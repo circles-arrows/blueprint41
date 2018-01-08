@@ -1,0 +1,22 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#@ import namespace="System.Linq.Expressions" #>
+<#
+
+    Debug.WriteLine("	executing {0} -> Convert value of {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, string.Format(AssignScript, string.Concat(Entity.Name, ".", Property.Name)));
+
+#>
+MATCH (node:<#= Entity.Label.Name #>) WHERE node.<#= Property.Name #> <> <#= string.Format(WhereScript, string.Concat("node.", Property.Name)) #>  WITH node LIMIT 10000 SET node.<#= Property.Name #> = <#= string.Format(AssignScript, string.Concat("node.", Property.Name)) #>
+<#+
+
+	// Template Parameters
+	public Entity	Entity	     { get; set; }
+	public Property Property     { get; set; }
+	public string   WhereScript  { get; set; }
+	public string   AssignScript { get; set; }
+#>

@@ -1,0 +1,23 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#@ import namespace="System.Linq.Expressions" #>
+<#
+
+    Debug.WriteLine("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Entity.Label.Name);
+#>
+MATCH (node:<#= Entity.Label.Name #>)
+WHERE NOT EXISTS(node.<#= To #>) OR node.<#= From #> <> node.<#= To #>
+WITH node limit 10000 
+SET node.<#= To #> = node.<#= From #>
+<#+
+
+	// Template Parameters
+	public Entity Entity { get; set; }
+	public string To  { get; set; }
+	public string From {get;set;}
+#>

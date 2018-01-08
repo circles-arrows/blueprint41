@@ -1,0 +1,37 @@
+﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Blueprint41.Core" #>
+<#@ includeForIntellisenseOnly processor="tangibleT4Editor" file="$(ProjectDir)DatastoreTemplates\Generator.ttinclude" #>
+using Blueprint41.Core;
+
+namespace <#= Settings.FullCRUDNamespace #>
+{
+  internal class Register
+    {
+        private static bool isInitialized = false;
+
+        public static void Types()
+        {
+            if (isInitialized)
+                return;
+
+            lock (typeof(Register))
+            {
+                if (isInitialized)
+                    return;
+
+				isInitialized = true;
+
+<#
+foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
+{	
+#>
+                ((ISetRuntimeType)<#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]).SetRuntimeTypes(typeof(<#= DALModel.ClassName #>), typeof(<#= DALModel.Name #>));
+<#
+}
+#>
+            }
+        }
+    }
+}

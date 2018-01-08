@@ -1,0 +1,188 @@
+﻿<#@ template language="C#" inherits="GenerationBase" visibility="internal" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Blueprint41.Modeller.Schemas" #>
+<# foreach (var functionalId in FunctionalIds)
+{
+#>
+		FunctionalId <#=functionalId.Name.ToLower()#>Id = FunctionalIds.New("<#=functionalId.Name #>", "<#=functionalId.Value #>", IdFormat.<#=functionalId.Type #>, 0);
+
+<# 
+}
+#>
+		
+<#
+	foreach (var entity in Entities.OrderBy(x => x.Name))
+    {
+#>
+			<#=entity.Name#> =
+<#
+		if(string.IsNullOrEmpty(entity.Inherits))
+        {
+#>
+				Entities.New("<#=entity.Name #>")
+<#
+        }
+		else
+        {
+#>
+<#
+			string name = Modeller.Model.Entities.Entity.Where(x => x.Guid == entity.Inherits).First().Name;
+			
+
+			if(string.IsNullOrEmpty(entity.FunctionalId))
+			{
+#>
+				Entities.New("<#=entity.Name #>", <#= name #>)
+<#
+			}
+			else
+            {
+				string entityFunctionalId = FunctionalIds.Where(x => x.Guid == entity.FunctionalId).First().Name.ToLower();
+#>
+				Entities.New("<#=entity.Name #>", <#= string.Concat(entityFunctionalId, "Id") #>, <#= name #>)
+<#
+			}
+
+			if(!string.IsNullOrEmpty(entity.Summary))
+			{
+#>
+				
+				.Summary("<#= entity.Summary.Replace("\"", "\\\"")#>")
+<#
+			}
+        }
+		if(entity.Abstract)
+        {
+#>
+.Abstract(true)
+<#
+        }
+		if(entity.Virtual)
+        {
+#>
+				.Virtual(true)
+<#
+        }
+#>
+<#
+        foreach (var primitive in entity.Primitive)
+        {
+			if(!string.IsNullOrEmpty(primitive.Index) && !primitive.Index.Equals("None"))
+            {
+#>
+				.AddProperty("<#=primitive.Name#>", typeof(<#=primitive.Type#>), <#= !primitive.Nullable?"false,":"" #> IndexType.<#=primitive.Index#>)
+<#
+            }
+			else
+            {
+#>
+				.AddProperty("<#=primitive.Name#>", typeof(<#=primitive.Type#>) <#= !primitive.Nullable?",false":"" #>)
+<#
+            }
+			if(primitive.IsKey)
+            {
+#>
+				.SetKey("<#=primitive.Name#>", true)
+<#
+			}
+        }
+#>       
+<#
+		Write(string.Join($"{Environment.NewLine}", entity.Primitive.Where(x => x.IsFullTextProperty == true).Select(x =>".SetFullTextProperty(\""+ x.Name+"\")").ToList()));
+
+ #>
+
+<#
+Write(";");
+#>
+			
+<#
+    foreach (var relationship in entity.GetRelationships(RelationshipDirection.In, false))
+    {
+		bool hasRelationshipSourceName = string.IsNullOrEmpty(relationship.Source.Name);
+		bool hasRelationshipTargetName = string.IsNullOrEmpty(relationship.Target.Name);
+#>
+			<#=relationship.Name#> = 
+<#
+
+		if(string.IsNullOrEmpty(relationship.Name))
+        {
+#>
+				Relations.New(<#=relationship.Source.Label#>, <#=relationship.Target.Label#>, <#=relationship.Type#>)
+<#
+		}
+		else
+        {
+#>
+				Relations.New(<#=relationship.Source.Label#>, <#=relationship.Target.Label#>, "<#=relationship.Name#>", "<#=relationship.Type#>")<#if(hasRelationshipSourceName){Write(";");}#>
+<#
+        }
+		if(!hasRelationshipSourceName)
+        {
+			if(relationship.Source.Nullable)
+            {
+#>
+				
+					.SetInProperty("<#=relationship.Source.Name#>", PropertyType.<#=relationship.Source.Type#>)<#if(hasRelationshipTargetName){Write(";\r\n");}#>
+<#
+			}
+			else
+            {
+#>
+
+					.SetInProperty("<#=relationship.Source.Name#>", PropertyType.<#=relationship.Source.Type#>, <#=relationship.Source.Nullable.ToString().ToLower()#>)<#if(hasRelationshipTargetName){Write(";\r\n");}#>
+<#
+            }
+		}
+		if(!hasRelationshipTargetName)
+        {
+			if(relationship.Target.Nullable)
+            {
+#>
+
+					.SetOutProperty("<#=relationship.Target.Name#>", PropertyType.<#=relationship.Target.Type#>);
+<#			
+			}
+			else
+			{
+#>
+
+					.SetOutProperty("<#=relationship.Target.Name#>", PropertyType.<#=relationship.Target.Type#>, <#=relationship.Target.Nullable.ToString().ToLower()#>);
+<#
+			}
+		}
+		else
+        {
+		}
+     }
+#>
+<#
+    }
+#>
+<#
+	foreach (var entity in Entities.OrderBy(x => x.Name))
+    {
+#>
+			public Entity <#= entity.Name#> {get; private set;}
+
+		<# if (entity.GetRelationships(RelationshipDirection.In, false).Count() > 0)
+     {
+		#>
+		
+		<# foreach (var relationship in entity.GetRelationships(RelationshipDirection.In, false))
+		{ #>
+	public Relationship <#= relationship.Name #> { get; private set; }
+		<# 
+		} #>
+		
+		<# 
+		} #>
+<#
+    }
+#>
+	

@@ -1,0 +1,19 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#
+
+    Debug.WriteLine("	executing {0} -> Create INDEX for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
+#>
+CREATE INDEX ON :<#= Entity.Label.Name #>(<#= Property.Name #>)
+<#+
+
+	// Template Parameters
+	public Entity	Entity	 { get; set; }
+	public Property Property { get; set; }
+
+#>

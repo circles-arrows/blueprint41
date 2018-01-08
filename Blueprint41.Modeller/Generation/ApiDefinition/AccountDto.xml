@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-16"?>
+<entity xmlns="http://xirqlz.com/2016/BusinessMap/Generation/CRUD/Entity" name="Account"  inherits="Org" >
+	<property name="StartDate" type="DateTime?" />
+	<property name="EndDate" type="DateTime?" />
+	<property name="RollUp" type="string" />
+	<property name="Bic" type="string" />
+	<property name="Iban" type="string" />
+	<property name="AccountTypes" type="AccountType" complex="Lookup" list="true" /> 
+	<property name="Currency" type="Currency" complex="Lookup"  /> 
+	<property name="Installations" type="Installation" complex="Lookup" list="true" /> 
+	<relationship name="HAS_BILLING_ACCOUNT" type="Out" action="Error" />
+	<relationship name="DOCUMENTINVOICE_HAS_ACCOUNT" type="Out" action="Error" />
+	<relationship name="HAS_PARENT_ORG" type="Out" action="Error" />
+	<relationship name="CONTACT_FOR" type="Out" action="Error" />
+</entity>

@@ -1,0 +1,40 @@
+
+******************************************************************************************************
+			Example To Run Generator (AdventureWorks - ProductSubcategory):
+******************************************************************************************************
+
+
+1) Open Blueprint41 solution and build project.
+
+2) Open AdventureWorks solution. This contains 3 projects
+	a) Datastore
+		- contains the Model where entities and relationships are initialized
+		- run this to generate files
+	b) Datastore.Generated files
+		- contains all generated files when Datastore is started
+	c) Datastore.CRUD
+		- simple test scenarios for generated entities, nodes, relationships by Creating, Retrieving, Updating and Deleting
+		
+3) Rebuild Datastore project to remove reference errors.
+
+4) To Test entities, relationships and nodes, uncomment the ff lines in DummyModel.cs:
+	line 16: TestWithProductSubcategory();
+
+5) Check Datastore.Generated project.
+	- Check that there is no ProductSubcategory.cs file created yet under folder "Entities"
+	- Check that there is no ProductSubcategoryNode.cs file created yet under folder "Nodes"
+	- Check that there is no PRODUCT_IN_PRODUCTSUBCATEGORY.cs file created yet under folder "Relationships"
+	- Check that there is no PRODUCTSUBCATEGORY_IN_PRODUCTCATEGORY.cs file created yet under folder "Relationships"
+
+6) Rebuild and Run (Start) Datastore project in Debug mode.
+	--- Console shows. Press enter to continue ---
+
+7) Recheck Datastore.Generated project.
+	- Check that there is ProductSubcategory.cs file created under folder "Entities"
+	- Check that there is ProductSubcategoryNode.cs file created under folder "Nodes"
+	- Check that there is PRODUCT_IN_PRODUCTSUBCATEGORY.cs file created under folder "Relationships"
+	- Check that there is PRODUCTSUBCATEGORY_IN_PRODUCTCATEGORY.cs file created under folder "Relationships"
+
+8) Rebuild Datastore.Generated project. 	
+
+9) Debug and explore CRUD functionalitites in Datastore.CRUD project :)

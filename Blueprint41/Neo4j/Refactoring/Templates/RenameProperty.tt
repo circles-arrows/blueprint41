@@ -1,0 +1,22 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#
+
+    Debug.WriteLine("	executing {0} -> Rename property from {1} to {2}", this.GetType().Name, From.Name, To);
+#>
+MATCH (node:<#= ConcreteParent.Label.Name #>) WHERE EXISTS(node.<#= From.Name #>) 
+WITH node LIMIT 10000 
+SET node.<#= To #> = node.<#= From.Name #>
+SET node.<#= From.Name #> = NULL
+<#+
+
+	// Template Parameters
+	public Entity ConcreteParent { get; set; }
+	public Property	From { get; set; }
+	public string	To { get; set; }
+#>

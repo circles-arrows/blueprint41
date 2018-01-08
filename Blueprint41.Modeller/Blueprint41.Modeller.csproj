@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{946C189D-DA9D-49DC-8A0C-CF4820B26C0D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Blueprint41.Modeller</RootNamespace>
+    <AssemblyName>Blueprint41.Modeller</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Msagl, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\Microsoft.Msagl.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Msagl.Drawing, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\Microsoft.Msagl.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Msagl.GraphViewerGdi, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\Microsoft.Msagl.GraphViewerGdi.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>C:\Windows\assembly\GAC\Microsoft.mshtml\7.0.3300.0__b03f5f7f11d50a3a\Microsoft.mshtml.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodeGeneration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CodeGeneration.Designer.cs">
+      <DependentUpon>CodeGeneration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generation\GenerationEnum.cs" />
+    <Compile Include="HtmlEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HtmlEditor.Designer.cs">
+      <DependentUpon>HtmlEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generation\ApiDefinition.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ApiDefinition.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Generation\DatastoreModel.cs">
+      <DependentUpon>DatastoreModel.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Generation\GenerationBase.cs" />
+    <Compile Include="Generation\StaticData.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StaticData.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Keywords.cs" />
+    <Compile Include="ManageEntityStaticDataForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManageEntityStaticDataForm.Designer.cs">
+      <DependentUpon>ManageEntityStaticDataForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ManageFunctionalId.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManageFunctionalId.Designer.cs">
+      <DependentUpon>ManageFunctionalId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ManageSubmodelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManageSubmodelForm.Designer.cs">
+      <DependentUpon>ManageSubmodelForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\DataGridViewUpperCaseTextBoxColumn.cs" />
+    <Compile Include="EventArguments\EdgeEventArgs.cs" />
+    <Compile Include="EntityEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EntityEditor.Designer.cs">
+      <DependentUpon>EntityEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EventArguments\InsertRelationshipEventArgs.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="GraphEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GraphEditorControl.Designer.cs">
+      <DependentUpon>GraphEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EventArguments\NodeEventArgs.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="NodeTypeEntry.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EventArguments\PropertyChangedEventArgs.cs" />
+    <Compile Include="RegistryHandler.cs" />
+    <Compile Include="Schemas\Logic\Entity.cs" />
+    <Compile Include="Schemas\Logic\Modeller.cs" />
+    <Compile Include="Schemas\Logic\NodeReference.cs" />
+    <Compile Include="Schemas\Logic\Primitive.cs" />
+    <Compile Include="Schemas\Logic\Relationship.cs" />
+    <Compile Include="Schemas\Logic\Submodel.cs" />
+    <Compile Include="Schemas\Wrapper.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Wrapper.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Schemas\View\Entity.cs" />
+    <Compile Include="Schemas\View\Modeller.cs" />
+    <Compile Include="Schemas\View\NodeReference.cs" />
+    <Compile Include="Schemas\View\Relationship.cs" />
+    <Compile Include="Schemas\View\Submodel.cs" />
+    <Compile Include="UpdateFunctionalIdForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdateFunctionalIdForm.Designer.cs">
+      <DependentUpon>UpdateFunctionalIdForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="CodeGeneration.resx">
+      <DependentUpon>CodeGeneration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HtmlEditor.resx">
+      <DependentUpon>HtmlEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManageEntityStaticDataForm.resx">
+      <DependentUpon>ManageEntityStaticDataForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManageFunctionalId.resx">
+      <DependentUpon>ManageFunctionalId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManageSubmodelForm.resx">
+      <DependentUpon>ManageSubmodelForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EntityEditor.resx">
+      <DependentUpon>EntityEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GraphEditorControl.resx">
+      <DependentUpon>GraphEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UpdateFunctionalIdForm.resx">
+      <DependentUpon>UpdateFunctionalIdForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\DataSources\Blueprint41.Modeller.Schemas.Entity.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Generation\ApiDefinition.tt">
+      <Generator>TextTemplatingFilePreProcessor</Generator>
+      <LastGenOutput>ApiDefinition.cs</LastGenOutput>
+    </Content>
+    <Content Include="Generation\ApiDefinition\AccountDto.xml" />
+    <Content Include="Generation\DatastoreModel.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>DatastoreModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="Generation\StaticData.tt">
+      <Generator>TextTemplatingFilePreProcessor</Generator>
+      <LastGenOutput>StaticData.cs</LastGenOutput>
+    </Content>
+    <None Include="Resources\bold.bmp" />
+    <None Include="Resources\cj.bmp" />
+    <None Include="Resources\color.bmp" />
+    <None Include="Resources\fj.bmp" />
+    <None Include="Resources\italic.bmp" />
+    <None Include="Resources\lj.bmp" />
+    <None Include="Resources\rj.bmp" />
+    <None Include="Resources\underscore.bmp" />
+    <Content Include="keywords.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ol.bmp" />
+    <Content Include="Resources\uol.bmp" />
+    <Content Include="Schemas\Wrapper.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Wrapper.cs</LastGenOutput>
+    </Content>
+    <Content Include="Xml\modeller-dev.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Xml\modeller.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\_Projects\Xirqlz\Blueprint41.Modeller.Compare\Blueprint41.Modeller.Compare.csproj">
+      <Project>{ad738fb0-ff73-4e32-ab49-d34c0e9e02e3}</Project>
+      <Name>Blueprint41.Modeller.Compare</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Blueprint41.Modeller.Schemas\Blueprint41.Modeller.Schemas.csproj">
+      <Project>{ce27c579-0842-46a2-8aba-d21908ac00b6}</Project>
+      <Name>Blueprint41.Modeller.Schemas</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

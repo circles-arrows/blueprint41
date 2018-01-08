@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-16"?>
+<entity xmlns="http://xirqlz.com/2016/BusinessMap/Generation/CRUD/Entity" name="TicketStatus"  inherits="d9d79291-dbce-4571-872c-4395a2472e74" >
+	<property name="Name" type="string" />
+	<relationship name="TICKET_HAS_STATUS" type="Out" action="Error" />
+</entity>

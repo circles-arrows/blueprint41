@@ -1,0 +1,30 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#@ import namespace="System.Linq.Expressions" #>
+<#
+
+    Debug.WriteLine("	executing {0} -> Apply FunctionalId on entity {1}", this.GetType().Name, Entity.Label.Name);
+#>
+MATCH (node:<#= Entity.Label.Name #>)
+<# if(! this.Full) 
+   {
+#>
+WHERE NOT node.Uid STARTS WITH '<#= FunctionalId.Prefix #>'
+<# }
+#>
+WITH node limit 10000 
+CALL marlink.functionalid.next('<#= FunctionalId.Label #>') YIELD value as key
+WITH node,key
+SET node.Uid=key
+<#+
+
+	// Template Parameters
+	public Entity Entity { get; set; }
+	public FunctionalId FunctionalId  { get; set; }
+	public bool Full {get;set;}
+#>

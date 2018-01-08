@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-16"?>
+<entity xmlns="http://xirqlz.com/2016/BusinessMap/Generation/CRUD/Entity" name="Ticket"  inherits="77aa18ff-1ac6-4808-8491-ebdfbdc67a59" >
+	<property name="Name" type="string" />
+	<property name="StatusSummary" type="string" />
+	<property name="Severity" type="string" />
+	<property name="Agent" type="string" />
+	<property name="Team" type="string" />
+	<property name="SLA" type="string" />
+	<property name="LastUpdateDate" type="DateTime?" />
+	<property name="TTRDeadline" type="DateTime?" />
+	<property name="Origin" type="string" />
+	<property name="ReceivedDate" type="DateTime?" />
+	<property name="ResolutionDate" type="DateTime?" />
+	<property name="CloseDate" type="DateTime?" />
+	<property name="ClosedBy" type="string" />
+	<property name="ModifiedBy" type="string" />
+	<property name="ResolvedBy" type="string" />
+	<property name="StartDate" type="DateTime?" />
+	<property name="OutageStartDate" type="DateTime?" />
+	<property name="OutageEndDate" type="DateTime?" />
+	<property name="ExpectedResolutionDate" type="DateTime?" />
+	<property name="Status" type="TicketStatus" complex="Lookup"  /> 
+	<property name="Type" type="TicketType" complex="Lookup"  /> 
+	<property name="ParentTicket" type="Ticket" complex="Lookup"  /> 
+	<property name="Company" type="Company" complex="Lookup"  /> 
+	<property name="Site" type="Site" complex="Lookup"  /> 
+	<property name="Installation" type="Installation" complex="Lookup"  /> 
+	<property name="ServiceInstance" type="ServiceInstance" complex="Lookup"  /> 
+	<property name="Problem" type="Problem" complex="Lookup"  /> 
+	<relationship name="TICKET_HAS_PARENT" type="Out" action="Error" />
+</entity>

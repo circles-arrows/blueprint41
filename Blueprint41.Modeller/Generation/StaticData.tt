@@ -1,0 +1,95 @@
+﻿<#@ template language="C#" inherits="GenerationBase" visibility="internal" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Blueprint41.Modeller.Schemas" #>
+<#@ import namespace="Blueprint41.Modeller" #>
+
+public void Script()
+{
+	if (ApplyToDatabase)
+	{
+	<#  
+	foreach(var entity in Entities)
+	{
+	#>
+	<#
+		if (entity.StaticData != null)
+		{
+	#>
+	<# 
+			foreach(var record in entity.StaticData.Records.Record)
+		{
+	 #>		
+		<#=entity.Label #>.Refactor.CreateNode(new
+			{
+			// Primitive properties
+			<# WritePrimitiveProperties(record,entity); #> 
+
+			// Properties from Relationships
+			<# WriteRelationshipProperties(record,entity); #>
+			}
+		);
+			
+
+		<# 
+		}
+		 #>
+		<# 
+		}
+		 #>
+		<# 	
+		}
+	    #>
+	}
+}
+<#+ 
+
+private void WritePrimitiveProperties(Record record, Entity e)
+{
+			var allProperties = new List<Primitive>();
+            Entity current = e;
+            do
+            {
+               allProperties.AddRange(current.Primitive);
+               current = current.ParentEntity;
+            } while (current != null);
+            var primitiveRecords = record.Property.Where(r => allProperties.Any(p => p.Guid == r.PropertyGuid));
+            Write(string.Join($"{Environment.NewLine}", primitiveRecords.Select(x => $"{x.PropertyGuid} = \"{x.Value}\",")));
+}
+
+private void WriteRelationshipProperties(Record record, Entity e)
+{
+	foreach(var r in record.Property)
+    {
+                var relationship = e.GetRelationships(RelationshipDirection.In, true).First();
+                if (relationship != null)
+                {
+                    var inEntity = relationship.InEntity;
+                    var outEntity = relationship.OutEntity;
+                    var inProperty = relationship.InProperty;
+                    string propertyGuid = e.Primitive.ToList().Where(x => x.Name == "Uid").First().Guid.ToString();
+                    var uid = record.Property.Single(x => x.PropertyGuid == propertyGuid).Value;
+
+                    if (relationship.InPropertyType.Equals("Collection"))
+                    {
+                        var values = r.Value.Split(',');
+                        Write(inProperty+" = new dynamic[] {");
+                        var strings = values.Select(val => $"({outEntity}.Refactor.MatchNode(\"{val}\"))");
+
+                        Write(string.Join(","+Environment.NewLine, strings));
+
+						Write("},");
+                    }
+                    else
+                    {
+                        var value = r.Value;
+                        Write($"{inProperty} = {outEntity}.Refactor.MatchNode(\"{value}\"),");
+                    }
+        }	           
+    }
+}
+#>

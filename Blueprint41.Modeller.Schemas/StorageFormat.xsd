@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://xirqlz.com/2016/Blueprint/Modeller"
+           xmlns="http://xirqlz.com/2016/Blueprint/Modeller"
+           elementFormDefault="qualified">
+
+  <xs:complexType name="nodeReference">
+    <xs:attribute name="label"  type="xs:string" use="required"/>
+    <xs:attribute name="name"   type="xs:string" />
+    <xs:attribute name="nullable"   type="xs:boolean" default="true"/>
+    <xs:attribute name="referenceGuid"       type="xs:string" use="required"/>
+    <xs:attribute name="type">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Lookup" />
+          <xs:enumeration value="Collection" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="relationship">
+    <xs:sequence>
+      <xs:element name="source" minOccurs="1" maxOccurs="1" nillable="false" type="nodeReference" />
+      <xs:element name="target" minOccurs="1" maxOccurs="1" nillable="false" type="nodeReference" />
+    </xs:sequence>
+    <xs:attribute name="name"       type="xs:string" use="required"/>
+    <xs:attribute name="type"      type="xs:string" use="required"/>
+    <xs:attribute name="guid"       type="xs:string" use="required"/>
+    <!--<xs:attribute name="role">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="None" />
+          <xs:enumeration value="Type" />
+          <xs:enumeration value="Instance" />
+          <xs:enumeration value="Details" />
+          <xs:enumeration value="Parent" />
+          <xs:enumeration value="Child" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>-->
+  </xs:complexType>
+  
+  <xs:complexType name="primitive">
+    <xs:attribute name="name"       type="xs:string"  use="required"/>
+    <xs:attribute name="isKey"      type="xs:boolean" default="false"/>
+    <xs:attribute name="type">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <!-- This is needed to guarantee type conventions (eg: int vs Int32) -->
+          <xs:enumeration value="string" />
+          <xs:enumeration value="DateTime" />
+          <xs:enumeration value="bool" />
+          <xs:enumeration value="int" />
+          <xs:enumeration value="long" />
+          <xs:enumeration value="decimal" />
+          <xs:enumeration value="double" />
+          <xs:enumeration value="List&lt;string&gt;" />
+          <xs:enumeration value="List&lt;DateTime&gt;" />
+          <xs:enumeration value="List&lt;bool&gt;" />
+          <xs:enumeration value="List&lt;long&gt;" />
+          <xs:enumeration value="List&lt;decimal&gt;" />
+          <xs:enumeration value="List&lt;double&gt;" />
+          <xs:enumeration value="List&lt;int&gt;" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="nullable"   type="xs:boolean" default="true"/>
+    <xs:attribute name="isFullTextProperty" type="xs:boolean" default="false"/>
+    <xs:attribute name="guid"       type="xs:string" use="required"/>
+    <xs:attribute name="index" >
+      <xs:simpleType>
+        <xs:restriction base="xs:string" >
+          <xs:enumeration value="None" />
+          <xs:enumeration value="Indexed" />
+          <xs:enumeration value="Unique" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="staticData">
+    <xs:sequence>
+      <xs:element name="records" minOccurs="0" maxOccurs="1" type="records" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="records">
+    <xs:sequence>
+      <xs:element name="record" minOccurs="0" maxOccurs="unbounded" type="record" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="record">
+    <xs:sequence>
+      <xs:element name="property" minOccurs="0" maxOccurs="unbounded" type="property" />
+    </xs:sequence>
+    <xs:attribute name="guid" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="property">
+    <xs:attribute name="propertyGuid" type="xs:string" />
+    <xs:attribute name="value" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="entity">
+    <xs:sequence>
+      <xs:element name="primitive" minOccurs="0" maxOccurs="unbounded" type="primitive" />
+      <xs:element name="staticData" minOccurs="0" maxOccurs="1" type="staticData" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="label" type="xs:string" use="required"/>
+    <xs:attribute name="abstract" type="xs:boolean" default="false"/>
+    <xs:attribute name="virtual" type="xs:boolean" default="false"/>
+    <xs:attribute name="summary" type="xs:string" />
+    <xs:attribute name="example" type="xs:string" />
+    <xs:attribute name="inherits" type="xs:string" />
+    <xs:attribute name="prefix" type="xs:string" />
+    <xs:attribute name="isStaticData" type="xs:boolean" default="false"/>
+    <xs:attribute name="functionalId" type="xs:string"/>
+    <xs:attribute name="guid" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="submodel">
+    <xs:sequence>
+      <xs:element name="explaination" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="node" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="label"       type="xs:string"  use="required"/>
+          <xs:attribute name="entityGuid"       type="xs:string" use="required"/>
+          <xs:attribute name="xcoordinate" type="xs:double" />
+          <xs:attribute name="ycoordinate" type="xs:double" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name"   type="xs:string" use="required"/>
+    <xs:attribute name="chapter"   type="xs:int" use="optional"/>
+    <xs:attribute name="isDraft"   type="xs:boolean" default="true"/>
+    <xs:attribute name="isLaboratory"   type="xs:boolean" default="false"/>
+  </xs:complexType>
+  
+  <xs:complexType name="functionalIds">
+    <xs:sequence>
+      <xs:element name="functionalId" minOccurs="0" maxOccurs="unbounded" type="functionalId">
+      </xs:element >
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="functionalId">
+    <xs:attribute name="value" type="xs:string"/>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="type" type="xs:string"/>
+    <xs:attribute name="guid" type="xs:string" use="required"/>
+    <xs:attribute name="isDefault" type="xs:boolean" default="false"/>
+  </xs:complexType>
+
+  <xs:element name="modeller">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="entities" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="entity" minOccurs="0" maxOccurs="unbounded" type="entity" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="relationships" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="relationship" minOccurs="0" maxOccurs="unbounded" type="relationship"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="submodels" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="submodel" minOccurs="0" maxOccurs="unbounded" type="submodel"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="functionalIds" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="functionalId" minOccurs="0" maxOccurs="unbounded" type="functionalId"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

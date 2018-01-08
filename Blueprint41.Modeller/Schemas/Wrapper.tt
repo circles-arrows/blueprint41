@@ -1,0 +1,291 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(SolutionDir)\Blueprint41.Modeller.Schemas\bin\Debug\Blueprint41.Modeller.Schemas.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Blueprint41.Modeller.Schemas" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Blueprint41.Modeller.Schemas
+{
+    public abstract class Initializable
+	{
+        public virtual Modeller Model { get; internal set; }
+
+		protected virtual void InitializeLogic()
+		{
+		}
+		protected virtual void InitializeView()
+		{
+		}
+	}
+
+    public partial class Modeller
+    {
+        public Modeller(string filename) : this(null, modeller.Load(filename))
+		{
+			Model = this;
+		}
+    }
+
+<#
+	List<Type> types = new List<Type>()
+	{
+		typeof(modeller),
+		typeof(modeller.entitiesLocalType),
+		typeof(modeller.relationshipsLocalType),
+		typeof(modeller.submodelsLocalType),
+		typeof(modeller.functionalIdsLocalType),
+		typeof(entity),
+		typeof(primitive),
+		typeof(staticData),
+		typeof(records),
+		typeof(record),
+		typeof(property),
+		typeof(relationship),
+		typeof(nodeReference),
+		typeof(submodel),
+		typeof(submodel.nodeLocalType),
+		typeof(functionalId),
+    };
+
+	foreach (Type type in types)
+    {
+		if (type.DeclaringType != null)
+        {
+#>
+	public partial class <#= Rename(type.DeclaringType.Name) #>
+	{
+<#
+			PushIndent("\t");
+        }
+#>
+	public partial class <#= Rename(type.Name) #> : Initializable
+	{
+		public <#= EmitXsdGeneratedType(type) #> Xml { get; internal set; }
+
+		public <#= Rename(type.Name) #>() : this(null, new <#= EmitXsdGeneratedType(type) #>())
+		{
+		}
+		public <#= Rename(type.Name) #>(Modeller model) : this(model, new <#= EmitXsdGeneratedType(type) #>())
+		{
+		}
+        internal <#= Rename(type.Name) #>(Modeller model, <#= EmitXsdGeneratedType(type) #> xml)
+        {
+			Xml = xml;
+			Model = <#= (type.Name == "modeller") ? "this" : "model" #>;
+<#
+		foreach (PropertyInfo propInfo in type.GetProperties().Where(item => item.Name != "Untyped" && item.Name != "Query").Distinct())
+        {
+			if(types.Exists(item => item.Name == propInfo.PropertyType.Name))
+            {
+#>
+
+            if (xml.@<#= propInfo.Name #> == null)
+                xml.@<#= propInfo.Name #> = new <#= EmitXsdGeneratedType(propInfo.PropertyType) #>();
+			m_<#= Rename(propInfo.Name) #> = new <#= Rename(propInfo.PropertyType.Name) #>(Model, xml.@<#= propInfo.Name #>);
+<#
+            }
+			else if (propInfo.PropertyType.IsGenericType && propInfo.PropertyType.GetGenericTypeDefinition() == typeof(IList<>))
+            {
+				Type propertyType = propInfo.PropertyType.GetGenericArguments()[0];
+				string innerType = propertyType.Name;
+				if(types.Exists(item => item.Name == propertyType.Name))
+					innerType = EmitXsdGeneratedType(propertyType);
+#>
+
+            if (xml.@<#= propInfo.Name #> == null)
+                xml.@<#= propInfo.Name #> = new List<<#= innerType #>>(); //normal <#= propInfo.PropertyType.Name #>
+<#
+			}
+        }
+ #>
+
+			InitializeView();
+			InitializeLogic();
+        }
+<#
+		foreach (PropertyInfo propInfo in type.GetProperties().Where(item => item.Name != "Untyped" && item.Name != "Query").Distinct())
+        {
+			if (propInfo.PropertyType.IsGenericType && propInfo.PropertyType.GetGenericTypeDefinition() == typeof(IList<>))
+            {
+				string innerType = propInfo.PropertyType.GetGenericArguments()[0].Name;
+				string wrapperType = Rename(propInfo.PropertyType.GetGenericArguments()[0].Name);
+#>
+		public Collection<<#= wrapperType #>> <#= Rename(propInfo.Name) #>
+		{
+			get
+			{
+				if (m_<#= Rename(propInfo.Name) #> == null)
+				{
+					m_<#= Rename(propInfo.Name) #> = new ObservableCollection<<#= wrapperType #>>(Xml.@<#= propInfo.Name #>.Select(item => new <#= wrapperType #>(Model, item)));
+					m_<#= Rename(propInfo.Name) #>.CollectionChanged += RaiseOn<#= Rename(propInfo.Name) #>CollectionChanged;
+					m_<#= Rename(propInfo.Name) #>.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
+                    {
+                        switch (e.Action)
+                        {
+                            case NotifyCollectionChangedAction.Add:
+                                {
+                                    int index = e.NewStartingIndex;
+                                    foreach (<#= wrapperType #> item in e.NewItems)
+									{
+										item.Model = Model;
+                                        Xml.@<#= propInfo.Name #>.Insert(index++, item.Xml);
+									}
+                                }
+                                break;
+                            case NotifyCollectionChangedAction.Remove:
+                                {
+									int oldItemIndex = 0;
+                                    foreach (int index in Enumerable.Range(e.OldStartingIndex, e.OldItems.Count).Reverse())
+                                    {
+                                        <#= wrapperType #> item = (<#= wrapperType #>)e.OldItems[oldItemIndex++];
+                                        if (Xml.@<#= propInfo.Name #>[index] != item.Xml)
+                                            throw new InvalidOperationException();
+
+										item.Model = null;
+                                        Xml.@<#= propInfo.Name #>.RemoveAt(index);
+                                    }
+                                }
+                                break;
+                            case NotifyCollectionChangedAction.Reset:
+                                {
+									if(e.OldItems != null)
+									{									
+										foreach (<#= wrapperType #> item in e.OldItems)
+											item.Model = null;
+									}
+                                    Xml.@<#= propInfo.Name #>.Clear();
+                                }
+                                break;
+                            case NotifyCollectionChangedAction.Replace:
+                            case NotifyCollectionChangedAction.Move:
+                                throw new NotSupportedException();
+                        }
+                    };
+				}
+				return m_<#= Rename(propInfo.Name) #>; 
+			}
+		}
+		private ObservableCollection<<#= wrapperType #>> m_<#= Rename(propInfo.Name) #> = null;
+		private event EventHandler<NotifyCollectionChangedEventArgs> <#= Rename(propInfo.Name) #>CollectionChanged;
+		private void RaiseOn<#= Rename(propInfo.Name) #>CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (<#= Rename(propInfo.Name) #>CollectionChanged != null)
+				<#= Rename(propInfo.Name) #>CollectionChanged(sender, e);
+		}
+
+<#
+            }
+			else if(types.Exists(item => item.Name == propInfo.PropertyType.Name))
+            {
+				string propertyType = Rename(propInfo.PropertyType.Name);
+#>
+		public <#= propertyType #> <#= Rename(propInfo.Name) #>
+		{
+			get { return m_<#= Rename(propInfo.Name) #>; }
+			set
+            {
+				if (m_<#= Rename(propInfo.Name) #> == value)
+                    return;
+
+				if (m_<#= Rename(propInfo.Name) #> != null)
+                    m_<#= Rename(propInfo.Name) #>.Model = null;
+
+                PropertyChangedEventArgs<<#= propertyType #>> eventArgs = new PropertyChangedEventArgs<<#= propertyType #>>(m_<#= Rename(propInfo.Name) #>, value);
+                m_<#= Rename(propInfo.Name) #> = value;
+
+				if (m_<#= Rename(propInfo.Name) #> != null)
+                    m_<#= Rename(propInfo.Name) #>.Model = Model;
+
+                if (On<#= Rename(propInfo.Name) #>Changed != null)
+                    On<#= Rename(propInfo.Name) #>Changed(this, eventArgs);
+            }
+		}
+		private <#= propertyType #> m_<#= Rename(propInfo.Name) #> = null;
+		public event EventHandler<PropertyChangedEventArgs<<#= propertyType #>>> On<#= Rename(propInfo.Name) #>Changed;
+
+<#
+            }
+			else
+			{
+#>
+		public <#= EmitCSharpType(propInfo.PropertyType) #> <#= Rename(propInfo.Name) #>
+		{
+			get { return Xml.@<#= propInfo.Name #>; }
+			set
+            {
+				if (Xml.@<#= propInfo.Name #> == value)
+                    return;
+
+				<#= EmitCSharpType(propInfo.PropertyType) #> oldValue = Xml.@<#= propInfo.Name #>;
+                PropertyChangedEventArgs<<#= EmitCSharpType(propInfo.PropertyType) #>> eventArgs = new PropertyChangedEventArgs<<#= EmitCSharpType(propInfo.PropertyType) #>>(oldValue, value);
+
+				On<#= Rename(propInfo.Name) #>Changing?.Invoke(this, eventArgs);
+				if (eventArgs.Cancel)
+				{
+					Xml.@<#= propInfo.Name #> = oldValue;
+					On<#= Rename(propInfo.Name) #>ChangeCancelled?.Invoke(this, eventArgs);
+				}
+				else
+				{
+					Xml.@<#= propInfo.Name #> = value;
+	                On<#= Rename(propInfo.Name) #>Changed?.Invoke(this, eventArgs);
+				}
+            }
+		}
+		public event EventHandler<PropertyChangedEventArgs<<#= EmitCSharpType(propInfo.PropertyType) #>>> On<#= Rename(propInfo.Name) #>ChangeCancelled;
+		public event EventHandler<PropertyChangedEventArgs<<#= EmitCSharpType(propInfo.PropertyType) #>>> On<#= Rename(propInfo.Name) #>Changing;
+		public event EventHandler<PropertyChangedEventArgs<<#= EmitCSharpType(propInfo.PropertyType) #>>> On<#= Rename(propInfo.Name) #>Changed;
+
+<#
+			}
+        }
+#>
+	}
+<#
+		if (type.DeclaringType != null)
+        {
+			PopIndent();
+#>
+	}
+<#
+        }
+	}
+#>
+}
+<#+
+	private string Rename(string text)
+	{
+		if (text.Length > 1)
+			return string.Concat(text.Substring(0,1).ToUpperInvariant(), text.Substring(1)); 
+
+		return text.ToUpperInvariant();
+	}
+
+	private string EmitXsdGeneratedType(Type type)
+	{
+		if (type.DeclaringType != null)        
+			return string.Concat(type.DeclaringType.Name, ".", type.Name);
+
+        return type.Name;
+    }
+	private string EmitCSharpType(Type type)
+    {
+		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+			return string.Concat(type.GenericTypeArguments[0].Name, "?");
+        }
+
+		return type.Name;
+    }
+#>

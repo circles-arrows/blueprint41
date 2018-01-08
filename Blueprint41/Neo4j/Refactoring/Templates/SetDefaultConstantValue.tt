@@ -1,0 +1,24 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#
+
+    Debug.WriteLine("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value == null) ? "<NULL>" : Value.ToString());
+
+	// Setup Cypher Parameters
+	OutputParameters.Add(Property.Name, Value);
+
+#>
+MATCH (node:<#= Entity.Label.Name #>) WHERE NOT EXISTS(node.<#= Property.Name #>) WITH node LIMIT 10000 SET node.<#= Property.Name #> = {<#= Property.Name #>}
+<#+
+
+	// Template Parameters
+	public Entity	Entity	 { get; set; }
+	public Property Property { get; set; }
+	public object	Value	 { get; set; }
+
+#>

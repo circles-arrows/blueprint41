@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modeller xmlns="http://xirqlz.com/2016/Blueprint/Modeller">
+  <entities />
+  <relationships />
+  <submodels>
+    <submodel name="Main Model" chapter="1" isDraft="false">
+      <explaination></explaination>
+    </submodel>
+  </submodels>
+  <functionalIds>
+  </functionalIds>
+</modeller>

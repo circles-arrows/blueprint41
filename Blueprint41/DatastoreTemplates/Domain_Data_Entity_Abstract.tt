@@ -1,0 +1,136 @@
+﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="System.Windows.Forms" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ includeForIntellisenseOnly processor="tangibleT4Editor" file="$(ProjectDir)DatastoreTemplates\Generator.ttinclude" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Blueprint41;
+using Blueprint41.Core;
+using Blueprint41.Query;
+using Blueprint41.DatastoreTemplates;
+using q = <#= Settings.FullQueryNamespace #>;
+
+namespace <#= Settings.FullCRUDNamespace #>
+{
+<#
+if (DALModel.IsAbstract)
+{
+#>
+	public partial interface <#= DALModel.ClassName #> : OGM<#= string.Join("", DALModel.GetBaseTypes().Where(item => item.IsAbstract).Select(item => string.Concat(", ", item.ClassName)).ToArray()) #>
+	{
+<#
+	if((object)DALModel.NodeType == null)
+    {
+#>
+		string <#= DALModel.NodeTypeName #> { get; }
+<#
+	}
+
+	foreach (Property attr in DALModel.Properties)
+	{
+		if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
+		{
+#>
+		<#= attr.OuterReturnType #> <#= attr.Name #> { get; }
+<#
+		}
+		else
+		{
+#>
+		<#= attr.OuterReturnType #> <#= attr.Name #> { get; set; }
+<#
+			if (attr.PropertyType == PropertyType.Lookup && attr.Relationship.IsTimeDependent)
+			{
+#>
+		<#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime? moment = null);
+		void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment = null);
+<#
+			}
+		}
+	}
+#>
+	}
+
+	public partial class <#= DALModel.Name #> : OGMAbstractImpl<<#= DALModel.Name #>, <#= DALModel.ClassName #>, <#= DALModel.Key.SystemReturnType #>>
+	{
+        #region Initialize
+
+		static <#= DALModel.Name #>()
+        {
+            Register.Types();
+        }
+
+        protected override void RegisterGeneratedStoredQueries()
+        {
+			AdditionalGeneratedStoredQueries();
+        }
+		partial void AdditionalGeneratedStoredQueries();
+
+		#endregion
+
+        private static <#= DALModel.ClassName #>Members members = null;
+        public static <#= DALModel.ClassName #>Members Members
+        {
+            get
+            {
+                if (members == null)
+                {
+                    lock (typeof(<#= DALModel.ClassName #>))
+                    {
+                        if (members == null)
+                            members = new <#= DALModel.ClassName #>Members();
+                    }
+                }
+                return members;
+            }
+        }
+        public class <#= DALModel.ClassName #>Members
+        {
+            internal <#= DALModel.ClassName #>Members() { }
+
+<#
+	foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
+	{
+#>
+			#region Members for interface I<#= inherited.Name #>
+
+<#
+		foreach (Property attr in inherited.Properties)
+		{
+#>
+            public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
+<#
+		}
+#>
+			#endregion
+
+<#
+	}
+#>
+        }
+
+		sealed public override Entity GetEntity()
+        {
+            if (entity == null)
+            {
+                lock (typeof(<#= DALModel.ClassName #>))
+                {
+                    if (entity == null)
+                        entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
+                }
+            }
+            return entity;
+        }
+	}
+<#
+}
+#>
+}

@@ -1,0 +1,102 @@
+﻿<#@ template language="C#" inherits="GenerationBase" visibility="internal" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Runtime.InteropServices" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Blueprint41.Modeller.Schemas" #>
+<#
+    foreach (var entity in Entities)
+    {
+		this.CurrentEntity = entity.Name;
+#>
+<?xml version="1.0" encoding="utf-16"?>
+<entity xmlns="http://marlink.com/2016/BusinessMap/Generation/CRUD/Entity" name="<#=entity.Name#>" <#= entity.Abstract?"abstract=\"true\"":"" #> <#WriteInherits(entity);#> >
+<#
+ if(entity.Abstract || entity.Inherits.Equals("Neo4jBase"))
+ {
+#>
+	<property name="Id" type="string" mapsto="Uid" />
+<#
+ }
+		
+        foreach (var primitive in entity.Primitive)
+        {
+#>
+	<property name="<#=primitive.Name#>" type="<#=primitive.Type.ToString()#><#WriteType(primitive);#>" <#WriteNullable(primitive);#>/>
+<#
+        }
+        foreach (var relationship in entity.GetRelationships(RelationshipDirection.In, false))
+        {
+#>
+	<property name="<#=relationship.Source.Name#>" type="<#=relationship.Target.Label#>" complex="Lookup" <#=relationship.Source.Type.ToString().Equals("Collection")?"list=\"true\"":""#> /> 
+<#
+        }
+#>
+<#
+		foreach (var relationship in entity.GetRelationships(RelationshipDirection.Out, true))
+        {
+#>
+	<relationship name="<#=relationship.Name#>" type="Out" action="Error" />
+<#
+        }
+#>
+</entity>
+<#
+    }
+#>
+<#+ 
+private void WriteInherits(Entity entity)
+{
+	 if(!(string.IsNullOrEmpty(entity.Inherits) || entity.Inherits.Equals("Neo4jBase")))
+     {
+		 string inherits = string.Empty;
+		 IEnumerable<Entity> entities = Modeller.Entities.Entity.Where(x => x.Guid == entity.Inherits);
+		 if(entities.Count() != 0)
+         {
+			inherits = entities.First().Name;
+		 }
+		
+		Write(string.Concat("inherits=\"", inherits + "\""));
+     }
+}
+#>
+<#+ 
+private void WriteType(Primitive primitive)
+{
+	 string questionMark = string.Empty;
+	 Type type = Type.GetType(string.Format("System.{0}", GetTypeAlias(primitive)));
+	 if(primitive.Nullable == true && type != null)
+	 	Write("?");
+}
+#>
+<#+ 
+private void WriteNullable(Primitive primitive)
+{
+	string nullable = string.Empty;
+	
+	Type nType = Type.GetType(string.Format("System.{0}", GetTypeAlias(primitive)));
+	if(nType == null)
+    {
+		if(!primitive.Nullable)
+			Write("nullable=\"false\"");
+	}
+}
+
+#>
+
+<#+ 
+private string GetTypeAlias(Primitive primitive)
+{
+	if(primitive.Type == "bool")
+		primitive.Type = "Boolean";
+	if(primitive.Type == "long")
+	 	primitive.Type = "Int64";
+	if(primitive.Type == "int")
+	 	primitive.Type = "Int32";
+	
+	 return primitive.Type;
+}
+#>
