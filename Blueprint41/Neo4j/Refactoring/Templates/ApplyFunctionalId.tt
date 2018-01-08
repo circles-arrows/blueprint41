@@ -18,7 +18,7 @@ WHERE NOT node.Uid STARTS WITH '<#= FunctionalId.Prefix #>'
 <# }
 #>
 WITH node limit 10000 
-CALL marlink.functionalid.next('<#= FunctionalId.Label #>') YIELD value as key
+CALL blueprint41.functionalid.next('<#= FunctionalId.Label #>') YIELD value as key
 WITH node,key
 SET node.Uid=key
 <#+
