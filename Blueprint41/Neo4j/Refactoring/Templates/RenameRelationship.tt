@@ -7,7 +7,7 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Rename relationship from {0} to {1}", this.GetType().Name, Relationship.Name, NewName);
+    Debug.WriteLine("	executing {0} -> Rename relationship from {1} to {2}", this.GetType().Name, Relationship.Name, NewName);
 #>
 MATCH (in:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= OldName #>]-(out:<#= Relationship.OutEntity.Label.Name #>)
 WITH in, rel, out LIMIT 10000

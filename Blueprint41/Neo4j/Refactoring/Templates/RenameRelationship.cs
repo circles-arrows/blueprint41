@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
+    #line 1 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     internal partial class RenameRelationship : TemplateBase
     {
@@ -31,38 +31,38 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
+            #line 8 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
 
 
-    Debug.WriteLine("	executing {0} -> Rename relationship from {0} to {1}", this.GetType().Name, Relationship.Name, NewName);
+    Debug.WriteLine("	executing {0} -> Rename relationship from {1} to {2}", this.GetType().Name, Relationship.Name, NewName);
 
             
             #line default
             #line hidden
             this.Write("MATCH (in:");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
+            #line 12 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.InEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")-[rel:");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
+            #line 12 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OldName));
             
             #line default
             #line hidden
             this.Write("]-(out:");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
+            #line 12 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.OutEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")\r\nWITH in, rel, out LIMIT 10000\r\nCREATE UNIQUE (in)-[newRelationship:");
             
-            #line 14 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
+            #line 14 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NewName));
             
             #line default
@@ -71,7 +71,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 15 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
+        #line 15 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
 
 
 	// Template Parameters
