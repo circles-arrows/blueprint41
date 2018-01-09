@@ -276,7 +276,7 @@ namespace Blueprint41
             if (!Parser.ShouldExecute)
                 return;
 
-            foreach (Entity subClass in this.Parent.GetConcreteClasses())
+            foreach (Entity subClass in Parent.GetConcreteClasses().Intersect(target.Parent.GetConcreteClasses()))
             {
                 if (subClass.Search(target.Name) != target)
                     continue;
