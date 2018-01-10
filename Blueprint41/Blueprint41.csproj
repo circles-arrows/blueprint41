@@ -87,9 +87,17 @@
       <LastGenOutput>CreateIndex.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
     </None>
-    <None Update="Neo4j\Refactoring\Templates\CreateRelationship.tt">
+    <None Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint - Copy.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>CreateRelationship.cs</LastGenOutput>
+      <LastGenOutput>CreateUniqueConstraint - Copy.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\DropExistConstraint.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>DropExistConstraint.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SetDefaultLookupValue.cs</LastGenOutput>
     </None>
     <None Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -212,10 +220,20 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>CreateIndex.tt</DependentUpon>
     </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\CreateRelationship.cs">
+    <Compile Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint - Copy.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>CreateRelationship.tt</DependentUpon>
+      <DependentUpon>CreateUniqueConstraint - Copy.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\DropExistConstraint.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DropExistConstraint.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\SetDefaultLookupValue.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SetDefaultLookupValue.tt</DependentUpon>
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint.cs">
       <DesignTime>True</DesignTime>

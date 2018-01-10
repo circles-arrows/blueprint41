@@ -247,6 +247,20 @@ namespace Blueprint41
         {
             if (PropertyType == PropertyType.Attribute)
             {
+                if (Parser.ShouldExecute && Nullable == false)
+                {
+                    string cypher = $"CALL db.constraints() YIELD description WHERE description = 'CONSTRAINT ON ( {Parent.Name.ToLower()}:{Parent.Name} ) ASSERT exists({Parent.Name.ToLower()}.{Name})' RETURN count(description) as count";
+                    IRecord record = Parser.ExecuteSelect(cypher, null).FirstOrDefault();
+                    bool contraintExists = record["count"].As<long>() > 0;
+                    if (contraintExists)
+                    {
+                        Parser.Execute<DropExistConstraint>(delegate (DropExistConstraint template)
+                        {
+                            template.Property = this;
+                        }, false);
+                    }
+                }
+
                 foreach (var entity in Parent.GetConcreteClasses())
                 {
                     Parser.ExecuteBatched<RenameProperty>(delegate (RenameProperty template)

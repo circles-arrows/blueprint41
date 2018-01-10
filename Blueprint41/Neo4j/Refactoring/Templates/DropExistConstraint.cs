@@ -20,9 +20,9 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+    #line 1 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    internal partial class CreateUniqueConstraint : TemplateBase
+    internal partial class DropExistConstraint : TemplateBase
     {
 #line hidden
         /// <summary>
@@ -31,37 +31,35 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+            #line 8 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
 
-
-    Debug.WriteLine("	executing {0} -> Create unique constraint for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
+    Debug.WriteLine("	executing {0} -> DROP CONSTRAINT ON for {1}.{2}", this.GetType().Name, Property.Parent.Label.Name, Property.Name);
 
             
             #line default
             #line hidden
-            this.Write("CREATE CONSTRAINT ON (node:");
+            this.Write("DROP CONSTRAINT ON (node:");
             
-            #line 12 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
+            #line 11 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Parent.Label.Name));
             
             #line default
             #line hidden
-            this.Write(") ASSERT node.");
+            this.Write(") ASSERT exists(node.");
             
-            #line 12 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+            #line 11 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
-            this.Write(" IS UNIQUE\r\n");
+            this.Write(")\r\n");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 13 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+        #line 12 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
 
 
 	// Template Parameters
-	public Entity	Entity	 { get; set; }
 	public Property Property { get; set; }
 
 
