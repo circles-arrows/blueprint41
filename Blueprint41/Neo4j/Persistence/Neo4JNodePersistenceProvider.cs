@@ -350,7 +350,6 @@ namespace Blueprint41.Neo4j.Persistence
             return result.Any();
         }
 
-
         static private T Activator<T>(Entity entity)
         {
             if (entity.IsAbstract)

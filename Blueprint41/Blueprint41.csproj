@@ -87,6 +87,10 @@
       <LastGenOutput>CreateIndex.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
     </None>
+    <None Update="Neo4j\Refactoring\Templates\CreateRelationship.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CreateRelationship.cs</LastGenOutput>
+    </None>
     <None Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>CreateUniqueConstraint.cs</LastGenOutput>
@@ -96,6 +100,10 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>MergeProperty.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\MergeRelationship - Copy.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MergeRelationship - Copy.cs</LastGenOutput>
     </None>
     <None Update="Neo4j\Refactoring\Templates\MergeRelationship.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -203,6 +211,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>CreateIndex.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\CreateRelationship.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CreateRelationship.tt</DependentUpon>
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint.cs">
       <DesignTime>True</DesignTime>

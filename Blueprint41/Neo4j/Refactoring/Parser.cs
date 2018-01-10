@@ -15,6 +15,20 @@ namespace Blueprint41.Neo4j.Refactoring
     {
         #region Parser Logic
 
+        internal static IStatementResult ExecuteSelect(string cypher, Dictionary<string, object> parameters)
+        {
+            if (!ShouldExecute)
+                return null;
+
+            using (Transaction.Begin(false))
+            {
+                if (parameters == null || parameters.Count == 0)
+                    return Neo4jTransaction.Run(cypher);
+                else
+                    return Neo4jTransaction.Run(cypher, parameters);
+            }
+        }
+
         private static IStatementResult PrivateExecute<T>(Action<T> setup)
             where T : TemplateBase, new()
         {

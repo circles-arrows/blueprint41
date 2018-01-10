@@ -621,9 +621,14 @@ namespace Blueprint41
 
             Nullable = false;
 
-            // temp fix to not block anyone immediately (only when they want to run against the DB...)
-            //if (Parser.ShouldExecute)
-            throw new NotImplementedException("Check the property has a value");
+            if (Parser.ShouldExecute)
+            {
+                string cypher = string.Format("MATCH (n:{0}) WHERE n.{1} IS NULL RETURN count(n) as count", Parent.Label.Name, Name);
+                IRecord record = Parser.ExecuteSelect(cypher, null).FirstOrDefault();
+                bool hasNullProperty = record["count"].As<long>() > 0;
+                if (hasNullProperty)
+                    throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", Parent.Name, Name));
+            }
         }
         void IRefactorProperty.MakeMandatory(object defaultValue)
         {
@@ -637,9 +642,12 @@ namespace Blueprint41
 
             Nullable = false;
 
-            // temp fix to not block anyone immediately (only when they want to run against the DB...)
-            //if (Parser.ShouldExecute)
-            throw new NotImplementedException("Assign default value");
+            Parser.ExecuteBatched<SetDefaultConstantValue>(delegate (SetDefaultConstantValue template)
+            {
+                template.Entity = Parent;
+                template.Property = this;
+                template.Value = defaultValue;
+            });
         }
         void IRefactorProperty.MakeMandatory(DynamicEntity defaultValue)
         {
@@ -652,11 +660,16 @@ namespace Blueprint41
             if (PropertyType == PropertyType.Attribute)
                 throw new ArgumentException("The property type does not match the type of the supplied 'defaultValue'.");
 
+            if(defaultValue.GetEntity().Name != ForeignEntity.Name)
+                throw new ArgumentException("The supplied default value does not match the entity type of the property.");
+
             Nullable = false;
 
-            // temp fix to not block anyone immediately (only when they want to run against the DB...)
-            //if (Parser.ShouldExecute)
-            throw new NotImplementedException("Assign default value");
+            Parser.ExecuteBatched<SetDefaultLookupValue>(delegate (SetDefaultLookupValue template)
+            {
+                template.Property = this;
+                template.Value = defaultValue;
+            });
         }
 
         private class NodePattern

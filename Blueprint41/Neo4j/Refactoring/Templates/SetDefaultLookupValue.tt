@@ -1,0 +1,24 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#@ import namespace="Blueprint41.Dynamic" #>
+<#
+
+    Debug.WriteLine("	executing {0} -> Set Default Lookup Value for {1}.{2}", this.GetType().Name, Property.Parent.Name, Property.Name);
+#>
+MATCH (in:<#= Property.Parent.Label.Name #>), (target:<#= Property.ForeignEntity.Label.Name #> { <#= Property.ForeignEntity.Key.Name #> : '<#= Value.GetKey() #>'})
+OPTIONAL MATCH (in)-[rel:<#= Property.Relationship.Neo4JRelationshipType #>]-(out:<#= Property.ForeignEntity.Label.Name #>)
+WITH in, count(out) as count
+WHERE count = 0
+WITH in LIMIT 10000
+CREATE UNIQUE (in)-[rel:<#= Property.Relationship.Neo4JRelationshipType #>]-(target)
+<#+
+
+	// Template Parameters
+	public Property Property { get; set; }
+	public DynamicEntity	Value	 { get; set; }
+#>
