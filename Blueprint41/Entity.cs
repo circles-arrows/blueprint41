@@ -140,6 +140,9 @@ namespace Blueprint41
         }
         public Entity AddProperty(string name, Type type, bool nullable, IndexType indexType = IndexType.None)
         {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                throw new ArgumentException(string.Format("The type argument does not support the 'Nullable<{0}>' type. All types are considered nullable by default, but you can also set the 'nullable' argument explicitly.", type.GenericTypeArguments[0].Name));
+
             Property value = new Property(this, PropertyType.Attribute, name, type, nullable, indexType);
             Properties.Add(name, value);
 
@@ -491,6 +494,7 @@ namespace Blueprint41
                     Parent.FunctionalIds.Remove(entity.FunctionalId.Label);
 
                 Parent.Entities.Remove(entity.Name);
+                Parent.Labels.Remove(entity.Label.Name);
             }
         }
 

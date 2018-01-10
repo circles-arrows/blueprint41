@@ -621,18 +621,41 @@ namespace Blueprint41
 
             Nullable = false;
 
+            // temp fix to not block anyone immediately (only when they want to run against the DB...)
+            //if (Parser.ShouldExecute)
             throw new NotImplementedException("Check the property has a value");
         }
-        void IRefactorProperty.MakeMandatory(DynamicEntity defaultValue)
+        void IRefactorProperty.MakeMandatory(object defaultValue)
         {
-            if (PropertyType == PropertyType.Collection)
-                throw new NotSupportedException("A collection cannot be made mandatory.");
-
             if (Nullable == false)
                 throw new NotSupportedException("The property is already mandatory.");
 
+            if (PropertyType != PropertyType.Attribute)
+                throw new ArgumentException("The property type does not match the type of the supplied 'defaultValue'.");
+
+            defaultValue = Conversion.Convert(defaultValue.GetType(), SystemReturnType, defaultValue);
+
             Nullable = false;
 
+            // temp fix to not block anyone immediately (only when they want to run against the DB...)
+            //if (Parser.ShouldExecute)
+            throw new NotImplementedException("Assign default value");
+        }
+        void IRefactorProperty.MakeMandatory(DynamicEntity defaultValue)
+        {
+            if (Nullable == false)
+                throw new NotSupportedException("The property is already mandatory.");
+
+            if (PropertyType == PropertyType.Collection)
+                throw new NotSupportedException("A collection cannot be made mandatory.");
+
+            if (PropertyType == PropertyType.Attribute)
+                throw new ArgumentException("The property type does not match the type of the supplied 'defaultValue'.");
+
+            Nullable = false;
+
+            // temp fix to not block anyone immediately (only when they want to run against the DB...)
+            //if (Parser.ShouldExecute)
             throw new NotImplementedException("Assign default value");
         }
 

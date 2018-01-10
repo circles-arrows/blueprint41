@@ -12,7 +12,7 @@ namespace Blueprint41.Neo4j.Model
         public Label New(string name)
         {
             Label value = new Label(name);
-            collection.Add(name, value);
+            Add(name, value);
 
             return value;
         }

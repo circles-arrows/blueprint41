@@ -34,6 +34,7 @@ namespace Blueprint41.Neo4j.Refactoring
 
         void MakeNullable();
         void MakeMandatory();
+        void MakeMandatory(object defaultValue);
         void MakeMandatory(DynamicEntity defaultValue);
     }
 }
