@@ -1,7 +1,5 @@
-
 using Blueprint41;
 using Blueprint41.Query;
-
 
 namespace Domain.Data.Query
 {

@@ -1,4 +1,3 @@
-
 using System;
 using Blueprint41;
 using Blueprint41.Query;

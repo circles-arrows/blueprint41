@@ -282,28 +282,6 @@ namespace Blueprint41
             Parent.DynamicEntityPropertyRenamed(oldName, this);
         }
 
-        void IRefactorProperty.CopyValue(Property target)
-        {
-            if (Parent.GetConcreteClasses().Intersect(target.Parent.GetConcreteClasses()).Any(item => item.ContainsStaticData))
-                throw new NotSupportedException("You cannot copy (potentially dynamic) data to a static data node.");
-
-            if (!Parser.ShouldExecute)
-                return;
-
-            foreach (Entity subClass in Parent.GetConcreteClasses().Intersect(target.Parent.GetConcreteClasses()))
-            {
-                if (subClass.Search(target.Name) != target)
-                    continue;
-
-                Parser.ExecuteBatched<CopyProperty>(delegate (CopyProperty template)
-                {
-                    template.Entity = subClass;
-                    template.From = this.Name;
-                    template.To = target.Name;
-                });
-            }
-        }
-
         void IRefactorProperty.Move(Entity target)
         {
             if (PropertyType != PropertyType.Attribute)

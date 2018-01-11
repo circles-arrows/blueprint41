@@ -1,4 +1,3 @@
- 
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -37,8 +36,7 @@ namespace Domain.Data.Manipulation
 
 		#endregion
 		#endregion
-   
-	}
+    }
 
 	public partial class Vendor : OGM<Vendor, Vendor.VendorData, System.String>, ISchemaBase, INeo4jBase, IVendorOriginalData
 	{
@@ -58,7 +56,9 @@ namespace Domain.Data.Manipulation
 
             #endregion
 
+			AdditionalGeneratedStoredQueries();
         }
+        partial void AdditionalGeneratedStoredQueries();
 
         public static Dictionary<System.String, Vendor> LoadByKeys(IEnumerable<System.String> uids)
         {
@@ -161,8 +161,8 @@ namespace Domain.Data.Manipulation
 				ProductVendor = new EntityCollection<ProductVendor>(Wrapper, Members.ProductVendor);
 			}
 			public string NodeType { get; private set; }
-			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertToStoredType<System.String>(Uid); }
-			sealed protected override void SetKey(System.String key) { Uid = Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(key); base.SetKey(Uid); }
+			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(Uid); }
+			sealed protected override void SetKey(System.String key) { Uid = (string)Blueprint41.Transaction.Current.ConvertToStoredType<System.String>(key); base.SetKey(Uid); }
 
 			#endregion
 			#region Map Data

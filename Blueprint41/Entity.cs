@@ -393,6 +393,32 @@ namespace Blueprint41
                 });
             }
         }
+        void IRefactorEntity.CopyValue(string sourceProperty, string targetProperty)
+        {
+            if (GetConcreteClasses().Any(item => item.ContainsStaticData))
+                throw new NotSupportedException("You cannot copy (potentially dynamic) data to a static data node.");
+
+            Property source = Search(sourceProperty);
+            if (source == null)
+                throw new NotSupportedException(string.Format("The source property '{0}' was not found on entity '{1}', you cannot copy data outside of the entity with this refactor action.", sourceProperty, Name));
+
+            Property target = Search(targetProperty);
+            if (target == null)
+                throw new NotSupportedException(string.Format("The target property '{0}' was not found on entity '{1}', you cannot copy data outside of the entity with this refactor action.", targetProperty, Name));
+
+            if (!Parser.ShouldExecute)
+                return;
+
+            foreach (Entity subClass in GetConcreteClasses())
+            {
+                Parser.ExecuteBatched<CopyProperty>(delegate (CopyProperty template)
+                {
+                    template.Entity = subClass;
+                    template.From = source.Name;
+                    template.To = target.Name;
+                });
+            }
+        }
 
         void IRefactorEntity.ApplyLabels()
         {

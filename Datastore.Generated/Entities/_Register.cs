@@ -1,4 +1,3 @@
-
 using Blueprint41.Core;
 
 namespace Domain.Data.Manipulation

@@ -5,8 +5,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Generate.cs">
+      <DependentUpon>Generate.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
     <ProjectReference Include="..\Datastore\Datastore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Generate.tt">
+      <LastGenOutput>Generate.txt</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Generate.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Generate.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>

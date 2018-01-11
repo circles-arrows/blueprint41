@@ -16,6 +16,7 @@ namespace Blueprint41.Neo4j.Refactoring
         void Rename(string newName);
 
         void SetDefaultValue(Action<dynamic> values);
+        void CopyValue(string source, string target);
 
         void ApplyLabels();
         void ApplyConstraints();

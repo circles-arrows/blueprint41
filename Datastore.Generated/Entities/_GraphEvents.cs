@@ -1,8 +1,6 @@
-
 using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
-
 
 namespace Domain.Data.Manipulation
 {

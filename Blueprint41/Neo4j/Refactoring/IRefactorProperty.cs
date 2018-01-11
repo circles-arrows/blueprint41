@@ -12,8 +12,6 @@ namespace Blueprint41.Neo4j.Refactoring
     {
         void Rename(string newName);
 
-        void CopyValue(Property target);
-
         void Move(Entity target);
         //void Move(string pattern, string newPropertyName);
 

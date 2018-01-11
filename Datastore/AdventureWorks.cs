@@ -5,12 +5,10 @@ namespace Datastore
 {
     public partial class AdventureWorks : DatastoreModel<AdventureWorks>
     {
-        protected override void InitializeEntities()
+        [Version(1,0,0)]
+        protected void Initial()
         {
             AddNewEntities();
-        }
-        protected override void InitializeRelationships()
-        {
             AddNewRelationships();
         }
 

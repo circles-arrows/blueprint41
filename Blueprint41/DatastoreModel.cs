@@ -51,7 +51,7 @@ namespace Blueprint41
         #region Execute
 
         private bool executed = false;
-        private bool executedStandAloneScript = false;
+
         internal List<UpgradeScript> GetUpgradeScripts()
         {
             List<UpgradeScript> scripts = new List<UpgradeScript>();
@@ -123,8 +123,6 @@ namespace Blueprint41
                 {
                     script.Method.Invoke();
                 }
-
-                executedStandAloneScript = true;
             }
 
             if (upgradeDatastore)

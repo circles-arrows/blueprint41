@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Domain.Data.Query;
+
 namespace Domain.Data.Manipulation
 {
 	public partial interface INeo4jBase : OGM
@@ -26,8 +27,9 @@ namespace Domain.Data.Manipulation
 
         protected override void RegisterGeneratedStoredQueries()
         {
-
+			AdditionalGeneratedStoredQueries();
         }
+		partial void AdditionalGeneratedStoredQueries();
 
 		#endregion
 

@@ -1,4 +1,3 @@
- 
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -31,8 +30,7 @@ namespace Domain.Data.Manipulation
 
 		#endregion
 		#endregion
-   
-	}
+    }
 
 	public partial class CountryRegion : OGM<CountryRegion, CountryRegion.CountryRegionData, System.String>, ISchemaBase, INeo4jBase, ICountryRegionOriginalData
 	{
@@ -52,7 +50,20 @@ namespace Domain.Data.Manipulation
 
             #endregion
 
+			#region LoadByCode
+
+			RegisterQuery(nameof(LoadByCode), (query, alias) => query.
+                Where(alias.Code == Parameter.New<string>(Param0)));
+
+			#endregion
+
+			AdditionalGeneratedStoredQueries();
         }
+		public static CountryRegion LoadByCode(string code)
+		{
+			return FromQuery(nameof(LoadByCode), new Parameter(Param0, code)).FirstOrDefault();
+		}
+        partial void AdditionalGeneratedStoredQueries();
 
         public static Dictionary<System.String, CountryRegion> LoadByKeys(IEnumerable<System.String> uids)
         {
@@ -141,8 +152,8 @@ namespace Domain.Data.Manipulation
 
 			}
 			public string NodeType { get; private set; }
-			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertToStoredType<System.String>(Uid); }
-			sealed protected override void SetKey(System.String key) { Uid = Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(key); base.SetKey(Uid); }
+			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(Uid); }
+			sealed protected override void SetKey(System.String key) { Uid = (string)Blueprint41.Transaction.Current.ConvertToStoredType<System.String>(key); base.SetKey(Uid); }
 
 			#endregion
 			#region Map Data
