@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <PackageVersion>1.0.5</PackageVersion>
+    <PackageVersion>1.0.6</PackageVersion>
     <PackageId>Blueprint41</PackageId>
     <Title>Blueprint41</Title>
     <Authors>Xirqlz</Authors>
