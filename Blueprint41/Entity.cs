@@ -429,6 +429,10 @@ namespace Blueprint41
         dynamic IRefactorEntity.CreateNode(object node)
         {
             DynamicEntity entity = new DynamicEntity(this, Parser.ShouldExecute, node);
+
+            if (staticData.Any(item => item.GetKey() == entity.GetKey()))
+                throw new PersistenceException(string.Format("An static entity with the same key already exists."));
+
             staticData.Add(entity);
 
             return entity;

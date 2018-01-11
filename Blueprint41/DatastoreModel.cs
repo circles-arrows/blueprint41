@@ -84,14 +84,10 @@ namespace Blueprint41
 
         internal void Execute(bool upgradeDatastore, Predicate<UpgradeScript> predicate, bool standAloneScript)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
+
             if (executed && standAloneScript)
                 throw new InvalidOperationException();
-
-            if (!executedStandAloneScript)
-            {
-                InitializeEntities();
-                InitializeRelationships();
-            }
 
             List<UpgradeScript> scripts = GetUpgradeScripts();
 
@@ -156,12 +152,11 @@ namespace Blueprint41
             }
 
             executed = true;
+
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
-        protected abstract void InitializeEntities();
-        protected abstract void InitializeRelationships();
         protected abstract void SubscribeEventHandlers();
-
 
         internal class UpgradeScript : IComparable<UpgradeScript>
         {
