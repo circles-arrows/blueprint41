@@ -510,15 +510,7 @@ namespace Blueprint41
                 }
 
                 foreach (var relation in Parent.Relations.Where(item => item.InEntity == entity || item.OutEntity == entity).ToList())
-                {
-                    if (relation.InProperty != null)
-                        relation.InEntity.Properties.Remove(relation.InProperty.Name);
-
-                    if (relation.OutProperty != null)
-                        relation.OutEntity.Properties.Remove(relation.OutProperty.Name);
-
-                    Parent.Relations.Remove(relation.Name);
-                }
+                    relation.Refactor.Deprecate();
 
                 if (!Parent.Entities.Any(item => item != entity && item.FunctionalId == entity.FunctionalId))
                     Parent.FunctionalIds.Remove(entity.FunctionalId.Label);

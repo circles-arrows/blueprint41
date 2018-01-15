@@ -21,7 +21,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+    #line 1 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     internal partial class SetDefaultLookupValue : TemplateBase
     {
@@ -32,7 +32,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 9 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 9 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
 
 
     Debug.WriteLine("	executing {0} -> Set Default Lookup Value for {1}.{2}", this.GetType().Name, Property.Parent.Name, Property.Name);
@@ -42,42 +42,42 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH (in:");
             
-            #line 13 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 13 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Parent.Label.Name));
             
             #line default
             #line hidden
             this.Write("), (target:");
             
-            #line 13 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 13 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.ForeignEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(" { ");
             
-            #line 13 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 13 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.ForeignEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(" : \'");
             
-            #line 13 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 13 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Value.GetKey()));
             
             #line default
             #line hidden
             this.Write("\'})\r\nOPTIONAL MATCH (in)-[rel:");
             
-            #line 14 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 14 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Relationship.Neo4JRelationshipType));
             
             #line default
             #line hidden
             this.Write("]-(out:");
             
-            #line 14 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 14 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.ForeignEntity.Label.Name));
             
             #line default
@@ -85,7 +85,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write(")\r\nWITH in, count(out) as count\r\nWHERE count = 0\r\nWITH in LIMIT 10000\r\nCREATE UNI" +
                     "QUE (in)-[rel:");
             
-            #line 18 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 18 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Relationship.Neo4JRelationshipType));
             
             #line default
@@ -94,7 +94,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 19 "E:\_xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+        #line 19 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
 
 
 	// Template Parameters
