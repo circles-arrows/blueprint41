@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Neo4j.Driver.V1;
 
@@ -36,8 +37,27 @@ namespace Blueprint41.Neo4j.Schema
         }
         private static IReadOnlyList<T> LoadData<T>(string procedure, Func<IRecord, T> processor)
         {
-            IStatementResult result = Persistence.Neo4jTransaction.Run(procedure);
-            return result.Select(processor).ToArray();
+            bool retry;
+            IReadOnlyList<T> data = null;
+            do
+            {
+                try
+                {
+                    retry = false;
+                    IStatementResult result = Persistence.Neo4jTransaction.Run(procedure);
+                    data = result.Select(processor).ToArray();
+                }
+                catch (ClientException clientException)
+                {
+                    if (!clientException.Message.Contains("is still populating"))
+                        throw;
+
+                    retry = true;
+                    Thread.Sleep(500);
+                }
+            } while (retry);
+
+            return data;
         }
 
         public IReadOnlyList<FunctionalIdInfo> FunctionalIds { get; private set; }

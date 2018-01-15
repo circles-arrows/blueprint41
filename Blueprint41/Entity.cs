@@ -503,7 +503,7 @@ namespace Blueprint41
             {
                 if (!entity.IsAbstract)
                 {
-                    Parser.ExecuteBatched<RemoveEntity>(delegate (RemoveEntity template)
+                    Parser.ExecuteBatched(delegate (RemoveEntity template)
                     {
                         template.Name = entity.Label.Name;
                     });
