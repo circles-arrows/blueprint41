@@ -68,6 +68,14 @@ namespace Blueprint41.Core
             Clear(typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
         internal abstract void Clear(bool fireEvent);
+        public void Delete(TEntity item, bool force = false)
+        {
+            LazyLoad();
+            LazySet();
+
+            item.Delete(force);
+            ForeignProperty.ClearLookup(item);
+        }
         public void DeleteDeep(bool force = false)
         {
             //if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
