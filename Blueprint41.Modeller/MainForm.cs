@@ -625,7 +625,8 @@ namespace Blueprint41.Modeller
             if (DatastoreModelComparer.Instance == null)
                 MessageBox.Show("The comparer is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
             else
-                DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml);
+                DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml, StoragePath);
+
         }
     }
 }

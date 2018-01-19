@@ -19,6 +19,6 @@ namespace Blueprint41.Modeller.Schemas
             return (DatastoreModelComparer)Activator.CreateInstance(t);
         }, true);
 
-        public abstract void GenerateUpgradeScript(modeller model);
+        public abstract void GenerateUpgradeScript(modeller model, string storagePath);
     }
 }
