@@ -104,7 +104,17 @@ namespace Blueprint41.Modeller.Schemas
                     if (Model == null)
                         return null;
 
-                    return Model.Entities.Entity.First(item => item.Label == Label);
+                    Entity entity;
+                    try
+                    {
+                        entity = Model.Entities.Entity.First(item => item.Label == Label);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception(string.Format("'{0}' exists in <submodels> but does not exist in <entities>. Remove all '{1}' references from all <submodels>", Label, Label));
+                    }
+
+                    return entity;
                 }
                 set
                 {
@@ -114,7 +124,7 @@ namespace Blueprint41.Modeller.Schemas
                     Label = value.Label;
                 }
             }
-            
+
             public NodeLocalType Clone()
             {
                 NodeLocalType clone = new NodeLocalType(Model, (submodel.nodeLocalType)this.Xml.Clone());
