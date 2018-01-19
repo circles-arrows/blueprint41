@@ -66,6 +66,9 @@ namespace Blueprint41
             List<OGM> entities = registeredEntities.Values.SelectMany(item => item).Where(item => item is OGMImpl).ToList();
             foreach (OGMImpl entity in entities)
             {
+                if (entity.PersistenceState == PersistenceState.Persisted)
+                    continue;
+
                 if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
                 {
                     entity.GetEntity().RaiseOnSave((OGMImpl)entity, this);
@@ -80,6 +83,10 @@ namespace Blueprint41
                 {
                     foreach (OGM entity in entitySet)
                     {
+                        if (entity.PersistenceState == PersistenceState.Persisted)
+                            continue;
+
+
                         if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
                             entity.ValidateSave();
                     }
@@ -91,6 +98,9 @@ namespace Blueprint41
             {
                 foreach (OGM entity in entitySet)
                 {
+                    if (entity.PersistenceState == PersistenceState.Persisted)
+                        continue;
+
                     if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
                         entity.Save();
                 }
@@ -108,6 +118,9 @@ namespace Blueprint41
             {
                 foreach (OGM entity in entitySet)
                 {
+                    if (entity.PersistenceState == PersistenceState.Persisted)
+                        continue;
+
                     if (entity.PersistenceState == PersistenceState.Deleted || entity.PersistenceState == PersistenceState.ForceDeleted)
                         entity.ValidateDelete();
                 }
@@ -117,6 +130,9 @@ namespace Blueprint41
             {
                 foreach (OGM entity in entitySet)
                 {
+                    if (entity.PersistenceState == PersistenceState.Persisted)
+                        continue;
+
                     if (entity.PersistenceState == PersistenceState.Deleted || entity.PersistenceState == PersistenceState.ForceDeleted)
                         entity.Save();
                 }
@@ -342,7 +358,7 @@ namespace Blueprint41
 
         private Dictionary<string, Dictionary<object, OGM>> entitiesByKey = new Dictionary<string, Dictionary<object, OGM>>(50);
 
-        internal OGM GetEntityByKey(string type, object key)
+        public OGM GetEntityByKey(string type, object key)
         {
             if (key == null)
                 return null;
