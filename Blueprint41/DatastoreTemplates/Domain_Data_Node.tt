@@ -5,7 +5,9 @@
 <#@ import namespace="Blueprint41.Core" #>
 <#@ includeForIntellisenseOnly processor="tangibleT4Editor" file="$(ProjectDir)DatastoreTemplates\Generator.ttinclude" #>
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace <#= Settings.FullQueryNamespace #>
@@ -145,24 +147,32 @@ namespace <#= Settings.FullQueryNamespace #>
         internal <#= DALModel.Name #>Alias(<#= DALModel.Name #>Node parent)
         {
 			Node = parent;
+        }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = <#= string.IsNullOrEmpty(DALModel.UnidentifiedProperties) ? "" : "new UnidentifiedPropertiesAliasDictionary(" #>new Dictionary<string, FieldResult>()
+                    {
 <#
 	foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
     {
 		if (property.PropertyType != PropertyType.Attribute)
 			continue;
 #>
-            <#= property.Name #> = new <#= GetResultType(property.SystemReturnType) #>(this, "<#= property.Name #>", <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"], <#= Datastore.GetType().FullName #>.Model.Entities["<#= property.Parent.Name #>"].Properties["<#= property.Name #>"]);
+						{ "<#= property.Name #>", new <#= GetResultType(property.SystemReturnType) #>(this, "<#= property.Name #>", <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"], <#= Datastore.GetType().FullName #>.Model.Entities["<#= property.Parent.Name #>"].Properties["<#= property.Name #>"]) },
 <#
 	}
-
-	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
-    {
 #>
-            <#= DALModel.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]);
-<#
-    }
-#>
-        }
+					}<#= string.IsNullOrEmpty(DALModel.UnidentifiedProperties) ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)") #>;
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
 <#
 	if (inRelations.Any())
@@ -192,14 +202,34 @@ namespace <#= Settings.FullQueryNamespace #>
 			continue;
 
 #>
-        public <#= GetResultType(property.SystemReturnType) #> <#= property.Name #> { get; private set; } 
+        public <#= GetResultType(property.SystemReturnType) #> <#= property.Name #>
+		{
+			get
+			{
+				if ((object)m_<#= property.Name #> == null)
+					m_<#= property.Name #> = (<#= GetResultType(property.SystemReturnType) #>)AliasFields["<#= property.Name #>"];
+
+				return m_<#= property.Name #>;
+			}
+		} 
+        private <#= GetResultType(property.SystemReturnType) #> m_<#= property.Name #> = null;
 <#
     }
 
 	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
     {
 #>
-        public UnidentifiedProperties <#= DALModel.UnidentifiedProperties #> { get; private set; }
+        public UnidentifiedProperties <#= DALModel.UnidentifiedProperties #>
+		{
+			get
+			{
+				if ((object)m_<#= DALModel.UnidentifiedProperties #> == null)
+					m_<#= DALModel.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]);
+
+				return m_<#= DALModel.UnidentifiedProperties #>;
+			}
+		}
+		private UnidentifiedProperties m_<#= DALModel.UnidentifiedProperties #> = null;
 
         public class UnidentifiedProperties
         {
