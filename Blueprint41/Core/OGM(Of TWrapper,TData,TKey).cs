@@ -276,7 +276,7 @@ namespace Blueprint41.Core
             if (set != null)
                 set.Invoke();
 
-            Transaction.Register(Entity.Name, this);
+            DbTransaction.Register(Entity.Name, this);
         }
 
         #region Stored Queries

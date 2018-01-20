@@ -96,13 +96,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Persisted;
-                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.ForceDeleted;
-                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Deleted:
                 case PersistenceState.ForceDeleted:
@@ -125,13 +125,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Persisted;
-                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Deleted:
                 case PersistenceState.ForceDeleted:
@@ -166,7 +166,7 @@ namespace Blueprint41.Core
         }
 
         PersistenceState OGM.PersistenceState { get { return this.PersistenceState; } set { this.PersistenceState = value; } }
-        Transaction OGM.Transaction { get { return this.Transaction; } set { this.Transaction = value; } }
+        Transaction OGM.Transaction { get { return this.DbTransaction; } set { this.DbTransaction = value; } }
 
         #endregion
 
@@ -174,7 +174,7 @@ namespace Blueprint41.Core
         internal abstract Data GetData();
 
         public abstract PersistenceState PersistenceState { get; internal set; }
-        public Transaction Transaction { get; internal set; }
+        internal Transaction DbTransaction { get; set; }
 
         internal NodePersistenceProvider PersistenceProvider { get; set; }
 

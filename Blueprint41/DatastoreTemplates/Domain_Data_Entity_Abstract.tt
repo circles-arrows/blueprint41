@@ -27,7 +27,7 @@ if (DALModel.IsAbstract)
 	public partial interface <#= DALModel.ClassName #> : OGM<#= string.Join("", DALModel.GetBaseTypes().Where(item => item.IsAbstract).Select(item => string.Concat(", ", item.ClassName)).ToArray()) #>
 	{
 <#
-	if((object)DALModel.NodeType == null)
+	if((object)DALModel.NodeType == null && DALModel.GetBaseTypes().Count == 0)
     {
 #>
 		string <#= DALModel.NodeTypeName #> { get; }

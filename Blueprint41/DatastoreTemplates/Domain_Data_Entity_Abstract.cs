@@ -75,7 +75,7 @@ if (DALModel.IsAbstract)
             
             #line 29 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
-	if((object)DALModel.NodeType == null)
+	if((object)DALModel.NodeType == null && DALModel.GetBaseTypes().Count == 0)
     {
 
             
