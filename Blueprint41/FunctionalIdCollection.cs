@@ -35,7 +35,7 @@ namespace Blueprint41
             if (collection.Any(item => item.Value.Prefix == prefix))
                 throw new InvalidOperationException(string.Format("You cannot have multiple FunctionalIds that have the same prefix '{0}'.", prefix));
 
-            FunctionalId value = new FunctionalId(label, prefix, format, startFrom);
+            FunctionalId value = new FunctionalId(Parent, label, prefix, format, startFrom);
             collection.Add(label, value);
 
             return value;

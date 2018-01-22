@@ -8,12 +8,13 @@ namespace Blueprint41
 {
     public class FunctionalId
     {
-        internal FunctionalId(string label, string prefix, IdFormat format, int startFrom)
+        internal FunctionalId(DatastoreModel parent, string label, string prefix, IdFormat format, int startFrom)
         {
             Label = label;
             Prefix = prefix;
             Format = format;
             StartFrom = startFrom < 0 ? 0 : startFrom;
+            Guid = parent.GenerateGuid(label);
         }
 
         #region Properties
@@ -22,6 +23,7 @@ namespace Blueprint41
         public string Prefix { get; private set; }
         public IdFormat Format { get; private set; }
         public int StartFrom { get; private set; }
+        public Guid Guid { get; private set; }
 
         #endregion
 
