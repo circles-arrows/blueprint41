@@ -10,7 +10,7 @@
 
     Debug.WriteLine("	executing {0} -> Set Default Lookup Value for {1}.{2}", this.GetType().Name, Property.Parent.Name, Property.Name);
 #>
-MATCH (in:<#= Property.Parent.Label.Name #>), (target:<#= Property.ForeignEntity.Label.Name #> { <#= Property.ForeignEntity.Key.Name #> : '<#= Value.GetKey() #>'})
+MATCH (in:<#= Property.Parent.Label.Name #>), (target:<#= Property.ForeignEntity.Label.Name #> { <#= Property.ForeignEntity.Key.Name #> : '<#= Value #>'})
 OPTIONAL MATCH (in)-[rel:<#= Property.Relationship.Neo4JRelationshipType #>]-(out:<#= Property.ForeignEntity.Label.Name #>)
 WITH in, count(out) as count
 WHERE count = 0
@@ -20,5 +20,5 @@ CREATE UNIQUE (in)-[rel:<#= Property.Relationship.Neo4JRelationshipType #>]-(tar
 
 	// Template Parameters
 	public Property Property { get; set; }
-	public DynamicEntity	Value	 { get; set; }
+	public string	Value	 { get; set; }
 #>

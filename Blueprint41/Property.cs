@@ -627,19 +627,35 @@ namespace Blueprint41
             if (Nullable == false)
                 throw new NotSupportedException("The property is already mandatory.");
 
-            if (PropertyType != PropertyType.Attribute)
-                throw new ArgumentException("The property type does not match the type of the supplied 'defaultValue'.");
-
-            defaultValue = Conversion.Convert(defaultValue.GetType(), SystemReturnType, defaultValue);
-
-            Nullable = false;
-
-            Parser.ExecuteBatched<SetDefaultConstantValue>(delegate (SetDefaultConstantValue template)
+            if (PropertyType == PropertyType.Attribute)
             {
-                template.Entity = Parent;
-                template.Property = this;
-                template.Value = defaultValue;
-            });
+                defaultValue = Conversion.Convert(defaultValue.GetType(), SystemReturnType, defaultValue);
+
+                Nullable = false;
+
+                Parser.ExecuteBatched<SetDefaultConstantValue>(delegate (SetDefaultConstantValue template)
+                {
+                    template.Entity = Parent;
+                    template.Property = this;
+                    template.Value = defaultValue;
+                });
+            }
+            else
+            {
+                if (PropertyType == PropertyType.Collection)
+                    throw new NotSupportedException("A collection cannot be made mandatory.");
+
+                if (defaultValue == null || defaultValue.GetType() != ForeignEntity.Key?.SystemReturnType)
+                    throw new ArgumentException("The supplied default value does not match the type of the entity its primary key field.");
+
+                Nullable = false;
+
+                Parser.ExecuteBatched<SetDefaultLookupValue>(delegate (SetDefaultLookupValue template)
+                {
+                    template.Property = this;
+                    template.Value = (string)defaultValue;
+                });
+            }
         }
         void IRefactorProperty.MakeMandatory(DynamicEntity defaultValue)
         {
@@ -660,7 +676,7 @@ namespace Blueprint41
             Parser.ExecuteBatched<SetDefaultLookupValue>(delegate (SetDefaultLookupValue template)
             {
                 template.Property = this;
-                template.Value = defaultValue;
+                template.Value = (string)defaultValue.GetKey();
             });
         }
 

@@ -64,7 +64,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write(" : \'");
             
             #line 13 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Value.GetKey()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Value));
             
             #line default
             #line hidden
@@ -99,7 +99,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
 
 	// Template Parameters
 	public Property Property { get; set; }
-	public DynamicEntity	Value	 { get; set; }
+	public string	Value	 { get; set; }
 
         
         #line default
