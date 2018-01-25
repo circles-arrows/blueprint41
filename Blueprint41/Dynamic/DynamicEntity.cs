@@ -502,6 +502,7 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.Persisted:
                     break;
                 case PersistenceState.Deleted:
+                case PersistenceState.ForceDeleted:
                     throw new InvalidOperationException("The object has been deleted, you cannot make changes to it anymore.");
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
