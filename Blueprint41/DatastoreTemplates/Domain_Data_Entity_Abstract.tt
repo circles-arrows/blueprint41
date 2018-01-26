@@ -24,6 +24,70 @@ namespace <#= Settings.FullCRUDNamespace #>
 if (DALModel.IsAbstract)
 {
 #>
+	public interface I<#= DALModel.Name #>OriginalData<#= DALModel.Inherits == null ? "" : string.Concat(" : I", DALModel.Inherits.Name, "OriginalData") #>
+    {
+<#
+	foreach (Property attr in DALModel.Properties)
+	{
+		if (attr.IsKey)
+		{
+#>
+		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+<#
+		}
+		else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
+		{
+#>
+		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+<#
+			if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
+			{
+				foreach (Entity concrete in attr.EntityReturnType.GetSubclasses())
+				{
+					string concreteOuterType = string.Concat("IEnumerable<", concrete.ClassName, ">");
+#>
+		<#= concreteOuterType  #> <#= attr.Name #>_<#= concrete.Name #> { get; }
+<#
+				}
+			}
+		}
+		else if (attr.PropertyType == PropertyType.Lookup)
+		{
+			if (attr.Relationship.IsTimeDependent)
+			{
+#>
+		<#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
+<#
+			}
+			else
+			{
+#>
+		<#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
+<#
+			}
+		}
+		else
+		{
+#>
+		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+<#
+		}
+	}
+
+	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
+	{
+#>
+        
+		#region Member for UnidentifiedProperties
+
+        IDictionary<string, object> <#= DALModel.UnidentifiedProperties #> { get; }
+
+        #endregion
+<#
+	}
+#>
+    }
+
 	public partial interface <#= DALModel.ClassName #> : OGM<#= string.Join("", DALModel.GetBaseTypes().Where(item => item.IsAbstract).Select(item => string.Concat(", ", item.ClassName)).ToArray()) #>
 	{
 <#
@@ -57,6 +121,8 @@ if (DALModel.IsAbstract)
 		}
 	}
 #>
+
+		<#= DALModel.Inherits == null ? "" : "new " #>I<#= DALModel.Name #>OriginalData OriginalVersion { get; }
 	}
 
 	public partial class <#= DALModel.Name #> : OGMAbstractImpl<<#= DALModel.Name #>, <#= DALModel.ClassName #>, <#= DALModel.Key.SystemReturnType #>>

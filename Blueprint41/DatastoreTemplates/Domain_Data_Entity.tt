@@ -25,71 +25,56 @@ if (!DALModel.IsAbstract)
 {
 	string baseTypes = string.Join(", ", DALModel.GetBaseTypes().Select(x => x.ClassName));
 #>
-	public interface I<#= DALModel.ClassName #>OriginalData
+	public interface I<#= DALModel.Name #>OriginalData<#= DALModel.Inherits == null ? "" : string.Concat(" : I", DALModel.Inherits.Name, "OriginalData") #>
     {
-		#region Outer Data
-
 <#
-	foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
+	foreach (Property attr in DALModel.Properties)
 	{
-#>
-		#region Members for interface I<#= inherited.Name #>
-
-<#
-		foreach (Property attr in inherited.Properties)
+		if (attr.IsKey)
 		{
-			if (attr.IsKey)
-			{
 #>
 		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
 <#
-			}
-			else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
-			{
+		}
+		else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
+		{
 #>
 		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
 <#
-				if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
+			if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
+			{
+				foreach (Entity concrete in attr.EntityReturnType.GetSubclasses())
 				{
-					foreach (Entity concrete in attr.EntityReturnType.GetSubclasses())
-					{
-						string concreteOuterType = string.Concat("IEnumerable<", concrete.ClassName, ">");
+					string concreteOuterType = string.Concat("IEnumerable<", concrete.ClassName, ">");
 #>
-		<#= concreteOuterType  #> <#= attr.Name #>_<#= concrete.ClassName #> { get; }
+		<#= concreteOuterType  #> <#= attr.Name #>_<#= concrete.Name #> { get; }
 <#
-					}
 				}
 			}
-			else if (attr.PropertyType == PropertyType.Lookup)
+		}
+		else if (attr.PropertyType == PropertyType.Lookup)
+		{
+			if (attr.Relationship.IsTimeDependent)
 			{
-				if (attr.Relationship.IsTimeDependent)
-				{
 #>
 		<#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
 <#
-				}
-				else
-				{
-#>
-		<#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
-<#
-				}
 			}
 			else
 			{
 #>
-		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
+		<#= attr.OuterReturnTypeReadOnly #> <#= attr.Name #> { get; }
 <#
 			}
 		}
+		else
+		{
 #>
-
-		#endregion
+		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
 <#
+		}
 	}
-#>
-		#endregion
-<#		
+
 	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
 	{
 #>
@@ -932,15 +917,24 @@ if (!DALModel.IsAbstract)
     }
 #>
 
-		#region I<#= DALModel.ClassName #>OriginalData
+		#region I<#= DALModel.Name #>OriginalData
 
-		public I<#= DALModel.ClassName #>OriginalData OriginalVersion { get { return this; } }
+		public I<#= DALModel.Name #>OriginalData OriginalVersion { get { return this; } }
 
 <#
 	foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
 	{
 #>
 		#region Members for interface I<#= inherited.Name #>
+<#
+		if (inherited.IsAbstract)
+        {
+#>
+
+		I<#= inherited.Name #>OriginalData <#= inherited.ClassName #>.OriginalVersion { get { return this; } }
+<#
+        }
+#>
 
 <#
 		foreach (Property attr in inherited.Properties)
@@ -948,7 +942,7 @@ if (!DALModel.IsAbstract)
 			if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
 			{
 #>
-		<#= attr.OuterReturnTypeReadOnly  #> I<#= DALModel.ClassName #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>.OriginalData; } }
+		<#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>.OriginalData; } }
 <#
 				if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
 				{
@@ -956,7 +950,7 @@ if (!DALModel.IsAbstract)
 					{
 						string concreteOuterType = string.Concat("IEnumerable<", concrete.ClassName, ">");
 #>
-		<#= concreteOuterType  #> I<#= DALModel.ClassName #>OriginalData.<#= attr.Name #>_<#= concrete.ClassName #> { get { return OriginalData.<#= attr.Name #>.OriginalData.Where(item => item is <#= concrete.ClassName #>).Select(item => item as <#= concrete.ClassName #>); } }
+		<#= concreteOuterType  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #>_<#= concrete.Name #> { get { return OriginalData.<#= attr.Name #>.OriginalData.Where(item => item is <#= concrete.ClassName #>).Select(item => item as <#= concrete.ClassName #>); } }
 <#
 					}
 				}
@@ -966,20 +960,20 @@ if (!DALModel.IsAbstract)
 				if (attr.Relationship.IsTimeDependent)
 				{
 #>
-		<#= attr.OuterReturnTypeReadOnly #> I<#= DALModel.ClassName #>OriginalData.<#= attr.Name #> { get { return ((ILookupHelper<<#= attr.OuterReturnTypeReadOnly #>>)OriginalData.<#= attr.Name #>).GetOriginalItem(DateTime.UtcNow); } }
+		<#= attr.OuterReturnTypeReadOnly #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return ((ILookupHelper<<#= attr.OuterReturnTypeReadOnly #>>)OriginalData.<#= attr.Name #>).GetOriginalItem(DateTime.UtcNow); } }
 <#
 				}
 				else
 				{
 #>
-		<#= attr.OuterReturnTypeReadOnly #> I<#= DALModel.ClassName #>OriginalData.<#= attr.Name #> { get { return ((ILookupHelper<<#= attr.OuterReturnTypeReadOnly #>>)OriginalData.<#= attr.Name #>).GetOriginalItem(null); } }
+		<#= attr.OuterReturnTypeReadOnly #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return ((ILookupHelper<<#= attr.OuterReturnTypeReadOnly #>>)OriginalData.<#= attr.Name #>).GetOriginalItem(null); } }
 <#
 				}
 			}
 			else
 			{
 #>
-		<#= attr.OuterReturnTypeReadOnly  #> I<#= DALModel.ClassName #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>; } }
+		<#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>; } }
 <#
 			}
 		}
@@ -997,7 +991,7 @@ if (!DALModel.IsAbstract)
         
 		#region Member for UnidentifiedProperties
 
-        IDictionary<string, object> I<#= DALModel.ClassName #>OriginalData.<#= DALModel.UnidentifiedProperties #> { get { return OriginalData.UnidentifiedProperties; } }
+        IDictionary<string, object> I<#= DALModel.Name #>OriginalData.<#= DALModel.UnidentifiedProperties #> { get { return OriginalData.UnidentifiedProperties; } }
 
         #endregion
 <#
