@@ -931,6 +931,34 @@ namespace Blueprint41.Modeller.Schemas
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChanging;
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChanged;
 
+		public String MappingGuid
+		{
+			get { return Xml.@mappingGuid; }
+			set
+            {
+				if (Xml.@mappingGuid == value)
+                    return;
+
+				String oldValue = Xml.@mappingGuid;
+                PropertyChangedEventArgs<String> eventArgs = new PropertyChangedEventArgs<String>(oldValue, value);
+
+				OnMappingGuidChanging?.Invoke(this, eventArgs);
+				if (eventArgs.Cancel)
+				{
+					Xml.@mappingGuid = oldValue;
+					OnMappingGuidChangeCancelled?.Invoke(this, eventArgs);
+				}
+				else
+				{
+					Xml.@mappingGuid = value;
+	                OnMappingGuidChanged?.Invoke(this, eventArgs);
+				}
+            }
+		}
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChangeCancelled;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanging;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanged;
+
 	}
 	public partial class Primitive : Initializable
 	{
@@ -1117,6 +1145,34 @@ namespace Blueprint41.Modeller.Schemas
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChangeCancelled;
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChanging;
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChanged;
+
+		public String MappingGuid
+		{
+			get { return Xml.@mappingGuid; }
+			set
+            {
+				if (Xml.@mappingGuid == value)
+                    return;
+
+				String oldValue = Xml.@mappingGuid;
+                PropertyChangedEventArgs<String> eventArgs = new PropertyChangedEventArgs<String>(oldValue, value);
+
+				OnMappingGuidChanging?.Invoke(this, eventArgs);
+				if (eventArgs.Cancel)
+				{
+					Xml.@mappingGuid = oldValue;
+					OnMappingGuidChangeCancelled?.Invoke(this, eventArgs);
+				}
+				else
+				{
+					Xml.@mappingGuid = value;
+	                OnMappingGuidChanged?.Invoke(this, eventArgs);
+				}
+            }
+		}
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChangeCancelled;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanging;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanged;
 
 		public String Index
 		{
@@ -1391,6 +1447,34 @@ namespace Blueprint41.Modeller.Schemas
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChanging;
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChanged;
 
+		public String MappingGuid
+		{
+			get { return Xml.@mappingGuid; }
+			set
+            {
+				if (Xml.@mappingGuid == value)
+                    return;
+
+				String oldValue = Xml.@mappingGuid;
+                PropertyChangedEventArgs<String> eventArgs = new PropertyChangedEventArgs<String>(oldValue, value);
+
+				OnMappingGuidChanging?.Invoke(this, eventArgs);
+				if (eventArgs.Cancel)
+				{
+					Xml.@mappingGuid = oldValue;
+					OnMappingGuidChangeCancelled?.Invoke(this, eventArgs);
+				}
+				else
+				{
+					Xml.@mappingGuid = value;
+	                OnMappingGuidChanged?.Invoke(this, eventArgs);
+				}
+            }
+		}
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChangeCancelled;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanging;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanged;
+
 	}
 	public partial class Property : Initializable
 	{
@@ -1437,6 +1521,34 @@ namespace Blueprint41.Modeller.Schemas
 		public event EventHandler<PropertyChangedEventArgs<String>> OnPropertyGuidChangeCancelled;
 		public event EventHandler<PropertyChangedEventArgs<String>> OnPropertyGuidChanging;
 		public event EventHandler<PropertyChangedEventArgs<String>> OnPropertyGuidChanged;
+
+		public String MappingGuid
+		{
+			get { return Xml.@mappingGuid; }
+			set
+            {
+				if (Xml.@mappingGuid == value)
+                    return;
+
+				String oldValue = Xml.@mappingGuid;
+                PropertyChangedEventArgs<String> eventArgs = new PropertyChangedEventArgs<String>(oldValue, value);
+
+				OnMappingGuidChanging?.Invoke(this, eventArgs);
+				if (eventArgs.Cancel)
+				{
+					Xml.@mappingGuid = oldValue;
+					OnMappingGuidChangeCancelled?.Invoke(this, eventArgs);
+				}
+				else
+				{
+					Xml.@mappingGuid = value;
+	                OnMappingGuidChanged?.Invoke(this, eventArgs);
+				}
+            }
+		}
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChangeCancelled;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanging;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanged;
 
 		public String Value
 		{
@@ -1624,6 +1736,34 @@ namespace Blueprint41.Modeller.Schemas
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChangeCancelled;
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChanging;
 		public event EventHandler<PropertyChangedEventArgs<String>> OnGuidChanged;
+
+		public String MappingGuid
+		{
+			get { return Xml.@mappingGuid; }
+			set
+            {
+				if (Xml.@mappingGuid == value)
+                    return;
+
+				String oldValue = Xml.@mappingGuid;
+                PropertyChangedEventArgs<String> eventArgs = new PropertyChangedEventArgs<String>(oldValue, value);
+
+				OnMappingGuidChanging?.Invoke(this, eventArgs);
+				if (eventArgs.Cancel)
+				{
+					Xml.@mappingGuid = oldValue;
+					OnMappingGuidChangeCancelled?.Invoke(this, eventArgs);
+				}
+				else
+				{
+					Xml.@mappingGuid = value;
+	                OnMappingGuidChanged?.Invoke(this, eventArgs);
+				}
+            }
+		}
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChangeCancelled;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanging;
+		public event EventHandler<PropertyChangedEventArgs<String>> OnMappingGuidChanged;
 
 	}
 	public partial class NodeReference : Initializable
