@@ -301,7 +301,7 @@ namespace Blueprint41.Neo4j.Persistence
             sb.Append(string.Join(" OR ", queries));
             sb.Append("') YIELD node WHERE (node:");
             sb.Append(entity.Label.Name);
-            sb.Append(") RETURN node");
+            sb.Append(") RETURN DISTINCT node");
 
             if (orderBy != null && orderBy.Length != 0)
             {
