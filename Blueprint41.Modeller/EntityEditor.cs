@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Blueprint41.Modeller.Schemas;
 using Model = Blueprint41.Modeller.Schemas.Modeller;
 using System.Collections.Specialized;
+using System.Collections;
 
 namespace Blueprint41.Modeller
 {
@@ -214,9 +215,11 @@ namespace Blueprint41.Modeller
 
             bindingSourceCollectionProperties.DataSource = relationshipsObservable;
             dataGridViewRelationships.DataSource = bindingSourceCollectionProperties;
+            dataGridViewRelationships.CellValueChanged += DataGridViewRelationships_CellValueChanged;
+            dataGridViewRelationships.CurrentCellDirtyStateChanged += DataGridViewRelationships_CurrentCellDirtyStateChanged;
 
             bindingSourceEntities.DataSource = null;
-            bindingSourceEntities.DataSource = StorageModel.Entities.Entity;
+            bindingSourceEntities.DataSource = StorageModel.Entities.Entity.OrderBy(x => x.Label);
 
             sourceEntitiesColumn.DataSource = null;
             sourceEntitiesColumn.DataSource = bindingSourceEntities;
@@ -261,6 +264,28 @@ namespace Blueprint41.Modeller
             Entity.OnLabelChangeCancelled += Entity_OnLabelChangeCancelled;
             Entity.OnNameChangeCancelled += Entity_OnNameChangeCancelled;
         }
+
+        private void DataGridViewRelationships_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if (dataGridViewRelationships.IsCurrentCellDirty)
+            {
+                dataGridViewRelationships.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
+        }
+
+        private void DataGridViewRelationships_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == sourceEntitiesColumn.Index && e.RowIndex >= 0) //check if combobox column
+            {
+                object selectedValue = dataGridViewRelationships.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+            }
+
+            if (e.ColumnIndex == targetEntitiesColumn.Index && e.RowIndex >= 0) //check if combobox column
+            {
+                object selectedValue = dataGridViewRelationships.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+            }
+        }
+
 
         private void CmbInherits_SelectedIndexChanged(object sender, EventArgs e)
         {
