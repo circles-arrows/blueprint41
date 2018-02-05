@@ -27,6 +27,7 @@
     <xs:attribute name="name"       type="xs:string" use="required"/>
     <xs:attribute name="type"      type="xs:string" use="required"/>
     <xs:attribute name="guid"       type="xs:string" use="required"/>
+    <xs:attribute name="mappingGuid" type="xs:string" use="optional"/>
     <!--<xs:attribute name="role">
       <xs:simpleType>
         <xs:restriction base="xs:string">
@@ -68,6 +69,7 @@
     <xs:attribute name="nullable"   type="xs:boolean" default="true"/>
     <xs:attribute name="isFullTextProperty" type="xs:boolean" default="false"/>
     <xs:attribute name="guid"       type="xs:string" use="required"/>
+    <xs:attribute name="mappingGuid" type="xs:string" use="optional"/>
     <xs:attribute name="index" >
       <xs:simpleType>
         <xs:restriction base="xs:string" >
@@ -96,10 +98,12 @@
       <xs:element name="property" minOccurs="0" maxOccurs="unbounded" type="property" />
     </xs:sequence>
     <xs:attribute name="guid" type="xs:string" use="required"/>
+    <xs:attribute name="mappingGuid" type="xs:string" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="property">
     <xs:attribute name="propertyGuid" type="xs:string" />
+    <xs:attribute name="mappingGuid" type="xs:string" use="optional"/>
     <xs:attribute name="value" type="xs:string" />
   </xs:complexType>
 
@@ -119,6 +123,7 @@
     <xs:attribute name="isStaticData" type="xs:boolean" default="false"/>
     <xs:attribute name="functionalId" type="xs:string"/>
     <xs:attribute name="guid" type="xs:string" use="required"/>
+    <xs:attribute name="mappingGuid" type="xs:string" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="submodel">

@@ -21,58 +21,93 @@ namespace Blueprint41.Modeller.Schemas
             entitiesByGuid.TryGetValue(new Guid(guid), out found);
             return found;
         }
+
         private Dictionary<Guid, entity> entitiesByGuid = null;
-
-        public void UpdateEntityGuid(entity entity, Guid newId)
+        #region Entities
+        public void UpdateEntityMappingGuid(entity entity, Guid? newId)
         {
-            Guid oldId = Guid.Parse(entity.guid);
-
-            // TODO: Fix this to more robust real refactoring solution....
-            // TODO: Why? because this can update conflicting guids when it shouldn't...
-            GenericQuickHackToRefactorGuidsAllOverThePlace(newId, oldId);
-        }
-        public void UpdateRelationshipGuid(relationship relationship, Guid newId)
-        {
-            Guid oldId = Guid.Parse(relationship.guid);
-
-            // TODO: Fix this to more robust real refactoring solution....
-            // TODO: Why? because this can update conflicting guids when it shouldn't...
-            GenericQuickHackToRefactorGuidsAllOverThePlace(newId, oldId);
-        }
-        public void UpdatePrimitivePropertyGuid(entity entity, primitive prop, Guid newId)
-        {
-            Guid oldId = Guid.Parse(prop.guid);
-
-            // TODO: Fix this to more robust real refactoring solution....
-            // TODO: Why? because this can update conflicting guids when it shouldn't...
-            GenericQuickHackToRefactorGuidsAllOverThePlace(newId, oldId);
-        }
-        public void UpdateRecordGuid(entity entity, record prop, Guid newId)
-        {
-            Guid oldId = Guid.Parse(prop.guid);
-
-            // TODO: Fix this to more robust real refactoring solution....
-            // TODO: Why? because this can update conflicting guids when it shouldn't...
-            GenericQuickHackToRefactorGuidsAllOverThePlace(newId, oldId);
+            entity.mappingGuid = newId?.ToString();
+            UpdateGuidReferences(entity.guid, newId?.ToString());
+            entity.guid = newId?.ToString();
         }
 
-        private void GenericQuickHackToRefactorGuidsAllOverThePlace(Guid newId, Guid oldId)
+        public void RemoveMapping<T>(T item)
         {
-            foreach (XElement element in Untyped.Document.Descendants())
+            
+        }
+        public void RemoveEntityMapping(entity entity)
+        {
+            entity.mappingGuid = null;
+        }
+        #endregion
+        #region Primitives
+        public void UpdatePrimitiveMappingGuid(primitive primitive, Guid? newId)
+        {
+            primitive.mappingGuid = newId?.ToString();
+            primitive.guid = newId?.ToString();
+        }
+        public void RemoveMapping(primitive primitive)
+        {
+            primitive.mappingGuid = null;
+        }
+        #endregion
+        #region Relationships
+        public void RemoveRelationshipMapping(relationship relationship)
+        {
+            relationship.mappingGuid = null;
+        }
+        public void UpdateRelationshipMappingGuid(relationship relationship, Guid? newId)
+        {
+            relationship.mappingGuid = newId?.ToString();
+            relationship.guid = newId?.ToString();
+        }
+        #endregion
+        #region Records
+       public void RemoveRecordMapping(record record)
+        {
+            record.mappingGuid = null;
+        }
+        public void UpdateRecordMappingGuid(record record, Guid? newId)
+        {
+            record.mappingGuid = newId?.ToString();
+            record.guid = newId?.ToString();
+        }
+        #endregion
+        private void UpdateGuidReferences(string oldGuid, string newGuid)
+        {
+            foreach (var entity in entities.entity.Where(x => x.inherits == oldGuid))
             {
-                foreach (XAttribute attr in element.Attributes())
+                entity.inherits = newGuid;
+            }
+            foreach (var relationship in relationships.relationship)
+            {
+                nodeReference source = relationship.source;
+                nodeReference target = relationship.target;
+                if (source.referenceGuid == oldGuid)
+                    source.referenceGuid = newGuid;
+                if (target.referenceGuid == oldGuid)
+                    target.referenceGuid = newGuid;
+            }
+            foreach (var subModel in submodels.submodel)
+            {
+                foreach (var node in subModel.node.Where(x => x.entityGuid == oldGuid))
                 {
-                    if (attr.Value != null)
-                    {
-                        Guid actual;
-                        if (Guid.TryParse(attr.Value, out actual))
-                        {
-                            if (actual == oldId)
-                                attr.Value = newId.ToString();
-                        }
-                    }
+                    node.entityGuid = newGuid;
                 }
             }
         }
+
+        public void ClearStaticData()
+        {
+            foreach (var item in entities.entity)
+            {
+                if (!item.isStaticData)
+                {
+                    item.isStaticData = false;
+                    item.staticData = null;
+                }
+            }
+        }
+
     }
 }

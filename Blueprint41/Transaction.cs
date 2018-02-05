@@ -430,7 +430,8 @@ namespace Blueprint41
             {
                 List<OGM> parents = new List<OGM>(initialSize);
                 foreach (Core.EntityCollectionBase item in chunk)
-                    parents.Add(item.Parent);
+                    if(item.Parent.PersistenceState != PersistenceState.New && item.Parent.PersistenceState != PersistenceState.NewAndChanged)
+                        parents.Add(item.Parent);
 
                 Dictionary<OGM, CollectionItemList> allItems = RelationshipPersistenceProvider.Load(parents, collection);
 
