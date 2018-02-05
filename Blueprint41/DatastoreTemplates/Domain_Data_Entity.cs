@@ -1702,7 +1702,7 @@ if (!DALModel.IsAbstract)
             this.Write("_");
             
             #line 550 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(concrete.ClassName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(concrete.Name));
             
             #line default
             #line hidden

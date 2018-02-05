@@ -547,7 +547,7 @@ if (!DALModel.IsAbstract)
 					{
 						string concreteOuterType = string.Concat("IEnumerable<", concrete.ClassName, ">");
 #>
-		public <#= concreteOuterType  #> <#= attr.Name #>_<#= concrete.ClassName #> { get { return InnerData.<#= attr.Name #>.Where(item => item is <#= concrete.ClassName #>).Cast<<#= concrete.ClassName #>>(); } }
+		public <#= concreteOuterType  #> <#= attr.Name #>_<#= concrete.Name #> { get { return InnerData.<#= attr.Name #>.Where(item => item is <#= concrete.ClassName #>).Cast<<#= concrete.ClassName #>>(); } }
 <#
 					}
 				}
