@@ -9,22 +9,10 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IPasswordOriginalData
+	public interface IPasswordOriginalData : INeo4jBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IPassword
-
 		string PasswordHash { get; }
 		string PasswordSalt { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class Password : OGM<Password, Password.PasswordData, System.String>, INeo4jBase, IPasswordOriginalData
@@ -570,7 +558,9 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IPasswordOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

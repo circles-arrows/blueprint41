@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace Domain.Data.Query
@@ -52,13 +54,48 @@ namespace Domain.Data.Query
         internal EmailAddressAlias(EmailAddressNode parent)
         {
 			Node = parent;
-            EmailAddr = new StringResult(this, "EmailAddr", Datastore.AdventureWorks.Model.Entities["EmailAddress"], Datastore.AdventureWorks.Model.Entities["EmailAddress"].Properties["EmailAddr"]);
-            Uid = new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["EmailAddress"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]);
         }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+						{ "EmailAddr", new StringResult(this, "EmailAddr", Datastore.AdventureWorks.Model.Entities["EmailAddress"], Datastore.AdventureWorks.Model.Entities["EmailAddress"].Properties["EmailAddr"]) },
+						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["EmailAddress"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+					};
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
         public EmailAddressNode.EmailAddressOut Out { get { return new EmailAddressNode.EmailAddressOut(new EmailAddressNode(this, true)); } }
 
-        public StringResult EmailAddr { get; private set; } 
-        public StringResult Uid { get; private set; } 
+        public StringResult EmailAddr
+		{
+			get
+			{
+				if ((object)m_EmailAddr == null)
+					m_EmailAddr = (StringResult)AliasFields["EmailAddr"];
+
+				return m_EmailAddr;
+			}
+		} 
+        private StringResult m_EmailAddr = null;
+        public StringResult Uid
+		{
+			get
+			{
+				if ((object)m_Uid == null)
+					m_Uid = (StringResult)AliasFields["Uid"];
+
+				return m_Uid;
+			}
+		} 
+        private StringResult m_Uid = null;
     }
 }

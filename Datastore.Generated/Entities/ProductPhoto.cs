@@ -9,29 +9,12 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IProductPhotoOriginalData
+	public interface IProductPhotoOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IProductPhoto
-
 		string ThumbNailPhoto { get; }
 		string ThumbNailPhotoFileName { get; }
 		string LargePhoto { get; }
 		string LargePhotoFileName { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class ProductPhoto : OGM<ProductPhoto, ProductPhoto.ProductPhotoData, System.String>, ISchemaBase, INeo4jBase, IProductPhotoOriginalData
@@ -739,12 +722,16 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime IProductPhotoOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IProductPhotoOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

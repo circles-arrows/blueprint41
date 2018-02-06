@@ -9,30 +9,13 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface ICreditCardOriginalData
+	public interface ICreditCardOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface ICreditCard
-
 		string CardType { get; }
 		string CardNumber { get; }
 		string ExpMonth { get; }
 		string ExpYear { get; }
 		IEnumerable<Person> Persons { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class CreditCard : OGM<CreditCard, CreditCard.CreditCardData, System.String>, ISchemaBase, INeo4jBase, ICreditCardOriginalData
@@ -801,12 +784,16 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime ICreditCardOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string ICreditCardOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

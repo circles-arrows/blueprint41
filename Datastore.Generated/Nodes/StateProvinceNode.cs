@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace Domain.Data.Query
@@ -66,24 +68,109 @@ namespace Domain.Data.Query
         internal StateProvinceAlias(StateProvinceNode parent)
         {
 			Node = parent;
-            StateProvinceCode = new StringResult(this, "StateProvinceCode", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["StateProvinceCode"]);
-            CountryRegionCode = new StringResult(this, "CountryRegionCode", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["CountryRegionCode"]);
-            IsOnlyStateProvinceFlag = new BooleanResult(this, "IsOnlyStateProvinceFlag", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["IsOnlyStateProvinceFlag"]);
-            Name = new StringResult(this, "Name", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["Name"]);
-            rowguid = new StringResult(this, "rowguid", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["rowguid"]);
-            ModifiedDate = new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]);
-            Uid = new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]);
         }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+						{ "StateProvinceCode", new StringResult(this, "StateProvinceCode", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["StateProvinceCode"]) },
+						{ "CountryRegionCode", new StringResult(this, "CountryRegionCode", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["CountryRegionCode"]) },
+						{ "IsOnlyStateProvinceFlag", new BooleanResult(this, "IsOnlyStateProvinceFlag", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["IsOnlyStateProvinceFlag"]) },
+						{ "Name", new StringResult(this, "Name", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["Name"]) },
+						{ "rowguid", new StringResult(this, "rowguid", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["StateProvince"].Properties["rowguid"]) },
+						{ "ModifiedDate", new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]) },
+						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["StateProvince"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+					};
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
         public StateProvinceNode.StateProvinceIn In { get { return new StateProvinceNode.StateProvinceIn(new StateProvinceNode(this, true)); } }
         public StateProvinceNode.StateProvinceOut Out { get { return new StateProvinceNode.StateProvinceOut(new StateProvinceNode(this, true)); } }
 
-        public StringResult StateProvinceCode { get; private set; } 
-        public StringResult CountryRegionCode { get; private set; } 
-        public BooleanResult IsOnlyStateProvinceFlag { get; private set; } 
-        public StringResult Name { get; private set; } 
-        public StringResult rowguid { get; private set; } 
-        public DateTimeResult ModifiedDate { get; private set; } 
-        public StringResult Uid { get; private set; } 
+        public StringResult StateProvinceCode
+		{
+			get
+			{
+				if ((object)m_StateProvinceCode == null)
+					m_StateProvinceCode = (StringResult)AliasFields["StateProvinceCode"];
+
+				return m_StateProvinceCode;
+			}
+		} 
+        private StringResult m_StateProvinceCode = null;
+        public StringResult CountryRegionCode
+		{
+			get
+			{
+				if ((object)m_CountryRegionCode == null)
+					m_CountryRegionCode = (StringResult)AliasFields["CountryRegionCode"];
+
+				return m_CountryRegionCode;
+			}
+		} 
+        private StringResult m_CountryRegionCode = null;
+        public BooleanResult IsOnlyStateProvinceFlag
+		{
+			get
+			{
+				if ((object)m_IsOnlyStateProvinceFlag == null)
+					m_IsOnlyStateProvinceFlag = (BooleanResult)AliasFields["IsOnlyStateProvinceFlag"];
+
+				return m_IsOnlyStateProvinceFlag;
+			}
+		} 
+        private BooleanResult m_IsOnlyStateProvinceFlag = null;
+        public StringResult Name
+		{
+			get
+			{
+				if ((object)m_Name == null)
+					m_Name = (StringResult)AliasFields["Name"];
+
+				return m_Name;
+			}
+		} 
+        private StringResult m_Name = null;
+        public StringResult rowguid
+		{
+			get
+			{
+				if ((object)m_rowguid == null)
+					m_rowguid = (StringResult)AliasFields["rowguid"];
+
+				return m_rowguid;
+			}
+		} 
+        private StringResult m_rowguid = null;
+        public DateTimeResult ModifiedDate
+		{
+			get
+			{
+				if ((object)m_ModifiedDate == null)
+					m_ModifiedDate = (DateTimeResult)AliasFields["ModifiedDate"];
+
+				return m_ModifiedDate;
+			}
+		} 
+        private DateTimeResult m_ModifiedDate = null;
+        public StringResult Uid
+		{
+			get
+			{
+				if ((object)m_Uid == null)
+					m_Uid = (StringResult)AliasFields["Uid"];
+
+				return m_Uid;
+			}
+		} 
+        private StringResult m_Uid = null;
     }
 }

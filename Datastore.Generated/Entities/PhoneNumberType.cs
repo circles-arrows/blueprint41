@@ -9,21 +9,9 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IPhoneNumberTypeOriginalData
+	public interface IPhoneNumberTypeOriginalData : INeo4jBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IPhoneNumberType
-
 		string Name { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class PhoneNumberType : OGM<PhoneNumberType, PhoneNumberType.PhoneNumberTypeData, System.String>, INeo4jBase, IPhoneNumberTypeOriginalData
@@ -514,7 +502,9 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IPhoneNumberTypeOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

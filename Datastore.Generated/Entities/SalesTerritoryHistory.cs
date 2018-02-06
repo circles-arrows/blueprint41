@@ -9,28 +9,11 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface ISalesTerritoryHistoryOriginalData
+	public interface ISalesTerritoryHistoryOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface ISalesTerritoryHistory
-
 		System.DateTime StartDate { get; }
 		System.DateTime? EndDate { get; }
 		string rowguid { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class SalesTerritoryHistory : OGM<SalesTerritoryHistory, SalesTerritoryHistory.SalesTerritoryHistoryData, System.String>, ISchemaBase, INeo4jBase, ISalesTerritoryHistoryOriginalData
@@ -691,12 +674,16 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime ISalesTerritoryHistoryOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string ISalesTerritoryHistoryOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

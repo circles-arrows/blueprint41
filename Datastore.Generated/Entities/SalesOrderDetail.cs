@@ -9,12 +9,8 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface ISalesOrderDetailOriginalData
+	public interface ISalesOrderDetailOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface ISalesOrderDetail
-
 		string CarrierTrackingNumber { get; }
 		int OrderQty { get; }
 		double UnitPrice { get; }
@@ -24,19 +20,6 @@ namespace Domain.Data.Manipulation
 		SalesOrderHeader SalesOrderHeader { get; }
 		Product Product { get; }
 		SpecialOffer SpecialOffer { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class SalesOrderDetail : OGM<SalesOrderDetail, SalesOrderDetail.SalesOrderDetailData, System.String>, ISchemaBase, INeo4jBase, ISalesOrderDetailOriginalData
@@ -1027,12 +1010,16 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime ISalesOrderDetailOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string ISalesOrderDetailOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

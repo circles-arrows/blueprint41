@@ -10,10 +10,16 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
+	public interface ISchemaBaseOriginalData : INeo4jBaseOriginalData
+    {
+		System.DateTime ModifiedDate { get; }
+    }
+
 	public partial interface ISchemaBase : OGM, INeo4jBase
 	{
-		string NodeType { get; }
 		System.DateTime ModifiedDate { get; set; }
+
+		new ISchemaBaseOriginalData OriginalVersion { get; }
 	}
 
 	public partial class SchemaBase : OGMAbstractImpl<SchemaBase, ISchemaBase, System.String>

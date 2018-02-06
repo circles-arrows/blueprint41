@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace Domain.Data.Query
@@ -52,15 +54,60 @@ namespace Domain.Data.Query
         internal IllustrationAlias(IllustrationNode parent)
         {
 			Node = parent;
-            Diagram = new StringResult(this, "Diagram", Datastore.AdventureWorks.Model.Entities["Illustration"], Datastore.AdventureWorks.Model.Entities["Illustration"].Properties["Diagram"]);
-            ModifiedDate = new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["Illustration"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]);
-            Uid = new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["Illustration"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]);
         }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+						{ "Diagram", new StringResult(this, "Diagram", Datastore.AdventureWorks.Model.Entities["Illustration"], Datastore.AdventureWorks.Model.Entities["Illustration"].Properties["Diagram"]) },
+						{ "ModifiedDate", new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["Illustration"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]) },
+						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["Illustration"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+					};
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
         public IllustrationNode.IllustrationOut Out { get { return new IllustrationNode.IllustrationOut(new IllustrationNode(this, true)); } }
 
-        public StringResult Diagram { get; private set; } 
-        public DateTimeResult ModifiedDate { get; private set; } 
-        public StringResult Uid { get; private set; } 
+        public StringResult Diagram
+		{
+			get
+			{
+				if ((object)m_Diagram == null)
+					m_Diagram = (StringResult)AliasFields["Diagram"];
+
+				return m_Diagram;
+			}
+		} 
+        private StringResult m_Diagram = null;
+        public DateTimeResult ModifiedDate
+		{
+			get
+			{
+				if ((object)m_ModifiedDate == null)
+					m_ModifiedDate = (DateTimeResult)AliasFields["ModifiedDate"];
+
+				return m_ModifiedDate;
+			}
+		} 
+        private DateTimeResult m_ModifiedDate = null;
+        public StringResult Uid
+		{
+			get
+			{
+				if ((object)m_Uid == null)
+					m_Uid = (StringResult)AliasFields["Uid"];
+
+				return m_Uid;
+			}
+		} 
+        private StringResult m_Uid = null;
     }
 }

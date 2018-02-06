@@ -9,31 +9,14 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface ITransactionHistoryOriginalData
+	public interface ITransactionHistoryOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface ITransactionHistory
-
 		int ReferenceOrderID { get; }
 		System.DateTime TransactionDate { get; }
 		string TransactionType { get; }
 		int Quantity { get; }
 		string ActualCost { get; }
 		int ReferenceOrderLineID { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class TransactionHistory : OGM<TransactionHistory, TransactionHistory.TransactionHistoryData, System.String>, ISchemaBase, INeo4jBase, ITransactionHistoryOriginalData
@@ -855,12 +838,16 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime ITransactionHistoryOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string ITransactionHistoryOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

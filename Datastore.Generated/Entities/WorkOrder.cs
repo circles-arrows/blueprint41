@@ -9,12 +9,8 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IWorkOrderOriginalData
+	public interface IWorkOrderOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IWorkOrder
-
 		int OrderQty { get; }
 		int StockedQty { get; }
 		int ScrappedQty { get; }
@@ -23,19 +19,6 @@ namespace Domain.Data.Manipulation
 		System.DateTime DueDate { get; }
 		ScrapReason ScrapReason { get; }
 		Product Product { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class WorkOrder : OGM<WorkOrder, WorkOrder.WorkOrderData, System.String>, ISchemaBase, INeo4jBase, IWorkOrderOriginalData
@@ -969,12 +952,16 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime IWorkOrderOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IWorkOrderOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

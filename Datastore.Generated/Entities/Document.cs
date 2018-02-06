@@ -9,12 +9,8 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IDocumentOriginalData
+	public interface IDocumentOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IDocument
-
 		string DocumentNode { get; }
 		string DocumentLevel { get; }
 		string Title { get; }
@@ -29,19 +25,6 @@ namespace Domain.Data.Manipulation
 		string Doc { get; }
 		string rowguid { get; }
 		IEnumerable<Person> Persons { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class Document : OGM<Document, Document.DocumentData, System.String>, ISchemaBase, INeo4jBase, IDocumentOriginalData
@@ -1283,12 +1266,16 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime IDocumentOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IDocumentOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

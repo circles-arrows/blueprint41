@@ -9,22 +9,10 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IEmailAddressOriginalData
+	public interface IEmailAddressOriginalData : INeo4jBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IEmailAddress
-
 		string EmailAddr { get; }
 		IEnumerable<Person> EmailAddresses { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class EmailAddress : OGM<EmailAddress, EmailAddress.EmailAddressData, System.String>, INeo4jBase, IEmailAddressOriginalData
@@ -568,7 +556,9 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IEmailAddressOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

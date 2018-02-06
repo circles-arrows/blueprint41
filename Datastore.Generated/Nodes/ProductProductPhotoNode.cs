@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace Domain.Data.Query
@@ -64,16 +66,61 @@ namespace Domain.Data.Query
         internal ProductProductPhotoAlias(ProductProductPhotoNode parent)
         {
 			Node = parent;
-            Primary = new StringResult(this, "Primary", Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"], Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"].Properties["Primary"]);
-            ModifiedDate = new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]);
-            Uid = new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]);
         }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+						{ "Primary", new StringResult(this, "Primary", Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"], Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"].Properties["Primary"]) },
+						{ "ModifiedDate", new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]) },
+						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+					};
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
         public ProductProductPhotoNode.ProductProductPhotoIn In { get { return new ProductProductPhotoNode.ProductProductPhotoIn(new ProductProductPhotoNode(this, true)); } }
         public ProductProductPhotoNode.ProductProductPhotoOut Out { get { return new ProductProductPhotoNode.ProductProductPhotoOut(new ProductProductPhotoNode(this, true)); } }
 
-        public StringResult Primary { get; private set; } 
-        public DateTimeResult ModifiedDate { get; private set; } 
-        public StringResult Uid { get; private set; } 
+        public StringResult Primary
+		{
+			get
+			{
+				if ((object)m_Primary == null)
+					m_Primary = (StringResult)AliasFields["Primary"];
+
+				return m_Primary;
+			}
+		} 
+        private StringResult m_Primary = null;
+        public DateTimeResult ModifiedDate
+		{
+			get
+			{
+				if ((object)m_ModifiedDate == null)
+					m_ModifiedDate = (DateTimeResult)AliasFields["ModifiedDate"];
+
+				return m_ModifiedDate;
+			}
+		} 
+        private DateTimeResult m_ModifiedDate = null;
+        public StringResult Uid
+		{
+			get
+			{
+				if ((object)m_Uid == null)
+					m_Uid = (StringResult)AliasFields["Uid"];
+
+				return m_Uid;
+			}
+		} 
+        private StringResult m_Uid = null;
     }
 }

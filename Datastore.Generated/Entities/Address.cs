@@ -9,12 +9,8 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IAddressOriginalData
+	public interface IAddressOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IAddress
-
 		string AddressLine1 { get; }
 		string AddressLine2 { get; }
 		string City { get; }
@@ -23,19 +19,6 @@ namespace Domain.Data.Manipulation
 		string rowguid { get; }
 		StateProvince StateProvince { get; }
 		AddressType AddressType { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
     }
 
 	public partial class Address : OGM<Address, Address.AddressData, System.String>, ISchemaBase, INeo4jBase, IAddressOriginalData
@@ -967,12 +950,16 @@ namespace Domain.Data.Manipulation
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime IAddressOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IAddressOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

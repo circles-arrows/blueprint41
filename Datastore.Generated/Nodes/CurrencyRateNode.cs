@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace Domain.Data.Query
@@ -64,24 +66,109 @@ namespace Domain.Data.Query
         internal CurrencyRateAlias(CurrencyRateNode parent)
         {
 			Node = parent;
-            CurrencyRateDate = new DateTimeResult(this, "CurrencyRateDate", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["CurrencyRateDate"]);
-            FromCurrencyCode = new StringResult(this, "FromCurrencyCode", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["FromCurrencyCode"]);
-            ToCurrencyCode = new StringResult(this, "ToCurrencyCode", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["ToCurrencyCode"]);
-            AverageRate = new StringResult(this, "AverageRate", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["AverageRate"]);
-            EndOfDayRate = new StringResult(this, "EndOfDayRate", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["EndOfDayRate"]);
-            ModifiedDate = new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]);
-            Uid = new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]);
         }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+						{ "CurrencyRateDate", new DateTimeResult(this, "CurrencyRateDate", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["CurrencyRateDate"]) },
+						{ "FromCurrencyCode", new StringResult(this, "FromCurrencyCode", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["FromCurrencyCode"]) },
+						{ "ToCurrencyCode", new StringResult(this, "ToCurrencyCode", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["ToCurrencyCode"]) },
+						{ "AverageRate", new StringResult(this, "AverageRate", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["AverageRate"]) },
+						{ "EndOfDayRate", new StringResult(this, "EndOfDayRate", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["EndOfDayRate"]) },
+						{ "ModifiedDate", new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]) },
+						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["CurrencyRate"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+					};
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
         public CurrencyRateNode.CurrencyRateIn In { get { return new CurrencyRateNode.CurrencyRateIn(new CurrencyRateNode(this, true)); } }
         public CurrencyRateNode.CurrencyRateOut Out { get { return new CurrencyRateNode.CurrencyRateOut(new CurrencyRateNode(this, true)); } }
 
-        public DateTimeResult CurrencyRateDate { get; private set; } 
-        public StringResult FromCurrencyCode { get; private set; } 
-        public StringResult ToCurrencyCode { get; private set; } 
-        public StringResult AverageRate { get; private set; } 
-        public StringResult EndOfDayRate { get; private set; } 
-        public DateTimeResult ModifiedDate { get; private set; } 
-        public StringResult Uid { get; private set; } 
+        public DateTimeResult CurrencyRateDate
+		{
+			get
+			{
+				if ((object)m_CurrencyRateDate == null)
+					m_CurrencyRateDate = (DateTimeResult)AliasFields["CurrencyRateDate"];
+
+				return m_CurrencyRateDate;
+			}
+		} 
+        private DateTimeResult m_CurrencyRateDate = null;
+        public StringResult FromCurrencyCode
+		{
+			get
+			{
+				if ((object)m_FromCurrencyCode == null)
+					m_FromCurrencyCode = (StringResult)AliasFields["FromCurrencyCode"];
+
+				return m_FromCurrencyCode;
+			}
+		} 
+        private StringResult m_FromCurrencyCode = null;
+        public StringResult ToCurrencyCode
+		{
+			get
+			{
+				if ((object)m_ToCurrencyCode == null)
+					m_ToCurrencyCode = (StringResult)AliasFields["ToCurrencyCode"];
+
+				return m_ToCurrencyCode;
+			}
+		} 
+        private StringResult m_ToCurrencyCode = null;
+        public StringResult AverageRate
+		{
+			get
+			{
+				if ((object)m_AverageRate == null)
+					m_AverageRate = (StringResult)AliasFields["AverageRate"];
+
+				return m_AverageRate;
+			}
+		} 
+        private StringResult m_AverageRate = null;
+        public StringResult EndOfDayRate
+		{
+			get
+			{
+				if ((object)m_EndOfDayRate == null)
+					m_EndOfDayRate = (StringResult)AliasFields["EndOfDayRate"];
+
+				return m_EndOfDayRate;
+			}
+		} 
+        private StringResult m_EndOfDayRate = null;
+        public DateTimeResult ModifiedDate
+		{
+			get
+			{
+				if ((object)m_ModifiedDate == null)
+					m_ModifiedDate = (DateTimeResult)AliasFields["ModifiedDate"];
+
+				return m_ModifiedDate;
+			}
+		} 
+        private DateTimeResult m_ModifiedDate = null;
+        public StringResult Uid
+		{
+			get
+			{
+				if ((object)m_Uid == null)
+					m_Uid = (StringResult)AliasFields["Uid"];
+
+				return m_Uid;
+			}
+		} 
+        private StringResult m_Uid = null;
     }
 }

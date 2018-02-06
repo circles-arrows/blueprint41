@@ -9,27 +9,11 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IProductCategoryOriginalData
+	public interface IProductCategoryOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IProductCategory
-
 		string Name { get; }
 		string rowguid { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
+		IEnumerable<ProductSubcategory> ProductSubcategories { get; }
     }
 
 	public partial class ProductCategory : OGM<ProductCategory, ProductCategory.ProductCategoryData, System.String>, ISchemaBase, INeo4jBase, IProductCategoryOriginalData
@@ -128,6 +112,7 @@ namespace Domain.Data.Manipulation
             {
 				Name = data.Name;
 				rowguid = data.rowguid;
+				ProductSubcategories = data.ProductSubcategories;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
             }
@@ -139,6 +124,7 @@ namespace Domain.Data.Manipulation
 			{
 				NodeType = "ProductCategory";
 
+				ProductSubcategories = new EntityCollection<ProductSubcategory>(Wrapper, Members.ProductSubcategories, item => { if (Members.ProductSubcategories.Events.HasRegisteredChangeHandlers) { object loadHack = item.ProductCategory; } });
 			}
 			public string NodeType { get; private set; }
 			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(Uid); }
@@ -176,6 +162,7 @@ namespace Domain.Data.Manipulation
 
 			public string Name { get; set; }
 			public string rowguid { get; set; }
+			public EntityCollection<ProductSubcategory> ProductSubcategories { get; private set; }
 
 			#endregion
 			#region Members for interface ISchemaBase
@@ -198,6 +185,11 @@ namespace Domain.Data.Manipulation
 
 		public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
 		public string rowguid { get { LazyGet(); return InnerData.rowguid; } set { if (LazySet(Members.rowguid, InnerData.rowguid, value)) InnerData.rowguid = value; } }
+		public EntityCollection<ProductSubcategory> ProductSubcategories { get { return InnerData.ProductSubcategories; } }
+		private void ClearProductSubcategories(DateTime? moment)
+		{
+			((ILookupHelper<EntityCollection<ProductSubcategory>>)InnerData.ProductSubcategories).ClearLookup(moment);
+		}
 
 		#endregion
 		#region Members for interface ISchemaBase
@@ -245,6 +237,7 @@ namespace Domain.Data.Manipulation
 
             public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["ProductCategory"].Properties["Name"];
             public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["ProductCategory"].Properties["rowguid"];
+            public Property ProductSubcategories { get; } = Datastore.AdventureWorks.Model.Entities["ProductCategory"].Properties["ProductSubcategories"];
 			#endregion
 
 			#region Members for interface ISchemaBase
@@ -534,6 +527,49 @@ namespace Domain.Data.Manipulation
 
 				#endregion
 
+				#region OnProductSubcategories
+
+				private static bool onProductSubcategoriesIsRegistered = false;
+
+				private static EventHandler<ProductCategory, PropertyEventArgs> onProductSubcategories;
+				public static event EventHandler<ProductCategory, PropertyEventArgs> OnProductSubcategories
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onProductSubcategoriesIsRegistered)
+							{
+								Members.ProductSubcategories.Events.OnChange -= onProductSubcategoriesProxy;
+								Members.ProductSubcategories.Events.OnChange += onProductSubcategoriesProxy;
+								onProductSubcategoriesIsRegistered = true;
+							}
+							onProductSubcategories += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onProductSubcategories -= value;
+							if (onProductSubcategories == null && onProductSubcategoriesIsRegistered)
+							{
+								Members.ProductSubcategories.Events.OnChange -= onProductSubcategoriesProxy;
+								onProductSubcategoriesIsRegistered = false;
+							}
+						}
+					}
+				}
+            
+				private static void onProductSubcategoriesProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<ProductCategory, PropertyEventArgs> handler = onProductSubcategories;
+					if ((object)handler != null)
+						handler.Invoke((ProductCategory)sender, args);
+				}
+
+				#endregion
+
 				#region OnModifiedDate
 
 				private static bool onModifiedDateIsRegistered = false;
@@ -635,16 +671,21 @@ namespace Domain.Data.Manipulation
 
 		string IProductCategoryOriginalData.Name { get { return OriginalData.Name; } }
 		string IProductCategoryOriginalData.rowguid { get { return OriginalData.rowguid; } }
+		IEnumerable<ProductSubcategory> IProductCategoryOriginalData.ProductSubcategories { get { return OriginalData.ProductSubcategories.OriginalData; } }
 
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime IProductCategoryOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IProductCategoryOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

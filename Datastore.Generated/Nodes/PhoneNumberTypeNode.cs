@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace Domain.Data.Query
@@ -52,13 +54,48 @@ namespace Domain.Data.Query
         internal PhoneNumberTypeAlias(PhoneNumberTypeNode parent)
         {
 			Node = parent;
-            Name = new StringResult(this, "Name", Datastore.AdventureWorks.Model.Entities["PhoneNumberType"], Datastore.AdventureWorks.Model.Entities["PhoneNumberType"].Properties["Name"]);
-            Uid = new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["PhoneNumberType"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]);
         }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+						{ "Name", new StringResult(this, "Name", Datastore.AdventureWorks.Model.Entities["PhoneNumberType"], Datastore.AdventureWorks.Model.Entities["PhoneNumberType"].Properties["Name"]) },
+						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["PhoneNumberType"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+					};
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
         public PhoneNumberTypeNode.PhoneNumberTypeOut Out { get { return new PhoneNumberTypeNode.PhoneNumberTypeOut(new PhoneNumberTypeNode(this, true)); } }
 
-        public StringResult Name { get; private set; } 
-        public StringResult Uid { get; private set; } 
+        public StringResult Name
+		{
+			get
+			{
+				if ((object)m_Name == null)
+					m_Name = (StringResult)AliasFields["Name"];
+
+				return m_Name;
+			}
+		} 
+        private StringResult m_Name = null;
+        public StringResult Uid
+		{
+			get
+			{
+				if ((object)m_Uid == null)
+					m_Uid = (StringResult)AliasFields["Uid"];
+
+				return m_Uid;
+			}
+		} 
+        private StringResult m_Uid = null;
     }
 }

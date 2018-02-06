@@ -10,10 +10,17 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
+	public interface INeo4jBaseOriginalData
+    {
+		string Uid { get; }
+    }
+
 	public partial interface INeo4jBase : OGM
 	{
 		string NodeType { get; }
 		string Uid { get; set; }
+
+		INeo4jBaseOriginalData OriginalVersion { get; }
 	}
 
 	public partial class Neo4jBase : OGMAbstractImpl<Neo4jBase, INeo4jBase, System.String>

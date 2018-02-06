@@ -51,6 +51,7 @@ namespace Domain.Data.Manipulation
                 ((ISetRuntimeType)Datastore.AdventureWorks.Model.Entities["ProductPhoto"]).SetRuntimeTypes(typeof(ProductPhoto), typeof(ProductPhoto));
                 ((ISetRuntimeType)Datastore.AdventureWorks.Model.Entities["ProductProductPhoto"]).SetRuntimeTypes(typeof(ProductProductPhoto), typeof(ProductProductPhoto));
                 ((ISetRuntimeType)Datastore.AdventureWorks.Model.Entities["ProductReview"]).SetRuntimeTypes(typeof(ProductReview), typeof(ProductReview));
+                ((ISetRuntimeType)Datastore.AdventureWorks.Model.Entities["ProductSubcategory"]).SetRuntimeTypes(typeof(ProductSubcategory), typeof(ProductSubcategory));
                 ((ISetRuntimeType)Datastore.AdventureWorks.Model.Entities["ProductVendor"]).SetRuntimeTypes(typeof(ProductVendor), typeof(ProductVendor));
                 ((ISetRuntimeType)Datastore.AdventureWorks.Model.Entities["PurchaseOrderDetail"]).SetRuntimeTypes(typeof(PurchaseOrderDetail), typeof(PurchaseOrderDetail));
                 ((ISetRuntimeType)Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"]).SetRuntimeTypes(typeof(PurchaseOrderHeader), typeof(PurchaseOrderHeader));

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace Domain.Data.Query
@@ -54,21 +56,96 @@ namespace Domain.Data.Query
         internal ProductInventoryAlias(ProductInventoryNode parent)
         {
 			Node = parent;
-            Shelf = new StringResult(this, "Shelf", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Shelf"]);
-            Bin = new StringResult(this, "Bin", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Bin"]);
-            Quantity = new NumericResult(this, "Quantity", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Quantity"]);
-            rowguid = new StringResult(this, "rowguid", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["rowguid"]);
-            ModifiedDate = new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]);
-            Uid = new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]);
         }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+						{ "Shelf", new StringResult(this, "Shelf", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Shelf"]) },
+						{ "Bin", new StringResult(this, "Bin", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Bin"]) },
+						{ "Quantity", new NumericResult(this, "Quantity", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Quantity"]) },
+						{ "rowguid", new StringResult(this, "rowguid", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["rowguid"]) },
+						{ "ModifiedDate", new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]) },
+						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["ProductInventory"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+					};
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
         public ProductInventoryNode.ProductInventoryIn In { get { return new ProductInventoryNode.ProductInventoryIn(new ProductInventoryNode(this, true)); } }
 
-        public StringResult Shelf { get; private set; } 
-        public StringResult Bin { get; private set; } 
-        public NumericResult Quantity { get; private set; } 
-        public StringResult rowguid { get; private set; } 
-        public DateTimeResult ModifiedDate { get; private set; } 
-        public StringResult Uid { get; private set; } 
+        public StringResult Shelf
+		{
+			get
+			{
+				if ((object)m_Shelf == null)
+					m_Shelf = (StringResult)AliasFields["Shelf"];
+
+				return m_Shelf;
+			}
+		} 
+        private StringResult m_Shelf = null;
+        public StringResult Bin
+		{
+			get
+			{
+				if ((object)m_Bin == null)
+					m_Bin = (StringResult)AliasFields["Bin"];
+
+				return m_Bin;
+			}
+		} 
+        private StringResult m_Bin = null;
+        public NumericResult Quantity
+		{
+			get
+			{
+				if ((object)m_Quantity == null)
+					m_Quantity = (NumericResult)AliasFields["Quantity"];
+
+				return m_Quantity;
+			}
+		} 
+        private NumericResult m_Quantity = null;
+        public StringResult rowguid
+		{
+			get
+			{
+				if ((object)m_rowguid == null)
+					m_rowguid = (StringResult)AliasFields["rowguid"];
+
+				return m_rowguid;
+			}
+		} 
+        private StringResult m_rowguid = null;
+        public DateTimeResult ModifiedDate
+		{
+			get
+			{
+				if ((object)m_ModifiedDate == null)
+					m_ModifiedDate = (DateTimeResult)AliasFields["ModifiedDate"];
+
+				return m_ModifiedDate;
+			}
+		} 
+        private DateTimeResult m_ModifiedDate = null;
+        public StringResult Uid
+		{
+			get
+			{
+				if ((object)m_Uid == null)
+					m_Uid = (StringResult)AliasFields["Uid"];
+
+				return m_Uid;
+			}
+		} 
+        private StringResult m_Uid = null;
     }
 }

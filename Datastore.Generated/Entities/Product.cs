@@ -9,12 +9,8 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IProductOriginalData
+	public interface IProductOriginalData : ISchemaBaseOriginalData
     {
-		#region Outer Data
-
-		#region Members for interface IProduct
-
 		string Name { get; }
 		string ProductNumber { get; }
 		bool MakeFlag { get; }
@@ -42,19 +38,7 @@ namespace Domain.Data.Manipulation
 		ProductModel ProductModel { get; }
 		Document Document { get; }
 		IEnumerable<ProductListPriceHistory> ProductListPriceHistories { get; }
-
-		#endregion
-		#region Members for interface ISchemaBase
-
-		System.DateTime ModifiedDate { get; }
-
-		#endregion
-		#region Members for interface INeo4jBase
-
-		string Uid { get; }
-
-		#endregion
-		#endregion
+		ProductSubcategory ProductSubcategory { get; }
     }
 
 	public partial class Product : OGM<Product, Product.ProductData, System.String>, ISchemaBase, INeo4jBase, IProductOriginalData
@@ -196,6 +180,7 @@ namespace Domain.Data.Manipulation
 				ProductModel = data.ProductModel;
 				Document = data.Document;
 				ProductListPriceHistories = data.ProductListPriceHistories;
+				ProductSubcategory = data.ProductSubcategory;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
             }
@@ -213,6 +198,7 @@ namespace Domain.Data.Manipulation
 				ProductModel = new EntityCollection<ProductModel>(Wrapper, Members.ProductModel);
 				Document = new EntityCollection<Document>(Wrapper, Members.Document);
 				ProductListPriceHistories = new EntityCollection<ProductListPriceHistory>(Wrapper, Members.ProductListPriceHistories, item => { if (Members.ProductListPriceHistories.Events.HasRegisteredChangeHandlers) { object loadHack = item.Product; } });
+				ProductSubcategory = new EntityCollection<ProductSubcategory>(Wrapper, Members.ProductSubcategory, item => { if (Members.ProductSubcategory.Events.HasRegisteredChangeHandlers) { int loadHack = item.Product.Count; } });
 			}
 			public string NodeType { get; private set; }
 			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(Uid); }
@@ -332,6 +318,7 @@ namespace Domain.Data.Manipulation
 			public EntityCollection<ProductModel> ProductModel { get; private set; }
 			public EntityCollection<Document> Document { get; private set; }
 			public EntityCollection<ProductListPriceHistory> ProductListPriceHistories { get; private set; }
+			public EntityCollection<ProductSubcategory> ProductSubcategory { get; private set; }
 
 			#endregion
 			#region Members for interface ISchemaBase
@@ -427,6 +414,19 @@ namespace Domain.Data.Manipulation
 		{
 			((ILookupHelper<EntityCollection<ProductListPriceHistory>>)InnerData.ProductListPriceHistories).ClearLookup(moment);
 		}
+		public ProductSubcategory ProductSubcategory
+		{
+			get { return ((ILookupHelper<ProductSubcategory>)InnerData.ProductSubcategory).GetItem(null); }
+			set 
+			{ 
+				if (LazySet(Members.ProductSubcategory, ((ILookupHelper<ProductSubcategory>)InnerData.ProductSubcategory).GetItem(null), value))
+					((ILookupHelper<ProductSubcategory>)InnerData.ProductSubcategory).SetItem(value, null); 
+			}
+		}
+		private void ClearProductSubcategory(DateTime? moment)
+		{
+			((ILookupHelper<ProductSubcategory>)InnerData.ProductSubcategory).ClearLookup(moment);
+		}
 
 		#endregion
 		#region Members for interface ISchemaBase
@@ -499,6 +499,7 @@ namespace Domain.Data.Manipulation
             public Property ProductModel { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductModel"];
             public Property Document { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Document"];
             public Property ProductListPriceHistories { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductListPriceHistories"];
+            public Property ProductSubcategory { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductSubcategory"];
 			#endregion
 
 			#region Members for interface ISchemaBase
@@ -1863,6 +1864,49 @@ namespace Domain.Data.Manipulation
 
 				#endregion
 
+				#region OnProductSubcategory
+
+				private static bool onProductSubcategoryIsRegistered = false;
+
+				private static EventHandler<Product, PropertyEventArgs> onProductSubcategory;
+				public static event EventHandler<Product, PropertyEventArgs> OnProductSubcategory
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onProductSubcategoryIsRegistered)
+							{
+								Members.ProductSubcategory.Events.OnChange -= onProductSubcategoryProxy;
+								Members.ProductSubcategory.Events.OnChange += onProductSubcategoryProxy;
+								onProductSubcategoryIsRegistered = true;
+							}
+							onProductSubcategory += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onProductSubcategory -= value;
+							if (onProductSubcategory == null && onProductSubcategoryIsRegistered)
+							{
+								Members.ProductSubcategory.Events.OnChange -= onProductSubcategoryProxy;
+								onProductSubcategoryIsRegistered = false;
+							}
+						}
+					}
+				}
+            
+				private static void onProductSubcategoryProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Product, PropertyEventArgs> handler = onProductSubcategory;
+					if ((object)handler != null)
+						handler.Invoke((Product)sender, args);
+				}
+
+				#endregion
+
 				#region OnModifiedDate
 
 				private static bool onModifiedDateIsRegistered = false;
@@ -1989,16 +2033,21 @@ namespace Domain.Data.Manipulation
 		ProductModel IProductOriginalData.ProductModel { get { return ((ILookupHelper<ProductModel>)OriginalData.ProductModel).GetOriginalItem(null); } }
 		Document IProductOriginalData.Document { get { return ((ILookupHelper<Document>)OriginalData.Document).GetOriginalItem(null); } }
 		IEnumerable<ProductListPriceHistory> IProductOriginalData.ProductListPriceHistories { get { return OriginalData.ProductListPriceHistories.OriginalData; } }
+		ProductSubcategory IProductOriginalData.ProductSubcategory { get { return ((ILookupHelper<ProductSubcategory>)OriginalData.ProductSubcategory).GetOriginalItem(null); } }
 
 		#endregion
 		#region Members for interface ISchemaBase
 
-		System.DateTime IProductOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
+		ISchemaBaseOriginalData ISchemaBase.OriginalVersion { get { return this; } }
+
+		System.DateTime ISchemaBaseOriginalData.ModifiedDate { get { return OriginalData.ModifiedDate; } }
 
 		#endregion
 		#region Members for interface INeo4jBase
 
-		string IProductOriginalData.Uid { get { return OriginalData.Uid; } }
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
 
 		#endregion
 		#endregion

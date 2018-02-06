@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using Blueprint41;
+using Blueprint41.Core;
 using Blueprint41.Query;
 
 namespace Domain.Data.Query
@@ -52,19 +54,84 @@ namespace Domain.Data.Query
         internal EmployeePayHistoryAlias(EmployeePayHistoryNode parent)
         {
 			Node = parent;
-            RateChangeDate = new DateTimeResult(this, "RateChangeDate", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["RateChangeDate"]);
-            Rate = new StringResult(this, "Rate", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["Rate"]);
-            PayFrequency = new StringResult(this, "PayFrequency", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["PayFrequency"]);
-            ModifiedDate = new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]);
-            Uid = new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]);
         }
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields == null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+						{ "RateChangeDate", new DateTimeResult(this, "RateChangeDate", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["RateChangeDate"]) },
+						{ "Rate", new StringResult(this, "Rate", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["Rate"]) },
+						{ "PayFrequency", new StringResult(this, "PayFrequency", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["PayFrequency"]) },
+						{ "ModifiedDate", new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]) },
+						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+					};
+				}
+				return m_AliasFields;
+			}
+		}
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
         public EmployeePayHistoryNode.EmployeePayHistoryOut Out { get { return new EmployeePayHistoryNode.EmployeePayHistoryOut(new EmployeePayHistoryNode(this, true)); } }
 
-        public DateTimeResult RateChangeDate { get; private set; } 
-        public StringResult Rate { get; private set; } 
-        public StringResult PayFrequency { get; private set; } 
-        public DateTimeResult ModifiedDate { get; private set; } 
-        public StringResult Uid { get; private set; } 
+        public DateTimeResult RateChangeDate
+		{
+			get
+			{
+				if ((object)m_RateChangeDate == null)
+					m_RateChangeDate = (DateTimeResult)AliasFields["RateChangeDate"];
+
+				return m_RateChangeDate;
+			}
+		} 
+        private DateTimeResult m_RateChangeDate = null;
+        public StringResult Rate
+		{
+			get
+			{
+				if ((object)m_Rate == null)
+					m_Rate = (StringResult)AliasFields["Rate"];
+
+				return m_Rate;
+			}
+		} 
+        private StringResult m_Rate = null;
+        public StringResult PayFrequency
+		{
+			get
+			{
+				if ((object)m_PayFrequency == null)
+					m_PayFrequency = (StringResult)AliasFields["PayFrequency"];
+
+				return m_PayFrequency;
+			}
+		} 
+        private StringResult m_PayFrequency = null;
+        public DateTimeResult ModifiedDate
+		{
+			get
+			{
+				if ((object)m_ModifiedDate == null)
+					m_ModifiedDate = (DateTimeResult)AliasFields["ModifiedDate"];
+
+				return m_ModifiedDate;
+			}
+		} 
+        private DateTimeResult m_ModifiedDate = null;
+        public StringResult Uid
+		{
+			get
+			{
+				if ((object)m_Uid == null)
+					m_Uid = (StringResult)AliasFields["Uid"];
+
+				return m_Uid;
+			}
+		} 
+        private StringResult m_Uid = null;
     }
 }
