@@ -134,7 +134,11 @@ namespace Blueprint41
                         continue;
 
                     if (entity.PersistenceState == PersistenceState.Deleted || entity.PersistenceState == PersistenceState.ForceDeleted)
+                    {
                         entity.Save();
+                        entitiesByKey.Remove(entity.GetKey().ToString());
+                        entitySet.Remove(entity);
+                    }
                 }
             }
         }
