@@ -269,7 +269,7 @@ namespace Blueprint41.Modeller
         {
             if (dataGridViewRelationships.IsCurrentCellDirty)
             {
-                dataGridViewRelationships.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                //dataGridViewRelationships.CommitEdit(DataGridViewDataErrorContexts.Commit);
             }
         }
 
@@ -468,7 +468,7 @@ namespace Blueprint41.Modeller
             if (e.ColumnIndex == 1 || e.ColumnIndex == 4 || e.ColumnIndex == 5 || e.ColumnIndex == 7)
             {
                 DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)dataGridViewRelationships.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                string newName = ((string)textBox.Value).Replace(" ", string.Empty);
+                string newName = ((string)textBox.Value)?.Replace(" ", string.Empty);
                 textBox.Value = newName;
 
                 if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
