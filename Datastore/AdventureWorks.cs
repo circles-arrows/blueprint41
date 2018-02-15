@@ -12,6 +12,12 @@ namespace Datastore
             AddNewRelationships();
         }
 
+        //[Version(1, 0, 1)]
+        //protected void Upgrade()
+        //{
+        //    DEPARTMENT_CONTAINS_EMPLOYEE.Refactor.Rename("DEPARTMENT_HIRED_EMPLOYEE");
+        //}
+
         protected override void SubscribeEventHandlers()
         {
         }
