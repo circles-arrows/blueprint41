@@ -18,6 +18,7 @@ namespace OGMSampleCode
 
             using (Transaction.Begin())
             {
+                // create 2 departments in the graph
                 Department development = new Department()
                 {
                     Name = "Software Development",
@@ -29,6 +30,7 @@ namespace OGMSampleCode
                     GroupName = "IT",
                 };
 
+                // and an employee
                 development.Employees.Add(
                     new Employee()
                     {
@@ -44,25 +46,32 @@ namespace OGMSampleCode
                         ModifiedDate = Transaction.Current.TransactionDate,
                     });
 
+                // save them, since we did it right...
                 Transaction.Commit();
+                //Transaction.Rollback();
             }
 
             using (Transaction.Begin())
             {
+                // Reusable type-safe query
                 var compiled = Transaction.CompiledQuery
                     .Match(Node.Department.Alias(out var d).In.DEPARTMENT_CONTAINS_EMPLOYEE.Out.Employee.Alias(out var e))
                     .Where(d.Name == Parameter.New<string>("DepartmentName"))
                     .Return(d.Name.As("Department"), e.SickLeaveHours.Sum().As("TotalSickleaveHours"), e.VacationHours.Sum().As("TotalVacationHours"))
                     .Compile();
 
+                // Make an execution context, which will hold the parameter values to be used
                 var context = compiled.GetExecutionContext();
                 context.SetParameter("DepartmentName", "Software Development");
-                var resultSet = context.Execute();
 
+                // Execute query and display results
+                var resultSet = context.Execute();
                 foreach (var result in resultSet)
                 {
                     Console.WriteLine($"Department: {result.Department}, Total outstanding sick leave hours: {result.TotalSickleaveHours}, Total outstanding vacation hours: {result.TotalVacationHours}.");
                 }
+
+                // No commit needed, since we're only reading anyway...
             }
         }
     }
