@@ -5,14 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Generate.cs">
-      <DependentUpon>Generate.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
     <ProjectReference Include="..\Datastore\Datastore.csproj" />
   </ItemGroup>

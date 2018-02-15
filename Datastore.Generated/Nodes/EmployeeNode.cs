@@ -88,11 +88,11 @@ namespace Domain.Data.Query
 						{ "BirthDate", new DateTimeResult(this, "BirthDate", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["BirthDate"]) },
 						{ "MaritalStatus", new StringResult(this, "MaritalStatus", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["MaritalStatus"]) },
 						{ "Gender", new StringResult(this, "Gender", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Gender"]) },
-						{ "HireDate", new StringResult(this, "HireDate", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["HireDate"]) },
-						{ "SalariedFlag", new StringResult(this, "SalariedFlag", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SalariedFlag"]) },
-						{ "VacationHours", new StringResult(this, "VacationHours", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["VacationHours"]) },
-						{ "SickLeaveHours", new StringResult(this, "SickLeaveHours", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SickLeaveHours"]) },
-						{ "Currentflag", new StringResult(this, "Currentflag", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Currentflag"]) },
+						{ "HireDate", new DateTimeResult(this, "HireDate", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["HireDate"]) },
+						{ "SalariedFlag", new BooleanResult(this, "SalariedFlag", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SalariedFlag"]) },
+						{ "VacationHours", new NumericResult(this, "VacationHours", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["VacationHours"]) },
+						{ "SickLeaveHours", new NumericResult(this, "SickLeaveHours", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SickLeaveHours"]) },
+						{ "Currentflag", new BooleanResult(this, "Currentflag", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Currentflag"]) },
 						{ "rowguid", new StringResult(this, "rowguid", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Employee"].Properties["rowguid"]) },
 						{ "ModifiedDate", new DateTimeResult(this, "ModifiedDate", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"]) },
 						{ "Uid", new StringResult(this, "Uid", Datastore.AdventureWorks.Model.Entities["Employee"], Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"]) },
@@ -172,61 +172,61 @@ namespace Domain.Data.Query
 			}
 		} 
         private StringResult m_Gender = null;
-        public StringResult HireDate
+        public DateTimeResult HireDate
 		{
 			get
 			{
 				if ((object)m_HireDate == null)
-					m_HireDate = (StringResult)AliasFields["HireDate"];
+					m_HireDate = (DateTimeResult)AliasFields["HireDate"];
 
 				return m_HireDate;
 			}
 		} 
-        private StringResult m_HireDate = null;
-        public StringResult SalariedFlag
+        private DateTimeResult m_HireDate = null;
+        public BooleanResult SalariedFlag
 		{
 			get
 			{
 				if ((object)m_SalariedFlag == null)
-					m_SalariedFlag = (StringResult)AliasFields["SalariedFlag"];
+					m_SalariedFlag = (BooleanResult)AliasFields["SalariedFlag"];
 
 				return m_SalariedFlag;
 			}
 		} 
-        private StringResult m_SalariedFlag = null;
-        public StringResult VacationHours
+        private BooleanResult m_SalariedFlag = null;
+        public NumericResult VacationHours
 		{
 			get
 			{
 				if ((object)m_VacationHours == null)
-					m_VacationHours = (StringResult)AliasFields["VacationHours"];
+					m_VacationHours = (NumericResult)AliasFields["VacationHours"];
 
 				return m_VacationHours;
 			}
 		} 
-        private StringResult m_VacationHours = null;
-        public StringResult SickLeaveHours
+        private NumericResult m_VacationHours = null;
+        public NumericResult SickLeaveHours
 		{
 			get
 			{
 				if ((object)m_SickLeaveHours == null)
-					m_SickLeaveHours = (StringResult)AliasFields["SickLeaveHours"];
+					m_SickLeaveHours = (NumericResult)AliasFields["SickLeaveHours"];
 
 				return m_SickLeaveHours;
 			}
 		} 
-        private StringResult m_SickLeaveHours = null;
-        public StringResult Currentflag
+        private NumericResult m_SickLeaveHours = null;
+        public BooleanResult Currentflag
 		{
 			get
 			{
 				if ((object)m_Currentflag == null)
-					m_Currentflag = (StringResult)AliasFields["Currentflag"];
+					m_Currentflag = (BooleanResult)AliasFields["Currentflag"];
 
 				return m_Currentflag;
 			}
 		} 
-        private StringResult m_Currentflag = null;
+        private BooleanResult m_Currentflag = null;
         public StringResult rowguid
 		{
 			get

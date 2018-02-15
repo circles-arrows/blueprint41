@@ -36,17 +36,6 @@ namespace Domain.Data.Query
 			return this;
 		}
 
-
-		public ProductCategoryOut Out { get { return new ProductCategoryOut(this); } }
-		public class ProductCategoryOut
-		{
-			private ProductCategoryNode Parent;
-			internal ProductCategoryOut(ProductCategoryNode parent)
-			{
-                Parent = parent;
-			}
-			public IFromOut_PRODUCTSUBCATEGORY_IN_PRODUCTCATEGORY_REL PRODUCTSUBCATEGORY_IN_PRODUCTCATEGORY { get { return new PRODUCTSUBCATEGORY_IN_PRODUCTCATEGORY_REL(Parent, DirectionEnum.Out); } }
-		}
 	}
 
     public class ProductCategoryAlias : AliasResult
@@ -75,7 +64,6 @@ namespace Domain.Data.Query
 		}
         private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
-        public ProductCategoryNode.ProductCategoryOut Out { get { return new ProductCategoryNode.ProductCategoryOut(new ProductCategoryNode(this, true)); } }
 
         public StringResult Name
 		{

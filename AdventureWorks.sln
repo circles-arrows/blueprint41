@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datastore", "Datastore\Datastore.csproj", "{3A823A05-B1B3-4C90-AE6F-B0E4CE1ED73D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Datastore", "Datastore\Datastore.csproj", "{3A823A05-B1B3-4C90-AE6F-B0E4CE1ED73D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Datastore.Generated", "Datastore.Generated\Datastore.Generated.csproj", "{D607BF48-266C-4391-86B0-020C6FD0FDFF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41", "Blueprint41\Blueprint41.csproj", "{7446D213-4723-4398-8D8D-30FD19FD1B9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGMSampleCode", "OGMSampleCode\OGMSampleCode.csproj", "{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{7446D213-4723-4398-8D8D-30FD19FD1B9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7446D213-4723-4398-8D8D-30FD19FD1B9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7446D213-4723-4398-8D8D-30FD19FD1B9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

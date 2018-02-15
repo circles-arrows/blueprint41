@@ -17,11 +17,11 @@ namespace Domain.Data.Manipulation
 		System.DateTime BirthDate { get; }
 		string MaritalStatus { get; }
 		string Gender { get; }
-		string HireDate { get; }
-		string SalariedFlag { get; }
-		string VacationHours { get; }
-		string SickLeaveHours { get; }
-		string Currentflag { get; }
+		System.DateTime HireDate { get; }
+		bool SalariedFlag { get; }
+		int VacationHours { get; }
+		int SickLeaveHours { get; }
+		bool Currentflag { get; }
 		string rowguid { get; }
 		EmployeePayHistory EmployeePayHistory { get; }
 		SalesPerson SalesPerson { get; }
@@ -197,10 +197,10 @@ namespace Domain.Data.Manipulation
 				dictionary.Add("BirthDate",  Conversion<System.DateTime, long>.Convert(BirthDate));
 				dictionary.Add("MaritalStatus",  MaritalStatus);
 				dictionary.Add("Gender",  Gender);
-				dictionary.Add("HireDate",  HireDate);
+				dictionary.Add("HireDate",  Conversion<System.DateTime, long>.Convert(HireDate));
 				dictionary.Add("SalariedFlag",  SalariedFlag);
-				dictionary.Add("VacationHours",  VacationHours);
-				dictionary.Add("SickLeaveHours",  SickLeaveHours);
+				dictionary.Add("VacationHours",  Conversion<int, long>.Convert(VacationHours));
+				dictionary.Add("SickLeaveHours",  Conversion<int, long>.Convert(SickLeaveHours));
 				dictionary.Add("Currentflag",  Currentflag);
 				dictionary.Add("rowguid",  rowguid);
 				dictionary.Add("ModifiedDate",  Conversion<System.DateTime, long>.Convert(ModifiedDate));
@@ -224,15 +224,15 @@ namespace Domain.Data.Manipulation
 				if (properties.TryGetValue("Gender", out value))
 					Gender = (string)value;
 				if (properties.TryGetValue("HireDate", out value))
-					HireDate = (string)value;
+					HireDate = Conversion<long, System.DateTime>.Convert((long)value);
 				if (properties.TryGetValue("SalariedFlag", out value))
-					SalariedFlag = (string)value;
+					SalariedFlag = (bool)value;
 				if (properties.TryGetValue("VacationHours", out value))
-					VacationHours = (string)value;
+					VacationHours = Conversion<long, int>.Convert((long)value);
 				if (properties.TryGetValue("SickLeaveHours", out value))
-					SickLeaveHours = (string)value;
+					SickLeaveHours = Conversion<long, int>.Convert((long)value);
 				if (properties.TryGetValue("Currentflag", out value))
-					Currentflag = (string)value;
+					Currentflag = (bool)value;
 				if (properties.TryGetValue("rowguid", out value))
 					rowguid = (string)value;
 				if (properties.TryGetValue("ModifiedDate", out value))
@@ -251,11 +251,11 @@ namespace Domain.Data.Manipulation
 			public System.DateTime BirthDate { get; set; }
 			public string MaritalStatus { get; set; }
 			public string Gender { get; set; }
-			public string HireDate { get; set; }
-			public string SalariedFlag { get; set; }
-			public string VacationHours { get; set; }
-			public string SickLeaveHours { get; set; }
-			public string Currentflag { get; set; }
+			public System.DateTime HireDate { get; set; }
+			public bool SalariedFlag { get; set; }
+			public int VacationHours { get; set; }
+			public int SickLeaveHours { get; set; }
+			public bool Currentflag { get; set; }
 			public string rowguid { get; set; }
 			public EntityCollection<EmployeePayHistory> EmployeePayHistory { get; private set; }
 			public EntityCollection<SalesPerson> SalesPerson { get; private set; }
@@ -289,11 +289,11 @@ namespace Domain.Data.Manipulation
 		public System.DateTime BirthDate { get { LazyGet(); return InnerData.BirthDate; } set { if (LazySet(Members.BirthDate, InnerData.BirthDate, value)) InnerData.BirthDate = value; } }
 		public string MaritalStatus { get { LazyGet(); return InnerData.MaritalStatus; } set { if (LazySet(Members.MaritalStatus, InnerData.MaritalStatus, value)) InnerData.MaritalStatus = value; } }
 		public string Gender { get { LazyGet(); return InnerData.Gender; } set { if (LazySet(Members.Gender, InnerData.Gender, value)) InnerData.Gender = value; } }
-		public string HireDate { get { LazyGet(); return InnerData.HireDate; } set { if (LazySet(Members.HireDate, InnerData.HireDate, value)) InnerData.HireDate = value; } }
-		public string SalariedFlag { get { LazyGet(); return InnerData.SalariedFlag; } set { if (LazySet(Members.SalariedFlag, InnerData.SalariedFlag, value)) InnerData.SalariedFlag = value; } }
-		public string VacationHours { get { LazyGet(); return InnerData.VacationHours; } set { if (LazySet(Members.VacationHours, InnerData.VacationHours, value)) InnerData.VacationHours = value; } }
-		public string SickLeaveHours { get { LazyGet(); return InnerData.SickLeaveHours; } set { if (LazySet(Members.SickLeaveHours, InnerData.SickLeaveHours, value)) InnerData.SickLeaveHours = value; } }
-		public string Currentflag { get { LazyGet(); return InnerData.Currentflag; } set { if (LazySet(Members.Currentflag, InnerData.Currentflag, value)) InnerData.Currentflag = value; } }
+		public System.DateTime HireDate { get { LazyGet(); return InnerData.HireDate; } set { if (LazySet(Members.HireDate, InnerData.HireDate, value)) InnerData.HireDate = value; } }
+		public bool SalariedFlag { get { LazyGet(); return InnerData.SalariedFlag; } set { if (LazySet(Members.SalariedFlag, InnerData.SalariedFlag, value)) InnerData.SalariedFlag = value; } }
+		public int VacationHours { get { LazyGet(); return InnerData.VacationHours; } set { if (LazySet(Members.VacationHours, InnerData.VacationHours, value)) InnerData.VacationHours = value; } }
+		public int SickLeaveHours { get { LazyGet(); return InnerData.SickLeaveHours; } set { if (LazySet(Members.SickLeaveHours, InnerData.SickLeaveHours, value)) InnerData.SickLeaveHours = value; } }
+		public bool Currentflag { get { LazyGet(); return InnerData.Currentflag; } set { if (LazySet(Members.Currentflag, InnerData.Currentflag, value)) InnerData.Currentflag = value; } }
 		public string rowguid { get { LazyGet(); return InnerData.rowguid; } set { if (LazySet(Members.rowguid, InnerData.rowguid, value)) InnerData.rowguid = value; } }
 		public EmployeePayHistory EmployeePayHistory
 		{
@@ -1494,11 +1494,11 @@ namespace Domain.Data.Manipulation
 		System.DateTime IEmployeeOriginalData.BirthDate { get { return OriginalData.BirthDate; } }
 		string IEmployeeOriginalData.MaritalStatus { get { return OriginalData.MaritalStatus; } }
 		string IEmployeeOriginalData.Gender { get { return OriginalData.Gender; } }
-		string IEmployeeOriginalData.HireDate { get { return OriginalData.HireDate; } }
-		string IEmployeeOriginalData.SalariedFlag { get { return OriginalData.SalariedFlag; } }
-		string IEmployeeOriginalData.VacationHours { get { return OriginalData.VacationHours; } }
-		string IEmployeeOriginalData.SickLeaveHours { get { return OriginalData.SickLeaveHours; } }
-		string IEmployeeOriginalData.Currentflag { get { return OriginalData.Currentflag; } }
+		System.DateTime IEmployeeOriginalData.HireDate { get { return OriginalData.HireDate; } }
+		bool IEmployeeOriginalData.SalariedFlag { get { return OriginalData.SalariedFlag; } }
+		int IEmployeeOriginalData.VacationHours { get { return OriginalData.VacationHours; } }
+		int IEmployeeOriginalData.SickLeaveHours { get { return OriginalData.SickLeaveHours; } }
+		bool IEmployeeOriginalData.Currentflag { get { return OriginalData.Currentflag; } }
 		string IEmployeeOriginalData.rowguid { get { return OriginalData.rowguid; } }
 		EmployeePayHistory IEmployeeOriginalData.EmployeePayHistory { get { return ((ILookupHelper<EmployeePayHistory>)OriginalData.EmployeePayHistory).GetOriginalItem(null); } }
 		SalesPerson IEmployeeOriginalData.SalesPerson { get { return ((ILookupHelper<SalesPerson>)OriginalData.SalesPerson).GetOriginalItem(null); } }

@@ -6,14 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Generate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Generate.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
   </ItemGroup>
 

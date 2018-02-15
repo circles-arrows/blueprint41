@@ -192,11 +192,11 @@ namespace Datastore
                 .AddProperty("BirthDate", typeof(DateTime), false)
                 .AddProperty("MaritalStatus", typeof(string), false)
                 .AddProperty("Gender", typeof(string), false)
-                .AddProperty("HireDate", typeof(string), false)
-                .AddProperty("SalariedFlag", typeof(string), false)
-                .AddProperty("VacationHours", typeof(string), false)
-                .AddProperty("SickLeaveHours", typeof(string), false)
-                .AddProperty("Currentflag", typeof(string), false)
+                .AddProperty("HireDate", typeof(DateTime), false)
+                .AddProperty("SalariedFlag", typeof(bool), false)
+                .AddProperty("VacationHours", typeof(int), false)
+                .AddProperty("SickLeaveHours", typeof(int), false)
+                .AddProperty("Currentflag", typeof(bool), false)
                 .AddProperty("rowguid", typeof(string), false);
 
 
