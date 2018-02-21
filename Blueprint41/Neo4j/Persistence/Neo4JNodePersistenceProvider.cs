@@ -236,6 +236,9 @@ namespace Blueprint41.Neo4j.Persistence
             foreach (var record in result)
             {
                 var node = record[0].As<INode>();
+                if (node == null)
+                    continue;
+
                 var key = node.Properties[entity.Key.Name];
 
                 Entity concrete = null;
