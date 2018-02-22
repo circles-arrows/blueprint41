@@ -136,7 +136,9 @@ namespace Blueprint41
                     if (entity.PersistenceState == PersistenceState.Deleted || entity.PersistenceState == PersistenceState.ForceDeleted)
                     {
                         entity.Save();
-                        entitiesByKey[entity.GetEntity().Name].Remove(entity.GetKey());
+                        Dictionary<object, OGM> cache; 
+                        if (entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
+                            cache.Remove(entity.GetKey());
                         entitySet.Remove(entity);
                     }
                 }
