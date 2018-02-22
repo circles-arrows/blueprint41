@@ -175,6 +175,7 @@ namespace Blueprint41.Neo4j.Persistence
                     item = new DynamicEntity(targetEntity, Parser.ShouldExecute);
 
                 item.SetData(node.Properties);
+                item.SetKey(item.GetKey());
                 item.PersistenceState = PersistenceState.Loaded;
             }
 
