@@ -34,25 +34,41 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line 8 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
 
 
-    Debug.WriteLine("	executing {0} -> Rename relationship from {0} to {1}", this.GetType().Name, Name);
+    Debug.WriteLine("	executing {0} -> Rename relationship from {0} to {1}", this.GetType().Name, Relation);
 
             
             #line default
             #line hidden
-            this.Write("MATCH (in)-[rel:");
+            this.Write("MATCH (in:");
             
             #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(InEntity));
             
             #line default
             #line hidden
-            this.Write("]-(out)\r\nWITH rel LIMIT 10000\r\nDELETE rel\r\n");
+            this.Write(")-[rel:");
+            
+            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relation));
+            
+            #line default
+            #line hidden
+            this.Write("]->(out:");
+            
+            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(OutEntity));
+            
+            #line default
+            #line hidden
+            this.Write(")\r\nWITH rel LIMIT 10000\r\nDELETE rel\r\n");
             return this.GenerationEnvironment.ToString();
         }
         
         #line 15 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
 
-    public string	Name { get; set; }
+	public string InEntity { get; set; }
+    public string Relation { get; set; }
+	public string OutEntity { get; set; }
 
         
         #line default

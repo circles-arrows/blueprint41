@@ -224,7 +224,9 @@ namespace Blueprint41
         {
             Parser.ExecuteBatched<RemoveRelationship>(delegate (RemoveRelationship template)
             {
-                template.Name = Neo4JRelationshipType;
+                template.InEntity = InEntity.Label.Name;
+                template.Relation = Neo4JRelationshipType;
+                template.OutEntity = OutEntity.Label.Name;
             });
 
             if (this.InProperty != null)

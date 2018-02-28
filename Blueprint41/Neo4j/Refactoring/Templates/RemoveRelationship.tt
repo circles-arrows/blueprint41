@@ -7,11 +7,13 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Rename relationship from {0} to {1}", this.GetType().Name, Name);
+    Debug.WriteLine("	executing {0} -> Rename relationship from {0} to {1}", this.GetType().Name, Relation);
 #>
-MATCH (in)-[rel:<#= Name #>]-(out)
+MATCH (in:<#= InEntity #>)-[rel:<#= Relation #>]->(out:<#= OutEntity #>)
 WITH rel LIMIT 10000
 DELETE rel
 <#+
-    public string	Name { get; set; }
+	public string InEntity { get; set; }
+    public string Relation { get; set; }
+	public string OutEntity { get; set; }
 #>
