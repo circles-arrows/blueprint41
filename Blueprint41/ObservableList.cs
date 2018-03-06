@@ -8,17 +8,16 @@ using System.Threading.Tasks;
 
 namespace Blueprint41
 {
-    public sealed class ObservableList<T> : IList<T>, INotifyCollectionChanged
+    public sealed class ObservableList<T> : IList<T>, INotifyChanged<T>
     {
         private List<T> InnerList;
-        public event NotifyCollectionChangedEventHandler BeforeCollectionChanged;
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyChangedEventHandler<T> BeforeCollectionChanged;
+        public event NotifyChangedEventHandler<T> CollectionChanged;
 
         public ObservableList()
         {
             InnerList = new List<T>();
         }
-
         public ObservableList(IEnumerable<T> items)
         {
             InnerList = new List<T>(items);
@@ -34,79 +33,67 @@ namespace Blueprint41
             {
                 if ((object)InnerList[index] != (object)value)
                 {
-                    NotifyCollectionChangedEventArgs eventArgs = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, (object)InnerList[index], index);
+                    NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Replace, value, InnerList[index], index);
                     BeforeCollectionChanged?.Invoke(this, eventArgs);
                     InnerList[index] = value;
                     CollectionChanged?.Invoke(this, eventArgs);
                 }
             }
         }
-
         public int Count => InnerList.Count;
-
         public bool IsReadOnly => false;
-
         public void Add(T item)
         {
-            NotifyCollectionChangedEventArgs eventArgs = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item);
+            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Add, item);
             BeforeCollectionChanged?.Invoke(this, eventArgs);
             InnerList.Add(item);
             CollectionChanged?.Invoke(this, eventArgs);
         }
-
         public void Clear()
         {
-            NotifyCollectionChangedEventArgs eventArgs = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Reset);
             BeforeCollectionChanged?.Invoke(this, eventArgs);
             InnerList.Clear();
             CollectionChanged?.Invoke(this, eventArgs);
         }
-
         public bool Contains(T item)
         {
             return InnerList.Contains(item);
         }
-
         public void CopyTo(T[] array, int arrayIndex)
         {
             InnerList.CopyTo(array, arrayIndex);
         }
-
         public IEnumerator<T> GetEnumerator()
         {
             return InnerList.GetEnumerator();
         }
-
         public int IndexOf(T item)
         {
             return InnerList.IndexOf(item);
         }
-
         public void Insert(int index, T item)
         {
-            NotifyCollectionChangedEventArgs eventArgs = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index);
+            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Add, item, index);
             BeforeCollectionChanged?.Invoke(this, eventArgs);
             InnerList.Insert(index, item);
             CollectionChanged?.Invoke(this, eventArgs);
         }
-
         public bool Remove(T item)
         {
-            NotifyCollectionChangedEventArgs eventArgs = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item);
+            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Remove, item);
             BeforeCollectionChanged?.Invoke(this, eventArgs);
             bool result = InnerList.Remove(item);
             CollectionChanged?.Invoke(this, eventArgs);
             return result;
         }
-
         public void RemoveAt(int index)
         {
-            NotifyCollectionChangedEventArgs eventArgs = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, InnerList[index], index);
+            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Remove, InnerList[index], index);
             BeforeCollectionChanged?.Invoke(this, eventArgs);
             InnerList.RemoveAt(index);
             CollectionChanged?.Invoke(this, eventArgs);
         }
-
         IEnumerator IEnumerable.GetEnumerator()
         {
             return InnerList.GetEnumerator();
