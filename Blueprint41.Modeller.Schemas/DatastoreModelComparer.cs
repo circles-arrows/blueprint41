@@ -14,12 +14,38 @@ namespace Blueprint41.Modeller.Schemas
             if (!File.Exists(dll))
                 return null;
 
-            byte[] assembly = File.ReadAllBytes(dll);
-            Assembly asm = Assembly.Load(assembly);
-            Type type = asm.GetTypes().First(x => x.Name == "DatastoreModelComparerImpl");
+            Type type = AssemblyLoader.GetType(dll, "DatastoreModelComparerImpl");
             return (DatastoreModelComparer)Activator.CreateInstance(type);
         }, true);
 
         public abstract void GenerateUpgradeScript(modeller model, string storagePath);
+    }
+
+    public static class AssemblyLoader
+    {
+        public static Assembly Load(string assemblyFile)
+        {
+            byte[] assemblyBytes = File.ReadAllBytes(assemblyFile);
+            return Assembly.Load(assemblyBytes);
+        }
+
+        public static Type GetType(string assemblyFile, string typeName)
+        {
+            Assembly assembly = Load(assemblyFile);
+            return assembly.GetTypes().First(x => x.Name == typeName);
+        }
+
+        public static Assembly Load(string assemblyFile, string pdbFile)
+        {
+            byte[] assemblyBytes = File.ReadAllBytes(assemblyFile);
+            byte[] pdbBytes = File.ReadAllBytes(pdbFile);
+            return Assembly.Load(assemblyBytes, pdbBytes);
+        }
+        public static Type GetType(string assemblyFile, string pdbFile, string typeName)
+        {
+            Assembly assembly = Load(assemblyFile, pdbFile);
+            return assembly.GetTypes().First(x => x.Name == typeName);
+        }
+
     }
 }
