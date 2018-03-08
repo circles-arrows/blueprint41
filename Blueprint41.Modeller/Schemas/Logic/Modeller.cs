@@ -51,7 +51,7 @@ namespace Blueprint41.Modeller.Schemas
 
         protected override void InitializeLogic()
         {
-            PopulateKnownGuids();
+            //PopulateKnownGuids();
 
             OnEntitiesChanged += delegate (object sender, PropertyChangedEventArgs<EntitiesLocalType> e)
             {

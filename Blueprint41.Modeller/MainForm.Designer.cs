@@ -309,7 +309,7 @@
             this.toolStripDropDownButton3.Name = "toolStripDropDownButton3";
             this.toolStripDropDownButton3.Size = new System.Drawing.Size(139, 27);
             this.toolStripDropDownButton3.Text = "Generate Upgrade Script";
-            this.toolStripDropDownButton3.Click += new System.EventHandler(this.toolStripDropDownButton3_Click);
+            this.toolStripDropDownButton3.Click += new System.EventHandler(this.toolStripDropDownButtonGenerateUpgradeScript_Click);
             // 
             // MainForm
             // 

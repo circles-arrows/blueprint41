@@ -620,7 +620,7 @@ namespace Blueprint41.Modeller
             functionalIdForm.ShowDialog(this);
         }
 
-        private void toolStripDropDownButton3_Click(object sender, EventArgs e)
+        private void toolStripDropDownButtonGenerateUpgradeScript_Click(object sender, EventArgs e)
         {
             if (DatastoreModelComparer.Instance == null)
                 MessageBox.Show("The comparer is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);

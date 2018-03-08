@@ -31,7 +31,7 @@ namespace Blueprint41.Modeller
             Entity = entity;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             Entity.StaticData.Records.Record.Clear();
             foreach (DataRow dr in DataTable.Rows)
@@ -56,8 +56,8 @@ namespace Blueprint41.Modeller
                     
                     record.Property.Add(new Property()
                     {
+                        Value = value,
                         PropertyGuid = clm.ColumnName,
-                        Value = value
                     });
                 }
                 Entity.StaticData.Records.Record.Add(record);
