@@ -3,6 +3,7 @@ using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Refactoring;
 using Blueprint41.Neo4j.Refactoring.Templates;
 using Blueprint41.Neo4j.Schema;
+using Force.Crc32;
 using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
@@ -270,26 +271,38 @@ namespace Blueprint41
 
         internal Guid GenerateGuid(string name)
         {
-            Guid hash = GetHash(name);
+            byte[] b1 = Encoding.UTF8.GetBytes(name);
+            byte[] b2 = new byte[b1.Length];
+            for (int read = 0, write = b1.Length - 1; write >= 0; read++, write--)
+                b2[write] = b1[read];
+
+            Guid hash = GetHash(b1, b2);
 
             while (knownGuids.Contains(hash))
             {
-                name = string.Concat(name + "Conflict...");
-                hash = GetHash(name);
+                for (int index = 0; index < 8; index++)
+                {
+                    b1[index]++;
+                    if (b1[index] != 0)
+                        break;
+                }
+                hash = GetHash(b1, b2);
             }
 
             knownGuids.Add(hash);
             return hash;
         }
-        private static Guid GetHash(string name)
+
+        private static Guid GetHash(byte[] b1, byte[] b2)
         {
-            using (MD5 md5 = MD5.Create())
-            {
-                byte[] hash = md5.ComputeHash(Encoding.Default.GetBytes(name));
-                return new Guid(hash);
-            }
+            uint i1 = Crc32Algorithm.Compute(b1);
+            uint i2 = Crc32CAlgorithm.Compute(b2);
+            byte[] i3 = BitConverter.GetBytes(Crc32Algorithm.Compute(b1));
+            byte[] i4 = BitConverter.GetBytes(Crc32CAlgorithm.Compute(b2));
+
+            return new Guid(i1, (ushort)i2, (ushort)(i2 >> 16), i3[0], i3[1], i3[2], i3[3], i4[0], i4[1], i4[2], i4[3]);
         }
-        private List<Guid> knownGuids = new List<Guid>();
+        private HashSet<Guid> knownGuids = new HashSet<Guid>();
     }
 
     public abstract class DatastoreModel<TSelf> : DatastoreModel
@@ -306,9 +319,13 @@ namespace Blueprint41
                     {
                         if (model == null)
                         {
-                            TSelf m = new TSelf();
-                            m.Execute(false);
-                            model = m;
+                            model = RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
+                            if (model == null)
+                            {
+                                TSelf m = new TSelf();
+                                m.Execute(false);
+                                model = m;
+                            }
                         }
                     }
                 }

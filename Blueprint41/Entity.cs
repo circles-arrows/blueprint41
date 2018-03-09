@@ -97,7 +97,7 @@ namespace Blueprint41
         public bool IsVirtual { get; private set; }
 
         private bool containsStaticData = false;
-        public bool ContainsStaticData { get { return (containsStaticData  || StaticData.Count != 0); } }
+        public bool ContainsStaticData { get { return (containsStaticData  || staticData.Count != 0); } }
         public Entity Inherits { get; private set; }
 
         public model.Label Label { get; private set; }
@@ -241,8 +241,8 @@ namespace Blueprint41
             return this;
         }
 
-        private List<DynamicEntity> staticData = new List<DynamicEntity>();
-        public IReadOnlyList<DynamicEntity> StaticData { get { return staticData; } }
+        private FastDictionary<object, DynamicEntity> staticData = new FastDictionary<object, DynamicEntity>();
+        public IReadOnlyCollection<DynamicEntity> StaticData { get { return (IReadOnlyCollection<DynamicEntity>)staticData.Values; } }
 
         private string summary = null;
         public Entity Summary(string summary)
@@ -456,10 +456,12 @@ namespace Blueprint41
         {
             DynamicEntity entity = new DynamicEntity(this, Parser.ShouldExecute, node);
 
-            if (staticData.Any(item => item.GetKey() == entity.GetKey()))
+            object key = entity.GetKey();
+
+            if (staticData.ContainsKey(key))
                 throw new PersistenceException(string.Format("An static entity with the same key already exists."));
 
-            staticData.Add(entity);
+            staticData.Add(key, entity);
 
             return entity;
         }
@@ -471,14 +473,14 @@ namespace Blueprint41
             if (!Key.SystemReturnType.IsAssignableFrom(key.GetType()))
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
 
-            int index = staticData.FindIndex(item => item.GetKey().Equals(key));
-            if (index == -1)
+            DynamicEntity value;
+            if (!staticData.TryGetValue(key, out value))
                 throw new ArgumentOutOfRangeException($"Only statically created data (via the upgrade script) can be loaded here.");
 
             if (Parser.ShouldExecute)
                 return DynamicEntity.Load(this, key);
             else
-                return staticData[index];
+                return value;
         }
         void IRefactorEntity.DeleteNode(object key)
         {
@@ -488,11 +490,9 @@ namespace Blueprint41
             if (!Key.SystemReturnType.IsAssignableFrom(key.GetType()))
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
 
-            int index = staticData.FindIndex(item => item.GetKey().Equals(key));
-            if (index == -1)
+            if (!staticData.Remove(key))
                 throw new ArgumentOutOfRangeException($"Only statically created data (via the upgrade script) can be deleted here.");
 
-            staticData.RemoveAt(index);
             if (Parser.ShouldExecute)
                 DynamicEntity.Delete(this, key);
         }
@@ -556,40 +556,40 @@ namespace Blueprint41
         {
             foreach (Entity entity in GetConcreteClasses())
             {
-                foreach (DynamicEntity item in entity.staticData)
-                    item.RefactorActionPropertyAdded(property);
+                foreach (KeyValuePair<object, DynamicEntity> item in entity.staticData)
+                    item.Value.RefactorActionPropertyAdded(property);
             }
         }
         internal void DynamicEntityPropertyRenamed(string oldname, Property property, MergeAlgorithm mergeAlgorithm = MergeAlgorithm.NotApplicable)
         {
             foreach (Entity entity in GetConcreteClasses())
             {
-                foreach (DynamicEntity item in entity.staticData)
-                    item.RefactorActionPropertyRenamed(oldname, property, mergeAlgorithm);
+                foreach (KeyValuePair<object, DynamicEntity> item in entity.staticData)
+                    item.Value.RefactorActionPropertyRenamed(oldname, property, mergeAlgorithm);
             }
         }
         internal void DynamicEntityPropertyConverted(Property property, Type target)
         {
             foreach (Entity entity in GetConcreteClasses())
             {
-                foreach (DynamicEntity item in entity.staticData)
-                    item.RefactorActionPropertyConverted(property, target);
+                foreach (KeyValuePair<object, DynamicEntity> item in entity.staticData)
+                    item.Value.RefactorActionPropertyConverted(property, target);
             }
         }
         internal void DynamicEntityPropertyRerouted(string oldname, Entity to, Property property)
         {
             foreach (Entity entity in GetConcreteClasses())
             {
-                foreach (DynamicEntity item in entity.staticData)
-                    item.RefactorActionPropertyRerouted(oldname, to, property);
+                foreach (KeyValuePair<object, DynamicEntity> item in entity.staticData)
+                    item.Value.RefactorActionPropertyRerouted(oldname, to, property);
             }
         }
         internal void DynamicEntityPropertyRemoved(Property property)
         {
             foreach (Entity entity in GetConcreteClasses())
             {
-                foreach (DynamicEntity item in entity.staticData)
-                    item.RefactorActionPropertyRemoved(property);
+                foreach (KeyValuePair<object, DynamicEntity> item in entity.staticData)
+                    item.Value.RefactorActionPropertyRemoved(property);
             }
         }
 

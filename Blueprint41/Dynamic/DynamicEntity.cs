@@ -462,8 +462,9 @@ namespace Blueprint41.Dynamic
             if (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged)
                 throw new InvalidOperationException("You cannot set the key unless if the object is a newly created one.");
 
-            if (HasKey)
-                throw new InvalidOperationException("You cannot set the key multiple times.");
+            // this check is not desired because we want to be able to update PK value during script and it's a bit slow on top of that...
+            //if (HasKey)
+            //    throw new InvalidOperationException("You cannot set the key multiple times.");
         }
         private void KeySet()
         {
