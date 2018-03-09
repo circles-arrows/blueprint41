@@ -97,7 +97,7 @@ namespace Blueprint41
         public bool IsVirtual { get; private set; }
 
         private bool containsStaticData = false;
-        public bool ContainsStaticData { get { return (containsStaticData  || staticData.Count != 0); } }
+        public bool ContainsStaticData { get { return (containsStaticData || staticData.Count != 0); } }
         public Entity Inherits { get; private set; }
 
         public model.Label Label { get; private set; }
@@ -242,7 +242,7 @@ namespace Blueprint41
         }
 
         private FastDictionary<object, DynamicEntity> staticData = new FastDictionary<object, DynamicEntity>();
-        public IReadOnlyCollection<DynamicEntity> StaticData { get { return (IReadOnlyCollection<DynamicEntity>)staticData.Values; } }
+        public ICollection<DynamicEntity> StaticData { get { return staticData.Values; } }
 
         private string summary = null;
         public Entity Summary(string summary)
@@ -338,7 +338,7 @@ namespace Blueprint41
                 template.NewName = newName;
             });
 
-            if(this.IsAbstract == false)
+            if (this.IsAbstract == false)
                 Refactor.ApplyConstraints();
         }
 
@@ -977,7 +977,7 @@ namespace Blueprint41
         private List<Entity> concreteClasses = null;
         public List<Entity> GetConcreteClasses()
         {
-            return InitSubList(ref concreteClasses, delegate(List<Entity> classes)
+            return InitSubList(ref concreteClasses, delegate (List<Entity> classes)
             {
                 foreach (Entity item in Parent.Entities)
                 {
