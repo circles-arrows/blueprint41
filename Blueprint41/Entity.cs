@@ -242,7 +242,7 @@ namespace Blueprint41
         }
 
         private FastDictionary<object, DynamicEntity> staticData = new FastDictionary<object, DynamicEntity>();
-        public IReadOnlyCollection<DynamicEntity> StaticData { get { return (IReadOnlyCollection<DynamicEntity>)staticData.Values; } }
+        public ICollection<DynamicEntity> StaticData { get { return staticData.Values; } }
 
         private string summary = null;
         public Entity Summary(string summary)
