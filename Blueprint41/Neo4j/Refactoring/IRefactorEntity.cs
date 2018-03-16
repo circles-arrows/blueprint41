@@ -19,6 +19,7 @@ namespace Blueprint41.Neo4j.Refactoring
         void CopyValue(string source, string target);
 
         void ApplyLabels();
+        void ChangeInheritance(Entity entity);
         void ApplyConstraints();
         void CreateIndexes();
 

@@ -520,6 +520,31 @@ namespace Blueprint41
             }
         }
 
+        void IRefactorEntity.ChangeInheritance(Entity newParentEntity)
+        {
+            Entity originalParent = this.Inherits;
+            if (originalParent != null)
+            {
+                bool hasMandatoryProperty = false;
+                Entity newParent = newParentEntity;
+                while (newParent != null && newParent != originalParent)
+                {
+                    if (newParent.Properties.Any(prop => !prop.Nullable))
+                        hasMandatoryProperty = true;
+
+                    newParent = newParent.Inherits;
+                }
+
+                if (newParent == null)
+                    throw new NotSupportedException();
+
+                if (hasMandatoryProperty)
+                    throw new NotSupportedException();
+            }
+
+            Inherits = newParentEntity;
+        }
+
         void IRefactorEntity.ResetFunctionalId()
         {
             if (Inherits?.FunctionalId != null)
