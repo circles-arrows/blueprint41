@@ -66,6 +66,16 @@ namespace Blueprint41
                     scripts.Add(new UpgradeScript(method, attr.Major, attr.Minor, attr.Patch, info.Name));
                 }
             }
+            scripts.Sort();
+
+            UpgradeScript prev = null;
+            foreach (UpgradeScript item in scripts)
+            {
+                if (prev != null && prev.Equals(item)) // don't use prev == item !!!!
+                    throw new NotSupportedException($"There are two methods ({prev.Name} & {item.Name}) with the same script version ({item.Major}.{item.Minor}.{item.Patch}).");
+
+                prev = item;
+            }
 
             return scripts;
         }
@@ -91,8 +101,7 @@ namespace Blueprint41
                 throw new InvalidOperationException();
 
             List<UpgradeScript> scripts = GetUpgradeScripts();
-
-            scripts.Sort();
+            
             bool anyScriptRan = false;
             foreach (UpgradeScript script in scripts.Where(item => predicate.Invoke(item)))
             {
@@ -157,6 +166,7 @@ namespace Blueprint41
 
         protected abstract void SubscribeEventHandlers();
 
+        [DebuggerDisplay("UpgradeScript: {Major}.{Minor}.{Patch} ({Name})")]
         internal class UpgradeScript : IComparable<UpgradeScript>
         {
             public UpgradeScript(Action method, long major, long minor, long patch, string name)
@@ -196,6 +206,26 @@ namespace Blueprint41
                     return result;
 
                 return this.Name.CompareTo(other.Name);
+            }
+
+            public override bool Equals(object obj)
+            {
+                UpgradeScript other = obj as UpgradeScript;
+                if ((object)other == null)
+                    return false;
+
+                return (Patch == other.Patch && Minor == other.Minor && Major == other.Major);
+            }
+
+            public override int GetHashCode()
+            {
+                return Patch.GetHashCode() ^ ROL(Minor.GetHashCode(), 10) ^ ROL(Major.GetHashCode(), 20) ^ Name.GetHashCode();
+
+                int ROL(int value, int bits)
+                {
+                    uint val = (uint)value;
+                    return (int)((val << bits) | (val >> (32 - bits)));
+                }
             }
         }
 
