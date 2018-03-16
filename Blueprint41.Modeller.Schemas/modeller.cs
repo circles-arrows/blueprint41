@@ -33,7 +33,7 @@ namespace Blueprint41.Modeller.Schemas
 
         public void RemoveMapping<T>(T item)
         {
-            
+
         }
         public void RemoveEntityMapping(entity entity)
         {
@@ -63,7 +63,7 @@ namespace Blueprint41.Modeller.Schemas
         }
         #endregion
         #region Records
-       public void RemoveRecordMapping(record record)
+        public void RemoveRecordMapping(record record)
         {
             record.mappingGuid = null;
         }
@@ -108,6 +108,128 @@ namespace Blueprint41.Modeller.Schemas
                 }
             }
         }
+    }
+
+    #region PrepareForComparison
+
+    public partial class modeller
+    {
+
+        public void PrepareForComparison()
+        {
+            foreach (entity entity in entities.entity)
+            {
+                if (!string.IsNullOrEmpty(entity.inherits))
+                    entity.Inherits = FindEntity(entity.inherits);
+
+                entity.Key = entity.primitive.FirstOrDefault(item => item.isKey);
+
+                foreach (record record in entity.staticData.records.record)
+                {
+                    record.Entity = entity;
+
+                    foreach (property property in record.property)
+                        property.Primitive = record.Entity.FindPrimitive(property.propertyGuid);
+
+                    record.Key = record.property.FirstOrDefault(item => item.Primitive.isKey);
+                }
+            }
+        }
+
+        public partial class entitiesLocalType { }
+        public partial class relationshipsLocalType { }
+        public partial class submodelsLocalType { }
+        public partial class functionalIdsLocalType { }
+
+        
+    }
+
+    public partial class nodeReference
+    {
+    }
+
+    public partial class relationship
+    {
 
     }
+    public partial class primitive
+    {
+
+    }
+    public partial class staticData
+    {
+
+    }
+    public partial class records
+    {
+
+    }
+
+    public partial class record
+    {
+        public entity Entity { get; internal set; }
+        public property Key { get; internal set; }
+    }
+
+    public partial class property
+    {
+        public primitive Primitive { get; internal set; }
+    }
+    public partial class entity
+    {
+        private primitive key = null;
+        public primitive Key
+        {
+            get
+            {
+                if (key == null)
+                    key = Inherits?.Key;
+
+                return key;
+            }
+            internal set
+            {
+                key = value;
+            }
+        }
+        public entity Inherits { get; internal set; }
+
+        public primitive FindPrimitive(string guid)
+        {
+            if (string.IsNullOrWhiteSpace(guid))
+                return null;
+
+            if (primitivesByGuid == null)
+                primitivesByGuid = primitive.ToDictionary(key => new Guid(key.guid), value => value);
+
+            primitive found;
+            primitivesByGuid.TryGetValue(new Guid(guid), out found);
+
+            if (found == null && Inherits != null)
+                found = Inherits.FindPrimitive(guid);
+
+            return found;
+        }
+
+        private Dictionary<Guid, primitive> primitivesByGuid = null;
+    }
+
+    public partial class submodel
+    {
+        public partial class nodeLocalType
+        {
+
+        }
+    }
+    public partial class functionalIds
+    {
+
+    }
+    public partial class functionalId
+    {
+
+    }
+
+
+    #endregion
 }
