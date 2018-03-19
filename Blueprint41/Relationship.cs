@@ -173,8 +173,8 @@ namespace Blueprint41
 
             if (InProperty != null)
             {
-                InEntity.Properties.Remove(Name);
-                target.Properties.Add(Name, InProperty);
+                InEntity.Properties.Remove(InProperty.Name);
+                target.Properties.Add(InProperty.Name, InProperty);
                 InProperty.SetParentEntity(target);
             }
             if (OutProperty != null)
@@ -191,8 +191,8 @@ namespace Blueprint41
 
             if (OutProperty != null)
             {
-                OutEntity.Properties.Remove(Name);
-                target.Properties.Add(Name, OutProperty);
+                OutEntity.Properties.Remove(OutProperty.Name);
+                target.Properties.Add(OutProperty.Name, OutProperty);
                 OutProperty.SetParentEntity(target);
             }
             if (InProperty != null)
