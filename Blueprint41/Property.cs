@@ -294,6 +294,7 @@ namespace Blueprint41
 
             Parent.Properties.Remove(Name);
             target.Properties.Add(Name, this);
+            this.Parent = target;
         }
         //void IRefactorProperty.Move(string pattern, string newPropertyName)
         //{
