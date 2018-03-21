@@ -125,13 +125,13 @@ namespace Blueprint41
                         }
                         else
                         {
-                            script.Method.Invoke();
+                            RunScriptChecked(script);
                         }
                     }
                 }
                 else
                 {
-                    script.Method.Invoke();
+                    RunScriptChecked(script);
                 }
             }
 
@@ -162,6 +162,36 @@ namespace Blueprint41
             executed = true;
 
 #pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        private void RunScriptChecked(UpgradeScript script)
+        {
+            try
+            {
+                script.Method.Invoke();
+            }
+            catch(Exception e)
+            {
+                int line = 0;
+
+                StackTrace stack = new StackTrace(e, true);
+                for (int frameIndex = 0; frameIndex < stack.FrameCount; frameIndex++)
+                {
+                    StackFrame frame = stack.GetFrame(frameIndex);
+                    MethodBase method = frame.GetMethod();
+                    if (method == null)
+                        continue;
+
+                    VersionAttribute attr = method.GetCustomAttribute<VersionAttribute>();
+                    if (attr != null)
+                    {
+                        line = frame.GetFileLineNumber();
+                        break;
+                    }
+                }
+
+                throw new InvalidOperationException($"Error in script version {script.Major}.{script.Minor}.{script.Patch}: {e.Message} @ line {line}, ex: {e.StackTrace}");
+            }
         }
 
         protected abstract void SubscribeEventHandlers();
