@@ -124,14 +124,17 @@ namespace Blueprint41.Modeller.Schemas
 
                 entity.Key = entity.primitive.FirstOrDefault(item => item.isKey);
 
-                foreach (record record in entity.staticData.records.record)
+                if (entity.staticData != null)
                 {
-                    record.Entity = entity;
+                    foreach (record record in entity.staticData.records.record)
+                    {
+                        record.Entity = entity;
 
-                    foreach (property property in record.property)
-                        property.Primitive = record.Entity.FindPrimitive(property.propertyGuid);
+                        foreach (property property in record.property)
+                            property.Primitive = record.Entity.FindPrimitive(property.propertyGuid);
 
-                    record.Key = record.property.FirstOrDefault(item => item.Primitive.isKey);
+                        record.Key = record.property.FirstOrDefault(item => item.Primitive.isKey);
+                    }
                 }
             }
         }
