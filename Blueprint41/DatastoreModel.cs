@@ -190,7 +190,7 @@ namespace Blueprint41
                     }
                 }
 
-                throw new InvalidOperationException($"Error in script version {script.Major}.{script.Minor}.{script.Patch}: {e.Message} @ line {line}, ex: {e.StackTrace}");
+                throw new InvalidOperationException($"Error in script version {script.Major}.{script.Minor}.{script.Patch}, line {line} -> {e.Message}");
             }
         }
 
