@@ -18,7 +18,7 @@ namespace Blueprint41.DatastoreTemplates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+    #line 1 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     public partial class Domain_Data_Register : GeneratorBase
     {
@@ -28,9 +28,9 @@ namespace Blueprint41.DatastoreTemplates
         /// </summary>
         public override string TransformText()
         {
-            this.Write("using Blueprint41.Core;\r\n\r\nnamespace ");
+            this.Write("\r\nusing System;\r\nusing Blueprint41.Core;\r\n\r\nnamespace ");
             
-            #line 8 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 10 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullCRUDNamespace));
             
             #line default
@@ -55,7 +55,7 @@ namespace Blueprint41.DatastoreTemplates
 
 ");
             
-            #line 26 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 28 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
 
 foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
 {	
@@ -65,35 +65,35 @@ foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
             #line hidden
             this.Write("                ((ISetRuntimeType)");
             
-            #line 30 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 32 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
             
             #line default
             #line hidden
             this.Write(".Model.Entities[\"");
             
-            #line 30 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 32 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("\"]).SetRuntimeTypes(typeof(");
             
-            #line 30 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 32 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("), typeof(");
             
-            #line 30 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 32 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n");
             
-            #line 31 "C:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 33 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
 
 }
 

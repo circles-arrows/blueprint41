@@ -4,6 +4,8 @@
 <#@ import namespace="Blueprint41" #>
 <#@ import namespace="Blueprint41.Core" #>
 <#@ includeForIntellisenseOnly processor="tangibleT4Editor" file="$(ProjectDir)DatastoreTemplates\Generator.ttinclude" #>
+using System;
+
 using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
