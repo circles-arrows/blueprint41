@@ -8,6 +8,32 @@ namespace Blueprint41.Query
 {
     public class AliasResult : Result
     {
+        public static QueryCondition operator ==(AliasResult a, AliasResult b)
+        {
+            return new QueryCondition(a, Operator.Equals, b);
+        }
+        public static QueryCondition operator ==(AliasResult a, Parameter b)
+        {
+            return new QueryCondition(a, Operator.Equals, b);
+        }
+        public static QueryCondition operator !=(AliasResult a, AliasResult b)
+        {
+            return new QueryCondition(a, Operator.NotEquals, b);
+        }
+        public static QueryCondition operator !=(AliasResult a, Parameter b)
+        {
+            return new QueryCondition(a, Operator.NotEquals, b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public string AliasName { get; internal set; }
         public Node Node { get; protected set; }
 

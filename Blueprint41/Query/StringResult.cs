@@ -77,6 +77,10 @@ namespace Blueprint41.Query
         public StringResult(AliasResult alias, string fieldName, Entity entity, Property property, Type overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
         public StringResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
 
+        public StringListResult Collect() {
+            return new StringListResult(this, "collect({base})");
+        }
+
         public StringResult ToUpperCase()
         {
             return new StringResult(this, "upper({base})");

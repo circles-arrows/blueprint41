@@ -64,6 +64,12 @@ namespace <#= Settings.FullQueryNamespace #>
 			return this;
 		}
 
+		public <#= DALModel.Name #>Node UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
+			return this;
+        }
+
 <#
 	var inRelations =  Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.InEntity)).OrderBy(item => item.Name);
 	var outRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity)).OrderBy(item => item.Name);

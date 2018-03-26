@@ -42,7 +42,7 @@ namespace Blueprint41.Query
             do
             {
                 GetDirection(current, state.Text);
-                if (current.NodeAlias != null)
+                if ((object)current.NodeAlias != null)
                 {
                     if (current.NodeAlias.AliasName == null)
                         current.NodeAlias.AliasName = string.Format("n{0}", state.patternSeq++);
@@ -62,7 +62,7 @@ namespace Blueprint41.Query
                 if (current.ToRelationship != null)
                 {
                     GetDirection(current.ToRelationship, state.Text);
-                    if (current.ToRelationship.RelationshipAlias != null)
+                    if ((object)current.ToRelationship.RelationshipAlias != null)
                     {
                         current.ToRelationship.RelationshipAlias.AliasName = string.Format("r{0}", state.patternSeq++);
                         state.Text.AppendFormat("[{0}:{1}]", current.ToRelationship.RelationshipAlias.AliasName, current.ToRelationship.NEO4J_TYPE);

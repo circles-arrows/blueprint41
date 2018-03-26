@@ -174,6 +174,23 @@ namespace Blueprint41.Query
             return new QueryCondition(this, Operator.In, parameter);
         }
 
+        public QueryCondition In(Result alias)
+        {
+            return new QueryCondition(this, Operator.In, alias);
+        }
+
+        public QueryCondition NotIn(Parameter parameter)
+        {
+            BooleanResult result = new BooleanResult(this, "NOT ({base})");
+            return new QueryCondition(result, Operator.In, parameter);
+        }
+
+        public QueryCondition NotIn(Result alias)
+        {
+            BooleanResult result = new BooleanResult(this, "NOT ({base})");
+            return new QueryCondition(result, Operator.In, alias);
+        }
+
         public AsResult As(string aliasName)
         {
             return new AsResult(this, aliasName);
