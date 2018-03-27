@@ -144,7 +144,7 @@ namespace Blueprint41.Modeller.Schemas
         public partial class submodelsLocalType { }
         public partial class functionalIdsLocalType { }
 
-        
+
     }
 
     public partial class nodeReference
