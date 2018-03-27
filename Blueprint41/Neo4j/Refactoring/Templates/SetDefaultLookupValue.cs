@@ -82,8 +82,8 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write(")\r\nWITH in, count(out) as count\r\nWHERE count = 0\r\nWITH in LIMIT 10000\r\nCREATE UNI" +
-                    "QUE (in)-[rel:");
+            this.Write(")\r\nWITH in, count(out) as count, target\r\nWHERE count = 0\r\nWITH in, target LIMIT 1" +
+                    "0000\r\nCREATE UNIQUE (in)-[rel:");
             
             #line 18 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Relationship.Neo4JRelationshipType));
