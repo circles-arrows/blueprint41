@@ -155,7 +155,7 @@ namespace Blueprint41.Neo4j.Schema
             {
                 foreach (var diff in GetFunctionalIdDifferences())
                 {
-                    Console.WriteLine(diff.ToString());
+                    System.Diagnostics.Debug.WriteLine(diff.ToString());
                     foreach (var query in diff.ToCypher())
                     {
                         Persistence.Neo4jTransaction.Run(query);
@@ -175,7 +175,7 @@ namespace Blueprint41.Neo4j.Schema
                     {
                         foreach (var cql in action.ToCypher())
                         {
-                            //Console.WriteLine(diff.ToString());
+                            //System.Diagnostics.Debug.WriteLine(diff.ToString());
                             Persistence.Neo4jTransaction.Run(cql);
                         }
                     }
