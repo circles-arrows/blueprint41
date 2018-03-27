@@ -133,7 +133,7 @@ namespace Blueprint41.Modeller.Schemas
                         foreach (property property in record.property)
                             property.Primitive = record.Entity.FindPrimitive(property.propertyGuid);
 
-                        record.Key = record.property.FirstOrDefault(item => item.Primitive.isKey);
+                        record.Key = record.property.Where(item => item.Primitive != null).FirstOrDefault(item => item.Primitive.isKey);
                     }
                 }
             }
@@ -144,7 +144,7 @@ namespace Blueprint41.Modeller.Schemas
         public partial class submodelsLocalType { }
         public partial class functionalIdsLocalType { }
 
-        
+
     }
 
     public partial class nodeReference

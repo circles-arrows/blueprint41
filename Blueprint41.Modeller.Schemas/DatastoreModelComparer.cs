@@ -14,7 +14,11 @@ namespace Blueprint41.Modeller.Schemas
             if (!File.Exists(dll))
                 return null;
 
-            Type type = AssemblyLoader.GetType(dll, "DatastoreModelComparerImpl");
+            string pdb = dll.Replace("dll", "pdb");
+            if (!File.Exists(pdb))
+                throw new FileNotFoundException($"File '{pdb}' not found.");
+
+            Type type = AssemblyLoader.GetType(dll, pdb, "DatastoreModelComparerImpl");
             return (DatastoreModelComparer)Activator.CreateInstance(type);
         }, true);
 
@@ -23,19 +27,7 @@ namespace Blueprint41.Modeller.Schemas
 
     public static class AssemblyLoader
     {
-        public static Assembly Load(string assemblyFile)
-        {
-            byte[] assemblyBytes = File.ReadAllBytes(assemblyFile);
-            return Assembly.Load(assemblyBytes);
-        }
-
-        public static Type GetType(string assemblyFile, string typeName)
-        {
-            Assembly assembly = Load(assemblyFile);
-            return assembly.GetTypes().First(x => x.Name == typeName || x.BaseType.Name == typeName);
-        }
-
-        public static Assembly Load(string assemblyFile, string pdbFile)
+        public static Assembly LoadAssemblyAndPdbByBytes(string assemblyFile, string pdbFile)
         {
             byte[] assemblyBytes = File.ReadAllBytes(assemblyFile);
             byte[] pdbBytes = File.ReadAllBytes(pdbFile);
@@ -43,9 +35,8 @@ namespace Blueprint41.Modeller.Schemas
         }
         public static Type GetType(string assemblyFile, string pdbFile, string typeName)
         {
-            Assembly assembly = Load(assemblyFile, pdbFile);
-            return assembly.GetTypes().First(x => x.Name == typeName);
+            Assembly assembly = LoadAssemblyAndPdbByBytes(assemblyFile, pdbFile);
+            return assembly.GetTypes().First(x => x.Name == typeName || x.BaseType.Name == typeName);
         }
-
     }
 }
