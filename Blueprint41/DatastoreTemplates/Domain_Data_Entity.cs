@@ -2852,9 +2852,49 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("            }\r\n");
+            this.Write("\t\t\t\tpublic static bool Exist(string ");
             
-            #line 911 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 910 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(property.Name.ToCamelCase()));
+            
+            #line default
+            #line hidden
+            this.Write(")\r\n                {\r\n");
+            
+            #line 912 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+
+			foreach (TypeSafeStaticData value in values)
+            {
+
+            
+            #line default
+            #line hidden
+            this.Write("                    if (");
+            
+            #line 916 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(property.Name.ToCamelCase()));
+            
+            #line default
+            #line hidden
+            this.Write(" == \"");
+            
+            #line 916 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(value.OriginalValue));
+            
+            #line default
+            #line hidden
+            this.Write("\")\r\n                        return true;\r\n");
+            
+            #line 918 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+
+            }
+
+            
+            #line default
+            #line hidden
+            this.Write("                    return false;\r\n                }\r\n            }\r\n");
+            
+            #line 924 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
         }
 
@@ -2863,7 +2903,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("        }\r\n\r\n\t\t#endregion\r\n");
             
-            #line 917 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 930 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
     }
 
@@ -2872,21 +2912,21 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n\t\t#region I");
             
-            #line 921 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 934 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData\r\n\r\n\t\tpublic I");
             
-            #line 923 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 936 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData OriginalVersion { get { return this; } }\r\n\r\n");
             
-            #line 925 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 938 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 	foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
 	{
@@ -2896,14 +2936,14 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t#region Members for interface I");
             
-            #line 929 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 942 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 930 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 943 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 		if (inherited.IsAbstract)
         {
@@ -2913,21 +2953,21 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n\t\tI");
             
-            #line 935 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 948 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData ");
             
-            #line 935 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 948 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.ClassName));
             
             #line default
             #line hidden
             this.Write(".OriginalVersion { get { return this; } }\r\n");
             
-            #line 936 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 949 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
         }
 
@@ -2936,7 +2976,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n");
             
-            #line 940 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 953 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 		foreach (Property attr in inherited.Properties)
 		{
@@ -2948,35 +2988,35 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 946 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 959 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 946 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 959 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 946 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 959 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return OriginalData.");
             
-            #line 946 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 959 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".OriginalData; } }\r\n");
             
-            #line 947 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 960 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 				if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
 				{
@@ -2989,56 +3029,56 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 954 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 967 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concreteOuterType));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 954 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 967 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 954 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 967 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("_");
             
-            #line 954 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 967 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concrete.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return OriginalData.");
             
-            #line 954 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 967 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".OriginalData.Where(item => item is ");
             
-            #line 954 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 967 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concrete.ClassName));
             
             #line default
             #line hidden
             this.Write(").Select(item => item as ");
             
-            #line 954 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 967 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concrete.ClassName));
             
             #line default
             #line hidden
             this.Write("); } }\r\n");
             
-            #line 955 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 968 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 					}
 				}
@@ -3053,42 +3093,42 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 964 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 964 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 964 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return ((ILookupHelper<");
             
-            #line 964 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(">)OriginalData.");
             
-            #line 964 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(").GetOriginalItem(DateTime.UtcNow); } }\r\n");
             
-            #line 965 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 978 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 				}
 				else
@@ -3099,42 +3139,42 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 970 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 983 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 970 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 983 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 970 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 983 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return ((ILookupHelper<");
             
-            #line 970 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 983 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(">)OriginalData.");
             
-            #line 970 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 983 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(").GetOriginalItem(null); } }\r\n");
             
-            #line 971 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 984 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 				}
 			}
@@ -3146,35 +3186,35 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 990 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" I");
             
-            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 990 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 990 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get { return OriginalData.");
             
-            #line 977 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 990 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("; } }\r\n");
             
-            #line 978 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 991 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 			}
 		}
@@ -3184,7 +3224,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n\t\t#endregion\r\n");
             
-            #line 984 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 997 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 	}
 
@@ -3193,7 +3233,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t#endregion\r\n");
             
-            #line 988 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 1001 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 		
 	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
 	{
@@ -3204,21 +3244,21 @@ if (!DALModel.IsAbstract)
             this.Write("        \r\n\t\t#region Member for UnidentifiedProperties\r\n\r\n        IDictionary<stri" +
                     "ng, object> I");
             
-            #line 995 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 1008 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData.");
             
-            #line 995 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 1008 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.UnidentifiedProperties));
             
             #line default
             #line hidden
             this.Write(" { get { return OriginalData.UnidentifiedProperties; } }\r\n\r\n        #endregion\r\n");
             
-            #line 998 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 1011 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 	}
 
@@ -3227,7 +3267,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             this.Write("\t}\r\n");
             
-            #line 1002 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            #line 1015 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 }
 
@@ -3238,7 +3278,7 @@ if (!DALModel.IsAbstract)
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1005 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+        #line 1018 "E:\_Xirqlz\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
 public class MappingIssue
 {
@@ -3262,17 +3302,23 @@ private struct TypeSafeStaticData
 		PropertyName = propertName;
 		KeyValue = (item == null || item.GetKey() == null) ? null : item.GetKey().ToString();
 		SafeValue = null;
+		OriginalValue = null;
 
 		object value = null;
 		if (item != null && item.TryGetMember(propertName, out value))
+        {
 			if (value != null)
+			{	
+				OriginalValue = value.ToString();			
 				SafeValue = SafeCSharpName(value.ToString());
+            }
+        }
 	}
 
 	public string PropertyName;
 	public string KeyValue;
 	public string SafeValue;
-
+	public string OriginalValue;
 	private string SafeCSharpName(string name)
 	{
 		if (string.IsNullOrWhiteSpace(name))
