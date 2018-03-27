@@ -907,6 +907,19 @@ if (!DALModel.IsAbstract)
 <#
             }
 #>
+				public static bool Exist(string <#= property.Name.ToCamelCase() #>)
+                {
+<#
+			foreach (TypeSafeStaticData value in values)
+            {
+#>
+                    if (<#= property.Name.ToCamelCase() #> == "<#= value.OriginalValue #>")
+                        return true;
+<#
+            }
+#>
+                    return false;
+                }
             }
 <#
         }
@@ -1025,17 +1038,23 @@ private struct TypeSafeStaticData
 		PropertyName = propertName;
 		KeyValue = (item == null || item.GetKey() == null) ? null : item.GetKey().ToString();
 		SafeValue = null;
+		OriginalValue = null;
 
 		object value = null;
 		if (item != null && item.TryGetMember(propertName, out value))
+        {
 			if (value != null)
+			{	
+				OriginalValue = value.ToString();			
 				SafeValue = SafeCSharpName(value.ToString());
+            }
+        }
 	}
 
 	public string PropertyName;
 	public string KeyValue;
 	public string SafeValue;
-
+	public string OriginalValue;
 	private string SafeCSharpName(string name)
 	{
 		if (string.IsNullOrWhiteSpace(name))
