@@ -28,25 +28,22 @@ namespace <#= Settings.FullQueryNamespace #>
 
 	public partial class <#= DALModel.Name #>Node : Blueprint41.Query.Node
 	{
-        public override string Neo4jLabel
+        protected override string GetNeo4jLabel()
         {
-            get
-            {
 <#
 	if(DALModel.IsVirtual)
     {
 #>
-                return null;
+			return null;
 <#
     }
 	else
     {
 #>
-				return "<#= DALModel.Label.Name #>";
+			return "<#= DALModel.Label.Name #>";
 <#
     }
 #>
-            }
         }
 
 		internal <#= DALModel.Name #>Node() { }
@@ -55,7 +52,7 @@ namespace <#= Settings.FullQueryNamespace #>
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction) : base(relationship, direction) { }
+		internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
 
 		public <#= DALModel.Name #>Node Alias(out <#= DALModel.Name #>Alias alias)
 		{
@@ -71,6 +68,22 @@ namespace <#= Settings.FullQueryNamespace #>
         }
 
 <#
+	foreach(Entity subclass in DALModel.GetSubclasses())
+    {
+#>
+		public <#= subclass.Name #>Node CastTo<#= subclass.Name #>()
+        {
+			if (this.Neo4jLabel == null)
+				throw new InvalidOperationException("Casting is not supported for virtual entities.");
+
+            if (FromRelationship == null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+
+            return new <#= subclass.Name #>Node(FromRelationship, Direction, this.Neo4jLabel);
+        }
+
+<#
+	}
 	var inRelations =  Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.InEntity)).OrderBy(item => item.Name);
 	var outRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity)).OrderBy(item => item.Name);
 	var anyRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity) && item.InEntity == item.OutEntity).OrderBy(item => item.Name);

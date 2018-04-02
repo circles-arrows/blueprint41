@@ -15,19 +15,21 @@ namespace Blueprint41.Query
             NodeAlias = null;
             IsReference = false;
         }
-        protected internal Node(RELATIONSHIP fromRelationship, DirectionEnum direction)
+        protected internal Node(RELATIONSHIP fromRelationship, DirectionEnum direction, string label)
             : this()
         {
             FromRelationship = fromRelationship;
             Direction = direction;
             FromRelationship.ToNode = this;
+            Neo4jLabel = label ?? GetNeo4jLabel();
         }
 
         public RELATIONSHIP FromRelationship { get; set; }
         public RELATIONSHIP ToRelationship { get; set; }
         public DirectionEnum Direction { get; set; }
 
-        public abstract string Neo4jLabel { get;}
+        protected abstract string GetNeo4jLabel();
+        public string Neo4jLabel { get; private set; }
         public AliasResult NodeAlias { get; protected set; }
         public bool IsReference { get; protected set; }
 
