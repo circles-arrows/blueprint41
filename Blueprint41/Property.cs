@@ -1004,7 +1004,7 @@ namespace Blueprint41
                         {
                             string name = string.Concat("Get", Name);
                             MethodInfo method = Parent.RuntimeReturnType.GetMethods().First(item => item.Name == name);
-                            getValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, object, DateTime?>>(method, DelegateHelper.CreateOptions.Downcasting);
+                            getValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, DateTime?, object>>(method, DelegateHelper.CreateOptions.Downcasting);
                         }
                     }
                 }
@@ -1027,7 +1027,7 @@ namespace Blueprint41
             }
         }
         private Func<OGM, object> getValue = null;
-        private Func<OGM, object, DateTime?> getValueWithMoment = null;
+        private Func<OGM, DateTime?, object> getValueWithMoment = null;
 
         public void SetValue(OGM instance, object value, DateTime? moment = null)
         {
