@@ -13,6 +13,7 @@ using System.Diagnostics;
 using Blueprint41.Core;
 using System.Reflection;
 using Blueprint41.Dynamic;
+using Blueprint41.Neo4j.Schema;
 
 namespace Blueprint41
 {
@@ -247,19 +248,7 @@ namespace Blueprint41
         {
             if (PropertyType == PropertyType.Attribute)
             {
-                if (Parser.ShouldExecute && Nullable == false)
-                {
-                    string cypher = $"CALL db.constraints() YIELD description WHERE description = 'CONSTRAINT ON ( {Parent.Name.ToLower()}:{Parent.Name} ) ASSERT exists({Parent.Name.ToLower()}.{Name})' RETURN count(description) as count";
-                    IRecord record = Parser.ExecuteSelect(cypher, null).FirstOrDefault();
-                    bool contraintExists = record["count"].As<long>() > 0;
-                    if (contraintExists)
-                    {
-                        Parser.Execute<DropExistConstraint>(delegate (DropExistConstraint template)
-                        {
-                            template.Property = this;
-                        }, false);
-                    }
-                }
+                RemoveIndexesAndContraints();
 
                 foreach (var entity in Parent.GetConcreteClasses())
                 {
@@ -280,6 +269,27 @@ namespace Blueprint41
 
             // StaticData
             Parent.DynamicEntityPropertyRenamed(oldName, this);
+        }
+
+        private void RemoveIndexesAndContraints()
+        {
+            if (Parser.ShouldExecute && (Nullable == false || IndexType != IndexType.None))
+            {
+                Nullable = true;
+                IndexType = IndexType.None;
+
+                foreach (var entity in Parent.GetConcreteClasses())
+                {
+                    ApplyConstraintEntity applyConstraint = new ApplyConstraintEntity(Parent.Parent.GetSchema(), entity);
+                    foreach (var action in applyConstraint.Actions.Where(c => c.Property == Name))
+                    {
+                        foreach (string query in action.ToCypher())
+                        {
+                            Parser.Execute(query, null);
+                        }
+                    }
+                }
+            }
         }
 
         void IRefactorProperty.Move(Entity target)
@@ -481,6 +491,8 @@ namespace Blueprint41
         {
             if (PropertyType == PropertyType.Attribute)
             {
+                RemoveIndexesAndContraints();
+
                 foreach (var entity in Parent.GetConcreteClasses())
                 {
                     Parser.ExecuteBatched<RemoveProperty>(delegate (RemoveProperty template)
