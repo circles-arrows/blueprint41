@@ -82,16 +82,29 @@ namespace Blueprint41
 
         public void Execute(bool upgradeDatastore)
         {
-            Execute(upgradeDatastore, item => true, true);
+            if (isExecuting)
+                throw new InvalidOperationException("It is not allowed to call the 'Execute' method from within an upgrade script.");
 
-            lock (RegisteredModels)
+            try
             {
-                if (RegisteredModels.Any(item => item.GetType() == this.GetType()))
-                    return;
+                isExecuting = true;
 
-                RegisteredModels.Add(this);
+                Execute(upgradeDatastore, item => true, true);
+
+                lock (RegisteredModels)
+                {
+                    if (RegisteredModels.Any(item => item.GetType() == this.GetType()))
+                        return;
+
+                    RegisteredModels.Add(this);
+                }
+            }
+            finally
+            {
+                isExecuting = false;
             }
         }
+        private bool isExecuting = false;
 
         internal void Execute(bool upgradeDatastore, Predicate<UpgradeScript> predicate, bool standAloneScript)
         {
@@ -115,7 +128,7 @@ namespace Blueprint41
                             Stopwatch sw = Stopwatch.StartNew();
 
                             Refactor.ApplyFunctionalIds();
-                            script.Method.Invoke();
+                            RunScriptChecked(script);
                             Refactor.ApplyFunctionalIds();
 
                             Parser.CommitScript(script);
@@ -170,7 +183,7 @@ namespace Blueprint41
             {
                 script.Method.Invoke();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 int line = 0;
 
@@ -190,7 +203,7 @@ namespace Blueprint41
                     }
                 }
 
-                throw new InvalidOperationException($"Error in script version {script.Major}.{script.Minor}.{script.Patch}, line {line} -> {e.Message}");
+                throw new InvalidOperationException($"Error in script version {script.Major}.{script.Minor}.{script.Patch}, line {line} -> {e.Message}", e);
             }
         }
 
@@ -262,7 +275,7 @@ namespace Blueprint41
         #endregion
 
 
-        public SchemaInfo GetSchema()
+        internal SchemaInfo GetSchema()
         {
             return SchemaInfo.FromDB(this);
         }
