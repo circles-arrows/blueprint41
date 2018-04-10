@@ -19,7 +19,7 @@ namespace Blueprint41.Modeller
     {
         public Model Model { get; private set; }
 
-        public DataTable DataTable { get; private set; }
+        public DataTable RecordPropertiesDataTable { get; private set; }
 
         public Entity Entity { get; private set; }
 
@@ -34,14 +34,14 @@ namespace Blueprint41.Modeller
         private void btnSave_Click(object sender, EventArgs e)
         {
             Entity.StaticData.Records.Record.Clear();
-            foreach (DataRow dr in DataTable.Rows)
+            foreach (DataRow dr in RecordPropertiesDataTable.Rows)
             {
                 Record record = new Record(Model);
-                foreach (DataColumn clm in DataTable.Columns)
+                foreach (DataColumn clm in RecordPropertiesDataTable.Columns)
                 {
                     string value = (dr.ItemArray[clm.Ordinal]) == DBNull.Value ? null : (string)dr.ItemArray[clm.Ordinal];
 
-                    if (clm.ColumnName == "Guid")
+                    if (clm.ColumnName == "RecordGuid")
                     {
                         if (string.IsNullOrEmpty(value))
                             record.Guid = Guid.NewGuid().ToString();
@@ -50,10 +50,10 @@ namespace Blueprint41.Modeller
 
                         continue;
                     }
-                    
+
                     if (string.IsNullOrEmpty(value))
                         continue;
-                    
+
                     record.Property.Add(new Property()
                     {
                         Value = value,
@@ -65,33 +65,50 @@ namespace Blueprint41.Modeller
             this.Close();
         }
 
+        private Dictionary<string, string> GetPropertiesOfBaseTypeAndSelf(Entity entity)
+        {
+            Dictionary<string, string> primitivePropertiesOfBaseTypeAndSelf = new Dictionary<string, string>();
+            Entity current = Entity;
+            do
+            {
+                foreach (var primitive in current.Primitive)
+                {
+                    primitivePropertiesOfBaseTypeAndSelf.Add(primitive.Guid, primitive.Name);
+                }
+
+                current = current.ParentEntity;
+            } while (current != null);
+
+            return primitivePropertiesOfBaseTypeAndSelf;
+        }
         private void GridViewLab_Load(object sender, EventArgs e)
         {
             dataGridView.AutoGenerateColumns = false;
             dataGridView.AutoSize = true;
             dataGridView.Columns.Clear();
 
-            DataTable = new DataTable();
-            DataTable.Columns.Add("Guid");
+            RecordPropertiesDataTable = new DataTable();
+            RecordPropertiesDataTable.Columns.Add("RecordGuid");
 
-            //Entity Properties
-            Entity current = Entity;
-            do
+            Dictionary<string, string> recordProperties = new Dictionary<string, string>();
+            foreach (var record in Entity.StaticData.Records.Record)
             {
-                foreach (var primitiveProperty in current.Primitive)
+                foreach (var property in record.Property)
                 {
-                    if (current.Label == "Neo4jBase" && primitiveProperty.Name != "Uid")
-                        continue;
-
-                    DataGridViewColumn column = new DataGridViewTextBoxColumn();
-                    column.DataPropertyName = primitiveProperty.Guid;
-                    column.Name = primitiveProperty.Name;
-                    dataGridView.Columns.Add(column);
-                    DataTable.Columns.Add(primitiveProperty.Guid);
+                    if (!recordProperties.ContainsKey(property.PropertyGuid))
+                        recordProperties.Add(property.PropertyGuid, property.Value);
                 }
-
-                current = current.ParentEntity;
-            } while (current != null);
+            }
+           
+            var primitiveGuidNameMapping = GetPropertiesOfBaseTypeAndSelf(Entity);
+            foreach (var recordProperty in recordProperties)
+            {
+                DataGridViewColumn column = new DataGridViewTextBoxColumn();
+                column.DataPropertyName = recordProperty.Key;
+                column.Name = primitiveGuidNameMapping[recordProperty.Key];
+                dataGridView.Columns.Add(column);
+                RecordPropertiesDataTable.Columns.Add(recordProperty.Key);
+            }
 
             //TODO: Review this part with Marko
             //Entity and Parent Relationship and Properties
@@ -101,31 +118,32 @@ namespace Blueprint41.Modeller
                 column.DataPropertyName = relationship.InProperty;
                 column.Name = relationship.InProperty;
                 dataGridView.Columns.Add(column);
-                DataTable.Columns.Add(relationship.InProperty);
+                RecordPropertiesDataTable.Columns.Add(relationship.InProperty);
             }
-            
+
             foreach (var record in Entity.StaticData.Records.Record)
             {
                 IDictionary<string, object> fields = new Dictionary<string, object>();
-                fields.Add("Guid", record.Guid);
+                fields.Add("RecordGuid", record.Guid);
 
                 foreach (var primitiveProperty in Entity.Primitive)
-                {
                     fields.Add(primitiveProperty.Guid, "");
-                }
 
                 foreach (var property in record.Property)
                 {
+                    if (property.PropertyGuid == null)
+                        throw new ArgumentNullException($"<record propertyGuid=\"{record.Guid}\"> has a <property> node without a 'propertyGuid' attribute.");
+
                     fields[property.PropertyGuid] = property.Value;
                 }
 
-                DataRow dr = DataTable.Rows.Add(fields.Values.ToArray());
+                DataRow dataRow = RecordPropertiesDataTable.Rows.Add(fields.Values.ToArray());
             }
 
             bindingSource.DataSource = null;
             dataGridView.DataSource = null;
 
-            bindingSource.DataSource = DataTable;
+            bindingSource.DataSource = RecordPropertiesDataTable;
             dataGridView.DataSource = bindingSource;
         }
     }

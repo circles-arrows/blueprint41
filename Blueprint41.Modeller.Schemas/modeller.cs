@@ -22,7 +22,21 @@ namespace Blueprint41.Modeller.Schemas
             return found;
         }
 
+        public functionalId FindFunctionalId(string guid)
+        {
+            if (string.IsNullOrWhiteSpace(guid))
+                return null;
+
+            if (functionalIdsByGuid == null)
+                functionalIdsByGuid = functionalIds.functionalId.ToDictionary(key => new Guid(key.guid), value => value);
+
+            functionalId found;
+            functionalIdsByGuid.TryGetValue(new Guid(guid), out found);
+            return found;
+        }
+
         private Dictionary<Guid, entity> entitiesByGuid = null;
+        private Dictionary<Guid, functionalId> functionalIdsByGuid = null;
         #region Entities
         public void UpdateEntityMappingGuid(entity entity, Guid? newId)
         {
@@ -230,9 +244,8 @@ namespace Blueprint41.Modeller.Schemas
     }
     public partial class functionalId
     {
-
+        
     }
-
 
     #endregion
 }

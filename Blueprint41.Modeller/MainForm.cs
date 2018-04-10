@@ -90,6 +90,32 @@ namespace Blueprint41.Modeller
         private void MainForm_Load(object sender, EventArgs e)
         {
             ReloadForm();
+            AddNewEntitiesToSubModel("Main Model");
+        }
+
+        private void AddNewEntitiesToSubModel(string submodelName)
+        {
+            Submodel subModel = Model.Submodels.Submodel.FirstOrDefault(submodel => submodel.Name == submodelName);
+            if (subModel == null)
+                throw new ArgumentNullException($"Submodel '{submodelName}' does not exist in the current model.");
+
+            IEnumerable<string> mainModelNodeLabels = subModel.Node.Select(node => node.Label).OrderBy(label => label);
+            IEnumerable<string> entityLabels = Model.Entities.Entity.Select(entity => entity.Label).OrderBy(label => label);
+
+            List<Entity> entitiesToAddToMainModel = new List<Entity>();
+
+            foreach (var entityLabel in entityLabels.Except(mainModelNodeLabels))
+                entitiesToAddToMainModel.Add(Model.Entities.Entity.FirstOrDefault(label => label.Label == entityLabel));
+
+            subModel.AddEntities(entitiesToAddToMainModel, 0, 0);
+
+            Model.CaptureCoordinates();
+            Model.Save(StoragePath);
+
+            if (this.entityEditor.Enabled)
+                entityEditor.Reload();
+
+            ReloadForm();
         }
 
         private void ReloadForm()
