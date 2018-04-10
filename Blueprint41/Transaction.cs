@@ -112,6 +112,7 @@ namespace Blueprint41
                 {
                     action.ExecuteInDatastore();
                 }
+                actions.Clear();
             }
 
             foreach (var entitySet in registeredEntities.Values)
