@@ -25,19 +25,7 @@ namespace Blueprint41.Core
             }
         }
 
-#pragma warning disable CS0809
-
-        [Obsolete("The meaning of count is ambiguous, use CountAt or CountAll instead.", true)]
-        public override int Count
-        {
-            get
-            {
-                return CountAll;
-            }
-        }
-
-#pragma warning restore CS0809
-
+        private protected override int CountInternal { get { return CountAt(null); } }
         public int CountAt(DateTime? moment)
         {
             LazyLoad();

@@ -18,7 +18,7 @@ namespace Blueprint41.Core
         }
 
         protected Action<TEntity> EagerLoadLogic;
-        
+
         protected IList<CollectionItem<TEntity>> InnerData = null;
         protected IList<CollectionItem<TEntity>> LoadedData { get; private set; }
         public IEnumerable<TEntity> OriginalData { get { LazyLoad(); return LoadedData.Select(item => item.Item); } }
@@ -48,10 +48,12 @@ namespace Blueprint41.Core
         }
         protected virtual void LazySet()
         {
-            
+
         }
 
-        public abstract int Count { get; }
+        int ICollection<TEntity>.Count { get { return CountInternal; } }
+        private protected abstract int CountInternal { get; }
+
         public void Add(TEntity item)
         {
             Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
