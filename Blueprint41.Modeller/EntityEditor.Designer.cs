@@ -48,8 +48,6 @@
             this.label8 = new System.Windows.Forms.Label();
             this.txtSummary = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.dgvRelationships = new System.Windows.Forms.DataGridView();
             this.btnEditStaticData = new System.Windows.Forms.Button();
             this.cmbFunctionalId = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -68,11 +66,6 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvRelationships)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -147,7 +140,7 @@
             this.dataGridViewPrimitiveProperties.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewPrimitiveProperties.Name = "dataGridViewPrimitiveProperties";
             this.dataGridViewPrimitiveProperties.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewPrimitiveProperties.Size = new System.Drawing.Size(431, 128);
+            this.dataGridViewPrimitiveProperties.Size = new System.Drawing.Size(454, 158);
             this.dataGridViewPrimitiveProperties.TabIndex = 8;
             this.dataGridViewPrimitiveProperties.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewPrimitiveProperties_CellValueChanged);
             this.dataGridViewPrimitiveProperties.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView_DataError);
@@ -156,13 +149,11 @@
             // 
             // dataGridViewRelationships
             // 
-            this.dataGridViewRelationships.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewRelationships.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewRelationships.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewRelationships.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewRelationships.Name = "dataGridViewRelationships";
-            this.dataGridViewRelationships.Size = new System.Drawing.Size(431, 43);
+            this.dataGridViewRelationships.Size = new System.Drawing.Size(454, 146);
             this.dataGridViewRelationships.TabIndex = 9;
             this.dataGridViewRelationships.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRelationships_CellValueChanged);
             this.dataGridViewRelationships.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridViewCollectionProperties_DataError);
@@ -232,52 +223,21 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 270);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.dataGridViewPrimitiveProperties);
+            this.splitContainer1.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dataGridViewRelationships);
-            this.splitContainer1.Size = new System.Drawing.Size(431, 217);
-            this.splitContainer1.SplitterDistance = 128;
+            this.splitContainer1.Size = new System.Drawing.Size(454, 308);
+            this.splitContainer1.SplitterDistance = 158;
             this.splitContainer1.TabIndex = 18;
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(14, 274);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.splitContainer1);
-            this.splitContainer2.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel1_Paint);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.dgvRelationships);
-            this.splitContainer2.Size = new System.Drawing.Size(437, 295);
-            this.splitContainer2.SplitterDistance = 184;
-            this.splitContainer2.TabIndex = 19;
-            // 
-            // dgvRelationships
-            // 
-            this.dgvRelationships.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvRelationships.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvRelationships.Location = new System.Drawing.Point(3, 3);
-            this.dgvRelationships.Name = "dgvRelationships";
-            this.dgvRelationships.Size = new System.Drawing.Size(431, 98);
-            this.dgvRelationships.TabIndex = 0;
             // 
             // btnEditStaticData
             // 
@@ -367,6 +327,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.chkIsStaticData);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label4);
@@ -375,7 +336,6 @@
             this.Controls.Add(this.cmbFunctionalId);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnEditStaticData);
-            this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.txtSummary);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.cmbInherits);
@@ -400,11 +360,6 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvRelationships)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -431,8 +386,6 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtSummary;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.DataGridView dgvRelationships;
         private System.Windows.Forms.Button btnEditStaticData;
         private System.Windows.Forms.ComboBox cmbFunctionalId;
         private System.Windows.Forms.Label label3;

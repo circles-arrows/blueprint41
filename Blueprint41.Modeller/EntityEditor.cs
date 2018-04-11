@@ -596,6 +596,11 @@ namespace Blueprint41.Modeller
             Entity.IsStaticData = chkIsStaticData.Checked;
             btnEditStaticData.Visible = Entity.IsStaticData;
         }
+
+        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 
     public static class EntityEditorExtensionMethods
