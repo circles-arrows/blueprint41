@@ -43,9 +43,31 @@ namespace Blueprint41.Modeller
             string prefix = txtPrefix.Text.Trim();
             string name = txtName.Text.Trim();
 
-            if (this.Model.FunctionalIds.FunctionalId.Where(fi => fi.Name == name).Count() > 0)
+            if (string.IsNullOrEmpty(name))
             {
-                MessageBox.Show($"Name \"{name}\" already exists.");
+                MessageBox.Show("Name cannot be empty.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtName.Focus();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(prefix))
+            {
+                MessageBox.Show("Prefix cannot be empty.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPrefix.Focus();
+                return;
+            }
+
+            if (this.Model.FunctionalIds.FunctionalId.Any(functionalId => functionalId.Name == name))
+            {
+                MessageBox.Show($"Name \"{name}\" already exists.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                txtName.Focus();
+                return;
+            }
+
+            if (this.Model.FunctionalIds.FunctionalId.Any(functionalId => functionalId.Value == prefix))
+            {
+                MessageBox.Show($"Prefix \"{prefix}\" already exists.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                txtPrefix.Focus();
                 return;
             }
 
@@ -60,6 +82,8 @@ namespace Blueprint41.Modeller
             ParentControl.FunctionalIdComboBox.InsertNonDataBoundItems(displayName, funcId.Guid);
             ParentControl.FunctionalIdComboBox.SelectedIndex = ParentControl.FunctionalIdComboBox.FindStringExact(displayName);
             this.Close();
+
+            MessageBox.Show("Functional Id saved in memory.", "Saved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #endregion

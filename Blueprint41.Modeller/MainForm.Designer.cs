@@ -236,6 +236,7 @@
             // cmbNodes
             // 
             this.cmbNodes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNodes.DropDownWidth = 200;
             this.cmbNodes.Name = "cmbNodes";
             this.cmbNodes.Size = new System.Drawing.Size(121, 30);
             this.cmbNodes.SelectedIndexChanged += new System.EventHandler(this.cmbNodes_SelectedIndexChanged);
