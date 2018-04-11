@@ -25,7 +25,8 @@ namespace Blueprint41.Core
                 return InnerData[index].Item;
             }
         }
-        public override int Count { get { LazyLoad(); return InnerData.Count; } }
+        private protected override int CountInternal { get { return Count; } }
+        public int Count { get { LazyLoad(); return InnerData.Count; } }
         internal sealed override void Add(TEntity item, bool fireEvents)
         {
             LazyLoad();

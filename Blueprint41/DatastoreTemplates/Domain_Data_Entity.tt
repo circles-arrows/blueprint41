@@ -348,8 +348,9 @@ if (!DALModel.IsAbstract)
                 }
 				else if (attr.ForeignProperty != null && attr.ForeignProperty.PropertyType == PropertyType.Collection)
                 {
+					string countMethod = (attr.Relationship.IsTimeDependent) ? "CountAll" : "Count";
 #>
-				<#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { int loadHack = item.<#= attr.ForeignProperty.Name #>.Count; } });
+				<#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { int loadHack = item.<#= attr.ForeignProperty.Name #>.<#= countMethod #>; } });
 <#
                 }
 				else
