@@ -336,7 +336,7 @@ namespace Blueprint41.Core
                     if (currentItem.Count > 0)
                         Clear(moment, false);
 
-                    if (Count == 0)
+                    if (CountAt(moment) == 0)
                         Add(item, moment, false);
                 }
             }
