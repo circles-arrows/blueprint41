@@ -80,17 +80,33 @@ namespace Blueprint41.Modeller
             string prefix = txtPrefix.Text.Trim();
             string name = txtName.Text.Trim();
 
-            if (string.IsNullOrEmpty(prefix) || string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
-                MessageBox.Show("Prefix and Name cannot be empty.");
+                MessageBox.Show("Name cannot be empty.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtName.Focus();
                 return;
             }
-            
+
+            if (string.IsNullOrEmpty(prefix))
+            {
+                MessageBox.Show("Prefix cannot be empty.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPrefix.Focus();
+                return;
+            }
+
             if (this.IsNewFunctionalId)
             {
-                if (this.Model.FunctionalIds.FunctionalId.Where(fi => fi.Name == name).Count() > 0)
+                if (this.Model.FunctionalIds.FunctionalId.Any(functionalId => functionalId.Name == name))
                 {
-                    MessageBox.Show($"Name \"{name}\" already exists.");
+                    MessageBox.Show($"Name \"{name}\" already exists.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    txtName.Focus();
+                    return;
+                }
+
+                if (this.Model.FunctionalIds.FunctionalId.Any(functionalId => functionalId.Value == prefix))
+                {
+                    MessageBox.Show($"Prefix \"{prefix}\" already exists.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    txtPrefix.Focus();
                     return;
                 }
 
