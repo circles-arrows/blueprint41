@@ -13,6 +13,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,8 @@ namespace Blueprint41
 
             Labels = new model.LabelCollection();
             RelationshipTypes = new model.RelationshipTypeCollection();
+
+            DataMigration = new DataMigrationScope(this);
         }
 
         public EntityCollection Entities { get; private set; }
@@ -44,6 +47,13 @@ namespace Blueprint41
                 return executed;
             }
         }
+        public bool IsDataMigration
+        {
+            get
+            {
+                return datamigration;
+            }
+        }
 
         internal model.LabelCollection Labels { get; private set; }
 
@@ -52,6 +62,7 @@ namespace Blueprint41
         #region Execute
 
         private bool executed = false;
+        private bool datamigration = false;
 
         internal List<UpgradeScript> GetUpgradeScripts()
         {
@@ -284,6 +295,7 @@ namespace Blueprint41
 
         void IRefactorGlobal.ApplyFunctionalIds()
         {
+            EnsureSchemaMigration();
             if (!Parser.ShouldExecute)
                 return;
 
@@ -292,6 +304,7 @@ namespace Blueprint41
 
         void IRefactorGlobal.ApplyConstraints()
         {
+            EnsureSchemaMigration();
             if (!Parser.ShouldExecute)
                 return;
 
@@ -300,6 +313,7 @@ namespace Blueprint41
 
         void IRefactorGlobal.SetCreationDate()
         {
+            EnsureSchemaMigration();
             if (!Parser.ShouldExecute)
                 return;
 
@@ -309,6 +323,7 @@ namespace Blueprint41
 
         void IRefactorGlobal.ApplyFullTextSearchIndexes()
         {
+            EnsureSchemaMigration();
             if (!Parser.ShouldExecute)
                 return;
 
@@ -341,6 +356,47 @@ namespace Blueprint41
             Parser.Execute(builder.ToString(), new Dictionary<string, object>(), true);
         }
 
+        /// <summary>
+        /// Used to start a database data migration block.
+        /// <para>using (DataMigration) { ...your data migration script goes here... }</para>
+        /// </summary>
+        protected DataMigrationScope DataMigration { get; private set; }
+
+        public class DataMigrationScope : IDisposable
+        {
+            internal DataMigrationScope(DatastoreModel model)
+            {
+                Model = model;
+            }
+
+            public DatastoreModel Model { get; private set; }
+
+            public IDisposable Begin()
+            {
+                if (Model.datamigration)
+                    throw new InvalidOperationException("Calling DataMigration.Begin() from inside another data migration block is not allowed.");
+
+                Model.datamigration = true;
+                return this;
+            }
+
+            void IDisposable.Dispose()
+            {
+                Model.datamigration = false;
+            }
+        }
+
+
+        internal void EnsureSchemaMigration([CallerMemberName] string callerMethodName = "")
+        {
+            if (IsDataMigration)
+                throw new InvalidOperationException($"The method '{callerMethodName}' cannot be used inside a data migration block.");
+        }
+        internal void EnsureDataMigration([CallerMemberName] string callerMethodName = "")
+        {
+            if (!IsDataMigration)
+                throw new InvalidOperationException($"The method '{callerMethodName}' cannot be used outside a data migration block. Consider adding the code:\r\nusing (DataMigration)\r\n{{\r\n\t{callerMethodName}...\r\n}}");
+        }
 
         internal Guid GenerateGuid(string name)
         {

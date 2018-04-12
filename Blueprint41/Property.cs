@@ -246,6 +246,8 @@ namespace Blueprint41
 
         void IRefactorProperty.Rename(string newName)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType == PropertyType.Attribute)
             {
                 RemoveIndexesAndContraints();
@@ -273,6 +275,8 @@ namespace Blueprint41
 
         private void RemoveIndexesAndContraints()
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (Parser.ShouldExecute && (Nullable == false || IndexType != IndexType.None))
             {
                 Nullable = true;
@@ -294,6 +298,8 @@ namespace Blueprint41
 
         void IRefactorProperty.Move(Entity target)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType != PropertyType.Attribute)
                 throw new NotSupportedException("Consider using the refactor action 'SetInEntity' or 'SetOutEntity' on the relationship.");
 
@@ -313,6 +319,8 @@ namespace Blueprint41
 
         void IRefactorProperty.Merge(Property target, MergeAlgorithm mergeAlgorithm)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType != PropertyType.Attribute)
                 throw new NotImplementedException();
 
@@ -376,6 +384,8 @@ namespace Blueprint41
 
         private void MergeProperty(Property target, MergeAlgorithm mergeAlgorithm)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType != PropertyType.Attribute)
                 throw new NotImplementedException();
 
@@ -393,6 +403,8 @@ namespace Blueprint41
 
         private void MergeRelationship(Property target, MergeAlgorithm mergeAlgorithm)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType != PropertyType.Attribute)
                 throw new NotImplementedException();
 
@@ -413,6 +425,8 @@ namespace Blueprint41
 
         void IRefactorProperty.Convert(Type target)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType != PropertyType.Attribute)
                 throw new NotSupportedException("Only primitive properties can have their return type converted.");
 
@@ -489,6 +503,8 @@ namespace Blueprint41
 
         void IRefactorProperty.Deprecate()
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType == PropertyType.Attribute)
             {
                 RemoveIndexesAndContraints();
@@ -514,6 +530,8 @@ namespace Blueprint41
 
         void IRefactorProperty.SetIndexType(IndexType indexType)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType != PropertyType.Attribute)
                 throw new NotImplementedException();
 
@@ -535,6 +553,8 @@ namespace Blueprint41
         }
         private void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (Relationship == null)
                 throw new NotSupportedException("This operation can only be done on an relationship property");
 
@@ -595,11 +615,15 @@ namespace Blueprint41
 
         void IRefactorProperty.ConvertToCollection()
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             PropertyType = PropertyType.Collection;
             Nullable = true;
         }
         void IRefactorProperty.ConvertToLookup(ConvertAlgorithm conversionAlgorithm)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             PropertyType = PropertyType.Lookup;
             Nullable = true;
 
@@ -608,6 +632,8 @@ namespace Blueprint41
 
         void IRefactorProperty.MakeNullable()
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType == PropertyType.Collection)
                 throw new NotSupportedException("A collection cannot be made nullable, it already is nullable by default.");
 
@@ -618,6 +644,8 @@ namespace Blueprint41
         }
         void IRefactorProperty.MakeMandatory()
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (PropertyType == PropertyType.Collection)
                 throw new NotSupportedException("A collection cannot be made mandatory.");
 
@@ -637,6 +665,8 @@ namespace Blueprint41
         }
         void IRefactorProperty.MakeMandatory(object defaultValue)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (Nullable == false)
                 throw new NotSupportedException("The property is already mandatory.");
 
@@ -672,6 +702,8 @@ namespace Blueprint41
         }
         void IRefactorProperty.MakeMandatory(DynamicEntity defaultValue)
         {
+            Parent.Parent.EnsureSchemaMigration();
+
             if (Nullable == false)
                 throw new NotSupportedException("The property is already mandatory.");
 

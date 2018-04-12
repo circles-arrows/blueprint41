@@ -147,6 +147,8 @@ namespace Blueprint41
  
         void IRefactorRelationship.Rename(string newName, string alias)
         {
+            Parent.EnsureSchemaMigration();
+
             if (string.IsNullOrEmpty(newName))
                 throw new ArgumentNullException("neo4JRelationshipType");
 
@@ -166,6 +168,8 @@ namespace Blueprint41
 
         void IRefactorRelationship.SetInEntity(Entity target)
         {
+            Parent.EnsureSchemaMigration();
+
             if (!InEntity.IsSubsclassOf(target))
                 throw new ArgumentException(string.Format("Target {0} is not a base type of {1}", target.Name, InEntity.Name), "baseType");
 
@@ -184,6 +188,8 @@ namespace Blueprint41
         }
         void IRefactorRelationship.SetOutEntity(Entity target)
         {
+            Parent.EnsureSchemaMigration();
+
             if (!OutEntity.IsSubsclassOf(target))
                 throw new ArgumentException(string.Format("Target {0} is not a base type of {1}", target.Name, OutEntity.Name), "baseType");
 
@@ -203,6 +209,8 @@ namespace Blueprint41
 
         void IRefactorRelationship.RemoveTimeDependance()
         {
+            Parent.EnsureSchemaMigration();
+
             if (!IsTimeDependent)
                 throw new NotSupportedException(string.Format("The relationship type '{0}' has no time dependence support yet.", Name));
 
@@ -212,6 +220,8 @@ namespace Blueprint41
         }
         void IRefactorRelationship.Merge(Relationship target)
         {
+            Parent.EnsureSchemaMigration();
+
             if (this.IsTimeDependent != target.IsTimeDependent)
                 throw new InvalidOperationException("You cannot merge 2 relationships with different time dependence settings.");
 
@@ -222,6 +232,8 @@ namespace Blueprint41
         }
         void IRefactorRelationship.Deprecate()
         {
+            Parent.EnsureSchemaMigration();
+
             Parser.ExecuteBatched<RemoveRelationship>(delegate (RemoveRelationship template)
             {
                 template.InEntity = InEntity.Label.Name;
