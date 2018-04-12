@@ -66,7 +66,7 @@
             // 
             // txtPrefix
             // 
-            this.txtPrefix.Location = new System.Drawing.Point(97, 43);
+            this.txtPrefix.Location = new System.Drawing.Point(97, 73);
             this.txtPrefix.Margin = new System.Windows.Forms.Padding(2);
             this.txtPrefix.Name = "txtPrefix";
             this.txtPrefix.Size = new System.Drawing.Size(156, 20);
@@ -75,7 +75,7 @@
             // lblPrefix
             // 
             this.lblPrefix.AutoSize = true;
-            this.lblPrefix.Location = new System.Drawing.Point(9, 45);
+            this.lblPrefix.Location = new System.Drawing.Point(9, 76);
             this.lblPrefix.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblPrefix.Name = "lblPrefix";
             this.lblPrefix.Size = new System.Drawing.Size(33, 13);
@@ -117,7 +117,7 @@
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(9, 76);
+            this.lblName.Location = new System.Drawing.Point(9, 45);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(35, 13);
             this.lblName.TabIndex = 7;
@@ -125,7 +125,7 @@
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(97, 73);
+            this.txtName.Location = new System.Drawing.Point(97, 42);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(156, 20);
             this.txtName.TabIndex = 8;
