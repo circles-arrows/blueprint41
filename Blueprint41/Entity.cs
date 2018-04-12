@@ -338,6 +338,8 @@ namespace Blueprint41
         /// <param name="newName"></param>
         void IRefactorEntity.Rename(string newName)
         {
+            Parent.EnsureSchemaMigration();
+
             string oldLabelName = Label.Name;
             Parent.Labels.Remove(Label.Name);
             Label.Name = newName;
@@ -359,6 +361,8 @@ namespace Blueprint41
 
         void IRefactorEntity.ApplyConstraints()
         {
+            Parent.EnsureSchemaMigration();
+
             foreach (var property in GetPropertiesOfBaseTypesAndSelf())
             {
                 if (property.IndexType == IndexType.Unique && !IsAbstract)
@@ -387,6 +391,8 @@ namespace Blueprint41
 
         void IRefactorEntity.SetDefaultValue(Action<dynamic> values)
         {
+            Parent.EnsureSchemaMigration();
+
             if (!Parser.ShouldExecute)
                 return;
 
@@ -410,6 +416,8 @@ namespace Blueprint41
         }
         void IRefactorEntity.CopyValue(string sourceProperty, string targetProperty)
         {
+            Parent.EnsureSchemaMigration();
+
             if (GetConcreteClasses().Any(item => item.ContainsStaticData))
                 throw new NotSupportedException("You cannot copy (potentially dynamic) data to a static data node.");
 
@@ -437,6 +445,8 @@ namespace Blueprint41
 
         void IRefactorEntity.ApplyLabels()
         {
+            Parent.EnsureSchemaMigration();
+
             if (!Parser.ShouldExecute)
                 return;
 
@@ -454,6 +464,8 @@ namespace Blueprint41
 
         void IRefactorEntity.CreateIndexes()
         {
+            Parent.EnsureSchemaMigration();
+
             foreach (var property in GetPropertiesOfBaseTypesAndSelf())
             {
                 if (property.IndexType == IndexType.Indexed || (property.IndexType == IndexType.Unique && property.Parent.IsAbstract))
@@ -469,6 +481,8 @@ namespace Blueprint41
 
         dynamic IRefactorEntity.CreateNode(object node)
         {
+            Parent.EnsureSchemaMigration();
+
             DynamicEntity entity = new DynamicEntity(this, Parser.ShouldExecute, node);
 
             object key = entity.GetKey();
@@ -482,6 +496,8 @@ namespace Blueprint41
         }
         dynamic IRefactorEntity.MatchNode(object key)
         {
+            Parent.EnsureSchemaMigration();
+
             if (key == null)
                 throw new ArgumentNullException("key");
 
@@ -499,6 +515,8 @@ namespace Blueprint41
         }
         void IRefactorEntity.DeleteNode(object key)
         {
+            Parent.EnsureSchemaMigration();
+
             if (key == null)
                 throw new ArgumentNullException("key");
 
@@ -514,6 +532,8 @@ namespace Blueprint41
 
         void IRefactorEntity.Deprecate()
         {
+            Parent.EnsureSchemaMigration();
+
             foreach (var entity in GetSubclassesOrSelf())
             {
                 if (!entity.IsAbstract)
@@ -537,6 +557,8 @@ namespace Blueprint41
 
         void IRefactorEntity.ChangeInheritance(Entity newParentEntity)
         {
+            Parent.EnsureSchemaMigration();
+
             Entity originalParent = this.Inherits;
             if (originalParent != null)
             {
@@ -562,6 +584,8 @@ namespace Blueprint41
 
         void IRefactorEntity.ResetFunctionalId()
         {
+            Parent.EnsureSchemaMigration();
+
             if (Inherits?.FunctionalId != null)
                 throw new InvalidOperationException($"The entity '{Name}' does not have a functional id, but inherited it '{Inherits.FunctionalId.Prefix} ({Inherits.FunctionalId.Label})', you cannot assign another one.");
 
@@ -571,6 +595,8 @@ namespace Blueprint41
         }
         void IRefactorEntity.SetFunctionalId(FunctionalId functionalId, ApplyAlgorithm algorithm)
         {
+            Parent.EnsureSchemaMigration();
+
             if (Inherits?.FunctionalId != null)
                 throw new InvalidOperationException($"The entity '{Name}' already inherited a functional id '{Inherits.FunctionalId.Prefix} ({Inherits.FunctionalId.Label})', you cannot assign another one.");
 
