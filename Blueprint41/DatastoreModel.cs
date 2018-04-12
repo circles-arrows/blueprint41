@@ -356,34 +356,49 @@ namespace Blueprint41
             Parser.Execute(builder.ToString(), new Dictionary<string, object>(), true);
         }
 
-        /// <summary>
-        /// Used to start a database data migration block.
-        /// <para>using (DataMigration) { ...your data migration script goes here... }</para>
-        /// </summary>
-        protected DataMigrationScope DataMigration { get; private set; }
 
-        public class DataMigrationScope : IDisposable
+
+        protected DataMigrationScope DataMigration { get; private set; }
+        public class DataMigrationScope
         {
             internal DataMigrationScope(DatastoreModel model)
             {
                 Model = model;
             }
-
             public DatastoreModel Model { get; private set; }
 
-            public IDisposable Begin()
+            public void Run(Action script)
             {
                 if (Model.datamigration)
-                    throw new InvalidOperationException("Calling DataMigration.Begin() from inside another data migration block is not allowed.");
+                    throw new InvalidOperationException("Calling DataMigration.Run() from inside another data migration block is not allowed.");
 
                 Model.datamigration = true;
-                return this;
-            }
 
-            void IDisposable.Dispose()
-            {
+                if (script != null && Parser.ShouldExecute)
+                    script.Invoke();
+
                 Model.datamigration = false;
             }
+
+            #region Global Migrations
+
+            /// <summary>
+            /// Executes a hard-coded Cypher query against the graph.
+            /// <para>Be aware that the parameters will be automatically converted from Blueprint41 supported DOT NET types to Neo4j types. However, it returns a raw Neo4j response and no type conversions will be executed on the data it contains.</para>
+            /// </summary>
+            /// <param name="cypher">The query</param>
+            /// <param name="parameters">Any parameters used in the query</param>
+            /// <returns>An IStatementResult object</returns>
+            public IStatementResult ExecuteCypher(string cypher, Dictionary<string, object> parameters = null)
+            {
+                Transaction trans = Transaction.RunningTransaction;
+
+                Dictionary<string, object> convertedParams = parameters.ToDictionary(item => item.Key, item => ((object)item.Value == null) ? null : trans.ConvertToStoredType(item.Value.GetType(), item.Value));
+
+                return Neo4jTransaction.Run(cypher, convertedParams);
+            }
+
+            #endregion
         }
 
 

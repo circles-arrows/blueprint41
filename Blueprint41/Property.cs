@@ -657,7 +657,7 @@ namespace Blueprint41
             if (Parser.ShouldExecute)
             {
                 string cypher = string.Format("MATCH (n:{0}) WHERE n.{1} IS NULL RETURN count(n) as count", Parent.Label.Name, Name);
-                IRecord record = Parser.ExecuteSelect(cypher, null).FirstOrDefault();
+                IRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
                 bool hasNullProperty = record["count"].As<long>() > 0;
                 if (hasNullProperty)
                     throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", Parent.Name, Name));

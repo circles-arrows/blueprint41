@@ -15,19 +15,19 @@ namespace Blueprint41.Neo4j.Refactoring
     {
         #region Parser Logic
 
-        internal static IStatementResult ExecuteSelect(string cypher, Dictionary<string, object> parameters)
-        {
-            if (!ShouldExecute)
-                return null;
+        //internal static IStatementResult ExecuteSelect(string cypher, Dictionary<string, object> parameters)
+        //{
+        //    if (!ShouldExecute)
+        //        return null;
 
-            using (Transaction.Begin(false))
-            {
-                if (parameters == null || parameters.Count == 0)
-                    return Neo4jTransaction.Run(cypher);
-                else
-                    return Neo4jTransaction.Run(cypher, parameters);
-            }
-        }
+        //    using (Transaction.Begin(false))
+        //    {
+        //        if (parameters == null || parameters.Count == 0)
+        //            return Neo4jTransaction.Run(cypher);
+        //        else
+        //            return Neo4jTransaction.Run(cypher, parameters);
+        //    }
+        //}
 
         private static IStatementResult PrivateExecute<T>(Action<T> setup)
             where T : TemplateBase, new()
@@ -61,19 +61,23 @@ namespace Blueprint41.Neo4j.Refactoring
             }
         }
 
-        internal static void Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true)
+        internal static IStatementResult Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true)
         {
             if (!ShouldExecute)
-                return;
+                return null;
+
+            IStatementResult result;
 
             using (Transaction.Begin(withTransaction))
             {
                 if (parameters == null || parameters.Count == 0)
-                    Neo4jTransaction.Run(cypher);
+                    result = Neo4jTransaction.Run(cypher);
                 else
-                    Neo4jTransaction.Run(cypher, parameters);
+                    result = Neo4jTransaction.Run(cypher, parameters);
                 Transaction.Commit();
             }
+
+            return result;
         }
 
         internal static void ExecuteBatched<T>(Action<T> setup, bool withTransaction = true)
