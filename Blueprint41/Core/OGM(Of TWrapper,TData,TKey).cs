@@ -22,7 +22,7 @@ namespace Blueprint41.Core
             TWrapper item = Lookup(key);
             item.LazyGet();
 
-            if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.HasUid)
+            if (item.PersistenceState != PersistenceState.New)
                 return item;
             else
                 return null;

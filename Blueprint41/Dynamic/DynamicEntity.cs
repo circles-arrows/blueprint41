@@ -451,6 +451,9 @@ namespace Blueprint41.Dynamic
             else
                 DynamicEntityValues.Add(DynamicEntityType.Key.Name, convertedKey);
 
+            if (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged)
+                return;
+
             PersistenceState = PersistenceState.HasUid;
 
             if (ShouldExecute)
@@ -588,7 +591,7 @@ namespace Blueprint41.Dynamic
             DynamicEntity item = Lookup(entity, key);
             item.LazyGet();
 
-            if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.HasUid)
+            if (item.PersistenceState != PersistenceState.New)
                 return item;
             else
                 return null;

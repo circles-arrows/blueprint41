@@ -29,6 +29,9 @@ namespace Blueprint41.Core
         }
         protected virtual void SetKey(TKey key)
         {
+            if (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged)
+                throw new InvalidOperationException("You cannot set the key after it was already assigned.");
+
             PersistenceState = PersistenceState.HasUid;
             Transaction.Current.Register(Wrapper.GetEntity().Name, Wrapper);
         }
