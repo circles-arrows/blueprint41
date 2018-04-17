@@ -14,6 +14,7 @@ namespace Blueprint41.Query
         {
             NodeAlias = null;
             IsReference = false;
+            Neo4jLabel = GetNeo4jLabel();
         }
         protected internal Node(RELATIONSHIP fromRelationship, DirectionEnum direction, string label)
             : this()
