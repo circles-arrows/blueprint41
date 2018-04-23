@@ -46,31 +46,37 @@ namespace Blueprint41.Modeller
         public EntityEditor()
         {
             InitializeComponent();
-            CreateGridColumnsForPrimitiveProperties();
+            CreateGridColumnsForPrimitiveProperties(dataGridViewPrimitiveProperties);
+            CreateGridColumnsForPrimitiveProperties(dataGridViewInheritedPrimitiveProperties, true);
             CreateGridColumnsForRelationships();
         }
 
-        private void CreateGridColumnsForPrimitiveProperties()
+        private void CreateGridColumnsForPrimitiveProperties(DataGridView dataGridView, bool readOnly = false)
         {
             // Initialize the DataGridView.
-            dataGridViewPrimitiveProperties.AutoGenerateColumns = false;
-            dataGridViewPrimitiveProperties.AutoSize = true;
-
+            dataGridView.AutoGenerateColumns = false;
+            dataGridView.AutoSize = true;
 
             DataGridViewColumn nameColumn = new DataGridViewTextBoxColumn();
             nameColumn.DataPropertyName = "Name";
             nameColumn.Name = "Name";
-            dataGridViewPrimitiveProperties.Columns.Add(nameColumn);
+            nameColumn.ReadOnly = readOnly;
+            nameColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
+            dataGridView.Columns.Add(nameColumn);
 
             DataGridViewCheckBoxColumn keyColumn = new DataGridViewCheckBoxColumn();
             keyColumn.DataPropertyName = "IsKey";
             keyColumn.Name = "Is Key";
-            dataGridViewPrimitiveProperties.Columns.Add(keyColumn);
+            keyColumn.ReadOnly = readOnly;
+            keyColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
+            dataGridView.Columns.Add(keyColumn);
 
             DataGridViewCheckBoxColumn nullableColumn = new DataGridViewCheckBoxColumn();
             nullableColumn.DataPropertyName = "Nullable";
             nullableColumn.Name = "Optional";
-            dataGridViewPrimitiveProperties.Columns.Add(nullableColumn);
+            nullableColumn.ReadOnly = readOnly;
+            nullableColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
+            dataGridView.Columns.Add(nullableColumn);
 
             DataGridViewComboBoxColumn typeColumn = new DataGridViewComboBoxColumn();
             typeColumn.Items.Add("string");
@@ -89,7 +95,8 @@ namespace Blueprint41.Modeller
             typeColumn.Items.Add("List<int>");
             typeColumn.DataPropertyName = "Type";
             typeColumn.Name = "Type";
-            dataGridViewPrimitiveProperties.Columns.Add(typeColumn);
+            typeColumn.ReadOnly = readOnly;
+            dataGridView.Columns.Add(typeColumn);
 
             DataGridViewComboBoxColumn indexTypeColumn = new DataGridViewComboBoxColumn();
             indexTypeColumn.Items.Add(PropertyIndex.None.ToString());
@@ -97,7 +104,9 @@ namespace Blueprint41.Modeller
             indexTypeColumn.Items.Add(PropertyIndex.Unique.ToString());
             indexTypeColumn.DataPropertyName = "Index";
             indexTypeColumn.Name = "Index";
-            dataGridViewPrimitiveProperties.Columns.Add(indexTypeColumn);
+            indexTypeColumn.ReadOnly = readOnly;
+            indexTypeColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
+            dataGridView.Columns.Add(indexTypeColumn);
         }
 
         private void CreateGridColumnsForRelationships()
@@ -165,6 +174,23 @@ namespace Blueprint41.Modeller
             dataGridViewRelationships.Columns.Add(targetNullableColumn);
         }
 
+        private Collection<Primitive> GetPrimitivesOfBaseTypes(Entity Entity)
+        {
+            Collection<Primitive> inheritedPrimitives = new Collection<Primitive>();
+            Entity current = Entity.ParentEntity;
+            if (current == null)
+                return null;
+            do
+            {
+                foreach (var primitive in current.Primitive)
+                    inheritedPrimitives.Add(primitive);
+
+                current = current.ParentEntity;
+
+            } while (current != null);
+
+            return inheritedPrimitives;
+        }
         private void Assign()
         {
             cmbInherits.DataBindings.Clear();
@@ -172,6 +198,12 @@ namespace Blueprint41.Modeller
             dataGridViewPrimitiveProperties.DataSource = null;
             bindingSourcePrimitiveProperties.DataSource = Entity.Primitive;
             dataGridViewPrimitiveProperties.DataSource = bindingSourcePrimitiveProperties;
+
+            bindingSourceInheritedPrimitiveProperties.DataSource = null;
+            dataGridViewInheritedPrimitiveProperties.DataSource = null;
+            bindingSourceInheritedPrimitiveProperties.DataSource = GetPrimitivesOfBaseTypes(Entity);
+            dataGridViewInheritedPrimitiveProperties.DataSource = bindingSourceInheritedPrimitiveProperties;
+
 
             bindingSourceCollectionProperties.DataSource = null;
             dataGridViewRelationships.DataSource = null;
@@ -595,11 +627,6 @@ namespace Blueprint41.Modeller
             
             Entity.IsStaticData = chkIsStaticData.Checked;
             btnEditStaticData.Visible = Entity.IsStaticData;
-        }
-
-        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 
