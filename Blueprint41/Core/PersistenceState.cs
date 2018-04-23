@@ -16,6 +16,7 @@ namespace Blueprint41.Core
         Persisted,
         Deleted,
         ForceDeleted,
+        DoesntExist,
         OutOfScope,
         Error,
     }

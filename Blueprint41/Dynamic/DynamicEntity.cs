@@ -510,6 +510,8 @@ namespace Blueprint41.Dynamic
                     throw new InvalidOperationException("The object has been deleted, you cannot make changes to it anymore.");
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
@@ -591,7 +593,7 @@ namespace Blueprint41.Dynamic
             DynamicEntity item = Lookup(entity, key);
             item.LazyGet();
 
-            if (item.PersistenceState != PersistenceState.New)
+            if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
                 return item;
             else
                 return null;

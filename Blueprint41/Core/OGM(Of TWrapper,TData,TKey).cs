@@ -22,7 +22,7 @@ namespace Blueprint41.Core
             TWrapper item = Lookup(key);
             item.LazyGet();
 
-            if (item.PersistenceState != PersistenceState.New)
+            if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
                 return item;
             else
                 return null;
@@ -114,6 +114,8 @@ namespace Blueprint41.Core
                 case PersistenceState.Deleted:
                 case PersistenceState.ForceDeleted:
                     throw new InvalidOperationException("The object has been deleted, you cannot make changes to it anymore.");
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 default:

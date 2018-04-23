@@ -59,6 +59,8 @@ namespace Blueprint41.Core
                 case PersistenceState.OutOfScope:
                 case PersistenceState.Error:
                     throw new InvalidOperationException(string.Format("The object with key '{0}' cannot be saved because it's state was {1}.", GetKey() ?? "<null>", PersistenceState.ToString()));
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The object with key '{0}' has an invalid/unknown state {1}.", GetKey() ?? "<null>", PersistenceState.ToString()));
             }
@@ -113,6 +115,8 @@ namespace Blueprint41.Core
                     throw new InvalidOperationException("This object was already flushed to the data store.");
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
@@ -142,6 +146,8 @@ namespace Blueprint41.Core
                     throw new InvalidOperationException("This object was already flushed to the data store.");
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }

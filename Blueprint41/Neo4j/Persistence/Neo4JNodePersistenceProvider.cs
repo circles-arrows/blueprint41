@@ -41,7 +41,10 @@ namespace Blueprint41.Neo4j.Persistence
 
             IRecord record = result.FirstOrDefault();
             if (record == null)
+            {
+                item.PersistenceState = PersistenceState.DoesntExist;
                 return;
+            }
 
             INode loaded = record["node"].As<INode>();
 

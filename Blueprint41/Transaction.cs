@@ -69,7 +69,7 @@ namespace Blueprint41
                 if (entity.PersistenceState == PersistenceState.Persisted)
                     continue;
 
-                if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
+                if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
                 {
                     entity.GetEntity().RaiseOnSave((OGMImpl)entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
@@ -87,7 +87,7 @@ namespace Blueprint41
                             continue;
 
 
-                        if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
+                        if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
                             entity.ValidateSave();
                     }
                 }
@@ -101,7 +101,7 @@ namespace Blueprint41
                     if (entity.PersistenceState == PersistenceState.Persisted)
                         continue;
 
-                    if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
+                    if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
                         entity.Save();
                 }
             }
