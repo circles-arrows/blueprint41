@@ -40,7 +40,7 @@
 
   <ItemGroup>
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.4.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
     <PackageReference Include="Neo4j.Driver" Version="1.5.2" />
     <PackageReference Include="System.CodeDom" Version="4.4.0" />
   </ItemGroup>
