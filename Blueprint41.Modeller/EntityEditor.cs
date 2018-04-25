@@ -82,44 +82,60 @@ namespace Blueprint41.Modeller
             nameColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
             dataGridView.Columns.Add(nameColumn);
 
-            DataGridViewCheckBoxColumn keyColumn = new DataGridViewCheckBoxColumn();
+            DataGridViewColumn keyColumn = new DataGridViewCheckBoxColumn();
+            if (readOnly)
+                keyColumn = new DataGridViewTextBoxColumn();
+
             keyColumn.DataPropertyName = "IsKey";
             keyColumn.Name = "Is Key";
             keyColumn.ReadOnly = readOnly;
             keyColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
             dataGridView.Columns.Add(keyColumn);
 
-            DataGridViewCheckBoxColumn nullableColumn = new DataGridViewCheckBoxColumn();
+            DataGridViewColumn nullableColumn = new DataGridViewCheckBoxColumn();
+            if (readOnly)
+                nullableColumn = new DataGridViewTextBoxColumn();
+
             nullableColumn.DataPropertyName = "Nullable";
             nullableColumn.Name = "Optional";
             nullableColumn.ReadOnly = readOnly;
             nullableColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
             dataGridView.Columns.Add(nullableColumn);
 
-            DataGridViewComboBoxColumn typeColumn = new DataGridViewComboBoxColumn();
-            typeColumn.Items.Add("string");
-            typeColumn.Items.Add("DateTime");
-            typeColumn.Items.Add("bool");
-            typeColumn.Items.Add("long");
-            typeColumn.Items.Add("int");
-            typeColumn.Items.Add("decimal");
-            typeColumn.Items.Add("double");
-            typeColumn.Items.Add("List<string>");
-            typeColumn.Items.Add("List<DateTime>");
-            typeColumn.Items.Add("List<bool>");
-            typeColumn.Items.Add("List<long>");
-            typeColumn.Items.Add("List<decimal>");
-            typeColumn.Items.Add("List<double>");
-            typeColumn.Items.Add("List<int>");
+            DataGridViewColumn typeColumn = new DataGridViewTextBoxColumn();
+            if (!readOnly)
+            {
+                typeColumn = new DataGridViewComboBoxColumn();
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("string");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("DateTime");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("bool");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("long");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("int");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("decimal");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("double");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<string>");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<DateTime>");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<bool>");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<long>");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<decimal>");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<double>");
+                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<int>");
+            }
             typeColumn.DataPropertyName = "Type";
             typeColumn.Name = "Type";
             typeColumn.ReadOnly = readOnly;
+            typeColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
             dataGridView.Columns.Add(typeColumn);
 
-            DataGridViewComboBoxColumn indexTypeColumn = new DataGridViewComboBoxColumn();
-            indexTypeColumn.Items.Add(PropertyIndex.None.ToString());
-            indexTypeColumn.Items.Add(PropertyIndex.Indexed.ToString());
-            indexTypeColumn.Items.Add(PropertyIndex.Unique.ToString());
+            DataGridViewColumn indexTypeColumn = new DataGridViewTextBoxColumn();
+            if (!readOnly)
+            {
+                indexTypeColumn = new DataGridViewComboBoxColumn();
+                ((DataGridViewComboBoxColumn)indexTypeColumn).Items.Add(PropertyIndex.None.ToString());
+                ((DataGridViewComboBoxColumn)indexTypeColumn).Items.Add(PropertyIndex.Indexed.ToString());
+                ((DataGridViewComboBoxColumn)indexTypeColumn).Items.Add(PropertyIndex.Unique.ToString());
+            }
+            
             indexTypeColumn.DataPropertyName = "Index";
             indexTypeColumn.Name = "Index";
             indexTypeColumn.ReadOnly = readOnly;
@@ -203,6 +219,7 @@ namespace Blueprint41.Modeller
             sourceEntity.DataPropertyName = "InEntity";
             sourceEntity.Name = "IN Entity";
             sourceEntity.ReadOnly = true;
+            sourceEntity.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(sourceEntity);
 
 
@@ -210,54 +227,63 @@ namespace Blueprint41.Modeller
             sourceNameColumn.DataPropertyName = "InProperty";
             sourceNameColumn.Name = "IN Property";
             sourceNameColumn.ReadOnly = true;
+            sourceNameColumn.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(sourceNameColumn);
 
             DataGridViewTextBoxColumn sourceTypeColumn = new DataGridViewTextBoxColumn();
             sourceTypeColumn.DataPropertyName = "InPropertyType";
             sourceTypeColumn.Name = "IN Prop. Type";
             sourceTypeColumn.ReadOnly = true;
+            sourceTypeColumn.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(sourceTypeColumn);
 
             DataGridViewTextBoxColumn sourceNullableColumn = new DataGridViewTextBoxColumn();
             sourceNullableColumn.DataPropertyName = "InNullable";
             sourceNullableColumn.Name = "IN Prop. Optional";
             sourceNullableColumn.ReadOnly = true;
+            sourceNullableColumn.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(sourceNullableColumn);
 
             DataGridViewUpperCaseTextBoxColumn relationshipNameColumn = new DataGridViewUpperCaseTextBoxColumn();
             relationshipNameColumn.DataPropertyName = "Name";
             relationshipNameColumn.Name = "Relationship Name";
             relationshipNameColumn.ReadOnly = true;
+            relationshipNameColumn.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(relationshipNameColumn);
 
             DataGridViewUpperCaseTextBoxColumn neo4jNameColumn = new DataGridViewUpperCaseTextBoxColumn();
             neo4jNameColumn.DataPropertyName = "Type";
             neo4jNameColumn.Name = "Neo4j Name";
             neo4jNameColumn.ReadOnly = true;
+            neo4jNameColumn.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(neo4jNameColumn);
 
             DataGridViewTextBoxColumn targetEntity = new DataGridViewTextBoxColumn();
             targetEntity.DataPropertyName = "OutEntity";
             targetEntity.Name = "OUT Entity";
             targetEntity.ReadOnly = true;
+            targetEntity.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(targetEntity);
 
             DataGridViewTextBoxColumn targetNameColumn = new DataGridViewTextBoxColumn();
             targetNameColumn.DataPropertyName = "OutProperty";
             targetNameColumn.Name = "OUT Property";
             targetNameColumn.ReadOnly = true;
+            targetNameColumn.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(targetNameColumn);
 
             DataGridViewTextBoxColumn targetTypeColumn = new DataGridViewTextBoxColumn();
             targetTypeColumn.DataPropertyName = "OutPropertyType";
             targetTypeColumn.Name = "OUT Prop. Type";
             targetTypeColumn.ReadOnly = true;
+            targetTypeColumn.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(targetTypeColumn);
 
             DataGridViewTextBoxColumn targetNullableColumn = new DataGridViewTextBoxColumn();
             targetNullableColumn.DataPropertyName = "OutNullable";
             targetNullableColumn.Name = "OUT Prop. Optional";
             targetNullableColumn.ReadOnly = true;
+            targetNullableColumn.DefaultCellStyle.BackColor = Color.LightGray;
             dataGridViewInheritedRelationships.Columns.Add(targetNullableColumn);
         }
 

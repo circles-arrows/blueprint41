@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
+            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.txtLabel = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.chkIsAbstract = new System.Windows.Forms.CheckBox();
@@ -66,7 +67,7 @@
             this.checkBoxShowAllRelationships = new System.Windows.Forms.CheckBox();
             this.label11 = new System.Windows.Forms.Label();
             this.bindingSourceInheritedRelationships = new System.Windows.Forms.BindingSource(this.components);
-            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRelationships)).BeginInit();
@@ -96,7 +97,6 @@
             this.splitContainerRelBox.Panel2.SuspendLayout();
             this.splitContainerRelBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedRelationships)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -118,6 +118,10 @@
             this.txtName.Size = new System.Drawing.Size(354, 20);
             this.txtName.TabIndex = 1;
             this.txtName.Leave += new System.EventHandler(this.txtName_Leave);
+            // 
+            // bindingSource
+            // 
+            this.bindingSource.DataSource = typeof(Blueprint41.Modeller.Schemas.entity);
             // 
             // txtLabel
             // 
@@ -252,7 +256,7 @@
             this.dataGridViewInheritedPrimitiveProperties.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewInheritedPrimitiveProperties.Name = "dataGridViewInheritedPrimitiveProperties";
             this.dataGridViewInheritedPrimitiveProperties.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewInheritedPrimitiveProperties.Size = new System.Drawing.Size(438, 117);
+            this.dataGridViewInheritedPrimitiveProperties.Size = new System.Drawing.Size(438, 120);
             this.dataGridViewInheritedPrimitiveProperties.TabIndex = 9;
             // 
             // btnEditStaticData
@@ -355,6 +359,7 @@
             this.splitContainerProperties.Panel2.Controls.Add(this.dataGridViewInheritedPrimitiveProperties);
             this.splitContainerProperties.Size = new System.Drawing.Size(438, 242);
             this.splitContainerProperties.SplitterDistance = 121;
+            this.splitContainerProperties.SplitterWidth = 1;
             this.splitContainerProperties.TabIndex = 0;
             // 
             // splitContainerRelationships
@@ -373,6 +378,7 @@
             this.splitContainerRelationships.Panel2.Controls.Add(this.dataGridViewInheritedRelationships);
             this.splitContainerRelationships.Size = new System.Drawing.Size(438, 238);
             this.splitContainerRelationships.SplitterDistance = 124;
+            this.splitContainerRelationships.SplitterWidth = 1;
             this.splitContainerRelationships.TabIndex = 0;
             // 
             // dataGridViewInheritedRelationships
@@ -381,7 +387,7 @@
             this.dataGridViewInheritedRelationships.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewInheritedRelationships.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewInheritedRelationships.Name = "dataGridViewInheritedRelationships";
-            this.dataGridViewInheritedRelationships.Size = new System.Drawing.Size(438, 110);
+            this.dataGridViewInheritedRelationships.Size = new System.Drawing.Size(438, 113);
             this.dataGridViewInheritedRelationships.TabIndex = 10;
             // 
             // splitContainerMain
@@ -476,10 +482,6 @@
             this.label11.TabIndex = 0;
             this.label11.Text = "Relationships (Direct && Inherited):";
             // 
-            // bindingSource
-            // 
-            this.bindingSource.DataSource = typeof(Blueprint41.Modeller.Schemas.entity);
-            // 
             // EntityEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -507,6 +509,7 @@
             this.Controls.Add(this.label1);
             this.Name = "EntityEditor";
             this.Size = new System.Drawing.Size(460, 819);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPrimitiveProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRelationships)).EndInit();
@@ -538,7 +541,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerRelBox)).EndInit();
             this.splitContainerRelBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedRelationships)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
