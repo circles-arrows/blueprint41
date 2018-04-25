@@ -20,6 +20,8 @@ namespace Blueprint41.Modeller
     {
         private bool isFromCmbInherits = false;
 
+        private bool showAllRelationships = false;
+
         public Entity Entity { get; private set; }
 
         public Model StorageModel { get; private set; }
@@ -49,6 +51,22 @@ namespace Blueprint41.Modeller
             CreateGridColumnsForPrimitiveProperties(dataGridViewPrimitiveProperties);
             CreateGridColumnsForPrimitiveProperties(dataGridViewInheritedPrimitiveProperties, true);
             CreateGridColumnsForRelationships();
+            CreateGridColumnsForInheritedRelationships();
+            CreateToolTipForShowAllRelationshipsCheckbox();
+        }
+
+        private void CreateToolTipForShowAllRelationshipsCheckbox()
+        {
+            // Create the ToolTip and associate with the Form container.
+            ToolTip toolTip1 = new ToolTip();
+
+            // Set up the delays for the ToolTip.
+            toolTip1.AutoPopDelay = 5000;
+            toolTip1.InitialDelay = 100;
+            toolTip1.ReshowDelay = 500;
+
+            // Set up the ToolTip text
+            toolTip1.SetToolTip(checkBoxShowAllRelationships, "Also shows relationships to entities outside the current submodel.");
         }
 
         private void CreateGridColumnsForPrimitiveProperties(DataGridView dataGridView, bool readOnly = false)
@@ -113,7 +131,7 @@ namespace Blueprint41.Modeller
         {
             // Initialize the DataGridView.
             dataGridViewRelationships.AutoGenerateColumns = false;
-            dataGridViewPrimitiveProperties.AutoSize = true;
+            dataGridViewRelationships.AutoSize = true;
 
 
             sourceEntitiesColumn = new DataGridViewComboBoxColumn();
@@ -174,6 +192,75 @@ namespace Blueprint41.Modeller
             dataGridViewRelationships.Columns.Add(targetNullableColumn);
         }
 
+        private void CreateGridColumnsForInheritedRelationships()
+        {
+            // Initialize the DataGridView.
+            dataGridViewInheritedRelationships.AutoGenerateColumns = false;
+            dataGridViewInheritedRelationships.AutoSize = true;
+
+
+            DataGridViewTextBoxColumn sourceEntity = new DataGridViewTextBoxColumn();
+            sourceEntity.DataPropertyName = "InEntity";
+            sourceEntity.Name = "IN Entity";
+            sourceEntity.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(sourceEntity);
+
+
+            DataGridViewTextBoxColumn sourceNameColumn = new DataGridViewTextBoxColumn();
+            sourceNameColumn.DataPropertyName = "InProperty";
+            sourceNameColumn.Name = "IN Property";
+            sourceNameColumn.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(sourceNameColumn);
+
+            DataGridViewTextBoxColumn sourceTypeColumn = new DataGridViewTextBoxColumn();
+            sourceTypeColumn.DataPropertyName = "InPropertyType";
+            sourceTypeColumn.Name = "IN Prop. Type";
+            sourceTypeColumn.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(sourceTypeColumn);
+
+            DataGridViewTextBoxColumn sourceNullableColumn = new DataGridViewTextBoxColumn();
+            sourceNullableColumn.DataPropertyName = "InNullable";
+            sourceNullableColumn.Name = "IN Prop. Optional";
+            sourceNullableColumn.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(sourceNullableColumn);
+
+            DataGridViewUpperCaseTextBoxColumn relationshipNameColumn = new DataGridViewUpperCaseTextBoxColumn();
+            relationshipNameColumn.DataPropertyName = "Name";
+            relationshipNameColumn.Name = "Relationship Name";
+            relationshipNameColumn.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(relationshipNameColumn);
+
+            DataGridViewUpperCaseTextBoxColumn neo4jNameColumn = new DataGridViewUpperCaseTextBoxColumn();
+            neo4jNameColumn.DataPropertyName = "Type";
+            neo4jNameColumn.Name = "Neo4j Name";
+            neo4jNameColumn.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(neo4jNameColumn);
+
+            DataGridViewTextBoxColumn targetEntity = new DataGridViewTextBoxColumn();
+            targetEntity.DataPropertyName = "OutEntity";
+            targetEntity.Name = "OUT Entity";
+            targetEntity.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(targetEntity);
+
+            DataGridViewTextBoxColumn targetNameColumn = new DataGridViewTextBoxColumn();
+            targetNameColumn.DataPropertyName = "OutProperty";
+            targetNameColumn.Name = "OUT Property";
+            targetNameColumn.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(targetNameColumn);
+
+            DataGridViewTextBoxColumn targetTypeColumn = new DataGridViewTextBoxColumn();
+            targetTypeColumn.DataPropertyName = "OutPropertyType";
+            targetTypeColumn.Name = "OUT Prop. Type";
+            targetTypeColumn.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(targetTypeColumn);
+
+            DataGridViewTextBoxColumn targetNullableColumn = new DataGridViewTextBoxColumn();
+            targetNullableColumn.DataPropertyName = "OutNullable";
+            targetNullableColumn.Name = "OUT Prop. Optional";
+            targetNullableColumn.ReadOnly = true;
+            dataGridViewInheritedRelationships.Columns.Add(targetNullableColumn);
+        }
+
         private Collection<Primitive> GetPrimitivesOfBaseTypes(Entity Entity)
         {
             Collection<Primitive> inheritedPrimitives = new Collection<Primitive>();
@@ -191,6 +278,25 @@ namespace Blueprint41.Modeller
 
             return inheritedPrimitives;
         }
+
+        private Collection<Relationship> GetInheritedRelationShipsOfBaseWithinSubmodel()
+        {
+            Collection<Relationship> inheritedRelationships = new Collection<Relationship>();
+            Entity current = Entity.ParentEntity;
+            if (current == null)
+                return null;
+            do
+            {
+                foreach (Relationship rel in current.GetRelationships(StorageModel.DisplayedSubmodel, true))
+                    inheritedRelationships.Add(rel);
+
+                current = current.ParentEntity;
+
+            } while (current != null);
+
+            return inheritedRelationships;
+        }
+
         private void Assign()
         {
             cmbInherits.DataBindings.Clear();
@@ -207,7 +313,18 @@ namespace Blueprint41.Modeller
 
             bindingSourceCollectionProperties.DataSource = null;
             dataGridViewRelationships.DataSource = null;
-            relationshipsObservable = new ObservableCollection<Schemas.Relationship>(Entity.GetRelationships(StorageModel.DisplayedSubmodel));
+
+            if (showAllRelationships)
+            {
+                List<Relationship> allRelationships = new List<Relationship>();
+                allRelationships.AddRange(Entity.GetRelationships(RelationshipDirection.In, false));
+                allRelationships.AddRange(Entity.GetRelationships(RelationshipDirection.Out, false));
+
+                relationshipsObservable = new ObservableCollection<Schemas.Relationship>(allRelationships);
+            }
+            else
+                relationshipsObservable = new ObservableCollection<Schemas.Relationship>(Entity.GetRelationships(StorageModel.DisplayedSubmodel));
+
             relationshipsObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
             {
                 switch (e.Action)
@@ -249,6 +366,9 @@ namespace Blueprint41.Modeller
             dataGridViewRelationships.DataSource = bindingSourceCollectionProperties;
             dataGridViewRelationships.CellValueChanged += DataGridViewRelationships_CellValueChanged;
             dataGridViewRelationships.CurrentCellDirtyStateChanged += DataGridViewRelationships_CurrentCellDirtyStateChanged;
+
+            bindingSourceInheritedRelationships.DataSource = GetInheritedRelationShipsOfBaseWithinSubmodel();
+            dataGridViewInheritedRelationships.DataSource = bindingSourceInheritedRelationships;
 
             bindingSourceEntities.DataSource = null;
             bindingSourceEntities.DataSource = StorageModel.Entities.Entity.OrderBy(x => x.Label);
@@ -369,7 +489,9 @@ namespace Blueprint41.Modeller
         public void ClearDataSourceAndHandlers()
         {
             bindingSourcePrimitiveProperties.DataSource = null;
+            bindingSourceInheritedPrimitiveProperties.DataSource = null;
             bindingSourceCollectionProperties.DataSource = null;
+            bindingSourceInheritedRelationships.DataSource = null;
             cmbFunctionalId.SelectedIndexChanged -= cmbFunctionalId_SelectedIndexChanged;
             cmbInherits.SelectedIndexChanged -= CmbInherits_SelectedIndexChanged;
             if (Entity != null)
@@ -600,6 +722,8 @@ namespace Blueprint41.Modeller
             relationshipsObservable = new ObservableCollection<Schemas.Relationship>(Entity.GetRelationships(StorageModel.DisplayedSubmodel));
             bindingSourceCollectionProperties.DataSource = relationshipsObservable;
             dataGridViewRelationships.DataSource = bindingSourceCollectionProperties;
+
+
         }
 
         private void btnAddFunctionalId_Click(object sender, EventArgs e)
@@ -627,6 +751,12 @@ namespace Blueprint41.Modeller
             
             Entity.IsStaticData = chkIsStaticData.Checked;
             btnEditStaticData.Visible = Entity.IsStaticData;
+        }
+
+        private void checkBoxShowAllRelationships_CheckedChanged(object sender, EventArgs e)
+        {
+            showAllRelationships = checkBoxShowAllRelationships.Checked;
+            Reload();
         }
     }
 

@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
-            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.txtLabel = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.chkIsAbstract = new System.Windows.Forms.CheckBox();
@@ -47,8 +46,6 @@
             this.cmbInherits = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txtSummary = new System.Windows.Forms.TextBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.dataGridViewInheritedPrimitiveProperties = new System.Windows.Forms.DataGridView();
             this.btnEditStaticData = new System.Windows.Forms.Button();
             this.cmbFunctionalId = new System.Windows.Forms.ComboBox();
@@ -59,22 +56,47 @@
             this.label9 = new System.Windows.Forms.Label();
             this.chkIsStaticData = new System.Windows.Forms.CheckBox();
             this.bindingSourceInheritedPrimitiveProperties = new System.Windows.Forms.BindingSource(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
+            this.splitContainerProperties = new System.Windows.Forms.SplitContainer();
+            this.splitContainerRelationships = new System.Windows.Forms.SplitContainer();
+            this.dataGridViewInheritedRelationships = new System.Windows.Forms.DataGridView();
+            this.splitContainerMain = new System.Windows.Forms.SplitContainer();
+            this.splitContainerPropBox = new System.Windows.Forms.SplitContainer();
+            this.label10 = new System.Windows.Forms.Label();
+            this.splitContainerRelBox = new System.Windows.Forms.SplitContainer();
+            this.checkBoxShowAllRelationships = new System.Windows.Forms.CheckBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.bindingSourceInheritedRelationships = new System.Windows.Forms.BindingSource(this.components);
+            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRelationships)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceCollectionProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceEntities)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInheritedPrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedPrimitiveProperties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerProperties)).BeginInit();
+            this.splitContainerProperties.Panel1.SuspendLayout();
+            this.splitContainerProperties.Panel2.SuspendLayout();
+            this.splitContainerProperties.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRelationships)).BeginInit();
+            this.splitContainerRelationships.Panel1.SuspendLayout();
+            this.splitContainerRelationships.Panel2.SuspendLayout();
+            this.splitContainerRelationships.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInheritedRelationships)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
+            this.splitContainerMain.Panel1.SuspendLayout();
+            this.splitContainerMain.Panel2.SuspendLayout();
+            this.splitContainerMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerPropBox)).BeginInit();
+            this.splitContainerPropBox.Panel1.SuspendLayout();
+            this.splitContainerPropBox.Panel2.SuspendLayout();
+            this.splitContainerPropBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRelBox)).BeginInit();
+            this.splitContainerRelBox.Panel1.SuspendLayout();
+            this.splitContainerRelBox.Panel2.SuspendLayout();
+            this.splitContainerRelBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedRelationships)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -96,10 +118,6 @@
             this.txtName.Size = new System.Drawing.Size(354, 20);
             this.txtName.TabIndex = 1;
             this.txtName.Leave += new System.EventHandler(this.txtName_Leave);
-            // 
-            // bindingSource
-            // 
-            this.bindingSource.DataSource = typeof(Blueprint41.Modeller.Schemas.entity);
             // 
             // txtLabel
             // 
@@ -149,7 +167,7 @@
             this.dataGridViewPrimitiveProperties.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewPrimitiveProperties.Name = "dataGridViewPrimitiveProperties";
             this.dataGridViewPrimitiveProperties.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewPrimitiveProperties.Size = new System.Drawing.Size(454, 88);
+            this.dataGridViewPrimitiveProperties.Size = new System.Drawing.Size(438, 121);
             this.dataGridViewPrimitiveProperties.TabIndex = 8;
             this.dataGridViewPrimitiveProperties.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewPrimitiveProperties_CellValueChanged);
             this.dataGridViewPrimitiveProperties.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView_DataError);
@@ -162,7 +180,7 @@
             this.dataGridViewRelationships.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewRelationships.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewRelationships.Name = "dataGridViewRelationships";
-            this.dataGridViewRelationships.Size = new System.Drawing.Size(454, 146);
+            this.dataGridViewRelationships.Size = new System.Drawing.Size(438, 124);
             this.dataGridViewRelationships.TabIndex = 9;
             this.dataGridViewRelationships.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRelationships_CellValueChanged);
             this.dataGridViewRelationships.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridViewCollectionProperties_DataError);
@@ -227,44 +245,6 @@
             this.txtSummary.Size = new System.Drawing.Size(354, 45);
             this.txtSummary.TabIndex = 17;
             // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(3, 270);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.dataGridViewRelationships);
-            this.splitContainer1.Size = new System.Drawing.Size(454, 308);
-            this.splitContainer1.SplitterDistance = 158;
-            this.splitContainer1.TabIndex = 18;
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.dataGridViewPrimitiveProperties);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.dataGridViewInheritedPrimitiveProperties);
-            this.splitContainer2.Size = new System.Drawing.Size(454, 158);
-            this.splitContainer2.SplitterDistance = 88;
-            this.splitContainer2.TabIndex = 0;
-            // 
             // dataGridViewInheritedPrimitiveProperties
             // 
             this.dataGridViewInheritedPrimitiveProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
@@ -272,7 +252,7 @@
             this.dataGridViewInheritedPrimitiveProperties.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewInheritedPrimitiveProperties.Name = "dataGridViewInheritedPrimitiveProperties";
             this.dataGridViewInheritedPrimitiveProperties.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewInheritedPrimitiveProperties.Size = new System.Drawing.Size(454, 66);
+            this.dataGridViewInheritedPrimitiveProperties.Size = new System.Drawing.Size(438, 117);
             this.dataGridViewInheritedPrimitiveProperties.TabIndex = 9;
             // 
             // btnEditStaticData
@@ -359,11 +339,152 @@
             this.chkIsStaticData.UseVisualStyleBackColor = true;
             this.chkIsStaticData.CheckedChanged += new System.EventHandler(this.chkIsStaticData_CheckedChanged);
             // 
+            // splitContainerProperties
+            // 
+            this.splitContainerProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerProperties.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerProperties.Name = "splitContainerProperties";
+            this.splitContainerProperties.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerProperties.Panel1
+            // 
+            this.splitContainerProperties.Panel1.Controls.Add(this.dataGridViewPrimitiveProperties);
+            // 
+            // splitContainerProperties.Panel2
+            // 
+            this.splitContainerProperties.Panel2.Controls.Add(this.dataGridViewInheritedPrimitiveProperties);
+            this.splitContainerProperties.Size = new System.Drawing.Size(438, 242);
+            this.splitContainerProperties.SplitterDistance = 121;
+            this.splitContainerProperties.TabIndex = 0;
+            // 
+            // splitContainerRelationships
+            // 
+            this.splitContainerRelationships.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerRelationships.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerRelationships.Name = "splitContainerRelationships";
+            this.splitContainerRelationships.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerRelationships.Panel1
+            // 
+            this.splitContainerRelationships.Panel1.Controls.Add(this.dataGridViewRelationships);
+            // 
+            // splitContainerRelationships.Panel2
+            // 
+            this.splitContainerRelationships.Panel2.Controls.Add(this.dataGridViewInheritedRelationships);
+            this.splitContainerRelationships.Size = new System.Drawing.Size(438, 238);
+            this.splitContainerRelationships.SplitterDistance = 124;
+            this.splitContainerRelationships.TabIndex = 0;
+            // 
+            // dataGridViewInheritedRelationships
+            // 
+            this.dataGridViewInheritedRelationships.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewInheritedRelationships.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewInheritedRelationships.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewInheritedRelationships.Name = "dataGridViewInheritedRelationships";
+            this.dataGridViewInheritedRelationships.Size = new System.Drawing.Size(438, 110);
+            this.dataGridViewInheritedRelationships.TabIndex = 10;
+            // 
+            // splitContainerMain
+            // 
+            this.splitContainerMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainerMain.Location = new System.Drawing.Point(10, 265);
+            this.splitContainerMain.Name = "splitContainerMain";
+            this.splitContainerMain.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerMain.Panel1
+            // 
+            this.splitContainerMain.Panel1.Controls.Add(this.splitContainerPropBox);
+            // 
+            // splitContainerMain.Panel2
+            // 
+            this.splitContainerMain.Panel2.Controls.Add(this.splitContainerRelBox);
+            this.splitContainerMain.Size = new System.Drawing.Size(438, 542);
+            this.splitContainerMain.SplitterDistance = 271;
+            this.splitContainerMain.TabIndex = 29;
+            // 
+            // splitContainerPropBox
+            // 
+            this.splitContainerPropBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerPropBox.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainerPropBox.IsSplitterFixed = true;
+            this.splitContainerPropBox.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerPropBox.Name = "splitContainerPropBox";
+            this.splitContainerPropBox.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerPropBox.Panel1
+            // 
+            this.splitContainerPropBox.Panel1.Controls.Add(this.label10);
+            this.splitContainerPropBox.Panel1MinSize = 18;
+            // 
+            // splitContainerPropBox.Panel2
+            // 
+            this.splitContainerPropBox.Panel2.Controls.Add(this.splitContainerProperties);
+            this.splitContainerPropBox.Size = new System.Drawing.Size(438, 271);
+            this.splitContainerPropBox.SplitterDistance = 25;
+            this.splitContainerPropBox.TabIndex = 0;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(-1, 11);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(147, 13);
+            this.label10.TabIndex = 0;
+            this.label10.Text = "Properties (Direct && Inherited):";
+            // 
+            // splitContainerRelBox
+            // 
+            this.splitContainerRelBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerRelBox.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainerRelBox.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerRelBox.Name = "splitContainerRelBox";
+            this.splitContainerRelBox.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerRelBox.Panel1
+            // 
+            this.splitContainerRelBox.Panel1.Controls.Add(this.checkBoxShowAllRelationships);
+            this.splitContainerRelBox.Panel1.Controls.Add(this.label11);
+            this.splitContainerRelBox.Panel1MinSize = 18;
+            // 
+            // splitContainerRelBox.Panel2
+            // 
+            this.splitContainerRelBox.Panel2.Controls.Add(this.splitContainerRelationships);
+            this.splitContainerRelBox.Size = new System.Drawing.Size(438, 267);
+            this.splitContainerRelBox.SplitterDistance = 25;
+            this.splitContainerRelBox.TabIndex = 0;
+            // 
+            // checkBoxShowAllRelationships
+            // 
+            this.checkBoxShowAllRelationships.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxShowAllRelationships.AutoSize = true;
+            this.checkBoxShowAllRelationships.Location = new System.Drawing.Point(310, 10);
+            this.checkBoxShowAllRelationships.Name = "checkBoxShowAllRelationships";
+            this.checkBoxShowAllRelationships.Size = new System.Drawing.Size(133, 17);
+            this.checkBoxShowAllRelationships.TabIndex = 1;
+            this.checkBoxShowAllRelationships.Text = "Show All Relationships";
+            this.checkBoxShowAllRelationships.UseVisualStyleBackColor = true;
+            this.checkBoxShowAllRelationships.CheckedChanged += new System.EventHandler(this.checkBoxShowAllRelationships_CheckedChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(-1, 11);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(163, 13);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Relationships (Direct && Inherited):";
+            // 
+            // bindingSource
+            // 
+            this.bindingSource.DataSource = typeof(Blueprint41.Modeller.Schemas.entity);
+            // 
             // EntityEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.splitContainerMain);
             this.Controls.Add(this.chkIsStaticData);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label4);
@@ -385,23 +506,39 @@
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.label1);
             this.Name = "EntityEditor";
-            this.Size = new System.Drawing.Size(460, 581);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
+            this.Size = new System.Drawing.Size(460, 819);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPrimitiveProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRelationships)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceCollectionProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceEntities)).EndInit();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInheritedPrimitiveProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedPrimitiveProperties)).EndInit();
+            this.splitContainerProperties.Panel1.ResumeLayout(false);
+            this.splitContainerProperties.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerProperties)).EndInit();
+            this.splitContainerProperties.ResumeLayout(false);
+            this.splitContainerRelationships.Panel1.ResumeLayout(false);
+            this.splitContainerRelationships.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRelationships)).EndInit();
+            this.splitContainerRelationships.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInheritedRelationships)).EndInit();
+            this.splitContainerMain.Panel1.ResumeLayout(false);
+            this.splitContainerMain.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
+            this.splitContainerMain.ResumeLayout(false);
+            this.splitContainerPropBox.Panel1.ResumeLayout(false);
+            this.splitContainerPropBox.Panel1.PerformLayout();
+            this.splitContainerPropBox.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerPropBox)).EndInit();
+            this.splitContainerPropBox.ResumeLayout(false);
+            this.splitContainerRelBox.Panel1.ResumeLayout(false);
+            this.splitContainerRelBox.Panel1.PerformLayout();
+            this.splitContainerRelBox.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRelBox)).EndInit();
+            this.splitContainerRelBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedRelationships)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -427,7 +564,6 @@
         private System.Windows.Forms.ComboBox cmbInherits;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtSummary;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnEditStaticData;
         private System.Windows.Forms.ComboBox cmbFunctionalId;
         private System.Windows.Forms.Label label3;
@@ -436,8 +572,17 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox chkIsStaticData;
-        private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.DataGridView dataGridViewInheritedPrimitiveProperties;
         private System.Windows.Forms.BindingSource bindingSourceInheritedPrimitiveProperties;
+        private System.Windows.Forms.SplitContainer splitContainerProperties;
+        private System.Windows.Forms.SplitContainer splitContainerRelationships;
+        private System.Windows.Forms.SplitContainer splitContainerMain;
+        private System.Windows.Forms.SplitContainer splitContainerPropBox;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.SplitContainer splitContainerRelBox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.CheckBox checkBoxShowAllRelationships;
+        private System.Windows.Forms.DataGridView dataGridViewInheritedRelationships;
+        private System.Windows.Forms.BindingSource bindingSourceInheritedRelationships;
     }
 }
