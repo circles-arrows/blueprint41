@@ -1038,7 +1038,7 @@ namespace Blueprint41
 
         public object GetValue(OGM instance, DateTime? moment = null)
         {
-            if (Relationship.IsTimeDependent && PropertyType == PropertyType.Lookup)
+            if (PropertyType == PropertyType.Lookup && Relationship.IsTimeDependent)
             {
                 if (getValueWithMoment == null)
                 {
@@ -1075,7 +1075,7 @@ namespace Blueprint41
 
         public void SetValue(OGM instance, object value, DateTime? moment = null)
         {
-            if (Relationship.IsTimeDependent && PropertyType == PropertyType.Lookup)
+            if (PropertyType == PropertyType.Lookup && Relationship.IsTimeDependent)
             {
                 if (setValueWithMoment == null)
                 {
