@@ -558,7 +558,7 @@ if (!DALModel.IsAbstract)
 #>
 		private void Clear<#= attr.Name #>(DateTime? moment)
 		{
-			((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).ClearLookup(moment);
+			((ILookupHelper<<#= attr.EntityReturnType.ClassName #>>)InnerData.<#= attr.Name #>).ClearLookup(moment);
 		}
 <#
 				}
@@ -573,6 +573,10 @@ if (!DALModel.IsAbstract)
 		{
 			return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItem(moment);
 		}
+		public IEnumerable<CollectionItem<<#= attr.OuterReturnType #>>> Get<#= attr.Name.ToPlural() #>(DateTime? from, DateTime? till)
+        {
+            return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(from, till);
+        }
 		public void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment = null)
 		{
 			if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItem(moment), value, moment))

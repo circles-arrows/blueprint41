@@ -281,6 +281,15 @@ namespace Blueprint41.Core
 
             return InnerData.Where(item => item.Overlaps(moment.Value)).Select(item => item.Item).FirstOrDefault();
         }
+        protected override IEnumerable<CollectionItem<TEntity>> GetItems(DateTime? from, DateTime? till)
+        {
+            LazyLoad();
+
+            if (from == null && till == null)
+                return InnerData;
+
+            return InnerData.Where(item => item.Overlaps(from, till));
+        }
         protected override TEntity GetOriginalItem(DateTime? moment)
         {
             LazyLoad();

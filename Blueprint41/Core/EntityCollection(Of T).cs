@@ -213,6 +213,10 @@ namespace Blueprint41.Core
 
             return InnerData[0].Item;
         }
+        protected override IEnumerable<CollectionItem<TEntity>> GetItems(DateTime? from, DateTime? till)
+        {
+            return InnerData;
+        }
         protected override TEntity GetOriginalItem(DateTime? moment)
         {
             LazyLoad();
