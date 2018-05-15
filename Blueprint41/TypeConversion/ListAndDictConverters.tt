@@ -1,0 +1,190 @@
+﻿<#@ template debug="true" hostSpecific="false" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+
+	var conversions = new []
+    {
+            new [] { "bool",      "bool",   "b"  },
+            new [] { "bool?",     "bool?",  "b"  },
+            new [] { "sbyte",     "long",   "i"  },
+            new [] { "sbyte?",    "long?",  "i"  },
+            new [] { "short",     "long",   "i"  },
+            new [] { "short?",    "long?",  "i"  },
+            new [] { "int",       "long",   "i"  },
+            new [] { "int?",      "long?",  "i"  },
+            new [] { "long",      "long",   "i"  },
+            new [] { "long?",     "long?",  "i"  },
+            new [] { "float",     "double", "f"  },
+            new [] { "float?",    "double?","f"  },
+            new [] { "double",    "double", "f"  },
+            new [] { "double?",   "double?","f"  },
+            new [] { "char",      "string", "s"  },
+            new [] { "char?",     "string", "s"  },
+            new [] { "string",    "string", "s"  },
+            new [] { "DateTime",  "long",   "dt" },
+            new [] { "DateTime?", "long?",  "dt" },
+            new [] { "Guid",      "string", "s"  },
+            new [] { "Guid?",     "string", "s"  },
+            new [] { "decimal",   "long",   "d"  },
+            new [] { "decimal?",  "long?",  "d"  },
+    };
+
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Blueprint41.Core;
+using Blueprint41.TypeConversion;
+
+#region Assembly Conversion Registration
+
+<#
+	foreach (var item in conversions)
+    {
+		string name = string.Concat(Char.ToUpper(item[0][0]), item[0].Substring(1)).Replace("?", "Nullable");
+
+#>
+[assembly: Conversion(typeof(ListOfObjectToListOf<#= name #>))]
+[assembly: Conversion(typeof(ListOf<#= name #>ToListOfObject))]
+<#
+    }
+
+	foreach (var key in conversions)
+    {
+		foreach (var value in conversions)
+		{
+			string kName = string.Concat(Char.ToUpper(key[0][0]), key[0].Substring(1)).Replace("?", "Nullable");
+			string vName = string.Concat(Char.ToUpper(value[0][0]), value[0].Substring(1)).Replace("?", "Nullable");
+
+#>
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOf<#= kName #><#= vName #>))]
+[assembly: Conversion(typeof(DictOf<#= kName #><#= vName #>ToDictOfObjectObject))]
+<#
+		}
+    }
+#>
+
+#endregion
+
+namespace Blueprint41.Neo4j.Persistence
+{
+	#region Provider Type Registration
+
+    public partial class Neo4JPersistenceProvider : PersistenceProvider
+    {
+        public static readonly List<TypeMapping> supportedTypeMappings = new List<TypeMapping>()
+        {
+			// primitives...
+<#
+	foreach (var item in conversions)
+    {
+#>
+            new TypeMapping(typeof(<#= item[0] #>), typeof(<#= item[1] #>), "<#= item[2] #>"),
+<#
+    }
+#>          
+            // lists...
+<#
+	foreach (var item in conversions)
+    {
+#>
+            new TypeMapping(typeof(List<<#= item[0] #>>), typeof(List<object>), "l_<#= item[2] #>"),
+<#
+    }
+#>          
+
+            // dictionaries
+<#
+	foreach (var key in conversions)
+    {
+		foreach (var value in conversions)
+		{
+#>
+            new TypeMapping(typeof(Dictionary<<#= key[0] #>, <#= value[0] #>>), typeof(string), "d_<#= key[2] #>_<#= value[2] #>"),
+<#
+		}
+    }
+#>           
+        };
+    }
+
+	#endregion
+}
+
+namespace Blueprint41.TypeConversion
+{
+	#region List<T>
+
+<#
+	foreach (var item in conversions)
+    {
+		string name = string.Concat(Char.ToUpper(item[0][0]), item[0].Substring(1)).Replace("?", "Nullable");
+
+#>
+    internal class ListOfObjectToListOf<#= name #> : Conversion<List<object>, List<<#= item[0] #>>>
+    {
+        protected override List<<#= item[0] #>> Converter(List<object> value)
+        {
+			if ((object)value == null)
+				return null;
+
+            return value.Select(item => Conversion<<#= item[1] #>, <#= item[0] #>>.Convert((<#= item[1] #>)item)).ToList();
+        }
+    }	
+    internal class ListOf<#= name #>ToListOfObject : Conversion<List<<#= item[0] #>>, List<object>>
+    {
+        protected override List<object> Converter(List<<#= item[0] #>> value)
+        {
+			if ((object)value == null)
+				return null;
+
+            return value.Select(item => (object)Conversion<<#= item[0] #>, <#= item[1] #>>.Convert(item)).ToList();
+        }
+    }	
+<#
+    }
+#>
+          
+	#endregion
+
+	#region Dictionary<TKey, TValue>
+
+<#
+	foreach (var key in conversions)
+    {
+		foreach (var value in conversions)
+		{
+			string kName = string.Concat(Char.ToUpper(key[0][0]), key[0].Substring(1)).Replace("?", "Nullable");
+			string vName = string.Concat(Char.ToUpper(value[0][0]), value[0].Substring(1)).Replace("?", "Nullable");
+
+#>
+    internal class DictOfObjectObjectToDictOf<#= kName #><#= vName #> : Conversion<string, Dictionary<<#= key[0] #>, <#= value[0] #>>>
+    {
+        protected override Dictionary<<#= key[0] #>, <#= value[0] #>> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<<#= key[1] #>, <#= value[1] #>>>().ToDictionary(item => Conversion<<#= key[1] #>, <#= key[0] #>>.Convert((<#= key[1] #>)item.Key), item => Conversion<<#= value[1] #>, <#= value[0] #>>.Convert((<#= value[1] #>)item.Value));
+        }
+    }	
+    internal class DictOf<#= kName #><#= vName #>ToDictOfObjectObject : Conversion<Dictionary<<#= key[0] #>, <#= value[0] #>>, string>
+    {
+        protected override string Converter(Dictionary<<#= key[0] #>, <#= value[0] #>> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<<#= key[0] #>, <#= key[1] #>>.Convert(item.Key), item => (object)Conversion<<#= value[0] #>, <#= value[1] #>>.Convert(item.Value)).ToJson();
+        }
+    }	
+<#
+		}
+    }
+#>   
+
+	#endregion
+}

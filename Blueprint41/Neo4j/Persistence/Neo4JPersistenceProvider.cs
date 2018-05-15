@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Neo4j.Persistence
 {
-    public class Neo4JPersistenceProvider : PersistenceProvider
+    public partial class Neo4JPersistenceProvider : PersistenceProvider
     {
         internal const decimal DECIMAL_FACTOR = 100000000m;
 
@@ -62,35 +62,6 @@ namespace Blueprint41.Neo4j.Persistence
                 return supportedTypeMappings;
             }
         }
-
-        public static readonly List<TypeMapping> supportedTypeMappings = new List<TypeMapping>()
-        {
-            new TypeMapping(typeof(bool), typeof(bool), "b"),
-            new TypeMapping(typeof(bool?), typeof(bool?), "b"),
-            new TypeMapping(typeof(sbyte), typeof(long), "i"),
-            new TypeMapping(typeof(sbyte?), typeof(long?), "i"),
-            new TypeMapping(typeof(short), typeof(long), "i"),
-            new TypeMapping(typeof(short?), typeof(long?), "i"),
-            new TypeMapping(typeof(int), typeof(long), "i"),
-            new TypeMapping(typeof(int?), typeof(long?), "i"),
-            new TypeMapping(typeof(long), typeof(long), "i"),
-            new TypeMapping(typeof(long?), typeof(long?), "i"),
-            new TypeMapping(typeof(float), typeof(double),"f"),
-            new TypeMapping(typeof(float?), typeof(double?),"f"),
-            new TypeMapping(typeof(double), typeof(double),"f"),
-            new TypeMapping(typeof(double?), typeof(double?),"f"),
-            new TypeMapping(typeof(char), typeof(string),"s"),
-            new TypeMapping(typeof(char?), typeof(string),"s"),
-            new TypeMapping(typeof(string), typeof(string),"s"),
-            new TypeMapping(typeof(DateTime), typeof(long),"dt"),
-            new TypeMapping(typeof(DateTime?), typeof(long?),"dt"),
-            new TypeMapping(typeof(Guid), typeof(string),"s"),
-            new TypeMapping(typeof(Guid?), typeof(string),"s"),
-            new TypeMapping(typeof(decimal), typeof(long),"d"),
-            new TypeMapping(typeof(decimal?), typeof(long?),"d"),
-            // lists...
-            new TypeMapping(typeof(List<string>), typeof(List<object>), "l_s"),
-        };
     }
 }
 /*

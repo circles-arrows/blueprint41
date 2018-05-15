@@ -164,6 +164,10 @@
       <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
     </None>
+    <None Update="TypeConversion\ListAndDictConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ListAndDictConverters.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -295,6 +299,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TypeConversion\ListAndDictConverters.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ListAndDictConverters.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

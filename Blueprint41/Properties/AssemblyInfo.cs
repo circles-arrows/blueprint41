@@ -46,7 +46,6 @@ using System.Runtime.InteropServices;
 [assembly: Conversion(typeof(GuidToString))]
 [assembly: Conversion(typeof(StringToGuid))]
 
-[assembly: Conversion(typeof(ListOfObjectToListOfString))]
-[assembly: Conversion(typeof(ListOfStringToListOfObject))]
+// Auto generated converters can be found in: ... 
 
 #endregion

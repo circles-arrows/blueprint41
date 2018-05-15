@@ -10,6 +10,7 @@ using Blueprint41.Core;
 using System.Reflection;
 using System.Collections.ObjectModel;
 using Blueprint41;
+using System.Runtime.Serialization.Json;
 
 namespace System.Linq
 {
@@ -193,6 +194,33 @@ namespace System.Linq
                 default:
                     throw new NotImplementedException();
             }
+        }
+    }
+}
+namespace System
+{
+    public static partial class ExtensionMethods
+    {
+        public static string ToJson<T>(this T self)
+        {
+            using (MemoryStream writer = new MemoryStream())
+            {
+                Cache<T>.JsonSerializer.WriteObject(writer, self);
+                return Encoding.UTF8.GetString(writer.ToArray());
+            }
+        }
+
+        public static T FromJson<T>(this string self)
+        {
+            using (MemoryStream reader = new MemoryStream(Encoding.UTF8.GetBytes(self)))
+            {
+                return (T)Cache<T>.JsonSerializer.ReadObject(reader);
+            }
+        }
+
+        private class Cache<T>
+        {
+            public static DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(T));
         }
     }
 }
