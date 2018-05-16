@@ -292,13 +292,15 @@ namespace Blueprint41.Neo4j.Persistence
         {
             Transaction trans = Transaction.RunningTransaction;
 
+            string search = text.Trim(' ', '(', ')').Replace("  ", " ").Replace(" ", " AND ");
+
             List<string> queries = new List<string>();
             foreach (var property in fullTextProperties)
             {
                 if (entity.FullTextIndexProperties.Contains(property) == false)
                     throw new ArgumentException("Property {0} is not included in the full text index.");
 
-                queries.Add(string.Format("{0}.{1}:\"{2}\"", entity.Label.Name, property.Name, text));
+                queries.Add(string.Format("({0}.{1}:{2})", entity.Label.Name, property.Name, search));
             }
 
             StringBuilder sb = new StringBuilder();
