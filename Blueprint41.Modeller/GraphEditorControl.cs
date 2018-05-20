@@ -9,6 +9,7 @@ using System.Collections;
 using System.Windows.Forms;
 using Microsoft.Msagl.Drawing;
 using Microsoft.Msagl.GraphViewerGdi;
+using Blueprint41.Modeller.Schemas;
 
 namespace Blueprint41.Modeller
 {
@@ -99,7 +100,7 @@ namespace Blueprint41.Modeller
 
         [Browsable(false)]
         /// <summary>
-        /// A list containing all the node type entries (custom node types for insetion).
+        /// A list containing all the node type entries (custom node types for insertion).
         /// </summary>
         internal List<NodeTypeEntry> NodeTypes { get; private set; }
 
@@ -176,6 +177,7 @@ namespace Blueprint41.Modeller
         {
             //Edge edge = Graph.AddEdge(sourceNodeId, edgeLabel, targetNodeId);
             DEdge edge = (DEdge)Viewer.CreateEdge((Node)Graph.NodeMap[sourceNodeId], (Node)Graph.NodeMap[targetNodeId]);
+            //edge.Edge.Attr.Color = Microsoft.Msagl.Drawing.GraphStyles.FORMS_WARNING;
             Viewer.AddEdge(edge, true);
             RelabelEdge(edge.Edge, edgeLabel);
             edge.Label.Font = new Font("Arial", 8);
@@ -214,7 +216,7 @@ namespace Blueprint41.Modeller
                 Graph.AddEdge(edge.Source, newLabel);
             }
 
-            foreach (var edge in n.OutEdges.ToList())
+            foreach (var edge in n.OutEdges.ToList()) 
             {
                 Graph.Edges.Remove(edge);
                 Graph.AddEdge(newLabel, edge.Target);
@@ -317,7 +319,7 @@ namespace Blueprint41.Modeller
 
                 mi = new ToolStripMenuItem();
                 mi.Text = "Remove from Storage";
-                mi.ForeColor = System.Drawing.Color.Red;
+                mi.ForeColor = Styles.FORMS_WARNING;
                 mi.Click += new EventHandler(removeFromStorage_Click);
                 cm.Items.Add(mi);
             }

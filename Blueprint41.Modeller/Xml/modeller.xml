@@ -737,6 +737,7 @@
       <node label="TransactionHistory" xcoordinate="575.9133439457953" ycoordinate="288.39167785644531" entityGuid="23dc7bcb-3067-4d5f-a88c-188b60055503" />
       <node label="TransactionHistoryArchive" xcoordinate="341.33501368849829" ycoordinate="-716.04559326171875" entityGuid="b89841c6-33d3-4a16-a721-ff52162dba40" />
       <node label="WorkOrderRouting" xcoordinate="534.99947357177734" ycoordinate="-222.6652569026129" entityGuid="da232c3f-43ef-4b29-b3d9-4b065edcddb3" />
+      <node label="Neo4jBase" xcoordinate="0" ycoordinate="0" entityGuid="a26173b4-5b3c-0d0d-0453-db01f25b7f56" />
     </submodel>
     <submodel name="Person">
       <explaination>This is AdventureWork&amp;apos;s sub-Category: &amp;lt;STRONG&amp;gt;Person&amp;lt;/STRONG&amp;gt;</explaination>

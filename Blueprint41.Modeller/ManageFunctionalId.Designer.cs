@@ -1,4 +1,6 @@
-﻿namespace Blueprint41.Modeller
+﻿using Blueprint41.Modeller.Schemas;
+
+namespace Blueprint41.Modeller
 {
     partial class ManageFunctionalId
     {
@@ -144,7 +146,7 @@
             // btnDelete
             // 
             this.btnDelete.Enabled = false;
-            this.btnDelete.ForeColor = System.Drawing.Color.Red;
+            this.btnDelete.ForeColor = Styles.FORMS_WARNING;
             this.btnDelete.Location = new System.Drawing.Point(213, 373);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 29);

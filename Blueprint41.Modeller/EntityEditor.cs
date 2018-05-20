@@ -53,6 +53,14 @@ namespace Blueprint41.Modeller
             CreateGridColumnsForRelationships();
             CreateGridColumnsForInheritedRelationships();
             CreateToolTipForShowAllRelationshipsCheckbox();
+
+            dataGridViewPrimitiveProperties.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
+            dataGridViewInheritedPrimitiveProperties.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
+            dataGridViewInheritedPrimitiveProperties.AllowUserToAddRows = false;
+
+            dataGridViewRelationships.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
+            dataGridViewInheritedRelationships.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
+            dataGridViewInheritedRelationships.AllowUserToAddRows = false;
         }
 
         private void CreateToolTipForShowAllRelationshipsCheckbox()
@@ -783,6 +791,11 @@ namespace Blueprint41.Modeller
         {
             showAllRelationships = checkBoxShowAllRelationships.Checked;
             Reload();
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

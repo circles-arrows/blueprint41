@@ -38,12 +38,15 @@ namespace Blueprint41.Modeller.Schemas
 
             viewerEdge = Model.Viewer.CreateEdge((Node)Model.GraphEditor.Graph.NodeMap[this.Source.Label], (Node)Model.GraphEditor.Graph.NodeMap[this.Target.Label]);
             viewerEdge.Edge.UserData = this;
+
+            viewerEdge.Edge.Attr.Color = Styles.RELATION_LINE_COLOR;
+
             if (Model.ShowRelationshipLabels)
             {
                 Label label = new Label(Type);
                 label.FontSize = 5;
-                label.FontColor = Color.Gray;
-                viewerEdge.Edge.Attr.Color = Color.Gray;
+                label.FontColor = Styles.RELATION_LABEL_COLOR;
+                viewerEdge.Edge.Attr.Color = Styles.RELATION_LINE_COLOR;
                 Model.Viewer.AddEdge(viewerEdge, false);
                 Model.Viewer.SetEdgeLabel(viewerEdge.Edge, label);
             }

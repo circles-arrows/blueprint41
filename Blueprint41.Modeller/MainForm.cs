@@ -61,10 +61,13 @@ namespace Blueprint41.Modeller
                 StoragePath = RegistryHandler.LastOpenedFile;
 
             InitializeComponent();
+
             if (DatastoreModelComparer.Instance == null)
                 toolStripDropDownButton3.Visible = false;
 
             Initialize();
+
+
         }
 
         private void Initialize()

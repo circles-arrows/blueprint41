@@ -81,7 +81,7 @@ namespace Blueprint41.Modeller.Schemas
                 if(Model.Viewer.ZoomF < zoom)
                     Model.Viewer.ZoomF = zoom;
                 Model.Viewer.CenterToPoint(viewerNode.DrawingObject.BoundingBox.Center);
-                viewerNode.Node.Attr.FillColor = Color.Red;
+                viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED;
             }
 
             internal void RemoveHighlight()
@@ -90,11 +90,11 @@ namespace Blueprint41.Modeller.Schemas
                     return;
 
                 if (Entity.Virtual)
-                    viewerNode.Node.Attr.FillColor = Color.White;
+                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL;
                 else if (Entity.Abstract)
-                    viewerNode.Node.Attr.FillColor = Color.LightGreen;
+                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT;
                 else
-                    viewerNode.Node.Attr.FillColor = Color.Silver;
+                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL;
 
                 Model.Viewer.Invalidate();
             }
@@ -107,7 +107,7 @@ namespace Blueprint41.Modeller.Schemas
 
                 if (viewerNode != null)
                 {
-                    IsNodeSelected = viewerNode.Node.Attr.FillColor == Color.Red;
+                    IsNodeSelected = viewerNode.Node.Attr.FillColor == Styles.NODE_BGCOLOR_SELECTED;
                     DeleteNode();
                 }         
 
@@ -117,21 +117,28 @@ namespace Blueprint41.Modeller.Schemas
                 Node node = new Node(Label);
                 node.Label.Text = Entity.Label;
 
-                if(Entity.Virtual)
-                    node.Attr.FillColor = Color.White;
+                node.Attr.Color = Styles.NODE_LINE_COLOR;
+
+
+                if (Entity.Virtual)
+                    node.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL;
                 else if (Entity.Abstract)
-                    node.Attr.FillColor = Color.LightGreen;
+                    node.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT;
                 else
-                    node.Attr.FillColor = Color.Silver;
+                    node.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL;
+
 
                 node.Label.FontColor = nte.FontColor;
+               // node.Label.FontColor = Color.White;
                 node.Label.FontSize = nte.FontSize;
+
                 node.Attr.Shape = nte.Shape;
+
                 node.UserData = this;
                 CreateNodeGeometry(node, center);
                 viewerNode = Model.Viewer.CreateNode(node);
                 Model.Viewer.AddNode(viewerNode, true);
-                if(IsNodeSelected) viewerNode.Node.Attr.FillColor = Color.Red;
+                if(IsNodeSelected) viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED;
 
                 Model.AutoResize();
             }
