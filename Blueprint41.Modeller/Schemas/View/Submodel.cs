@@ -81,7 +81,7 @@ namespace Blueprint41.Modeller.Schemas
                 if(Model.Viewer.ZoomF < zoom)
                     Model.Viewer.ZoomF = zoom;
                 Model.Viewer.CenterToPoint(viewerNode.DrawingObject.BoundingBox.Center);
-                viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED;
+                viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
             }
 
             internal void RemoveHighlight()
@@ -90,11 +90,11 @@ namespace Blueprint41.Modeller.Schemas
                     return;
 
                 if (Entity.Virtual)
-                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL;
+                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
                 else if (Entity.Abstract)
-                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT;
+                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT.ToMsAgl();
                 else
-                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL;
+                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
 
                 Model.Viewer.Invalidate();
             }
@@ -107,7 +107,7 @@ namespace Blueprint41.Modeller.Schemas
 
                 if (viewerNode != null)
                 {
-                    IsNodeSelected = viewerNode.Node.Attr.FillColor == Styles.NODE_BGCOLOR_SELECTED;
+                    IsNodeSelected = viewerNode.Node.Attr.FillColor == Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
                     DeleteNode();
                 }         
 
@@ -117,15 +117,15 @@ namespace Blueprint41.Modeller.Schemas
                 Node node = new Node(Label);
                 node.Label.Text = Entity.Label;
 
-                node.Attr.Color = Styles.NODE_LINE_COLOR;
+                node.Attr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
 
 
                 if (Entity.Virtual)
-                    node.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL;
+                    node.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
                 else if (Entity.Abstract)
-                    node.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT;
+                    node.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT.ToMsAgl();
                 else
-                    node.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL;
+                    node.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
 
 
                 node.Label.FontColor = nte.FontColor;
@@ -138,7 +138,7 @@ namespace Blueprint41.Modeller.Schemas
                 CreateNodeGeometry(node, center);
                 viewerNode = Model.Viewer.CreateNode(node);
                 Model.Viewer.AddNode(viewerNode, true);
-                if(IsNodeSelected) viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED;
+                if(IsNodeSelected) viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
 
                 Model.AutoResize();
             }
