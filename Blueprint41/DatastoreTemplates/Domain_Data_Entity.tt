@@ -540,22 +540,12 @@ if (!DALModel.IsAbstract)
 			}
 			else if (attr.IsRowVersion)
 			{
-				if (attr.HideSetter)
-                {
-#>
-		public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return InnerData.<#= attr.Name #>; } }
-		public override void SetRowVersion(DateTime? value)
-		{
-			if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value)) InnerData.<#= attr.Name #> = value ?? DateTime.MinValue; 
-		}
-<#
-                }
-				else
-				{
+				string setter = (attr.HideSetter) ? "private set" : "set";
 #>
 		public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return InnerData.<#= attr.Name #>; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value)) InnerData.<#= attr.Name #> = value; } }
+		protected override DateTime GetRowVersion() { return <#= attr.Name #>; }
+		public override void SetRowVersion(DateTime? value) { <#= attr.Name #> = value ?? DateTime.MinValue; }
 <#
-                }
             }
 			else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
 			{
