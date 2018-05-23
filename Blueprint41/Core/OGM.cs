@@ -1,11 +1,14 @@
 ﻿using Blueprint41;
 using Blueprint41.Core;
+using System;
 using System.Collections.Generic;
 
 public interface OGM
 {
     object GetKey();
     void SetKey(object key);
+    DateTime GetRowVersion();
+    void SetRowVersion(DateTime? value);
     IDictionary<string,object> GetData();
     void SetData(IReadOnlyDictionary<string, object> data);
     void Delete(bool force);

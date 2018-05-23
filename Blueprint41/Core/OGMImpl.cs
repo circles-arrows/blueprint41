@@ -48,13 +48,13 @@ namespace Blueprint41.Core
                     break;
                 case PersistenceState.Persisted:
                     break;
-                case PersistenceState.Deleted:
+                case PersistenceState.Delete:
                     PersistenceProvider.Delete(this);
-                    PersistenceState = PersistenceState.Persisted;
+                    PersistenceState = PersistenceState.Deleted;
                     return;
-                case PersistenceState.ForceDeleted:
+                case PersistenceState.ForceDelete:
                     PersistenceProvider.ForceDelete(this);
-                    PersistenceState = PersistenceState.Persisted;
+                    PersistenceState = PersistenceState.Deleted;
                     return;
                 case PersistenceState.OutOfScope:
                 case PersistenceState.Error:
@@ -103,11 +103,11 @@ namespace Blueprint41.Core
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
-                    PersistenceState = PersistenceState.ForceDeleted;
+                    PersistenceState = PersistenceState.ForceDelete;
                     DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
-                case PersistenceState.Deleted:
-                case PersistenceState.ForceDeleted:
+                case PersistenceState.Delete:
+                case PersistenceState.ForceDelete:
                     break;
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
@@ -134,11 +134,11 @@ namespace Blueprint41.Core
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
-                    PersistenceState = PersistenceState.Deleted;
+                    PersistenceState = PersistenceState.Delete;
                     DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
-                case PersistenceState.Deleted:
-                case PersistenceState.ForceDeleted:
+                case PersistenceState.Delete:
+                case PersistenceState.ForceDelete:
                     break;
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
@@ -156,11 +156,12 @@ namespace Blueprint41.Core
         #region Explicit OGM
 
         object OGM.GetKey() { return this.GetKey(); }
-
         void OGM.SetKey(object key)
         {
             this.GetData().SetKey(key);
         }
+
+        DateTime OGM.GetRowVersion() { return this.GetRowVersion(); }
 
         IDictionary<string, object> OGM.GetData()
         {
@@ -178,6 +179,23 @@ namespace Blueprint41.Core
 
         internal abstract object GetKey();
         internal abstract Data GetData();
+
+        public virtual void SetRowVersion(DateTime? value)
+        {
+            Entity entity = GetEntity();
+            if (entity.RowVersion == null)
+                throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
+
+            entity.RowVersion.SetValue(this, value ?? DateTime.MinValue);
+        }
+        internal virtual DateTime GetRowVersion()
+        {
+            Entity entity = GetEntity();
+            if (entity.RowVersion == null)
+                throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
+
+            return (DateTime?)entity.RowVersion.GetValue(this) ?? DateTime.MinValue;
+        }
 
         public abstract PersistenceState PersistenceState { get; internal set; }
         internal Transaction DbTransaction { get; set; }

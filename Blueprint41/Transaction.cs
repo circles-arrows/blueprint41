@@ -66,10 +66,10 @@ namespace Blueprint41
             List<OGM> entities = registeredEntities.Values.SelectMany(item => item).Where(item => item is OGMImpl).ToList();
             foreach (OGMImpl entity in entities)
             {
-                if (entity.PersistenceState == PersistenceState.Persisted)
+                if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                     continue;
 
-                if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
+                if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded)
                 {
                     entity.GetEntity().RaiseOnSave((OGMImpl)entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
@@ -83,11 +83,11 @@ namespace Blueprint41
                 {
                     foreach (OGM entity in entitySet)
                     {
-                        if (entity.PersistenceState == PersistenceState.Persisted)
+                        if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                             continue;
 
 
-                        if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
+                        if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded)
                             entity.ValidateSave();
                     }
                 }
@@ -98,10 +98,10 @@ namespace Blueprint41
             {
                 foreach (OGM entity in entitySet)
                 {
-                    if (entity.PersistenceState == PersistenceState.Persisted)
+                    if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
 
-                    if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Deleted && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDeleted && entity.PersistenceState != PersistenceState.Loaded)
+                    if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded)
                         entity.Save();
                 }
             }
@@ -119,10 +119,10 @@ namespace Blueprint41
             {
                 foreach (OGM entity in entitySet)
                 {
-                    if (entity.PersistenceState == PersistenceState.Persisted)
+                    if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
 
-                    if (entity.PersistenceState == PersistenceState.Deleted || entity.PersistenceState == PersistenceState.ForceDeleted)
+                    if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
                         entity.ValidateDelete();
                 }
             }
@@ -131,10 +131,10 @@ namespace Blueprint41
             {
                 foreach (OGM entity in entitySet)
                 {
-                    if (entity.PersistenceState == PersistenceState.Persisted)
+                    if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
 
-                    if (entity.PersistenceState == PersistenceState.Deleted || entity.PersistenceState == PersistenceState.ForceDeleted)
+                    if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
                     {
                         entity.Save();
                         Dictionary<object, OGM> cache; 

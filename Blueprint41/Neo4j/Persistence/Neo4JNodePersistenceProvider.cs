@@ -9,6 +9,7 @@ using Neo4j.Driver.V1;
 using Blueprint41.Core;
 using System.Diagnostics;
 using Blueprint41.Query;
+using System.Data;
 
 namespace Blueprint41.Neo4j.Persistence
 {
@@ -65,69 +66,99 @@ namespace Blueprint41.Neo4j.Persistence
         public override void Delete(OGM item)
         {
             Transaction trans = Transaction.RunningTransaction;
+            Entity entity = item.GetEntity();
 
-            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DELETE node", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
+            string match;
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("key", item.GetKey());
 
+            if (entity.RowVersion == null)
+            {
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DELETE node", entity.Label.Name, entity.Key.Name);
+            }
+            else
+            {
+                parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+            }
+
             Dictionary<string, object> customState = null;
-            var args = item.GetEntity().RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
+            var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
+            
+            IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
+            if (result.Summary.Counters.NodesDeleted == 0)
+                throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            Neo4jTransaction.Run(args.Cypher, args.Parameters);
-
-            item.GetEntity().RaiseOnNodeDeleted(trans, args);
+            entity.RaiseOnNodeDeleted(trans, args);
         }
 
         public override void ForceDelete(OGM item)
         {
             Transaction trans = Transaction.RunningTransaction;
+            Entity entity = item.GetEntity();
 
-            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DETACH DELETE node", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
+            string match;
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("key", item.GetKey());
 
+            if (entity.RowVersion == null)
+            {
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DETACH DELETE node", entity.Label.Name, entity.Key.Name);
+            }
+            else
+            {
+                parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+            }
+
             Dictionary<string, object> customState = null;
-            var args = item.GetEntity().RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
+            var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
+            
+            IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
+            if (result.Summary.Counters.NodesDeleted == 0)
+                throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            Neo4jTransaction.Run(args.Cypher, args.Parameters);
-
-            item.GetEntity().RaiseOnNodeDeleted(trans, args);
+            entity.RaiseOnNodeDeleted(trans, args);
         }
 
         public override void Insert(OGM item)
         {
             Transaction trans = Transaction.RunningTransaction;
+            Entity entity = item.GetEntity();
 
-            string labels = string.Join(":", item.GetEntity().GetBaseTypesAndSelf().Where(x => x.IsVirtual == false).Select(x => x.Label.Name));
+            string labels = string.Join(":", entity.GetBaseTypesAndSelf().Where(x => x.IsVirtual == false).Select(x => x.Label.Name));
 
             IDictionary<string, object> node = item.GetData();
 
             string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
-            if (item.GetKey() == null && item.GetEntity().FunctionalId != null)
+            if (item.GetKey() == null && entity.FunctionalId != null)
             {
-                string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", item.GetEntity().FunctionalId.Label);
-                if (item.GetEntity().FunctionalId.Format == IdFormat.Numeric)
-                    nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", item.GetEntity().FunctionalId.Label);
+                string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", entity.FunctionalId.Label);
+                if (entity.FunctionalId.Format == IdFormat.Numeric)
+                    nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
 
-                create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, item.GetEntity().Key.Name);
+                create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
 
-                node.Remove(item.GetEntity().Key.Name);
+                node.Remove(entity.Key.Name);
             }
             else
             {
-                item.GetEntity().FunctionalId.SeenUid(item.GetKey().ToString());
+                entity.FunctionalId.SeenUid(item.GetKey().ToString());
             }
+
+            if (entity.RowVersion != null)
+                item.SetRowVersion(trans.TransactionDate);
 
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("node", node);
 
             Dictionary<string, object> customState = null;
-            var args = item.GetEntity().RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
+            var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
             var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
             IRecord record = result.FirstOrDefault();
             if (record == null)
-                return;
+                throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
             INode inserted = record["inserted"].As<INode>();
 
@@ -137,7 +168,7 @@ namespace Blueprint41.Neo4j.Persistence
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
             args.Properties = (Dictionary<string, object>)inserted.Properties;
-            args = item.GetEntity().RaiseOnNodeCreated(trans, args, inserted.Id, inserted.Labels, (Dictionary<string, object>)inserted.Properties);
+            args = entity.RaiseOnNodeCreated(trans, args, inserted.Id, inserted.Labels, (Dictionary<string, object>)inserted.Properties);
 
             item.SetData(args.Properties);
             item.PersistenceState = PersistenceState.Persisted;
@@ -146,20 +177,34 @@ namespace Blueprint41.Neo4j.Persistence
         public override void Update(OGM item)
         {
             Transaction trans = Transaction.RunningTransaction;
+            Entity entity = item.GetEntity();
 
-            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} SET node = {{newValues}}", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
+            string match;
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("key", item.GetKey());
+
+            if (entity.RowVersion == null)
+            {
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name);
+            }
+            else
+            {
+                parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                item.SetRowVersion(trans.TransactionDate);
+            }
 
             IDictionary<string, object> node = item.GetData();
             parameters.Add("newValues", node);
 
             Dictionary<string, object> customState = null;
-            var args = item.GetEntity().RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
+            var args = entity.RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
 
-            Neo4jTransaction.Run(args.Cypher, args.Parameters);
+            IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
+            if (!result.Summary.Counters.ContainsUpdates)
+                throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
-            item.GetEntity().RaiseOnNodeUpdated(trans, args);
+            entity.RaiseOnNodeUpdated(trans, args);
 
             item.PersistenceState = PersistenceState.Persisted;
         }

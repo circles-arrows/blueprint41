@@ -47,6 +47,7 @@ namespace Blueprint41
 
             key = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey); }, true);
             nodeType = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType); }, true);
+            rowVersion = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
         }
 
         static private FunctionalId GetFunctionalId(DatastoreModel parent, string name, string label, string prefix)
@@ -221,6 +222,17 @@ namespace Blueprint41
                 return ((object)NodeType == null) ? "NodeType" : NodeType.Name;
             }
         }
+        private Lazy<Property> rowVersion;
+        public Property RowVersion
+        {
+            get
+            {
+                if (Parent.IsUpgraded)
+                    return rowVersion.Value;
+
+                return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion);
+            }
+        }
 
         public Entity Abstract(bool isAbstract = true)
         {
@@ -253,6 +265,22 @@ namespace Blueprint41
                 throw new NotSupportedException("Multiple node type not allowed.");
 
             Properties[property].IsNodeType = true;
+            return this;
+        }
+        public Entity SetRowVersionField(string property, bool hideSetter = true)
+        {
+            List<Property> properties = GetPropertiesOfBaseTypesAndSelf();
+            if (properties.Where(x => x.Name != property && x.IsRowVersion).Count() > 0)
+                throw new NotSupportedException("Multiple row version fields are not allowed.");
+
+            if (Properties[property].SystemReturnType != typeof(DateTime))
+                throw new NotSupportedException("You cannot make a non-datetime field the row version.");
+
+            if (Properties[property].Nullable)
+                Properties[property].Refactor.MakeMandatory(DateTime.MinValue);
+
+            Properties[property].IsRowVersion = true;
+            Properties[property].HideSetter = hideSetter;
             return this;
         }
 

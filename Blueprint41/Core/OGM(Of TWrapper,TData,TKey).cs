@@ -110,9 +110,10 @@ namespace Blueprint41.Core
                 case PersistenceState.LoadedAndChanged:
                 case PersistenceState.OutOfScope:
                 case PersistenceState.Persisted:
+                case PersistenceState.Delete:
+                case PersistenceState.ForceDelete:
                     break;
                 case PersistenceState.Deleted:
-                case PersistenceState.ForceDeleted:
                     throw new InvalidOperationException("The object has been deleted, you cannot make changes to it anymore.");
                 case PersistenceState.DoesntExist:
                     throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");

@@ -110,8 +110,9 @@ if (DALModel.IsAbstract)
 		}
 		else
 		{
+			string accessors = (attr.HideSetter) ? "get;" : "get; set;";
 #>
-		<#= attr.OuterReturnType #> <#= attr.Name #> { get; set; }
+		<#= attr.OuterReturnType #> <#= attr.Name #> { <#= accessors #> }
 <#
 			if (attr.PropertyType == PropertyType.Lookup && attr.Relationship.IsTimeDependent)
 			{

@@ -84,6 +84,8 @@ namespace Blueprint41
         public IndexType IndexType { get; private set; }
         public bool IsKey { get; internal set; }
         public bool IsNodeType { get; internal set; }
+        public bool IsRowVersion { get; internal set; }
+        internal bool HideSetter { get; set; }
         public Property Reference { get; private set; }
         public Guid Guid { get; private set; }
 
@@ -672,16 +674,16 @@ namespace Blueprint41
 
             if (PropertyType == PropertyType.Attribute)
             {
-                defaultValue = Conversion.Convert(defaultValue.GetType(), SystemReturnType, defaultValue);
-
                 Nullable = false;
-
-                Parser.ExecuteBatched<SetDefaultConstantValue>(delegate (SetDefaultConstantValue template)
+                foreach (var entity in Parent.GetConcreteClasses())
                 {
-                    template.Entity = Parent;
-                    template.Property = this;
-                    template.Value = defaultValue;
-                });
+                    Parser.ExecuteBatched<SetDefaultConstantValue>(delegate (SetDefaultConstantValue template)
+                    {
+                        template.Entity = entity;
+                        template.Property = this;
+                        template.Value = Transaction.Current.ConvertToStoredType(SystemReturnType, defaultValue);
+                    });
+                }
             }
             else
             {
@@ -1099,7 +1101,10 @@ namespace Blueprint41
                     {
                         if (setValue == null)
                         {
-                            MethodInfo method = Parent.RuntimeReturnType.GetProperties().First(item => item.Name == Name).GetSetMethod();
+                            MethodInfo method = Parent.RuntimeReturnType.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
+                            if (method == null && IsRowVersion)
+                                method = typeof(OGM).GetMethod("SetRowVersion");
+
                             setValue = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object>>(method, DelegateHelper.CreateOptions.Downcasting);
                         }
                     }

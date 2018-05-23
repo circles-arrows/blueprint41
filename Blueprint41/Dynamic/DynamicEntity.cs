@@ -350,13 +350,13 @@ namespace Blueprint41.Dynamic
                     break;
                 case PersistenceState.Persisted:
                     break;
-                case PersistenceState.Deleted:
+                case PersistenceState.Delete:
                     Transaction.NodePersistenceProvider.Delete(this);
-                    PersistenceState = PersistenceState.Persisted;
+                    PersistenceState = PersistenceState.Deleted;
                     return;
-                case PersistenceState.ForceDeleted:
+                case PersistenceState.ForceDelete:
                     Transaction.NodePersistenceProvider.ForceDelete(this);
-                    PersistenceState = PersistenceState.Persisted;
+                    PersistenceState = PersistenceState.Deleted;
                     return;
                 case PersistenceState.OutOfScope:
                 case PersistenceState.Error:
@@ -459,7 +459,27 @@ namespace Blueprint41.Dynamic
             if (ShouldExecute)
                 Transaction.Current.Register(DynamicEntityType.Name, this);
         }
+        void OGM.SetRowVersion(DateTime? value)
+        {
+            Entity entity = GetEntity();
+            if (entity.RowVersion == null)
+                throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
 
+            if (!TrySetMember(entity.RowVersion.Name, value ?? DateTime.MinValue))
+                throw new InvalidOperationException($"Unable to set the row version field '{entity.RowVersion.Name}'.");
+        }
+        DateTime OGM.GetRowVersion()
+        {
+            Entity entity = GetEntity();
+            if (entity.RowVersion == null)
+                throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
+
+            object result;
+            if (!TryGetMember(entity.RowVersion.Name, out result))
+                return DateTime.MinValue;
+
+            return (DateTime?)result ?? DateTime.MinValue;
+        }
         private void KeyCheck()
         {
             if (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged)
@@ -504,9 +524,10 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.LoadedAndChanged:
                 case PersistenceState.OutOfScope:
                 case PersistenceState.Persisted:
+                case PersistenceState.Delete:
+                case PersistenceState.ForceDelete:
                     break;
                 case PersistenceState.Deleted:
-                case PersistenceState.ForceDeleted:
                     throw new InvalidOperationException("The object has been deleted, you cannot make changes to it anymore.");
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
