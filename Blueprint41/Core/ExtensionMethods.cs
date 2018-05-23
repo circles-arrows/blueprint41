@@ -27,7 +27,7 @@ namespace System.Linq
                 csharpProvider.GenerateCodeFromStatement(variableDeclaration, writer, new CodeGeneratorOptions());
             }
             sb.Replace(" dummy;\r\n", null);
-            if (nullable)
+            if (nullable && type.IsValueType)
                 return sb.ToString() + "?";
             return sb.ToString();
         }
