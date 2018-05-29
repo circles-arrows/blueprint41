@@ -464,7 +464,7 @@ namespace Blueprint41.Modeller
         {
             Model.CaptureCoordinates();
             Model.Save(StoragePath);
-            MessageBox.Show("Successfully saved diagram.", "Saved!", System.Windows.Forms.MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Diagram saved successfully.", "Confirmation", System.Windows.Forms.MessageBoxButtons.OK, MessageBoxIcon.Information);
             if (this.entityEditor.Enabled)
                 entityEditor.Reload();
         }

@@ -41,12 +41,6 @@ namespace Blueprint41.Modeller
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.dataGridViewFunctionalIds = new System.Windows.Forms.DataGridView();
-            this.dgvTextBoxColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvtbcModel = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvtbcGuid = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvtbcXml = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvTextBoxColumnPrefix = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvTextBoxColumnType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvcbcDefault = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.bindingSourceFunctionalIds = new System.Windows.Forms.BindingSource(this.components);
             this.btnNew = new System.Windows.Forms.Button();
@@ -60,6 +54,12 @@ namespace Blueprint41.Modeller
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvTextBoxColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvtbcModel = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvtbcGuid = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvtbcXml = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvTextBoxColumnPrefix = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvTextBoxColumnType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewFunctionalIds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFunctionalIds)).BeginInit();
@@ -140,7 +140,7 @@ namespace Blueprint41.Modeller
             // 
             this.btnUpdate.Enabled = false;
             this.btnUpdate.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUpdate.Location = new System.Drawing.Point(132, 373);
+            this.btnUpdate.Location = new System.Drawing.Point(93, 373);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(75, 29);
             this.btnUpdate.TabIndex = 10;
@@ -150,10 +150,11 @@ namespace Blueprint41.Modeller
             // 
             // btnDelete
             // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDelete.Enabled = false;
-            this.btnDelete.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDelete.ForeColor = System.Drawing.Color.Red;
-            this.btnDelete.Location = new System.Drawing.Point(213, 373);
+            this.btnDelete.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDelete.ForeColor = System.Drawing.Color.Black;
+            this.btnDelete.Location = new System.Drawing.Point(225, 373);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 29);
             this.btnDelete.TabIndex = 11;
@@ -183,9 +184,134 @@ namespace Blueprint41.Modeller
             this.dataGridViewFunctionalIds.Name = "dataGridViewFunctionalIds";
             this.dataGridViewFunctionalIds.ReadOnly = true;
             this.dataGridViewFunctionalIds.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewFunctionalIds.Size = new System.Drawing.Size(274, 355);
+            this.dataGridViewFunctionalIds.Size = new System.Drawing.Size(286, 355);
             this.dataGridViewFunctionalIds.TabIndex = 12;
             this.dataGridViewFunctionalIds.SelectionChanged += new System.EventHandler(this.dataGridViewFunctionalIds_SelectionChanged);
+            // 
+            // dgvcbcDefault
+            // 
+            this.dgvcbcDefault.DataPropertyName = "IsDefault";
+            this.dgvcbcDefault.HeaderText = "Default";
+            this.dgvcbcDefault.Name = "dgvcbcDefault";
+            this.dgvcbcDefault.ReadOnly = true;
+            this.dgvcbcDefault.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvcbcDefault.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
+            // btnNew
+            // 
+            this.btnNew.Enabled = false;
+            this.btnNew.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNew.Location = new System.Drawing.Point(12, 373);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(75, 29);
+            this.btnNew.TabIndex = 13;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancel.Location = new System.Drawing.Point(178, 130);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 29);
+            this.btnCancel.TabIndex = 14;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // editorPanel
+            // 
+            this.editorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.editorPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.editorPanel.Controls.Add(this.chkDefault);
+            this.editorPanel.Controls.Add(this.lblDefault);
+            this.editorPanel.Controls.Add(this.btnCancel);
+            this.editorPanel.Controls.Add(this.txtPrefix);
+            this.editorPanel.Controls.Add(this.lblPrefix);
+            this.editorPanel.Controls.Add(this.lblType);
+            this.editorPanel.Controls.Add(this.cmbType);
+            this.editorPanel.Controls.Add(this.btnSave);
+            this.editorPanel.Controls.Add(this.txtName);
+            this.editorPanel.Controls.Add(this.lblName);
+            this.editorPanel.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.editorPanel.Location = new System.Drawing.Point(311, 13);
+            this.editorPanel.Name = "editorPanel";
+            this.editorPanel.Size = new System.Drawing.Size(266, 171);
+            this.editorPanel.TabIndex = 15;
+            // 
+            // chkDefault
+            // 
+            this.chkDefault.AutoSize = true;
+            this.chkDefault.Location = new System.Drawing.Point(106, 103);
+            this.chkDefault.Name = "chkDefault";
+            this.chkDefault.Size = new System.Drawing.Size(15, 14);
+            this.chkDefault.TabIndex = 16;
+            this.chkDefault.UseVisualStyleBackColor = true;
+            // 
+            // lblDefault
+            // 
+            this.lblDefault.AutoSize = true;
+            this.lblDefault.Location = new System.Drawing.Point(9, 103);
+            this.lblDefault.Name = "lblDefault";
+            this.lblDefault.Size = new System.Drawing.Size(91, 13);
+            this.lblDefault.TabIndex = 15;
+            this.lblDefault.Text = "Set as Default";
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
+            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn1.Width = 60;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewTextBoxColumn2.DataPropertyName = "Prefix";
+            this.dataGridViewTextBoxColumn2.HeaderText = "Prefix";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            this.dataGridViewTextBoxColumn2.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewTextBoxColumn3.DataPropertyName = "Type";
+            this.dataGridViewTextBoxColumn3.HeaderText = "Type";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.ReadOnly = true;
+            this.dataGridViewTextBoxColumn3.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewTextBoxColumn4.DataPropertyName = "Value";
+            this.dataGridViewTextBoxColumn4.HeaderText = "Prefix";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            this.dataGridViewTextBoxColumn4.ReadOnly = true;
+            this.dataGridViewTextBoxColumn4.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewTextBoxColumn5.DataPropertyName = "Type";
+            this.dataGridViewTextBoxColumn5.HeaderText = "Type";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            this.dataGridViewTextBoxColumn5.ReadOnly = true;
+            this.dataGridViewTextBoxColumn5.Visible = false;
+            this.dataGridViewTextBoxColumn5.Width = 58;
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            this.dataGridViewTextBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewTextBoxColumn6.DataPropertyName = "Type";
+            this.dataGridViewTextBoxColumn6.HeaderText = "Type";
+            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            this.dataGridViewTextBoxColumn6.ReadOnly = true;
+            this.dataGridViewTextBoxColumn6.Width = 56;
             // 
             // dgvTextBoxColumnName
             // 
@@ -238,127 +364,6 @@ namespace Blueprint41.Modeller
             this.dgvTextBoxColumnType.ReadOnly = true;
             this.dgvTextBoxColumnType.Width = 56;
             // 
-            // dgvcbcDefault
-            // 
-            this.dgvcbcDefault.DataPropertyName = "IsDefault";
-            this.dgvcbcDefault.HeaderText = "Default";
-            this.dgvcbcDefault.Name = "dgvcbcDefault";
-            this.dgvcbcDefault.ReadOnly = true;
-            this.dgvcbcDefault.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvcbcDefault.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            // 
-            // btnNew
-            // 
-            this.btnNew.Enabled = false;
-            this.btnNew.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNew.Location = new System.Drawing.Point(51, 373);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(75, 29);
-            this.btnNew.TabIndex = 13;
-            this.btnNew.Text = "New";
-            this.btnNew.UseVisualStyleBackColor = true;
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Location = new System.Drawing.Point(178, 130);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 29);
-            this.btnCancel.TabIndex = 14;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // editorPanel
-            // 
-            this.editorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.editorPanel.Controls.Add(this.chkDefault);
-            this.editorPanel.Controls.Add(this.lblDefault);
-            this.editorPanel.Controls.Add(this.btnCancel);
-            this.editorPanel.Controls.Add(this.txtPrefix);
-            this.editorPanel.Controls.Add(this.lblPrefix);
-            this.editorPanel.Controls.Add(this.lblType);
-            this.editorPanel.Controls.Add(this.cmbType);
-            this.editorPanel.Controls.Add(this.btnSave);
-            this.editorPanel.Controls.Add(this.txtName);
-            this.editorPanel.Controls.Add(this.lblName);
-            this.editorPanel.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.editorPanel.Location = new System.Drawing.Point(299, 13);
-            this.editorPanel.Name = "editorPanel";
-            this.editorPanel.Size = new System.Drawing.Size(266, 171);
-            this.editorPanel.TabIndex = 15;
-            // 
-            // chkDefault
-            // 
-            this.chkDefault.AutoSize = true;
-            this.chkDefault.Location = new System.Drawing.Point(106, 103);
-            this.chkDefault.Name = "chkDefault";
-            this.chkDefault.Size = new System.Drawing.Size(15, 14);
-            this.chkDefault.TabIndex = 16;
-            this.chkDefault.UseVisualStyleBackColor = true;
-            // 
-            // lblDefault
-            // 
-            this.lblDefault.AutoSize = true;
-            this.lblDefault.Location = new System.Drawing.Point(9, 103);
-            this.lblDefault.Name = "lblDefault";
-            this.lblDefault.Size = new System.Drawing.Size(91, 13);
-            this.lblDefault.TabIndex = 15;
-            this.lblDefault.Text = "Set as Default";
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewTextBoxColumn1.DataPropertyName = "Name";
-            this.dataGridViewTextBoxColumn1.HeaderText = "Name";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewTextBoxColumn2.DataPropertyName = "Prefix";
-            this.dataGridViewTextBoxColumn2.HeaderText = "Prefix";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.ReadOnly = true;
-            this.dataGridViewTextBoxColumn2.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewTextBoxColumn3.DataPropertyName = "Type";
-            this.dataGridViewTextBoxColumn3.HeaderText = "Type";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            this.dataGridViewTextBoxColumn3.ReadOnly = true;
-            this.dataGridViewTextBoxColumn3.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewTextBoxColumn4.DataPropertyName = "Value";
-            this.dataGridViewTextBoxColumn4.HeaderText = "Prefix";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            this.dataGridViewTextBoxColumn4.ReadOnly = true;
-            this.dataGridViewTextBoxColumn4.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewTextBoxColumn5.DataPropertyName = "Type";
-            this.dataGridViewTextBoxColumn5.HeaderText = "Type";
-            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            this.dataGridViewTextBoxColumn5.ReadOnly = true;
-            this.dataGridViewTextBoxColumn5.Visible = false;
-            // 
-            // dataGridViewTextBoxColumn6
-            // 
-            this.dataGridViewTextBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewTextBoxColumn6.DataPropertyName = "Type";
-            this.dataGridViewTextBoxColumn6.HeaderText = "Type";
-            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-            this.dataGridViewTextBoxColumn6.ReadOnly = true;
-            // 
             // dataGridViewTextBoxColumn7
             // 
             this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
@@ -371,14 +376,19 @@ namespace Blueprint41.Modeller
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(578, 419);
+            this.ClientSize = new System.Drawing.Size(590, 419);
             this.Controls.Add(this.editorPanel);
             this.Controls.Add(this.btnNew);
             this.Controls.Add(this.dataGridViewFunctionalIds);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnUpdate);
             this.Margin = new System.Windows.Forms.Padding(2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "ManageFunctionalId";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Manage Functional Id";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewFunctionalIds)).EndInit();
