@@ -103,6 +103,7 @@
             this.toolStripButtonNew.Size = new System.Drawing.Size(36, 57);
             this.toolStripButtonNew.Text = "NEW";
             this.toolStripButtonNew.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonNew.Click += new System.EventHandler(this.menuFielNew_Click);
             // 
             // toolStripButtonOpen
             // 
@@ -114,6 +115,7 @@
             this.toolStripButtonOpen.Size = new System.Drawing.Size(40, 57);
             this.toolStripButtonOpen.Text = "OPEN";
             this.toolStripButtonOpen.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonOpen.Click += new System.EventHandler(this.menuFileOpen_Click);
             // 
             // toolStripSeparator6
             // 
@@ -232,7 +234,7 @@
             this.cmbSubmodels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSubmodels.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.cmbSubmodels.Name = "cmbSubmodels";
-            this.cmbSubmodels.Size = new System.Drawing.Size(250, 60);
+            this.cmbSubmodels.Size = new System.Drawing.Size(250, 21);
             this.cmbSubmodels.SelectedIndexChanged += new System.EventHandler(this.cmbSubmodels_SelectedIndexChanged);
             // 
             // toolStripLabel1
@@ -240,7 +242,7 @@
             this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripLabel1.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(48, 57);
+            this.toolStripLabel1.Size = new System.Drawing.Size(48, 13);
             this.toolStripLabel1.Text = "MODEL:";
             // 
             // toolStripDropDownButton3
