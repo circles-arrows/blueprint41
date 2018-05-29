@@ -44,11 +44,11 @@
             this.buttonAddAll = new System.Windows.Forms.Button();
             this.buttonRemoveAll = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.hteExplaination = new Blueprint41.Modeller.HtmlEditor();
             this.chkIsLaboratory = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.hteExplaination = new Blueprint41.Modeller.HtmlEditor();
             ((System.ComponentModel.ISupportInitialize)(this.numericChapter)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -58,6 +58,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.Location = new System.Drawing.Point(488, 670);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -69,6 +70,7 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.Enabled = false;
+            this.btnOK.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnOK.Location = new System.Drawing.Point(407, 670);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
@@ -80,25 +82,27 @@
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(12, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
+            this.label1.Size = new System.Drawing.Size(37, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Name:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(12, 39);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(47, 13);
+            this.label2.Size = new System.Drawing.Size(55, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "Chapter:";
             // 
             // chkIsDraft
             // 
             this.chkIsDraft.AutoSize = true;
-            this.chkIsDraft.Location = new System.Drawing.Point(85, 64);
+            this.chkIsDraft.Location = new System.Drawing.Point(110, 64);
             this.chkIsDraft.Name = "chkIsDraft";
             this.chkIsDraft.Size = new System.Drawing.Size(15, 14);
             this.chkIsDraft.TabIndex = 6;
@@ -107,22 +111,23 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 64);
+            this.label3.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(12, 65);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(44, 13);
+            this.label3.Size = new System.Drawing.Size(61, 13);
             this.label3.TabIndex = 7;
             this.label3.Text = "Is Draft:";
             // 
             // numericChapter
             // 
-            this.numericChapter.Location = new System.Drawing.Point(85, 37);
+            this.numericChapter.Location = new System.Drawing.Point(110, 36);
             this.numericChapter.Name = "numericChapter";
             this.numericChapter.Size = new System.Drawing.Size(212, 20);
             this.numericChapter.TabIndex = 8;
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(85, 10);
+            this.txtName.Location = new System.Drawing.Point(110, 9);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(212, 20);
             this.txtName.TabIndex = 9;
@@ -131,6 +136,7 @@
             // lbAvailable
             // 
             this.lbAvailable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbAvailable.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbAvailable.FormattingEnabled = true;
             this.lbAvailable.Location = new System.Drawing.Point(3, 3);
             this.lbAvailable.Name = "lbAvailable";
@@ -142,6 +148,7 @@
             // lbExisting
             // 
             this.lbExisting.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbExisting.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbExisting.FormattingEnabled = true;
             this.lbExisting.Location = new System.Drawing.Point(301, 3);
             this.lbExisting.Name = "lbExisting";
@@ -197,34 +204,17 @@
             // label4
             // 
             this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(12, 106);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(316, 13);
+            this.label4.Size = new System.Drawing.Size(403, 13);
             this.label4.TabIndex = 16;
             this.label4.Text = "Explaination:   (New Paragraph = Enter  |  New Line = Shift+Enter)";
-            // 
-            // hteExplaination
-            // 
-            this.hteExplaination.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hteExplaination.BodyBackgroundColor = System.Drawing.Color.White;
-            this.hteExplaination.BodyHtml = null;
-            this.hteExplaination.BodyText = null;
-            this.hteExplaination.DocumentText = resources.GetString("hteExplaination.DocumentText");
-            this.hteExplaination.EditorBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.hteExplaination.EditorForeColor = Blueprint41.Modeller.FontColor.Black;
-            this.hteExplaination.FontSize = Blueprint41.Modeller.FontSize.Regular;
-            this.hteExplaination.Html = null;
-            this.hteExplaination.Location = new System.Drawing.Point(18, 124);
-            this.hteExplaination.Name = "hteExplaination";
-            this.hteExplaination.Size = new System.Drawing.Size(547, 175);
-            this.hteExplaination.TabIndex = 18;
             // 
             // chkIsLaboratory
             // 
             this.chkIsLaboratory.AutoSize = true;
-            this.chkIsLaboratory.Location = new System.Drawing.Point(85, 84);
+            this.chkIsLaboratory.Location = new System.Drawing.Point(110, 84);
             this.chkIsLaboratory.Name = "chkIsLaboratory";
             this.chkIsLaboratory.Size = new System.Drawing.Size(15, 14);
             this.chkIsLaboratory.TabIndex = 19;
@@ -233,9 +223,10 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 84);
+            this.label5.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(12, 85);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(71, 13);
+            this.label5.Size = new System.Drawing.Size(91, 13);
             this.label5.TabIndex = 20;
             this.label5.Text = "Is Laboratory:";
             // 
@@ -268,6 +259,24 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(37, 357);
             this.panel1.TabIndex = 22;
+            // 
+            // hteExplaination
+            // 
+            this.hteExplaination.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hteExplaination.BodyBackgroundColor = System.Drawing.Color.White;
+            this.hteExplaination.BodyHtml = null;
+            this.hteExplaination.BodyText = null;
+            this.hteExplaination.DocumentText = resources.GetString("hteExplaination.DocumentText");
+            this.hteExplaination.EditorBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.hteExplaination.EditorForeColor = Blueprint41.Modeller.FontColor.Black;
+            this.hteExplaination.FontSize = Blueprint41.Modeller.FontSize.Regular;
+            this.hteExplaination.Html = null;
+            this.hteExplaination.Location = new System.Drawing.Point(18, 124);
+            this.hteExplaination.Name = "hteExplaination";
+            this.hteExplaination.Size = new System.Drawing.Size(547, 175);
+            this.hteExplaination.TabIndex = 18;
             // 
             // ManageSubmodelForm
             // 
