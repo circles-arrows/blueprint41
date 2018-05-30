@@ -500,7 +500,7 @@
             this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label12.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label12.ForeColor = System.Drawing.Color.Black;
-            this.label12.Location = new System.Drawing.Point(6, 0);
+            this.label12.Location = new System.Drawing.Point(8, 7);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(130, 24);
             this.label12.TabIndex = 30;

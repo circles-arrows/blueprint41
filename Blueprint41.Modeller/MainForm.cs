@@ -667,6 +667,8 @@ namespace Blueprint41.Modeller
 
         private void ShowHideToolStripMenu(bool panel2Collapsed)
         {
+            toolStripRight.Visible = panel2Collapsed;
+
             if (panel2Collapsed)
             {
                 ToolStripMenuItem propertiesItem = new ToolStripMenuItem("Properties");
