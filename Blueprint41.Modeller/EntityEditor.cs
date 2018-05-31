@@ -26,8 +26,8 @@ namespace Blueprint41.Modeller
 
         public Model StorageModel { get; private set; }
 
-        public DataGridViewComboBoxColumn sourceEntitiesColumn { get; private set; }
-        public DataGridViewComboBoxColumn targetEntitiesColumn { get; private set; }
+        public DataGridViewComboBoxColumn SourceEntitiesColumn { get; private set; }
+        public DataGridViewComboBoxColumn TargetEntitiesColumn { get; private set; }
 
         private ObservableCollection<Relationship> relationshipsObservable;
 
@@ -42,6 +42,24 @@ namespace Blueprint41.Modeller
             set
             {
                 this.cmbFunctionalId = value;
+            }
+        }
+
+        public int DataGridMaxWidth
+        {
+            get
+            {
+                int propertiesWidth = dataGridViewPrimitiveProperties.Columns.GetColumnsWidth(DataGridViewElementStates.None);
+                int inheritedPrimitivePropertiesWidth = dataGridViewInheritedPrimitiveProperties.Columns.GetColumnsWidth(DataGridViewElementStates.None);
+                int relationshipsWidth = dataGridViewRelationships.Columns.GetColumnsWidth(DataGridViewElementStates.None);
+                int inheritedRelationshipsWidth = dataGridViewInheritedRelationships.Columns.GetColumnsWidth(DataGridViewElementStates.None);
+
+                int maxOne = Math.Max(propertiesWidth, inheritedPrimitivePropertiesWidth);
+                int maxTwo = Math.Max(relationshipsWidth, inheritedRelationshipsWidth);
+                int max = Math.Max(maxOne, maxTwo);
+
+                
+                return max + dataGridViewRelationships.RowHeadersWidth;
             }
         }
 
@@ -143,7 +161,7 @@ namespace Blueprint41.Modeller
                 ((DataGridViewComboBoxColumn)indexTypeColumn).Items.Add(PropertyIndex.Indexed.ToString());
                 ((DataGridViewComboBoxColumn)indexTypeColumn).Items.Add(PropertyIndex.Unique.ToString());
             }
-            
+
             indexTypeColumn.DataPropertyName = "Index";
             indexTypeColumn.Name = "Index";
             indexTypeColumn.ReadOnly = readOnly;
@@ -158,10 +176,10 @@ namespace Blueprint41.Modeller
             dataGridViewRelationships.AutoSize = true;
 
 
-            sourceEntitiesColumn = new DataGridViewComboBoxColumn();
-            sourceEntitiesColumn.DataPropertyName = "InEntity";
-            sourceEntitiesColumn.Name = "IN Entity";
-            dataGridViewRelationships.Columns.Add(sourceEntitiesColumn);
+            SourceEntitiesColumn = new DataGridViewComboBoxColumn();
+            SourceEntitiesColumn.DataPropertyName = "InEntity";
+            SourceEntitiesColumn.Name = "IN Entity";
+            dataGridViewRelationships.Columns.Add(SourceEntitiesColumn);
 
 
             DataGridViewColumn sourceNameColumn = new DataGridViewTextBoxColumn();
@@ -191,11 +209,11 @@ namespace Blueprint41.Modeller
             neo4jNameColumn.DataPropertyName = "Type";
             neo4jNameColumn.Name = "Neo4j Name";
             dataGridViewRelationships.Columns.Add(neo4jNameColumn);
-            
-            targetEntitiesColumn = new DataGridViewComboBoxColumn();
-            targetEntitiesColumn.DataPropertyName = "OutEntity";
-            targetEntitiesColumn.Name = "OUT Entity";
-            dataGridViewRelationships.Columns.Add(targetEntitiesColumn);
+
+            TargetEntitiesColumn = new DataGridViewComboBoxColumn();
+            TargetEntitiesColumn.DataPropertyName = "OutEntity";
+            TargetEntitiesColumn.Name = "OUT Entity";
+            dataGridViewRelationships.Columns.Add(TargetEntitiesColumn);
 
             DataGridViewColumn targetNameColumn = new DataGridViewTextBoxColumn();
             targetNameColumn.DataPropertyName = "OutProperty";
@@ -407,15 +425,15 @@ namespace Blueprint41.Modeller
             bindingSourceEntities.DataSource = null;
             bindingSourceEntities.DataSource = StorageModel.Entities.Entity.OrderBy(x => x.Label);
 
-            sourceEntitiesColumn.DataSource = null;
-            sourceEntitiesColumn.DataSource = bindingSourceEntities;
-            sourceEntitiesColumn.DisplayMember = "Label";
-            sourceEntitiesColumn.ValueMember = "Label";
+            SourceEntitiesColumn.DataSource = null;
+            SourceEntitiesColumn.DataSource = bindingSourceEntities;
+            SourceEntitiesColumn.DisplayMember = "Label";
+            SourceEntitiesColumn.ValueMember = "Label";
 
-            targetEntitiesColumn.DataSource = null;
-            targetEntitiesColumn.DataSource = bindingSourceEntities;
-            targetEntitiesColumn.DisplayMember = "Label";
-            targetEntitiesColumn.ValueMember = "Label";
+            TargetEntitiesColumn.DataSource = null;
+            TargetEntitiesColumn.DataSource = bindingSourceEntities;
+            TargetEntitiesColumn.DisplayMember = "Label";
+            TargetEntitiesColumn.ValueMember = "Label";
 
             bindingSource.DataSource = Entity;
             cmbInherits.DataSource = StorageModel.Entities.Entity.Where(e => e.Abstract && e.Label != Entity.Label).ToList();
@@ -423,21 +441,21 @@ namespace Blueprint41.Modeller
             Binding baseEntityBinding = new Binding("SelectedValue", this.bindingSource, "inherits", true);//, DataSourceUpdateMode.OnPropertyChanged);
             baseEntityBinding.BindingComplete += BaseEntityBinding_BindingComplete;
             this.cmbInherits.DataBindings.Add(baseEntityBinding);
-            
+
             Entity inherited = StorageModel.Entities.Entity.Where(item => item.Guid == Entity.Inherits).FirstOrDefault();
 
             if (inherited != null)
                 cmbInherits.SelectedItem = inherited;
-            
+
             cmbInherits.SelectedIndexChanged += CmbInherits_SelectedIndexChanged;
-            
+
             // FunctionalId Combobox
             cmbFunctionalId.Enabled = !Entity.Virtual;
             cmbFunctionalId.Items.Clear();
-            
+
             foreach (var functionalId in StorageModel.FunctionalIds.FunctionalId.Where(x => x.Guid == Entity.Guid || !string.IsNullOrEmpty(x.Name)).OrderBy(x => x.Name))
                 cmbFunctionalId.InsertNonDataBoundItems(string.Concat(functionalId.Name ?? Entity.Label, " - ", functionalId.Value), functionalId.Guid);
-            
+
             FunctionalId entityFunctionalId = StorageModel.FunctionalIds.FunctionalId.Where(item => item.Guid == Entity.FunctionalId).SingleOrDefault();
 
             if (entityFunctionalId != null)
@@ -461,12 +479,12 @@ namespace Blueprint41.Modeller
 
         private void DataGridViewRelationships_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == sourceEntitiesColumn.Index && e.RowIndex >= 0) //check if combobox column
+            if (e.ColumnIndex == SourceEntitiesColumn.Index && e.RowIndex >= 0) //check if combobox column
             {
                 object selectedValue = dataGridViewRelationships.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
             }
 
-            if (e.ColumnIndex == targetEntitiesColumn.Index && e.RowIndex >= 0) //check if combobox column
+            if (e.ColumnIndex == TargetEntitiesColumn.Index && e.RowIndex >= 0) //check if combobox column
             {
                 object selectedValue = dataGridViewRelationships.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
             }
@@ -632,13 +650,13 @@ namespace Blueprint41.Modeller
                 textBox.Value = newName;
             }
         }
-        
+
         private void ShowMessageAndResetTextBoxValue(string message, DataGridViewTextBoxCell textBox)
         {
             MessageBox.Show(message);
             textBox.Value = "PropertyName";
         }
-        
+
         private void dataGridViewRelationships_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == 0)
@@ -669,7 +687,7 @@ namespace Blueprint41.Modeller
             ManageEntityStaticDataForm form = new ManageEntityStaticDataForm(StorageModel, Entity);
             form.ShowDialog();
         }
-        
+
         private void lnkAddFunctionalID_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             ManageFunctionalId form = new ManageFunctionalId(StorageModel);
@@ -680,7 +698,7 @@ namespace Blueprint41.Modeller
         {
             if (cmbFunctionalId.SelectedItem == null)// || Entity.Abstract) -- TODO: Ask reason for this condition
                 return;
-            
+
             StorageModel.Entities.Entity.Where(x => x.Guid == Entity.Guid).SingleOrDefault().FunctionalId = (cmbFunctionalId.SelectedItem as ComboxBoxItem).Value;
         }
 
@@ -739,7 +757,7 @@ namespace Blueprint41.Modeller
 
             if (parentEntity == null)
                 return false;
-            
+
             if (parentEntity.Primitive.Where(x => x.Name == propertyName).Count() > 0)
                 return true;
 
@@ -773,7 +791,7 @@ namespace Blueprint41.Modeller
 
         private void chkIsStaticData_CheckedChanged(object sender, EventArgs e)
         {
-            if(!chkIsStaticData.Checked && Entity.IsStaticData)
+            if (!chkIsStaticData.Checked && Entity.IsStaticData)
             {
                 DialogResult result = MessageBox.Show($"This will delete all the existing '{Entity.Label}' static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
                 if (result != System.Windows.Forms.DialogResult.Yes)
@@ -782,7 +800,7 @@ namespace Blueprint41.Modeller
                     return;
                 }
             }
-            
+
             Entity.IsStaticData = chkIsStaticData.Checked;
             btnEditStaticData.Visible = Entity.IsStaticData;
         }

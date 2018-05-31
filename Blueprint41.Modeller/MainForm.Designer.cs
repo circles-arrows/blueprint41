@@ -46,6 +46,8 @@
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripDropDownButton3 = new System.Windows.Forms.ToolStripButton();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.graphEditor = new Blueprint41.Modeller.GraphEditorControl();
+            this.entityEditor = new Blueprint41.Modeller.EntityEditor();
             this.generateCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.staticDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aPIDefinitionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,9 +63,9 @@
             this.showInheritedRelationshipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expandPropertiesWidthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRight = new System.Windows.Forms.ToolStrip();
-            this.graphEditor = new Blueprint41.Modeller.GraphEditorControl();
-            this.entityEditor = new Blueprint41.Modeller.EntityEditor();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -277,9 +279,41 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.entityEditor);
-            this.splitContainer.Size = new System.Drawing.Size(1183, 648);
-            this.splitContainer.SplitterDistance = 841;
+            this.splitContainer.Size = new System.Drawing.Size(1215, 648);
+            this.splitContainer.SplitterDistance = 863;
             this.splitContainer.TabIndex = 3;
+            // 
+            // graphEditor
+            // 
+            this.graphEditor.BackColor = System.Drawing.SystemColors.Control;
+            this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.graphEditor.Location = new System.Drawing.Point(0, 0);
+            this.graphEditor.Name = "graphEditor";
+            this.graphEditor.SelectedEntities = null;
+            this.graphEditor.Size = new System.Drawing.Size(863, 648);
+            this.graphEditor.TabIndex = 0;
+            this.graphEditor.NodeInsertedByUser += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_NodeInsertedByUser);
+            this.graphEditor.SelectedNodeChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_SelectedNodeChanged);
+            this.graphEditor.SelectedEdgeChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_SelectedEdgeChanged);
+            this.graphEditor.InsertRelationship += new System.EventHandler<Blueprint41.Modeller.InsertRelationshipEventArgs>(this.graphEditor_InsertRelationship);
+            this.graphEditor.AddDisplayedEntities += new System.EventHandler<System.EventArgs>(this.graphEditor_AddDisplayedEntities);
+            this.graphEditor.RemoveNodeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromDiagramChanged);
+            this.graphEditor.RemoveEdgeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromDiagramChanged);
+            this.graphEditor.RemoveNodeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromStorageChanged);
+            this.graphEditor.RemoveEdgeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromStorageChanged);
+            this.graphEditor.NoSelectionEvent += new System.EventHandler(this.graphEditor_NoSelectionEvent);
+            // 
+            // entityEditor
+            // 
+            this.entityEditor.BackColor = System.Drawing.Color.White;
+            this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityEditor.Enabled = false;
+            this.entityEditor.FunctionalIdDataTable = null;
+            this.entityEditor.Location = new System.Drawing.Point(0, 0);
+            this.entityEditor.Name = "entityEditor";
+            this.entityEditor.Size = new System.Drawing.Size(348, 648);
+            this.entityEditor.TabIndex = 0;
             // 
             // generateCodeToolStripMenuItem
             // 
@@ -306,7 +340,8 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.viewToolStripMenuItem});
+            this.viewToolStripMenuItem,
+            this.optionsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(0);
@@ -401,6 +436,21 @@
             this.propertiesToolStripMenuItem.Text = "&Properties";
             this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
             // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.expandPropertiesWidthToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 24);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // expandPropertiesWidthToolStripMenuItem
+            // 
+            this.expandPropertiesWidthToolStripMenuItem.CheckOnClick = true;
+            this.expandPropertiesWidthToolStripMenuItem.Name = "expandPropertiesWidthToolStripMenuItem";
+            this.expandPropertiesWidthToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.expandPropertiesWidthToolStripMenuItem.Text = "Expand Properties Width";
+            // 
             // toolStripRight
             // 
             this.toolStripRight.Dock = System.Windows.Forms.DockStyle.Right;
@@ -413,38 +463,6 @@
             this.toolStripRight.Text = "Right Tool Strip";
             this.toolStripRight.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
             this.toolStripRight.Visible = false;
-            // 
-            // graphEditor
-            // 
-            this.graphEditor.BackColor = System.Drawing.SystemColors.Control;
-            this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.graphEditor.Location = new System.Drawing.Point(0, 0);
-            this.graphEditor.Name = "graphEditor";
-            this.graphEditor.SelectedEntities = null;
-            this.graphEditor.Size = new System.Drawing.Size(841, 648);
-            this.graphEditor.TabIndex = 0;
-            this.graphEditor.NodeInsertedByUser += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_NodeInsertedByUser);
-            this.graphEditor.SelectedNodeChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_SelectedNodeChanged);
-            this.graphEditor.SelectedEdgeChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_SelectedEdgeChanged);
-            this.graphEditor.InsertRelationship += new System.EventHandler<Blueprint41.Modeller.InsertRelationshipEventArgs>(this.graphEditor_InsertRelationship);
-            this.graphEditor.AddDisplayedEntities += new System.EventHandler<System.EventArgs>(this.graphEditor_AddDisplayedEntities);
-            this.graphEditor.RemoveNodeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromDiagramChanged);
-            this.graphEditor.RemoveEdgeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromDiagramChanged);
-            this.graphEditor.RemoveNodeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromStorageChanged);
-            this.graphEditor.RemoveEdgeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromStorageChanged);
-            this.graphEditor.NoSelectionEvent += new System.EventHandler(this.graphEditor_NoSelectionEvent);
-            // 
-            // entityEditor
-            // 
-            this.entityEditor.BackColor = System.Drawing.Color.White;
-            this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityEditor.Enabled = false;
-            this.entityEditor.FunctionalIdDataTable = null;
-            this.entityEditor.Location = new System.Drawing.Point(0, 0);
-            this.entityEditor.Name = "entityEditor";
-            this.entityEditor.Size = new System.Drawing.Size(338, 648);
-            this.entityEditor.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -512,6 +530,8 @@
         private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStrip toolStripRight;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expandPropertiesWidthToolStripMenuItem;
     }
 }
 

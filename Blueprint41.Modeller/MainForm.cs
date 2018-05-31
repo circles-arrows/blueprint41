@@ -80,6 +80,7 @@ namespace Blueprint41.Modeller
         }
 
         int idcounter = 0;
+        private int _splitterDistance;
 
         internal string GetNewId(NodeTypeEntry nte)
         {
@@ -93,6 +94,7 @@ namespace Blueprint41.Modeller
         {
             ReloadForm();
             AddNewEntitiesToSubModel("Main Model");
+            _splitterDistance = splitContainer.SplitterDistance;
         }
 
         private void AddNewEntitiesToSubModel(string submodelName)
@@ -198,6 +200,7 @@ namespace Blueprint41.Modeller
                 throw new NotSupportedException();
 
             entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
+            DefaultOrExpandPropertiesWidth(true);
         }
 
         private void graphEditor_SelectedEdgeChanged(object sender, EdgeEventArgs e)
@@ -211,6 +214,7 @@ namespace Blueprint41.Modeller
             CloseNodeEditor();
             CloseEdgeEditor();
             RefreshNodeCombobox();
+            DefaultOrExpandPropertiesWidth(false);
         }
 
         private void entityEditor_ApplyChangesButtonClicked(object sender, EventArgs e)
@@ -706,6 +710,20 @@ namespace Blueprint41.Modeller
         {
             btnShowInheritedRelationships.Checked = !btnShowInheritedRelationships.Checked;
             btnShowInheritedRelationships_Click(sender, e);
+        }
+
+        private void DefaultOrExpandPropertiesWidth(bool expand)
+        {
+            if (expand && expandPropertiesWidthToolStripMenuItem.Checked)
+            {
+                int width = splitContainer.Width - entityEditor.DataGridMaxWidth;
+                splitContainer.SplitterDistance = width;
+            }
+            else
+            {
+                splitContainer.SplitterDistance = _splitterDistance;
+            }
+
         }
     }
 }
