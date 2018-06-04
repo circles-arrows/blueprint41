@@ -330,7 +330,7 @@ namespace Blueprint41
             Parser.Execute("CALL apoc.index.remove('fts')", new Dictionary<string, object>(), true);
 
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine("CALL apoc.index.addAllNodes('fts',");
+            builder.AppendLine("CALL apoc.index.addAllNodesExtended('fts',");
             builder.AppendLine("\t{");
 
             bool first = true;
@@ -350,6 +350,9 @@ namespace Blueprint41
             }
 
             builder.AppendLine();
+            builder.AppendLine("\t},");
+            builder.AppendLine("\t{");
+            builder.AppendLine("\t\tautoUpdate:true");
             builder.AppendLine("\t}");
             builder.AppendLine(")");
 
