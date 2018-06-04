@@ -721,9 +721,9 @@ namespace Blueprint41.Modeller
             }
             else
             {
-                splitContainer.SplitterDistance = _splitterDistance;
+                if (_splitterDistance > 0 && splitContainer.SplitterDistance > _splitterDistance)
+                    splitContainer.SplitterDistance = _splitterDistance;
             }
-
         }
     }
 }

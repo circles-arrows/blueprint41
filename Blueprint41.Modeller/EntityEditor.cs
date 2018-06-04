@@ -57,7 +57,6 @@ namespace Blueprint41.Modeller
                 int maxOne = Math.Max(propertiesWidth, inheritedPrimitivePropertiesWidth);
                 int maxTwo = Math.Max(relationshipsWidth, inheritedRelationshipsWidth);
                 int max = Math.Max(maxOne, maxTwo);
-
                 
                 return max + dataGridViewRelationships.RowHeadersWidth;
             }
