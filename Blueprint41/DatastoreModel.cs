@@ -393,6 +393,9 @@ namespace Blueprint41
             {
                 Transaction trans = Transaction.RunningTransaction;
 
+                if (parameters == null)
+                    parameters = new Dictionary<string, object>();
+
                 Dictionary<string, object> convertedParams = parameters.ToDictionary(item => item.Key, item => ((object)item.Value == null) ? null : trans.ConvertToStoredType(item.Value.GetType(), item.Value));
 
                 return Neo4jTransaction.Run(cypher, convertedParams);
