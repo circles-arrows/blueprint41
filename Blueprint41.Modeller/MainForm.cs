@@ -95,6 +95,12 @@ namespace Blueprint41.Modeller
             ReloadForm();
             AddNewEntitiesToSubModel("Main Model");
             _splitterDistance = splitContainer.SplitterDistance;
+            SizeChanged += MainForm_SizeChanged;
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            _splitterDistance = splitContainer.SplitterDistance;
         }
 
         private void AddNewEntitiesToSubModel(string submodelName)
@@ -720,10 +726,7 @@ namespace Blueprint41.Modeller
                 splitContainer.SplitterDistance = width;
             }
             else
-            {
-                if (_splitterDistance > 0 && splitContainer.SplitterDistance > _splitterDistance)
-                    splitContainer.SplitterDistance = _splitterDistance;
-            }
+                splitContainer.SplitterDistance = _splitterDistance;
         }
     }
 }
