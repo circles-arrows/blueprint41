@@ -66,8 +66,6 @@ namespace Blueprint41.Modeller
                 toolStripDropDownButton3.Visible = false;
 
             Initialize();
-
-
         }
 
         private void Initialize()
@@ -82,6 +80,8 @@ namespace Blueprint41.Modeller
         }
 
         int idcounter = 0;
+        private int _splitterDistance;
+
         internal string GetNewId(NodeTypeEntry nte)
         {
             string ret = nte.DefaultLabel + idcounter++;
@@ -94,6 +94,13 @@ namespace Blueprint41.Modeller
         {
             ReloadForm();
             AddNewEntitiesToSubModel("Main Model");
+            _splitterDistance = splitContainer.SplitterDistance;
+            SizeChanged += MainForm_SizeChanged;
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            _splitterDistance = splitContainer.SplitterDistance;
         }
 
         private void AddNewEntitiesToSubModel(string submodelName)
@@ -199,6 +206,7 @@ namespace Blueprint41.Modeller
                 throw new NotSupportedException();
 
             entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
+            DefaultOrExpandPropertiesWidth(true);
         }
 
         private void graphEditor_SelectedEdgeChanged(object sender, EdgeEventArgs e)
@@ -212,6 +220,7 @@ namespace Blueprint41.Modeller
             CloseNodeEditor();
             CloseEdgeEditor();
             RefreshNodeCombobox();
+            DefaultOrExpandPropertiesWidth(false);
         }
 
         private void entityEditor_ApplyChangesButtonClicked(object sender, EventArgs e)
@@ -457,14 +466,14 @@ namespace Blueprint41.Modeller
 
         private void splitContainer1_SizeChanged(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(string.Format("Width:{0}", splitContainer1.Panel2.Width));
+            System.Diagnostics.Debug.WriteLine(string.Format("Width:{0}", splitContainer.Panel2.Width));
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             Model.CaptureCoordinates();
             Model.Save(StoragePath);
-            MessageBox.Show("Successfully saved diagram.", "Saved!", System.Windows.Forms.MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Diagram saved successfully.", "Confirmation", System.Windows.Forms.MessageBoxButtons.OK, MessageBoxIcon.Information);
             if (this.entityEditor.Enabled)
                 entityEditor.Reload();
         }
@@ -472,6 +481,7 @@ namespace Blueprint41.Modeller
         private void btnShowLabels_Click(object sender, EventArgs e)
         {
             showLabels = btnShowLabels.Checked;
+            showLabelsToolStripMenuItem.Checked = btnShowLabels.Checked;
             Model.ShowRelationshipLabels = btnShowLabels.Checked;
         }
 
@@ -551,6 +561,7 @@ namespace Blueprint41.Modeller
         private void btnShowInheritedRelationships_Click(object sender, EventArgs e)
         {
             showInherited = btnShowInheritedRelationships.Checked;
+            showInheritedRelationshipsToolStripMenuItem.Checked = btnShowInheritedRelationships.Checked;
             Model.ShowInheritedRelationships = btnShowInheritedRelationships.Checked;
         }
 
@@ -656,6 +667,66 @@ namespace Blueprint41.Modeller
             else
                 DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml, StoragePath);
 
+        }
+
+        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer.Panel2Collapsed = !propertiesToolStripMenuItem.Checked;
+            ShowHideToolStripMenu(splitContainer.Panel2Collapsed);
+        }
+
+        private void ShowHideToolStripMenu(bool panel2Collapsed)
+        {
+            toolStripRight.Visible = panel2Collapsed;
+
+            if (panel2Collapsed)
+            {
+                ToolStripMenuItem propertiesItem = new ToolStripMenuItem("Properties");
+                propertiesItem.Font = new Font(FontFamily.GenericSansSerif, 8.25f);
+                propertiesItem.Click += PropertiesItem_Click;
+                toolStripRight.Items.Add(propertiesItem);
+            }
+            else
+            {
+                if (toolStripRight.Items[0] is ToolStripMenuItem menuItem)
+                    menuItem.Click -= PropertiesItem_Click;
+
+                toolStripRight.Items.Clear();
+            }
+        }
+
+        private void PropertiesItem_Click(object sender, EventArgs e)
+        {
+            propertiesToolStripMenuItem.Checked = !propertiesToolStripMenuItem.Checked;
+            propertiesToolStripMenuItem_Click(sender, e);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void showLabelsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnShowLabels.Checked = !btnShowLabels.Checked;
+            btnShowLabels_Click(sender, e);
+        }
+
+        private void showInheritedRelationshipsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnShowInheritedRelationships.Checked = !btnShowInheritedRelationships.Checked;
+            btnShowInheritedRelationships_Click(sender, e);
+        }
+
+        private void DefaultOrExpandPropertiesWidth(bool expand)
+        {
+            if (expand && expandPropertiesWidthToolStripMenuItem.Checked)
+            {
+                int width = splitContainer.Width - entityEditor.DataGridMaxWidth;
+                splitContainer.SplitterDistance = width;
+            }
+            else
+                splitContainer.SplitterDistance = _splitterDistance;
         }
     }
 }

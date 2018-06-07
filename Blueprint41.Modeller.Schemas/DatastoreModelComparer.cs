@@ -36,7 +36,12 @@ namespace Blueprint41.Modeller.Schemas
         public static Type GetType(string assemblyFile, string pdbFile, string typeName)
         {
             Assembly assembly = LoadAssemblyAndPdbByBytes(assemblyFile, pdbFile);
-            return assembly.GetTypes().First(x => x.Name == typeName || x.BaseType.Name == typeName);
+            return GetType(assembly, typeName);
+        }
+
+        public static Type GetType(Assembly assembly, string typeName)
+        {
+            return assembly?.GetTypes().FirstOrDefault(x => x.Name == typeName || x.BaseType?.Name == typeName);
         }
     }
 }
