@@ -379,6 +379,9 @@ namespace Blueprint41.Dynamic
                     if (attr.IsNodeType)
                         continue;
 
+                    if (attr.IsRowVersion)
+                        continue;
+
                     if (attr.IsKey && DynamicEntityType.FunctionalId != null)
                         continue;
 
