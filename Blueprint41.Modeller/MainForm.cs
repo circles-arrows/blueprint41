@@ -725,7 +725,7 @@ namespace Blueprint41.Modeller
                 int width = splitContainer.Width - entityEditor.DataGridMaxWidth;
                 splitContainer.SplitterDistance = width;
             }
-            else
+            else if (expand == false && expandPropertiesWidthToolStripMenuItem.Checked)
                 splitContainer.SplitterDistance = _splitterDistance;
         }
     }
