@@ -667,6 +667,10 @@ namespace Blueprint41.Modeller
             else
                 DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml, StoragePath);
 
+            // Re initalize model after generating update script
+            // this will reload the xml
+            Initialize();
+            ReloadForm();
         }
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -725,7 +729,7 @@ namespace Blueprint41.Modeller
                 int width = splitContainer.Width - entityEditor.DataGridMaxWidth;
                 splitContainer.SplitterDistance = width;
             }
-            else
+            else if (expand == false && expandPropertiesWidthToolStripMenuItem.Checked)
                 splitContainer.SplitterDistance = _splitterDistance;
         }
     }
