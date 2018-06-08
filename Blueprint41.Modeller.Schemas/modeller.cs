@@ -14,7 +14,7 @@ namespace Blueprint41.Modeller.Schemas
             if (string.IsNullOrWhiteSpace(guid))
                 return null;
 
-            if (entitiesByGuid == null)
+            if (entitiesByGuid == null || entitiesByGuid.Count < entities.entity.Count)
                 entitiesByGuid = entities.entity.ToDictionary(key => new Guid(key.guid), value => value);
 
             entity found;
@@ -27,7 +27,7 @@ namespace Blueprint41.Modeller.Schemas
             if (string.IsNullOrWhiteSpace(guid))
                 return null;
 
-            if (functionalIdsByGuid == null)
+            if (functionalIdsByGuid == null || functionalIdsByGuid.Count < functionalIds.functionalId.Count)
                 functionalIdsByGuid = functionalIds.functionalId.ToDictionary(key => new Guid(key.guid), value => value);
 
             functionalId found;
