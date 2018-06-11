@@ -133,6 +133,16 @@ namespace Blueprint41.Modeller.Schemas
         {
             foreach (entity entity in entities.entity)
             {
+
+                entity currentEntity = entity;
+                List<primitive> primitivesOfBaseTypeAndSelf = new List<primitive>();
+                do
+                {
+                    primitivesOfBaseTypeAndSelf.AddRange(currentEntity.primitive.ToList());
+                    currentEntity = FindEntity(currentEntity.inherits);
+
+                } while (currentEntity != null);
+
                 if (!string.IsNullOrEmpty(entity.inherits))
                     entity.Inherits = FindEntity(entity.inherits);
 
@@ -145,7 +155,7 @@ namespace Blueprint41.Modeller.Schemas
                         record.Entity = entity;
 
                         foreach (property property in record.property)
-                            property.Primitive = record.Entity.FindPrimitive(property.propertyGuid);
+                            property.Primitive = primitivesOfBaseTypeAndSelf.SingleOrDefault(x => x.guid == property.propertyGuid);
 
                         record.Key = record.property.FirstOrDefault(item => item.Primitive?.isKey ?? false);
                     }
@@ -244,7 +254,7 @@ namespace Blueprint41.Modeller.Schemas
     }
     public partial class functionalId
     {
-        
+
     }
 
     #endregion
