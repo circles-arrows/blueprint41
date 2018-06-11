@@ -128,6 +128,9 @@ namespace Blueprint41.Neo4j.Persistence
 
             string labels = string.Join(":", entity.GetBaseTypesAndSelf().Where(x => x.IsVirtual == false).Select(x => x.Label.Name));
 
+            if (entity.RowVersion != null)
+                item.SetRowVersion(trans.TransactionDate);
+
             IDictionary<string, object> node = item.GetData();
 
             string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
@@ -145,9 +148,6 @@ namespace Blueprint41.Neo4j.Persistence
             {
                 entity.FunctionalId.SeenUid(item.GetKey().ToString());
             }
-
-            if (entity.RowVersion != null)
-                item.SetRowVersion(trans.TransactionDate);
 
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("node", node);

@@ -16,7 +16,7 @@ namespace Blueprint41
         {
             InTransaction = true;
             DisableForeignKeyChecks = false;
-        }
+        } 
 
         #region Transaction Logic
 

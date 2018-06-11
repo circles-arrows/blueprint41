@@ -224,6 +224,10 @@ if (!DALModel.IsAbstract)
 		{
 			if(attr.IsNodeType)
 				continue;
+
+			if (attr.IsRowVersion)
+                continue;
+
 			if(attr.IsKey && DALModel.FunctionalId != null)
 				continue;
 
