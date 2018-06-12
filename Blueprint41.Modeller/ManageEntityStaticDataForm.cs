@@ -110,6 +110,19 @@ namespace Blueprint41.Modeller
                 RecordPropertiesDataTable.Columns.Add(recordProperty.Key);
             }
 
+            // if we don't have anything to map, add the primitive mapping instead
+            if(recordProperties.Count == 0)
+            {
+                foreach(KeyValuePair<string, string> primiviteGuidName in primitiveGuidNameMapping)
+                {
+                    DataGridViewColumn column = new DataGridViewTextBoxColumn();
+                    column.DataPropertyName = primiviteGuidName.Key;
+                    column.Name = primiviteGuidName.Value;
+                    dataGridView.Columns.Add(column);
+                    RecordPropertiesDataTable.Columns.Add(primiviteGuidName.Key);
+                }
+            }
+
             //TODO: Review this part with Marko
             //Entity and Parent Relationship and Properties
             foreach (var relationship in Entity.GetRelationships(RelationshipDirection.In, true))
