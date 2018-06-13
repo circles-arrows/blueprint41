@@ -40,10 +40,9 @@
             // lblType
             // 
             this.lblType.AutoSize = true;
-            this.lblType.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblType.Location = new System.Drawing.Point(12, 18);
             this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(37, 13);
+            this.lblType.Size = new System.Drawing.Size(31, 13);
             this.lblType.TabIndex = 0;
             this.lblType.Text = "Type:";
             // 
@@ -53,16 +52,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPrefix.Location = new System.Drawing.Point(64, 68);
             this.txtPrefix.Name = "txtPrefix";
-            this.txtPrefix.Size = new System.Drawing.Size(236, 20);
+            this.txtPrefix.Size = new System.Drawing.Size(154, 20);
             this.txtPrefix.TabIndex = 3;
             // 
             // lblPrefix
             // 
             this.lblPrefix.AutoSize = true;
-            this.lblPrefix.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPrefix.Location = new System.Drawing.Point(12, 71);
             this.lblPrefix.Name = "lblPrefix";
-            this.lblPrefix.Size = new System.Drawing.Size(49, 13);
+            this.lblPrefix.Size = new System.Drawing.Size(33, 13);
             this.lblPrefix.TabIndex = 0;
             this.lblPrefix.Text = "Prefix:";
             // 
@@ -72,7 +70,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtName.Location = new System.Drawing.Point(64, 42);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(236, 20);
+            this.txtName.Size = new System.Drawing.Size(154, 20);
             this.txtName.TabIndex = 2;
             // 
             // cmbType
@@ -83,24 +81,22 @@
             this.cmbType.FormattingEnabled = true;
             this.cmbType.Location = new System.Drawing.Point(64, 15);
             this.cmbType.Name = "cmbType";
-            this.cmbType.Size = new System.Drawing.Size(236, 21);
+            this.cmbType.Size = new System.Drawing.Size(154, 21);
             this.cmbType.TabIndex = 1;
             // 
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblName.Location = new System.Drawing.Point(12, 45);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(37, 13);
+            this.lblName.Size = new System.Drawing.Size(35, 13);
             this.lblName.TabIndex = 0;
             this.lblName.Text = "Name:";
             // 
             // btnSave
             // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Location = new System.Drawing.Point(225, 94);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));            
+            this.btnSave.Location = new System.Drawing.Point(143, 94);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 26);
             this.btnSave.TabIndex = 4;
@@ -112,7 +108,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(318, 134);
+            this.ClientSize = new System.Drawing.Size(236, 134);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.cmbType);
