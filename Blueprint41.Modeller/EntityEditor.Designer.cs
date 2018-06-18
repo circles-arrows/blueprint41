@@ -153,6 +153,7 @@
             this.chkIsAbstract.Size = new System.Drawing.Size(15, 14);
             this.chkIsAbstract.TabIndex = 4;
             this.chkIsAbstract.UseVisualStyleBackColor = true;
+            this.chkIsAbstract.CheckedChanged += new System.EventHandler(this.chkIsAbstract_CheckedChanged);
             // 
             // chkIsVirtual
             // 

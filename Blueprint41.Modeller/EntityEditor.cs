@@ -910,6 +910,8 @@ namespace Blueprint41.Modeller
         {
             Entity.FunctionalId = null;
             cmbFunctionalId.SelectedItem = null;
+
+            Entity.Virtual = chkIsVirtual.Checked;
         }
 
         private void dataGridViewPrimitiveProperties_KeyDown(object sender, KeyEventArgs e)
@@ -1008,6 +1010,11 @@ namespace Blueprint41.Modeller
         private void label6_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void chkIsAbstract_CheckedChanged(object sender, EventArgs e)
+        {
+            Entity.Abstract = chkIsAbstract.Checked;
         }
     }
 
