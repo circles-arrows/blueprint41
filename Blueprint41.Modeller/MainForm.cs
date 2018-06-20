@@ -48,7 +48,7 @@ namespace Blueprint41.Modeller
         {
             get
             {
-                return Model.Submodels.Submodel.Where(sub => sub.Name == "Main Model").SingleOrDefault();
+                return Model.Submodels.Submodel[0];
             }
         }
 
@@ -93,7 +93,7 @@ namespace Blueprint41.Modeller
         private void MainForm_Load(object sender, EventArgs e)
         {
             ReloadForm();
-            AddNewEntitiesToSubModel("Main Model");
+            AddNewEntitiesToSubModel(Model.Submodels.Submodel[0].Name);
             _splitterDistance = splitContainer.SplitterDistance;
             SizeChanged += MainForm_SizeChanged;
         }
