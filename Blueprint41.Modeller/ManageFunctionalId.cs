@@ -142,6 +142,13 @@ namespace Blueprint41.Modeller
                     return;
                 }
 
+                if (this.Model.FunctionalIds.FunctionalId.Any(functionalId => functionalId.Value == prefix && functionalId.Guid != this.SelectedFunctionalIdGuid))
+                {
+                    MessageBox.Show($"Prefix \"{prefix}\" already exists.", "Cannot Save Functiond Id", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    txtPrefix.Focus();
+                    return;
+                }
+
                 FunctionalId selectedFunctionalId = GetSelected();
                 selectedFunctionalId.Type = type;
                 selectedFunctionalId.Value = prefix;
