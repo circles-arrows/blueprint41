@@ -117,7 +117,7 @@
             this.txtName.Location = new System.Drawing.Point(97, 70);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(354, 20);
-            this.txtName.TabIndex = 1;
+            this.txtName.TabIndex = 2;
             this.txtName.Leave += new System.EventHandler(this.txtName_Leave);
             // 
             // bindingSource
@@ -132,7 +132,7 @@
             this.txtLabel.Location = new System.Drawing.Point(97, 44);
             this.txtLabel.Name = "txtLabel";
             this.txtLabel.Size = new System.Drawing.Size(354, 20);
-            this.txtLabel.TabIndex = 3;
+            this.txtLabel.TabIndex = 1;
             this.txtLabel.Leave += new System.EventHandler(this.txtLabel_Leave);
             // 
             // label2
@@ -151,7 +151,7 @@
             this.chkIsAbstract.Location = new System.Drawing.Point(97, 235);
             this.chkIsAbstract.Name = "chkIsAbstract";
             this.chkIsAbstract.Size = new System.Drawing.Size(15, 14);
-            this.chkIsAbstract.TabIndex = 4;
+            this.chkIsAbstract.TabIndex = 8;
             this.chkIsAbstract.UseVisualStyleBackColor = true;
             this.chkIsAbstract.CheckedChanged += new System.EventHandler(this.chkIsAbstract_CheckedChanged);
             // 
@@ -162,7 +162,7 @@
             this.chkIsVirtual.Location = new System.Drawing.Point(181, 236);
             this.chkIsVirtual.Name = "chkIsVirtual";
             this.chkIsVirtual.Size = new System.Drawing.Size(15, 14);
-            this.chkIsVirtual.TabIndex = 5;
+            this.chkIsVirtual.TabIndex = 8;
             this.chkIsVirtual.UseVisualStyleBackColor = true;
             this.chkIsVirtual.CheckedChanged += new System.EventHandler(this.chkIsVirtual_CheckedChanged);
             // 
@@ -176,7 +176,7 @@
             this.dataGridViewPrimitiveProperties.Name = "dataGridViewPrimitiveProperties";
             this.dataGridViewPrimitiveProperties.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewPrimitiveProperties.Size = new System.Drawing.Size(438, 121);
-            this.dataGridViewPrimitiveProperties.TabIndex = 8;
+            this.dataGridViewPrimitiveProperties.TabIndex = 11;
             this.dataGridViewPrimitiveProperties.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewPrimitiveProperties_CellValueChanged);
             this.dataGridViewPrimitiveProperties.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView_DataError);
             this.dataGridViewPrimitiveProperties.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridViewPrimitiveProperties_DefaultValuesNeeded);
@@ -190,7 +190,7 @@
             this.dataGridViewRelationships.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewRelationships.Name = "dataGridViewRelationships";
             this.dataGridViewRelationships.Size = new System.Drawing.Size(438, 124);
-            this.dataGridViewRelationships.TabIndex = 9;
+            this.dataGridViewRelationships.TabIndex = 14;
             this.dataGridViewRelationships.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRelationships_CellValueChanged);
             this.dataGridViewRelationships.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridViewCollectionProperties_DataError);
             // 
@@ -232,7 +232,7 @@
             this.cmbInherits.Location = new System.Drawing.Point(97, 97);
             this.cmbInherits.Name = "cmbInherits";
             this.cmbInherits.Size = new System.Drawing.Size(354, 21);
-            this.cmbInherits.TabIndex = 15;
+            this.cmbInherits.TabIndex = 3;
             this.cmbInherits.ValueMember = "Guid";
             // 
             // label8
@@ -253,7 +253,7 @@
             this.txtSummary.Multiline = true;
             this.txtSummary.Name = "txtSummary";
             this.txtSummary.Size = new System.Drawing.Size(354, 45);
-            this.txtSummary.TabIndex = 17;
+            this.txtSummary.TabIndex = 6;
             // 
             // dataGridViewInheritedPrimitiveProperties
             // 
@@ -265,7 +265,7 @@
             this.dataGridViewInheritedPrimitiveProperties.Name = "dataGridViewInheritedPrimitiveProperties";
             this.dataGridViewInheritedPrimitiveProperties.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewInheritedPrimitiveProperties.Size = new System.Drawing.Size(438, 120);
-            this.dataGridViewInheritedPrimitiveProperties.TabIndex = 9;
+            this.dataGridViewInheritedPrimitiveProperties.TabIndex = 12;
             // 
             // btnEditStaticData
             // 
@@ -275,7 +275,7 @@
             this.btnEditStaticData.Location = new System.Drawing.Point(337, 236);
             this.btnEditStaticData.Name = "btnEditStaticData";
             this.btnEditStaticData.Size = new System.Drawing.Size(104, 23);
-            this.btnEditStaticData.TabIndex = 20;
+            this.btnEditStaticData.TabIndex = 10;
             this.btnEditStaticData.Text = "Edit Data";
             this.btnEditStaticData.UseVisualStyleBackColor = false;
             this.btnEditStaticData.Visible = false;
@@ -290,7 +290,7 @@
             this.cmbFunctionalId.Location = new System.Drawing.Point(97, 126);
             this.cmbFunctionalId.Name = "cmbFunctionalId";
             this.cmbFunctionalId.Size = new System.Drawing.Size(220, 21);
-            this.cmbFunctionalId.TabIndex = 23;
+            this.cmbFunctionalId.TabIndex = 4;
             // 
             // label3
             // 
@@ -309,7 +309,7 @@
             this.txtExample.Location = new System.Drawing.Point(97, 207);
             this.txtExample.Name = "txtExample";
             this.txtExample.Size = new System.Drawing.Size(354, 20);
-            this.txtExample.TabIndex = 25;
+            this.txtExample.TabIndex = 7;
             // 
             // label4
             // 
@@ -336,7 +336,7 @@
             this.chkIsStaticData.Location = new System.Drawing.Point(244, 236);
             this.chkIsStaticData.Name = "chkIsStaticData";
             this.chkIsStaticData.Size = new System.Drawing.Size(15, 14);
-            this.chkIsStaticData.TabIndex = 28;
+            this.chkIsStaticData.TabIndex = 9;
             this.chkIsStaticData.UseVisualStyleBackColor = true;
             this.chkIsStaticData.CheckedChanged += new System.EventHandler(this.chkIsStaticData_CheckedChanged);
             // 
@@ -386,7 +386,7 @@
             this.dataGridViewInheritedRelationships.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewInheritedRelationships.Name = "dataGridViewInheritedRelationships";
             this.dataGridViewInheritedRelationships.Size = new System.Drawing.Size(438, 113);
-            this.dataGridViewInheritedRelationships.TabIndex = 10;
+            this.dataGridViewInheritedRelationships.TabIndex = 15;
             // 
             // splitContainerMain
             // 
@@ -467,7 +467,7 @@
             this.checkBoxShowAllRelationships.Location = new System.Drawing.Point(310, 10);
             this.checkBoxShowAllRelationships.Name = "checkBoxShowAllRelationships";
             this.checkBoxShowAllRelationships.Size = new System.Drawing.Size(133, 17);
-            this.checkBoxShowAllRelationships.TabIndex = 1;
+            this.checkBoxShowAllRelationships.TabIndex = 13;
             this.checkBoxShowAllRelationships.Text = "Show All Relationships";
             this.checkBoxShowAllRelationships.UseVisualStyleBackColor = true;
             this.checkBoxShowAllRelationships.CheckedChanged += new System.EventHandler(this.checkBoxShowAllRelationships_CheckedChanged);
@@ -504,7 +504,7 @@
             this.button1.Location = new System.Drawing.Point(323, 125);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(128, 23);
-            this.button1.TabIndex = 31;
+            this.button1.TabIndex = 5;
             this.button1.Text = "ADD FUNCTIONAL ID";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.btnAddFunctionalId_Click);

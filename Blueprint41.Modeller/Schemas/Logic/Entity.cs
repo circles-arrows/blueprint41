@@ -43,7 +43,7 @@ namespace Blueprint41.Modeller.Schemas
             Entity current = this;
             do
             {
-                if(direction != RelationshipDirection.Out)
+                if (direction != RelationshipDirection.Out)
                     relationships.AddRange(Model.Relationships.Relationship.Where(item => item.Source.ReferenceGuid == current.Guid));
 
                 if (direction != RelationshipDirection.In)
@@ -123,7 +123,7 @@ namespace Blueprint41.Modeller.Schemas
                     foreach (var relationship in Model.Relationships.Relationship)
                     {
                         if (relationship.Source.ReferenceGuid == this.Guid)
-                        { 
+                        {
                             relationship.Source.Label = e.NewValue;
                             relationship.Source.ReferenceGuid = newGuid;
                         }
@@ -136,7 +136,8 @@ namespace Blueprint41.Modeller.Schemas
                     }
 
                     Guid = newGuid;
-                }  
+                    Model.UpdateGraph();
+                }
             };
 
             OnLabelChanging += delegate (object sender, PropertyChangedEventArgs<string> e)

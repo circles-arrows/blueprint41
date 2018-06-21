@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -156,6 +157,42 @@ namespace Blueprint41.Modeller.Schemas
             GraphEditor.Viewer.Graph = Viewer.Graph;
             CaptureCoordinates();
         }
+
+        public void UpdateGraph()
+        {
+            GraphEditor.Viewer.NeedToCalculateLayout = false;
+
+            // We must get the zoom factor and the scroll values of the viewer
+            // and setting it after re assigning the graph object
+            var zoom = Viewer.ZoomF;
+            var hScroll = GetPropertyValue(typeof(GViewer), Viewer, "HVal");
+            var vScroll = GetPropertyValue(typeof(GViewer), Viewer, "VVal");
+
+            // MSAGL have this issue wherein it does not reflect directly after updating some nodes
+            // Re assigning it will redraw the graph
+            GraphEditor.Viewer.Graph = Viewer.Graph;
+            GraphEditor.Viewer.ZoomF = zoom;
+            BindProperty(GraphEditor.Viewer, "HVal", (int)hScroll);
+            BindProperty(GraphEditor.Viewer, "VVal", (int)vScroll);
+            CaptureCoordinates();
+        }
+
+        internal object GetPropertyValue(Type type, object instance, string fieldName)
+        {
+            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            PropertyInfo field = type.GetProperty(fieldName, bindFlags);
+            return field.GetValue(instance);
+        }
+
+        internal void BindProperty(object obj, string propertyName, object propertyValue)
+        {
+            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            PropertyInfo propertyInfo = obj.GetType().GetProperty(propertyName, bindFlags);
+
+            if (propertyInfo != null && propertyInfo.CanWrite)
+                propertyInfo.SetValue(obj, propertyValue, null);
+        }
+
         internal void CaptureCoordinates()
         {
             foreach (var node in DisplayedSubmodel.Node)
@@ -247,7 +284,7 @@ namespace Blueprint41.Modeller.Schemas
                                 item.CreateEdge();
                             break;
                         case NotifyCollectionChangedAction.Remove:
-                            foreach(Relationship item in e.OldItems)
+                            foreach (Relationship item in e.OldItems)
                                 item.DeleteEdge();
                             break;
                         case NotifyCollectionChangedAction.Reset:
