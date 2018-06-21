@@ -1,5 +1,6 @@
 ﻿using Blueprint41.Query;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -139,6 +140,33 @@ namespace Blueprint41.Core
         }
         internal protected override bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment = null)
         {
+            if (previousValue == null && assignValue == null)
+                return false;
+
+            if (previousValue != null && previousValue.Equals(assignValue))
+                return false;
+
+            if (property.PropertyType == PropertyType.Attribute && previousValue is IList)
+            {
+                IList pv = previousValue as IList;
+                IList av = assignValue as IList;
+                if (pv.Count == 0 && av.Count == 0)
+                    return false;
+
+                if(pv.Count == av.Count)
+                {
+                    bool equal = true;
+                    foreach (var item in pv)
+                    {
+                        if (!av.Contains(item))
+                            equal = false;
+                    }
+
+                    if (equal)
+                        return false;
+                }
+            }
+
             if (base.LazySet(property, previousValue, assignValue, moment))
                 return false;
 
