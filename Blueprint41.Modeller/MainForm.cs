@@ -663,7 +663,10 @@ namespace Blueprint41.Modeller
         private void toolStripDropDownButtonGenerateUpgradeScript_Click(object sender, EventArgs e)
         {
             if (DatastoreModelComparer.Instance == null)
+            {
                 MessageBox.Show("The comparer is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                return;
+            }
             else
             {
                 // Save it before generating update script
@@ -671,12 +674,12 @@ namespace Blueprint41.Modeller
                 Model.Save(StoragePath);
 
                 DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml, StoragePath);
-            }
 
-            // Re initalize model after generating update script
-            // this will reload the xml
-            Initialize();
-            ReloadForm();
+                // Re initalize model after generating update script
+                // this will reload the xml
+                Initialize();
+                ReloadForm();
+            }
         }
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
