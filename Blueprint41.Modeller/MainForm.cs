@@ -665,7 +665,13 @@ namespace Blueprint41.Modeller
             if (DatastoreModelComparer.Instance == null)
                 MessageBox.Show("The comparer is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
             else
+            {
+                // Save it before generating update script
+                Model.CaptureCoordinates();
+                Model.Save(StoragePath);
+
                 DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml, StoragePath);
+            }
 
             // Re initalize model after generating update script
             // this will reload the xml
