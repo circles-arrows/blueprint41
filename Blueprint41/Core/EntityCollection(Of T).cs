@@ -41,6 +41,26 @@ namespace Blueprint41.Core
 
             Transaction?.Register(AddAction(item, null));
         }
+        internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
+        {
+            LazyLoad();
+            LazySet();
+
+            LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
+            foreach (var item in items)
+            {
+                if (item != null && EagerLoadLogic != null)
+                    EagerLoadLogic.Invoke(item);
+
+                if (fireEvents)
+                    if (ParentProperty.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add))
+                        return;
+
+                actions.AddLast(AddAction(item, null));
+            }
+
+            Transaction.Register(actions);
+        }
         public override bool Contains(TEntity item)
         {
             LazyLoad();
@@ -121,7 +141,48 @@ namespace Blueprint41.Core
 
             Transaction.Register(ClearAction(null));
         }
+        internal sealed override bool RemoveRange(IEnumerable<TEntity> items, bool fireEvents)
+        {
+            return RemoveRange(items, Transaction.TransactionDate, fireEvents);
+        }
+        internal bool RemoveRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
+        {
+            if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
+                throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty.Relationship.Neo4JRelationshipType, ForeignEntity.Name));
 
+            LazyLoad();
+            LazySet();
+
+            LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
+            foreach (var item in items)
+            {
+                if (item != null && EagerLoadLogic != null)
+                    EagerLoadLogic.Invoke(item);
+
+                if (fireEvents)
+                {
+                    bool cancel = false;
+                    ForEach(delegate (int index, CollectionItem current)
+                    {
+                        if (current.Item.Equals(item))
+                            if (ParentProperty.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), null, OperationEnum.Remove))
+                                cancel = true;
+                    });
+                    if (cancel)
+                        return false;
+                }
+
+                ForEach(delegate (int index, CollectionItem current)
+                {
+                    if (current.Item.Equals(item))
+                        actions.AddLast(RemoveAction(current, null));
+                });
+            }
+
+            Transaction.Register(actions);
+
+            return (actions.Count > 0);
+        }
 
 
         sealed protected override IEnumerator<TEntity> GetEnumeratorInternal()

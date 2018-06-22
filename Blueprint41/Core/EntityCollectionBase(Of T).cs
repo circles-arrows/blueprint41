@@ -53,18 +53,27 @@ namespace Blueprint41.Core
 
         int ICollection<TEntity>.Count { get { return CountInternal; } }
         private protected abstract int CountInternal { get; }
-
         public void Add(TEntity item)
         {
             Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
         internal abstract void Add(TEntity item, bool fireEvent);
+        public void AddRange(IEnumerable<TEntity> items)
+        {
+            AddRange(items, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
+        }
+        internal abstract void AddRange(IEnumerable<TEntity> items, bool fireEvent);
         public abstract bool Contains(TEntity item);
         public bool Remove(TEntity item)
         {
             return Remove(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
         internal abstract bool Remove(TEntity item, bool fireEvent);
+        public bool RemoveRange(IEnumerable<TEntity> items)
+        {
+            return RemoveRange(items, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
+        }
+        internal abstract bool RemoveRange(IEnumerable<TEntity> item, bool fireEvent);
         public void Clear()
         {
             Clear(typeof(TEntity) != typeof(Dynamic.DynamicEntity));
