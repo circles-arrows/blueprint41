@@ -99,8 +99,12 @@ namespace Blueprint41.Modeller
                         recordProperties.Add(property.PropertyGuid, property.Value);
                 }
             }
-           
+
             var primitiveGuidNameMapping = GetPropertiesOfBaseTypeAndSelf(Entity);
+
+            IDictionary<string, object> fields = new Dictionary<string, object>();
+            fields.Add("RecordGuid", "");
+
             foreach (var recordProperty in recordProperties)
             {
                 DataGridViewColumn column = new DataGridViewTextBoxColumn();
@@ -108,18 +112,23 @@ namespace Blueprint41.Modeller
                 column.Name = primitiveGuidNameMapping[recordProperty.Key];
                 dataGridView.Columns.Add(column);
                 RecordPropertiesDataTable.Columns.Add(recordProperty.Key);
+
+                // Add the field names here so that it won't mixed up
+                fields.Add(recordProperty.Key, "");
             }
 
             // if we don't have anything to map, add the primitive mapping instead
-            if(recordProperties.Count == 0)
+            if (recordProperties.Count == 0)
             {
-                foreach(KeyValuePair<string, string> primiviteGuidName in primitiveGuidNameMapping)
+                foreach (KeyValuePair<string, string> primiviteGuidName in primitiveGuidNameMapping)
                 {
                     DataGridViewColumn column = new DataGridViewTextBoxColumn();
                     column.DataPropertyName = primiviteGuidName.Key;
                     column.Name = primiviteGuidName.Value;
                     dataGridView.Columns.Add(column);
                     RecordPropertiesDataTable.Columns.Add(primiviteGuidName.Key);
+
+                    fields.Add(primiviteGuidName.Key, "");
                 }
             }
 
@@ -136,11 +145,7 @@ namespace Blueprint41.Modeller
 
             foreach (var record in Entity.StaticData.Records.Record)
             {
-                IDictionary<string, object> fields = new Dictionary<string, object>();
-                fields.Add("RecordGuid", record.Guid);
-
-                foreach (var primitiveProperty in Entity.Primitive)
-                    fields.Add(primitiveProperty.Guid, "");
+                fields["RecordGuid"] = record.Guid;                
 
                 foreach (var property in record.Property)
                 {

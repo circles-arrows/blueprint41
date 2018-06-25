@@ -63,8 +63,9 @@ namespace Blueprint41.Modeller
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.ForeColor = Styles.FORMS_WARNING;
+            this.label1.ForeColor = System.Drawing.Color.Red;
             this.label1.Location = new System.Drawing.Point(12, 474);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(226, 13);
