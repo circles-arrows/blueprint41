@@ -29,6 +29,7 @@ namespace Blueprint41.Modeller
         public DataGridViewComboBoxColumn SourceEntitiesColumn { get; private set; }
         public DataGridViewComboBoxColumn TargetEntitiesColumn { get; private set; }
 
+        private ObservableCollection<Primitive> primitiveObservable;
         private ObservableCollection<Relationship> relationshipsObservable;
 
         public DataTable FunctionalIdDataTable { get; set; }
@@ -57,7 +58,7 @@ namespace Blueprint41.Modeller
                 int maxOne = Math.Max(propertiesWidth, inheritedPrimitivePropertiesWidth);
                 int maxTwo = Math.Max(relationshipsWidth, inheritedRelationshipsWidth);
                 int max = Math.Max(maxOne, maxTwo);
-                
+
                 return max + dataGridViewRelationships.RowHeadersWidth;
             }
         }
@@ -546,17 +547,52 @@ namespace Blueprint41.Modeller
         private void Assign()
         {
             cmbInherits.DataBindings.Clear();
+
+            // Primitive
             bindingSourcePrimitiveProperties.DataSource = null;
             dataGridViewPrimitiveProperties.DataSource = null;
-            bindingSourcePrimitiveProperties.DataSource = Entity.Primitive;
+
+            primitiveObservable = new ObservableCollection<Primitive>(Entity.Primitive);
+
+            primitiveObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Remove:
+                    case NotifyCollectionChangedAction.Reset:
+                        {
+                            foreach (Primitive item in e.OldItems)
+                            {
+                                RemoveRecordPropertyAndFromChildEntity(item);
+                                Entity.Primitive.Remove(item);
+                            }
+
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Add:
+                        {
+                            foreach (Primitive item in e.NewItems)
+                                Entity.Primitive.Add(item);
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                    case NotifyCollectionChangedAction.Move:
+                        throw new NotSupportedException();
+                }
+            };
+
+            bindingSourcePrimitiveProperties.DataSource = primitiveObservable;
             dataGridViewPrimitiveProperties.DataSource = bindingSourcePrimitiveProperties;
 
+
+            // Inherited Primitive Properties
             bindingSourceInheritedPrimitiveProperties.DataSource = null;
             dataGridViewInheritedPrimitiveProperties.DataSource = null;
+
             bindingSourceInheritedPrimitiveProperties.DataSource = GetPrimitivesOfBaseTypes(Entity);
             dataGridViewInheritedPrimitiveProperties.DataSource = bindingSourceInheritedPrimitiveProperties;
 
-
+            // Relationships
             bindingSourceCollectionProperties.DataSource = null;
             dataGridViewRelationships.DataSource = null;
 
@@ -661,6 +697,26 @@ namespace Blueprint41.Modeller
             cmbFunctionalId.SelectedIndexChanged += cmbFunctionalId_SelectedIndexChanged;
             Entity.OnLabelChangeCancelled += Entity_OnLabelChangeCancelled;
             Entity.OnNameChangeCancelled += Entity_OnNameChangeCancelled;
+        }
+
+        private void RemoveRecordPropertyAndFromChildEntity(Primitive item)
+        {
+            RemoveRecordProperties(Entity, item);
+
+            List<Entity> childEntities = Entity.GetChildStaticEntities();
+            foreach (Entity e in childEntities)
+                RemoveRecordProperties(e, item);
+        }
+
+        private void RemoveRecordProperties(Entity entity, Primitive item)
+        {
+            if (entity.IsStaticData == false)
+                return;
+
+            foreach (Record record in entity.StaticData.Records.Record)
+                foreach (Property prop in record.Property.ToList())
+                    if (prop.PropertyGuid == item.Guid)
+                        record.Property.Remove(prop);
         }
 
         private void DataGridViewRelationships_CurrentCellDirtyStateChanged(object sender, EventArgs e)

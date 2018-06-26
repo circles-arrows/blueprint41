@@ -54,6 +54,11 @@ namespace Blueprint41.Modeller
             return result;
         }
 
+        public static List<Entity> GetChildStaticEntities(this Entity entity)
+        {
+            return entity.Model.Entities.Entity.Where(item => item.Inherits == entity.Guid && item.IsStaticData).ToList();
+        }
+
         public static List<Relationship> GetCurrentRelationshipsInGraph(this Entity entity, Submodel model)
         {
             List<Relationship> relationships = model.Model.Relationships.Relationship.Where(item => item.Source.ReferenceGuid == entity.Guid || item.Target.ReferenceGuid == entity.Guid).ToList();
