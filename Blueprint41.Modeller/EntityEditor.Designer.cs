@@ -257,6 +257,9 @@
             // 
             // dataGridViewInheritedPrimitiveProperties
             // 
+            this.dataGridViewInheritedPrimitiveProperties.AllowUserToAddRows = false;
+            this.dataGridViewInheritedPrimitiveProperties.AllowUserToDeleteRows = false;
+            this.dataGridViewInheritedPrimitiveProperties.AllowUserToOrderColumns = true;
             this.dataGridViewInheritedPrimitiveProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewInheritedPrimitiveProperties.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGridViewInheritedPrimitiveProperties.Dock = System.Windows.Forms.DockStyle.Fill;
