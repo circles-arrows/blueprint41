@@ -18,7 +18,7 @@ namespace Blueprint41.Modeller.Schemas
             {
                 if (e.OldValue != e.NewValue)
                 {
-                    Guid = Model.GenerateGuid(e.NewValue).ToString();
+                    //Guid = Model.GenerateGuid(e.NewValue).ToString();
                     Name = e.NewValue;
                 }
             };
