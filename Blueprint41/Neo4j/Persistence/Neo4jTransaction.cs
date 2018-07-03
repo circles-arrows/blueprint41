@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Neo4j.Persistence
 {
+    
     public class Neo4jTransaction : Transaction
     {
         internal Neo4jTransaction(IDriver driver, bool withTransaction)
@@ -41,10 +42,11 @@ namespace Blueprint41.Neo4j.Persistence
             return results;
         }
 
-        private IDriver Driver;
-        private ISession Session;
-        private ITransaction Transaction;
-        private IStatementRunner StatementRunner;
+        public IDriver Driver { get; set; }
+        public ISession Session { get; set; }
+        public ITransaction Transaction { get; set; }
+        public IStatementRunner StatementRunner { get; set; }
+
         private bool WithTransaction;
 
         protected override void OnCommit()
@@ -82,7 +84,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             base.FlushPrivate();
         }
-        
+
 
         protected override void ApplyFunctionalId(FunctionalId functionalId)
         {

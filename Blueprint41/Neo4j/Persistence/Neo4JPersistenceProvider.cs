@@ -50,7 +50,7 @@ namespace Blueprint41.Neo4j.Persistence
             return new Neo4JRelationshipPersistenceProvider(this);
         }
 
-        internal override Transaction NewTransaction(bool withTransaction)
+        public override Transaction NewTransaction(bool withTransaction)
         {
             return new Neo4jTransaction(Driver, withTransaction);
         }

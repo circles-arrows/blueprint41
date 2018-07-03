@@ -29,7 +29,7 @@ namespace Blueprint41.Core
         internal abstract NodePersistenceProvider GetNodePersistenceProvider();
         internal abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider();
 
-        internal abstract Transaction NewTransaction(bool withTransaction);
+        public abstract Transaction NewTransaction(bool withTransaction);
 
         public abstract IEnumerable<TypeMapping> SupportedTypeMappings { get; }
 
@@ -48,8 +48,8 @@ namespace Blueprint41.Core
             {
                 if (CurrentPersistenceProvider == null)
                     return false;
- 
-                return (CurrentPersistenceProvider.GetType() == typeof(Neo4j.Persistence.Neo4JPersistenceProvider));
+
+                return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Neo4j.Persistence.Neo4JPersistenceProvider));
             }
         }
     }
