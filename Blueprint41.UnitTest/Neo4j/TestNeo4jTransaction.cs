@@ -1,11 +1,17 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Neo4j.Schema;
 using Blueprint41.UnitTest.Mocks;
+using Neo4j.Driver.V1;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace Blueprint41.UnitTest.Neo4j
 {
+    /// <summary>
+    /// Before running test, be sure to back up the exisiting neo4j database. 
+    /// </summary>
     [TestFixture]
     public class TestNeo4jTransaction
     {
@@ -54,6 +60,28 @@ namespace Blueprint41.UnitTest.Neo4j
 
             // Revert back for future transaction
             provider.NotNeo4jTransaction = false;
+        }
+
+        [Test]
+        public void EnsureCanCreateAnEntity()
+        {
+            using (Transaction.Begin())
+            {
+                // Let us try to create a person entity
+                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");                
+                Transaction.Commit();
+            }
+
+            // Load the newly added entity
+            using (Transaction.Begin())
+            {
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+                INode loaded = record["n"].As<INode>();
+
+                Assert.AreEqual(loaded.Properties["name"], "Address");
+                Assert.AreEqual(loaded.Properties["title"], "Developer");
+            }
         }
 
         [TearDown]

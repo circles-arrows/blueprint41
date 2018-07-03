@@ -30,7 +30,7 @@ namespace Blueprint41.UnitTest.Mocks
 
         public void Failure()
         {
-            Console.WriteLine("Failure");
+            Console.WriteLine("Transaction: Failure");
             NeoTransaction.Failure();
         }
 
