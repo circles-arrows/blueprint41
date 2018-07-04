@@ -53,10 +53,11 @@ namespace Blueprint41.Neo4j.Persistence
         {
             if (WithTransaction)
             {
-                Transaction.Success();
-
                 if (Transaction != null)
+                {
+                    Transaction.Success();
                     Transaction.Dispose();
+                }   
             }
 
             if (Session != null)
