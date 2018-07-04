@@ -17,9 +17,11 @@ namespace Blueprint41.UnitTest.Neo4j
     {
         [SetUp]
         public void Setup()
-        {            
+        {
             MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7687", "neo4j", "neo");
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+
+            TearDown();
         }
 
         [Test]
@@ -63,25 +65,119 @@ namespace Blueprint41.UnitTest.Neo4j
         }
 
         [Test]
+        public void EnsureNotAbleToTransactAfterCommit()
+        {
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                using (Transaction.Begin())
+                {
+                    // Let us try to create a person entity
+                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+
+                    Transaction.Commit();
+
+                    // This statement should throw invalid operation exception
+                    IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                    IRecord record = result.FirstOrDefault();
+                    INode loaded = record["n"].As<INode>();
+
+                    Assert.AreEqual(loaded.Properties["name"], "Address");
+                    Assert.AreEqual(loaded.Properties["title"], "Developer");
+                }
+            });
+
+            Assert.That(exception.Message, Contains.Substring("The transaction was already committed or rolled back."));
+        }
+
+        [Test]
         public void EnsureCanCreateAnEntity()
         {
             using (Transaction.Begin())
             {
                 // Let us try to create a person entity
-                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");                
-                Transaction.Commit();
-            }
+                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
 
-            // Load the newly added entity
-            using (Transaction.Begin())
-            {
                 IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
                 IRecord record = result.FirstOrDefault();
                 INode loaded = record["n"].As<INode>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
+
+                Transaction.Commit();
             }
+        }
+
+        [Test]
+        public void EnsureEntityShouldNotBeAddedAfterRollback()
+        {
+            using (Transaction.Begin(true))
+            {
+                // Let us try to create a person entity
+                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+                INode loaded = record["n"].As<INode>();
+
+                Assert.AreEqual(loaded.Properties["name"], "Address");
+                Assert.AreEqual(loaded.Properties["title"], "Developer");
+
+                Transaction.Rollback();
+            }
+
+            using (Transaction.Begin())
+            {
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+                Assert.IsNull(record);
+            }
+        }
+
+        [Test]
+        public void EnsureEntityShouldNotBeRollbackedAfterCommitedAndViceVersa()
+        {
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                using (Transaction.Begin(true))
+                {
+                    // Let us try to create a person entity
+                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+
+                    IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                    IRecord record = result.FirstOrDefault();
+                    INode loaded = record["n"].As<INode>();
+
+                    Assert.AreEqual(loaded.Properties["name"], "Address");
+                    Assert.AreEqual(loaded.Properties["title"], "Developer");
+
+                    Transaction.Commit();
+                    Transaction.Rollback();
+                }
+            });
+
+            Assert.That(exception.Message, Contains.Substring("The transaction was already committed or rolled back."));
+
+            InvalidOperationException exception2 = Assert.Throws<InvalidOperationException>(() =>
+            {
+                using (Transaction.Begin(true))
+                {
+                    // Let us try to create a person entity
+                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+
+                    IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                    IRecord record = result.FirstOrDefault();
+                    INode loaded = record["n"].As<INode>();
+
+                    Assert.AreEqual(loaded.Properties["name"], "Address");
+                    Assert.AreEqual(loaded.Properties["title"], "Developer");
+
+                    Transaction.Rollback();
+                    Transaction.Commit();
+                }
+            });
+
+            Assert.That(exception2.Message, Contains.Substring("The transaction was already committed or rolled back."));
         }
 
         [TearDown]
