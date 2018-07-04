@@ -33,6 +33,8 @@ namespace Blueprint41.Core
 
         public abstract void ForceDelete(OGM item);
 
+        public abstract string NextFunctionID(FunctionalId functionalId);
+
         public abstract bool RelationshipExists(Property foreignProperty, OGM instance);
     }
 }

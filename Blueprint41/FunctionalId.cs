@@ -61,6 +61,10 @@ namespace Blueprint41
             }
         }
 
+        public string NextFunctionID()
+        {
+            return Transaction.Current.NodePersistenceProvider.NextFunctionID(this);
+        }
         #endregion
     }
 }

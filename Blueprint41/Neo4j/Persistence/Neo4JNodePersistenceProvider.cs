@@ -209,6 +209,19 @@ namespace Blueprint41.Neo4j.Persistence
             item.PersistenceState = PersistenceState.Persisted;
         }
 
+        public override string NextFunctionID(FunctionalId functionalId)
+        {
+            if (functionalId == null)
+                throw new ArgumentNullException("functionalId");
+
+            string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", functionalId.Label);
+            if (functionalId.Format == IdFormat.Numeric)
+                nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", functionalId.Label);
+
+            var result = Neo4jTransaction.Run(nextKey).First();
+            return result["key"].ToString();
+        }
+
         public override List<T> LoadWhere<T>(Entity entity, string conditions, Parameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
             Transaction trans = Transaction.RunningTransaction;
