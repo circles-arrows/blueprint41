@@ -180,6 +180,51 @@ namespace Blueprint41.UnitTest.Neo4j
             Assert.That(exception2.Message, Contains.Substring("The transaction was already committed or rolled back."));
         }
 
+        [Test]
+        public void EnsureEntityIsCreatedRegardlessAnExceptionIsThrown()
+        {
+            Assert.Throws<Exception>(() =>
+            {
+                using (Transaction.Begin())
+                {
+                    // Let us try to create a person entity
+                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                    throw new Exception();
+                }
+            });
+
+            using (Transaction.Begin())
+            {
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+                INode loaded = record["n"].As<INode>();
+
+                Assert.AreEqual(loaded.Properties["name"], "Address");
+                Assert.AreEqual(loaded.Properties["title"], "Developer");
+            }
+        }
+
+        [Test]
+        public void EnsureEntityIsRolledbackWhenExceptionIsThrown()
+        {
+            Assert.Throws<Exception>(() =>
+            {
+                using (Transaction.Begin(true))
+                {
+                    // Let us try to create a person entity
+                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                    throw new Exception();
+                }
+            });
+
+            using (Transaction.Begin())
+            {
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+                Assert.IsNull(record);
+            }
+        }
+
         [TearDown]
         public void TearDown()
         {
