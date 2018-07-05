@@ -1,29 +1,21 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Schema;
+using Blueprint41.Query;
 using Blueprint41.UnitTest.Mocks;
 using Neo4j.Driver.V1;
 using NUnit.Framework;
 using System;
 using System.Linq;
 
-namespace Blueprint41.UnitTest.Neo4j
+namespace Blueprint41.UnitTest.Tests
 {
     /// <summary>
     /// Before running test, be sure to back up the exisiting neo4j database. 
     /// </summary>
     [TestFixture]
-    public class TestNeo4jTransaction
+    internal class TestNeo4jTransaction : TestBase
     {
-        [SetUp]
-        public void Setup()
-        {
-            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7687", "neo4j", "neo");
-            PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
-
-            TearDown();
-        }
-
         [Test]
         public void EnsureThereShouldBeATransactionWhenRunningNeo4jCypher()
         {
@@ -50,7 +42,7 @@ namespace Blueprint41.UnitTest.Neo4j
 
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                using (Transaction.Begin())
+                using (Transaction.Begin(true))
                 {
                     // Let us try to create a person entity
                     Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
@@ -69,7 +61,7 @@ namespace Blueprint41.UnitTest.Neo4j
         {
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                using (Transaction.Begin())
+                using (Transaction.Begin(true))
                 {
                     // Let us try to create a person entity
                     Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
@@ -92,7 +84,7 @@ namespace Blueprint41.UnitTest.Neo4j
         [Test]
         public void EnsureCanCreateAnEntity()
         {
-            using (Transaction.Begin())
+            using (Transaction.Begin(true))
             {
                 // Let us try to create a person entity
                 Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
@@ -225,15 +217,56 @@ namespace Blueprint41.UnitTest.Neo4j
             }
         }
 
-        [TearDown]
-        public void TearDown()
+        [Test]
+        public void EnsureEntityIsFlushedAfterTransaction()
+        {
+            using (Transaction.Begin(true))
+            {
+                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+
+                INode loaded = record["n"].As<INode>();
+                Assert.AreEqual(loaded.Properties["name"], "Address");
+                Assert.AreEqual(loaded.Properties["title"], "Developer");
+
+                Transaction.Flush();
+            }
+
+            using (Transaction.Begin())
+            {
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+                Assert.IsNull(record);
+            }
+        }
+
+        [Test]
+        public void EnsureEntityIsCreatedEvenFlushedWithoutTransaction()
         {
             using (Transaction.Begin())
             {
-                string reset = "Match (n) detach delete n";
-                Neo4jTransaction.Run(reset);
-                Transaction.Commit();
+                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+
+                INode loaded = record["n"].As<INode>();
+                Assert.AreEqual(loaded.Properties["name"], "Address");
+                Assert.AreEqual(loaded.Properties["title"], "Developer");
+
+                Transaction.Flush();
+            }
+
+            using (Transaction.Begin())
+            {
+                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IRecord record = result.FirstOrDefault();
+
+                INode loaded = record["n"].As<INode>();
+                Assert.AreEqual(loaded.Properties["name"], "Address");
+                Assert.AreEqual(loaded.Properties["title"], "Developer");
             }
         }
+
     }
 }

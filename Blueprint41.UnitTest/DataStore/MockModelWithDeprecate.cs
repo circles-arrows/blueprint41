@@ -1,16 +1,12 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Blueprint41.UnitTest.DataStore
 {
-    public class MockModel : DatastoreModel<MockModel>
+    public class MockModelWithDeprecate : DatastoreModel<MockModelWithDeprecate>
     {
-        protected override void SubscribeEventHandlers()
-        {
-            
-        }
+        protected override void SubscribeEventHandlers() { }
 
         [Version(0, 0, 0)]
         public void Script_0_0_0()
@@ -25,6 +21,12 @@ namespace Blueprint41.UnitTest.DataStore
 
             Entities.New("Person", Entities["BaseEntity"])
                     .AddProperty("Name", typeof(string));
+        }
+
+        [Version(0, 0, 1)]
+        public void Script_0_0_1()
+        {
+            Entities["Person"].Refactor.Deprecate();
         }
     }
 }
