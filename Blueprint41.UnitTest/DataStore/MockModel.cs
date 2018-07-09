@@ -9,7 +9,7 @@ namespace Blueprint41.UnitTest.DataStore
     {
         protected override void SubscribeEventHandlers()
         {
-            
+
         }
 
         [Version(0, 0, 0)]
@@ -21,10 +21,12 @@ namespace Blueprint41.UnitTest.DataStore
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                    .Abstract(true)
                    .Virtual(true)
-                   .SetKey("Uid", true);
+                   .SetKey("Uid", true)
+                   .AddProperty("LastModifiedOn", typeof(DateTime))
+                   .SetRowVersionField("LastModifiedOn");
 
             Entities.New("Person", Entities["BaseEntity"])
-                    .AddProperty("Name", typeof(string));
+                   .AddProperty("Name", typeof(string));
         }
     }
 }
