@@ -1,6 +1,8 @@
-﻿using NUnit.Framework;
+﻿using Blueprint41.Dynamic;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Blueprint41.UnitTest.Tests
@@ -209,7 +211,7 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
-        public void EnsureKeyIsUnique()
+        public void EnsureEntityKeyIsUnique()
         {
             DatastoreModel model;
 
@@ -353,7 +355,7 @@ namespace Blueprint41.UnitTest.Tests
             [Version(0, 0, 1)]
             public void UpdateInheritance()
             {
-                // TODO: Bug, Changing inheritance with same prperties does not trigger an exception
+                // TODO: Bug, Changing inheritance with same properties does not trigger an exception
                 Entities["Person"].Refactor.ChangeInheritance(Entities["BaseEntity"]);
             }
         }
@@ -383,7 +385,202 @@ namespace Blueprint41.UnitTest.Tests
                 model.Execute(false);
             });
 
+            // TODO: Bug, Changing inheritance with same properties does not trigger an exception
             Assert.That(exception.Message, Contains.Substring("Property with the name Name already exists on base class Entity BaseEntity"));
+        }
+
+        #endregion
+
+        #region DataModelStaticData CreateNode
+
+        private class DataModelWithStaticData : DatastoreModel<DataModelWithStaticData>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                Entities.New("AccountType")
+                   .Summary("The type of an Account")
+                   .HasStaticData(true)
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                   .SetFullTextProperty("Name");
+
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "6", Name = "Account" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "81", Name = "MTMSAccount" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "89", Name = "FinancialAccount" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "90", Name = "BillingAccount" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "91", Name = "AxaptaAccount" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "349", Name = "Aircraft" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "350", Name = "Installation" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "351", Name = "SiteTrackingObject" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "352", Name = "StaticSite" });
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "353", Name = "Vessel" });
+
+                Entities.New("ContactStatus")
+                    .Summary("The ContactStatus is describing the status of a Contact")
+                    .Example("Active, Inactive, Blacklisted")
+                    //.HasStaticData(true)
+                    .AddProperty("OrderBy", typeof(string))
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .SetKey("Uid", true)
+                    .AddProperty("Name", typeof(string), false, IndexType.Unique);
+
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "2", Name = "Inactive", OrderBy = "5" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "3", Name = "Blacklisted", OrderBy = "10" });
+                
+                Entities.New("ReferenceType")
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .SetKey("Uid", true)
+                    .AddProperty("Name", typeof(string), false)
+                    .AddProperty("Fields", typeof(List<string>));
+
+                Entities["ReferenceType"].Refactor.CreateNode(new { Uid = "1", Name = "Opportunity", Fields = new List<string>() { "Field1" } });
+            }
+        }
+
+        [Test]
+        public void EnsureStaticDataAreCreated()
+        {
+            DatastoreModel model = new DataModelWithStaticData();
+            model.Execute(false);
+
+            Entity accountType = model.Entities["AccountType"];
+
+            Assert.IsTrue(accountType.ContainsStaticData);
+            Assert.IsNotNull(accountType.StaticData);
+            Assert.IsTrue(accountType.StaticData.Count == 10);
+
+            // TODO: Should it create a static data when HasStaticData == false ??
+            Entity contactStatus = model.Entities["ContactStatus"];
+
+            Assert.IsTrue(contactStatus.ContainsStaticData);
+            Assert.IsNotNull(contactStatus.StaticData);
+            Assert.IsTrue(contactStatus.StaticData.Count == 3);
+
+            Entity referenceType = model.Entities["ReferenceType"];
+
+            dynamic node = referenceType.Refactor.MatchNode("1");
+            Assert.IsInstanceOf<DynamicEntity>(node);
+
+            DynamicEntity nodeType = node as DynamicEntity;            
+            IReadOnlyDictionary<string, object> values = nodeType.GetDynamicEntityValues();
+
+            Assert.AreEqual(values["Uid"], "1");
+            Assert.AreEqual(values["Name"], "Opportunity");
+            Assert.IsInstanceOf<List<string>>(values["Fields"]);
+        }
+
+        private class DataModelWithStaticDataKeyDuplicate : DatastoreModel<DataModelWithStaticDataKeyDuplicate>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                Entities.New("ContactStatus")
+                    .HasStaticData(true)
+                    .AddProperty("OrderBy", typeof(string))
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .SetKey("Uid", true)
+                    .AddProperty("Name", typeof(string), false, IndexType.Unique);
+
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "2", Name = "Inactive", OrderBy = "5" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "3", Name = "Blacklisted", OrderBy = "10" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "3", Name = "Unknown", OrderBy = "11" });
+            }
+        }
+
+        [Test]
+        public void EnsureStaticDataAreUnique()
+        {
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                DatastoreModel model = new DataModelWithStaticDataKeyDuplicate();
+                model.Execute(false);
+            });
+
+            Assert.That(exception.Message, Contains.Substring("A static entity with the same key already exists."));
+        }
+
+        private class DataModelWithStaticDataWithoutKey : DatastoreModel<DataModelWithStaticDataWithoutKey>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                Entities.New("ContactStatus")
+                    .HasStaticData(true)
+                    .AddProperty("OrderBy", typeof(string))
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .AddProperty("Name", typeof(string), false, IndexType.Unique);
+
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "2", Name = "Inactive", OrderBy = "5" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "3", Name = "Blacklisted", OrderBy = "10" });
+            }
+        }
+
+        [Test]
+        public void EnsureStaticDataHaveKeys()
+        {
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                DatastoreModel model = new DataModelWithStaticDataWithoutKey();
+                model.Execute(false);
+            });
+
+            // Todo: Exception message should be more specific rather than a null reference error
+            Assert.That(exception.Message, Contains.Substring("No key exists of entity 'ContactStatus'"));
+        }
+
+        private class DataModelWithStaticDataMissingProperty : DatastoreModel<DataModelWithStaticDataMissingProperty>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                Entities.New("ContactStatus")
+                    .HasStaticData(true)
+                    .AddProperty("OrderBy", typeof(string))
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .SetKey("Uid", true)
+                    .AddProperty("Label", typeof(string), false, IndexType.Unique);
+
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "2", Name = "Inactive", OrderBy = "5" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "3", Name = "Blacklisted", OrderBy = "10" });
+            }
+        }
+
+        [Test]
+        public void EnsureStaticDataHaveCorrectProperties()
+        {
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                DatastoreModel model = new DataModelWithStaticDataMissingProperty();
+                model.Execute(false);
+            });
+
+            Assert.That(exception.Message, Contains.Substring("The property 'Name' is not contained within entity 'ContactStatus'."));
         }
 
         #endregion
