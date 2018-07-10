@@ -516,7 +516,7 @@ namespace Blueprint41
             object key = entity.GetKey();
 
             if (staticData.ContainsKey(key))
-                throw new PersistenceException(string.Format("An static entity with the same key already exists."));
+                throw new PersistenceException(string.Format("A static entity with the same key already exists."));
 
             staticData.Add(key, entity);
 
