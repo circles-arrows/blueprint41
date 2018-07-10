@@ -130,6 +130,16 @@ namespace Blueprint41
             FullTextIndexProperties.Add(property);
             return this;
         }
+        public Entity RemoveFullTextProperty(string propertyName)
+        {
+            Property property = Search(propertyName);
+            if (property == null)
+                throw new NotSupportedException("Property does not exist.");
+
+            FullTextIndexProperties.Remove(property);
+            return this;
+        }
+
 
         public Entity AddProperty(string name, Type type)
         {
