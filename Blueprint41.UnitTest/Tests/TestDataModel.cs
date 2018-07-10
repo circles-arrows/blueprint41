@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Dynamic;
+using Blueprint41.UnitTest.Helper;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -391,7 +392,7 @@ namespace Blueprint41.UnitTest.Tests
 
         #endregion
 
-        #region DataModelStaticData CreateNode
+        #region IRefactorEntity CreateNode
 
         private class DataModelWithStaticData : DatastoreModel<DataModelWithStaticData>
         {
@@ -403,6 +404,8 @@ namespace Blueprint41.UnitTest.Tests
             [Version(0, 0, 0)]
             public void Initialize()
             {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
                 Entities.New("AccountType")
                    .Summary("The type of an Account")
                    .HasStaticData(true)
@@ -434,7 +437,7 @@ namespace Blueprint41.UnitTest.Tests
                 Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
                 Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "2", Name = "Inactive", OrderBy = "5" });
                 Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "3", Name = "Blacklisted", OrderBy = "10" });
-                
+
                 Entities.New("ReferenceType")
                     .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                     .SetKey("Uid", true)
@@ -469,7 +472,7 @@ namespace Blueprint41.UnitTest.Tests
             dynamic node = referenceType.Refactor.MatchNode("1");
             Assert.IsInstanceOf<DynamicEntity>(node);
 
-            DynamicEntity nodeType = node as DynamicEntity;            
+            DynamicEntity nodeType = node as DynamicEntity;
             IReadOnlyDictionary<string, object> values = nodeType.GetDynamicEntityValues();
 
             Assert.AreEqual(values["Uid"], "1");
@@ -583,6 +586,78 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(exception.Message, Contains.Substring("The property 'Name' is not contained within entity 'ContactStatus'."));
         }
 
+        #endregion
+
+        #region IRefactorEntity DeleteNode
+
+        private class DataModelStaticDataWithDeleteNode : DatastoreModel<DataModelStaticDataWithDeleteNode>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("ContactStatus")
+                    .HasStaticData(true)
+                    .AddProperty("OrderBy", typeof(string))
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .SetKey("Uid", true)
+                    .AddProperty("Name", typeof(string), false, IndexType.Unique);
+
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "2", Name = "Inactive", OrderBy = "5" });
+                Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "3", Name = "Blacklisted", OrderBy = "10" });
+            }
+
+            [Version(0, 0, 1)]
+            public void DeleteNode1()
+            {
+                Entities["ContactStatus"].Refactor.DeleteNode("1");
+            }
+        }
+
+        [Test]
+        public void EnsureStaticDataIsDeleted()
+        {
+            // TODO: Delete node has not yet been implemented
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                DatastoreModel model = new DataModelStaticDataWithDeleteNode();
+                model.Execute(true);
+            });
+
+            Assert.That(exception.Message, Contains.Substring("The method or operation is not implemented."));
+        }
+
+        #endregion
+
+        #region IRefactorEntity MatchNode
+
+        [Test]
+        public void EnsureMatchNodeReturnsCorrectNode()
+        {
+            DatastoreModel model = new DataModelWithStaticData();
+            model.Execute(false);
+
+            Entity accountType = model.Entities["AccountType"];
+            dynamic account = accountType.Refactor.MatchNode("6");
+
+            Assert.IsInstanceOf<DynamicEntity>(account);
+
+            DynamicEntity nodeType = account as DynamicEntity;
+            IReadOnlyDictionary<string, object> values = nodeType.GetDynamicEntityValues();
+            Assert.AreEqual(values["Uid"], "6");
+            Assert.AreEqual(values["Name"], "Account");
+
+            Assert.Throws<ArgumentNullException>(() => accountType.Refactor.MatchNode(null));
+            Assert.Throws<InvalidCastException>(() => accountType.Refactor.MatchNode(6));
+            Assert.Throws<ArgumentOutOfRangeException>(() => accountType.Refactor.MatchNode("7"));
+        }
         #endregion
     }
 }
