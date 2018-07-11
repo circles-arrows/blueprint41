@@ -239,54 +239,7 @@ namespace Blueprint41.UnitTest.Tests
             Assert.IsTrue(uid.IsKey && uid.IndexType == IndexType.Unique);
         }
 
-        #endregion
-
-        #region DataModelWithDeprecatedEntities
-        private class DataModelWithDeprecatedEntities : DatastoreModel<DataModelWithDeprecatedEntities>
-        {
-            protected override void SubscribeEventHandlers()
-            {
-
-            }
-
-            [Version(0, 0, 0)]
-            public void Initialize()
-            {
-                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
-
-                Entities.New("BaseEntity")
-                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                       .Abstract(true)
-                       .Virtual(true)
-                       .SetKey("Uid", true)
-                       .AddProperty("LastModifiedOn", typeof(DateTime))
-                       .SetRowVersionField("LastModifiedOn");
-
-                Entities.New("Person", Entities["BaseEntity"])
-                       .AddProperty("Name", typeof(string));
-
-                Entities.New("Address")
-                        .AddProperty("Name", typeof(string))
-                        .AddProperty("LastModifiedOn", typeof(DateTime));
-            }
-
-            [Version(0, 0, 1)]
-            public void DeprecatePerson()
-            {
-                Entities["Person"].Refactor.Deprecate();
-            }
-        }
-
-        [Test]
-        public void EnsureDeprecatedEntitiesDoesNotExists()
-        {
-            DataModelWithDeprecatedEntities model = new DataModelWithDeprecatedEntities();
-            model.Execute(false);
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => Assert.IsNotNull(model.Entities["Person"]));
-        }
-
-        #endregion
+        #endregion        
 
         #region DataModelProperties
 
@@ -636,13 +589,63 @@ namespace Blueprint41.UnitTest.Tests
 
         #endregion
 
+        #region IRefactorEntity Deprecate
+        private class DataModelWithDeprecatedEntities : DatastoreModel<DataModelWithDeprecatedEntities>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntity")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid", true)
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("Person", Entities["BaseEntity"])
+                       .AddProperty("Name", typeof(string));
+
+                Entities.New("Address")
+                        .AddProperty("Name", typeof(string))
+                        .AddProperty("LastModifiedOn", typeof(DateTime));
+            }
+
+            [Version(0, 0, 1)]
+            public void DeprecatePerson()
+            {
+                Entities["Person"].Refactor.Deprecate();
+            }
+        }
+
+        [Test]
+        public void IRefactorEntityDeprecate()
+        {
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                DataModelWithDeprecatedEntities model = new DataModelWithDeprecatedEntities();
+                model.Execute(true);
+                Assert.Throws<ArgumentOutOfRangeException>(() => Assert.IsNotNull(model.Entities["Person"]));
+                Assert.That(output.GetOuput(), Contains.Substring("MATCH (n:Person) WITH n LIMIT 10000 DETACH DELETE n"));
+            }
+        }
+
+        #endregion
+
         #region IRefactorEntity MatchNode
 
         [Test]
         public void EnsureMatchNodeReturnsCorrectNode()
         {
             DatastoreModel model = new DataModelWithStaticData();
-            model.Execute(false);
+            model.Execute(true);
 
             Entity accountType = model.Entities["AccountType"];
             dynamic account = accountType.Refactor.MatchNode("6");
@@ -657,6 +660,222 @@ namespace Blueprint41.UnitTest.Tests
             Assert.Throws<ArgumentNullException>(() => accountType.Refactor.MatchNode(null));
             Assert.Throws<InvalidCastException>(() => accountType.Refactor.MatchNode(6));
             Assert.Throws<ArgumentOutOfRangeException>(() => accountType.Refactor.MatchNode("7"));
+        }
+        #endregion
+
+        #region IRefactorEntity Rename
+
+        private class DatastoreEntityRefactor : DatastoreModel<DatastoreEntityRefactor>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("AccountType")
+                   .Summary("The type of an Account")
+                   .HasStaticData(true)
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                   .SetFullTextProperty("Name");
+
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "6", Name = "Account" });
+            }
+
+            [Version(0, 0, 1)]
+            public void Update()
+            {
+                Entities["AccountType"].Refactor.Rename("NewAccountType");
+
+                Entities["NewAccountType"].AddProperty("Unique", typeof(string), IndexType.Unique);
+                Entities["NewAccountType"].AddProperty("Indexed", typeof(string), IndexType.Indexed);
+            }
+        }
+
+        [Test]
+        public void IRefactorEntityRename()
+        {
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                DatastoreModel model = new DatastoreEntityRefactor();
+                model.Execute(true);
+
+                Assert.Throws<ArgumentOutOfRangeException>(() => { Entity oldType = model.Entities["AccountType"]; });
+                Assert.IsInstanceOf<Entity>(model.Entities["NewAccountType"]);
+                Assert.That(output.GetOuput(), Contains.Substring("MATCH (n:AccountType) WITH n LIMIT 10000 SET n:NewAccountType REMOVE n:AccountType"));
+
+                // Does Renaming outside the script will not run to the neo4j database ??
+                model.Entities["NewAccountType"].Refactor.Rename("AccountType");
+                Assert.Throws<ArgumentOutOfRangeException>(() => { Entity oldType = model.Entities["NewAccountType"]; });
+                Assert.IsInstanceOf<Entity>(model.Entities["AccountType"]);
+                Assert.IsFalse(output.GetOuput().Contains("MATCH (n:NewAccountType) WITH n LIMIT 10000 SET n:AccountType REMOVE n:NewAccountType"));
+            }
+        }
+        #endregion
+
+        #region IRefactorEntity ApplyConstraints
+        [Test]
+        public void IRefactorEntityApplyConstraints()
+        {
+            // TODO: This does not call ApplyConstraints after adding properties. Had to call
+            // Entities["NewAccountType"].Refactor.ApplyConstraints() to make it work.
+            // Should this be automatic set by the updatescript after adding properties?
+
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                DatastoreModel model = new DatastoreEntityRefactor();
+                model.Execute(true);
+
+                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX ON :NewAccountType(Indexed)"));
+                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT ON (node:NewAccountType) ASSERT node.Unique IS UNIQUE"));
+            }
+        }
+        #endregion
+
+        #region IRefactorEntity ChangeInheritance()
+
+        private class DatastoreEntityBaseWithoutParent : DatastoreModel<DatastoreEntityBaseWithoutParent>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseOne")
+                  .Abstract(true)
+                  .Virtual(true)
+                  .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                  .SetKey("Uid", true)
+                  .AddProperty("LastModifiedOn", typeof(DateTime))
+                  .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("BaseTwo")
+                  .Abstract(true)
+                  .Virtual(true)
+                  .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                  .SetKey("Uid", true)
+                  .AddProperty("LastModifiedOn", typeof(DateTime))
+                  .SetRowVersionField("LastModifiedOn"); ;
+
+                Entities.New("Child", Entities["BaseOne"])
+                   .AddProperty("Name", typeof(string), false);
+            }
+
+            [Version(0, 0, 1)]
+            public void Update()
+            {
+                Entities["Child"].Refactor.ChangeInheritance(Entities["BaseTwo"]);
+            }
+        }
+
+        private class DatastoreEntityBaseWithParent : DatastoreModel<DatastoreEntityBaseWithParent>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseOne")
+                  .Abstract(true)
+                  .Virtual(true)
+                  .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                  .SetKey("Uid", true)
+                  .AddProperty("LastModifiedOn", typeof(DateTime))
+                  .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("BaseTwo", Entities["BaseOne"]);
+
+                Entities.New("Child", Entities["BaseOne"])
+                   .AddProperty("Name", typeof(string), false);
+            }
+
+            [Version(0, 0, 1)]
+            public void Update()
+            {
+                Entities["Child"].Refactor.ChangeInheritance(Entities["BaseTwo"]);
+            }
+        }
+
+        [Test]
+        public void IRefactorChangeInheritance()
+        {
+            DatastoreModel model;
+
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                model = new DatastoreEntityBaseWithoutParent();
+                model.Execute(true);
+
+            });
+
+            Assert.That(exception.Message, Contains.Substring("Specified method is not supported."));
+
+            model = new DatastoreEntityBaseWithParent();
+            model.Execute(true);
+            Assert.AreEqual(model.Entities["Child"].Inherits.Name, "BaseTwo");
+        }
+
+        #endregion
+
+        #region IRefactorEntity ResetFunctionalId
+        private class DatastoreEntityResetFunctionalId : DatastoreModel<DatastoreEntityResetFunctionalId>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+                FunctionalId accountId = FunctionalIds.New("Acct", "A_", IdFormat.Hash, 0);
+
+                Entities.New("AccountType", accountId)
+                   .Summary("The type of an Account")
+                   .HasStaticData(true)
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                   .SetFullTextProperty("Name");
+
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "6", Name = "Account" });
+
+                Assert.IsNotNull(Entities["AccountType"].FunctionalId);
+                Assert.AreEqual(Entities["AccountType"].FunctionalId.Prefix, "A_");
+
+            }
+
+            [Version(0, 0, 1)]
+            public void Update()
+            {
+                Entities["AccountType"].Refactor.ResetFunctionalId();
+            }
+        }
+
+        [Test]
+        public void IRefactorEntityResetFunctionalId()
+        {
+            DatastoreModel model = new DatastoreEntityResetFunctionalId();
+            model.Execute(true);
+
+            Assert.AreEqual(model.Entities["AccountType"].FunctionalId, model.FunctionalIds.Default);
         }
         #endregion
     }
