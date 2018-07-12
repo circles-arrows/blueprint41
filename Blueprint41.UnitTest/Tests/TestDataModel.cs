@@ -49,7 +49,7 @@ namespace Blueprint41.UnitTest.Tests
             model.Execute(false);
 
             Assert.IsTrue(model.Entities["BaseEntity"].Properties["LastModifiedOn"].IsRowVersion);
-            Assert.IsTrue(model.Entities["Person"].IsSelfOrSubclassOf(model.Entities["BaseEntity"]));
+            Assert.IsTrue(model.Entities["Person"].IsSubsclassOf(model.Entities["BaseEntity"]));
             Assert.IsFalse(model.Entities["Address"].Properties["LastModifiedOn"].IsRowVersion);
         }
 

@@ -15,10 +15,60 @@ namespace Blueprint41.UnitTest.Tests
     [TestFixture]
     internal class TestGenerator : TestBase
     {
+        private class MockGeneratorModel : DatastoreModel<MockGeneratorModel>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntity")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid", true)
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("Person", Entities["BaseEntity"])
+                       .AddProperty("Name", typeof(string));
+            }
+        }
+        private class MockModelWithDeprecate : DatastoreModel<MockModelWithDeprecate>
+        {
+            protected override void SubscribeEventHandlers() { }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntity")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid", true);
+
+                Entities.New("Person", Entities["BaseEntity"])
+                        .AddProperty("Name", typeof(string));
+            }
+
+            [Version(0, 0, 1)]
+            public void Script_0_0_1()
+            {
+                Entities["Person"].Refactor.Deprecate();
+            }
+        }
+        
         [Test]
         public void EnsureGeneratorSettingsIsRequired()
         {
-            Assert.Throws<ArgumentNullException>(() => Generator.Execute<MockModel>());
+            Assert.Throws<ArgumentNullException>(() => Generator.Execute<MockGeneratorModel>());
         }
 
         [Test]
@@ -26,7 +76,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
             GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            GeneratorResult result = GenerateModel<MockModel>(settings);
+            GeneratorResult result = GenerateModel<MockGeneratorModel>(settings);
 
             FileExists(result.EntityResult, Path.Combine(projectFolder, settings.EntitiesFolder));
             FileExists(result.RelationshipResult, Path.Combine(projectFolder, settings.RelationshipsFolder));
