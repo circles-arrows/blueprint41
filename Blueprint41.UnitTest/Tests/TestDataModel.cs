@@ -858,7 +858,7 @@ namespace Blueprint41.UnitTest.Tests
                 Entities["AccountType"].Refactor.CreateNode(new { Uid = "6", Name = "Account" });
 
                 Assert.IsNotNull(Entities["AccountType"].FunctionalId);
-                Assert.AreEqual(Entities["AccountType"].FunctionalId.Prefix, "A_");
+                Assert.AreEqual(Entities["AccountType"].FunctionalId, accountId);
 
             }
 
@@ -876,6 +876,228 @@ namespace Blueprint41.UnitTest.Tests
             model.Execute(true);
 
             Assert.AreEqual(model.Entities["AccountType"].FunctionalId, model.FunctionalIds.Default);
+        }
+        #endregion
+
+        #region IRefactorEntity CopyValue
+
+        private class DatastoreEntityCopyValue : DatastoreModel<DatastoreEntityCopyValue>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("AccountType")
+                   .Summary("The type of an Account")
+                   .HasStaticData(true)
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                   .AddProperty("CopyName", typeof(string))
+                   .SetFullTextProperty("Name");
+
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "6", Name = "Account" });
+            }
+
+            [Version(0, 0, 1)]
+            public void Update()
+            {
+                Entities["AccountType"].Refactor.CopyValue("Name", "CopyName");
+            }
+        }
+
+        [Test]
+        public void IRefactorCopyValue()
+        {
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                DatastoreModel model = new DatastoreEntityCopyValue();
+                model.Execute(true);
+            });
+
+            Assert.That(exception.Message, Contains.Substring("You cannot copy (potentially dynamic) data to a static data node."));
+        }
+
+        #endregion
+
+        #region IRefactorEntity SetDefaultValue
+
+        private class DatastoreEntitySetDefaultValue : DatastoreModel<DatastoreEntitySetDefaultValue>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("Account")
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false)
+                   .SetFullTextProperty("Name");
+            }
+
+            [Version(0, 0, 1)]
+            public void Update()
+            {
+                Entities["Account"].Refactor.SetDefaultValue((a) => a.Name = "First Account");
+            }
+        }
+
+        private class DatastoreEntitySetDefaultValueWithNonExistentProperty : DatastoreModel<DatastoreEntitySetDefaultValueWithNonExistentProperty>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("Account")
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false)
+                   .SetFullTextProperty("Name");
+            }
+
+            [Version(0, 0, 1)]
+            public void Update()
+            {
+                Entities["Account"].Refactor.SetDefaultValue((a) => a.Label = "First Account");
+            }
+        }
+
+        [Test]
+        public void IRefactorEntitySetDefaultValue()
+        {
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                DatastoreModel model = new DatastoreEntitySetDefaultValue();
+                model.Execute(true);
+
+                string query = @"MATCH (node:Account) WHERE NOT EXISTS(node.Name) WITH node LIMIT 10000 SET node.Name = ""First Account""";
+                Assert.That(output.GetOuput(), Contains.Substring(query));
+            }
+
+            TearDown();
+
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                DatastoreModel model = new DatastoreEntitySetDefaultValueWithNonExistentProperty();
+                model.Execute(true);
+            });
+
+            Assert.That(exception.Message, Contains.Substring("The field 'Label' was not present on entity 'Account'."));
+        }
+
+        #endregion
+
+        #region IRefactorEntity SetFunctionalId
+        private class DatastoreEntitySetFunctionalId : DatastoreModel<DatastoreEntitySetFunctionalId>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("Account")
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false)
+                   .SetFullTextProperty("Name");
+
+                Assert.AreEqual(Entities["Account"].FunctionalId, FunctionalIds.Default);
+            }
+
+            [Version(0, 0, 1)]
+            public void UpdateFunctionalId()
+            {
+                FunctionalId account = FunctionalIds.New("Account", "A_", IdFormat.Hash);
+                Entities["Account"].Refactor.SetFunctionalId(account);
+                Assert.AreEqual(Entities["Account"].FunctionalId, account);                
+            }
+
+            [Version(0, 0, 2)]
+            public void ChnageFunctionalId()
+            {
+                FunctionalId toChangeFunctionalId = FunctionalIds.New("ChangeAccount", "CA_", IdFormat.Hash);
+
+                Entities["Account"].Refactor.SetFunctionalId(toChangeFunctionalId, ApplyAlgorithm.ReapplyAll);
+                Assert.AreEqual(Entities["Account"].FunctionalId, toChangeFunctionalId);
+            }
+        }
+
+        private class DatastoreEntityInheritedFunctionalId : DatastoreModel<DatastoreEntitySetFunctionalId>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+                FunctionalId account = FunctionalIds.New("Account", "A_", IdFormat.Hash);
+
+                Entities.New("BaseAccount", account)
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true);
+
+                Entities.New("Account", Entities["BaseAccount"])
+                   .AddProperty("Name", typeof(string), false)
+                   .SetFullTextProperty("Name");
+
+                Assert.AreEqual(Entities["Account"].FunctionalId, account);
+            }
+
+            [Version(0, 0, 1)]
+            public void UpdateFunctionalId()
+            {
+                FunctionalId toChangeFunctionalId = FunctionalIds.New("ChangeAccount", "CA_", IdFormat.Hash);
+                Entities["Account"].Refactor.SetFunctionalId(toChangeFunctionalId);
+            }
+        }
+
+        [Test]
+        public void IRefactorEntitySetFunctionalId()
+        {
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                DatastoreModel model = new DatastoreEntitySetFunctionalId();
+                model.Execute(true);
+
+                Assert.That(output.GetOuput(), Contains.Substring("MATCH (node:Account) where node.Uid STARTS WITH 'A_' AND Length(node.Uid) = 8 CALL blueprint41.hashing.decode(replace(node.Uid, 'A_', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId"));
+                Assert.That(output.GetOuput(), Contains.Substring("MATCH (node:Account) where node.Uid STARTS WITH 'CA_' AND Length(node.Uid) = 9 CALL blueprint41.hashing.decode(replace(node.Uid, 'CA_', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId"));
+            }                
+
+            TearDown();
+
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                DatastoreModel model = new DatastoreEntityInheritedFunctionalId();
+                model.Execute(true);
+            });
+
+            Assert.That(exception.Message, Contains.Substring("The entity 'Account' already inherited a functional id 'A_ (Account)', you cannot assign another one."));
         }
         #endregion
     }
