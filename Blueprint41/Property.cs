@@ -510,6 +510,7 @@ namespace Blueprint41
             if (PropertyType == PropertyType.Attribute)
             {
                 RemoveIndexesAndContraints();
+                Parent.RemoveFullTextProperty(Name);
 
                 foreach (var entity in Parent.GetConcreteClasses())
                 {
