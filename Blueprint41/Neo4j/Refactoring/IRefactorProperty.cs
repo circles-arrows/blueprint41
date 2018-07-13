@@ -24,8 +24,8 @@ namespace Blueprint41.Neo4j.Refactoring
 
         void Deprecate();
 
-        void Reroute(string pattern, string newPropertyName);
-        void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType = null);
+        void Reroute(string pattern, string newPropertyName, bool strict = true);
+        void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType = null, bool strict = true);
 
         void ConvertToCollection();
         void ConvertToLookup(ConvertAlgorithm conversionAlgorithm);
