@@ -546,15 +546,15 @@ namespace Blueprint41
         }
 
         
-        void IRefactorProperty.Reroute(string pattern, string newPropertyName)
+        void IRefactorProperty.Reroute(string pattern, string newPropertyName, bool strict)
         {
-            Reroute(pattern, newPropertyName, Relationship.Name, Relationship.Neo4JRelationshipType);
+            Reroute(pattern, newPropertyName, Relationship.Name, Relationship.Neo4JRelationshipType, strict);
         }
-        void IRefactorProperty.Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType)
+        void IRefactorProperty.Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
         {
-            Reroute(pattern, newPropertyName, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName);
+            Reroute(pattern, newPropertyName, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName, strict);
         }
-        private void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType)
+        private void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
         {
             Parent.Parent.EnsureSchemaMigration();
 
@@ -567,7 +567,7 @@ namespace Blueprint41
             string oldname = Name;
 
             NodePattern decoded = new NodePattern(Parent.Parent, pattern);
-            decoded.Validate(EntityReturnType);
+            decoded.Validate(EntityReturnType, strict);
 
             Entity original = Parent;
             Entity target = decoded.GetToEntity();
@@ -795,9 +795,9 @@ namespace Blueprint41
 
             #region Validation
 
-            public void Validate(Entity fromEntity)
+            public void Validate(Entity fromEntity, bool strict)
             {
-                ValidateRecursive(fromEntity);
+                ValidateRecursive(fromEntity, strict);
 
                 if (EntityAlias !=  "from")
                     throw new FormatException("The pattern should start with the 'from' entity");
@@ -805,7 +805,7 @@ namespace Blueprint41
                 if (HasAlias("from") != 1 || HasAlias("to") != 1)
                     throw new FormatException("The pattern needs to have 1 'from' and 1 'to' node alias");
             }
-            internal void ValidateRecursive(Entity fromEntity)
+            internal void ValidateRecursive(Entity fromEntity, bool strict)
             {
                 if (EntityAlias != "" && EntityAlias != "from" && EntityAlias != "to")
                     throw new FormatException("The pattern can only have a 'from' and 'to' node alias");
@@ -820,7 +820,7 @@ namespace Blueprint41
                     throw new FormatException($"The property return type is '{fromEntity.Name}' while the pattern is (from:{EntityName})");
 
                 if (Next != null)
-                    Next.ValidateRecursive(fromEntity, this);
+                    Next.ValidateRecursive(fromEntity, this, strict);
             }
             internal int HasAlias(string alias)
             {
@@ -936,7 +936,7 @@ namespace Blueprint41
 
             #region Validation
 
-            internal void ValidateRecursive(Entity fromEntity, NodePattern node)
+            internal void ValidateRecursive(Entity fromEntity, NodePattern node, bool strict)
             {
                 if (RelationAlias != "")
                     throw new FormatException("A relationship cannot have an alias");
@@ -952,20 +952,26 @@ namespace Blueprint41
                     bool found = false;
                     foreach (Relationship relation in node.Entity.GetRelationshipsRecursive())
                     {
-                        if (RelationDirection.Test(relation, node.Entity, Next.Entity))
+                        if (RelationDirection.Test(relation, node.Entity, Next.Entity, strict))
                             found = true;
                     }
 
                     if (!found)
-                        throw new FormatException($"The relationship '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' does not exist");
+                        if (strict)
+                            throw new FormatException($"When applying the pattern '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' it cannot be guarenteed that you will lose information. If you are sure about this pattern, set the 'strict' argument to 'false' to override this warning.");
+                        else
+                            throw new FormatException($"The relationship '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' does not exist");
                 }
                 else
                 {
-                    if (!RelationDirection.Test(Relation, node.Entity, Next.Entity))
-                        throw new FormatException($"The relationship '{Relation.Name}' does not attach to the specified node types");
+                    if (!RelationDirection.Test(Relation, node.Entity, Next.Entity, strict))
+                        if (strict)
+                            throw new FormatException($"When applying the pattern '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[{Relation.Name}]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' it cannot be guarenteed that you will lose information. If you are sure about this pattern, set the 'strict' argument to 'false' to override this warning.");
+                        else
+                            throw new FormatException($"The relationship '{Relation.Name}' does not attach to the specified node types");
                 }
 
-                Next.ValidateRecursive(fromEntity);
+                Next.ValidateRecursive(fromEntity, strict);
             }
             internal int HasAlias(string alias)
             {
@@ -988,13 +994,13 @@ namespace Blueprint41
             public static readonly DirectionPattern Left = new DirectionLeft();
             public static readonly DirectionPattern Right = new DirectionRight();
 
-            public abstract bool Test(Relationship relation, Entity left, Entity right);
+            public abstract bool Test(Relationship relation, Entity left, Entity right, bool strict);
 
             private sealed class DirectionUnknown : DirectionPattern
             {
-                public override bool Test(Relationship relation, Entity left, Entity right)
+                public override bool Test(Relationship relation, Entity left, Entity right, bool strict)
                 {
-                    if ((relation.InEntity == left && relation.OutEntity == right) || (relation.OutEntity == left && relation.InEntity == right))
+                    if (Left.Test(relation, left, right, strict) || Right.Test(relation, left, right, strict))
                         return true;
 
                     return false;
@@ -1002,22 +1008,34 @@ namespace Blueprint41
             }
             private sealed class DirectionLeft : DirectionPattern
             {
-                public override bool Test(Relationship relation, Entity left, Entity right)
+                public override bool Test(Relationship relation, Entity left, Entity right, bool strict)
                 {
-                    if ((relation.OutEntity == left && relation.InEntity == right))
-                        return true;
+                    bool leave = right.IsSelfOrSubclassOf(relation.InEntity);
+                    bool enter = relation.OutEntity.IsSelfOrSubclassOf(left);
 
-                    return false;
+                    if (!strict)
+                    {
+                        leave = leave || relation.InEntity.IsSelfOrSubclassOf(right);
+                        enter = enter || left.IsSelfOrSubclassOf(relation.OutEntity);
+                    }
+
+                    return (leave && enter);
                 }
             }
             private sealed class DirectionRight : DirectionPattern
             {
-                public override bool Test(Relationship relation, Entity left, Entity right)
+                public override bool Test(Relationship relation, Entity left, Entity right, bool strict)
                 {
-                    if ((relation.InEntity == left && relation.OutEntity == right))
-                        return true;
+                    bool leave = left.IsSelfOrSubclassOf(relation.InEntity);
+                    bool enter = relation.OutEntity.IsSelfOrSubclassOf(right);
 
-                    return false;
+                    if (!strict)
+                    {
+                        leave = leave || relation.InEntity.IsSelfOrSubclassOf(left);
+                        enter = enter || right.IsSelfOrSubclassOf(relation.OutEntity);
+                    }
+
+                    return (leave && enter);
                 }
             }
         }
