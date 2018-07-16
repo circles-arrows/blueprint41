@@ -27,6 +27,23 @@ namespace Blueprint41.UnitTest.DataStore
 
             Entities.New("Person", Entities["BaseEntity"])
                    .AddProperty("Name", typeof(string));
+
+            Entities.New("City", Entities["BaseEntity"])
+                   .AddProperty("Name", typeof(string), IndexType.Unique);
+
+            Entities.New("Restaurant", Entities["BaseEntity"])
+                   .AddProperty("Name", typeof(string));
+
+            Relations.New(Entities["Person"], Entities["City"], "PERSON_LIVES_IN", "LIVES_IN")
+                .SetInProperty("City", PropertyType.Lookup);
+
+            Relations.New(Entities["Restaurant"], Entities["City"], "RESTAURANT_LOCATED_AT", "LOCATED_AT")
+                .SetInProperty("City", PropertyType.Lookup)
+                .SetOutProperty("Restraurants", PropertyType.Collection);
+
+            Relations.New(Entities["Person"], Entities["Restaurant"], "PERSON_EATS_AT", "EATS_AT")
+                .SetInProperty("Restaurants", PropertyType.Collection)
+                .SetOutProperty("Persons", PropertyType.Collection);
         }
     }
 }

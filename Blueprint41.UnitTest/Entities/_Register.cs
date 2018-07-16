@@ -1,0 +1,30 @@
+
+using System;
+using Blueprint41.Core;
+
+namespace Datastore.Manipulation
+{
+  internal class Register
+    {
+        private static bool isInitialized = false;
+
+        public static void Types()
+        {
+            if (isInitialized)
+                return;
+
+            lock (typeof(Register))
+            {
+                if (isInitialized)
+                    return;
+
+				isInitialized = true;
+
+                ((ISetRuntimeType)Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"]).SetRuntimeTypes(typeof(IBaseEntity), typeof(BaseEntity));
+                ((ISetRuntimeType)Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"]).SetRuntimeTypes(typeof(City), typeof(City));
+                ((ISetRuntimeType)Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"]).SetRuntimeTypes(typeof(Person), typeof(Person));
+                ((ISetRuntimeType)Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"]).SetRuntimeTypes(typeof(Restaurant), typeof(Restaurant));
+            }
+        }
+    }
+}
