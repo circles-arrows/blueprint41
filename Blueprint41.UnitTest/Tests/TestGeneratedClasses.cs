@@ -117,5 +117,87 @@ namespace Blueprint41.UnitTest.Tests
                 }
             }
         }
+
+        [Test]
+        public void OGMImplCRUDWithRelationship()
+        {
+            string consoleOutput;
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+
+                Person p1;
+                City c1;
+                Restaurant r1;
+
+                using (Transaction.Begin(true))
+                {
+                    p1 = new Person()
+                    {
+                        Name = "Joe Smith"
+                    };
+
+                    c1 = new City()
+                    {
+                        Name = "New York"
+                    };
+
+                    r1 = new Restaurant()
+                    {
+                        Name = "Pizza House Inc."
+                    };
+
+                    p1.City = c1;
+                    r1.City = c1;
+                    p1.Restaurants.Add(r1);
+
+                    Transaction.Commit();
+                }
+
+                Assert.AreEqual(p1.City, c1);
+                Assert.AreEqual(r1.City, c1);
+                Assert.AreEqual(p1.Restaurants[0], r1);
+
+                consoleOutput = output.GetOuput();
+
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Person \{""Name"":""Joe Smith"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City \{""Name"":""New York"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Restaurant \{""Name"":""Pizza House Inc."",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
+
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\), \(out:City \{Uid:""3"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LIVES_IN \{""CreationDate"":)\d+(\}\]->\(out\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Restaurant \{Uid:""4"" \}\), \(out:City \{Uid:""3"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LOCATED_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\), \(out:Restaurant \{Uid:""4"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:EATS_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
+            }
+
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin(true))
+                {
+                    Person p2 = new Person()
+                    {
+                        Name = "Jane Smith",
+                        City = new City { Name = "San Francisco" }
+                    };
+                    p2.Restaurants.Add(new Restaurant { Name = "Tadich Grill", City = p2.City });
+
+                    Transaction.Commit();
+                }
+
+                consoleOutput = output.GetOuput();
+
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Person \{""Name"":""Jane Smith"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City \{""Name"":""San Francisco"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Restaurant \{""Name"":""Tadich Grill"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
+
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\), \(out:City \{Uid:""6"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LIVES_IN \{""CreationDate"":)\d+(\}\]->\(out\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Restaurant \{Uid:""7"" \}\), \(out:City \{Uid:""6"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LOCATED_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\), \(out:Restaurant \{Uid:""7"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:EATS_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
+            }
+        }
     }
 }
