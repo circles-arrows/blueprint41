@@ -6,11 +6,13 @@ using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 using Datastore.Manipulation;
+using Neo4j.Driver.V1;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -129,6 +131,7 @@ namespace Blueprint41.UnitTest.Tests
                 City c1;
                 Restaurant r1;
 
+                // adding relationships per entity
                 using (Transaction.Begin(true))
                 {
                     p1 = new Person()
@@ -171,6 +174,7 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:EATS_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
             }
 
+            // adding relationships directly
             using (ConsoleOutput output = new ConsoleOutput())
             {
                 using (Transaction.Begin(true))
@@ -197,6 +201,121 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LOCATED_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\), \(out:Restaurant \{Uid:""7"" \}\))"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:EATS_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
+            }
+
+            // Update
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin(true))
+                {
+
+                    Person p = Person.Load("5");
+                    p.Name = "Janice Smith";
+                    p.City.Name = "California";
+                    p.Restaurants[0].Name = "Shakeys Pizza";
+
+                    Transaction.Commit();
+
+                    consoleOutput = output.GetOuput();
+
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\) WHERE node.Uid = ""5"" RETURN node)"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\)-\[rel:LIVES_IN\]->\(out:City\) WHERE node.Uid = ""5"" RETURN out, rel)"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\)-\[rel:EATS_AT\]->\(out:Restaurant\) WHERE node.Uid = ""5"" RETURN out, rel)"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\) WHERE node.Uid = ""5"" AND node.LastModifiedOn = )\d+( SET node = \{""Name"":""Janice Smith"",""Uid"":""5"",""LastModifiedOn"":)\d+(\})"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" AND node.LastModifiedOn = )\d+( SET node = \{""Name"":""California"",""Uid"":""6"",""LastModifiedOn"":)\d+(\})"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Restaurant\) WHERE node.Uid = ""7"" AND node.LastModifiedOn = )\d+( SET node = \{""Name"":""Shakeys Pizza"",""Uid"":""7"",""LastModifiedOn"":)\d+(\})"));
+                }
+
+                using (Transaction.Begin())
+                {
+                    Person p = Person.Load("5");
+                    City c = City.Load("6");
+                    Restaurant r = Restaurant.Load("7");
+
+                    Assert.AreEqual(p.Name, "Janice Smith");
+                    Assert.AreEqual(c.Name, "California");
+                    Assert.AreEqual(r.Name, "Shakeys Pizza");
+                }
+            }
+
+            // Removing relationships
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin(true))
+                {
+                    Person p = Person.Load("5");
+                    p.City = null;
+                    p.Restaurants.Clear();
+
+                    Transaction.Flush();
+
+                    consoleOutput = output.GetOuput();
+
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Person\)-\[r:LIVES_IN\]->\(useless\) WHERE item.Uid = ""5"" DELETE r)"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Person\)-\[r:EATS_AT\]->\(useless\) WHERE item.Uid = ""5"" DELETE r)"));
+
+                    Transaction.Rollback();
+                }
+            }
+
+            // Removing relationships via properties
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin(true))
+                {
+                    Person p = Person.Load("5");
+                    p.City.Delete();
+                    p.Restaurants[0].Delete();
+
+                    Transaction.Flush();
+
+                    consoleOutput = output.GetOuput();
+
+                    // Removing Person -> City Relationship
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LIVES_IN\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
+                    // Removing City -> Restaurant Relationship
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LOCATED_AT\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
+
+                    // Removing Restaurant -> City Relationship
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Restaurant\)-\[r:LOCATED_AT\]->\(useless\) WHERE item.Uid = ""7"" DELETE r)"));
+                    // Removing Person -> Restaurant Relationship
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Restaurant\)-\[r:EATS_AT\]->\(useless\) WHERE item.Uid = ""7"" DELETE r)"));
+
+                    // Deleting the node
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" AND node.LastModifiedOn = )\d+( DELETE node)"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" AND node.LastModifiedOn = )\d+( DELETE node)"));
+
+                    Transaction.Rollback();
+                }
+            }
+
+            // Removing node with existing relationship
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin(true))
+                {
+                    //load before deleting
+                    Person p = Person.Load("5");
+
+                    City.Load("6").Delete();
+
+                    //load after deleting
+                    Restaurant r = Restaurant.Load("7");
+
+                    Assert.IsNull(p.City);
+                    Assert.IsNull(r.City);
+
+                    Transaction.Flush();
+
+                    consoleOutput = output.GetOuput();
+
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" RETURN node)"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LIVES_IN\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LOCATED_AT\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" AND node.LastModifiedOn = )\d+( DELETE node)"));
+
+                    Transaction.Rollback();
+                }
             }
         }
     }
