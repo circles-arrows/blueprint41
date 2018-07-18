@@ -6,6 +6,8 @@ using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 using Datastore.Manipulation;
+using Datastore.Query;
+using node = Datastore.Query.Node;
 using Neo4j.Driver.V1;
 using NUnit.Framework;
 using System;
@@ -172,11 +174,7 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LOCATED_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\), \(out:Restaurant \{Uid:""4"" \}\))"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:EATS_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
-            }
 
-            // adding relationships directly
-            using (ConsoleOutput output = new ConsoleOutput())
-            {
                 using (Transaction.Begin(true))
                 {
                     Person p2 = new Person()
@@ -201,11 +199,9 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LOCATED_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\), \(out:Restaurant \{Uid:""7"" \}\))"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:EATS_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
-            }
 
-            // Update
-            using (ConsoleOutput output = new ConsoleOutput())
-            {
+                // Update
+
                 using (Transaction.Begin(true))
                 {
 
@@ -236,11 +232,8 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.AreEqual(c.Name, "California");
                     Assert.AreEqual(r.Name, "Shakeys Pizza");
                 }
-            }
 
-            // Removing relationships
-            using (ConsoleOutput output = new ConsoleOutput())
-            {
+                // Removing relationships by setting
                 using (Transaction.Begin(true))
                 {
                     Person p = Person.Load("5");
@@ -249,6 +242,9 @@ namespace Blueprint41.UnitTest.Tests
 
                     Transaction.Flush();
 
+                    Assert.IsNull(p.City);
+                    Assert.IsTrue(p.Restaurants.Count == 0);
+
                     consoleOutput = output.GetOuput();
 
                     Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Person\)-\[r:LIVES_IN\]->\(useless\) WHERE item.Uid = ""5"" DELETE r)"));
@@ -256,11 +252,8 @@ namespace Blueprint41.UnitTest.Tests
 
                     Transaction.Rollback();
                 }
-            }
 
-            // Removing relationships via properties
-            using (ConsoleOutput output = new ConsoleOutput())
-            {
+                // Removing relationships via properties
                 using (Transaction.Begin(true))
                 {
                     Person p = Person.Load("5");
@@ -270,6 +263,9 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Flush();
 
                     consoleOutput = output.GetOuput();
+
+                    Assert.IsNull(p.City);
+                    Assert.IsTrue(p.Restaurants.Count == 0);
 
                     // Removing Person -> City Relationship
                     Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LIVES_IN\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
@@ -287,11 +283,8 @@ namespace Blueprint41.UnitTest.Tests
 
                     Transaction.Rollback();
                 }
-            }
 
-            // Removing node with existing relationship
-            using (ConsoleOutput output = new ConsoleOutput())
-            {
+                // Removing node with existing relationship
                 using (Transaction.Begin(true))
                 {
                     //load before deleting
@@ -317,6 +310,140 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Rollback();
                 }
             }
+        }
+
+        [Test]
+        public void OGMImplQuery()
+        {
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin(true))
+                {
+                    Person p1 = new Person
+                    {
+                        Name = "Joe Smith",
+                        City = new City() { Name = "New York" }
+                    };
+
+                    p1.City.Restraurants.Add(new Restaurant { Name = "Mcdonalds" });
+                    p1.City.Restraurants.Add(new Restaurant { Name = "Shakeys" });
+                    p1.City.Restraurants.Add(new Restaurant { Name = "Starbucks" });
+                    p1.City.Restraurants.Add(new Restaurant { Name = "Bo's Coffee" });
+                    p1.City.Restraurants.Add(new Restaurant { Name = "Chattime" });
+
+                    Person p2 = new Person
+                    {
+                        Name = "Jane Smith",
+                        City = new City() { Name = "California" }
+                    };
+
+                    Person p3 = new Person
+                    {
+                        Name = "Bob Smith",
+                        City = p1.City
+                    };
+
+                    p2.City.Restraurants.Add(new Restaurant { Name = "Pink's Hot Dogs" });
+                    p2.City.Restraurants.Add(new Restaurant { Name = "World Famous" });
+                    p2.City.Restraurants.Add(new Restaurant { Name = "Barone's" });
+                    p2.City.Restraurants.Add(new Restaurant { Name = "Providence" });
+                    p2.City.Restraurants.Add(new Restaurant { Name = "La Taqueria" });
+
+                    p1.Restaurants.Add(p1.City.Restraurants[0]);
+                    p1.Restaurants.Add(p1.City.Restraurants[1]);
+                    p1.Restaurants.Add(p1.City.Restraurants[2]);
+                    p1.Restaurants.Add(p1.City.Restraurants[3]);
+                    p1.Restaurants.Add(p1.City.Restraurants[4]);
+
+                    p1.Restaurants.Add(p2.City.Restraurants[0]);
+                    p1.Restaurants.Add(p2.City.Restraurants[1]);
+                    p1.Restaurants.Add(p2.City.Restraurants[2]);
+                    p1.Restaurants.Add(p2.City.Restraurants[3]);
+                    p1.Restaurants.Add(p2.City.Restraurants[4]);
+
+                    p2.Restaurants.Add(p1.City.Restraurants[0]);
+                    p2.Restaurants.Add(p1.City.Restraurants[1]);
+                    p2.Restaurants.Add(p1.City.Restraurants[2]);
+                    p2.Restaurants.Add(p1.City.Restraurants[3]);
+                    p2.Restaurants.Add(p1.City.Restraurants[4]);
+
+                    p2.Restaurants.Add(p2.City.Restraurants[0]);
+                    p2.Restaurants.Add(p2.City.Restraurants[1]);
+                    p2.Restaurants.Add(p2.City.Restraurants[2]);
+                    p2.Restaurants.Add(p2.City.Restraurants[2]);
+                    p2.Restaurants.Add(p2.City.Restraurants[3]);
+                    p2.Restaurants.Add(p2.City.Restraurants[4]);
+
+                    
+                    Transaction.Commit();
+                }
+            }
+
+            string outputConsole;
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin())
+                {
+                    ICompiled compiled = Transaction.CompiledQuery
+                        .Match(node.Person.Alias(out PersonAlias p))
+                        .Where(p.Name.Contains("Smith"))
+                        .Return(p)
+                        .Compile();
+
+                    List<Person> searchResult = Person.LoadWhere(compiled);
+                    Assert.Greater(searchResult.Count, 0);
+
+                    outputConsole = output.GetOuput();
+
+                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Smith""\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)", RegexOptions.Multiline));
+
+                    compiled = Transaction.CompiledQuery
+                        .Match(node.Person.Alias(out PersonAlias pWithLimit))
+                        .Where(pWithLimit.Name.Contains("Smith"))
+                        .Return(pWithLimit)
+                        .Limit(1)
+                        .Compile();
+
+                    searchResult = Person.LoadWhere(compiled);
+                    Assert.AreEqual(searchResult.Count, 1);
+
+                    outputConsole = output.GetOuput();
+
+                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0.Name CONTAINS ""Smith""\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(LIMIT 1)"));
+
+                    compiled = Transaction.CompiledQuery
+                        .Match(node.Person.Alias(out var pR).In.PERSON_EATS_AT.Out.Restaurant.Alias(out var rP))
+                        .Where(rP.Name == "Shakeys")
+                        .Return(pR)
+                        .OrderBy(pR.Name)
+                        .Compile();
+
+                    searchResult = Person.LoadWhere(compiled);
+                    Assert.AreEqual(searchResult.Count, 2);
+
+                    Assert.AreEqual(searchResult[0].Name, "Jane Smith");
+                    Assert.AreEqual(searchResult[1].Name, "Joe Smith");
+
+                    outputConsole = output.GetOuput();
+
+                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\)-\[:EATS_AT\]->\(n1:Restaurant\))[^a-zA-Z,0-9]*(WHERE \(n1\.Name = ""Shakeys""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(ORDER BY n0.Name)"));
+                }
+            }
+
+            //using (Transaction.Begin())
+            //{
+            //    ICompiled compiled = Transaction.CompiledQuery
+            //            .Match(node.Person.Alias(out PersonAlias p).In.PERSON_EATS_AT.Out.Restaurant.Alias(out RestaurantAlias r))
+            //            .Where(r.Name == "Shakeys")
+            //            .With(r, p)
+            //            .Return(p)
+            //            .OrderBy(p.Name)
+            //            .Compile();
+
+            //    List<Person> searchResult = Person.LoadWhere(compiled);
+            //    Assert.AreEqual(searchResult.Count, 2);
+
+            //}
         }
     }
 }

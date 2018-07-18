@@ -111,7 +111,7 @@ namespace Blueprint41.UnitTest.Mocks
                 foreach (var par in parameters)
                     st = st.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
 
-            Console.WriteLine(statement);
+            Console.WriteLine(st);
             return NeoSession.Run(statement, parameters);
         }
 
