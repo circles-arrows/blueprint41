@@ -125,7 +125,7 @@ namespace Blueprint41
                 throw new InvalidOperationException();
 
             List<UpgradeScript> scripts = GetUpgradeScripts();
-            
+
             bool anyScriptRan = false;
             foreach (UpgradeScript script in scripts.Where(item => predicate.Invoke(item)))
             {
@@ -171,7 +171,7 @@ namespace Blueprint41
                     }
                     if (anyScriptRan)
                     {
-                        Parser.ForceScript(delegate()
+                        Parser.ForceScript(delegate ()
                         {
                             Refactor.ApplyConstraints();
                         });
@@ -327,6 +327,11 @@ namespace Blueprint41
             if (!Parser.ShouldExecute)
                 return;
 
+            ApplyFullTextSearchIndexes();
+        }
+
+        public void ApplyFullTextSearchIndexes()
+        {
             Parser.Execute("CALL apoc.index.remove('fts')", new Dictionary<string, object>(), true);
 
             StringBuilder builder = new StringBuilder();
