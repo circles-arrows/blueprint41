@@ -34,6 +34,9 @@ namespace Blueprint41.UnitTest.DataStore
             Entities.New("Restaurant", Entities["BaseEntity"])
                    .AddProperty("Name", typeof(string));
 
+            Entities.New("Movie", Entities["BaseEntity"])
+                   .AddProperty("Title", typeof(string));
+
             Relations.New(Entities["Person"], Entities["City"], "PERSON_LIVES_IN", "LIVES_IN")
                 .SetInProperty("City", PropertyType.Lookup);
 
@@ -44,6 +47,14 @@ namespace Blueprint41.UnitTest.DataStore
             Relations.New(Entities["Person"], Entities["Restaurant"], "PERSON_EATS_AT", "EATS_AT")
                 .SetInProperty("Restaurants", PropertyType.Collection)
                 .SetOutProperty("Persons", PropertyType.Collection);
+
+            Relations.New(Entities["Person"], Entities["Movie"], "PERSON_DIRECTED", "DIRECTED_BY")
+                .SetInProperty("DirectedMovies", PropertyType.Collection)
+                .SetOutProperty("Director", PropertyType.Lookup);
+
+            Relations.New(Entities["Person"], Entities["Movie"], "ACTED_IN", "ACTORS")
+                .SetInProperty("ActedInMovies", PropertyType.Collection)
+                .SetOutProperty("Actors", PropertyType.Collection);
         }
     }
 }

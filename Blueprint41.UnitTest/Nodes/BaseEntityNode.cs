@@ -74,6 +74,17 @@ namespace Datastore.Query
             return new RestaurantNode(FromRelationship, Direction, this.Neo4jLabel);
         }
 
+		public MovieNode CastToMovie()
+        {
+			if (this.Neo4jLabel == null)
+				throw new InvalidOperationException("Casting is not supported for virtual entities.");
+
+            if (FromRelationship == null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+
+            return new MovieNode(FromRelationship, Direction, this.Neo4jLabel);
+        }
+
 	}
 
     public class BaseEntityAlias : AliasResult

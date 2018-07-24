@@ -10,20 +10,18 @@ using q = Datastore.Query;
 
 namespace Datastore.Manipulation
 {
-	public interface IPersonOriginalData : IBaseEntityOriginalData
+	public interface IMovieOriginalData : IBaseEntityOriginalData
     {
-		string Name { get; }
-		City City { get; }
-		IEnumerable<Restaurant> Restaurants { get; }
-		IEnumerable<Movie> DirectedMovies { get; }
-		IEnumerable<Movie> ActedInMovies { get; }
+		string Title { get; }
+		Person Director { get; }
+		IEnumerable<Person> Actors { get; }
     }
 
-	public partial class Person : OGM<Person, Person.PersonData, System.String>, IBaseEntity, IPersonOriginalData
+	public partial class Movie : OGM<Movie, Movie.MovieData, System.String>, IBaseEntity, IMovieOriginalData
 	{
         #region Initialize
 
-        static Person()
+        static Movie()
         {
             Register.Types();
         }
@@ -41,16 +39,16 @@ namespace Datastore.Manipulation
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Person> LoadByKeys(IEnumerable<System.String> uids)
+        public static Dictionary<System.String, Movie> LoadByKeys(IEnumerable<System.String> uids)
         {
             return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
-		protected static void RegisterQuery(string name, Func<IMatchQuery, q.PersonAlias, IWhereQuery> query)
+		protected static void RegisterQuery(string name, Func<IMatchQuery, q.MovieAlias, IWhereQuery> query)
         {
-            q.PersonAlias alias;
+            q.MovieAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Person.Alias(out alias));
+            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Movie.Alias(out alias));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
@@ -59,7 +57,7 @@ namespace Datastore.Manipulation
 
 		public override string ToString()
         {
-            return $"Person => Name : {this.Name?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Movie => Title : {this.Title?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -73,7 +71,7 @@ namespace Datastore.Manipulation
             if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
             {
                 if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new PersonData(InnerData);
+                    OriginalData = new MovieData(InnerData);
             }
         }
 
@@ -98,20 +96,18 @@ namespace Datastore.Manipulation
 
 		#region Inner Data
 
-		public class PersonData : Data<System.String>
+		public class MovieData : Data<System.String>
 		{
-			public PersonData()
+			public MovieData()
             {
 
             }
 
-            public PersonData(PersonData data)
+            public MovieData(MovieData data)
             {
-				Name = data.Name;
-				City = data.City;
-				Restaurants = data.Restaurants;
-				DirectedMovies = data.DirectedMovies;
-				ActedInMovies = data.ActedInMovies;
+				Title = data.Title;
+				Director = data.Director;
+				Actors = data.Actors;
 				Uid = data.Uid;
 				LastModifiedOn = data.LastModifiedOn;
             }
@@ -121,12 +117,10 @@ namespace Datastore.Manipulation
 
 			protected override void InitializeCollections()
 			{
-				NodeType = "Person";
+				NodeType = "Movie";
 
-				City = new EntityCollection<City>(Wrapper, Members.City);
-				Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { int loadHack = item.Persons.Count; } });
-				DirectedMovies = new EntityCollection<Movie>(Wrapper, Members.DirectedMovies, item => { if (Members.DirectedMovies.Events.HasRegisteredChangeHandlers) { object loadHack = item.Director; } });
-				ActedInMovies = new EntityCollection<Movie>(Wrapper, Members.ActedInMovies, item => { if (Members.ActedInMovies.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actors.Count; } });
+				Director = new EntityCollection<Person>(Wrapper, Members.Director, item => { if (Members.Director.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedMovies.Count; } });
+				Actors = new EntityCollection<Person>(Wrapper, Members.Actors, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedInMovies.Count; } });
 			}
 			public string NodeType { get; private set; }
 			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(Uid); }
@@ -138,7 +132,7 @@ namespace Datastore.Manipulation
 			sealed public override IDictionary<string, object> MapTo()
 			{
 				IDictionary<string, object> dictionary = new Dictionary<string, object>();
-				dictionary.Add("Name",  Name);
+				dictionary.Add("Title",  Title);
 				dictionary.Add("Uid",  Uid);
 				dictionary.Add("LastModifiedOn",  Conversion<System.DateTime, long>.Convert(LastModifiedOn));
 				return dictionary;
@@ -147,8 +141,8 @@ namespace Datastore.Manipulation
 			sealed public override void MapFrom(IReadOnlyDictionary<string, object> properties)
 			{
 				object value;
-				if (properties.TryGetValue("Name", out value))
-					Name = (string)value;
+				if (properties.TryGetValue("Title", out value))
+					Title = (string)value;
 				if (properties.TryGetValue("Uid", out value))
 					Uid = (string)value;
 				if (properties.TryGetValue("LastModifiedOn", out value))
@@ -157,13 +151,11 @@ namespace Datastore.Manipulation
 
 			#endregion
 
-			#region Members for interface IPerson
+			#region Members for interface IMovie
 
-			public string Name { get; set; }
-			public EntityCollection<City> City { get; private set; }
-			public EntityCollection<Restaurant> Restaurants { get; private set; }
-			public EntityCollection<Movie> DirectedMovies { get; private set; }
-			public EntityCollection<Movie> ActedInMovies { get; private set; }
+			public string Title { get; set; }
+			public EntityCollection<Person> Director { get; private set; }
+			public EntityCollection<Person> Actors { get; private set; }
 
 			#endregion
 			#region Members for interface IBaseEntity
@@ -178,32 +170,26 @@ namespace Datastore.Manipulation
 
 		#region Outer Data
 
-		#region Members for interface IPerson
+		#region Members for interface IMovie
 
-		public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-		public City City
+		public string Title { get { LazyGet(); return InnerData.Title; } set { if (LazySet(Members.Title, InnerData.Title, value)) InnerData.Title = value; } }
+		public Person Director
 		{
-			get { return ((ILookupHelper<City>)InnerData.City).GetItem(null); }
+			get { return ((ILookupHelper<Person>)InnerData.Director).GetItem(null); }
 			set 
 			{ 
-				if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItem(null), value))
-					((ILookupHelper<City>)InnerData.City).SetItem(value, null); 
+				if (LazySet(Members.Director, ((ILookupHelper<Person>)InnerData.Director).GetItem(null), value))
+					((ILookupHelper<Person>)InnerData.Director).SetItem(value, null); 
 			}
 		}
-		public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
-		private void ClearRestaurants(DateTime? moment)
+		private void ClearDirector(DateTime? moment)
 		{
-			((ILookupHelper<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
+			((ILookupHelper<Person>)InnerData.Director).ClearLookup(moment);
 		}
-		public EntityCollection<Movie> DirectedMovies { get { return InnerData.DirectedMovies; } }
-		private void ClearDirectedMovies(DateTime? moment)
+		public EntityCollection<Person> Actors { get { return InnerData.Actors; } }
+		private void ClearActors(DateTime? moment)
 		{
-			((ILookupHelper<Movie>)InnerData.DirectedMovies).ClearLookup(moment);
-		}
-		public EntityCollection<Movie> ActedInMovies { get { return InnerData.ActedInMovies; } }
-		private void ClearActedInMovies(DateTime? moment)
-		{
-			((ILookupHelper<Movie>)InnerData.ActedInMovies).ClearLookup(moment);
+			((ILookupHelper<Person>)InnerData.Actors).ClearLookup(moment);
 		}
 
 		#endregion
@@ -226,33 +212,31 @@ namespace Datastore.Manipulation
 
 		#region Reflection
 
-        private static PersonMembers members = null;
-        public static PersonMembers Members
+        private static MovieMembers members = null;
+        public static MovieMembers Members
         {
             get
             {
                 if (members == null)
                 {
-                    lock (typeof(Person))
+                    lock (typeof(Movie))
                     {
                         if (members == null)
-                            members = new PersonMembers();
+                            members = new MovieMembers();
                     }
                 }
                 return members;
             }
         }
-        public class PersonMembers
+        public class MovieMembers
         {
-            internal PersonMembers() { }
+            internal MovieMembers() { }
 
-			#region Members for interface IPerson
+			#region Members for interface IMovie
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Name"];
-            public Property City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["City"];
-            public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Restaurants"];
-            public Property DirectedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["DirectedMovies"];
-            public Property ActedInMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["ActedInMovies"];
+            public Property Title { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Title"];
+            public Property Director { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Director"];
+            public Property Actors { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Actors"];
 			#endregion
 
 			#region Members for interface IBaseEntity
@@ -263,26 +247,26 @@ namespace Datastore.Manipulation
 
         }
 
-        private static PersonFullTextMembers fullTextMembers = null;
-        public static PersonFullTextMembers FullTextMembers
+        private static MovieFullTextMembers fullTextMembers = null;
+        public static MovieFullTextMembers FullTextMembers
         {
             get
             {
                 if (fullTextMembers == null)
                 {
-                    lock (typeof(Person))
+                    lock (typeof(Movie))
                     {
                         if (fullTextMembers == null)
-                            fullTextMembers = new PersonFullTextMembers();
+                            fullTextMembers = new MovieFullTextMembers();
                     }
                 }
                 return fullTextMembers;
             }
         }
 
-        public class PersonFullTextMembers
+        public class MovieFullTextMembers
         {
-            internal PersonFullTextMembers() { }
+            internal MovieFullTextMembers() { }
 
         }
 
@@ -290,40 +274,40 @@ namespace Datastore.Manipulation
         {
             if (entity == null)
             {
-                lock (typeof(Person))
+                lock (typeof(Movie))
                 {
                     if (entity == null)
-                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"];
+                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"];
                 }
             }
             return entity;
         }
 
-		private static PersonEvents events = null;
-        public static PersonEvents Events
+		private static MovieEvents events = null;
+        public static MovieEvents Events
         {
             get
             {
                 if (events == null)
                 {
-                    lock (typeof(Person))
+                    lock (typeof(Movie))
                     {
                         if (events == null)
-                            events = new PersonEvents();
+                            events = new MovieEvents();
                     }
                 }
                 return events;
             }
         }
-        public class PersonEvents
+        public class MovieEvents
         {
 
             #region OnNew
 
             private bool onNewIsRegistered = false;
 
-            private EventHandler<Person, EntityEventArgs> onNew;
-            public event EventHandler<Person, EntityEventArgs> OnNew
+            private EventHandler<Movie, EntityEventArgs> onNew;
+            public event EventHandler<Movie, EntityEventArgs> OnNew
             {
                 add
                 {
@@ -354,9 +338,9 @@ namespace Datastore.Manipulation
             
 			private void onNewProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<Person, EntityEventArgs> handler = onNew;
+                EventHandler<Movie, EntityEventArgs> handler = onNew;
                 if ((object)handler != null)
-                    handler.Invoke((Person)sender, args);
+                    handler.Invoke((Movie)sender, args);
             }
 
             #endregion
@@ -365,8 +349,8 @@ namespace Datastore.Manipulation
 
             private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Person, EntityEventArgs> onDelete;
-            public event EventHandler<Person, EntityEventArgs> OnDelete
+            private EventHandler<Movie, EntityEventArgs> onDelete;
+            public event EventHandler<Movie, EntityEventArgs> OnDelete
             {
                 add
                 {
@@ -397,9 +381,9 @@ namespace Datastore.Manipulation
             
 			private void onDeleteProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<Person, EntityEventArgs> handler = onDelete;
+                EventHandler<Movie, EntityEventArgs> handler = onDelete;
                 if ((object)handler != null)
-                    handler.Invoke((Person)sender, args);
+                    handler.Invoke((Movie)sender, args);
             }
 
             #endregion
@@ -408,8 +392,8 @@ namespace Datastore.Manipulation
 
             private bool onSaveIsRegistered = false;
 
-            private EventHandler<Person, EntityEventArgs> onSave;
-            public event EventHandler<Person, EntityEventArgs> OnSave
+            private EventHandler<Movie, EntityEventArgs> onSave;
+            public event EventHandler<Movie, EntityEventArgs> OnSave
             {
                 add
                 {
@@ -440,9 +424,9 @@ namespace Datastore.Manipulation
             
 			private void onSaveProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<Person, EntityEventArgs> handler = onSave;
+                EventHandler<Movie, EntityEventArgs> handler = onSave;
                 if ((object)handler != null)
-                    handler.Invoke((Person)sender, args);
+                    handler.Invoke((Movie)sender, args);
             }
 
             #endregion
@@ -452,217 +436,131 @@ namespace Datastore.Manipulation
             public static class OnPropertyChange
             {
 
-				#region OnName
+				#region OnTitle
 
-				private static bool onNameIsRegistered = false;
+				private static bool onTitleIsRegistered = false;
 
-				private static EventHandler<Person, PropertyEventArgs> onName;
-				public static event EventHandler<Person, PropertyEventArgs> OnName
+				private static EventHandler<Movie, PropertyEventArgs> onTitle;
+				public static event EventHandler<Movie, PropertyEventArgs> OnTitle
 				{
 					add
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							if (!onNameIsRegistered)
+							if (!onTitleIsRegistered)
 							{
-								Members.Name.Events.OnChange -= onNameProxy;
-								Members.Name.Events.OnChange += onNameProxy;
-								onNameIsRegistered = true;
+								Members.Title.Events.OnChange -= onTitleProxy;
+								Members.Title.Events.OnChange += onTitleProxy;
+								onTitleIsRegistered = true;
 							}
-							onName += value;
+							onTitle += value;
 						}
 					}
 					remove
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							onName -= value;
-							if (onName == null && onNameIsRegistered)
+							onTitle -= value;
+							if (onTitle == null && onTitleIsRegistered)
 							{
-								Members.Name.Events.OnChange -= onNameProxy;
-								onNameIsRegistered = false;
+								Members.Title.Events.OnChange -= onTitleProxy;
+								onTitleIsRegistered = false;
 							}
 						}
 					}
 				}
             
-				private static void onNameProxy(object sender, PropertyEventArgs args)
+				private static void onTitleProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Person, PropertyEventArgs> handler = onName;
+					EventHandler<Movie, PropertyEventArgs> handler = onTitle;
 					if ((object)handler != null)
-						handler.Invoke((Person)sender, args);
+						handler.Invoke((Movie)sender, args);
 				}
 
 				#endregion
 
-				#region OnCity
+				#region OnDirector
 
-				private static bool onCityIsRegistered = false;
+				private static bool onDirectorIsRegistered = false;
 
-				private static EventHandler<Person, PropertyEventArgs> onCity;
-				public static event EventHandler<Person, PropertyEventArgs> OnCity
+				private static EventHandler<Movie, PropertyEventArgs> onDirector;
+				public static event EventHandler<Movie, PropertyEventArgs> OnDirector
 				{
 					add
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							if (!onCityIsRegistered)
+							if (!onDirectorIsRegistered)
 							{
-								Members.City.Events.OnChange -= onCityProxy;
-								Members.City.Events.OnChange += onCityProxy;
-								onCityIsRegistered = true;
+								Members.Director.Events.OnChange -= onDirectorProxy;
+								Members.Director.Events.OnChange += onDirectorProxy;
+								onDirectorIsRegistered = true;
 							}
-							onCity += value;
+							onDirector += value;
 						}
 					}
 					remove
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							onCity -= value;
-							if (onCity == null && onCityIsRegistered)
+							onDirector -= value;
+							if (onDirector == null && onDirectorIsRegistered)
 							{
-								Members.City.Events.OnChange -= onCityProxy;
-								onCityIsRegistered = false;
+								Members.Director.Events.OnChange -= onDirectorProxy;
+								onDirectorIsRegistered = false;
 							}
 						}
 					}
 				}
             
-				private static void onCityProxy(object sender, PropertyEventArgs args)
+				private static void onDirectorProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Person, PropertyEventArgs> handler = onCity;
+					EventHandler<Movie, PropertyEventArgs> handler = onDirector;
 					if ((object)handler != null)
-						handler.Invoke((Person)sender, args);
+						handler.Invoke((Movie)sender, args);
 				}
 
 				#endregion
 
-				#region OnRestaurants
+				#region OnActors
 
-				private static bool onRestaurantsIsRegistered = false;
+				private static bool onActorsIsRegistered = false;
 
-				private static EventHandler<Person, PropertyEventArgs> onRestaurants;
-				public static event EventHandler<Person, PropertyEventArgs> OnRestaurants
+				private static EventHandler<Movie, PropertyEventArgs> onActors;
+				public static event EventHandler<Movie, PropertyEventArgs> OnActors
 				{
 					add
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							if (!onRestaurantsIsRegistered)
+							if (!onActorsIsRegistered)
 							{
-								Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
-								Members.Restaurants.Events.OnChange += onRestaurantsProxy;
-								onRestaurantsIsRegistered = true;
+								Members.Actors.Events.OnChange -= onActorsProxy;
+								Members.Actors.Events.OnChange += onActorsProxy;
+								onActorsIsRegistered = true;
 							}
-							onRestaurants += value;
+							onActors += value;
 						}
 					}
 					remove
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							onRestaurants -= value;
-							if (onRestaurants == null && onRestaurantsIsRegistered)
+							onActors -= value;
+							if (onActors == null && onActorsIsRegistered)
 							{
-								Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
-								onRestaurantsIsRegistered = false;
+								Members.Actors.Events.OnChange -= onActorsProxy;
+								onActorsIsRegistered = false;
 							}
 						}
 					}
 				}
             
-				private static void onRestaurantsProxy(object sender, PropertyEventArgs args)
+				private static void onActorsProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Person, PropertyEventArgs> handler = onRestaurants;
+					EventHandler<Movie, PropertyEventArgs> handler = onActors;
 					if ((object)handler != null)
-						handler.Invoke((Person)sender, args);
-				}
-
-				#endregion
-
-				#region OnDirectedMovies
-
-				private static bool onDirectedMoviesIsRegistered = false;
-
-				private static EventHandler<Person, PropertyEventArgs> onDirectedMovies;
-				public static event EventHandler<Person, PropertyEventArgs> OnDirectedMovies
-				{
-					add
-					{
-						lock (typeof(OnPropertyChange))
-						{
-							if (!onDirectedMoviesIsRegistered)
-							{
-								Members.DirectedMovies.Events.OnChange -= onDirectedMoviesProxy;
-								Members.DirectedMovies.Events.OnChange += onDirectedMoviesProxy;
-								onDirectedMoviesIsRegistered = true;
-							}
-							onDirectedMovies += value;
-						}
-					}
-					remove
-					{
-						lock (typeof(OnPropertyChange))
-						{
-							onDirectedMovies -= value;
-							if (onDirectedMovies == null && onDirectedMoviesIsRegistered)
-							{
-								Members.DirectedMovies.Events.OnChange -= onDirectedMoviesProxy;
-								onDirectedMoviesIsRegistered = false;
-							}
-						}
-					}
-				}
-            
-				private static void onDirectedMoviesProxy(object sender, PropertyEventArgs args)
-				{
-					EventHandler<Person, PropertyEventArgs> handler = onDirectedMovies;
-					if ((object)handler != null)
-						handler.Invoke((Person)sender, args);
-				}
-
-				#endregion
-
-				#region OnActedInMovies
-
-				private static bool onActedInMoviesIsRegistered = false;
-
-				private static EventHandler<Person, PropertyEventArgs> onActedInMovies;
-				public static event EventHandler<Person, PropertyEventArgs> OnActedInMovies
-				{
-					add
-					{
-						lock (typeof(OnPropertyChange))
-						{
-							if (!onActedInMoviesIsRegistered)
-							{
-								Members.ActedInMovies.Events.OnChange -= onActedInMoviesProxy;
-								Members.ActedInMovies.Events.OnChange += onActedInMoviesProxy;
-								onActedInMoviesIsRegistered = true;
-							}
-							onActedInMovies += value;
-						}
-					}
-					remove
-					{
-						lock (typeof(OnPropertyChange))
-						{
-							onActedInMovies -= value;
-							if (onActedInMovies == null && onActedInMoviesIsRegistered)
-							{
-								Members.ActedInMovies.Events.OnChange -= onActedInMoviesProxy;
-								onActedInMoviesIsRegistered = false;
-							}
-						}
-					}
-				}
-            
-				private static void onActedInMoviesProxy(object sender, PropertyEventArgs args)
-				{
-					EventHandler<Person, PropertyEventArgs> handler = onActedInMovies;
-					if ((object)handler != null)
-						handler.Invoke((Person)sender, args);
+						handler.Invoke((Movie)sender, args);
 				}
 
 				#endregion
@@ -671,8 +569,8 @@ namespace Datastore.Manipulation
 
 				private static bool onUidIsRegistered = false;
 
-				private static EventHandler<Person, PropertyEventArgs> onUid;
-				public static event EventHandler<Person, PropertyEventArgs> OnUid
+				private static EventHandler<Movie, PropertyEventArgs> onUid;
+				public static event EventHandler<Movie, PropertyEventArgs> OnUid
 				{
 					add
 					{
@@ -703,9 +601,9 @@ namespace Datastore.Manipulation
             
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Person, PropertyEventArgs> handler = onUid;
+					EventHandler<Movie, PropertyEventArgs> handler = onUid;
 					if ((object)handler != null)
-						handler.Invoke((Person)sender, args);
+						handler.Invoke((Movie)sender, args);
 				}
 
 				#endregion
@@ -714,8 +612,8 @@ namespace Datastore.Manipulation
 
 				private static bool onLastModifiedOnIsRegistered = false;
 
-				private static EventHandler<Person, PropertyEventArgs> onLastModifiedOn;
-				public static event EventHandler<Person, PropertyEventArgs> OnLastModifiedOn
+				private static EventHandler<Movie, PropertyEventArgs> onLastModifiedOn;
+				public static event EventHandler<Movie, PropertyEventArgs> OnLastModifiedOn
 				{
 					add
 					{
@@ -746,9 +644,9 @@ namespace Datastore.Manipulation
             
 				private static void onLastModifiedOnProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Person, PropertyEventArgs> handler = onLastModifiedOn;
+					EventHandler<Movie, PropertyEventArgs> handler = onLastModifiedOn;
 					if ((object)handler != null)
-						handler.Invoke((Person)sender, args);
+						handler.Invoke((Movie)sender, args);
 				}
 
 				#endregion
@@ -760,17 +658,15 @@ namespace Datastore.Manipulation
 
         #endregion
 
-		#region IPersonOriginalData
+		#region IMovieOriginalData
 
-		public IPersonOriginalData OriginalVersion { get { return this; } }
+		public IMovieOriginalData OriginalVersion { get { return this; } }
 
-		#region Members for interface IPerson
+		#region Members for interface IMovie
 
-		string IPersonOriginalData.Name { get { return OriginalData.Name; } }
-		City IPersonOriginalData.City { get { return ((ILookupHelper<City>)OriginalData.City).GetOriginalItem(null); } }
-		IEnumerable<Restaurant> IPersonOriginalData.Restaurants { get { return OriginalData.Restaurants.OriginalData; } }
-		IEnumerable<Movie> IPersonOriginalData.DirectedMovies { get { return OriginalData.DirectedMovies.OriginalData; } }
-		IEnumerable<Movie> IPersonOriginalData.ActedInMovies { get { return OriginalData.ActedInMovies.OriginalData; } }
+		string IMovieOriginalData.Title { get { return OriginalData.Title; } }
+		Person IMovieOriginalData.Director { get { return ((ILookupHelper<Person>)OriginalData.Director).GetOriginalItem(null); } }
+		IEnumerable<Person> IMovieOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
 
 		#endregion
 		#region Members for interface IBaseEntity

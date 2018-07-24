@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Dynamic;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -374,7 +375,7 @@ namespace Blueprint41.UnitTest.Tests
                     p2.Restaurants.Add(p2.City.Restraurants[3]);
                     p2.Restaurants.Add(p2.City.Restraurants[4]);
 
-                    
+
                     Transaction.Commit();
                 }
             }
@@ -395,7 +396,7 @@ namespace Blueprint41.UnitTest.Tests
 
                     outputConsole = output.GetOuput();
 
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Smith""\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)", RegexOptions.Multiline));
+                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Smith""\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)"));
 
                     compiled = Transaction.CompiledQuery
                         .Match(node.Person.Alias(out PersonAlias pWithLimit))
@@ -429,21 +430,114 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\)-\[:EATS_AT\]->\(n1:Restaurant\))[^a-zA-Z,0-9]*(WHERE \(n1\.Name = ""Shakeys""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(ORDER BY n0.Name)"));
                 }
             }
+        }
 
-            //using (Transaction.Begin())
-            //{
-            //    ICompiled compiled = Transaction.CompiledQuery
-            //            .Match(node.Person.Alias(out PersonAlias p).In.PERSON_EATS_AT.Out.Restaurant.Alias(out RestaurantAlias r))
-            //            .Where(r.Name == "Shakeys")
-            //            .With(r, p)
-            //            .Return(p)
-            //            .OrderBy(p.Name)
-            //            .Compile();
+        [Test]
+        public void OGMImplQueryOptionalMatch()
+        {
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin(true))
+                {
+                    Person p1 = new Person
+                    {
+                        Name = "Martin Sheen",
+                    };
 
-            //    List<Person> searchResult = Person.LoadWhere(compiled);
-            //    Assert.AreEqual(searchResult.Count, 2);
+                    Person p2 = new Person
+                    {
+                        Name = "Michael Douglas",
+                    };
 
-            //}
+                    Person p3 = new Person
+                    {
+                        Name = "Oliver Stone",
+                    };
+
+                    Person p4 = new Person
+                    {
+                        Name = "Rob Reiner",
+                    };
+
+                    Movie wallstreet = new Movie
+                    {
+                        Title = "Wall Street"
+                    };
+
+                    Movie tap = new Movie
+                    {
+                        Title = "The American President"
+                    };
+
+                    p1.ActedInMovies.Add(tap);
+                    p1.ActedInMovies.Add(wallstreet);
+
+                    p2.ActedInMovies.Add(tap);
+                    p2.ActedInMovies.Add(wallstreet);
+
+                    p3.DirectedMovies.Add(wallstreet);
+                    p4.DirectedMovies.Add(tap);
+
+                    Transaction.Commit();
+                }
+            }
+
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                string outputConsole;
+                using (Transaction.Begin())
+                {
+                    ICompiled compiled = Transaction.CompiledQuery
+                                .Match(node.Person.Alias(out PersonAlias p))
+                                .Where(p.Name.Contains("Martin Sheen"))
+                                .OptionalMatch(node.Movie.Alias(out MovieAlias m))
+                                .Return(m.Title)
+                                .OrderBy(m.Title)
+                                .Compile();
+
+                    var result = compiled.GetExecutionContext().Execute();
+
+                    var a = result[0] as IDictionary<string, object>;
+                    var b = result[1] as IDictionary<string, object>;
+
+                    Assert.AreEqual(a["Column1"], "The American President");
+                    Assert.AreEqual(b["Column1"], "Wall Street");
+
+                    outputConsole = output.GetOuput();
+
+                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Martin Sheen""\))[^a-zA-Z,0-9]*(OPTIONAL MATCH \(n1:Movie\))[^a-zA-Z,0-9]*(RETURN DISTINCT n1\.Title AS Column1)[^a-zA-Z,0-9]*(ORDER BY n1\.Title)"));
+
+                    compiled = Transaction.CompiledQuery
+                            .Match(node.Person.Alias(out PersonAlias pa))
+                            .Where(pa.Name.Contains("Martin Sheen"))
+                            .OptionalMatch(pa.In.PERSON_DIRECTED.Out.Movie.Alias(out MovieAlias ma))
+                            .Return(pa.Name, ma.Title)
+                            .OrderBy(ma.Title)
+                            .Compile();
+
+                    result = compiled.GetExecutionContext().Execute();
+
+                    a = result[0] as IDictionary<string, object>;
+                    Assert.AreEqual(a["Column1"], "Martin Sheen");
+                    Assert.IsNull(a["Column2"]);
+
+                    outputConsole = output.GetOuput();
+                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Martin Sheen""\))[^a-zA-Z,0-9]*(OPTIONAL MATCH \(n0\)-\[\:DIRECTED_BY\]\-\>\(n1:Movie\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0\.Name AS Column1, n1\.Title AS Column2)[^a-zA-Z,0-9]*(ORDER BY n1\.Title)"));
+
+                    compiled = Transaction.CompiledQuery
+                                .Match(node.Person.Alias(out PersonAlias pap).In.PERSON_DIRECTED.Out.Movie.Alias(out MovieAlias mam))
+                                .Where(pap.Name.Contains("Martin Sheen"))
+                                .Return(mam.Title)
+                                .OrderBy(mam.Title)
+                                .Compile();
+
+                    result = compiled.GetExecutionContext().Execute();
+                    Assert.Zero(result.Count);
+
+                    outputConsole = output.GetOuput();
+                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\)-\[\:DIRECTED_BY\]\-\>\(n1:Movie\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Martin Sheen""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n1\.Title AS Column1)[^a-zA-Z,0-9]*(ORDER BY n1\.Title)"));
+                }
+            }
         }
     }
 }
