@@ -349,8 +349,18 @@ namespace Blueprint41.Neo4j.Persistence
         internal override List<T> Search<T>(Entity entity, string text, Property[] fullTextProperties, int page = 0, int pageSize = 0, params Property[] orderBy)
         {
             Transaction trans = Transaction.RunningTransaction;
+            HashSet<string> keys = new HashSet<string>()
+            {
+               "AND", "OR"
+            };
+
+            foreach (string k in keys)
+            {
+                text = text.Replace(k, string.Concat("\"", k, "\""));
+            }
 
             string search = text.Trim(' ', '(', ')').Replace("  ", " ").Replace(" ", " AND ");
+         
 
             List<string> queries = new List<string>();
             foreach (var property in fullTextProperties)
