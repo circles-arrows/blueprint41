@@ -67,7 +67,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("]->(out) SET newRelationship = rel WITH rel DELETE rel\r\n");
+            this.Write("]->(out) ON CREATE SET newRelationship += rel WITH rel DELETE rel\r\n");
             return this.GenerationEnvironment.ToString();
         }
         

@@ -11,7 +11,7 @@
 #>
 MATCH (in:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= OldName #>]-(out:<#= Relationship.OutEntity.Label.Name #>)
 WITH in, rel, out LIMIT 10000
-MERGE (in)-[newRelationship:<#= NewName #>]->(out) SET newRelationship = rel WITH rel DELETE rel
+MERGE (in)-[newRelationship:<#= NewName #>]->(out) ON CREATE SET newRelationship += rel WITH rel DELETE rel
 <#+
 
 	// Template Parameters

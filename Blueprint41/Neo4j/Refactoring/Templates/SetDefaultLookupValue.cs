@@ -47,37 +47,37 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("), (target:");
+            this.Write(")\r\nMATCH (target:");
             
-            #line 13 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 14 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.ForeignEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(" { ");
             
-            #line 13 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 14 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.ForeignEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(" : \'");
             
-            #line 13 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 14 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Value));
             
             #line default
             #line hidden
             this.Write("\'})\r\nOPTIONAL MATCH (in)-[rel:");
             
-            #line 14 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 15 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Relationship.Neo4JRelationshipType));
             
             #line default
             #line hidden
             this.Write("]-(out:");
             
-            #line 14 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 15 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.ForeignEntity.Label.Name));
             
             #line default
@@ -85,7 +85,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write(")\r\nWITH in, count(out) as count, target\r\nWHERE count = 0\r\nWITH in, target LIMIT 1" +
                     "0000\r\nMERGE (in)-[rel:");
             
-            #line 18 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+            #line 19 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Relationship.Neo4JRelationshipType));
             
             #line default
@@ -94,7 +94,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 19 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
+        #line 20 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
 
 
 	// Template Parameters
