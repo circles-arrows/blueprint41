@@ -35,7 +35,7 @@ namespace Blueprint41.UnitTest.DataStore
                    .AddProperty("Name", typeof(string));
 
             Entities.New("Movie", Entities["BaseEntity"])
-                   .AddProperty("Title", typeof(string));
+                   .AddProperty("Title", typeof(string), IndexType.Unique);
 
             Relations.New(Entities["Person"], Entities["City"], "PERSON_LIVES_IN", "LIVES_IN")
                 .SetInProperty("City", PropertyType.Lookup);

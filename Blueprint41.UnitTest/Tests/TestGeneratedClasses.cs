@@ -39,7 +39,7 @@ namespace Blueprint41.UnitTest.Tests
 
         }
 
-        [TearDown]
+        //[TearDown]
         public void TearDown()
         {
             using (Transaction.Begin())
@@ -536,6 +536,149 @@ namespace Blueprint41.UnitTest.Tests
 
                     outputConsole = output.GetOuput();
                     Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\)-\[\:DIRECTED_BY\]\-\>\(n1:Movie\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Martin Sheen""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n1\.Title AS Column1)[^a-zA-Z,0-9]*(ORDER BY n1\.Title)"));
+                }
+            }
+        }
+
+        [Test]
+        public void OGMImplPlannerHitsUsing()
+        {
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                using (Transaction.Begin(true))
+                {
+                    Person p1 = new Person
+                    {
+                        Name = "Martin Sheen",
+                    };
+
+                    Person p2 = new Person
+                    {
+                        Name = "Michael Douglas",
+                    };
+
+                    Person p3 = new Person
+                    {
+                        Name = "Oliver Stone",
+                    };
+
+                    Person p4 = new Person
+                    {
+                        Name = "Rob Reiner",
+                    };
+
+                    Movie wallstreet = new Movie
+                    {
+                        Title = "Wall Street"
+                    };
+
+                    Movie tap = new Movie
+                    {
+                        Title = "The American President"
+                    };
+
+                    p1.ActedInMovies.Add(tap);
+                    p1.ActedInMovies.Add(wallstreet);
+
+                    p2.ActedInMovies.Add(tap);
+                    p2.ActedInMovies.Add(wallstreet);
+
+                    p3.DirectedMovies.Add(wallstreet);
+                    p4.DirectedMovies.Add(tap);
+
+                    Transaction.Commit();
+                }
+            }
+
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                string consoleOutput;
+                using (Transaction.Begin())
+                {
+                    // Force to use index
+                    ICompiled compiled = Transaction.CompiledQuery
+                            .Match(node.Movie.Alias(out MovieAlias m))
+                            .UsingIndex(m.Title)
+                            .Where(m.Title == "Wall Street")
+                            .Return(m.Title)
+                            .Compile();
+
+                    var result = compiled.GetExecutionContext().Execute();
+
+                    var a = result[0] as IDictionary<string, object>;
+                    Assert.AreEqual(a["Column1"], "Wall Street");
+
+                    consoleOutput = output.GetOuput();
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\))[^a-zA-Z,0-9]*(USING INDEX n0:Movie\(Title\))[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1)"));
+
+                    // With relationship
+                    compiled = Transaction.CompiledQuery
+                                .Match(node.Movie.Alias(out MovieAlias ma).Out.PERSON_DIRECTED.In.Person.Alias(out PersonAlias p))
+                                .UsingIndex(ma.Title)
+                                .Where(ma.Title == "Wall Street")
+                                .Return(ma.Title, p.Name)
+                                .Compile();
+
+                    result = compiled.GetExecutionContext().Execute();
+
+                    a = result[0] as IDictionary<string, object>;
+                    Assert.AreEqual(a["Column1"], "Wall Street");
+                    Assert.AreEqual(a["Column2"], "Oliver Stone");
+
+                    consoleOutput = output.GetOuput();
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\)<-\[:DIRECTED_BY\]-\(n1:Person\))[^a-zA-Z,0-9]*(USING INDEX n0:Movie\(Title\))[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2)"));
+
+                    // Use label scan
+                    compiled = Transaction.CompiledQuery
+                            .Match(node.Movie.Alias(out MovieAlias mas))
+                            .UsingScan(mas)
+                            .Where(mas.Title == "Wall Street")
+                            .Return(mas.Title)
+                            .Compile();
+
+                    result = compiled.GetExecutionContext().Execute();
+
+                    a = result[0] as IDictionary<string, object>;
+                    Assert.AreEqual(a["Column1"], "Wall Street");
+
+                    consoleOutput = output.GetOuput();
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\))[^a-zA-Z,0-9]*(USING SCAN n0:Movie)[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1)"));
+
+                    // use label scan with relationship
+                    compiled = Transaction.CompiledQuery
+                            .Match(node.Movie.Alias(out MovieAlias mar).Out.PERSON_DIRECTED.In.Person.Alias(out PersonAlias par))
+                            .UsingScan(mar)
+                            .UsingScan(par)
+                            .Where(mar.Title == "Wall Street")
+                            .Return(mar.Title, par.Name)
+                            .Compile();
+
+                    result = compiled.GetExecutionContext().Execute();
+
+                    a = result[0] as IDictionary<string, object>;
+                    Assert.AreEqual(a["Column1"], "Wall Street");
+                    Assert.AreEqual(a["Column2"], "Oliver Stone");
+
+                    consoleOutput = output.GetOuput();
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\)<-\[:DIRECTED_BY\]-\(n1:Person\))[^a-zA-Z,0-9]*(USING SCAN n0:Movie)[^a-zA-Z,0-9]*(USING SCAN n1:Person)[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2)"));
+
+                    // use label scan and index
+                    compiled = Transaction.CompiledQuery
+                            .Match(node.Movie.Alias(out MovieAlias msi).Out.PERSON_DIRECTED.In.Person.Alias(out PersonAlias psi))
+                            .UsingIndex(msi.Title)
+                            .UsingScan(psi)
+                            .Where(msi.Title == "Wall Street")
+                            .Return(msi.Title, psi.Name)
+                            .Compile();
+
+                    result = compiled.GetExecutionContext().Execute();
+
+                    a = result[0] as IDictionary<string, object>;
+                    Assert.AreEqual(a["Column1"], "Wall Street");
+                    Assert.AreEqual(a["Column2"], "Oliver Stone");
+
+                    consoleOutput = output.GetOuput();
+                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\)<-\[:DIRECTED_BY\]-\(n1:Person\))[^a-zA-Z,0-9]*(USING INDEX n0:Movie\(Title\))[^a-zA-Z,0-9]*(USING SCAN n1:Person)[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2)"));
                 }
             }
         }

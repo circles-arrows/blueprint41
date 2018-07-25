@@ -35,8 +35,19 @@ namespace Datastore.Manipulation
 
             #endregion
 
+			#region LoadByTitle
+
+			RegisterQuery(nameof(LoadByTitle), (query, alias) => query.
+                Where(alias.Title == Parameter.New<string>(Param0)));
+
+			#endregion
+
 			AdditionalGeneratedStoredQueries();
         }
+		public static Movie LoadByTitle(string title)
+		{
+			return FromQuery(nameof(LoadByTitle), new Parameter(Param0, title)).FirstOrDefault();
+		}
         partial void AdditionalGeneratedStoredQueries();
 
         public static Dictionary<System.String, Movie> LoadByKeys(IEnumerable<System.String> uids)
