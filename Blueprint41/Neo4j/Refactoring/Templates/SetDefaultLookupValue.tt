@@ -15,7 +15,7 @@ OPTIONAL MATCH (in)-[rel:<#= Property.Relationship.Neo4JRelationshipType #>]-(ou
 WITH in, count(out) as count, target
 WHERE count = 0
 WITH in, target LIMIT 10000
-CREATE UNIQUE (in)-[rel:<#= Property.Relationship.Neo4JRelationshipType #>]-(target)
+MERGE (in)-[rel:<#= Property.Relationship.Neo4JRelationshipType #>]-(target)
 <#+
 
 	// Template Parameters

@@ -11,7 +11,7 @@
 #>
 MATCH (in:<#= From.InEntity.Label.Name #>)-[rel:<#= From.Neo4JRelationshipType #>]-(out:<#= From.OutEntity.Label.Name #>)
 WITH in, rel, out LIMIT 10000
-CREATE UNIQUE (in)-[newRelationship:<#= To.Neo4JRelationshipType #>]->(out) SET newRelationship = rel WITH rel DELETE rel
+MERGE (in)-[newRelationship:<#= To.Neo4JRelationshipType #>]->(out) SET newRelationship = rel WITH rel DELETE rel
 <#+
 
 	// Template Parameters

@@ -60,7 +60,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write(")\r\nWITH in, rel, out LIMIT 10000\r\nCREATE UNIQUE (in)-[newRelationship:");
+            this.Write(")\r\nWITH in, rel, out LIMIT 10000\r\nMERGE (in)-[newRelationship:");
             
             #line 14 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NewName));

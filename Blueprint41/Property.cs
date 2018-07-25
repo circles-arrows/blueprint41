@@ -347,7 +347,7 @@ namespace Blueprint41
             //{
             //    case StorageModel.Lookup:
             //    case StorageModel.Collection:
-            //        string format = string.Format("MATCH (in:{0})-[rel:{1}]-(out:{2}) CREATE UNIQUE (in)-[:LANGUAGE_FOR]->(out) DELETE rel", 
+            //        string format = string.Format("MATCH (in:{0})-[rel:{1}]-(out:{2}) MERGE (in)-[:LANGUAGE_FOR]->(out) DELETE rel", 
             //            this.Relationship.InEntity.Label.Name,
             //            this.Relationship.Name,
             //            this.Relationship.OutEntity.Label.Name,
@@ -574,7 +574,7 @@ namespace Blueprint41
 
             string left = (Direction == DirectionEnum.Out) ? "<-" : "-";
             string right = (Direction == DirectionEnum.In) ? "->" : "-";
-            string cypher = $"MATCH (anchor:{Parent.Label.Name}){left}[{Relationship.Neo4JRelationshipType}]{right}{decoded.Compile()} CREATE UNIQUE (anchor){left}[:{newNeo4jRelationshipType}]{right}(to)";
+            string cypher = $"MATCH (anchor:{Parent.Label.Name}){left}[{Relationship.Neo4JRelationshipType}]{right}{decoded.Compile()} MERGE (anchor){left}[:{newNeo4jRelationshipType}]{right}(to)";
 
             Parser.Execute(cypher, null);
 
