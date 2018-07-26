@@ -39,7 +39,7 @@ namespace Blueprint41.UnitTest.Tests
 
         }
 
-        //[TearDown]
+        [TearDown]
         public void TearDown()
         {
             using (Transaction.Begin())
@@ -71,8 +71,9 @@ namespace Blueprint41.UnitTest.Tests
 
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Person {""Name"":""Joe Smith"",""LastModifiedOn"":)\d+}(\) SET inserted.Uid = key Return inserted)"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City {""Name"":""New York"",""LastModifiedOn"":)\d+}(\) SET inserted.Uid = key Return inserted)"));
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (in:Person {Uid:""2"" }), (out:City {Uid:""3"" })"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LIVES_IN {""CreationDate"":)\d+(\}\]->\(out\))"));
+                Assert.That(consoleOutput, Contains.Substring(@"MATCH (in:Person {Uid:""2"" })"));
+                Assert.That(consoleOutput, Contains.Substring(@"MATCH (out:City {Uid:""3"" })"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LIVES_IN\]->\(out\) ON CREATE SET outr \+= {""CreationDate"":)\d+(\})"));
 
                 Assert.IsInstanceOf<OGMImpl>(a);
                 Assert.AreEqual(a.Name, "Joe Smith");
@@ -169,12 +170,12 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City \{""Name"":""New York"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Restaurant \{""Name"":""Pizza House Inc."",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
 
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\), \(out:City \{Uid:""3"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LIVES_IN \{""CreationDate"":)\d+(\}\]->\(out\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Restaurant \{Uid:""4"" \}\), \(out:City \{Uid:""3"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LOCATED_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\), \(out:Restaurant \{Uid:""4"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:EATS_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:City \{Uid:""3"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LIVES_IN\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Restaurant \{Uid:""4"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:City \{Uid:""3"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LOCATED_AT\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:Restaurant \{Uid:""4"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:EATS_AT\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
 
                 using (Transaction.Begin(true))
                 {
@@ -194,12 +195,12 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City \{""Name"":""San Francisco"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
                 Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Restaurant \{""Name"":""Tadich Grill"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
 
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\), \(out:City \{Uid:""6"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LIVES_IN \{""CreationDate"":)\d+(\}\]->\(out\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Restaurant \{Uid:""7"" \}\), \(out:City \{Uid:""6"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:LOCATED_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\), \(out:Restaurant \{Uid:""7"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE UNIQUE \(in\)-\[:EATS_AT \{""CreationDate"":)\d+(\}\]->\(out\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:City \{Uid:""6"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LIVES_IN\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Restaurant \{Uid:""7"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:City \{Uid:""6"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LOCATED_AT\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:Restaurant \{Uid:""7"" \}\))"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:EATS_AT\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
 
                 // Update
 

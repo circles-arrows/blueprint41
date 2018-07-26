@@ -35,7 +35,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
-                Entities.New("Person", Entities["BaseEntity"])
+                Entities.New("PersonEntity", Entities["BaseEntity"])
                        .AddProperty("Name", typeof(string));
             }
         }
@@ -54,14 +54,14 @@ namespace Blueprint41.UnitTest.Tests
                        .Virtual(true)
                        .SetKey("Uid", true);
 
-                Entities.New("Person", Entities["BaseEntity"])
+                Entities.New("PersonEntity", Entities["BaseEntity"])
                         .AddProperty("Name", typeof(string));
             }
 
             [Version(0, 0, 1)]
             public void Script_0_0_1()
             {
-                Entities["Person"].Refactor.Deprecate();
+                Entities["PersonEntity"].Refactor.Deprecate();
             }
         }
         
