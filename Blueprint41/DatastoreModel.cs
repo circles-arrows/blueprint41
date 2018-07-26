@@ -332,38 +332,46 @@ namespace Blueprint41
 
         public void ApplyFullTextSearchIndexes()
         {
-            Parser.Execute("CALL apoc.index.remove('fts')", new Dictionary<string, object>(), true);
-
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine("CALL apoc.index.addAllNodesExtended('fts',");
-            builder.AppendLine("\t{");
-
-            bool first = true;
-            foreach (var entity in Entities)
+            using (Transaction.Begin(true))
             {
-                if (entity.FullTextIndexProperties.Count == 0)
-                    continue;
-
-                if (first)
-                    first = false;
-                else
-                    builder.AppendLine(",");
-
-                builder.AppendFormat("\t\t{0}:\t\t\t['", entity.Label.Name);
-                builder.Append(string.Join("', '", entity.FullTextIndexProperties.Select(item => item.Name)));
-                builder.Append("']");
+                Neo4jTransaction.Run("CALL apoc.index.remove('fts')");
+                Transaction.Commit();
             }
 
-            builder.AppendLine();
-            builder.AppendLine("\t},");
-            builder.AppendLine("\t{");
-            builder.AppendLine("\t\tautoUpdate:true");
-            builder.AppendLine("\t}");
-            builder.AppendLine(")");
+            using (Transaction.Begin(true))
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.AppendLine("CALL apoc.index.addAllNodesExtended('fts',");
+                builder.AppendLine("\t{");
 
-            Parser.Execute(builder.ToString(), new Dictionary<string, object>(), true);
+                bool first = true;
+                foreach (var entity in Entities)
+                {
+                    if (entity.FullTextIndexProperties.Count == 0)
+                        continue;
+
+                    if (first)
+                        first = false;
+                    else
+                        builder.AppendLine(",");
+
+                    builder.AppendFormat("\t\t{0}:\t\t\t['", entity.Label.Name);
+                    builder.Append(string.Join("', '", entity.FullTextIndexProperties.Select(item => item.Name)));
+                    builder.Append("']");
+                }
+
+                builder.AppendLine();
+                builder.AppendLine("\t},");
+                builder.AppendLine("\t{");
+                builder.AppendLine("\t\tautoUpdate:true");
+                builder.AppendLine("\t}");
+                builder.AppendLine(")");
+
+                Neo4jTransaction.Run(builder.ToString());
+
+                Transaction.Commit();
+            }
         }
-
 
 
         protected DataMigrationScope DataMigration { get; private set; }
