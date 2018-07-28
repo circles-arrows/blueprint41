@@ -14,17 +14,23 @@ namespace Blueprint41
     {
         internal QueryExecutionContext(CompiledQuery query)
         {
+            Transaction transaction = Transaction.RunningTransaction;
+
             CompiledQuery = query;
             QueryParameters = new Dictionary<string, object>();
             foreach (var item in query.ConstantValues)
             {
-                QueryParameters.Add(item.Name, item.Value);
+                QueryParameters.Add(item.Name, transaction.ConvertToStoredType(item.Type, item.Value));
             }
         }
 
         public void SetParameter(string parameterName, object value)
         {
-            QueryParameters.Add(parameterName, value);
+            Transaction transaction = Transaction.RunningTransaction;
+            if (value == null)
+                QueryParameters.Add(parameterName, null);
+            else
+                QueryParameters.Add(parameterName, transaction.ConvertToStoredType(value.GetType(), value));
         }
         public List<dynamic> Execute()
         {
@@ -33,12 +39,7 @@ namespace Blueprint41
             Transaction transaction = Transaction.RunningTransaction;
             Dictionary<string, object> parameters = new Dictionary<string, object>(QueryParameters.Count);
             foreach (var queryParameter in QueryParameters)
-            {
-                if((object)queryParameter.Value == null)
-                    parameters.Add(queryParameter.Key, null);
-                else
-                    parameters.Add(queryParameter.Key, transaction.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
-            }
+                parameters.Add(queryParameter.Key, queryParameter.Value);
 
             var result = Neo4j.Persistence.Neo4jTransaction.Run(CompiledQuery.QueryText, parameters);
             foreach (var row in result)
