@@ -39,7 +39,12 @@ namespace Blueprint41
             Transaction transaction = Transaction.RunningTransaction;
             Dictionary<string, object> parameters = new Dictionary<string, object>(QueryParameters.Count);
             foreach (var queryParameter in QueryParameters)
-                parameters.Add(queryParameter.Key, queryParameter.Value);
+            {
+                if (queryParameter.Value == null)
+                    parameters.Add(queryParameter.Key, null);
+                else
+                    parameters.Add(queryParameter.Key, transaction.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
+            }
 
             var result = Neo4j.Persistence.Neo4jTransaction.Run(CompiledQuery.QueryText, parameters);
             foreach (var row in result)
@@ -58,9 +63,9 @@ namespace Blueprint41
             }
             return items;
         }
-        
-        public Dictionary<string, object> QueryParameters { get; private set; } 
+
         public CompiledQuery CompiledQuery { get; set; }
         public IReadOnlyList<string> Errors { get; private set; }
+        internal Dictionary<string, object> QueryParameters { get; private set; }
     }
 }
