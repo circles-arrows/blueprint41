@@ -519,7 +519,7 @@ namespace Blueprint41
             if (!PersistenceProviderFactory.ConvertFromStoredTypeCache.TryGetValue(returnType, out converter))
                 return null;
 
-            return converter.FromType;
+            return converter?.FromType;
         }
 
         private class ConvertToStoredTypeCache<TReturnType>
