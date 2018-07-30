@@ -538,7 +538,7 @@ namespace Blueprint41
             if (PropertyType != PropertyType.Attribute)
                 throw new NotImplementedException();
 
-            if (IndexType == IndexType)
+            if (IndexType == indexType)
                 return;
 
             IndexType = indexType;
