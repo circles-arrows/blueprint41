@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -55,7 +56,7 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(null));
 
                 // TODO: Failed: Should not support empty string
-                Assert.Throws<Exception>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(""));                
+                Assert.Throws<Exception>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(""));
             }
         }
 
@@ -313,6 +314,403 @@ namespace Blueprint41.UnitTest.Tests
         public void IRefactorPropertyMerge()
         {
             DataModelPropertyMerge model = new DataModelPropertyMerge();
+            model.Execute(true);
+        }
+        #endregion
+
+        #region IRefactorPropertyConvert
+        private class DataModelPropertyConvert : DatastoreModel<DataModelPropertyConvert>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntity")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid", true)
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("Scene", Entities["BaseEntity"])
+                       .AddProperty("Name", typeof(string), IndexType.Unique)
+                       .AddProperty("BoolToLong", typeof(bool))
+                       .AddProperty("BoolToDouble", typeof(bool))
+                       .AddProperty("BoolToString", typeof(bool))
+                       .AddProperty("LongToBool", typeof(long))
+                       .AddProperty("LongToDouble", typeof(long))
+                       .AddProperty("LongToString", typeof(long))
+                       .AddProperty("DoubleToBool", typeof(double))
+                       .AddProperty("DoubleToLong", typeof(double))
+                       .AddProperty("DoubleToString", typeof(double))
+                       .AddProperty("StringToBool", typeof(string))
+                       .AddProperty("StringToLong", typeof(string))
+                       .AddProperty("StringToDouble", typeof(string));
+            }
+
+            [Version(0, 0, 1)]
+            public void Script_0_0_1()
+            {
+                // TODO: Not able to convert types specified by genericConvertTabel (Property.cs)
+
+                Assert.IsTrue(typeof(bool) == Entities["Scene"].Properties["BoolToLong"].SystemReturnType);
+                Assert.IsTrue(typeof(bool) == Entities["Scene"].Properties["BoolToDouble"].SystemReturnType);
+                Assert.IsTrue(typeof(bool) == Entities["Scene"].Properties["BoolToString"].SystemReturnType);
+
+                Assert.IsTrue(typeof(long) == Entities["Scene"].Properties["LongToBool"].SystemReturnType);
+                Assert.IsTrue(typeof(long) == Entities["Scene"].Properties["LongToDouble"].SystemReturnType);
+                Assert.IsTrue(typeof(long) == Entities["Scene"].Properties["LongToString"].SystemReturnType);
+
+                Assert.IsTrue(typeof(double) == Entities["Scene"].Properties["DoubleToBool"].SystemReturnType);
+                Assert.IsTrue(typeof(double) == Entities["Scene"].Properties["DoubleToLong"].SystemReturnType);
+                Assert.IsTrue(typeof(double) == Entities["Scene"].Properties["DoubleToString"].SystemReturnType);
+
+                Assert.IsTrue(typeof(string) == Entities["Scene"].Properties["StringToBool"].SystemReturnType);
+                Assert.IsTrue(typeof(string) == Entities["Scene"].Properties["StringToLong"].SystemReturnType);
+                Assert.IsTrue(typeof(string) == Entities["Scene"].Properties["StringToDouble"].SystemReturnType);
+
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["BoolToLong"].Refactor.Convert(typeof(long)));
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["BoolToDouble"].Refactor.Convert(typeof(double)));
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["BoolToString"].Refactor.Convert(typeof(string)));
+
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["LongToBool"].Refactor.Convert(typeof(bool)));
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["LongToDouble"].Refactor.Convert(typeof(double)));
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["LongToString"].Refactor.Convert(typeof(string)));
+
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["DoubleToBool"].Refactor.Convert(typeof(bool)));
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["DoubleToLong"].Refactor.Convert(typeof(long)));
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["DoubleToString"].Refactor.Convert(typeof(string)));
+
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["StringToBool"].Refactor.Convert(typeof(bool)));
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["StringToLong"].Refactor.Convert(typeof(long)));
+                Assert.DoesNotThrow(() => Entities["Scene"].Properties["StringToDouble"].Refactor.Convert(typeof(double)));
+            }
+        }
+
+        [Test]
+        public void IRefactorPropertyConvert()
+        {
+            DataModelPropertyConvert model = new DataModelPropertyConvert();
+            model.Execute(true);
+        }
+        #endregion
+
+        #region IRefactorPropertySetIndexTypeAndDeprecate
+        private class DataModelPropertySetIndexTypeAndDeprecate : DatastoreModel<DataModelPropertySetIndexTypeAndDeprecate>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntity")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid", true)
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("Person", Entities["BaseEntity"])
+                       .AddProperty("Name", typeof(string));
+
+                Entities.New("Movie", Entities["BaseEntity"])
+                       .AddProperty("Title", typeof(string), IndexType.Unique)
+                       .AddProperty("ReleaseDate", typeof(DateTime));
+
+                Entities.New("Scene", Entities["Movie"])
+                       .AddProperty("Name", typeof(string), IndexType.Unique)
+                       .AddProperty("Number", typeof(bool));
+
+                Entities.New("Genre", Entities["BaseEntity"])
+                    .AddProperty("Name", typeof(string), IndexType.Unique)
+                    .HasStaticData(true)
+                    .SetFullTextProperty("Name");
+
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "7", Name = "Action" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "8", Name = "Adventure" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "9", Name = "Comedy" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "10", Name = "Drama" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "11", Name = "Horror" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "12", Name = "Musical" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "13", Name = "Science Fiction" });
+
+                Relations.New(Entities["Person"], Entities["Movie"], "PERSON_DIRECTED", "DIRECTED_BY")
+                    .SetInProperty("DirectedMovies", PropertyType.Collection)
+                    .SetOutProperty("Director", PropertyType.Lookup);
+
+                Relations.New(Entities["Person"], Entities["Movie"], "ACTED_IN", "ACTORS")
+                    .SetInProperty("ActedInMovies", PropertyType.Collection)
+                    .SetOutProperty("Actors", PropertyType.Collection);
+
+                Relations.New(Entities["Movie"], Entities["Scene"], "MOVIES_HAS", "MOVIES_HAS")
+                    .SetInProperty("MovieScenes", PropertyType.Collection)
+                    .SetOutProperty("Scenes", PropertyType.Collection);
+            }
+
+            [Version(0, 0, 1)]
+            public void Script_0_0_1()
+            {
+                Assert.IsTrue(IndexType.Unique == Entities["Scene"].Properties["Name"].IndexType);
+                Assert.IsTrue(IndexType.None == Entities["Scene"].Properties["Number"].IndexType);
+                Assert.IsTrue(IndexType.Unique == Entities["Genre"].Properties["Name"].IndexType);
+
+                Entities["Scene"].Properties["Name"].Refactor.SetIndexType(IndexType.None);
+                Entities["Scene"].Properties["Number"].Refactor.SetIndexType(IndexType.Unique);
+                Entities["Genre"].Properties["Name"].Refactor.SetIndexType(IndexType.Indexed);
+
+                Assert.IsTrue(IndexType.None == Entities["Scene"].Properties["Name"].IndexType);
+                Assert.IsTrue(IndexType.Unique == Entities["Scene"].Properties["Number"].IndexType);
+                Assert.IsTrue(IndexType.Indexed == Entities["Genre"].Properties["Name"].IndexType);
+            }
+
+            [Version(0, 0, 2)]
+            public void Script_0_0_2()
+            {
+                Entities["Scene"].Properties["Name"].Refactor.Deprecate();
+                Entities["Scene"].Properties["Number"].Refactor.Deprecate();
+                Entities["Genre"].Properties["Name"].Refactor.Deprecate();
+
+                Assert.Throws<ArgumentOutOfRangeException>(() => { var name = Entities["Scene"].Properties["Name"]; });
+                Assert.Throws<ArgumentOutOfRangeException>(() => { var num = Entities["Scene"].Properties["Number"]; });
+                Assert.Throws<ArgumentOutOfRangeException>(() => { var name = Entities["Genre"].Properties["Name"]; });
+            }
+        }
+
+        [Test]
+        public void IRefactorPropertySetIndexTypeAndDeprecate()
+        {
+            DataModelPropertySetIndexTypeAndDeprecate model = new DataModelPropertySetIndexTypeAndDeprecate();
+            model.Execute(true);
+        }
+        #endregion
+
+        #region IRefactorReroute
+
+        private class DataModelPropertyReroute : DatastoreModel<DataModelPropertyReroute>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntity")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid", true)
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("Person", Entities["BaseEntity"])
+                       .AddProperty("Name", typeof(string));
+
+                Entities.New("Movie", Entities["BaseEntity"])
+                       .AddProperty("Title", typeof(string), IndexType.Unique)
+                       .AddProperty("ReleaseDate", typeof(DateTime));
+
+                Entities.New("Scene", Entities["Movie"])
+                       .AddProperty("Name", typeof(string), IndexType.Unique)
+                       .AddProperty("Number", typeof(int));
+
+                Entities.New("Genre", Entities["BaseEntity"])
+                    .AddProperty("Name", typeof(string), IndexType.Unique)
+                    .HasStaticData(true)
+                    .SetFullTextProperty("Name");
+
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "7", Name = "Action" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "8", Name = "Adventure" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "9", Name = "Comedy" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "10", Name = "Drama" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "11", Name = "Horror" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "12", Name = "Musical" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "13", Name = "Science Fiction" });
+
+                Relations.New(Entities["Person"], Entities["Movie"], "PERSON_DIRECTED", "DIRECTED_BY")
+                    .SetInProperty("DirectedMovies", PropertyType.Collection)
+                    .SetOutProperty("Director", PropertyType.Lookup);
+
+                Relations.New(Entities["Person"], Entities["Movie"], "ACTED_IN", "ACTORS")
+                    .SetInProperty("ActedInMovies", PropertyType.Collection)
+                    .SetOutProperty("Actors", PropertyType.Collection);
+
+                Relations.New(Entities["Movie"], Entities["Scene"], "MOVIES_HAS", "MOVIES_HAS")
+                    .SetInProperty("MovieScenes", PropertyType.Collection)
+                    .SetOutProperty("Scenes", PropertyType.Collection);
+            }
+
+            [Version(0, 0, 1)]
+            public void Script_0_0_1()
+            {
+                Entities["Movie"].Properties["MovieScenes"].Refactor.Reroute("(from:Scene)-[]->(to:Genre)", "Genres", "MOVIE_CONTAINS_GENRE", "MOVIE_GENRE", false);
+            }
+        }
+
+        [Test]
+        public void IRefactorPropertyReroute()
+        {
+            DataModelPropertyReroute model = new DataModelPropertyReroute();
+            model.Execute(true);
+        }
+        #endregion
+
+        #region IRefactorConvert, IRefactorMakeMandatory(), IRefactorMakeNullable
+        private class DataModelPropertyConvertRel : DatastoreModel<DataModelPropertyConvertRel>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntity")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid", true)
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("Person", Entities["BaseEntity"])
+                       .AddProperty("Name", typeof(string))
+                       .AddProperty("NotNullableProperty", typeof(int), false);
+
+                Entities.New("Movie", Entities["BaseEntity"])
+                       .AddProperty("Title", typeof(string), IndexType.Unique)
+                       .AddProperty("ReleaseDate", typeof(DateTime));
+
+                Relations.New(Entities["Person"], Entities["Movie"], "DIRECTED_BY", "DIRECTED_BY")
+                    .SetInProperty("DirectedMovies", PropertyType.Collection)
+                    .SetOutProperty("Director", PropertyType.Lookup);
+
+                Relations.New(Entities["Person"], Entities["Movie"], "ACTED_IN", "ACTORS")
+                    .SetInProperty("ActedInMovies", PropertyType.Collection)
+                    .SetOutProperty("Actors", PropertyType.Collection);
+            }
+
+            [Version(0, 0, 1)]
+            public void Script_0_0_1()
+            {
+                Assert.IsTrue(Relations["DIRECTED_BY"].InProperty.PropertyType == PropertyType.Collection);
+                Assert.IsTrue(Relations["DIRECTED_BY"].OutProperty.PropertyType == PropertyType.Lookup);
+
+                Assert.Throws<NotImplementedException>(() => Relations["DIRECTED_BY"].InProperty.Refactor.ConvertToLookup(ConvertAlgorithm.TakeFirst));
+                Relations["DIRECTED_BY"].OutProperty.Refactor.ConvertToCollection();
+
+                Assert.IsTrue(Relations["DIRECTED_BY"].InProperty.PropertyType == PropertyType.Lookup);
+                Assert.IsTrue(Relations["DIRECTED_BY"].OutProperty.PropertyType == PropertyType.Collection);
+            }
+
+            [Version(0, 0, 2)]
+            public void Script_0_0_2()
+            {
+                Assert.IsTrue(Entities["Person"].Properties["Name"].Nullable == true);
+                Assert.IsTrue(Entities["Person"].Properties["NotNullableProperty"].Nullable == false);
+
+                Entities["Person"].Properties["Name"].Refactor.MakeMandatory();
+                Entities["Person"].Properties["NotNullableProperty"].Refactor.MakeNullable();
+
+                Assert.IsTrue(Entities["Person"].Properties["Name"].Nullable == false);
+                Assert.IsTrue(Entities["Person"].Properties["NotNullableProperty"].Nullable == true);
+            }
+        }
+
+        [Test]
+        public void IRefactorPropertyConvertToCollectionOrLookup()
+        {
+            DataModelPropertyConvertRel model = new DataModelPropertyConvertRel();
+            model.Execute(true);
+        }
+        #endregion
+
+        #region IRefactorMakeMandatory with values
+        private class DataModelPropertyMandatory : DatastoreModel<DataModelPropertyMandatory>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Script_0_0_0()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("BaseEntity")
+                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                       .Abstract(true)
+                       .Virtual(true)
+                       .SetKey("Uid", true)
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
+
+                Entities.New("Person", Entities["BaseEntity"])
+                       .AddProperty("Name", typeof(string))
+                       .AddProperty("MandatoryProperty", typeof(int), false);
+
+                Entities.New("Movie", Entities["BaseEntity"])
+                       .AddProperty("Title", typeof(string), IndexType.Unique)
+                       .AddProperty("ReleaseDate", typeof(DateTime));
+
+                Relations.New(Entities["Person"], Entities["Movie"], "DIRECTED_BY", "DIRECTED_BY")
+                    .SetInProperty("DirectedMovies", PropertyType.Collection)
+                    .SetOutProperty("Director", PropertyType.Lookup);
+
+                Relations.New(Entities["Person"], Entities["Movie"], "ACTED_IN", "ACTORS")
+                    .SetInProperty("ActedInMovies", PropertyType.Collection)
+                    .SetOutProperty("Actors", PropertyType.Collection);
+
+                Entities.New("Genre", Entities["BaseEntity"])
+                    .AddProperty("Name", typeof(string), IndexType.Unique)
+                    .HasStaticData(true)
+                    .SetFullTextProperty("Name");
+
+                Relations.New(Entities["Movie"], Entities["Genre"], "MOVIE_HAS", "MOVIE_HAS")
+                    .SetInProperty("MovieGenre", PropertyType.Lookup)
+                    .SetOutProperty("Movies", PropertyType.Collection);
+
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "7", Name = "Action" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "8", Name = "Adventure" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "9", Name = "Comedy" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "10", Name = "Drama" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "11", Name = "Horror" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "12", Name = "Musical" });
+                Entities["Genre"].Refactor.CreateNode(new { Uid = "13", Name = "Science Fiction" });
+            }
+
+            [Version(0, 0, 1)]
+            public void Script_0_0_1()
+            {
+                Entities["Person"].Properties["Name"].Refactor.MakeMandatory("Mr/Mrs.");
+                Relations["MOVIE_HAS"].InProperty.Refactor.MakeMandatory("Action");
+            }
+        }
+
+        [Test]
+        public void IRefactorPropertyMakeMandatoryWithValues()
+        {
+            DataModelPropertyMandatory model = new DataModelPropertyMandatory();
             model.Execute(true);
         }
         #endregion
