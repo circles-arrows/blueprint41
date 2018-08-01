@@ -93,10 +93,10 @@ namespace Blueprint41.UnitTest.Tests
             GeneratorResult result = GenerateModel<MockModelWithDeprecate>(settings);
 
             // The person entity is deprecated so it should be included in the entity result
-            bool exist = result.EntityResult.Select(x => x.Key).SingleOrDefault(x => x == "Person") != null;
+            bool exist = result.EntityResult.Select(x => x.Key).SingleOrDefault(x => x == "PersonEntity") != null;
             Assert.IsFalse(exist);
 
-            string entityPath = Path.Combine(Path.Combine(projectFolder, settings.EntitiesFolder), "Person.cs");
+            string entityPath = Path.Combine(Path.Combine(projectFolder, settings.EntitiesFolder), "PersonEntity.cs");
             Assert.IsFalse(File.Exists(entityPath));
 
             DeleteGeneratedFiles(settings, projectFolder);

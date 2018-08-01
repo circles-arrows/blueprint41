@@ -1,4 +1,6 @@
-﻿using Blueprint41.UnitTest.Helper;
+﻿using Blueprint41.Neo4j.Persistence;
+using Blueprint41.UnitTest.Helper;
+using Neo4j.Driver.V1;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,6 @@ namespace Blueprint41.UnitTest.Tests
     [TestFixture]
     internal class TestRefactorProperty : TestBase
     {
-
         #region IRefactorPropertyRename
         private class DataModelPropertyRename : DatastoreModel<DataModelPropertyRename>
         {
@@ -559,7 +560,7 @@ namespace Blueprint41.UnitTest.Tests
             [Version(0, 0, 1)]
             public void Script_0_0_1()
             {
-                Entities["Movie"].Properties["MovieScenes"].Refactor.Reroute("(from:Scene)-[]->(to:Genre)", "Genres", "MOVIE_CONTAINS_GENRE", "MOVIE_GENRE", false);
+                // TODO: Reroute tests
             }
         }
 
@@ -690,6 +691,10 @@ namespace Blueprint41.UnitTest.Tests
                     .SetInProperty("MovieGenre", PropertyType.Lookup)
                     .SetOutProperty("Movies", PropertyType.Collection);
 
+                Relations.New(Entities["Person"], Entities["Genre"], "LIKES", "LIKES")
+                    .SetInProperty("MovieGenre", PropertyType.Lookup)
+                    .SetOutProperty("Person", PropertyType.Collection);
+
                 Entities["Genre"].Refactor.CreateNode(new { Uid = "7", Name = "Action" });
                 Entities["Genre"].Refactor.CreateNode(new { Uid = "8", Name = "Adventure" });
                 Entities["Genre"].Refactor.CreateNode(new { Uid = "9", Name = "Comedy" });
@@ -704,14 +709,24 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Entities["Person"].Properties["Name"].Refactor.MakeMandatory("Mr/Mrs.");
                 Relations["MOVIE_HAS"].InProperty.Refactor.MakeMandatory("Action");
+                Relations["LIKES"].InProperty.Refactor.MakeMandatory(Entities["Genre"].Refactor.MatchNode("8"));
             }
         }
 
         [Test]
         public void IRefactorPropertyMakeMandatoryWithValues()
         {
-            DataModelPropertyMandatory model = new DataModelPropertyMandatory();
-            model.Execute(true);
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                DataModelPropertyMandatory model = new DataModelPropertyMandatory();
+                model.Execute(true);
+
+                string consoleOutput = output.GetOuput();
+                Assert.That(consoleOutput, Contains.Substring(@"MATCH (node:Person) WHERE NOT EXISTS(node.Name) WITH node LIMIT 10000 SET node.Name = ""Mr/Mrs."""));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Movie\))[^a-zA-Z,0-9]*(MATCH \(target:Genre \{ Uid : 'Action'\}\))[^a-zA-Z,0-9]*(OPTIONAL MATCH \(in\)-\[rel:MOVIE_HAS\]-\(out:Genre\))[^a-zA-Z,0-9]*(WITH in, count\(out\) as count, target)[^a-zA-Z,0-9]*(WHERE count = 0)[^a-zA-Z,0-9]*(WITH in, target LIMIT 10000)[^a-zA-Z,0-9]*(MERGE \(in\)-\[rel:MOVIE_HAS\]-\(target\))"));
+                Assert.That(consoleOutput, Contains.Substring(@"MATCH (node:Genre) WHERE node.Uid = ""8"" RETURN node"));
+                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(target:Genre \{ Uid : '8'\}\))[^a-zA-Z,0-9]*(OPTIONAL MATCH \(in\)-\[rel:LIKES\]-\(out:Genre\))[^a-zA-Z,0-9]*(WITH in, count\(out\) as count, target)[^a-zA-Z,0-9]*(WHERE count = 0)[^a-zA-Z,0-9]*(WITH in, target LIMIT 10000)[^a-zA-Z,0-9]*(MERGE \(in\)-\[rel:LIKES\]-\(target\))"));
+            }   
         }
         #endregion
     }
