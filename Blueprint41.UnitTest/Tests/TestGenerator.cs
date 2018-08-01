@@ -52,7 +52,9 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true);
+                       .SetKey("Uid", true)
+                       .AddProperty("LastModifiedOn", typeof(DateTime))
+                       .SetRowVersionField("LastModifiedOn");
 
                 Entities.New("PersonEntity", Entities["BaseEntity"])
                         .AddProperty("Name", typeof(string));
@@ -80,9 +82,7 @@ namespace Blueprint41.UnitTest.Tests
 
             FileExists(result.EntityResult, Path.Combine(projectFolder, settings.EntitiesFolder));
             FileExists(result.RelationshipResult, Path.Combine(projectFolder, settings.RelationshipsFolder));
-            FileExists(result.NodeResult, Path.Combine(projectFolder, settings.NodesFolder));
-
-            DeleteGeneratedFiles(settings, projectFolder);
+            FileExists(result.NodeResult, Path.Combine(projectFolder, settings.NodesFolder));            
         }
 
         [Test]
@@ -92,14 +92,12 @@ namespace Blueprint41.UnitTest.Tests
             GeneratorSettings settings = new GeneratorSettings(projectFolder);
             GeneratorResult result = GenerateModel<MockModelWithDeprecate>(settings);
 
-            // The person entity is deprecated so it should be included in the entity result
+            // The person entity is deprecated so it should be excluded in the entity result
             bool exist = result.EntityResult.Select(x => x.Key).SingleOrDefault(x => x == "PersonEntity") != null;
             Assert.IsFalse(exist);
 
             string entityPath = Path.Combine(Path.Combine(projectFolder, settings.EntitiesFolder), "PersonEntity.cs");
-            Assert.IsFalse(File.Exists(entityPath));
-
-            DeleteGeneratedFiles(settings, projectFolder);
+            Assert.IsFalse(File.Exists(entityPath));            
         }
 
         private GeneratorResult GenerateModel<T>(GeneratorSettings settings) where T : DatastoreModel<T>, new()
