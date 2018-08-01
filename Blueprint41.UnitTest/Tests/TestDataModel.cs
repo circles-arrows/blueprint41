@@ -1,10 +1,12 @@
 ﻿using Blueprint41.Dynamic;
 using Blueprint41.UnitTest.Helper;
+using Neo4j.Driver.V1;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -517,7 +519,7 @@ namespace Blueprint41.UnitTest.Tests
                 Entities.New("ContactStatus")
                     .HasStaticData(true)
                     .AddProperty("OrderBy", typeof(string))
-                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .AddProperty("Uid", typeof(string), false)
                     .SetKey("Uid", true)
                     .AddProperty("Label", typeof(string), false, IndexType.Unique);
 
@@ -695,6 +697,11 @@ namespace Blueprint41.UnitTest.Tests
 
                 Entities["NewAccountType"].AddProperty("Unique", typeof(string), IndexType.Unique);
                 Entities["NewAccountType"].AddProperty("Indexed", typeof(string), IndexType.Indexed);
+
+                Assert.Throws<ArgumentOutOfRangeException>(() => { Entity oldType = Entities["AccountType"]; });
+
+                // TODO: Bug, was able to rename entity to an empty string
+                Assert.Throws<Exception>(() => Entities["NewAccountType"].Refactor.Rename(""));
             }
         }
 
@@ -705,35 +712,59 @@ namespace Blueprint41.UnitTest.Tests
             {
                 DatastoreModel model = new DatastoreEntityRefactor();
                 model.Execute(true);
-
-                Assert.Throws<ArgumentOutOfRangeException>(() => { Entity oldType = model.Entities["AccountType"]; });
-                Assert.IsInstanceOf<Entity>(model.Entities["NewAccountType"]);
-                Assert.That(output.GetOuput(), Contains.Substring("MATCH (n:AccountType) WITH n LIMIT 10000 SET n:NewAccountType REMOVE n:AccountType"));
-
-                // Does Renaming outside the script will not run to the neo4j database ??
-                model.Entities["NewAccountType"].Refactor.Rename("AccountType");
-                Assert.Throws<ArgumentOutOfRangeException>(() => { Entity oldType = model.Entities["NewAccountType"]; });
-                Assert.IsInstanceOf<Entity>(model.Entities["AccountType"]);
-                Assert.IsFalse(output.GetOuput().Contains("MATCH (n:NewAccountType) WITH n LIMIT 10000 SET n:AccountType REMOVE n:NewAccountType"));
             }
         }
         #endregion
 
         #region IRefactorEntity ApplyConstraints
+
+        private class DatastoreEntityRefactorConstraints : DatastoreModel<DatastoreEntityRefactorConstraints>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("AccountType")
+                   .Summary("The type of an Account")
+                   .HasStaticData(true)
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                   .SetFullTextProperty("Name");
+
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "6", Name = "Account" });
+            }
+
+            [Version(0, 0, 1)]
+            public void Update()
+            {
+                Entities["AccountType"].AddProperty("Unique", typeof(string), IndexType.Unique);
+                Entities["AccountType"].AddProperty("Indexed", typeof(string), IndexType.Indexed);
+
+                Entities["AccountType"].Refactor.ApplyConstraints();
+            }
+        }
+
         [Test]
         public void IRefactorEntityApplyConstraints()
         {
             // TODO: This does not call ApplyConstraints after adding properties. Had to call
-            // Entities["NewAccountType"].Refactor.ApplyConstraints() to make it work.
+            // Entities["AccountType"].Refactor.ApplyConstraints() to make it work.
             // Should this be automatic set by the updatescript after adding properties?
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntityRefactor();
+                DatastoreEntityRefactorConstraints model = new DatastoreEntityRefactorConstraints();
                 model.Execute(true);
 
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX ON :NewAccountType(Indexed)"));
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT ON (node:NewAccountType) ASSERT node.Unique IS UNIQUE"));
+                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX ON :AccountType(Indexed)"));
+                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT ON (node:AccountType) ASSERT node.Unique IS UNIQUE"));
             }
         }
         #endregion
@@ -893,6 +924,13 @@ namespace Blueprint41.UnitTest.Tests
             {
                 FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
 
+                Entities.New("Account")                   
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                   .AddProperty("CopyName", typeof(string))
+                   .SetFullTextProperty("Name");
+
                 Entities.New("AccountType")
                    .Summary("The type of an Account")
                    .HasStaticData(true)
@@ -908,20 +946,22 @@ namespace Blueprint41.UnitTest.Tests
             [Version(0, 0, 1)]
             public void Update()
             {
-                Entities["AccountType"].Refactor.CopyValue("Name", "CopyName");
+                Entities["Account"].Refactor.CopyValue("Name", "CopyName");
+                Assert.Throws<NotSupportedException>(() => Entities["Account"].Refactor.CopyValue("Name", "NonExistentProperty"));
+                Assert.Throws<NotSupportedException>(() => Entities["Account"].Refactor.CopyValue("NonExistentProperty", "Name"));
+                Assert.Throws<NotSupportedException>(() => Entities["AccountType"].Refactor.CopyValue("Name", "CopyName"));
             }
         }
 
         [Test]
         public void IRefactorCopyValue()
         {
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            using (ConsoleOutput output = new ConsoleOutput())
             {
                 DatastoreModel model = new DatastoreEntityCopyValue();
                 model.Execute(true);
-            });
-
-            Assert.That(exception.Message, Contains.Substring("You cannot copy (potentially dynamic) data to a static data node."));
+                Assert.IsTrue(Regex.IsMatch(output.GetOuput(), @"(MATCH \(node:Account\))[^a-zA-Z,0-9]*(WHERE NOT EXISTS\(node\.CopyName\) OR node.Name <> node.CopyName)[^a-zA-Z,0-9]*(WITH node limit 10000)[^a-zA-Z,0-9]*(SET node\.CopyName = node\.Name)"));
+            }                
         }
 
         #endregion
@@ -951,32 +991,13 @@ namespace Blueprint41.UnitTest.Tests
             public void Update()
             {
                 Entities["Account"].Refactor.SetDefaultValue((a) => a.Name = "First Account");
-            }
-        }
 
-        private class DatastoreEntitySetDefaultValueWithNonExistentProperty : DatastoreModel<DatastoreEntitySetDefaultValueWithNonExistentProperty>
-        {
-            protected override void SubscribeEventHandlers()
-            {
+                ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    Entities["Account"].Refactor.SetDefaultValue((a) => a.Label = "First Account");
+                });
 
-            }
-
-            [Version(0, 0, 0)]
-            public void Initialize()
-            {
-                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
-
-                Entities.New("Account")
-                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
-                   .AddProperty("Name", typeof(string), false)
-                   .SetFullTextProperty("Name");
-            }
-
-            [Version(0, 0, 1)]
-            public void Update()
-            {
-                Entities["Account"].Refactor.SetDefaultValue((a) => a.Label = "First Account");
+                Assert.That(exception.Message, Contains.Substring("The field 'Label' was not present on entity 'Account'."));
             }
         }
 
@@ -991,16 +1012,6 @@ namespace Blueprint41.UnitTest.Tests
                 string query = @"MATCH (node:Account) WHERE NOT EXISTS(node.Name) WITH node LIMIT 10000 SET node.Name = ""First Account""";
                 Assert.That(output.GetOuput(), Contains.Substring(query));
             }
-
-            TearDown();
-
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                DatastoreModel model = new DatastoreEntitySetDefaultValueWithNonExistentProperty();
-                model.Execute(true);
-            });
-
-            Assert.That(exception.Message, Contains.Substring("The field 'Label' was not present on entity 'Account'."));
         }
 
         #endregion
@@ -1032,7 +1043,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 FunctionalId account = FunctionalIds.New("Account", "A_", IdFormat.Hash);
                 Entities["Account"].Refactor.SetFunctionalId(account);
-                Assert.AreEqual(Entities["Account"].FunctionalId, account);                
+                Assert.AreEqual(Entities["Account"].FunctionalId, account);
             }
 
             [Version(0, 0, 2)]
@@ -1087,7 +1098,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 Assert.That(output.GetOuput(), Contains.Substring("MATCH (node:Account) where node.Uid STARTS WITH 'A_' AND Length(node.Uid) = 8 CALL blueprint41.hashing.decode(replace(node.Uid, 'A_', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId"));
                 Assert.That(output.GetOuput(), Contains.Substring("MATCH (node:Account) where node.Uid STARTS WITH 'CA_' AND Length(node.Uid) = 9 CALL blueprint41.hashing.decode(replace(node.Uid, 'CA_', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId"));
-            }                
+            }
 
             TearDown();
 
