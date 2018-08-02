@@ -27,7 +27,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
 
-                Entities.New("BaseEntity")
+                Entities.New("BaseEntityWithRowVersion")
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
@@ -35,10 +35,10 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
-                Entities.New("Person", Entities["BaseEntity"])
+                Entities.New("PersonInheritedBase", Entities["BaseEntityWithRowVersion"])
                        .AddProperty("Name", typeof(string));
 
-                Entities.New("Address")
+                Entities.New("AddressWithNoParent")
                         .AddProperty("Name", typeof(string))
                         .AddProperty("LastModifiedOn", typeof(DateTime));
             }
@@ -50,9 +50,9 @@ namespace Blueprint41.UnitTest.Tests
             DatastoreModel model = new DataModelWithRowVersion();
             model.Execute(false);
 
-            Assert.IsTrue(model.Entities["BaseEntity"].Properties["LastModifiedOn"].IsRowVersion);
-            Assert.IsTrue(model.Entities["Person"].IsSubsclassOf(model.Entities["BaseEntity"]));
-            Assert.IsFalse(model.Entities["Address"].Properties["LastModifiedOn"].IsRowVersion);
+            Assert.IsTrue(model.Entities["BaseEntityWithRowVersion"].Properties["LastModifiedOn"].IsRowVersion);
+            Assert.IsTrue(model.Entities["PersonInheritedBase"].IsSubsclassOf(model.Entities["BaseEntityWithRowVersion"]));
+            Assert.IsFalse(model.Entities["AddressWithNoParent"].Properties["LastModifiedOn"].IsRowVersion);
         }
 
         #endregion
@@ -519,7 +519,7 @@ namespace Blueprint41.UnitTest.Tests
                 Entities.New("ContactStatus")
                     .HasStaticData(true)
                     .AddProperty("OrderBy", typeof(string))
-                    .AddProperty("Uid", typeof(string), false)
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                     .SetKey("Uid", true)
                     .AddProperty("Label", typeof(string), false, IndexType.Unique);
 

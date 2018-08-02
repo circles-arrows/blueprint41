@@ -109,7 +109,7 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\) WHERE node.Uid = ""2"" RETURN node)"));
                     Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\)-\[rel:DIRECTED_BY\]->\(out:Movie\) WHERE node\.Uid in \(\[""2""\]\) RETURN out, rel, node\.Uid as ParentKey)"));
                     Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\)-\[rel:ACTORS\]->\(out:Movie\) WHERE node\.Uid in \(\[""2""\]\) RETURN out, rel, node\.Uid as ParentKey)"));
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Movie\)<-\[rel:ACTORS\]-\(out:Person\) WHERE node\.Uid in \(\[""6"",""7""\]\) RETURN out, rel, node\.Uid as ParentKey)"));
+                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Movie\)<-\[rel:ACTORS\]-\(out:Person\) WHERE node\.Uid in \(\["")\d+("","")\d+(""\]\) RETURN out, rel, node\.Uid as ParentKey)"));
                 }
 
                 using (Transaction.Begin(OptimizeFor.PartialSubGraphAccess))

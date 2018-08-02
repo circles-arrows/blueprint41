@@ -63,13 +63,13 @@ namespace Blueprint41.UnitTest.Tests
             {
                 using (Transaction.Begin(true))
                 {
-                    // Let us try to create a person entity
-                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                    // Let us try to create an entity
+                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
                     Transaction.Commit();
 
                     // This statement should throw invalid operation exception
-                    IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                    IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                     IRecord record = result.FirstOrDefault();
                     INode loaded = record["n"].As<INode>();
 
@@ -86,10 +86,10 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (Transaction.Begin(true))
             {
-                // Let us try to create a person entity
-                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                // Let us try to create an entity
+                Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
                 INode loaded = record["n"].As<INode>();
 
@@ -105,10 +105,10 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (Transaction.Begin(true))
             {
-                // Let us try to create a person entity
-                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                // Let us try to create an entity
+                Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
                 INode loaded = record["n"].As<INode>();
 
@@ -120,7 +120,7 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
@@ -133,10 +133,10 @@ namespace Blueprint41.UnitTest.Tests
             {
                 using (Transaction.Begin(true))
                 {
-                    // Let us try to create a person entity
-                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                    // Let us try to create an entity
+                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                    IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                     IRecord record = result.FirstOrDefault();
                     INode loaded = record["n"].As<INode>();
 
@@ -154,10 +154,10 @@ namespace Blueprint41.UnitTest.Tests
             {
                 using (Transaction.Begin(true))
                 {
-                    // Let us try to create a person entity
-                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                    // Let us try to create an entity
+                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                    IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                     IRecord record = result.FirstOrDefault();
                     INode loaded = record["n"].As<INode>();
 
@@ -179,15 +179,15 @@ namespace Blueprint41.UnitTest.Tests
             {
                 using (Transaction.Begin())
                 {
-                    // Let us try to create a person entity
-                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                    // Let us try to create an entity
+                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                     throw new Exception();
                 }
             });
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
                 INode loaded = record["n"].As<INode>();
 
@@ -203,15 +203,15 @@ namespace Blueprint41.UnitTest.Tests
             {
                 using (Transaction.Begin(true))
                 {
-                    // Let us try to create a person entity
-                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                    // Let us try to create an entity
+                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                     throw new Exception();
                 }
             });
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
@@ -222,8 +222,8 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (Transaction.Begin(true))
             {
-                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
 
                 INode loaded = record["n"].As<INode>();
@@ -235,7 +235,7 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
@@ -246,8 +246,8 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (Transaction.Begin())
             {
-                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
 
                 INode loaded = record["n"].As<INode>();
@@ -259,7 +259,7 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:Person) Return n");
+                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
                 IRecord record = result.FirstOrDefault();
 
                 INode loaded = record["n"].As<INode>();

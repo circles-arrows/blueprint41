@@ -27,7 +27,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
 
-                Entities.New("BaseEntity")
+                Entities.New("BaseEntityGenerator")
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
@@ -35,7 +35,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
-                Entities.New("PersonEntity", Entities["BaseEntity"])
+                Entities.New("PersonEntity", Entities["BaseEntityGenerator"])
                        .AddProperty("Name", typeof(string));
             }
         }
@@ -48,7 +48,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
 
-                Entities.New("BaseEntity")
+                Entities.New("BaseEntityGenerator")
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
@@ -56,7 +56,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
-                Entities.New("PersonEntity", Entities["BaseEntity"])
+                Entities.New("PersonEntity", Entities["BaseEntityGenerator"])
                         .AddProperty("Name", typeof(string));
             }
 
@@ -66,7 +66,7 @@ namespace Blueprint41.UnitTest.Tests
                 Entities["PersonEntity"].Refactor.Deprecate();
             }
         }
-        
+
         [Test]
         public void EnsureGeneratorSettingsIsRequired()
         {
@@ -82,7 +82,7 @@ namespace Blueprint41.UnitTest.Tests
 
             FileExists(result.EntityResult, Path.Combine(projectFolder, settings.EntitiesFolder));
             FileExists(result.RelationshipResult, Path.Combine(projectFolder, settings.RelationshipsFolder));
-            FileExists(result.NodeResult, Path.Combine(projectFolder, settings.NodesFolder));            
+            FileExists(result.NodeResult, Path.Combine(projectFolder, settings.NodesFolder));
         }
 
         [Test]
@@ -97,7 +97,16 @@ namespace Blueprint41.UnitTest.Tests
             Assert.IsFalse(exist);
 
             string entityPath = Path.Combine(Path.Combine(projectFolder, settings.EntitiesFolder), "PersonEntity.cs");
-            Assert.IsFalse(File.Exists(entityPath));            
+            Assert.IsFalse(File.Exists(entityPath));
+
+            string basePath = Path.Combine(Path.Combine(projectFolder, settings.EntitiesFolder), "BaseEntityGenerator.cs");
+            string baseNodePath = Path.Combine(Path.Combine(projectFolder, settings.NodesFolder), "BaseEntityGeneratorNode.cs");
+
+            if (File.Exists(basePath))
+                File.Delete(basePath);
+
+            if (File.Exists(baseNodePath))
+                File.Delete(baseNodePath);
         }
 
         private GeneratorResult GenerateModel<T>(GeneratorSettings settings) where T : DatastoreModel<T>, new()
@@ -114,19 +123,14 @@ namespace Blueprint41.UnitTest.Tests
                 Directory.Delete(dirPath);
         }
 
-        private void DeleteGeneratedFiles(GeneratorSettings settings, string projectFolder)
-        {
-            DeleteDirAndFiles(Path.Combine(projectFolder, settings.EntitiesFolder));
-            DeleteDirAndFiles(Path.Combine(projectFolder, settings.NodesFolder));
-            DeleteDirAndFiles(Path.Combine(projectFolder, settings.RelationshipsFolder));
-        }
-
         private void FileExists(Dictionary<string, string> dictionary, string path)
         {
             foreach (KeyValuePair<string, string> item in dictionary)
             {
                 string entityPath = Path.Combine(path, item.Key + ".cs");
                 Assert.IsTrue(File.Exists(entityPath));
+
+                File.Delete(entityPath);
             }
         }
     }
