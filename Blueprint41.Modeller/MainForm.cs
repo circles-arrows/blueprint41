@@ -741,5 +741,21 @@ namespace Blueprint41.Modeller
             else if (expand == false && expandPropertiesWidthToolStripMenuItem.Checked)
                 splitContainer.SplitterDistance = _splitterDistance;
         }
+
+        private void TsbZoomOut_Click(object sender, EventArgs e)
+        {
+            graphEditor.Viewer.ZoomOutPressed();
+        }
+
+        private void TsbZoomIn_Click(object sender, EventArgs e)
+        {
+            graphEditor.Viewer.ZoomInPressed();
+        }
+
+        private void TsbPan_Click(object sender, EventArgs e)
+        {
+            graphEditor.Viewer.PanButtonPressed = !graphEditor.Viewer.PanButtonPressed;
+            tsbPan.Text = graphEditor.Viewer.PanButtonPressed ? "Pan On" : "Pan Off";
+        }
     }
 }

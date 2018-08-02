@@ -58,7 +58,7 @@
             this.Viewer.SaveInVectorFormatEnabled = true;
             this.Viewer.Size = new System.Drawing.Size(787, 617);
             this.Viewer.TabIndex = 0;
-            this.Viewer.ToolBarIsVisible = true;
+            this.Viewer.ToolBarIsVisible = false;
             this.Viewer.ZoomF = 1D;
             this.Viewer.ZoomFraction = 0.2D;
             this.Viewer.ZoomWindowThreshold = 0.05D;

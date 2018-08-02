@@ -125,7 +125,7 @@ namespace Blueprint41.Modeller
             Viewer.LayoutAlgorithmSettingsButtonVisible = false;
             NodeTypes = new List<Modeller.NodeTypeEntry>();
 
-            ToolBar.ButtonClick += new ToolBarButtonClickEventHandler(ToolBar_ButtonClick);
+            //ToolBar.ButtonClick += new ToolBarButtonClickEventHandler(ToolBar_ButtonClick);
             (Viewer as Microsoft.Msagl.Drawing.IViewer).MouseMove += Viewer_MouseMove;
             (Viewer as Microsoft.Msagl.Drawing.IViewer).MouseDown += Viewer_MouseDown;
             (Viewer as Microsoft.Msagl.Drawing.IViewer).MouseUp += Viewer_MouseUp;
