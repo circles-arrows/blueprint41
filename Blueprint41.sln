@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint41.Modeller.Labaro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.UnitTest", "Blueprint41.UnitTest\Blueprint41.UnitTest.csproj", "{31A46AC6-6D52-4E1E-AA6A-A28DE282844A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint41.Modeller.Document", "..\..\_Projects\Xirqlz\Blueprint41.Modeller.Document\Blueprint41.Modeller.Document.csproj", "{AF87CE1C-53D9-460D-B0D3-30C8152F78E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{31A46AC6-6D52-4E1E-AA6A-A28DE282844A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31A46AC6-6D52-4E1E-AA6A-A28DE282844A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31A46AC6-6D52-4E1E-AA6A-A28DE282844A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF87CE1C-53D9-460D-B0D3-30C8152F78E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF87CE1C-53D9-460D-B0D3-30C8152F78E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF87CE1C-53D9-460D-B0D3-30C8152F78E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF87CE1C-53D9-460D-B0D3-30C8152F78E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

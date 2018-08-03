@@ -72,6 +72,7 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expandPropertiesWidthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRight = new System.Windows.Forms.ToolStrip();
+            this.generateDocumentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -230,7 +231,8 @@
             this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.functionalIdToolStripMenuItem,
             this.generateCodeToolStripMenuItem1,
-            this.generateUpdateScriptToolStripMenuItem});
+            this.generateUpdateScriptToolStripMenuItem,
+            this.generateDocumentToolStripMenuItem});
             this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
             this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
@@ -516,6 +518,13 @@
             this.toolStripRight.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
             this.toolStripRight.Visible = false;
             // 
+            // generateDocumentToolStripMenuItem
+            // 
+            this.generateDocumentToolStripMenuItem.Name = "generateDocumentToolStripMenuItem";
+            this.generateDocumentToolStripMenuItem.Size = new System.Drawing.Size(221, 24);
+            this.generateDocumentToolStripMenuItem.Text = "Generate Document";
+            this.generateDocumentToolStripMenuItem.Click += new System.EventHandler(this.generateDocumentToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -590,6 +599,7 @@
         private System.Windows.Forms.ToolStripMenuItem zoomOutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zoomInToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem panToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generateDocumentToolStripMenuItem;
     }
 }
 

@@ -25,6 +25,26 @@ namespace Blueprint41.Modeller.Schemas
         public abstract void GenerateUpgradeScript(modeller model, string storagePath);
     }
 
+    public abstract class DatastoreModelDocumentGenerator
+    {
+        public static DatastoreModelDocumentGenerator Instance { get { return instance.Value; } }
+        private static Lazy<DatastoreModelDocumentGenerator> instance = new Lazy<DatastoreModelDocumentGenerator>(delegate ()
+        {
+            string dll = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Blueprint41.Modeller.Document.dll");
+            if (!File.Exists(dll))
+                return null;
+
+            string pdb = dll.Replace("dll", "pdb");
+            if (!File.Exists(pdb))
+                throw new FileNotFoundException($"File '{pdb}' not found.");
+
+            Type type = AssemblyLoader.GetType(dll, pdb, "DocumentGeneratorImpl");
+            return (DatastoreModelDocumentGenerator)Activator.CreateInstance(type);
+        }, true);
+
+        public abstract void ShowAndGenerateDocument(modeller model);
+    }
+
     public static class AssemblyLoader
     {
         public static Assembly LoadAssemblyAndPdbByBytes(string assemblyFile, string pdbFile)

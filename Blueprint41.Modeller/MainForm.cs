@@ -65,6 +65,9 @@ namespace Blueprint41.Modeller
             if (DatastoreModelComparer.Instance == null)
                 generateUpdateScriptToolStripMenuItem.Visible = false;
 
+            if (DatastoreModelDocumentGenerator.Instance == null)
+                generateDocumentToolStripMenuItem.Visible = false;
+
             Initialize();
         }
 
@@ -773,6 +776,17 @@ namespace Blueprint41.Modeller
         private void panToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TsbPan_Click(this, EventArgs.Empty);
+        }
+
+        private void generateDocumentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (DatastoreModelDocumentGenerator.Instance == null)
+            {
+                MessageBox.Show("The document generator is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                return;
+            }
+
+            DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(Model.Xml);
         }
     }
 }
