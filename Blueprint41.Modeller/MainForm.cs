@@ -63,7 +63,7 @@ namespace Blueprint41.Modeller
             InitializeComponent();
 
             if (DatastoreModelComparer.Instance == null)
-                toolStripDropDownButton3.Visible = false;
+                generateUpdateScriptToolStripMenuItem.Visible = false;
 
             Initialize();
         }
@@ -522,18 +522,7 @@ namespace Blueprint41.Modeller
             SelectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
             SelectedNode.Highlight();
         }
-
-        private void generateCodeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CodeGeneration codeGeneration = new CodeGeneration();
-            codeGeneration.Size = this.Size;
-            codeGeneration.T4Template = new DatastoreModel();
-            codeGeneration.T4Template.Name = GenerationEnum.DataStoreModel;
-            codeGeneration.Model = Model;
-            codeGeneration.T4Template.Modeller = Model;
-            codeGeneration.T4Template.FunctionalIds = new List<FunctionalId>();
-            codeGeneration.ShowDialog();
-        }
+        
 
         private void staticDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -654,34 +643,6 @@ namespace Blueprint41.Modeller
             RegistryHandler.LastOpenedFile = Path.GetFullPath(this.StoragePath);
         }
 
-        private void btnManageFunctionalIds_Click(object sender, EventArgs e)
-        {
-            ManageFunctionalId functionalIdForm = new ManageFunctionalId(Model);
-            functionalIdForm.ShowDialog(this);
-        }
-
-        private void toolStripDropDownButtonGenerateUpgradeScript_Click(object sender, EventArgs e)
-        {
-            if (DatastoreModelComparer.Instance == null)
-            {
-                MessageBox.Show("The comparer is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
-                return;
-            }
-            else
-            {
-                // Save it before generating update script
-                Model.CaptureCoordinates();
-                Model.Save(StoragePath);
-
-                DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml, StoragePath);
-
-                // Re initalize model after generating update script
-                // this will reload the xml
-                Initialize();
-                ReloadForm();
-            }
-        }
-
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             splitContainer.Panel2Collapsed = !propertiesToolStripMenuItem.Checked;
@@ -755,7 +716,63 @@ namespace Blueprint41.Modeller
         private void TsbPan_Click(object sender, EventArgs e)
         {
             graphEditor.Viewer.PanButtonPressed = !graphEditor.Viewer.PanButtonPressed;
-            tsbPan.Text = graphEditor.Viewer.PanButtonPressed ? "Pan On" : "Pan Off";
+            tsbPan.Checked = graphEditor.Viewer.PanButtonPressed;
+            panToolStripMenuItem.Checked = graphEditor.Viewer.PanButtonPressed;
+        }
+
+        private void functionalIdToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ManageFunctionalId functionalIdForm = new ManageFunctionalId(Model);
+            functionalIdForm.ShowDialog(this);
+        }
+
+        private void generateUpdateScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (DatastoreModelComparer.Instance == null)
+            {
+                MessageBox.Show("The comparer is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                return;
+            }
+            else
+            {
+                // Save it before generating update script
+                Model.CaptureCoordinates();
+                Model.Save(StoragePath);
+
+                DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml, StoragePath);
+
+                // Re initalize model after generating update script
+                // this will reload the xml
+                Initialize();
+                ReloadForm();
+            }
+        }
+
+        private void generateCodeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            CodeGeneration codeGeneration = new CodeGeneration();
+            codeGeneration.Size = this.Size;
+            codeGeneration.T4Template = new DatastoreModel();
+            codeGeneration.T4Template.Name = GenerationEnum.DataStoreModel;
+            codeGeneration.Model = Model;
+            codeGeneration.T4Template.Modeller = Model;
+            codeGeneration.T4Template.FunctionalIds = new List<FunctionalId>();
+            codeGeneration.ShowDialog();
+        }
+
+        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TsbZoomOut_Click(this, EventArgs.Empty);
+        }
+
+        private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TsbZoomIn_Click(this, EventArgs.Empty);
+        }
+
+        private void panToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TsbPan_Click(this, EventArgs.Empty);
         }
     }
 }
