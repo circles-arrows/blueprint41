@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model = Blueprint41.Modeller.Schemas.Modeller;
@@ -59,10 +60,11 @@ namespace Blueprint41.Modeller
 
         private void lbEntities_SelectedValueChanged(object sender, EventArgs e)
         {
-            txtResult.Clear();
+            richTextBox1.Clear();
             T4Template.Entities = lbEntities.SelectedItems.Cast<Entity>().ToList();
             T4Template.GenerationEnvironment = null;
-            txtResult.Text = T4Template.TransformText();
+            richTextBox1.Text = T4Template.TransformText();
+            DoStyle();
 
             if (T4Template.Name == GenerationEnum.ApiDefinition)
             {
@@ -70,7 +72,7 @@ namespace Blueprint41.Modeller
                 string file = Path.Combine(folder, string.Format("{0}Dto.xml", T4Template.CurrentEntity));
                 using (FileStream fs = File.Create(file))
                 {
-                    Byte[] info = new UTF8Encoding(true).GetBytes(txtResult.Text);
+                    Byte[] info = new UTF8Encoding(true).GetBytes(richTextBox1.Text);
                     fs.Write(info, 0, info.Length);
                 }
             }
@@ -84,27 +86,27 @@ namespace Blueprint41.Modeller
         private void btnExport_Click(object sender, EventArgs e)
         {
             StringBuilder sb = new StringBuilder();
-            //sb.Append("using System;");
-            //sb.Append("using System.Text;");
-            //sb.Append("using System.Linq;");
-            //sb.Append("using System.Collections.Generic;");
-            //sb.Append("using Blueprint41;");
-            //sb.Append("using Blueprint41.Core;");
-            //sb.Append("using Blueprint41.Neo4j.Persistence;");
-            //sb.Append("using Blueprint41.Dynamic;");
-            //
-            //sb.Append("namespace Datastore");
-            //sb.Append("    {");
-            //sb.Append("        public partial class GbmModelTestV2 : DatastoreModel<GbmModelTestV2>");
-            //sb.Append("        {");
-            //sb.Append("            protected override void SubscribeEventHandlers()");
-            //sb.Append("            {");
-            //sb.Append("                throw new NotImplementedException();");
-            //sb.Append("            }");
-            //sb.Append("");
-            //sb.Append("            protected override void InitializeEntities()");
-            //sb.Append("            {");
-            //sb.Append("                #region FunctionalID");
+            sb.AppendLine("using System;");
+            sb.AppendLine("using System.Text;");
+            sb.AppendLine("using System.Linq;");
+            sb.AppendLine("using System.Collections.Generic;");
+            sb.AppendLine("using Blueprint41;");
+            sb.AppendLine("using Blueprint41.Core;");
+            sb.AppendLine("using Blueprint41.Neo4j.Persistence;");
+            sb.AppendLine("using Blueprint41.Dynamic;");
+            sb.AppendLine("");
+            sb.AppendLine("namespace Datastore");
+            sb.AppendLine("{");
+            sb.AppendLine("    public partial class GbmModelTestV2 : DatastoreModel<GbmModelTestV2>");
+            sb.AppendLine("    {");
+            sb.AppendLine("        protected override void SubscribeEventHandlers()");
+            sb.AppendLine("        {");
+            sb.AppendLine("             throw new NotImplementedException();");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
+            sb.AppendLine("        protected override void InitializeEntities()");
+            sb.AppendLine("        {");
+            //sb.AppendLine("                #region FunctionalID");
 
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             if (fbd.ShowDialog() == DialogResult.OK)
@@ -123,9 +125,9 @@ namespace Blueprint41.Modeller
                     sb.AppendLine();
                 }
 
-                sb.Append("         }");
-                sb.Append("    }");
-                sb.Append("}");
+                sb.AppendLine("        }");
+                sb.AppendLine("    }");
+                sb.AppendLine("}");
         string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, this.SelectedPath, string.Format("{0}.cs", "DatastoreModel"));
                 using (FileStream fs = File.Create(path))
                 {
@@ -135,5 +137,72 @@ namespace Blueprint41.Modeller
                 MessageBox.Show("Entities Generated on " + SelectedPath, "Generated", MessageBoxButtons.OK);
             }
         }
+
+
+        private void DoStyle()
+        {
+            int originalIndex = 0;
+            int originalLength = richTextBox1.Text.Length;
+
+            richTextBox1.SelectionStart = originalIndex;
+            richTextBox1.SelectionLength = originalLength;
+            richTextBox1.SelectionColor = Color.Black;
+
+            // getting keywords/functions
+            string keywords = @"\b(public|private|partial|static|namespace|class|using|void|foreach|in|var|new|typeof|string|int|false|true|double|float|null|bool|decimal)\b";
+            MatchCollection keywordMatches = Regex.Matches(richTextBox1.Text, keywords);
+
+            foreach (Match m in keywordMatches)
+            {
+                richTextBox1.SelectionStart = m.Index;
+                richTextBox1.SelectionLength = m.Length;
+                richTextBox1.SelectionColor = Color.Blue;
+            }
+
+            // getting types/classes from the text 
+            string types = @"\b(Console|DateTime|NotSupportedException|Dictionary)\b";
+            MatchCollection typeMatches = Regex.Matches(richTextBox1.Text, types);
+
+            foreach (Match m in typeMatches)
+            {
+                richTextBox1.SelectionStart = m.Index;
+                richTextBox1.SelectionLength = m.Length;
+                richTextBox1.SelectionColor = Color.DarkCyan;
+            }
+
+            // getting comments (inline or multiline)
+            string comments = @"(\/\/.+?$|\/\*.+?\*\/)";
+            MatchCollection commentMatches = Regex.Matches(richTextBox1.Text, comments, RegexOptions.Multiline);
+
+            foreach (Match m in commentMatches)
+            {
+                richTextBox1.SelectionStart = m.Index;
+                richTextBox1.SelectionLength = m.Length;
+                richTextBox1.SelectionColor = Color.Green;
+            }
+
+            string groupedTypes = @"(\u0023region+.*|\u0023endregion)\b";
+            MatchCollection groupedMatches = Regex.Matches(richTextBox1.Text, groupedTypes);
+
+            foreach (Match m in groupedMatches)
+            {
+                richTextBox1.SelectionStart = m.Index;
+                richTextBox1.SelectionLength = m.Length;
+                richTextBox1.SelectionColor = Color.DarkGray;
+            }
+
+
+            // getting strings
+            string strings = "\".*?\"";
+            MatchCollection stringMatches = Regex.Matches(richTextBox1.Text, strings);
+
+            foreach (Match m in stringMatches)
+            {
+                richTextBox1.SelectionStart = m.Index;
+                richTextBox1.SelectionLength = m.Length;
+                richTextBox1.SelectionColor = Color.Brown;
+            }
+        }
+
     }
 }

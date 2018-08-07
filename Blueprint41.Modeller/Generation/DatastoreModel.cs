@@ -109,7 +109,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write(" =\r\n");
+            this.Write(" =");
             
             #line 28 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
@@ -119,18 +119,18 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write("\t\t\t\tEntities.New(\"");
+            this.Write("\r\n\t\t\t\tEntities.New(\"");
             
             #line 32 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
             
             #line default
             #line hidden
-            this.Write("\")\r\n");
-            
+            this.Write("\")");
+
             #line 33 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-        }
+                }
 		else
         {
 
@@ -145,7 +145,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write("\t\t\t\tEntities.New(\"");
+            this.Write("\r\n\t\t\t\tEntities.New(\"");
             
             #line 41 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
@@ -159,7 +159,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write(")\r\n");
+            this.Write(")");
             
             #line 42 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
@@ -169,14 +169,14 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write("\t\t\t\t.Summary(\"");
+            this.Write("\r\n\t\t\t\t.Summary(\"");
             
             #line 46 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Summary.Replace("\"", "\\\"")));
             
             #line default
             #line hidden
-            this.Write("\")\r\n");
+            this.Write("\")");
             
             #line 47 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
@@ -188,7 +188,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write(".Abstract(true)\r\n");
+            this.Write("\r\n\t\t\t\t.Abstract(true)");
             
             #line 54 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
@@ -199,7 +199,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write("\t\t\t\t.Virtual(true)\r\n");
+            this.Write("\r\n\t\t\t\t.Virtual(true)");
             
             #line 60 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
@@ -219,7 +219,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write("\t\t\t\t.AddProperty(\"");
+            this.Write("\r\n\t\t\t\t.AddProperty(\"");
             
             #line 69 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
@@ -247,7 +247,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write(")\r\n");
+            this.Write(")");
             
             #line 70 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
@@ -258,7 +258,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write("\t\t\t\t.AddProperty(\"");
+            this.Write("\r\n\t\t\t\t.AddProperty(\"");
             
             #line 75 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
@@ -279,7 +279,7 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write(")\r\n");
+            this.Write(")");
             
             #line 76 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
@@ -290,38 +290,37 @@ functionalId.Name.ToLower();
             
             #line default
             #line hidden
-            this.Write("\t\t\t\t.SetKey(\"");
+            this.Write("\r\n\t\t\t\t.SetKey(\"");
             
             #line 81 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
             
             #line default
             #line hidden
-            this.Write("\", true)\r\n");
-            
+            this.Write("\", true)");
+
             #line 82 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-			}
+            }
         }
 
             
             #line default
             #line hidden
-            this.Write("       \r\n");
+           
+            // this.Write("       \r\n");
             
             #line 86 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-		Write(string.Join($"{Environment.NewLine}", entity.Primitive.Where(x => x.IsFullTextProperty == true).Select(x =>".SetFullTextProperty(\""+ x.Name+"\")").ToList()));
-
+		    Write(string.Join($"{Environment.NewLine}", entity.Primitive.Where(x => x.IsFullTextProperty == true).Select(x =>".SetFullTextProperty(\""+ x.Name+"\")").ToList()));
  
             
             #line default
             #line hidden
-            this.Write("\r\n");
             
             #line 91 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-Write(";");
+            Write(";\r\n");
 
             
             #line default
@@ -562,7 +561,9 @@ if(hasRelationshipTargetName){Write(";\r\n");}
 		else
         {
 		}
-     }
+
+                    this.Write("\r\n");
+                }
 
             
             #line default
@@ -591,7 +592,7 @@ if(hasRelationshipTargetName){Write(";\r\n");}
             
             #line default
             #line hidden
-            this.Write(" {get; private set;}\r\n\r\n\t\t");
+            this.Write(" { get; private set; }\r\n\r\n\t\t");
             
             #line 164 "E:\_tfs\BS.GBM\trunk (core 2.0)\code\Blueprint41.Modeller\Generation\DatastoreModel.tt"
  if (entity.GetRelationships(RelationshipDirection.In, false).Count() > 0)

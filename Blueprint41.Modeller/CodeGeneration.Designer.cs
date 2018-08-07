@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.lbEntities = new System.Windows.Forms.ListBox();
-            this.txtResult = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.multiPurposeButton = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -49,16 +49,6 @@
             this.lbEntities.TabIndex = 0;
             this.lbEntities.SelectedValueChanged += new System.EventHandler(this.lbEntities_SelectedValueChanged);
             // 
-            // txtResult
-            // 
-            this.txtResult.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtResult.Location = new System.Drawing.Point(0, 0);
-            this.txtResult.Multiline = true;
-            this.txtResult.Name = "txtResult";
-            this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(514, 543);
-            this.txtResult.TabIndex = 1;
-            // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -73,7 +63,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.txtResult);
+            this.splitContainer1.Panel2.Controls.Add(this.richTextBox1);
             this.splitContainer1.Size = new System.Drawing.Size(776, 543);
             this.splitContainer1.SplitterDistance = 258;
             this.splitContainer1.TabIndex = 2;
@@ -89,6 +79,15 @@
             this.multiPurposeButton.TabIndex = 3;
             this.multiPurposeButton.UseVisualStyleBackColor = false;
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(514, 543);
+            this.richTextBox1.TabIndex = 2;
+            this.richTextBox1.Text = "";
+            // 
             // CodeGeneration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -103,7 +102,6 @@
             this.Load += new System.EventHandler(this.CodeGeneration_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -113,8 +111,8 @@
         #endregion
 
         private System.Windows.Forms.ListBox lbEntities;
-        private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button multiPurposeButton;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
