@@ -148,7 +148,14 @@ namespace Blueprint41.Query
         {
             return new DateTimeResult(this, "coalesce({base}, {0})", new object[] { value });
         }
-
+        public DateTimeResult Min()
+        {
+            return new DateTimeResult(this, "min({base})");
+        }
+        public DateTimeResult Max()
+        {
+            return new DateTimeResult(this, "max({base})");
+        }
         public DateTimeResult ConvertMinToNull()
         {
             return new DateTimeResult(this, string.Format("CASE WHEN {{base}} = {0} THEN NULL ELSE {{base}} END", MinDateTime.Value), new object[0]);
