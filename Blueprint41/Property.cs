@@ -248,6 +248,9 @@ namespace Blueprint41
 
         void IRefactorProperty.Rename(string newName)
         {
+            if (string.IsNullOrEmpty(newName))
+                throw new ArgumentNullException(nameof(newName));
+
             Parent.Parent.EnsureSchemaMigration();
 
             if (PropertyType == PropertyType.Attribute)

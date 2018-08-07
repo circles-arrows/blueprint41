@@ -147,10 +147,10 @@ namespace Blueprint41
  
         void IRefactorRelationship.Rename(string newName, string alias)
         {
-            Parent.EnsureSchemaMigration();
-
             if (string.IsNullOrEmpty(newName))
-                throw new ArgumentNullException("neo4JRelationshipType");
+                throw new ArgumentNullException(nameof(newName));
+
+            Parent.EnsureSchemaMigration();
 
             if (alias == null)
                 alias = newName;

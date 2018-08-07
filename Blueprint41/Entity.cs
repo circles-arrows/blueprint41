@@ -376,6 +376,9 @@ namespace Blueprint41
         /// <param name="newName"></param>
         void IRefactorEntity.Rename(string newName)
         {
+            if (string.IsNullOrEmpty(newName))
+                throw new ArgumentNullException(nameof(newName));
+
             Parent.EnsureSchemaMigration();
 
             string oldLabelName = Label.Name;
