@@ -332,11 +332,21 @@ namespace Blueprint41.Dynamic
 
         internal bool ShouldExecute = false;
 
+        public void SetChanged()
+        {
+            if (PersistenceState == PersistenceState.New || PersistenceState == PersistenceState.NewAndChanged)
+                PersistenceState = PersistenceState.NewAndChanged;
+            else if (PersistenceState == PersistenceState.Loaded || PersistenceState == PersistenceState.LoadedAndChanged)
+                PersistenceState = PersistenceState.LoadedAndChanged;
+            else
+                throw new InvalidOperationException(string.Format("To be able to call this method, the {0} PersistenceState must either be 'New' or 'Loaded'", GetEntity().Name));
+        }
         void OGM.Save()
         {
             switch (PersistenceState)
             {
                 case PersistenceState.New:
+                    throw new NotSupportedException(string.Format("You created an instance of {0}, but inside this transaction but did not set any properties. If you did this intentionally, you can call the method 'SetChanged' on the instance before committing the transaction.", GetEntity().Name));
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                     break;
@@ -360,9 +370,11 @@ namespace Blueprint41.Dynamic
                     return;
                 case PersistenceState.OutOfScope:
                 case PersistenceState.Error:
-                    throw new InvalidOperationException(string.Format("The object with key '{0}' cannot be saved because it's state was {1}.", GetKey() ?? "<null>", PersistenceState.ToString()));
+                    throw new InvalidOperationException(string.Format("The {0} with key '{1}' cannot be saved because it's state was {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
                 default:
-                    throw new NotImplementedException(string.Format("The object with key '{0}' has an invalid/unknown state {1}.", GetKey() ?? "<null>", PersistenceState.ToString()));
+                    throw new NotImplementedException(string.Format("The {0} with key '{1}' has an invalid/unknown state {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
             }
         }
 

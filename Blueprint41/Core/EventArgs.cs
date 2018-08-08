@@ -18,6 +18,10 @@ namespace Blueprint41.Core
         protected virtual OGMImpl SenderInternalBridge { get; set; }
         public OGM Sender { get { return SenderInternalBridge; } }
 
+        public bool IsInsert { get { return Sender.PersistenceState == PersistenceState.NewAndChanged; } }
+        public bool IsUpdate { get { return Sender.PersistenceState == PersistenceState.LoadedAndChanged; } }
+        public bool IsDelete { get { return Sender.PersistenceState == PersistenceState.Delete || Sender.PersistenceState == PersistenceState.ForceDelete; } }
+
         public Entity Entity { get; protected set; }
 
         public Transaction Transaction { get; protected set; }
