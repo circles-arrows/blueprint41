@@ -106,7 +106,6 @@ namespace Blueprint41.Modeller
             sb.AppendLine("");
             sb.AppendLine("        protected override void InitializeEntities()");
             sb.AppendLine("        {");
-            //sb.AppendLine("                #region FunctionalID");
 
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             if (fbd.ShowDialog() == DialogResult.OK)
@@ -115,7 +114,7 @@ namespace Blueprint41.Modeller
                 foreach (var entity in Entities)
                 {
                     T4Template = new DatastoreModel();
-                    T4Template.FunctionalIds = new List<FunctionalId>();
+                    T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.Where(fid=> fid.Guid == entity.FunctionalId).ToList();
                     T4Template.Modeller = Model;
                     T4Template.Entities = new List<Entity>();
                     T4Template.Entities.Add(entity);
@@ -128,7 +127,8 @@ namespace Blueprint41.Modeller
                 sb.AppendLine("        }");
                 sb.AppendLine("    }");
                 sb.AppendLine("}");
-        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, this.SelectedPath, string.Format("{0}.cs", "DatastoreModel"));
+
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, this.SelectedPath, string.Format("{0}.cs", "DatastoreModel"));
                 using (FileStream fs = File.Create(path))
                 {
                     Byte[] info = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -137,8 +137,7 @@ namespace Blueprint41.Modeller
                 MessageBox.Show("Entities Generated on " + SelectedPath, "Generated", MessageBoxButtons.OK);
             }
         }
-
-
+        
         private void DoStyle()
         {
             int originalIndex = 0;
@@ -160,7 +159,7 @@ namespace Blueprint41.Modeller
             }
 
             // getting types/classes from the text 
-            string types = @"\b(Console|DateTime|NotSupportedException|Dictionary)\b";
+            string types = @"\b(Console|DateTime|NotSupportedException|Dictionary|Entity|FunctionalId|Relationship)\b";
             MatchCollection typeMatches = Regex.Matches(richTextBox1.Text, types);
 
             foreach (Match m in typeMatches)
@@ -190,8 +189,7 @@ namespace Blueprint41.Modeller
                 richTextBox1.SelectionLength = m.Length;
                 richTextBox1.SelectionColor = Color.DarkGray;
             }
-
-
+            
             // getting strings
             string strings = "\".*?\"";
             MatchCollection stringMatches = Regex.Matches(richTextBox1.Text, strings);
@@ -203,6 +201,5 @@ namespace Blueprint41.Modeller
                 richTextBox1.SelectionColor = Color.Brown;
             }
         }
-
     }
 }

@@ -9,8 +9,7 @@
 <# foreach (var functionalId in FunctionalIds)
 {
 #>
-		FunctionalId <#=functionalId.Name.ToLower()#>Id = FunctionalIds.New("<#=functionalId.Name #>", "<#=functionalId.Value #>", IdFormat.<#=functionalId.Type #>, 0);
-
+			FunctionalId <#=functionalId.Name.ToLower()#>Id = FunctionalIds.New("<#=functionalId.Name #>", "<#=functionalId.Value #>", IdFormat.<#=functionalId.Type #>, 0);
 <# 
 }
 #>
@@ -23,9 +22,17 @@
 <#
 		if(string.IsNullOrEmpty(entity.Inherits))
         {
+			if (string.IsNullOrEmpty(entity.FunctionalId))
+			{
 #>
-				Entities.New("<#=entity.Name #>")
-<#
+				Entities.New("<#=entity.Name #>")<#
+			}
+			else
+			{
+				string entityFunctionalId = FunctionalIds.Where(x => x.Guid == entity.FunctionalId).First().Name.ToLower();
+#>
+				Entities.New("<#=entity.Name #>", <#= string.Concat(entityFunctionalId, "Id") #>)<#
+			}
         }
 		else
         {
@@ -33,19 +40,16 @@
 <#
 			string name = Modeller.Model.Entities.Entity.Where(x => x.Guid == entity.Inherits).First().Name;
 			
-
 			if(string.IsNullOrEmpty(entity.FunctionalId))
 			{
 #>
-				Entities.New("<#=entity.Name #>", <#= name #>)
-<#
+				Entities.New("<#=entity.Name #>", <#= name #>)<#
 			}
 			else
             {
 				string entityFunctionalId = FunctionalIds.Where(x => x.Guid == entity.FunctionalId).First().Name.ToLower();
 #>
-				Entities.New("<#=entity.Name #>", <#= string.Concat(entityFunctionalId, "Id") #>, <#= name #>)
-<#
+				Entities.New("<#=entity.Name #>", <#= string.Concat(entityFunctionalId, "Id") #>, <#= name #>)<#				
 			}
 
 			if(!string.IsNullOrEmpty(entity.Summary))
@@ -59,14 +63,14 @@
 		if(entity.Abstract)
         {
 #>
-.Abstract(true)
+
+				.Abstract(true)
 <#
         }
 		if(entity.Virtual)
         {
 #>
-				.Virtual(true)
-<#
+				.Virtual(true)<#
         }
 #>
 <#
@@ -75,30 +79,25 @@
 			if(!string.IsNullOrEmpty(primitive.Index) && !primitive.Index.Equals("None"))
             {
 #>
-				.AddProperty("<#=primitive.Name#>", typeof(<#=primitive.Type#>), <#= !primitive.Nullable?"false,":"" #> IndexType.<#=primitive.Index#>)
-<#
+
+				.AddProperty("<#=primitive.Name#>", typeof(<#=primitive.Type#>), <#= !primitive.Nullable?"false,":"" #> IndexType.<#=primitive.Index#>)<#
             }
 			else
             {
 #>
-				.AddProperty("<#=primitive.Name#>", typeof(<#=primitive.Type#>) <#= !primitive.Nullable?",false":"" #>)
-<#
+
+				.AddProperty("<#=primitive.Name#>", typeof(<#=primitive.Type#>) <#= !primitive.Nullable?",false":"" #>)<#
             }
 			if(primitive.IsKey)
             {
 #>
-				.SetKey("<#=primitive.Name#>", true)
-<#
+
+				.SetKey("<#=primitive.Name#>", true)<#
 			}
         }
-#>       
-<#
+
 		Write(string.Join($"{Environment.NewLine}", entity.Primitive.Where(x => x.IsFullTextProperty == true).Select(x =>".SetFullTextProperty(\""+ x.Name+"\")").ToList()));
-
- #>
-
-<#
-Write(";");
+		Write(";");
 #>
 			
 <#
@@ -107,6 +106,7 @@ Write(";");
 		bool hasRelationshipSourceName = string.IsNullOrEmpty(relationship.Source.Name);
 		bool hasRelationshipTargetName = string.IsNullOrEmpty(relationship.Target.Name);
 #>
+
 			<#=relationship.Name#> = 
 <#
 
@@ -161,6 +161,7 @@ Write(";");
 		}
      }
 #>
+
 <#
     }
 #>
@@ -168,7 +169,7 @@ Write(";");
 	foreach (var entity in Entities.OrderBy(x => x.Name))
     {
 #>
-			public Entity <#= entity.Name#> {get; private set;}
+			public Entity <#= entity.Name#> { get; private set; }
 
 		<# if (entity.GetRelationships(RelationshipDirection.In, false).Count() > 0)
      {
