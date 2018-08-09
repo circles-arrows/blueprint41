@@ -573,7 +573,72 @@ namespace Blueprint41.Dynamic
 
         void OGM.Delete(bool force)
         {
-            throw new NotImplementedException();
+            if (force)
+                ForceDelete();
+            else
+                Delete();
+        }
+
+        public void ForceDelete()
+        {
+            switch (PersistenceState)
+            {
+                case PersistenceState.New:
+                case PersistenceState.NewAndChanged:
+                    PersistenceState = PersistenceState.Persisted;
+                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    break;
+                case PersistenceState.HasUid:
+                case PersistenceState.Loaded:
+                case PersistenceState.LoadedAndChanged:
+                    PersistenceState = PersistenceState.ForceDelete;
+                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    break;
+                case PersistenceState.Delete:
+                case PersistenceState.ForceDelete:
+                    break;
+                case PersistenceState.OutOfScope:
+                    throw new InvalidOperationException("The transaction for this object has already ended.");
+                case PersistenceState.Persisted:
+                    throw new InvalidOperationException("This object was already flushed to the data store.");
+                case PersistenceState.Error:
+                    throw new InvalidOperationException("The object suffered an unexpected failure.");
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                default:
+                    throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
+            }
+        }
+
+        public void Delete()
+        {
+            switch (PersistenceState)
+            {
+                case PersistenceState.New:
+                case PersistenceState.NewAndChanged:
+                    PersistenceState = PersistenceState.Persisted;
+                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    break;
+                case PersistenceState.HasUid:
+                case PersistenceState.Loaded:
+                case PersistenceState.LoadedAndChanged:
+                    PersistenceState = PersistenceState.Delete;
+                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    break;
+                case PersistenceState.Delete:
+                case PersistenceState.ForceDelete:
+                    break;
+                case PersistenceState.OutOfScope:
+                    throw new InvalidOperationException("The transaction for this object has already ended.");
+                case PersistenceState.Persisted:
+                    throw new InvalidOperationException("This object was already flushed to the data store.");
+                case PersistenceState.Error:
+                    throw new InvalidOperationException("The object suffered an unexpected failure.");
+                case PersistenceState.DoesntExist:
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                default:
+                    throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
+            }
         }
 
         public Entity GetEntity()
@@ -652,7 +717,8 @@ namespace Blueprint41.Dynamic
         }
         public static void Delete(Entity entity, object key)
         {
-            throw new NotImplementedException();
+            DynamicEntity item = Load(entity, key);
+            item.Delete();
         }
     }
 }

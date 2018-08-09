@@ -129,7 +129,7 @@ namespace Blueprint41
 
             foreach (var entitySet in registeredEntities.Values)
             {
-                foreach (OGM entity in entitySet)
+                foreach (OGM entity in entitySet.ToList())
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;

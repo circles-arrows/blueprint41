@@ -131,7 +131,7 @@ namespace Blueprint41
             {
                 if (upgradeDatastore && PersistenceProvider.IsNeo4j)
                 {
-                    using (Transaction.Begin())
+                    using (Transaction.Begin(true))
                     {
                         if (!Parser.HasScript(script))
                         {
@@ -161,7 +161,7 @@ namespace Blueprint41
 
             if (upgradeDatastore)
             {
-                using (Transaction.Begin())
+                using (Transaction.Begin(true))
                 {
                     if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds())
                     {
