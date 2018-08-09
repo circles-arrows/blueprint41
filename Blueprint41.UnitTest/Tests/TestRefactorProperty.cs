@@ -54,10 +54,8 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Entities["Person"].Properties["Name"].Refactor.Rename("FullName");
 
-                Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(null));
-
-                // TODO: Failed: Should not support empty string
-                Assert.Throws<Exception>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(""));
+                Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(null));                
+                Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(""));
             }
         }
 
