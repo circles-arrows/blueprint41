@@ -284,7 +284,7 @@ namespace Blueprint41
                 registeredEntities.Add(entityName, values);
             }
 
-            if (values.Contains(item))
+            if (values.Any(v => v.PersistenceState != PersistenceState.DoesntExist && v == item))
                 throw new InvalidOperationException("You cannot register an already loaded object.");
 
             values.Add(item);
@@ -306,7 +306,7 @@ namespace Blueprint41
             if (values.ContainsKey(key))
             {
                 OGM similarItem = values[key];
-                if (similarItem.PersistenceState != PersistenceState.HasUid)
+                if (similarItem.PersistenceState != PersistenceState.HasUid && similarItem.PersistenceState != PersistenceState.DoesntExist)
                     throw new InvalidOperationException("You cannot register an already loaded object.");
                 else
                     values[key] = item;
