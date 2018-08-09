@@ -502,7 +502,6 @@ namespace Blueprint41.UnitTest.Tests
                 model.Execute(false);
             });
 
-            // Todo: Exception message should be more specific rather than a null reference error
             Assert.That(exception.Message, Contains.Substring("No key exists of entity 'ContactStatus'"));
         }
 
@@ -699,9 +698,9 @@ namespace Blueprint41.UnitTest.Tests
                 Entities["NewAccountType"].AddProperty("Indexed", typeof(string), IndexType.Indexed);
 
                 Assert.Throws<ArgumentOutOfRangeException>(() => { Entity oldType = Entities["AccountType"]; });
-
-                // TODO: Bug, was able to rename entity to an empty string
-                Assert.Throws<Exception>(() => Entities["NewAccountType"].Refactor.Rename(""));
+                                
+                Assert.Throws<ArgumentNullException>(() => Entities["NewAccountType"].Refactor.Rename(""));
+                Assert.Throws<ArgumentNullException>(() => Entities["NewAccountType"].Refactor.Rename(null));
             }
         }
 
@@ -924,7 +923,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
 
-                Entities.New("Account")                   
+                Entities.New("Account")
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                    .SetKey("Uid", true)
                    .AddProperty("Name", typeof(string), false, IndexType.Unique)
@@ -961,7 +960,7 @@ namespace Blueprint41.UnitTest.Tests
                 DatastoreModel model = new DatastoreEntityCopyValue();
                 model.Execute(true);
                 Assert.IsTrue(Regex.IsMatch(output.GetOuput(), @"(MATCH \(node:Account\))[^a-zA-Z,0-9]*(WHERE NOT EXISTS\(node\.CopyName\) OR node.Name <> node.CopyName)[^a-zA-Z,0-9]*(WITH node limit 10000)[^a-zA-Z,0-9]*(SET node\.CopyName = node\.Name)"));
-            }                
+            }
         }
 
         #endregion
