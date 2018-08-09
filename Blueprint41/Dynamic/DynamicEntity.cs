@@ -440,8 +440,10 @@ namespace Blueprint41.Dynamic
 
         object OGM.GetKey()
         {
-            object key;
-            DynamicEntityValues.TryGetValue(DynamicEntityType.Key.Name, out key);
+            if ((object)DynamicEntityType.Key == null)
+                throw new MissingMemberException($"No key exists of entity '{DynamicEntityType.Name}'");
+
+            DynamicEntityValues.TryGetValue(DynamicEntityType.Key.Name, out object key);
 
             if (Transaction == null)
             {
