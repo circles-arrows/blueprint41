@@ -46,6 +46,9 @@
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>bp41.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Msagl, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -230,6 +233,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bp41.ico" />
     <Content Include="Generation\ApiDefinition.tt">
       <Generator>TextTemplatingFilePreProcessor</Generator>
       <LastGenOutput>ApiDefinition.cs</LastGenOutput>
