@@ -30,8 +30,9 @@
         {
             this.lbEntities = new System.Windows.Forms.ListBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.multiPurposeButton = new System.Windows.Forms.Button();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.cbSelectAll = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -40,12 +41,14 @@
             // 
             // lbEntities
             // 
-            this.lbEntities.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbEntities.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbEntities.FormattingEnabled = true;
             this.lbEntities.Location = new System.Drawing.Point(0, 0);
             this.lbEntities.Name = "lbEntities";
             this.lbEntities.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbEntities.Size = new System.Drawing.Size(258, 543);
+            this.lbEntities.Size = new System.Drawing.Size(273, 784);
             this.lbEntities.TabIndex = 0;
             this.lbEntities.SelectedValueChanged += new System.EventHandler(this.lbEntities_SelectedValueChanged);
             // 
@@ -63,36 +66,52 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.richTextBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(776, 543);
-            this.splitContainer1.SplitterDistance = 258;
+            this.splitContainer1.Panel2.Controls.Add(this.richTextBox);
+            this.splitContainer1.Size = new System.Drawing.Size(1068, 788);
+            this.splitContainer1.SplitterDistance = 276;
             this.splitContainer1.TabIndex = 2;
+            // 
+            // richTextBox
+            // 
+            this.richTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox.Name = "richTextBox";
+            this.richTextBox.Size = new System.Drawing.Size(785, 785);
+            this.richTextBox.TabIndex = 2;
+            this.richTextBox.Text = "";
             // 
             // multiPurposeButton
             // 
             this.multiPurposeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.multiPurposeButton.BackColor = System.Drawing.Color.OrangeRed;
             this.multiPurposeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.multiPurposeButton.Location = new System.Drawing.Point(668, 561);
+            this.multiPurposeButton.Location = new System.Drawing.Point(960, 806);
             this.multiPurposeButton.Name = "multiPurposeButton";
             this.multiPurposeButton.Size = new System.Drawing.Size(120, 23);
             this.multiPurposeButton.TabIndex = 3;
             this.multiPurposeButton.UseVisualStyleBackColor = false;
             // 
-            // richTextBox1
+            // cbSelectAll
             // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(514, 543);
-            this.richTextBox1.TabIndex = 2;
-            this.richTextBox1.Text = "";
+            this.cbSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbSelectAll.AutoSize = true;
+            this.cbSelectAll.ForeColor = System.Drawing.Color.Black;
+            this.cbSelectAll.Location = new System.Drawing.Point(13, 806);
+            this.cbSelectAll.Name = "cbSelectAll";
+            this.cbSelectAll.Size = new System.Drawing.Size(70, 17);
+            this.cbSelectAll.TabIndex = 4;
+            this.cbSelectAll.Text = "Select All";
+            this.cbSelectAll.UseVisualStyleBackColor = true;
+            this.cbSelectAll.CheckedChanged += new System.EventHandler(this.cbSelectAll_CheckedChanged);
             // 
             // CodeGeneration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 591);
+            this.ClientSize = new System.Drawing.Size(1092, 836);
+            this.Controls.Add(this.cbSelectAll);
             this.Controls.Add(this.multiPurposeButton);
             this.Controls.Add(this.splitContainer1);
             this.ForeColor = System.Drawing.Color.White;
@@ -105,6 +124,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -113,6 +133,7 @@
         private System.Windows.Forms.ListBox lbEntities;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button multiPurposeButton;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox richTextBox;
+        private System.Windows.Forms.CheckBox cbSelectAll;
     }
 }
