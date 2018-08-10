@@ -244,7 +244,6 @@ namespace Blueprint41.UnitTest.Tests
         #endregion        
 
         #region DataModelProperties
-
         private class DataModelEntityWithSameProperties : DatastoreModel<DataModelEntityWithSameProperties>
         {
             protected override void SubscribeEventHandlers()
@@ -296,16 +295,21 @@ namespace Blueprint41.UnitTest.Tests
             public void Initialize()
             {
                 Entities.New("BaseEntity")
-                       .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                       .AddProperty("Name", typeof(string))
-                       .Abstract(true)
-                       .Virtual(true)
-                       .SetKey("Uid", true)
-                       .AddProperty("LastModifiedOn", typeof(DateTime))
-                       .SetRowVersionField("LastModifiedOn");
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .AddProperty("Name", typeof(string))
+                    .Abstract(true)
+                    .Virtual(true)
+                    .SetKey("Uid", true)
+                    .AddProperty("LastModifiedOn", typeof(DateTime))
+                    .SetRowVersionField("LastModifiedOn");
 
                 Entities.New("Person")
-                       .AddProperty("Name", typeof(string));
+                    .AddProperty("Name", typeof(string));
+
+                Entities.New("Continent", Entities["BaseEntity"])
+                    .AddProperty("Location", typeof(string));
+                
+                Assert.AreEqual(Entities["Continent"].Inherits, Entities["BaseEntity"]);
             }
 
             [Version(0, 0, 1)]
@@ -313,6 +317,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 // TODO: Bug, Changing inheritance with same properties does not trigger an exception
                 Entities["Person"].Refactor.ChangeInheritance(Entities["BaseEntity"]);
+                Assert.AreEqual(Entities["Person"].Inherits, Entities["BaseEntity"]);
             }
         }
 
@@ -340,11 +345,9 @@ namespace Blueprint41.UnitTest.Tests
                 DatastoreModel model = new DataModelEntityWithSamePropertiesFromChangedInheritance();
                 model.Execute(false);
             });
-
-            // TODO: Bug, Changing inheritance with same properties does not trigger an exception
+            
             Assert.That(exception.Message, Contains.Substring("Property with the name Name already exists on base class Entity BaseEntity"));
         }
-
         #endregion
 
         #region IRefactorEntity CreateNode
@@ -698,7 +701,7 @@ namespace Blueprint41.UnitTest.Tests
                 Entities["NewAccountType"].AddProperty("Indexed", typeof(string), IndexType.Indexed);
 
                 Assert.Throws<ArgumentOutOfRangeException>(() => { Entity oldType = Entities["AccountType"]; });
-                                
+
                 Assert.Throws<ArgumentNullException>(() => Entities["NewAccountType"].Refactor.Rename(""));
                 Assert.Throws<ArgumentNullException>(() => Entities["NewAccountType"].Refactor.Rename(null));
             }
@@ -753,10 +756,6 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void IRefactorEntityApplyConstraints()
         {
-            // TODO: This does not call ApplyConstraints after adding properties. Had to call
-            // Entities["AccountType"].Refactor.ApplyConstraints() to make it work.
-            // Should this be automatic set by the updatescript after adding properties?
-
             using (ConsoleOutput output = new ConsoleOutput())
             {
                 DatastoreEntityRefactorConstraints model = new DatastoreEntityRefactorConstraints();

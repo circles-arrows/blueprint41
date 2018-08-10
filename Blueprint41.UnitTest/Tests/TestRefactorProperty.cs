@@ -54,6 +54,9 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Entities["Person"].Properties["Name"].Refactor.Rename("FullName");
 
+                //TODO: This should fail when there is an existing inherited property
+                Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename("LastModifiedOn"));
+
                 Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(null));                
                 Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(""));
             }
