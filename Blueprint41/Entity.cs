@@ -154,20 +154,7 @@ namespace Blueprint41
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 throw new ArgumentException(string.Format("The type argument does not support the 'Nullable<{0}>' type. All types are considered nullable by default, but you can also set the 'nullable' argument explicitly.", type.GenericTypeArguments[0].Name));
 
-            Entity item = this;
-            while(item != null && item.Name != "Neo4jBase")
-            {
-                if (item.Properties.Contains(name))
-                {
-                    if(item == this)
-                        throw new NotSupportedException(string.Format("Property with the name {0} already exists on Entity {1}", name, item.Name));
-                    else
-                        throw new NotSupportedException(string.Format("Property with the name {0} already exists on base class Entity {1}", name, item.Name));
-                }
-                    
-
-                item = item.Inherits;
-            }
+            VerifyFromInheritedProperties(name);
 
             Property value = new Property(this, PropertyType.Attribute, name, type, nullable, indexType);
             Properties.Add(name, value);
@@ -355,6 +342,34 @@ namespace Blueprint41
                 Description = summary;
             else
                 Description = summary + "\r\nExample: " + example;
+        }
+
+        private void VerifyFromInheritedProperties(string propertyName, bool excludeThis = false)
+        {
+            Entity item = this;
+            while (item != null && item.Name != "Neo4jBase")
+            {
+                if (excludeThis && item == this)
+                {
+                    item = item.Inherits;
+                    continue;
+                }
+
+                if (item.Properties.Contains(propertyName))
+                {
+                    if (item == this)
+                        throw new NotSupportedException(string.Format("Property with the name {0} already exists on Entity {1}", propertyName, item.Name));
+                    else
+                        throw new NotSupportedException(string.Format("Property with the name {0} already exists on base class Entity {1}", propertyName, item.Name));
+                }
+                item = item.Inherits;
+            }
+        }
+
+        private void CheckProperties()
+        {
+            foreach (Property prop in Properties)
+                VerifyFromInheritedProperties(prop.Name, true);
         }
 
         public Type RuntimeReturnType { get; private set; }
@@ -621,6 +636,7 @@ namespace Blueprint41
             }
 
             Inherits = newParentEntity;
+            CheckProperties();
         }
 
         void IRefactorEntity.ResetFunctionalId()
