@@ -466,7 +466,7 @@
         "Entry"
         {
         "MsmKey" = "8:_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
-        "OwnerKey" = "8:_19577646F16B4465AA90FA1E121C7B01"
+        "OwnerKey" = "8:_4CE2997C5067DD325E079E6DCB09CD98"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -484,7 +484,7 @@
         "Entry"
         {
         "MsmKey" = "8:_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
-        "OwnerKey" = "8:_4CE2997C5067DD325E079E6DCB09CD98"
+        "OwnerKey" = "8:_19577646F16B4465AA90FA1E121C7B01"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -745,7 +745,7 @@
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
-        "Compression" = "3:2"
+        "Compression" = "3:3"
         "SignOutput" = "11:FALSE"
         "CertificateFile" = "8:"
         "PrivateKeyFile" = "8:"
@@ -2558,7 +2558,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Blueprint41 Modeller"
         "ProductCode" = "8:{F8AFAEE0-EF95-4233-B6E2-9DC566E51B9D}"
-        "PackageCode" = "8:{C864E931-60B1-4428-84FC-EB42525AEC34}"
+        "PackageCode" = "8:{445C5545-2197-42CB-AE79-15E883CA47D8}"
         "UpgradeCode" = "8:{B2C223A8-2CEF-497A-85C0-AB460E559880}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
