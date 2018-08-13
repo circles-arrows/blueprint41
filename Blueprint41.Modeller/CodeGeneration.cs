@@ -23,6 +23,8 @@ namespace Blueprint41.Modeller
         private string SelectedPath { get; set; }
         private IEnumerable<Entity> Entities { get; set; }
 
+        public Dictionary<Guid, Entity> EntitiesLookUp { get; private set; }
+
         public CodeGeneration()
         {
             InitializeComponent();
@@ -31,8 +33,9 @@ namespace Blueprint41.Modeller
         private void CodeGeneration_Load(object sender, EventArgs e)
         {
             T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.ToList();
-            Entities = Model.Entities.Entity.OrderBy(x => x.Name).ToList();
-            lbEntities.DataSource = Entities;
+            EntitiesLookUp = Model.Entities.Entity.ToDictionary(x => Guid.Parse(x.Guid));
+
+            lbEntities.DataSource = EntitiesLookUp.Select(x => x.Value).OrderBy(x => x.Name).ToList();
             lbEntities.DisplayMember = "name";
             InitializableButton(this.T4Template.Name);
         }
@@ -61,7 +64,65 @@ namespace Blueprint41.Modeller
         private void lbEntities_SelectedValueChanged(object sender, EventArgs e)
         {
             richTextBox.Clear();
-            T4Template.Entities = lbEntities.SelectedItems.Cast<Entity>().ToList();
+
+            Dictionary<Guid, Entity> selectedEntities = lbEntities.SelectedItems.Cast<Entity>().ToDictionary(x => Guid.Parse(x.Guid));
+            List<Relationship> relationships = new List<Relationship>();
+
+            foreach (Entity entity in lbEntities.SelectedItems.Cast<Entity>())
+            {
+                if (cbRelationship.Checked == false)
+                    break;
+
+                foreach (var rel in entity.GetRelationships(RelationshipDirection.In, false))
+                {
+                    Guid.TryParse(rel.Source.ReferenceGuid, out Guid source);
+                    Guid.TryParse(rel.Target.ReferenceGuid, out Guid target);
+
+                    if (selectedEntities.ContainsKey(source) == false && EntitiesLookUp.ContainsKey(source))
+                        selectedEntities.Add(source, EntitiesLookUp[source]);
+
+                    if (selectedEntities.ContainsKey(target) == false && EntitiesLookUp.ContainsKey(target))
+                        selectedEntities.Add(target, EntitiesLookUp[target]);
+
+                    relationships.Add(rel);
+                }
+            }
+
+            List<Entity> entityList = selectedEntities.Select(x => x.Value).ToList();
+
+            foreach (Entity entity in entityList.ToList())
+            {
+                Entity currentEntity = entity;
+
+                while (string.IsNullOrEmpty(currentEntity.Inherits) == false)
+                {
+                    if (string.IsNullOrEmpty(currentEntity.Inherits) == false && Guid.TryParse(currentEntity.Inherits, out Guid inherit) && EntitiesLookUp.ContainsKey(inherit))
+                    {
+                        if (selectedEntities.ContainsKey(inherit) == false)
+                        {
+                            selectedEntities.Add(inherit, EntitiesLookUp[inherit]);
+                            entityList.Add(EntitiesLookUp[inherit]);
+                        }
+                        else
+                        {
+                            // Re arrange the entities
+                            entityList.Remove(EntitiesLookUp[inherit]);
+                            entityList.Add(EntitiesLookUp[inherit]);
+                        }
+                        currentEntity = EntitiesLookUp[inherit];
+                    }
+                    else
+                        break;
+                }
+            }
+
+            entityList.Reverse();
+
+            Dictionary<Guid, Entity> functionalIdByentities = selectedEntities.Where(x => string.IsNullOrEmpty(x.Value.FunctionalId) == false).GroupBy(x => x.Value.FunctionalId).Select(x => x.FirstOrDefault()).ToDictionary(x => Guid.Parse(x.Value.FunctionalId), y => y.Value);
+            T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.Where(x => functionalIdByentities.ContainsKey(Guid.Parse(x.Guid)) || x.IsDefault == true).ToList();
+            T4Template.Entities = entityList;
+            T4Template.Relationships = relationships;
+
             T4Template.GenerationEnvironment = null;
             richTextBox.Text = T4Template.TransformText();
             DoStyle();
@@ -159,7 +220,7 @@ namespace Blueprint41.Modeller
             }
 
             // getting types/classes from the text 
-            string types = @"\b(Console|DateTime|NotSupportedException|Dictionary|Entity|FunctionalId|Relationship)\b";
+            string types = @"\b(Console|DateTime|NotSupportedException|Dictionary|Entity|FunctionalId|Relationship|Guid)\b";
             MatchCollection typeMatches = Regex.Matches(richTextBox.Text, types);
 
             foreach (Match m in typeMatches)
@@ -211,6 +272,12 @@ namespace Blueprint41.Modeller
 
             lbEntities.SelectedValueChanged += lbEntities_SelectedValueChanged;
             lbEntities_SelectedValueChanged(lbEntities, EventArgs.Empty);
+        }
+
+        private void btnCopyClipboard_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(richTextBox.Text);
+            MessageBox.Show("Contents copied to clipboard", "Code Generation", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

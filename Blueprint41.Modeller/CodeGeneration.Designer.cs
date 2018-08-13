@@ -33,6 +33,8 @@
             this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.multiPurposeButton = new System.Windows.Forms.Button();
             this.cbSelectAll = new System.Windows.Forms.CheckBox();
+            this.btnCopyClipboard = new System.Windows.Forms.Button();
+            this.cbRelationship = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -76,6 +78,7 @@
             this.richTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox.Font = new System.Drawing.Font("Consolas", 8.25F);
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Name = "richTextBox";
             this.richTextBox.Size = new System.Drawing.Size(785, 785);
@@ -106,18 +109,48 @@
             this.cbSelectAll.UseVisualStyleBackColor = true;
             this.cbSelectAll.CheckedChanged += new System.EventHandler(this.cbSelectAll_CheckedChanged);
             // 
+            // btnCopyClipboard
+            // 
+            this.btnCopyClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCopyClipboard.ForeColor = System.Drawing.Color.Black;
+            this.btnCopyClipboard.Location = new System.Drawing.Point(826, 805);
+            this.btnCopyClipboard.Name = "btnCopyClipboard";
+            this.btnCopyClipboard.Size = new System.Drawing.Size(128, 23);
+            this.btnCopyClipboard.TabIndex = 5;
+            this.btnCopyClipboard.Text = "Copy to Clipboard";
+            this.btnCopyClipboard.UseVisualStyleBackColor = true;
+            this.btnCopyClipboard.Click += new System.EventHandler(this.btnCopyClipboard_Click);
+            // 
+            // cbRelationship
+            // 
+            this.cbRelationship.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbRelationship.AutoSize = true;
+            this.cbRelationship.Checked = true;
+            this.cbRelationship.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbRelationship.ForeColor = System.Drawing.Color.Black;
+            this.cbRelationship.Location = new System.Drawing.Point(90, 807);
+            this.cbRelationship.Name = "cbRelationship";
+            this.cbRelationship.Size = new System.Drawing.Size(122, 17);
+            this.cbRelationship.TabIndex = 6;
+            this.cbRelationship.Text = "Include Relationship";
+            this.cbRelationship.UseVisualStyleBackColor = true;
+            // 
             // CodeGeneration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1092, 836);
+            this.Controls.Add(this.cbRelationship);
+            this.Controls.Add(this.btnCopyClipboard);
             this.Controls.Add(this.cbSelectAll);
             this.Controls.Add(this.multiPurposeButton);
             this.Controls.Add(this.splitContainer1);
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "CodeGeneration";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "CodeGeneration";
+            this.Text = "Code Generation";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.CodeGeneration_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -135,5 +168,7 @@
         private System.Windows.Forms.Button multiPurposeButton;
         private System.Windows.Forms.RichTextBox richTextBox;
         private System.Windows.Forms.CheckBox cbSelectAll;
+        private System.Windows.Forms.Button btnCopyClipboard;
+        private System.Windows.Forms.CheckBox cbRelationship;
     }
 }
