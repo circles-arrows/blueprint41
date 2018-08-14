@@ -531,7 +531,6 @@ namespace Blueprint41.Modeller
         {
             CodeGeneration codeGeneration = new CodeGeneration();
             codeGeneration.Size = this.Size;
-            codeGeneration.EntitiesListBox.SelectionMode = SelectionMode.One;
             codeGeneration.T4Template = new Blueprint41.Modeller.Generation.StaticData();
             codeGeneration.T4Template.Name = GenerationEnum.StaticData;
             codeGeneration.Model = Model;

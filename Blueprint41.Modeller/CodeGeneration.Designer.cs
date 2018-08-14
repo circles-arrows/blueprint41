@@ -28,31 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lbEntities = new System.Windows.Forms.ListBox();
+            this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tvEntities = new System.Windows.Forms.TreeView();
             this.richTextBox = new System.Windows.Forms.RichTextBox();
             this.multiPurposeButton = new System.Windows.Forms.Button();
-            this.cbSelectAll = new System.Windows.Forms.CheckBox();
             this.btnCopyClipboard = new System.Windows.Forms.Button();
-            this.cbRelationship = new System.Windows.Forms.CheckBox();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnSelectAll = new System.Windows.Forms.Button();
+            this.cmsSelect = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.cmsSelect.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lbEntities
-            // 
-            this.lbEntities.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbEntities.FormattingEnabled = true;
-            this.lbEntities.Location = new System.Drawing.Point(0, 0);
-            this.lbEntities.Name = "lbEntities";
-            this.lbEntities.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbEntities.Size = new System.Drawing.Size(273, 784);
-            this.lbEntities.TabIndex = 0;
-            this.lbEntities.SelectedValueChanged += new System.EventHandler(this.lbEntities_SelectedValueChanged);
             // 
             // splitContainer1
             // 
@@ -64,7 +56,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.lbEntities);
+            this.splitContainer1.Panel1.Controls.Add(this.tvEntities);
             // 
             // splitContainer1.Panel2
             // 
@@ -72,6 +64,18 @@
             this.splitContainer1.Size = new System.Drawing.Size(1068, 788);
             this.splitContainer1.SplitterDistance = 276;
             this.splitContainer1.TabIndex = 2;
+            // 
+            // tvEntities
+            // 
+            this.tvEntities.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tvEntities.CheckBoxes = true;
+            this.tvEntities.Location = new System.Drawing.Point(3, 3);
+            this.tvEntities.Name = "tvEntities";
+            this.tvEntities.ShowLines = false;
+            this.tvEntities.Size = new System.Drawing.Size(270, 782);
+            this.tvEntities.TabIndex = 1;
             // 
             // richTextBox
             // 
@@ -81,6 +85,7 @@
             this.richTextBox.Font = new System.Drawing.Font("Consolas", 8.25F);
             this.richTextBox.Location = new System.Drawing.Point(0, 0);
             this.richTextBox.Name = "richTextBox";
+            this.richTextBox.ReadOnly = true;
             this.richTextBox.Size = new System.Drawing.Size(785, 785);
             this.richTextBox.TabIndex = 2;
             this.richTextBox.Text = "";
@@ -96,19 +101,6 @@
             this.multiPurposeButton.TabIndex = 3;
             this.multiPurposeButton.UseVisualStyleBackColor = false;
             // 
-            // cbSelectAll
-            // 
-            this.cbSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbSelectAll.AutoSize = true;
-            this.cbSelectAll.ForeColor = System.Drawing.Color.Black;
-            this.cbSelectAll.Location = new System.Drawing.Point(13, 806);
-            this.cbSelectAll.Name = "cbSelectAll";
-            this.cbSelectAll.Size = new System.Drawing.Size(70, 17);
-            this.cbSelectAll.TabIndex = 4;
-            this.cbSelectAll.Text = "Select All";
-            this.cbSelectAll.UseVisualStyleBackColor = true;
-            this.cbSelectAll.CheckedChanged += new System.EventHandler(this.cbSelectAll_CheckedChanged);
-            // 
             // btnCopyClipboard
             // 
             this.btnCopyClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -121,28 +113,60 @@
             this.btnCopyClipboard.UseVisualStyleBackColor = true;
             this.btnCopyClipboard.Click += new System.EventHandler(this.btnCopyClipboard_Click);
             // 
-            // cbRelationship
+            // btnClear
             // 
-            this.cbRelationship.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbRelationship.AutoSize = true;
-            this.cbRelationship.Checked = true;
-            this.cbRelationship.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbRelationship.ForeColor = System.Drawing.Color.Black;
-            this.cbRelationship.Location = new System.Drawing.Point(90, 807);
-            this.cbRelationship.Name = "cbRelationship";
-            this.cbRelationship.Size = new System.Drawing.Size(122, 17);
-            this.cbRelationship.TabIndex = 6;
-            this.cbRelationship.Text = "Include Relationship";
-            this.cbRelationship.UseVisualStyleBackColor = true;
+            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnClear.ForeColor = System.Drawing.Color.Black;
+            this.btnClear.Location = new System.Drawing.Point(94, 804);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(84, 23);
+            this.btnClear.TabIndex = 6;
+            this.btnClear.Text = "Clear All";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnSelectAll
+            // 
+            this.btnSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSelectAll.ForeColor = System.Drawing.Color.Black;
+            this.btnSelectAll.Location = new System.Drawing.Point(13, 804);
+            this.btnSelectAll.Name = "btnSelectAll";
+            this.btnSelectAll.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectAll.TabIndex = 7;
+            this.btnSelectAll.Text = "Select All";
+            this.btnSelectAll.UseVisualStyleBackColor = true;
+            this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
+            // 
+            // cmsSelect
+            // 
+            this.cmsSelect.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectAllToolStripMenuItem,
+            this.deselectAllToolStripMenuItem});
+            this.cmsSelect.Name = "cmsSelect";
+            this.cmsSelect.Size = new System.Drawing.Size(136, 48);
+            // 
+            // selectAllToolStripMenuItem
+            // 
+            this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.selectAllToolStripMenuItem.Text = "Select All";
+            this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
+            // 
+            // deselectAllToolStripMenuItem
+            // 
+            this.deselectAllToolStripMenuItem.Name = "deselectAllToolStripMenuItem";
+            this.deselectAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deselectAllToolStripMenuItem.Text = "Deselect All";
+            this.deselectAllToolStripMenuItem.Click += new System.EventHandler(this.deselectAllToolStripMenuItem_Click);
             // 
             // CodeGeneration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1092, 836);
-            this.Controls.Add(this.cbRelationship);
+            this.Controls.Add(this.btnSelectAll);
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnCopyClipboard);
-            this.Controls.Add(this.cbSelectAll);
             this.Controls.Add(this.multiPurposeButton);
             this.Controls.Add(this.splitContainer1);
             this.ForeColor = System.Drawing.Color.White;
@@ -156,19 +180,21 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.cmsSelect.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox lbEntities;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button multiPurposeButton;
         private System.Windows.Forms.RichTextBox richTextBox;
-        private System.Windows.Forms.CheckBox cbSelectAll;
         private System.Windows.Forms.Button btnCopyClipboard;
-        private System.Windows.Forms.CheckBox cbRelationship;
+        private System.Windows.Forms.TreeView tvEntities;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnSelectAll;
+        private System.Windows.Forms.ContextMenuStrip cmsSelect;
+        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deselectAllToolStripMenuItem;
     }
 }

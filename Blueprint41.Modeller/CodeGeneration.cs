@@ -17,9 +17,11 @@ namespace Blueprint41.Modeller
 {
     public partial class CodeGeneration : Form
     {
+        private bool isDoubleClicked;
+        private TreeNode oldSelectNode;
+
         internal GenerationBase T4Template { get; set; }
         internal Model Model { get; set; }
-        public ListBox EntitiesListBox { get { return lbEntities; } }
         private string SelectedPath { get; set; }
         private IEnumerable<Entity> Entities { get; set; }
 
@@ -35,9 +37,158 @@ namespace Blueprint41.Modeller
             T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.ToList();
             EntitiesLookUp = Model.Entities.Entity.ToDictionary(x => Guid.Parse(x.Guid));
 
-            lbEntities.DataSource = EntitiesLookUp.Select(x => x.Value).OrderBy(x => x.Name).ToList();
-            lbEntities.DisplayMember = "name";
             InitializableButton(this.T4Template.Name);
+            InitializeEntityTree();
+        }
+
+        private void InitializeEntityTree()
+        {
+            foreach (Entity entity in EntitiesLookUp.Select(x => x.Value).OrderBy(x => x.Name).ToList())
+                tvEntities.Nodes.Add(new EntityTreeNode(Model, entity));
+
+            tvEntities.AfterCheck += TvEntities_AfterCheck;
+            tvEntities.MouseUp += TvEntities_MouseUp;
+            tvEntities.KeyUp += TvEntities_KeyUp;
+
+            richTextBox.KeyUp += RichTextBox_KeyUp;
+        }
+
+        private void RichTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.A)
+                richTextBox.SelectAll();
+        }
+
+        private void TvEntities_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.A)
+                btnSelectAll_Click(sender, e);
+        }
+
+        private void TvEntities_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            // Point where the mouse is clicked.
+            Point p = new Point(e.X, e.Y);
+
+            // Get the node that the user has clicked.
+            TreeNode node = tvEntities.GetNodeAt(p);
+            if (node != null)
+            {
+                // Select the node the user has clicked.
+                // The node appears selected until the menu is displayed on the screen.
+                oldSelectNode = tvEntities.SelectedNode;
+                tvEntities.SelectedNode = node;
+
+                cmsSelect.Show(tvEntities, p);
+            }
+        }
+
+        private void TvEntities_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node is EntityTreeNode entityNode)
+                LoadChildNodes(entityNode);
+
+            IterateSelectedEntities();
+        }
+
+        private void LoadChildNodes(EntityTreeNode node, bool expand = true)
+        {
+            if (node.Loaded == false)
+            {
+                node.LoadInheritance();
+                node.LoadRelationship();
+
+                if (expand)
+                    node.Expand();
+            }
+        }
+
+        private void IterateSelectedEntities()
+        {
+            List<Entity> checkedEntities = new List<Entity>();
+            List<Relationship> relationships = new List<Relationship>();
+
+            Dictionary<Guid, Entity> selectedEntitiesLookup = new Dictionary<Guid, Entity>();
+            Dictionary<string, Relationship> relationshipLookup = new Dictionary<string, Relationship>();
+
+            foreach (EntityTreeNode node in tvEntities.Nodes)
+            {
+                if (node.Checked == false)
+                {
+                    continue;
+                }
+
+                if (node.RelationshipNode.Checked)
+                {
+                    foreach (RelationshipTreeNode relNode in node.RelationshipNode.Nodes)
+                    {
+                        if (relNode.Checked)
+                        {
+                            AddToCheckEntities(checkedEntities, selectedEntitiesLookup, relNode.InEntity);
+                            AddToCheckEntities(checkedEntities, selectedEntitiesLookup, relNode.OutEntity);
+
+                            if (relationshipLookup.ContainsKey(relNode.Relationship.Name) == false)
+                            {
+                                relationshipLookup.Add(relNode.Relationship.Name, relNode.Relationship);
+                                relationships.Add(relNode.Relationship);
+                            }
+                        }
+                    }
+                }
+
+                AddToCheckEntities(checkedEntities, selectedEntitiesLookup, node.Entity);
+
+                if (node.InheritNode.Checked)
+                {
+                    foreach (InheritedEntityTreeNode inheritedNode in node.InheritNode.Nodes)
+                    {
+                        if (inheritedNode.Checked)
+                            AddToCheckEntities(checkedEntities, selectedEntitiesLookup, inheritedNode.Entity);
+                    }
+                }
+            }
+
+            // This will rearrange the inherited entities to its proper place
+            foreach (Entity e in checkedEntities.ToList())
+            {
+                Entity currentE = e;
+
+                do
+                {
+                    if (string.IsNullOrEmpty(currentE.Inherits))
+                        break;
+
+                    currentE = EntitiesLookUp[Guid.Parse(currentE.Inherits)];
+
+                    // we only iterate to the selected nodes
+                    if (selectedEntitiesLookup.ContainsKey(Guid.Parse(currentE.Guid)))
+                        AddToCheckEntities(checkedEntities, selectedEntitiesLookup, currentE);
+
+                } while (currentE != null);
+            }
+
+            GenerateEntitiesCode(checkedEntities, relationships);
+        }
+
+        private void AddToCheckEntities(List<Entity> checkedEntities, Dictionary<Guid, Entity> selectedEntitiesLookup, Entity entity)
+        {
+            if (entity == null)
+                return;
+
+            if (selectedEntitiesLookup.ContainsKey(Guid.Parse(entity.Guid)) == false)
+            {
+                selectedEntitiesLookup.Add(Guid.Parse(entity.Guid), entity);
+                checkedEntities.Add(entity);
+            }
+            else
+            {
+                // move the entity to the last entry
+                checkedEntities.Remove(entity);
+                checkedEntities.Add(entity);
+            }
         }
 
         private void InitializableButton(GenerationEnum generation)
@@ -61,82 +212,21 @@ namespace Blueprint41.Modeller
             }
         }
 
-        private void lbEntities_SelectedValueChanged(object sender, EventArgs e)
+        private void GenerateEntitiesCode(List<Entity> entities, List<Relationship> relationships)
         {
             richTextBox.Clear();
 
-            Dictionary<Guid, Entity> selectedEntities = lbEntities.SelectedItems.Cast<Entity>().ToDictionary(x => Guid.Parse(x.Guid));
-            List<Relationship> relationships = new List<Relationship>();
-
-            foreach (Entity entity in lbEntities.SelectedItems.Cast<Entity>())
-            {
-                if (cbRelationship.Checked == false)
-                    break;
-
-                foreach (var rel in entity.GetRelationships(RelationshipDirection.In, false))
-                {
-                    Guid.TryParse(rel.Source.ReferenceGuid, out Guid source);
-                    Guid.TryParse(rel.Target.ReferenceGuid, out Guid target);
-
-                    if (selectedEntities.ContainsKey(source) == false && EntitiesLookUp.ContainsKey(source))
-                        selectedEntities.Add(source, EntitiesLookUp[source]);
-
-                    if (selectedEntities.ContainsKey(target) == false && EntitiesLookUp.ContainsKey(target))
-                        selectedEntities.Add(target, EntitiesLookUp[target]);
-
-                    relationships.Add(rel);
-                }
-            }
-
-            List<Entity> entityList = selectedEntities.Select(x => x.Value).ToList();
-
-            foreach (Entity entity in entityList.ToList())
-            {
-                Entity currentEntity = entity;
-
-                while (string.IsNullOrEmpty(currentEntity.Inherits) == false)
-                {
-                    if (string.IsNullOrEmpty(currentEntity.Inherits) == false && Guid.TryParse(currentEntity.Inherits, out Guid inherit) && EntitiesLookUp.ContainsKey(inherit))
-                    {
-                        if (selectedEntities.ContainsKey(inherit) == false)
-                        {
-                            selectedEntities.Add(inherit, EntitiesLookUp[inherit]);
-                            entityList.Add(EntitiesLookUp[inherit]);
-                        }
-                        else
-                        {
-                            // Re arrange the entities
-                            entityList.Remove(EntitiesLookUp[inherit]);
-                            entityList.Add(EntitiesLookUp[inherit]);
-                        }
-                        currentEntity = EntitiesLookUp[inherit];
-                    }
-                    else
-                        break;
-                }
-            }
-
-            entityList.Reverse();
+            Dictionary<Guid, Entity> selectedEntities = entities.ToDictionary(x => Guid.Parse(x.Guid));
+            entities.Reverse();
 
             Dictionary<Guid, Entity> functionalIdByentities = selectedEntities.Where(x => string.IsNullOrEmpty(x.Value.FunctionalId) == false).GroupBy(x => x.Value.FunctionalId).Select(x => x.FirstOrDefault()).ToDictionary(x => Guid.Parse(x.Value.FunctionalId), y => y.Value);
             T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.Where(x => functionalIdByentities.ContainsKey(Guid.Parse(x.Guid)) || x.IsDefault == true).ToList();
-            T4Template.Entities = entityList;
+            T4Template.Entities = entities;
             T4Template.Relationships = relationships;
 
             T4Template.GenerationEnvironment = null;
             richTextBox.Text = T4Template.TransformText();
             DoStyle();
-
-            if (T4Template.Name == GenerationEnum.ApiDefinition)
-            {
-                string folder = AppDomain.CurrentDomain.BaseDirectory + @"..\..\Generation\ApiDefinition\";
-                string file = Path.Combine(folder, string.Format("{0}Dto.xml", T4Template.CurrentEntity));
-                using (FileStream fs = File.Create(file))
-                {
-                    Byte[] info = new UTF8Encoding(true).GetBytes(richTextBox.Text);
-                    fs.Write(info, 0, info.Length);
-                }
-            }
         }
 
         private void btnOpenFolder_Click(object sender, EventArgs e)
@@ -263,21 +353,76 @@ namespace Blueprint41.Modeller
             }
         }
 
-        private void cbSelectAll_CheckedChanged(object sender, EventArgs e)
-        {
-            lbEntities.SelectedValueChanged -= lbEntities_SelectedValueChanged;
-
-            for (int i = 0; i < lbEntities.Items.Count; i++)
-                lbEntities.SetSelected(i, cbSelectAll.Checked);
-
-            lbEntities.SelectedValueChanged += lbEntities_SelectedValueChanged;
-            lbEntities_SelectedValueChanged(lbEntities, EventArgs.Empty);
-        }
-
         private void btnCopyClipboard_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(richTextBox.Text);
             MessageBox.Show("Contents copied to clipboard", "Code Generation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnSelectAll_Click(object sender, EventArgs e)
+        {
+            LoadUnloadEntities(true, false);
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            LoadUnloadEntities(false, false);
+        }
+
+        private void RecursiveCheckNode(TreeNode node, bool check)
+        {
+            foreach (TreeNode childNode in node.Nodes)
+            {
+                if (childNode.Nodes.Count > 0)
+                    RecursiveCheckNode(childNode, check);
+
+                childNode.Checked = check;
+            }
+
+            node.Checked = check;
+        }
+
+        private void LoadUnloadEntities(bool check, bool expand)
+        {
+            BeforeSelection();
+
+            foreach (EntityTreeNode node in tvEntities.Nodes)
+                SelectDeselectNode(node, check, expand);
+
+            AfterSelection();
+        }
+
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BeforeSelection();
+            SelectDeselectNode(tvEntities.SelectedNode, true, true);
+            AfterSelection();
+        }
+
+        private void deselectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BeforeSelection();
+            SelectDeselectNode(tvEntities.SelectedNode, false, false);
+            AfterSelection();
+        }
+
+        private void SelectDeselectNode(TreeNode node, bool check, bool expand)
+        {
+            RecursiveCheckNode(node, check);
+
+            if (node is EntityTreeNode entityTree)
+                LoadChildNodes(entityTree, expand);
+        }
+
+        private void BeforeSelection()
+        {
+            tvEntities.AfterCheck -= TvEntities_AfterCheck;
+        }
+
+        private void AfterSelection()
+        {
+            IterateSelectedEntities();
+            tvEntities.AfterCheck += TvEntities_AfterCheck;
         }
     }
 }
