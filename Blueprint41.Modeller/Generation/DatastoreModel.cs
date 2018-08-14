@@ -165,14 +165,7 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("        Entity ");
-            
-            #line 45 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
-            
-            #line default
-            #line hidden
-            this.Write(" = Entities.New(\"");
+            this.Write("        Entities.New(\"");
             
             #line 45 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
@@ -201,28 +194,21 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("        Entity ");
+            this.Write("        Entities.New(\"");
             
             #line 55 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
             
             #line default
             #line hidden
-            this.Write(" = Entities.New(\"");
-            
-            #line 55 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
-            
-            #line default
-            #line hidden
-            this.Write("\", ");
+            this.Write("\", Entities[\"");
             
             #line 55 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedEntityName));
             
             #line default
             #line hidden
-            this.Write(")\r\n");
+            this.Write("\"])\r\n");
             
             #line 56 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
@@ -235,14 +221,7 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("        Entity ");
-            
-            #line 63 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
-            
-            #line default
-            #line hidden
-            this.Write(" = Entities.New(\"");
+            this.Write("        Entities.New(\"");
             
             #line 63 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
@@ -256,13 +235,14 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
+            this.Write("Entities[\"");
             
             #line 63 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedEntityName));
             
             #line default
             #line hidden
-            this.Write(")\r\n");
+            this.Write("\"])\r\n");
             
             #line 64 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 				
@@ -430,17 +410,17 @@ foreach (var relationship in Relationships)
             
             #line default
             #line hidden
-            this.Write(" = Relations.New(");
+            this.Write(" = Relations.New(Entities[\"");
             
             #line 122 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Label));
             
             #line default
             #line hidden
-            this.Write(", ");
+            this.Write("\"], ");
             
             #line 122 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Label ?? "null"));
+            this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Label != null ? $"Entities[\"{relationship.Target.Label}\"]" : "null"));
             
             #line default
             #line hidden
@@ -469,17 +449,17 @@ foreach (var relationship in Relationships)
             
             #line default
             #line hidden
-            this.Write(" = Relations.New(");
+            this.Write(" = Relations.New(Entities[\"");
             
             #line 129 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Label));
             
             #line default
             #line hidden
-            this.Write(", ");
+            this.Write("\"], ");
             
             #line 129 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Label ?? "null"));
+            this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Label != null ? $"Entities[\"{relationship.Target.Label}\"]" : "null"));
             
             #line default
             #line hidden

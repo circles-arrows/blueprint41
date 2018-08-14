@@ -42,7 +42,7 @@ foreach (var entity in Entities)
             var ids = FunctionalIds.Where(x => x.Guid == entity.FunctionalId && x.IsDefault == false).ToList();
             string entityFunctionalId = ids.Count > 0 ?  ", " + ids.First().Name.ToLower() + "Id": "";
 #>
-        Entity <#=entity.Name#> = Entities.New("<#=entity.Name #>"<#=entityFunctionalId#>)
+        Entities.New("<#=entity.Name #>"<#=entityFunctionalId#>)
 <#
         }
     }
@@ -52,7 +52,7 @@ foreach (var entity in Entities)
         if(string.IsNullOrEmpty(entity.FunctionalId))
         {
 #>
-        Entity <#=entity.Name#> = Entities.New("<#=entity.Name #>", <#=inheritedEntityName#>)
+        Entities.New("<#=entity.Name #>", Entities["<#=inheritedEntityName#>"])
 <#
         }
         else
@@ -60,7 +60,7 @@ foreach (var entity in Entities)
             var ids = FunctionalIds.Where(x => x.Guid == entity.FunctionalId && x.IsDefault == false).ToList();
             string entityFunctionalId = ids.Count > 0 ?  ids.First().Name.ToLower() + "Id, ": "";
 #>
-        Entity <#=entity.Name#> = Entities.New("<#=entity.Name #>", <#=entityFunctionalId#><#= inheritedEntityName #>)
+        Entities.New("<#=entity.Name #>", <#=entityFunctionalId#>Entities["<#= inheritedEntityName #>"])
 <#				
         }
         if(!string.IsNullOrEmpty(entity.Summary))
@@ -119,14 +119,14 @@ foreach (var relationship in Relationships)
     {
 #>
 
-        Relationship <#=relationship.Name#> = Relations.New(<#=relationship.Source.Label#>, <#=relationship.Target.Label ?? "null" #>, <#=relationship.Type#>)
+        Relationship <#=relationship.Name#> = Relations.New(Entities["<#=relationship.Source.Label#>"], <#=relationship.Target.Label != null ? $"Entities[\"{relationship.Target.Label}\"]" : "null" #>, <#=relationship.Type#>)
 <#
     }
     else
     {
 #>
 
-        Relationship <#=relationship.Name#> = Relations.New(<#=relationship.Source.Label#>, <#=relationship.Target.Label ?? "null"#>, "<#=relationship.Name#>", "<#=relationship.Type#>")
+        Relationship <#=relationship.Name#> = Relations.New(Entities["<#=relationship.Source.Label#>"], <#=relationship.Target.Label != null ? $"Entities[\"{relationship.Target.Label}\"]" : "null"#>, "<#=relationship.Name#>", "<#=relationship.Type#>")
 <#
     }
     if(!hasRelationshipSourceName)

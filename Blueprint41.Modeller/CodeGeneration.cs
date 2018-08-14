@@ -88,10 +88,9 @@ namespace Blueprint41.Modeller
 
         private void TvEntities_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            if (e.Node is EntityTreeNode entityNode)
-                LoadChildNodes(entityNode);
-
-            IterateSelectedEntities();
+            BeforeSelection();
+            SelectDeselectNode(e.Node, e.Node.Checked, true);
+            AfterSelection();
         }
 
         private void LoadChildNodes(EntityTreeNode node, bool expand = true)
@@ -108,6 +107,49 @@ namespace Blueprint41.Modeller
 
         private void IterateSelectedEntities()
         {
+            #region TODO Sort
+
+            //List<Relationship> relationships = new List<Relationship>();
+            //List<EntityTreeNode> checkedEntities = tvEntities.Nodes.Cast<EntityTreeNode>().ToList().Where(x => x.Checked == true).Select(x => x).ToList();
+
+            //List<Entity> result = new List<Entity>();
+            //result.AddRange(checkedEntities.Where(x => x.Entity.Inherits == null).Select(x => x.Entity));
+            //checkedEntities.RemoveAll(entity => entity.Entity.Inherits == null);
+
+            //// add the entity whose parent are already in the list
+            //result.AddRange(checkedEntities.Where(entity => result.Any(parent => parent.Guid == entity.Entity.Inherits)).Select(x => x.Entity));
+            //checkedEntities.RemoveAll(entity => result.Any(parent => parent.Guid == entity.Entity.Inherits));
+
+            //// these entities are having dependencies
+            //int count;
+            //while (checkedEntities.Count > 0)
+            //{
+            //    count = checkedEntities.Count - 1;
+
+            //    List<Entity> inheritedNodes = checkedEntities[count].InheritNode.Nodes.Cast<InheritedEntityTreeNode>().ToList().Where(x => x.Checked == true).Select(x => x.Entity).ToList();
+
+            //    int inheritedCount = inheritedNodes.Count;
+
+            //    result.AddRange(inheritedNodes.Where(x => x.Inherits == null));
+            //    inheritedNodes.RemoveAll(entity => entity.Inherits == null);
+
+            //    while (inheritedCount > 0)
+            //    {
+            //        var toadd = inheritedNodes.Where(entity => result.Any(parent => Guid.Parse(parent.Guid) == Guid.Parse(entity.Inherits))).ToList();
+
+            //        result.AddRange(toadd);
+
+            //        foreach (var a in toadd)
+            //            inheritedNodes.Remove(a);
+
+            //        inheritedCount = inheritedNodes.Count;
+            //    }
+
+            //    result.Add(checkedEntities[count].Entity);
+            //    checkedEntities.RemoveAt(count);
+            //} 
+            #endregion
+
             List<Entity> checkedEntities = new List<Entity>();
             List<Relationship> relationships = new List<Relationship>();
 
@@ -117,9 +159,7 @@ namespace Blueprint41.Modeller
             foreach (EntityTreeNode node in tvEntities.Nodes)
             {
                 if (node.Checked == false)
-                {
                     continue;
-                }
 
                 if (node.RelationshipNode.Checked)
                 {
@@ -127,9 +167,6 @@ namespace Blueprint41.Modeller
                     {
                         if (relNode.Checked)
                         {
-                            AddToCheckEntities(checkedEntities, selectedEntitiesLookup, relNode.InEntity);
-                            AddToCheckEntities(checkedEntities, selectedEntitiesLookup, relNode.OutEntity);
-
                             if (relationshipLookup.ContainsKey(relNode.Relationship.Name) == false)
                             {
                                 relationshipLookup.Add(relNode.Relationship.Name, relNode.Relationship);
@@ -151,7 +188,7 @@ namespace Blueprint41.Modeller
                 }
             }
 
-            // This will rearrange the inherited entities to its proper place
+            // This will rearrange the inherited entities to its proper place, this works for now
             foreach (Entity e in checkedEntities.ToList())
             {
                 Entity currentE = e;
@@ -215,11 +252,11 @@ namespace Blueprint41.Modeller
         private void GenerateEntitiesCode(List<Entity> entities, List<Relationship> relationships)
         {
             richTextBox.Clear();
-
-            Dictionary<Guid, Entity> selectedEntities = entities.ToDictionary(x => Guid.Parse(x.Guid));
             entities.Reverse();
 
+            Dictionary<Guid, Entity> selectedEntities = entities.ToDictionary(x => Guid.Parse(x.Guid));
             Dictionary<Guid, Entity> functionalIdByentities = selectedEntities.Where(x => string.IsNullOrEmpty(x.Value.FunctionalId) == false).GroupBy(x => x.Value.FunctionalId).Select(x => x.FirstOrDefault()).ToDictionary(x => Guid.Parse(x.Value.FunctionalId), y => y.Value);
+
             T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.Where(x => functionalIdByentities.ContainsKey(Guid.Parse(x.Guid)) || x.IsDefault == true).ToList();
             T4Template.Entities = entities;
             T4Template.Relationships = relationships;
