@@ -51,6 +51,17 @@ namespace Blueprint41.Modeller
             tvEntities.KeyUp += TvEntities_KeyUp;
 
             richTextBox.KeyUp += RichTextBox_KeyUp;
+            richTextBox.MouseUp += RichTextBox_MouseUp;
+        }
+
+        private void RichTextBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            // Point where the mouse is clicked.
+            Point p = new Point(e.X, e.Y);
+            cmsCopy.Show(richTextBox, p);
         }
 
         private void RichTextBox_KeyUp(object sender, KeyEventArgs e)
@@ -107,107 +118,64 @@ namespace Blueprint41.Modeller
 
         private void IterateSelectedEntities()
         {
-            #region TODO Sort
-
-            //List<Relationship> relationships = new List<Relationship>();
-            //List<EntityTreeNode> checkedEntities = tvEntities.Nodes.Cast<EntityTreeNode>().ToList().Where(x => x.Checked == true).Select(x => x).ToList();
-
-            //List<Entity> result = new List<Entity>();
-            //result.AddRange(checkedEntities.Where(x => x.Entity.Inherits == null).Select(x => x.Entity));
-            //checkedEntities.RemoveAll(entity => entity.Entity.Inherits == null);
-
-            //// add the entity whose parent are already in the list
-            //result.AddRange(checkedEntities.Where(entity => result.Any(parent => parent.Guid == entity.Entity.Inherits)).Select(x => x.Entity));
-            //checkedEntities.RemoveAll(entity => result.Any(parent => parent.Guid == entity.Entity.Inherits));
-
-            //// these entities are having dependencies
-            //int count;
-            //while (checkedEntities.Count > 0)
-            //{
-            //    count = checkedEntities.Count - 1;
-
-            //    List<Entity> inheritedNodes = checkedEntities[count].InheritNode.Nodes.Cast<InheritedEntityTreeNode>().ToList().Where(x => x.Checked == true).Select(x => x.Entity).ToList();
-
-            //    int inheritedCount = inheritedNodes.Count;
-
-            //    result.AddRange(inheritedNodes.Where(x => x.Inherits == null));
-            //    inheritedNodes.RemoveAll(entity => entity.Inherits == null);
-
-            //    while (inheritedCount > 0)
-            //    {
-            //        var toadd = inheritedNodes.Where(entity => result.Any(parent => Guid.Parse(parent.Guid) == Guid.Parse(entity.Inherits))).ToList();
-
-            //        result.AddRange(toadd);
-
-            //        foreach (var a in toadd)
-            //            inheritedNodes.Remove(a);
-
-            //        inheritedCount = inheritedNodes.Count;
-            //    }
-
-            //    result.Add(checkedEntities[count].Entity);
-            //    checkedEntities.RemoveAt(count);
-            //} 
-            #endregion
-
-            List<Entity> checkedEntities = new List<Entity>();
             List<Relationship> relationships = new List<Relationship>();
+            List<EntityTreeNode> checkedEntities = tvEntities.Nodes.Cast<EntityTreeNode>().ToList().Where(x => x.Checked == true).Select(x => x).ToList();
 
-            Dictionary<Guid, Entity> selectedEntitiesLookup = new Dictionary<Guid, Entity>();
-            Dictionary<string, Relationship> relationshipLookup = new Dictionary<string, Relationship>();
+            List<Entity> checkedParentEntities = new List<Entity>();
+            checkedEntities.ForEach((node) => checkedParentEntities.AddRange(node.InheritNode.Nodes.Cast<InheritedEntityTreeNode>().ToList().Where(entity => entity.Checked == true && checkedParentEntities.Any(added => added.Guid == entity.Entity.Guid) == false).Select(x => x.Entity)));
+            checkedEntities.ForEach((node) => relationships.AddRange(node.RelationshipNode.Nodes.Cast<RelationshipTreeNode>().ToList().Where(rel => rel.Checked == true && relationships.Any(added => added.Name == rel.Relationship.Name) == false).Select(x => x.Relationship)));
 
-            foreach (EntityTreeNode node in tvEntities.Nodes)
+            // we removed entities from inherited 
+            checkedParentEntities.RemoveAll(entity => checkedEntities.Any(x => x.Entity.Guid == entity.Guid));
+
+            List<Entity> result = new List<Entity>();
+            result.AddRange(checkedEntities.Where(x => x.Entity.Inherits == null).Select(x => x.Entity));
+            checkedEntities.RemoveAll(entity => entity.Entity.Inherits == null);
+
+            if (result.Count > 0)
+                result.AddRange(checkedParentEntities.Where(x => result.Any(added => added.Guid == x.Inherits)));
+            else
             {
-                if (node.Checked == false)
-                    continue;
+                result.AddRange(checkedParentEntities.Where(x => x.Inherits == null));
+                checkedParentEntities.RemoveAll(entity => entity.Inherits == null);
+            }
 
-                if (node.RelationshipNode.Checked)
+            int count;
+            // remaining inherited parent
+            while (checkedParentEntities.Count > 0)
+            {
+                count = checkedParentEntities.Count;
+                result.AddRange(checkedParentEntities.Where(x => result.Any(added => added.Guid == x.Inherits)));
+                checkedParentEntities.RemoveAll(entity => result.Any(added => added.Guid == entity.Guid));
+
+                if (count == checkedParentEntities.Count)
                 {
-                    foreach (RelationshipTreeNode relNode in node.RelationshipNode.Nodes)
-                    {
-                        if (relNode.Checked)
-                        {
-                            if (relationshipLookup.ContainsKey(relNode.Relationship.Name) == false)
-                            {
-                                relationshipLookup.Add(relNode.Relationship.Name, relNode.Relationship);
-                                relationships.Add(relNode.Relationship);
-                            }
-                        }
-                    }
-                }
-
-                AddToCheckEntities(checkedEntities, selectedEntitiesLookup, node.Entity);
-
-                if (node.InheritNode.Checked)
-                {
-                    foreach (InheritedEntityTreeNode inheritedNode in node.InheritNode.Nodes)
-                    {
-                        if (inheritedNode.Checked)
-                            AddToCheckEntities(checkedEntities, selectedEntitiesLookup, inheritedNode.Entity);
-                    }
+                    //  the user may have omitted to other parent, so add it here
+                    result.AddRange(checkedParentEntities.Where(x => result.Any(added => added.Guid == x.Guid) == false));
+                    break;
                 }
             }
 
-            // This will rearrange the inherited entities to its proper place, this works for now
-            foreach (Entity e in checkedEntities.ToList())
+            // add the entity whose parent are already in the list
+            result.AddRange(checkedEntities.Where(entity => result.Any(added => added.Guid == entity.Entity.Inherits)).Select(x => x.Entity));
+            checkedEntities.RemoveAll(entity => result.Any(added => added.Guid == entity.Entity.Guid));
+
+            // add the remaining entities
+            while (checkedEntities.Count > 0)
             {
-                Entity currentE = e;
+                count = checkedEntities.Count;
+                result.AddRange(checkedEntities.Where(x => result.Any(added => added.Guid == x.Entity.Inherits)).Select(x => x.Entity));
+                checkedEntities.RemoveAll(entity => result.Any(added => added.Guid == entity.Entity.Guid));
 
-                do
+                if (count == checkedEntities.Count)
                 {
-                    if (string.IsNullOrEmpty(currentE.Inherits))
-                        break;
-
-                    currentE = EntitiesLookUp[Guid.Parse(currentE.Inherits)];
-
-                    // we only iterate to the selected nodes
-                    if (selectedEntitiesLookup.ContainsKey(Guid.Parse(currentE.Guid)))
-                        AddToCheckEntities(checkedEntities, selectedEntitiesLookup, currentE);
-
-                } while (currentE != null);
+                    //  the user may have omitted to other parent, so add it here
+                    result.AddRange(checkedEntities.Where(x => result.Any(added => added.Guid == x.Entity.Guid) == false).Select(x => x.Entity));
+                    break;
+                }
             }
 
-            GenerateEntitiesCode(checkedEntities, relationships);
+            GenerateEntitiesCode(result, relationships);
         }
 
         private void AddToCheckEntities(List<Entity> checkedEntities, Dictionary<Guid, Entity> selectedEntitiesLookup, Entity entity)
@@ -252,7 +220,6 @@ namespace Blueprint41.Modeller
         private void GenerateEntitiesCode(List<Entity> entities, List<Relationship> relationships)
         {
             richTextBox.Clear();
-            entities.Reverse();
 
             Dictionary<Guid, Entity> selectedEntities = entities.ToDictionary(x => Guid.Parse(x.Guid));
             Dictionary<Guid, Entity> functionalIdByentities = selectedEntities.Where(x => string.IsNullOrEmpty(x.Value.FunctionalId) == false).GroupBy(x => x.Value.FunctionalId).Select(x => x.FirstOrDefault()).ToDictionary(x => Guid.Parse(x.Value.FunctionalId), y => y.Value);
@@ -460,6 +427,11 @@ namespace Blueprint41.Modeller
         {
             IterateSelectedEntities();
             tvEntities.AfterCheck += TvEntities_AfterCheck;
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(richTextBox.SelectedText);
         }
     }
 }
