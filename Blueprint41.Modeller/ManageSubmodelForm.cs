@@ -16,15 +16,17 @@ namespace Blueprint41.Modeller
     public partial class ManageSubmodelForm : Form
     {
         public Submodel Submodel { get; private set; }
+        public Model Model { get; private set; }
 
-        public ManageSubmodelForm(Model modeller) : this(new Submodel(modeller))
+        public ManageSubmodelForm(Model modeller) : this(modeller, new Submodel(modeller))
         {
             Text = "Add Submodel";
         }
 
-        public ManageSubmodelForm(Submodel submodel)
+        public ManageSubmodelForm(Model modeller, Submodel submodel)
         {
             InitializeComponent();
+            Model = modeller;
             Submodel = submodel;
             AssignToUi();
             Text = "Edit Submodel";
@@ -33,6 +35,7 @@ namespace Blueprint41.Modeller
         private void AssignToUi()
         {
             txtName.Text = Submodel.Name;
+            txtName.Enabled = Submodel.Name != "Main Model";
             numericChapter.Value = Submodel.Chapter ?? 0;
             chkIsDraft.Checked = Submodel.IsDraft;
             chkIsLaboratory.Checked = Submodel.IsLaboratory;
@@ -41,6 +44,7 @@ namespace Blueprint41.Modeller
                 hteExplaination.BodyHtml = ToNormalString(Submodel.Explaination);
 
             btnRemove.Enabled = btnAdd.Enabled = false;
+            btnDelete.Enabled = Submodel.Name != "Main Model";
 
             lbAvailable.Items.Clear();
 
@@ -70,7 +74,7 @@ namespace Blueprint41.Modeller
                 Submodel.Node.Remove(node);
             }
 
-            foreach (string item in lbExisting.Items.Cast<string>().Where(item => !Submodel.Node.Any(node=> node.Label == item)).ToList())
+            foreach (string item in lbExisting.Items.Cast<string>().Where(item => !Submodel.Node.Any(node => node.Label == item)).ToList())
             {
                 Submodel.AddEntities(Submodel.Model.Entities.Entity.Where(entity => entity.Label == item).ToList(), 0, 0);
             }
@@ -89,7 +93,7 @@ namespace Blueprint41.Modeller
                 .Replace("<", "&lt;")
                 .Replace(">", "&gt;")
                 .Replace("'", "&apos;");
-                
+
         }
 
         public static string ToNormalString(string self)
@@ -155,5 +159,18 @@ namespace Blueprint41.Modeller
             }
         }
 
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show($"Are you sure to delete {Submodel.Name}?", "Delete submodel", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
+
+            if (result == DialogResult.Yes)
+            {
+                Model.Submodels.Submodel.Remove(Submodel);
+                Model.DisplayedSubmodel = Model.Submodels.Submodel[0];
+            }
+
+            DialogResult = DialogResult.OK;
+            Close();
+        }
     }
 }

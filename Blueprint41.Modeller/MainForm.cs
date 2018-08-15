@@ -194,7 +194,7 @@ namespace Blueprint41.Modeller
 
         private void graphEditor_AddDisplayedEntities(object sender, EventArgs e)
         {
-            ManageSubmodelForm form = new Modeller.ManageSubmodelForm(Model.DisplayedSubmodel);
+            ManageSubmodelForm form = new Modeller.ManageSubmodelForm(Model, Model.DisplayedSubmodel);
             if (form.ShowDialog() == DialogResult.OK)
             {
                 Model.RebindControl();

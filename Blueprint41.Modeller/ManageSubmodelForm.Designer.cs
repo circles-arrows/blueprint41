@@ -49,6 +49,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.hteExplaination = new Blueprint41.Modeller.HtmlEditor();
+            this.btnDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericChapter)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -200,7 +201,7 @@
             this.label4.ForeColor = System.Drawing.Color.Red;
             this.label4.Location = new System.Drawing.Point(12, 106);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(316, 13);
+            this.label4.Size = new System.Drawing.Size(314, 13);
             this.label4.TabIndex = 16;
             this.label4.Text = "Explanation:   (New Paragraph = Enter  |  New Line = Shift+Enter)";
             // 
@@ -270,12 +271,25 @@
             this.hteExplaination.Size = new System.Drawing.Size(547, 175);
             this.hteExplaination.TabIndex = 18;
             // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDelete.ForeColor = System.Drawing.Color.Red;
+            this.btnDelete.Location = new System.Drawing.Point(15, 670);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnDelete.TabIndex = 22;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
             // ManageSubmodelForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(580, 700);
+            this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.chkIsLaboratory);
@@ -322,5 +336,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnDelete;
     }
 }
