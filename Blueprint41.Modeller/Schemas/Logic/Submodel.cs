@@ -73,6 +73,9 @@ namespace Blueprint41.Modeller.Schemas
 
         public override string ToString()
         {
+            if (IsDraft)
+                return Name + " ------ (Draft)";
+
             return Name;
         }
 
