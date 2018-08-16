@@ -34,8 +34,8 @@
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.btnSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbZoomOut = new System.Windows.Forms.ToolStripButton();
             this.tsbZoomIn = new System.Windows.Forms.ToolStripButton();
+            this.tsbZoomOut = new System.Windows.Forms.ToolStripButton();
             this.tsbPan = new System.Windows.Forms.ToolStripButton();
             this.btnShowLabels = new System.Windows.Forms.ToolStripButton();
             this.btnShowInheritedRelationships = new System.Windows.Forms.ToolStripButton();
@@ -94,8 +94,8 @@
             this.toolStripButtonOpen,
             this.btnSave,
             this.toolStripSeparator1,
-            this.tsbZoomOut,
             this.tsbZoomIn,
+            this.tsbZoomOut,
             this.tsbPan,
             this.btnShowLabels,
             this.btnShowInheritedRelationships,
@@ -163,16 +163,6 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 34);
             // 
-            // tsbZoomOut
-            // 
-            this.tsbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("tsbZoomOut.Image")));
-            this.tsbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbZoomOut.Name = "tsbZoomOut";
-            this.tsbZoomOut.Size = new System.Drawing.Size(28, 31);
-            this.tsbZoomOut.Text = "Zoom In";
-            this.tsbZoomOut.Click += new System.EventHandler(this.TsbZoomOut_Click);
-            // 
             // tsbZoomIn
             // 
             this.tsbZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -180,8 +170,18 @@
             this.tsbZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbZoomIn.Name = "tsbZoomIn";
             this.tsbZoomIn.Size = new System.Drawing.Size(28, 31);
-            this.tsbZoomIn.Text = "ZOOM OUT";
+            this.tsbZoomIn.Text = "ZOOM IN";
             this.tsbZoomIn.Click += new System.EventHandler(this.TsbZoomIn_Click);
+            // 
+            // tsbZoomOut
+            // 
+            this.tsbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("tsbZoomOut.Image")));
+            this.tsbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbZoomOut.Name = "tsbZoomOut";
+            this.tsbZoomOut.Size = new System.Drawing.Size(28, 31);
+            this.tsbZoomOut.Text = "ZOOM OUT";
+            this.tsbZoomOut.Click += new System.EventHandler(this.TsbZoomOut_Click);
             // 
             // tsbPan
             // 
@@ -238,7 +238,7 @@
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
             this.toolStripDropDownButton1.Size = new System.Drawing.Size(37, 31);
-            this.toolStripDropDownButton1.Text = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Text = "TOOLS";
             // 
             // generateCodeToolStripMenuItem
             // 
@@ -448,8 +448,8 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.zoomOutToolStripMenuItem,
             this.zoomInToolStripMenuItem,
+            this.zoomOutToolStripMenuItem,
             this.panToolStripMenuItem,
             this.showLabelsToolStripMenuItem,
             this.showInheritedRelationshipsToolStripMenuItem,
@@ -604,9 +604,9 @@
         private System.Windows.Forms.ToolStrip toolStripRight;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expandPropertiesWidthToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton tsbZoomOut;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton tsbZoomIn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton tsbZoomOut;
         private System.Windows.Forms.ToolStripButton tsbPan;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
         private System.Windows.Forms.ToolStripMenuItem functionalIdToolStripMenuItem;
