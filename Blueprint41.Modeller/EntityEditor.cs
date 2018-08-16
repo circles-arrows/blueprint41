@@ -968,6 +968,9 @@ namespace Blueprint41.Modeller
             cmbFunctionalId.SelectedItem = null;
 
             Entity.Virtual = chkIsVirtual.Checked;
+
+            CheckAbstract();
+            UncheckStaticData();
         }
 
         private void dataGridViewPrimitiveProperties_KeyDown(object sender, KeyEventArgs e)
@@ -1026,8 +1029,6 @@ namespace Blueprint41.Modeller
             relationshipsObservable = new ObservableCollection<Schemas.Relationship>(Entity.GetRelationships(StorageModel.DisplayedSubmodel));
             bindingSourceCollectionProperties.DataSource = relationshipsObservable;
             dataGridViewRelationships.DataSource = bindingSourceCollectionProperties;
-
-
         }
 
         private void btnAddFunctionalId_Click(object sender, EventArgs e)
@@ -1055,6 +1056,9 @@ namespace Blueprint41.Modeller
 
             Entity.IsStaticData = chkIsStaticData.Checked;
             btnEditStaticData.Visible = Entity.IsStaticData;
+
+            UncheckVirtual();
+            UncheckAbstract();
         }
 
         private void checkBoxShowAllRelationships_CheckedChanged(object sender, EventArgs e)
@@ -1068,9 +1072,68 @@ namespace Blueprint41.Modeller
 
         }
 
+        private void UncheckStaticData()
+        {
+            if (chkIsStaticData.Checked == false)
+                return;
+
+            chkIsStaticData.CheckedChanged -= chkIsStaticData_CheckedChanged;
+            chkIsStaticData.Checked = false;
+            chkIsStaticData.CheckedChanged += chkIsStaticData_CheckedChanged;
+
+            if (!chkIsStaticData.Checked && Entity.IsStaticData)
+            {
+                DialogResult result = MessageBox.Show($"This will delete all the existing '{Entity.Label}' static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
+                if (result != System.Windows.Forms.DialogResult.Yes)
+                {
+                    chkIsStaticData.Checked = !chkIsStaticData.Checked;
+                    return;
+                }
+            }
+            Entity.IsStaticData = chkIsStaticData.Checked;
+            btnEditStaticData.Visible = Entity.IsStaticData;
+
+        }
+
+        private void UncheckVirtual()
+        {
+            if (chkIsVirtual.Checked == false)
+                return;
+
+            chkIsVirtual.CheckedChanged -= chkIsVirtual_CheckedChanged;
+            chkIsVirtual.Checked = false;
+            Entity.Virtual = chkIsVirtual.Checked;
+            chkIsVirtual.CheckedChanged += chkIsVirtual_CheckedChanged;
+        }
+
+        private void UncheckAbstract()
+        {
+            if (chkIsAbstract.Checked == false)
+                return;
+
+            chkIsAbstract.CheckedChanged -= chkIsAbstract_CheckedChanged;
+            chkIsAbstract.Checked = false;
+            Entity.Abstract = chkIsAbstract.Checked;
+            chkIsAbstract.CheckedChanged += chkIsAbstract_CheckedChanged;
+        }
+
+        private void CheckAbstract()
+        {
+            if (chkIsAbstract.Checked == true)
+                return;
+
+            chkIsAbstract.CheckedChanged -= chkIsAbstract_CheckedChanged;
+            chkIsAbstract.Checked = true;
+            Entity.Abstract = chkIsAbstract.Checked;
+            chkIsAbstract.CheckedChanged += chkIsAbstract_CheckedChanged;
+        }
+
         private void chkIsAbstract_CheckedChanged(object sender, EventArgs e)
         {
             Entity.Abstract = chkIsAbstract.Checked;
+
+            UncheckVirtual();
+            UncheckStaticData();
         }
     }
 
