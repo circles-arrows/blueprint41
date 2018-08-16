@@ -34,23 +34,26 @@
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.btnSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbZoomOut = new System.Windows.Forms.ToolStripButton();
             this.tsbZoomIn = new System.Windows.Forms.ToolStripButton();
+            this.tsbZoomOut = new System.Windows.Forms.ToolStripButton();
             this.tsbPan = new System.Windows.Forms.ToolStripButton();
             this.btnShowLabels = new System.Windows.Forms.ToolStripButton();
             this.btnShowInheritedRelationships = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.functionalIdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.generateCodeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.generateCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateUpdateScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateDocumentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.functionalIdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmbNodes = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.cmbSubmodels = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.graphEditor = new Blueprint41.Modeller.GraphEditorControl();
+            this.entityEditor = new Blueprint41.Modeller.EntityEditor();
             this.staticDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aPIDefinitionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -71,8 +74,6 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expandPropertiesWidthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRight = new System.Windows.Forms.ToolStrip();
-            this.graphEditor = new Blueprint41.Modeller.GraphEditorControl();
-            this.entityEditor = new Blueprint41.Modeller.EntityEditor();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -93,12 +94,13 @@
             this.toolStripButtonOpen,
             this.btnSave,
             this.toolStripSeparator1,
-            this.tsbZoomOut,
             this.tsbZoomIn,
+            this.tsbZoomOut,
             this.tsbPan,
             this.btnShowLabels,
             this.btnShowInheritedRelationships,
             this.toolStripSeparator4,
+            this.toolStripDropDownButton1,
             this.toolStripDropDownButton2,
             this.cmbNodes,
             this.toolStripLabel2,
@@ -161,16 +163,6 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 34);
             // 
-            // tsbZoomOut
-            // 
-            this.tsbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("tsbZoomOut.Image")));
-            this.tsbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbZoomOut.Name = "tsbZoomOut";
-            this.tsbZoomOut.Size = new System.Drawing.Size(28, 31);
-            this.tsbZoomOut.Text = "Zoom In";
-            this.tsbZoomOut.Click += new System.EventHandler(this.TsbZoomOut_Click);
-            // 
             // tsbZoomIn
             // 
             this.tsbZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -178,8 +170,18 @@
             this.tsbZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbZoomIn.Name = "tsbZoomIn";
             this.tsbZoomIn.Size = new System.Drawing.Size(28, 31);
-            this.tsbZoomIn.Text = "ZOOM OUT";
+            this.tsbZoomIn.Text = "ZOOM IN";
             this.tsbZoomIn.Click += new System.EventHandler(this.TsbZoomIn_Click);
+            // 
+            // tsbZoomOut
+            // 
+            this.tsbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("tsbZoomOut.Image")));
+            this.tsbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbZoomOut.Name = "tsbZoomOut";
+            this.tsbZoomOut.Size = new System.Drawing.Size(28, 31);
+            this.tsbZoomOut.Text = "ZOOM OUT";
+            this.tsbZoomOut.Click += new System.EventHandler(this.TsbZoomOut_Click);
             // 
             // tsbPan
             // 
@@ -225,33 +227,25 @@
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 34);
             // 
-            // toolStripDropDownButton2
+            // toolStripDropDownButton1
             // 
-            this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.functionalIdToolStripMenuItem,
-            this.generateCodeToolStripMenuItem1,
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generateCodeToolStripMenuItem,
             this.generateUpdateScriptToolStripMenuItem,
             this.generateDocumentToolStripMenuItem});
-            this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
-            this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(37, 31);
-            this.toolStripDropDownButton2.Text = "SETTINGS";
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(37, 31);
+            this.toolStripDropDownButton1.Text = "TOOLS";
             // 
-            // functionalIdToolStripMenuItem
+            // generateCodeToolStripMenuItem
             // 
-            this.functionalIdToolStripMenuItem.Name = "functionalIdToolStripMenuItem";
-            this.functionalIdToolStripMenuItem.Size = new System.Drawing.Size(221, 24);
-            this.functionalIdToolStripMenuItem.Text = "Manage Functional Id";
-            this.functionalIdToolStripMenuItem.Click += new System.EventHandler(this.functionalIdToolStripMenuItem_Click);
-            // 
-            // generateCodeToolStripMenuItem1
-            // 
-            this.generateCodeToolStripMenuItem1.Name = "generateCodeToolStripMenuItem1";
-            this.generateCodeToolStripMenuItem1.Size = new System.Drawing.Size(221, 24);
-            this.generateCodeToolStripMenuItem1.Text = "Generate Code";
-            this.generateCodeToolStripMenuItem1.Click += new System.EventHandler(this.generateCodeToolStripMenuItem1_Click);
+            this.generateCodeToolStripMenuItem.Name = "generateCodeToolStripMenuItem";
+            this.generateCodeToolStripMenuItem.Size = new System.Drawing.Size(221, 24);
+            this.generateCodeToolStripMenuItem.Text = "Generate Code";
+            this.generateCodeToolStripMenuItem.Click += new System.EventHandler(this.generateCodeToolStripMenuItem_Click);
             // 
             // generateUpdateScriptToolStripMenuItem
             // 
@@ -266,6 +260,24 @@
             this.generateDocumentToolStripMenuItem.Size = new System.Drawing.Size(221, 24);
             this.generateDocumentToolStripMenuItem.Text = "Generate Document";
             this.generateDocumentToolStripMenuItem.Click += new System.EventHandler(this.generateDocumentToolStripMenuItem_Click);
+            // 
+            // toolStripDropDownButton2
+            // 
+            this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.functionalIdToolStripMenuItem});
+            this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
+            this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(37, 31);
+            this.toolStripDropDownButton2.Text = "SETTINGS";
+            // 
+            // functionalIdToolStripMenuItem
+            // 
+            this.functionalIdToolStripMenuItem.Name = "functionalIdToolStripMenuItem";
+            this.functionalIdToolStripMenuItem.Size = new System.Drawing.Size(211, 24);
+            this.functionalIdToolStripMenuItem.Text = "Manage Functional Id";
+            this.functionalIdToolStripMenuItem.Click += new System.EventHandler(this.functionalIdToolStripMenuItem_Click);
             // 
             // cmbNodes
             // 
@@ -325,6 +337,40 @@
             this.splitContainer.Size = new System.Drawing.Size(1215, 644);
             this.splitContainer.SplitterDistance = 862;
             this.splitContainer.TabIndex = 3;
+            // 
+            // graphEditor
+            // 
+            this.graphEditor.BackColor = System.Drawing.SystemColors.Control;
+            this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.graphEditor.Location = new System.Drawing.Point(0, 0);
+            this.graphEditor.Margin = new System.Windows.Forms.Padding(4);
+            this.graphEditor.Name = "graphEditor";
+            this.graphEditor.SelectedEntities = null;
+            this.graphEditor.Size = new System.Drawing.Size(862, 644);
+            this.graphEditor.TabIndex = 0;
+            this.graphEditor.NodeInsertedByUser += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_NodeInsertedByUser);
+            this.graphEditor.SelectedNodeChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_SelectedNodeChanged);
+            this.graphEditor.SelectedEdgeChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_SelectedEdgeChanged);
+            this.graphEditor.InsertRelationship += new System.EventHandler<Blueprint41.Modeller.InsertRelationshipEventArgs>(this.graphEditor_InsertRelationship);
+            this.graphEditor.AddDisplayedEntities += new System.EventHandler<System.EventArgs>(this.graphEditor_AddDisplayedEntities);
+            this.graphEditor.RemoveNodeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromDiagramChanged);
+            this.graphEditor.RemoveEdgeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromDiagramChanged);
+            this.graphEditor.RemoveNodeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromStorageChanged);
+            this.graphEditor.RemoveEdgeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromStorageChanged);
+            this.graphEditor.NoSelectionEvent += new System.EventHandler(this.graphEditor_NoSelectionEvent);
+            // 
+            // entityEditor
+            // 
+            this.entityEditor.BackColor = System.Drawing.Color.White;
+            this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityEditor.Enabled = false;
+            this.entityEditor.FunctionalIdDataTable = null;
+            this.entityEditor.Location = new System.Drawing.Point(0, 0);
+            this.entityEditor.Margin = new System.Windows.Forms.Padding(4);
+            this.entityEditor.Name = "entityEditor";
+            this.entityEditor.Size = new System.Drawing.Size(349, 644);
+            this.entityEditor.TabIndex = 0;
             // 
             // staticDataToolStripMenuItem
             // 
@@ -402,8 +448,8 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.zoomOutToolStripMenuItem,
             this.zoomInToolStripMenuItem,
+            this.zoomOutToolStripMenuItem,
             this.panToolStripMenuItem,
             this.showLabelsToolStripMenuItem,
             this.showInheritedRelationshipsToolStripMenuItem,
@@ -495,40 +541,6 @@
             this.toolStripRight.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
             this.toolStripRight.Visible = false;
             // 
-            // graphEditor
-            // 
-            this.graphEditor.BackColor = System.Drawing.SystemColors.Control;
-            this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.graphEditor.Location = new System.Drawing.Point(0, 0);
-            this.graphEditor.Margin = new System.Windows.Forms.Padding(4);
-            this.graphEditor.Name = "graphEditor";
-            this.graphEditor.SelectedEntities = null;
-            this.graphEditor.Size = new System.Drawing.Size(862, 644);
-            this.graphEditor.TabIndex = 0;
-            this.graphEditor.NodeInsertedByUser += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_NodeInsertedByUser);
-            this.graphEditor.SelectedNodeChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_SelectedNodeChanged);
-            this.graphEditor.SelectedEdgeChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_SelectedEdgeChanged);
-            this.graphEditor.InsertRelationship += new System.EventHandler<Blueprint41.Modeller.InsertRelationshipEventArgs>(this.graphEditor_InsertRelationship);
-            this.graphEditor.AddDisplayedEntities += new System.EventHandler<System.EventArgs>(this.graphEditor_AddDisplayedEntities);
-            this.graphEditor.RemoveNodeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromDiagramChanged);
-            this.graphEditor.RemoveEdgeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromDiagramChanged);
-            this.graphEditor.RemoveNodeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromStorageChanged);
-            this.graphEditor.RemoveEdgeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromStorageChanged);
-            this.graphEditor.NoSelectionEvent += new System.EventHandler(this.graphEditor_NoSelectionEvent);
-            // 
-            // entityEditor
-            // 
-            this.entityEditor.BackColor = System.Drawing.Color.White;
-            this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityEditor.Enabled = false;
-            this.entityEditor.FunctionalIdDataTable = null;
-            this.entityEditor.Location = new System.Drawing.Point(0, 0);
-            this.entityEditor.Margin = new System.Windows.Forms.Padding(4);
-            this.entityEditor.Name = "entityEditor";
-            this.entityEditor.Size = new System.Drawing.Size(349, 644);
-            this.entityEditor.TabIndex = 0;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -592,17 +604,18 @@
         private System.Windows.Forms.ToolStrip toolStripRight;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expandPropertiesWidthToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton tsbZoomOut;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton tsbZoomIn;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton tsbZoomOut;
         private System.Windows.Forms.ToolStripButton tsbPan;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
         private System.Windows.Forms.ToolStripMenuItem functionalIdToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem generateCodeToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem generateUpdateScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zoomOutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zoomInToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem panToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem generateCodeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generateUpdateScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateDocumentToolStripMenuItem;
     }
 }

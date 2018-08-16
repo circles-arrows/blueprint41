@@ -133,7 +133,10 @@ namespace Blueprint41.Modeller
             checkedEntities.RemoveAll(entity => entity.Entity.Inherits == null);
 
             if (result.Count > 0)
+            {
                 result.AddRange(checkedParentEntities.Where(x => result.Any(added => added.Guid == x.Inherits)));
+                checkedParentEntities.RemoveAll(entity => result.Any(x => x.Guid == entity.Guid));
+            }
             else
             {
                 result.AddRange(checkedParentEntities.Where(x => x.Inherits == null));

@@ -525,7 +525,7 @@ namespace Blueprint41.Modeller
             SelectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
             SelectedNode.Highlight();
         }
-        
+
 
         private void staticDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -726,6 +726,46 @@ namespace Blueprint41.Modeller
         {
             ManageFunctionalId functionalIdForm = new ManageFunctionalId(Model);
             functionalIdForm.ShowDialog(this);
+        }        
+
+        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TsbZoomOut_Click(this, EventArgs.Empty);
+        }
+
+        private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TsbZoomIn_Click(this, EventArgs.Empty);
+        }
+
+        private void panToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TsbPan_Click(this, EventArgs.Empty);
+        }
+
+        #region Tools
+
+        private void generateDocumentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (DatastoreModelDocumentGenerator.Instance == null)
+            {
+                MessageBox.Show("The document generator is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                return;
+            }
+
+            DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(Model.Xml);
+        }
+
+        private void generateCodeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CodeGeneration codeGeneration = new CodeGeneration();
+            codeGeneration.Size = this.Size;
+            codeGeneration.T4Template = new DatastoreModel();
+            codeGeneration.T4Template.Name = GenerationEnum.DataStoreModel;
+            codeGeneration.Model = Model;
+            codeGeneration.T4Template.Modeller = Model;
+            codeGeneration.T4Template.FunctionalIds = new List<FunctionalId>();
+            codeGeneration.ShowDialog();
         }
 
         private void generateUpdateScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -750,42 +790,6 @@ namespace Blueprint41.Modeller
             }
         }
 
-        private void generateCodeToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            CodeGeneration codeGeneration = new CodeGeneration();
-            codeGeneration.Size = this.Size;
-            codeGeneration.T4Template = new DatastoreModel();
-            codeGeneration.T4Template.Name = GenerationEnum.DataStoreModel;
-            codeGeneration.Model = Model;
-            codeGeneration.T4Template.Modeller = Model;
-            codeGeneration.T4Template.FunctionalIds = new List<FunctionalId>();
-            codeGeneration.ShowDialog();
-        }
-
-        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TsbZoomOut_Click(this, EventArgs.Empty);
-        }
-
-        private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TsbZoomIn_Click(this, EventArgs.Empty);
-        }
-
-        private void panToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TsbPan_Click(this, EventArgs.Empty);
-        }
-
-        private void generateDocumentToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (DatastoreModelDocumentGenerator.Instance == null)
-            {
-                MessageBox.Show("The document generator is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
-                return;
-            }
-
-            DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(Model.Xml);
-        }
+        #endregion
     }
 }
