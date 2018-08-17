@@ -138,14 +138,7 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("         Entity ");
-            
-            #line 37 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
-            
-            #line default
-            #line hidden
-            this.Write(" = Entities.New(\"");
+            this.Write("         Entities.New(\"");
             
             #line 37 "C:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
