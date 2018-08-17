@@ -1044,7 +1044,7 @@ namespace Blueprint41.Modeller
 
         private void chkIsStaticData_CheckedChanged(object sender, EventArgs e)
         {
-            if (!chkIsStaticData.Checked && Entity.IsStaticData)
+            if (!chkIsStaticData.Checked && Entity.IsStaticData && Entity.StaticData.Records.Record.Count != 0)
             {
                 DialogResult result = MessageBox.Show($"This will delete all the existing '{Entity.Label}' static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
                 if (result != System.Windows.Forms.DialogResult.Yes)
@@ -1081,7 +1081,7 @@ namespace Blueprint41.Modeller
             chkIsStaticData.Checked = false;
             chkIsStaticData.CheckedChanged += chkIsStaticData_CheckedChanged;
 
-            if (!chkIsStaticData.Checked && Entity.IsStaticData)
+            if (!chkIsStaticData.Checked && Entity.IsStaticData && Entity.StaticData.Records.Record.Count != 0)
             {
                 DialogResult result = MessageBox.Show($"This will delete all the existing '{Entity.Label}' static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
                 if (result != System.Windows.Forms.DialogResult.Yes)
