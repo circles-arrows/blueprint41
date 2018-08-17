@@ -23,7 +23,6 @@ namespace Blueprint41.Modeller
         internal GenerationBase T4Template { get; set; }
         internal Model Model { get; set; }
         private string SelectedPath { get; set; }
-        private IEnumerable<Entity> Entities { get; set; }
 
         public Dictionary<Guid, Entity> EntitiesLookUp { get; private set; }
 
@@ -36,7 +35,6 @@ namespace Blueprint41.Modeller
         {
             T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.ToList();
             EntitiesLookUp = Model.Entities.Entity.ToDictionary(x => Guid.Parse(x.Guid));
-
             InitializableButton(this.T4Template.Name);
             InitializeEntityTree();
         }
@@ -116,68 +114,76 @@ namespace Blueprint41.Modeller
             }
         }
 
+        private List<Entity> SortDependencyEntities(List<Entity> entities, List<Entity> parentEntities)
+        {
+            parentEntities.RemoveAll(entity => entities.Any(x => x.Guid == entity.Guid));
+
+            List<Entity> result = new List<Entity>();
+            result.AddRange(entities.Where(x => x.Inherits == null));
+            entities.RemoveAll(entity => entity.Inherits == null);
+
+            if (result.Count > 0)
+            {
+                result.AddRange(parentEntities.Where(x => result.Any(added => added.Guid == x.Inherits)));
+                parentEntities.RemoveAll(entity => result.Any(x => x.Guid == entity.Guid));
+            }
+            else
+            {
+                result.AddRange(parentEntities.Where(x => x.Inherits == null));
+                parentEntities.RemoveAll(entity => entity.Inherits == null);
+            }
+
+            int count;
+            // remaining inherited parent
+            while (parentEntities.Count > 0)
+            {
+                count = parentEntities.Count;
+                result.AddRange(parentEntities.Where(x => result.Any(added => added.Guid == x.Inherits)));
+                parentEntities.RemoveAll(entity => result.Any(added => added.Guid == entity.Guid));
+
+                if (count == parentEntities.Count)
+                {
+                    //  the user may have omitted to other parent, so add it here
+                    result.AddRange(parentEntities.Where(x => result.Any(added => added.Guid == x.Guid) == false));
+                    break;
+                }
+            }
+
+            // add the entity whose parent are already in the list
+            result.AddRange(entities.Where(entity => result.Any(added => added.Guid == entity.Inherits)));
+            entities.RemoveAll(entity => result.Any(added => added.Guid == entity.Guid));
+
+            // add the remaining entities
+            while (entities.Count > 0)
+            {
+                count = entities.Count;
+                result.AddRange(entities.Where(x => result.Any(added => added.Guid == x.Inherits)));
+                entities.RemoveAll(entity => result.Any(added => added.Guid == entity.Guid));
+
+                if (count == entities.Count)
+                {
+                    //  the user may have omitted to other parent, so add it here
+                    result.AddRange(entities.Where(x => result.Any(added => added.Guid == x.Guid) == false));
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         private void IterateSelectedEntities()
         {
             List<Relationship> relationships = new List<Relationship>();
             List<EntityTreeNode> checkedEntities = tvEntities.Nodes.Cast<EntityTreeNode>().ToList().Where(x => x.Checked == true).Select(x => x).ToList();
 
             List<Entity> checkedParentEntities = new List<Entity>();
-            checkedEntities.ForEach((node) => checkedParentEntities.AddRange(node.InheritNode.Nodes.Cast<InheritedEntityTreeNode>().ToList().Where(entity => entity.Checked == true && checkedParentEntities.Any(added => added.Guid == entity.Entity.Guid) == false).Select(x => x.Entity)));
-            checkedEntities.ForEach((node) => relationships.AddRange(node.RelationshipNode.Nodes.Cast<RelationshipTreeNode>().ToList().Where(rel => rel.Checked == true && relationships.Any(added => added.Name == rel.Relationship.Name) == false).Select(x => x.Relationship)));
-
-            // we removed entities from inherited 
-            checkedParentEntities.RemoveAll(entity => checkedEntities.Any(x => x.Entity.Guid == entity.Guid));
-
-            List<Entity> result = new List<Entity>();
-            result.AddRange(checkedEntities.Where(x => x.Entity.Inherits == null).Select(x => x.Entity));
-            checkedEntities.RemoveAll(entity => entity.Entity.Inherits == null);
-
-            if (result.Count > 0)
+            checkedEntities.ForEach((node) =>
             {
-                result.AddRange(checkedParentEntities.Where(x => result.Any(added => added.Guid == x.Inherits)));
-                checkedParentEntities.RemoveAll(entity => result.Any(x => x.Guid == entity.Guid));
-            }
-            else
-            {
-                result.AddRange(checkedParentEntities.Where(x => x.Inherits == null));
-                checkedParentEntities.RemoveAll(entity => entity.Inherits == null);
-            }
+                checkedParentEntities.AddRange(node.InheritNode.Nodes.Cast<InheritedEntityTreeNode>().ToList().Where(entity => entity.Checked == true && checkedParentEntities.Any(added => added.Guid == entity.Entity.Guid) == false).Select(x => x.Entity));
+                relationships.AddRange(node.RelationshipNode.Nodes.Cast<RelationshipTreeNode>().ToList().Where(rel => rel.Checked == true && relationships.Any(added => added.Name == rel.Relationship.Name) == false).Select(x => x.Relationship));
+            });           
 
-            int count;
-            // remaining inherited parent
-            while (checkedParentEntities.Count > 0)
-            {
-                count = checkedParentEntities.Count;
-                result.AddRange(checkedParentEntities.Where(x => result.Any(added => added.Guid == x.Inherits)));
-                checkedParentEntities.RemoveAll(entity => result.Any(added => added.Guid == entity.Guid));
-
-                if (count == checkedParentEntities.Count)
-                {
-                    //  the user may have omitted to other parent, so add it here
-                    result.AddRange(checkedParentEntities.Where(x => result.Any(added => added.Guid == x.Guid) == false));
-                    break;
-                }
-            }
-
-            // add the entity whose parent are already in the list
-            result.AddRange(checkedEntities.Where(entity => result.Any(added => added.Guid == entity.Entity.Inherits)).Select(x => x.Entity));
-            checkedEntities.RemoveAll(entity => result.Any(added => added.Guid == entity.Entity.Guid));
-
-            // add the remaining entities
-            while (checkedEntities.Count > 0)
-            {
-                count = checkedEntities.Count;
-                result.AddRange(checkedEntities.Where(x => result.Any(added => added.Guid == x.Entity.Inherits)).Select(x => x.Entity));
-                checkedEntities.RemoveAll(entity => result.Any(added => added.Guid == entity.Entity.Guid));
-
-                if (count == checkedEntities.Count)
-                {
-                    //  the user may have omitted to other parent, so add it here
-                    result.AddRange(checkedEntities.Where(x => result.Any(added => added.Guid == x.Entity.Guid) == false).Select(x => x.Entity));
-                    break;
-                }
-            }
-
+            var result = SortDependencyEntities(checkedEntities.Select(x => x.Entity).ToList(), checkedParentEntities);
             GenerateEntitiesCode(result, relationships);
         }
 
@@ -243,6 +249,25 @@ namespace Blueprint41.Modeller
 
         private void btnExport_Click(object sender, EventArgs e)
         {
+            List<Relationship> relationships = new List<Relationship>();
+            List<EntityTreeNode> entities = tvEntities.Nodes.Cast<EntityTreeNode>().ToList().Select(x => x).ToList();
+
+            List<Entity> parentEntities = new List<Entity>();
+            entities.ForEach((node) =>
+            {
+                if (node.Loaded == false)
+                {
+                    node.LoadInheritance();
+                    node.LoadRelationship();
+                }
+
+                parentEntities.AddRange(node.InheritNode.Nodes.Cast<InheritedEntityTreeNode>().ToList().Where(entity => parentEntities.Any(added => added.Guid == entity.Entity.Guid) == false).Select(x => x.Entity));
+                relationships.AddRange(node.RelationshipNode.Nodes.Cast<RelationshipTreeNode>().ToList().Where(rel => relationships.Any(added => added.Name == rel.Relationship.Name) == false).Select(x => x.Relationship));
+            });
+
+            Dictionary<Guid, Entity> functionalIdByentities = EntitiesLookUp.Where(x => string.IsNullOrEmpty(x.Value.FunctionalId) == false).GroupBy(x => x.Value.FunctionalId).Select(x => x.FirstOrDefault()).ToDictionary(x => Guid.Parse(x.Value.FunctionalId), y => y.Value);
+            List<Entity> sortedResult = SortDependencyEntities(entities.Select(x => x.Entity).ToList(), parentEntities);
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("using System;");
             sb.AppendLine("using System.Text;");
@@ -269,18 +294,16 @@ namespace Blueprint41.Modeller
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 this.SelectedPath = fbd.SelectedPath;
-                foreach (var entity in Entities)
-                {
-                    T4Template = new DatastoreModel();
-                    T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.Where(fid => fid.Guid == entity.FunctionalId).ToList();
-                    T4Template.Modeller = Model;
-                    T4Template.Entities = new List<Entity>();
-                    T4Template.Entities.Add(entity);
-                    string output = T4Template.TransformText();
 
-                    sb.Append(output);
-                    sb.AppendLine();
-                }
+                T4Template = new DatastoreModel();
+                T4Template.FunctionalIds = Model.FunctionalIds.FunctionalId.Where(x => functionalIdByentities.ContainsKey(Guid.Parse(x.Guid)) || x.IsDefault == true).ToList();
+                T4Template.Modeller = Model;
+                T4Template.Entities = sortedResult;
+                T4Template.Relationships = relationships;
+                string output = T4Template.TransformText();
+
+                sb.Append(output);
+                sb.AppendLine();
 
                 sb.AppendLine("        }");
                 sb.AppendLine("    }");
