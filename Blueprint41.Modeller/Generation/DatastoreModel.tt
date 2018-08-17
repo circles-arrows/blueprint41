@@ -34,7 +34,7 @@ foreach (var entity in Entities)
         if (string.IsNullOrEmpty(entity.FunctionalId))
         {
 #>
-         Entities.New("<#=entity.Name #>")
+        Entities.New("<#=entity.Name #>")
 <#
         } 
         else 
