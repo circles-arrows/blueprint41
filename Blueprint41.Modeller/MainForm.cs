@@ -627,7 +627,7 @@ namespace Blueprint41.Modeller
         private void menuFileOpen_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDialog = new OpenFileDialog();
-            // openDialog.Filter = "XML Document (*.xml) | *.xml";
+            openDialog.Filter = "XML Document (*.xml) | *.xml";
             DialogResult result = openDialog.ShowDialog(this);
 
             if (result == DialogResult.OK)
