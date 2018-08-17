@@ -73,10 +73,21 @@ namespace Blueprint41.Modeller
 
         private void Initialize()
         {
-            if (File.Exists(StoragePath))
-                Model = new Model(StoragePath);
-            else
-                Model = new Model();
+            try
+            {
+                Model = File.Exists(StoragePath) ? Model = new Model(StoragePath) : new Model();
+            }
+            catch (XmlException ex)
+            {
+                MessageBox.Show($"The path {StoragePath} is an invalid xml file", "Invalid Xml File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                RegistryHandler.LastOpenedFile = string.Empty;
+
+                if (Model == null)
+                {
+                    Model = new Model();
+                }
+            }
+
 
             Model.ShowRelationshipLabels = false;
             Model.ShowInheritedRelationships = false;
@@ -616,11 +627,14 @@ namespace Blueprint41.Modeller
         private void menuFileOpen_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDialog = new OpenFileDialog();
+            // openDialog.Filter = "XML Document (*.xml) | *.xml";
             DialogResult result = openDialog.ShowDialog(this);
 
             if (result == DialogResult.OK)
             {
                 StoragePath = openDialog.FileName;
+                RegistryHandler.LastOpenedFile = Path.GetFullPath(StoragePath);
+
                 Initialize();
                 Model.ShowRelationshipLabels = showLabels;
                 Model.ShowInheritedRelationships = showInherited;
@@ -726,7 +740,7 @@ namespace Blueprint41.Modeller
         {
             ManageFunctionalId functionalIdForm = new ManageFunctionalId(Model);
             functionalIdForm.ShowDialog(this);
-        }        
+        }
 
         private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
