@@ -15,12 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_08B29ED6004A4C6883BB85574A360926"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_0B0185307C6E4B5CBEBCE9A6D9346533"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -28,19 +22,7 @@
         "Entry"
         {
         "MsmKey" = "8:_0E502AFD9DB11EA20760DFEB4A6E2792"
-        "OwnerKey" = "8:_19577646F16B4465AA90FA1E121C7B01"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0E502AFD9DB11EA20760DFEB4A6E2792"
-        "OwnerKey" = "8:_8B5663249CC7AAB30B783326A68037F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0E502AFD9DB11EA20760DFEB4A6E2792"
-        "OwnerKey" = "8:_4CE2997C5067DD325E079E6DCB09CD98"
+        "OwnerKey" = "8:_CABE859AF32B7FF59E5CD43E6CD02FDE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -57,37 +39,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_19577646F16B4465AA90FA1E121C7B01"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_19684A6E677A4476BAE614CE394E7E8B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1E23405C39D647F68B9E8B9D705A6E69"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1E8839E8EF3D42B8BA1A5535526A041C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1F9908DB0A35431FB7CD1C29B35C09D3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_21804E77D89F4F13A489F35CD811D087"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -105,12 +57,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_25B4F771FFA04DA8B8C7E68DF3AE7D38"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_27700D6D5C994CD297826B558BCC4894"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -123,62 +69,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2C56B0EAF7554F61B5C132A971B5B334"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3243B3B2785A47FCA3A3289842D58A86"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_3E9472FE0B9EC8F12589DFB43E372133"
-        "OwnerKey" = "8:_19577646F16B4465AA90FA1E121C7B01"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3E9472FE0B9EC8F12589DFB43E372133"
-        "OwnerKey" = "8:_8B5663249CC7AAB30B783326A68037F6"
+        "MsmKey" = "8:_332BEC24A13D4B01535D3C6EB617E819"
+        "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_42AA6F0EDB5E441380C8B675F0C863A7"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4C06F291A3384FF49BB07887905904C0"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4CE2997C5067DD325E079E6DCB09CD98"
-        "OwnerKey" = "8:_0B0185307C6E4B5CBEBCE9A6D9346533"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4CE2997C5067DD325E079E6DCB09CD98"
-        "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4CE2997C5067DD325E079E6DCB09CD98"
-        "OwnerKey" = "8:_7AD551E811BE45909D41DE2E97CC9F93"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4CE2997C5067DD325E079E6DCB09CD98"
-        "OwnerKey" = "8:_BB311835B032708DDD2EC22882063B54"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -207,31 +111,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5D9B1BA3968F198C659F8F8E6F621A8D"
+        "OwnerKey" = "8:_CABE859AF32B7FF59E5CD43E6CD02FDE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5D9B1BA3968F198C659F8F8E6F621A8D"
+        "OwnerKey" = "8:_99A606A473F842DBA94A46521FA10D78"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_64135488D96A40209209F39A567D64E6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_64B1913491787CE741F68BA535B3C442"
-        "OwnerKey" = "8:_21804E77D89F4F13A489F35CD811D087"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6B0BA9845F1AE128E21F9D7B6E276AA0"
-        "OwnerKey" = "8:_19577646F16B4465AA90FA1E121C7B01"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6B0BA9845F1AE128E21F9D7B6E276AA0"
-        "OwnerKey" = "8:_8B5663249CC7AAB30B783326A68037F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_70E324F6324A45878BA50913AEF50814"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -245,12 +137,6 @@
         {
         "MsmKey" = "8:_78B5BA03D764191EE4DD51F848F87251"
         "OwnerKey" = "8:_0E502AFD9DB11EA20760DFEB4A6E2792"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7AD551E811BE45909D41DE2E97CC9F93"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -273,61 +159,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8B5663249CC7AAB30B783326A68037F6"
-        "OwnerKey" = "8:_21804E77D89F4F13A489F35CD811D087"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8B5663249CC7AAB30B783326A68037F6"
-        "OwnerKey" = "8:_7AD551E811BE45909D41DE2E97CC9F93"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_8CB6649E857645A4887B0C509682C1F8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_8F0F5F0BB9B073405339939A97505F55"
-        "OwnerKey" = "8:_7AD551E811BE45909D41DE2E97CC9F93"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9948A4CFFDB649948D36CFF1086C1CDF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_99A606A473F842DBA94A46521FA10D78"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9DD6CA883B5E96562C271E20A776F833"
-        "OwnerKey" = "8:_53DF6FDAA140432BAB5325BD0C43DED9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9DD6CA883B5E96562C271E20A776F833"
-        "OwnerKey" = "8:_C5CC9D962D0EAFDFE1412A8311894AF5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9DD6CA883B5E96562C271E20A776F833"
-        "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A76CC00BF18B4C6E937E6B67298BAFEB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -351,8 +189,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B11E94D47E0B474CA4B9316FBBDD2FCD"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_B4C4EFECDD0EDC3981BCBE0913FD753F"
+        "OwnerKey" = "8:_53DF6FDAA140432BAB5325BD0C43DED9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B4C4EFECDD0EDC3981BCBE0913FD753F"
+        "OwnerKey" = "8:_332BEC24A13D4B01535D3C6EB617E819"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B4C4EFECDD0EDC3981BCBE0913FD753F"
+        "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -363,62 +213,38 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_BB311835B032708DDD2EC22882063B54"
-        "OwnerKey" = "8:_21804E77D89F4F13A489F35CD811D087"
+        "MsmKey" = "8:_B6950FF6FBBC4585BBDD1C83EA2FE4B3"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_BB311835B032708DDD2EC22882063B54"
+        "MsmKey" = "8:_CABE859AF32B7FF59E5CD43E6CD02FDE"
+        "OwnerKey" = "8:_0B0185307C6E4B5CBEBCE9A6D9346533"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CABE859AF32B7FF59E5CD43E6CD02FDE"
         "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_BB311835B032708DDD2EC22882063B54"
-        "OwnerKey" = "8:_7AD551E811BE45909D41DE2E97CC9F93"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C305C2EB8518B24262316702CA4B2EDD"
-        "OwnerKey" = "8:_0F2F626790854A85B205C6BE39D96EA3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C305C2EB8518B24262316702CA4B2EDD"
-        "OwnerKey" = "8:_C5CC9D962D0EAFDFE1412A8311894AF5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C305C2EB8518B24262316702CA4B2EDD"
-        "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C305C2EB8518B24262316702CA4B2EDD"
-        "OwnerKey" = "8:_9DD6CA883B5E96562C271E20A776F833"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C305C2EB8518B24262316702CA4B2EDD"
-        "OwnerKey" = "8:_53DF6FDAA140432BAB5325BD0C43DED9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C5CC9D962D0EAFDFE1412A8311894AF5"
-        "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
+        "MsmKey" = "8:_CABE859AF32B7FF59E5CD43E6CD02FDE"
+        "OwnerKey" = "8:_D67A47A8A150725278548E1FF35DFD82"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_CD85518ABD21A8D3745A8EF80D87C33D"
         "OwnerKey" = "8:_0E502AFD9DB11EA20760DFEB4A6E2792"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D67A47A8A150725278548E1FF35DFD82"
+        "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -447,14 +273,32 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EE19FD7F406744E392A4A2E4D0E90F60"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_EFAB181EDD836CDE9D4BB8B193318E6F"
+        "OwnerKey" = "8:_0F2F626790854A85B205C6BE39D96EA3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_EE3129CE87E04D9C9C74DAA4674A2779"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_EFAB181EDD836CDE9D4BB8B193318E6F"
+        "OwnerKey" = "8:_332BEC24A13D4B01535D3C6EB617E819"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EFAB181EDD836CDE9D4BB8B193318E6F"
+        "OwnerKey" = "8:_E84A51F7DD79400C9399241F50E53FF4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EFAB181EDD836CDE9D4BB8B193318E6F"
+        "OwnerKey" = "8:_B4C4EFECDD0EDC3981BCBE0913FD753F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EFAB181EDD836CDE9D4BB8B193318E6F"
+        "OwnerKey" = "8:_53DF6FDAA140432BAB5325BD0C43DED9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -465,50 +309,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
-        "OwnerKey" = "8:_4CE2997C5067DD325E079E6DCB09CD98"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
-        "OwnerKey" = "8:_99A606A473F842DBA94A46521FA10D78"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
-        "OwnerKey" = "8:_8B5663249CC7AAB30B783326A68037F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
-        "OwnerKey" = "8:_19577646F16B4465AA90FA1E121C7B01"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FAACCE8ABB5C48E79C8CACE9D9A57451"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0E502AFD9DB11EA20760DFEB4A6E2792"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F458216F1BA9CA67DF9CBBAF9FD235D1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_EE3129CE87E04D9C9C74DAA4674A2779"
+        "OwnerKey" = "8:_78B5BA03D764191EE4DD51F848F87251"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -526,13 +328,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C5CC9D962D0EAFDFE1412A8311894AF5"
+        "OwnerKey" = "8:_332BEC24A13D4B01535D3C6EB617E819"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CD85518ABD21A8D3745A8EF80D87C33D"
+        "OwnerKey" = "8:_D67A47A8A150725278548E1FF35DFD82"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -568,24 +370,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7AD551E811BE45909D41DE2E97CC9F93"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8F0F5F0BB9B073405339939A97505F55"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_78B5BA03D764191EE4DD51F848F87251"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_73E92C7D220543078D84F1E299A1BE2D"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -604,7 +388,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9DD6CA883B5E96562C271E20A776F833"
+        "OwnerKey" = "8:_B4C4EFECDD0EDC3981BCBE0913FD753F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -634,55 +418,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2C56B0EAF7554F61B5C132A971B5B334"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2BF6A88A8C76FE6C843981E952F783D7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_25B4F771FFA04DA8B8C7E68DF3AE7D38"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_238426749AA3427CB7A98C5FA3FCA7FB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_21804E77D89F4F13A489F35CD811D087"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_64B1913491787CE741F68BA535B3C442"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BB311835B032708DDD2EC22882063B54"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8B5663249CC7AAB30B783326A68037F6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1E8839E8EF3D42B8BA1A5535526A041C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -694,31 +430,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_19577646F16B4465AA90FA1E121C7B01"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6B0BA9845F1AE128E21F9D7B6E276AA0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3E9472FE0B9EC8F12589DFB43E372133"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0F2F626790854A85B205C6BE39D96EA3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C305C2EB8518B24262316702CA4B2EDD"
+        "OwnerKey" = "8:_EFAB181EDD836CDE9D4BB8B193318E6F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -730,7 +448,31 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
+        "OwnerKey" = "8:_5D9B1BA3968F198C659F8F8E6F621A8D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_0E502AFD9DB11EA20760DFEB4A6E2792"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2BF6A88A8C76FE6C843981E952F783D7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_F458216F1BA9CA67DF9CBBAF9FD235D1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CD85518ABD21A8D3745A8EF80D87C33D"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -828,26 +570,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_08B29ED6004A4C6883BB85574A360926"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.pdb"
-            "TargetName" = "8:Blueprint41.pdb"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0B0185307C6E4B5CBEBCE9A6D9346533"
             {
             "AssemblyRegister" = "3:1"
@@ -861,7 +583,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Schemas.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Blueprint41.Modeller.Schemas.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -923,38 +645,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Microsoft.Msagl.Drawing.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_19577646F16B4465AA90FA1E121C7B01"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Blueprint41, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_19577646F16B4465AA90FA1E121C7B01"
-                    {
-                    "Name" = "8:Blueprint41.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Microsoft.Msagl.Drawing.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -985,109 +676,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Net.Http.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1E23405C39D647F68B9E8B9D705A6E69"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\PreferredPropertyNames.xml"
-            "TargetName" = "8:PreferredPropertyNames.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1E8839E8EF3D42B8BA1A5535526A041C"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SourceGrid, Version=4.22.3616.29532, Culture=neutral, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_1E8839E8EF3D42B8BA1A5535526A041C"
-                    {
-                    "Name" = "8:SourceGrid.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\SourceGrid.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F9908DB0A35431FB7CD1C29B35C09D3"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Document.dll.config"
-            "TargetName" = "8:Blueprint41.Modeller.Document.dll.config"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_21804E77D89F4F13A489F35CD811D087"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Blueprint41.Modeller.Document, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_21804E77D89F4F13A489F35CD811D087"
-                    {
-                    "Name" = "8:Blueprint41.Modeller.Document.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Document.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Net.Http.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1107,7 +696,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_21A639CA8B204A26BB9864C871B1229A"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.exe.config"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Blueprint41.Modeller.exe.config"
             "TargetName" = "8:Blueprint41.Modeller.exe.config"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1129,7 +718,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.CodeDom, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.CodeDom, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_238426749AA3427CB7A98C5FA3FCA7FB"
@@ -1138,38 +727,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.CodeDom.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_25B4F771FFA04DA8B8C7E68DF3AE7D38"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Neo4j.Driver, Version=1.6.70.1, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_25B4F771FFA04DA8B8C7E68DF3AE7D38"
-                    {
-                    "Name" = "8:Neo4j.Driver.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Neo4j.Driver.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.CodeDom.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1189,7 +747,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_27700D6D5C994CD297826B558BCC4894"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.pdb"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Blueprint41.Modeller.pdb"
             "TargetName" = "8:Blueprint41.Modeller.pdb"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1238,37 +796,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2C56B0EAF7554F61B5C132A971B5B334"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:GraphVizWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_2C56B0EAF7554F61B5C132A971B5B334"
-                    {
-                    "Name" = "8:GraphVizWrapper.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\GraphVizWrapper.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3243B3B2785A47FCA3A3289842D58A86"
             {
             "AssemblyRegister" = "3:1"
@@ -1282,7 +809,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Diagnostics.Tracing.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Diagnostics.Tracing.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1300,20 +827,20 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3E9472FE0B9EC8F12589DFB43E372133"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_332BEC24A13D4B01535D3C6EB617E819"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Crc32.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=dc0b95cf99bf4e99, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Microsoft.Msagl.GraphViewerGdi, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_3E9472FE0B9EC8F12589DFB43E372133"
+                    "_332BEC24A13D4B01535D3C6EB617E819"
                     {
-                    "Name" = "8:Crc32.NET.DLL"
+                    "Name" = "8:Microsoft.Msagl.GraphViewerGdi.DLL"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:Crc32.NET.DLL"
+            "SourcePath" = "8:Microsoft.Msagl.GraphViewerGdi.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1344,7 +871,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Microsoft.Msagl.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Microsoft.Msagl.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1360,57 +887,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4C06F291A3384FF49BB07887905904C0"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bp41.ico"
-            "TargetName" = "8:bp41.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4CE2997C5067DD325E079E6DCB09CD98"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Xml.Schema.Linq, Version=2.0.2.12, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_4CE2997C5067DD325E079E6DCB09CD98"
-                    {
-                    "Name" = "8:Xml.Schema.Linq.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Xml.Schema.Linq.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4E90A107E77D454BB34398BCDA197192"
@@ -1426,7 +902,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Globalization.Extensions.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Globalization.Extensions.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1446,7 +922,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4F088D32BAB24AE98BF1D628B751E1F3"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Microsoft.Msagl.xml"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Microsoft.Msagl.xml"
             "TargetName" = "8:Microsoft.Msagl.xml"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1477,7 +953,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Diagnostics.StackTrace.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Diagnostics.StackTrace.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1508,7 +984,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Microsoft.Msagl.GraphViewerGdi.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Microsoft.Msagl.GraphViewerGdi.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1524,6 +1000,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5D9B1BA3968F198C659F8F8E6F621A8D"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.CodeDom, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_5D9B1BA3968F198C659F8F8E6F621A8D"
+                    {
+                    "Name" = "8:System.CodeDom.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.CodeDom.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_64135488D96A40209209F39A567D64E6"
@@ -1539,90 +1046,8 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Net.Sockets.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Net.Sockets.dll"
             "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_64B1913491787CE741F68BA535B3C442"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:GraphVizWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_64B1913491787CE741F68BA535B3C442"
-                    {
-                    "Name" = "8:GraphVizWrapper.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:GraphVizWrapper.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6B0BA9845F1AE128E21F9D7B6E276AA0"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Neo4j.Driver, Version=1.6.70.1, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_6B0BA9845F1AE128E21F9D7B6E276AA0"
-                    {
-                    "Name" = "8:Neo4j.Driver.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Neo4j.Driver.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_70E324F6324A45878BA50913AEF50814"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Compare.pdb"
-            "TargetName" = "8:Blueprint41.Modeller.Compare.pdb"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
             "Condition" = "8:"
@@ -1652,7 +1077,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Security.SecureString.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Security.SecureString.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1701,37 +1126,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7AD551E811BE45909D41DE2E97CC9F93"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Blueprint41.Modeller.Compare, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_7AD551E811BE45909D41DE2E97CC9F93"
-                    {
-                    "Name" = "8:Blueprint41.Modeller.Compare.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Compare.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7C27C6BBFC034663A63F103F562798C9"
             {
             "AssemblyRegister" = "3:1"
@@ -1745,7 +1139,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Threading.Overlapped.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Threading.Overlapped.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1776,7 +1170,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Xml.XPath.XDocument.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Xml.XPath.XDocument.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1796,7 +1190,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8974FB3C1701479EAF51028D1D4B7CC1"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Microsoft.Msagl.Drawing.xml"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Microsoft.Msagl.Drawing.xml"
             "TargetName" = "8:Microsoft.Msagl.Drawing.xml"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -1814,37 +1208,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8B5663249CC7AAB30B783326A68037F6"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Blueprint41, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_8B5663249CC7AAB30B783326A68037F6"
-                    {
-                    "Name" = "8:Blueprint41.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Blueprint41.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8CB6649E857645A4887B0C509682C1F8"
             {
             "AssemblyRegister" = "3:1"
@@ -1858,59 +1221,8 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Runtime.Serialization.Primitives.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Runtime.Serialization.Primitives.dll"
             "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8F0F5F0BB9B073405339939A97505F55"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SourceGrid, Version=4.22.3616.29532, Culture=neutral, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_8F0F5F0BB9B073405339939A97505F55"
-                    {
-                    "Name" = "8:SourceGrid.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:SourceGrid.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9948A4CFFDB649948D36CFF1086C1CDF"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Compare.dll.config"
-            "TargetName" = "8:Blueprint41.Modeller.Compare.dll.config"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
             "Condition" = "8:"
@@ -1940,61 +1252,10 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Xml.Schema.Linq.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Xml.Schema.Linq.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9DD6CA883B5E96562C271E20A776F833"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.Msagl.Drawing, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_9DD6CA883B5E96562C271E20A776F833"
-                    {
-                    "Name" = "8:Microsoft.Msagl.Drawing.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Microsoft.Msagl.Drawing.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A76CC00BF18B4C6E937E6B67298BAFEB"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Xml\\modeller.xml"
-            "TargetName" = "8:modeller.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_750CA154069746BE9BDF3F0472AF8711"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2022,7 +1283,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Data.Common.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Data.Common.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2053,7 +1314,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.IO.Compression.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.IO.Compression.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2073,7 +1334,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AF52CC12CA994C27A5E5157A706BD0C8"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\keywords.txt"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\keywords.txt"
             "TargetName" = "8:keywords.txt"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2091,10 +1352,21 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B11E94D47E0B474CA4B9316FBBDD2FCD"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B4C4EFECDD0EDC3981BCBE0913FD753F"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.dll.config"
-            "TargetName" = "8:Blueprint41.dll.config"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Microsoft.Msagl.Drawing, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_B4C4EFECDD0EDC3981BCBE0913FD753F"
+                    {
+                    "Name" = "8:Microsoft.Msagl.Drawing.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Microsoft.Msagl.Drawing.DLL"
+            "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
             "Condition" = "8:"
@@ -2108,12 +1380,12 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B5A5198D51B04D808FBE882039CCD18D"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Microsoft.Msagl.GraphViewerGdi.xml"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Microsoft.Msagl.GraphViewerGdi.xml"
             "TargetName" = "8:Microsoft.Msagl.GraphViewerGdi.xml"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2131,21 +1403,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BB311835B032708DDD2EC22882063B54"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B6950FF6FBBC4585BBDD1C83EA2FE4B3"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Blueprint41.Modeller.Schemas, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_BB311835B032708DDD2EC22882063B54"
-                    {
-                    "Name" = "8:Blueprint41.Modeller.Schemas.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Blueprint41.Modeller.Schemas.DLL"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bp41.ico"
+            "TargetName" = "8:bp41.ico"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
             "Condition" = "8:"
@@ -2159,54 +1420,23 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C305C2EB8518B24262316702CA4B2EDD"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_CABE859AF32B7FF59E5CD43E6CD02FDE"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.Msagl, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Xml.Schema.Linq, Version=2.0.2.12, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_C305C2EB8518B24262316702CA4B2EDD"
+                    "_CABE859AF32B7FF59E5CD43E6CD02FDE"
                     {
-                    "Name" = "8:Microsoft.Msagl.DLL"
+                    "Name" = "8:Xml.Schema.Linq.DLL"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:Microsoft.Msagl.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C5CC9D962D0EAFDFE1412A8311894AF5"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.Msagl.GraphViewerGdi, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_C5CC9D962D0EAFDFE1412A8311894AF5"
-                    {
-                    "Name" = "8:Microsoft.Msagl.GraphViewerGdi.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Microsoft.Msagl.GraphViewerGdi.DLL"
+            "SourcePath" = "8:Xml.Schema.Linq.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2255,9 +1485,40 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D67A47A8A150725278548E1FF35DFD82"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Blueprint41.Modeller.Schemas, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_D67A47A8A150725278548E1FF35DFD82"
+                    {
+                    "Name" = "8:Blueprint41.Modeller.Schemas.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Blueprint41.Modeller.Schemas.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E06DA2B79ECA4D63BCBD50C0ECD95CAA"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Schemas.dll.config"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Blueprint41.Modeller.Schemas.dll.config"
             "TargetName" = "8:Blueprint41.Modeller.Schemas.dll.config"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2277,7 +1538,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E52F3C98F9324D20BEDCB62E9985F2D4"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Schemas.pdb"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Blueprint41.Modeller.Schemas.pdb"
             "TargetName" = "8:Blueprint41.Modeller.Schemas.pdb"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2308,7 +1569,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.exe"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\Blueprint41.Modeller.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2339,7 +1600,7 @@
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\System.Security.Cryptography.Algorithms.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Release\\System.Security.Cryptography.Algorithms.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2357,40 +1618,20 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EE19FD7F406744E392A4A2E4D0E90F60"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Blueprint41.Modeller.Document.pdb"
-            "TargetName" = "8:Blueprint41.Modeller.Document.pdb"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EE3129CE87E04D9C9C74DAA4674A2779"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_EFAB181EDD836CDE9D4BB8B193318E6F"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Crc32.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=dc0b95cf99bf4e99, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Microsoft.Msagl, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_EE3129CE87E04D9C9C74DAA4674A2779"
+                    "_EFAB181EDD836CDE9D4BB8B193318E6F"
                     {
-                    "Name" = "8:Crc32.NET.dll"
+                    "Name" = "8:Microsoft.Msagl.DLL"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Crc32.NET.dll"
+            "SourcePath" = "8:Microsoft.Msagl.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -2405,7 +1646,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F458216F1BA9CA67DF9CBBAF9FD235D1"
@@ -2439,57 +1680,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.CodeDom, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_F9B2B3C503D9DC6E5E9BEE3B69C5871A"
-                    {
-                    "Name" = "8:System.CodeDom.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.CodeDom.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FAACCE8ABB5C48E79C8CACE9D9A57451"
-            {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\bin\\Debug\\Xml\\modeller-dev.xml"
-            "TargetName" = "8:modeller-dev.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_750CA154069746BE9BDF3F0472AF8711"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
@@ -2506,17 +1696,6 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_750CA154069746BE9BDF3F0472AF8711"
-                    {
-                    "Name" = "8:Xml"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_4157091A68D04C9483152A66B6C041A0"
-                        "Folders"
-                        {
-                        }
-                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_DA3EB53E0F1141EE8E7483494C82E4E1"
@@ -2558,7 +1737,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Blueprint41 Modeller"
         "ProductCode" = "8:{F8AFAEE0-EF95-4233-B6E2-9DC566E51B9D}"
-        "PackageCode" = "8:{445C5545-2197-42CB-AE79-15E883CA47D8}"
+        "PackageCode" = "8:{42DE8772-7D51-411A-A5C8-4905089EF30B}"
         "UpgradeCode" = "8:{B2C223A8-2CEF-497A-85C0-AB460E559880}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -2575,7 +1754,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:_4C06F291A3384FF49BB07887905904C0"
+        "ARPPRODUCTICON" = "8:_B6950FF6FBBC4585BBDD1C83EA2FE4B3"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -2689,7 +1868,7 @@
             "Target" = "8:_E84A51F7DD79400C9399241F50E53FF4"
             "Folder" = "8:_DA3EB53E0F1141EE8E7483494C82E4E1"
             "WorkingFolder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Icon" = "8:_4C06F291A3384FF49BB07887905904C0"
+            "Icon" = "8:_B6950FF6FBBC4585BBDD1C83EA2FE4B3"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_DC221087C1BC4AF5816DD3EEA6CE459A"
@@ -2703,7 +1882,7 @@
             "Target" = "8:_E84A51F7DD79400C9399241F50E53FF4"
             "Folder" = "8:_DBEFAE905E7C4251B7F787FACDFBB99D"
             "WorkingFolder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
-            "Icon" = "8:_4C06F291A3384FF49BB07887905904C0"
+            "Icon" = "8:_B6950FF6FBBC4585BBDD1C83EA2FE4B3"
             "Feature" = "8:"
             }
         }

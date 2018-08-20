@@ -38,7 +38,7 @@ namespace Blueprint41.Modeller
             get
             {
                 if (this.m_StoragePath == null)
-                    return Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Xml\", "modeller.xml"));
+                    this.m_StoragePath = GetDefaultFilePath();
 
                 return this.m_StoragePath;
             }
@@ -54,6 +54,19 @@ namespace Blueprint41.Modeller
 
         internal NodeTypeEntry NewEntity { get; private set; }
         internal Submodel.NodeLocalType SelectedNode { get; private set; }
+
+        private string GetDefaultFilePath()
+        {
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Blueprint41");            
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            if (Directory.Exists(path))
+                return Path.Combine(path, "modeller.xml");
+
+            return string.Empty;
+        }
 
         public MainForm()
         {
