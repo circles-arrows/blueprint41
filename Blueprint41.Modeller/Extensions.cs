@@ -4,9 +4,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Model = Blueprint41.Modeller.Schemas.Modeller;
 namespace Blueprint41.Modeller
 {
+    public interface IComboBoxItem
+    {
+        string Display { get; set; }
+        object Value { get; set; }
+    }
+
+    public class EntityComboBoxItem : IComboBoxItem
+    {
+        public string Display { get; set; }
+        public object Value { get; set; }
+
+        public EntityComboBoxItem() { }
+
+        public EntityComboBoxItem(string display, object value)
+        {
+            Display = display;
+            Value = value;
+        }
+    }
+
     public static class Extensions
     {
         public static List<Relationship> GetRelationships(this Submodel model, bool includeInherited = false)
@@ -67,9 +88,25 @@ namespace Blueprint41.Modeller
             {
                 relationships.Add(relationship);
             }
-            
+
             return relationships;
         }
-        
+
+        public static void SetDataSource<T>(this ComboBox cbo, ref List<T> dataList, bool hasNone)
+            where T : IComboBoxItem, new()
+        {
+            if (hasNone)
+            {
+                List<T> newList = new List<T>();
+                newList.Add(new T() { Display = "--------", Value = null });
+
+                newList.AddRange(dataList);
+                dataList = newList;                
+            }
+
+            cbo.DisplayMember = "Display";
+            cbo.ValueMember = "Value";
+            cbo.DataSource = dataList;
+        }
     }
 }

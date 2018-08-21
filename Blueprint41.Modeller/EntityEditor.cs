@@ -665,14 +665,18 @@ namespace Blueprint41.Modeller
             TargetEntitiesColumn.DisplayMember = "Label";
             TargetEntitiesColumn.ValueMember = "Label";
 
+            List<EntityComboBoxItem> entityItems = StorageModel.Entities.Entity.Where(e => e.Abstract && e.Label != Entity.Label).Select(x => new EntityComboBoxItem() { Display = x.Label, Value = x }).ToList();
             bindingSource.DataSource = Entity;
-            cmbInherits.DataSource = StorageModel.Entities.Entity.Where(e => e.Abstract && e.Label != Entity.Label).ToList();
+            cmbInherits.SetDataSource(ref entityItems, true);
 
-            Binding baseEntityBinding = new Binding("SelectedValue", this.bindingSource, "inherits", true);//, DataSourceUpdateMode.OnPropertyChanged);
-            baseEntityBinding.BindingComplete += BaseEntityBinding_BindingComplete;
-            this.cmbInherits.DataBindings.Add(baseEntityBinding);
+            //BindingSource baseBindingSource = new BindingSource(this.components);
+            //baseBindingSource.DataSource = entityItems.SingleOrDefault(x => (x.Value as Entity)?.Guid == Entity.Inherits) ?? entityItems[0];
 
-            Entity inherited = StorageModel.Entities.Entity.Where(item => item.Guid == Entity.Inherits).FirstOrDefault();
+            //Binding baseEntityBinding = new Binding("SelectedValue", baseBindingSource, "Value", true);//, DataSourceUpdateMode.OnPropertyChanged);
+            //baseEntityBinding.BindingComplete += BaseEntityBinding_BindingComplete;
+            //this.cmbInherits.DataBindings.Add(baseEntityBinding);
+
+            EntityComboBoxItem inherited = entityItems.Where(item => (item.Value as Entity)?.Guid == Entity.Inherits).FirstOrDefault();
 
             if (inherited != null)
                 cmbInherits.SelectedItem = inherited;
@@ -746,12 +750,15 @@ namespace Blueprint41.Modeller
             if (cmbInherits.SelectedItem == null)
                 return;
 
-            if ((cmbInherits.SelectedItem as Entity).Guid == Entity.Inherits)
+            if (cmbInherits.SelectedItem is EntityComboBoxItem item && item.Value is Entity entity && entity.Guid == Entity.Inherits)
                 return;
-
+            
             StorageModel.RemoveAllEdges(Entity);
             this.isFromCmbInherits = true;
-            cmbInherits.DataBindings[0].WriteValue();
+            if (cmbInherits.SelectedItem is EntityComboBoxItem cmbitem)
+                Entity.Inherits = (cmbitem.Value as Entity)?.Guid;
+
+            //cmbInherits.DataBindings[0].WriteValue();
         }
 
         private void BaseEntityBinding_BindingComplete(object sender, BindingCompleteEventArgs e)
