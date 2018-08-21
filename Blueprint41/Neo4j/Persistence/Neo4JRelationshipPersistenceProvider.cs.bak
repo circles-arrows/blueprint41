@@ -199,7 +199,7 @@ namespace Blueprint41.Neo4j.Persistence
         {
             Checks(relationship, inItem, outItem);
 
-            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = {{inKey}} \r\n MATCH (out:{2}) WHERE out.{3} = {{outKey}}",
+            string match = string.Format("MATCH (in:{0} {{{1}:{{inKey}} }}) \r\n MATCH (out:{2} {{{3}:{{outKey}} }})",
                 inItem.GetEntity().Label.Name,
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
@@ -371,12 +371,12 @@ namespace Blueprint41.Neo4j.Persistence
                 Neo4jTransaction.Run(delete, parameters);
             }
 
-            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = {{inKey}} MATCH (out:{2}) WHERE out.{3} = {{outKey}}",
+            string match = string.Format("MATCH (in:{0} {{{1}:{{inKey}} }}) \r\n MATCH (out:{2} {{{3}:{{outKey}} }})",
                 inItem.GetEntity().Label.Name,
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("CREATE (in)-[outr:{0} {{node}}]->(out)", relationship.Neo4JRelationshipType);
+            string create = string.Format("MERGE (in)-[outr:{0} {{node}}]->(out) ON CREATE SET outr += {{node}}", relationship.Neo4JRelationshipType);
 
             Dictionary<string, object> node = new Dictionary<string, object>();
             node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.Current.TransactionDate));
