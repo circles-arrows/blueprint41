@@ -34,6 +34,11 @@ namespace Blueprint41.Modeller
 
         public DataTable FunctionalIdDataTable { get; set; }
 
+        public bool IsEditable
+        {
+            get { return gbProperties.Enabled && pre.Enabled; }            
+        }
+
         public ComboBox FunctionalIdComboBox
         {
             get
@@ -79,6 +84,9 @@ namespace Blueprint41.Modeller
             pre.DataGridViewRelationship.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
             pre.DataGridViewInheritedRelationship.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
             pre.DataGridViewInheritedRelationship.AllowUserToAddRows = false;
+
+            pre.Enabled = false;
+            gbProperties.Enabled = false;
         }
 
         private void CreateToolTipForShowAllRelationshipsCheckbox()
@@ -783,7 +791,9 @@ namespace Blueprint41.Modeller
         public void Show(Entity model, Model modeller)
         {
             ClearDataSourceAndHandlers();
-            Enabled = true;
+            //Enabled = true;
+            gbProperties.Enabled = true;
+            pre.Enabled = true;
             Entity = model;
             StorageModel = modeller;
             Assign();
@@ -791,7 +801,9 @@ namespace Blueprint41.Modeller
 
         public void CloseEditor()
         {
-            Enabled = false;
+            //Enabled = false;
+            gbProperties.Enabled = false;
+            pre.Enabled = false;
             ClearDataSourceAndHandlers();
         }
 

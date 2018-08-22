@@ -149,7 +149,7 @@ namespace Blueprint41.Modeller
             Model.CaptureCoordinates();
             Model.Save(StoragePath);
 
-            if (this.entityEditor.Enabled)
+            if (this.entityEditor.IsEditable)
                 entityEditor.Reload();
 
             ReloadForm();
@@ -446,7 +446,7 @@ namespace Blueprint41.Modeller
                 if (model != null)
                 {
                     Model.Relationships.Relationship.Remove(model);
-                    if (this.entityEditor.Enabled)
+                    if (this.entityEditor.IsEditable)
                     {
                         this.entityEditor.UpdateRelationshipGridView();
                     }
@@ -501,7 +501,7 @@ namespace Blueprint41.Modeller
             Model.CaptureCoordinates();
             Model.Save(StoragePath);
             MessageBox.Show("Diagram saved successfully.", "Confirmation", System.Windows.Forms.MessageBoxButtons.OK, MessageBoxIcon.Information);
-            if (this.entityEditor.Enabled)
+            if (this.entityEditor.IsEditable)
                 entityEditor.Reload();
         }
 
