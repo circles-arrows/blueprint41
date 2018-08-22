@@ -52,8 +52,6 @@
             this.cmbSubmodels = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.graphEditor = new Blueprint41.Modeller.GraphEditorControl();
-            this.entityEditor = new Blueprint41.Modeller.EntityEditor();
             this.staticDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aPIDefinitionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -64,8 +62,8 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zoomInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLabelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showInheritedRelationshipsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,6 +72,8 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expandPropertiesWidthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRight = new System.Windows.Forms.ToolStrip();
+            this.graphEditor = new Blueprint41.Modeller.GraphEditorControl();
+            this.entityEditor = new Blueprint41.Modeller.EntityEditor();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -338,40 +338,6 @@
             this.splitContainer.SplitterDistance = 862;
             this.splitContainer.TabIndex = 3;
             // 
-            // graphEditor
-            // 
-            this.graphEditor.BackColor = System.Drawing.SystemColors.Control;
-            this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.graphEditor.Location = new System.Drawing.Point(0, 0);
-            this.graphEditor.Margin = new System.Windows.Forms.Padding(4);
-            this.graphEditor.Name = "graphEditor";
-            this.graphEditor.SelectedEntities = null;
-            this.graphEditor.Size = new System.Drawing.Size(862, 644);
-            this.graphEditor.TabIndex = 0;
-            this.graphEditor.NodeInsertedByUser += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_NodeInsertedByUser);
-            this.graphEditor.SelectedNodeChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_SelectedNodeChanged);
-            this.graphEditor.SelectedEdgeChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_SelectedEdgeChanged);
-            this.graphEditor.InsertRelationship += new System.EventHandler<Blueprint41.Modeller.InsertRelationshipEventArgs>(this.graphEditor_InsertRelationship);
-            this.graphEditor.AddDisplayedEntities += new System.EventHandler<System.EventArgs>(this.graphEditor_AddDisplayedEntities);
-            this.graphEditor.RemoveNodeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromDiagramChanged);
-            this.graphEditor.RemoveEdgeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromDiagramChanged);
-            this.graphEditor.RemoveNodeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromStorageChanged);
-            this.graphEditor.RemoveEdgeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromStorageChanged);
-            this.graphEditor.NoSelectionEvent += new System.EventHandler(this.graphEditor_NoSelectionEvent);
-            // 
-            // entityEditor
-            // 
-            this.entityEditor.BackColor = System.Drawing.Color.White;
-            this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityEditor.Enabled = false;
-            this.entityEditor.FunctionalIdDataTable = null;
-            this.entityEditor.Location = new System.Drawing.Point(0, 0);
-            this.entityEditor.Margin = new System.Windows.Forms.Padding(4);
-            this.entityEditor.Name = "entityEditor";
-            this.entityEditor.Size = new System.Drawing.Size(349, 644);
-            this.entityEditor.TabIndex = 0;
-            // 
             // staticDataToolStripMenuItem
             // 
             this.staticDataToolStripMenuItem.Name = "staticDataToolStripMenuItem";
@@ -459,19 +425,19 @@
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.viewToolStripMenuItem.Text = "&View";
             // 
-            // zoomOutToolStripMenuItem
-            // 
-            this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
-            this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.zoomOutToolStripMenuItem.Text = "Zoom &Out";
-            this.zoomOutToolStripMenuItem.Click += new System.EventHandler(this.zoomOutToolStripMenuItem_Click);
-            // 
             // zoomInToolStripMenuItem
             // 
             this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
             this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.zoomInToolStripMenuItem.Text = "Zoom &In";
             this.zoomInToolStripMenuItem.Click += new System.EventHandler(this.zoomInToolStripMenuItem_Click);
+            // 
+            // zoomOutToolStripMenuItem
+            // 
+            this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
+            this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.zoomOutToolStripMenuItem.Text = "Zoom &Out";
+            this.zoomOutToolStripMenuItem.Click += new System.EventHandler(this.zoomOutToolStripMenuItem_Click);
             // 
             // panToolStripMenuItem
             // 
@@ -524,8 +490,8 @@
             // 
             this.expandPropertiesWidthToolStripMenuItem.CheckOnClick = true;
             this.expandPropertiesWidthToolStripMenuItem.Name = "expandPropertiesWidthToolStripMenuItem";
-            this.expandPropertiesWidthToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.expandPropertiesWidthToolStripMenuItem.Text = "Expand Properties Width";
+            this.expandPropertiesWidthToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.expandPropertiesWidthToolStripMenuItem.Text = "Auto Expand Properties";
             // 
             // toolStripRight
             // 
@@ -540,6 +506,40 @@
             this.toolStripRight.Text = "Right Tool Strip";
             this.toolStripRight.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
             this.toolStripRight.Visible = false;
+            // 
+            // graphEditor
+            // 
+            this.graphEditor.BackColor = System.Drawing.SystemColors.Control;
+            this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.graphEditor.Location = new System.Drawing.Point(0, 0);
+            this.graphEditor.Margin = new System.Windows.Forms.Padding(4);
+            this.graphEditor.Name = "graphEditor";
+            this.graphEditor.SelectedEntities = null;
+            this.graphEditor.Size = new System.Drawing.Size(862, 644);
+            this.graphEditor.TabIndex = 0;
+            this.graphEditor.NodeInsertedByUser += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_NodeInsertedByUser);
+            this.graphEditor.SelectedNodeChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_SelectedNodeChanged);
+            this.graphEditor.SelectedEdgeChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_SelectedEdgeChanged);
+            this.graphEditor.InsertRelationship += new System.EventHandler<Blueprint41.Modeller.InsertRelationshipEventArgs>(this.graphEditor_InsertRelationship);
+            this.graphEditor.AddDisplayedEntities += new System.EventHandler<System.EventArgs>(this.graphEditor_AddDisplayedEntities);
+            this.graphEditor.RemoveNodeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromDiagramChanged);
+            this.graphEditor.RemoveEdgeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromDiagramChanged);
+            this.graphEditor.RemoveNodeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromStorageChanged);
+            this.graphEditor.RemoveEdgeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromStorageChanged);
+            this.graphEditor.NoSelectionEvent += new System.EventHandler(this.graphEditor_NoSelectionEvent);
+            // 
+            // entityEditor
+            // 
+            this.entityEditor.BackColor = System.Drawing.Color.White;
+            this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityEditor.Enabled = false;
+            this.entityEditor.FunctionalIdDataTable = null;
+            this.entityEditor.Location = new System.Drawing.Point(0, 0);
+            this.entityEditor.Margin = new System.Windows.Forms.Padding(4);
+            this.entityEditor.Name = "entityEditor";
+            this.entityEditor.Size = new System.Drawing.Size(349, 644);
+            this.entityEditor.TabIndex = 0;
             // 
             // MainForm
             // 

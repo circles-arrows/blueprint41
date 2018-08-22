@@ -673,13 +673,14 @@ namespace Blueprint41.Modeller
         }
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            splitContainer.Panel2Collapsed = !propertiesToolStripMenuItem.Checked;
-            ShowHideToolStripMenu(splitContainer.Panel2Collapsed);
+        {            
+            ShowHideToolStripMenu(!propertiesToolStripMenuItem.Checked);
         }
 
-        private void ShowHideToolStripMenu(bool panel2Collapsed)
+        public void ShowHideToolStripMenu(bool panel2Collapsed)
         {
+            propertiesToolStripMenuItem.Checked = !panel2Collapsed;
+            splitContainer.Panel2Collapsed = panel2Collapsed;
             toolStripRight.Visible = panel2Collapsed;
 
             if (panel2Collapsed)
