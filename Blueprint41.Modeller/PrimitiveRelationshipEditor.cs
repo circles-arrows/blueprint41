@@ -37,6 +37,11 @@ namespace Blueprint41.Modeller
             get { return this.cbShowAll; }
         }
 
+        public TabControl TabControl
+        {
+            get { return this.tabControl; }
+        }
+
         public PrimitiveRelationshipEditor()
         {
             InitializeComponent();

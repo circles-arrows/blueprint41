@@ -57,7 +57,7 @@ namespace Blueprint41.Modeller
 
         private string GetDefaultFilePath()
         {
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Blueprint41");            
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Blueprint41");
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -233,7 +233,7 @@ namespace Blueprint41.Modeller
                 throw new NotSupportedException();
 
             entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
-            DefaultOrExpandPropertiesWidth(true);
+            DefaultOrExpandPropertiesWidth(false);
         }
 
         private void graphEditor_SelectedEdgeChanged(object sender, EdgeEventArgs e)
@@ -673,7 +673,7 @@ namespace Blueprint41.Modeller
         }
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
-        {            
+        {
             ShowHideToolStripMenu(!propertiesToolStripMenuItem.Checked);
         }
 
@@ -722,12 +722,14 @@ namespace Blueprint41.Modeller
             btnShowInheritedRelationships_Click(sender, e);
         }
 
-        private void DefaultOrExpandPropertiesWidth(bool expand)
+        public void DefaultOrExpandPropertiesWidth(bool expand)
         {
             if (expand && expandPropertiesWidthToolStripMenuItem.Checked)
             {
                 int width = splitContainer.Width - entityEditor.DataGridMaxWidth;
-                splitContainer.SplitterDistance = width;
+
+                if (splitContainer.SplitterDistance > width)
+                    splitContainer.SplitterDistance = width;
             }
             else if (expand == false && expandPropertiesWidthToolStripMenuItem.Checked)
                 splitContainer.SplitterDistance = _splitterDistance;

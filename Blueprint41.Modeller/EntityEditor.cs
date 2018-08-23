@@ -36,7 +36,7 @@ namespace Blueprint41.Modeller
 
         public bool IsEditable
         {
-            get { return gbProperties.Enabled && pre.Enabled; }            
+            get { return gbProperties.Enabled && pre.Enabled; }
         }
 
         public ComboBox FunctionalIdComboBox
@@ -60,11 +60,14 @@ namespace Blueprint41.Modeller
                 int relationshipsWidth = pre.DataGridViewRelationship.Columns.GetColumnsWidth(DataGridViewElementStates.None);
                 int inheritedRelationshipsWidth = pre.DataGridViewInheritedRelationship.Columns.GetColumnsWidth(DataGridViewElementStates.None);
 
-                int maxOne = Math.Max(propertiesWidth, inheritedPrimitivePropertiesWidth);
-                int maxTwo = Math.Max(relationshipsWidth, inheritedRelationshipsWidth);
-                int max = Math.Max(maxOne, maxTwo);
+                if (pre.TabControl.SelectedIndex == 0)
+                {
+                    int maxOne = Math.Max(propertiesWidth, inheritedPrimitivePropertiesWidth);
+                    return maxOne + pre.DataGridViewInheritedPrimitive.RowHeadersWidth;
+                }
 
-                return max + pre.DataGridViewRelationship.RowHeadersWidth;
+                int maxTwo = Math.Max(relationshipsWidth, inheritedRelationshipsWidth);
+                return maxTwo + pre.DataGridViewRelationship.RowHeadersWidth;
             }
         }
 
@@ -85,8 +88,19 @@ namespace Blueprint41.Modeller
             pre.DataGridViewInheritedRelationship.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
             pre.DataGridViewInheritedRelationship.AllowUserToAddRows = false;
 
+            pre.DataGridViewPrimitive.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
+            pre.DataGridViewInheritedPrimitive.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
+            pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
+            pre.DataGridViewInheritedRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
+
             pre.Enabled = false;
             gbProperties.Enabled = false;
+        }
+
+        private void DataGridViewPrimitive_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (ParentForm is MainForm main)
+                main.DefaultOrExpandPropertiesWidth(true);
         }
 
         private void CreateToolTipForShowAllRelationshipsCheckbox()
