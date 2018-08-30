@@ -710,6 +710,13 @@ namespace Blueprint41.Modeller
             Close();
         }
 
+        private void functionalIdToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ManageFunctionalId functionalIdForm = new ManageFunctionalId(Model);
+            functionalIdForm.ShowDialog(this);
+        }
+
+        #region View Menu
         private void showLabelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             btnShowLabels.Checked = !btnShowLabels.Checked;
@@ -752,12 +759,6 @@ namespace Blueprint41.Modeller
             panToolStripMenuItem.Checked = graphEditor.Viewer.PanButtonPressed;
         }
 
-        private void functionalIdToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ManageFunctionalId functionalIdForm = new ManageFunctionalId(Model);
-            functionalIdForm.ShowDialog(this);
-        }
-
         private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TsbZoomOut_Click(this, EventArgs.Empty);
@@ -772,8 +773,9 @@ namespace Blueprint41.Modeller
         {
             TsbPan_Click(this, EventArgs.Empty);
         }
+        #endregion
 
-        #region Tools
+        #region Tools Menu
 
         private void generateDocumentToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -820,6 +822,30 @@ namespace Blueprint41.Modeller
             }
         }
 
+        private void generateCodeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            generateCodeToolStripMenuItem_Click(sender, EventArgs.Empty);
+        }
+
+        private void generateUpdateScriptToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            generateUpdateScriptToolStripMenuItem_Click(sender, EventArgs.Empty);
+        }
+
+        private void generateDocumentationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            generateDocumentToolStripMenuItem_Click(sender, EventArgs.Empty);
+        }
+
         #endregion
+
+        #region Settings Menu
+        private void functionalIdToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            functionalIdToolStripMenuItem_Click(sender, EventArgs.Empty);
+        }
+        #endregion
+
+        
     }
 }

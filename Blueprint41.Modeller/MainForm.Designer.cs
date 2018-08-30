@@ -73,6 +73,12 @@
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expandPropertiesWidthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateCodeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateUpdateScriptToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateDocumentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.functionalIdToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRight = new System.Windows.Forms.ToolStrip();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -363,7 +369,7 @@
             // 
             this.entityEditor.BackColor = System.Drawing.Color.White;
             this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;            
+            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.entityEditor.FunctionalIdDataTable = null;
             this.entityEditor.Location = new System.Drawing.Point(0, 0);
             this.entityEditor.Margin = new System.Windows.Forms.Padding(4);
@@ -392,7 +398,9 @@
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.viewToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.toolsToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(0);
@@ -527,6 +535,52 @@
             this.expandPropertiesWidthToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.expandPropertiesWidthToolStripMenuItem.Text = "Auto Expand Properties";
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generateCodeToolStripMenuItem1,
+            this.generateUpdateScriptToolStripMenuItem1,
+            this.generateDocumentationToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
+            this.toolsToolStripMenuItem.Text = "&Tools";
+            // 
+            // generateCodeToolStripMenuItem1
+            // 
+            this.generateCodeToolStripMenuItem1.Name = "generateCodeToolStripMenuItem1";
+            this.generateCodeToolStripMenuItem1.Size = new System.Drawing.Size(207, 22);
+            this.generateCodeToolStripMenuItem1.Text = "Generate &Code";
+            this.generateCodeToolStripMenuItem1.Click += new System.EventHandler(this.generateCodeToolStripMenuItem1_Click);
+            // 
+            // generateUpdateScriptToolStripMenuItem1
+            // 
+            this.generateUpdateScriptToolStripMenuItem1.Name = "generateUpdateScriptToolStripMenuItem1";
+            this.generateUpdateScriptToolStripMenuItem1.Size = new System.Drawing.Size(207, 22);
+            this.generateUpdateScriptToolStripMenuItem1.Text = "Generate Update &Script";
+            this.generateUpdateScriptToolStripMenuItem1.Click += new System.EventHandler(this.generateUpdateScriptToolStripMenuItem1_Click);
+            // 
+            // generateDocumentationToolStripMenuItem
+            // 
+            this.generateDocumentationToolStripMenuItem.Name = "generateDocumentationToolStripMenuItem";
+            this.generateDocumentationToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.generateDocumentationToolStripMenuItem.Text = "Generate &Documentation";
+            this.generateDocumentationToolStripMenuItem.Click += new System.EventHandler(this.generateDocumentationToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.functionalIdToolStripMenuItem1});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 24);
+            this.settingsToolStripMenuItem.Text = "&Settings";
+            // 
+            // functionalIdToolStripMenuItem1
+            // 
+            this.functionalIdToolStripMenuItem1.Name = "functionalIdToolStripMenuItem1";
+            this.functionalIdToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.functionalIdToolStripMenuItem1.Text = "&Functional Id";
+            this.functionalIdToolStripMenuItem1.Click += new System.EventHandler(this.functionalIdToolStripMenuItem1_Click);
+            // 
             // toolStripRight
             // 
             this.toolStripRight.Dock = System.Windows.Forms.DockStyle.Right;
@@ -617,6 +671,12 @@
         private System.Windows.Forms.ToolStripMenuItem generateCodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateUpdateScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateDocumentToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generateCodeToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem generateUpdateScriptToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem generateDocumentationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem functionalIdToolStripMenuItem1;
     }
 }
 
