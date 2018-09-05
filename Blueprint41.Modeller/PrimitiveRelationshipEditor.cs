@@ -17,19 +17,9 @@ namespace Blueprint41.Modeller
             get { return this.dataGridViewPrimitive; }
         }
 
-        public DataGridView DataGridViewInheritedPrimitive
-        {
-            get { return this.dataGridViewInheritedPrimitive; }
-        }
-
         public DataGridView DataGridViewRelationship
         {
             get { return this.dataGridViewRelationship; }
-        }
-
-        public DataGridView DataGridViewInheritedRelationship
-        {
-            get { return this.dataGridViewInheritedRelationship; }
         }
 
         public CheckBox CheckBoxShowAllRelationship

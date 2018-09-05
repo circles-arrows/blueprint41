@@ -844,8 +844,6 @@ namespace Blueprint41.Modeller
         {
             functionalIdToolStripMenuItem_Click(sender, EventArgs.Empty);
         }
-        #endregion
-
-        
+        #endregion                
     }
 }

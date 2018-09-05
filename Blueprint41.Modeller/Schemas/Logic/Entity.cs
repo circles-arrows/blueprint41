@@ -55,30 +55,64 @@ namespace Blueprint41.Modeller.Schemas
             return relationships;
         }
 
-        public IEnumerable<Relationship> GetRelationships(Submodel model, bool includeInherited)
+        public IEnumerable<Relationship> GetRelationships(Submodel model, RelationshipDirection direction, bool includeInherited)
         {
-            List<Relationship> relationships = model.Model.Relationships.Relationship.Where(item => item.Source.ReferenceGuid == this.Guid || item.Target.ReferenceGuid == this.Guid).ToList();
+            Func<Relationship, bool> func;
+
+            switch (direction)
+            {
+                case RelationshipDirection.Out:
+                    func = RelationshipOut;
+                    break;
+                case RelationshipDirection.Both:
+                    func = RelationshipBoth;
+                    break;
+                case RelationshipDirection.In:
+                default:
+                    func = RelationshipIn;
+                    break;
+            }
+
+            List<Relationship> relationships = model.Model.Relationships.Relationship.Where(func).ToList();
 
             if (includeInherited == false)
                 return relationships;
 
             Dictionary<RelationshipDirection, List<Relationship>> inheritedPropertyByDirection = this.GetInheritedRelationships(model);
+
             foreach (var item in inheritedPropertyByDirection[RelationshipDirection.In])
             {
                 Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());
-                relationship.Source.Label = this.Label;
+                //relationship.Source.Label = this.Label;
                 relationships.Add(relationship);
                 model.CreatedInheritedRelationships.Add(relationship);
             }
+
             foreach (var item in inheritedPropertyByDirection[RelationshipDirection.Out])
             {
                 Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());
-                relationship.Target.Label = this.Label;
+                //relationship.Target.Label = this.Label;
                 relationships.Add(relationship);
                 model.CreatedInheritedRelationships.Add(relationship);
             }
 
             return relationships;
+
+            bool RelationshipIn(Relationship item)
+            {
+                return item.Source.ReferenceGuid == this.Guid;
+            }
+
+
+            bool RelationshipOut(Relationship item)
+            {
+                return item.Target.ReferenceGuid == this.Guid;
+            }
+
+            bool RelationshipBoth(Relationship item)
+            {
+                return item.Source.ReferenceGuid == this.Guid || item.Target.ReferenceGuid == this.Guid;
+            }
         }
 
         public void CleanPrimitive()

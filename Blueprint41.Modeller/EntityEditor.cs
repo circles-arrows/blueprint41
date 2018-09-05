@@ -29,8 +29,18 @@ namespace Blueprint41.Modeller
         public DataGridViewComboBoxColumn SourceEntitiesColumn { get; private set; }
         public DataGridViewComboBoxColumn TargetEntitiesColumn { get; private set; }
 
-        private ObservableCollection<Primitive> primitiveObservable;
+        private ObservableCollection<GridPrimitiveItem> primitiveObservable;
+        private Dictionary<string, Primitive> primitiveLookUp
+        {
+            get { return Entity.Primitive.ToDictionary(x => x.Name); }
+        }
+
         private ObservableCollection<Relationship> relationshipsObservable;
+
+        private Dictionary<string, Relationship> relationshipLookUp
+        {
+            get { return Entity.GetRelationships(RelationshipDirection.In, false).ToDictionary(x => x.Name); }
+        }
 
         public DataTable FunctionalIdDataTable { get; set; }
 
@@ -56,18 +66,12 @@ namespace Blueprint41.Modeller
             get
             {
                 int propertiesWidth = pre.DataGridViewPrimitive.Columns.GetColumnsWidth(DataGridViewElementStates.None);
-                int inheritedPrimitivePropertiesWidth = pre.DataGridViewInheritedPrimitive.Columns.GetColumnsWidth(DataGridViewElementStates.None);
                 int relationshipsWidth = pre.DataGridViewRelationship.Columns.GetColumnsWidth(DataGridViewElementStates.None);
-                int inheritedRelationshipsWidth = pre.DataGridViewInheritedRelationship.Columns.GetColumnsWidth(DataGridViewElementStates.None);
 
                 if (pre.TabControl.SelectedIndex == 0)
-                {
-                    int maxOne = Math.Max(propertiesWidth, inheritedPrimitivePropertiesWidth);
-                    return maxOne + pre.DataGridViewInheritedPrimitive.RowHeadersWidth;
-                }
+                    return propertiesWidth + pre.DataGridViewPrimitive.RowHeadersWidth;
 
-                int maxTwo = Math.Max(relationshipsWidth, inheritedRelationshipsWidth);
-                return maxTwo + pre.DataGridViewRelationship.RowHeadersWidth;
+                return relationshipsWidth + pre.DataGridViewRelationship.RowHeadersWidth;
             }
         }
 
@@ -75,32 +79,152 @@ namespace Blueprint41.Modeller
         {
             InitializeComponent();
             CreateGridColumnsForPrimitiveProperties(pre.DataGridViewPrimitive);
-            CreateGridColumnsForPrimitiveProperties(pre.DataGridViewInheritedPrimitive, true);
             CreateGridColumnsForRelationships();
-            CreateGridColumnsForInheritedRelationships();
             CreateToolTipForShowAllRelationshipsCheckbox();
 
             pre.DataGridViewPrimitive.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
-            pre.DataGridViewInheritedPrimitive.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
-            pre.DataGridViewInheritedPrimitive.AllowUserToAddRows = false;
-
             pre.DataGridViewRelationship.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
-            pre.DataGridViewInheritedRelationship.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
-            pre.DataGridViewInheritedRelationship.AllowUserToAddRows = false;
 
             pre.DataGridViewPrimitive.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
-            pre.DataGridViewInheritedPrimitive.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
+            pre.DataGridViewPrimitive.DataSourceChanged += DataGridViewPrimitive_DataSourceChanged;
+            pre.DataGridViewPrimitive.UserDeletingRow += DataGridViewPrimitive_UserDeletingRow;
+            pre.DataGridViewPrimitive.CellValueChanged += dataGridViewPrimitiveProperties_CellValueChanged;
+            pre.DataGridViewPrimitive.DefaultValuesNeeded += dataGridViewPrimitiveProperties_DefaultValuesNeeded;
+            pre.DataGridViewPrimitive.KeyDown += dataGridViewPrimitiveProperties_KeyDown;
+
             pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
-            pre.DataGridViewInheritedRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
+            pre.DataGridViewRelationship.DataSourceChanged += DataGridViewRelationship_DataSourceChanged;
+            pre.DataGridViewRelationship.UserDeletingRow += DataGridViewRelationship_UserDeletingRow;
+            //pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
+
+            pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
 
             pre.Enabled = false;
             gbProperties.Enabled = false;
+        }
+
+        #region Primitive Event Handlers
+        private void DataGridViewPrimitive_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            if (e.Row.DataBoundItem is GridPrimitiveItem myPrim && primitiveLookUp.ContainsKey(myPrim.Item.Name) == false)
+                e.Cancel = true;
+        }
+
+        private void DataGridViewPrimitive_DataSourceChanged(object sender, EventArgs e)
+        {
+            DataGridView dataGrid = (DataGridView)sender;
+
+            for (int x = 0; x < dataGrid.RowCount; x++)
+            {
+                DataGridViewRow row = dataGrid.Rows[x];
+
+                if (row.DataBoundItem is GridPrimitiveItem myPrim && primitiveLookUp.ContainsKey(myPrim.Item.Name) == false)
+                {
+                    row.ReadOnly = true;
+                    row.DefaultCellStyle.BackColor = Color.DarkGray;
+                    row.DefaultCellStyle.SelectionBackColor = Color.DarkGray;
+                    row.DefaultCellStyle.ForeColor = Color.Black;
+                    row.DefaultCellStyle.SelectionForeColor = Color.Black;
+                }
+            }
         }
 
         private void DataGridViewPrimitive_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (ParentForm is MainForm main)
                 main.DefaultOrExpandPropertiesWidth(true);
+        }
+
+        private void dataGridViewPrimitiveProperties_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            e.Row.Cells["Type"].Value = "string";
+            e.Row.Cells["Index"].Value = PropertyIndex.None.ToString();
+        }
+
+        private void dataGridViewPrimitiveProperties_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 1)
+            {
+                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewPrimitive.Rows[e.RowIndex].Cells[1];
+
+                if (textBox.Value == null)
+                {
+                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
+                    return;
+                }
+
+                string newName = ((string)textBox.Value).Replace(" ", string.Empty);
+
+                if (string.IsNullOrEmpty(newName))
+                {
+                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
+                    return;
+                }
+                else if (CheckInheritedPropertyExists(Entity, newName))
+                {
+                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" already exists in base entity.", newName), textBox);
+                    return;
+                }
+
+                if (CheckIfReservedKeyword(newName))
+                {
+                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" is a reserved keyword.", newName), textBox);
+                    return;
+                }
+
+                textBox.Value = newName;
+            }
+        }
+        #endregion
+
+        private void DataGridViewRelationship_DataSourceChanged(object sender, EventArgs e)
+        {
+            DataGridView dataGrid = (DataGridView)sender;
+
+            for (int x = 0; x < dataGrid.RowCount; x++)
+            {
+                DataGridViewRow row = dataGrid.Rows[x];
+
+                if (row.DataBoundItem is Relationship rel && relationshipLookUp.ContainsKey(rel.Name) == false)
+                {
+                    row.ReadOnly = true;
+                    row.DefaultCellStyle.BackColor = Color.DarkGray;
+                    row.DefaultCellStyle.SelectionBackColor = Color.DarkGray;
+                    row.DefaultCellStyle.ForeColor = Color.Black;
+                    row.DefaultCellStyle.SelectionForeColor = Color.Black;
+                }
+            }
+        }
+
+        private void DataGridViewRelationship_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            if (e.Row.DataBoundItem is Relationship rel && relationshipLookUp.ContainsKey(rel.Name) == false)
+                e.Cancel = true;
+        }
+
+        private void DataGridViewRelationships_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[0];
+                relationshipsObservable[e.RowIndex].Source.ReferenceGuid = StorageModel.Entities.Entity.Where(x => x.Label == (string)cb.Value).SingleOrDefault()?.Guid;
+            }
+
+            if (e.ColumnIndex == 6)
+            {
+                DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[6];
+                relationshipsObservable[e.RowIndex].Target.ReferenceGuid = StorageModel.Entities.Entity.Where(x => x.Label == (string)cb.Value).SingleOrDefault()?.Guid;
+            }
+
+            if (e.ColumnIndex == 1 || e.ColumnIndex == 4 || e.ColumnIndex == 5 || e.ColumnIndex == 7)
+            {
+                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                string newName = ((string)textBox.Value)?.Replace(" ", string.Empty);
+                textBox.Value = newName;
+
+                if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
+                    relationshipsObservable[e.RowIndex].RecreateEdge();
+            }
         }
 
         private void CreateToolTipForShowAllRelationshipsCheckbox()
@@ -122,6 +246,17 @@ namespace Blueprint41.Modeller
             // Initialize the DataGridView.
             dataGridView.AutoGenerateColumns = false;
             dataGridView.AutoSize = true;
+
+            DataGridViewColumn entityNameColumn = new DataGridViewTextBoxColumn();
+            entityNameColumn.DataPropertyName = "EntityName";
+            entityNameColumn.Name = "Entity Name";
+            entityNameColumn.ReadOnly = readOnly;
+            entityNameColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
+            entityNameColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            entityNameColumn.DefaultCellStyle.Font = new Font(dataGridView.Font, FontStyle.Bold);
+            entityNameColumn.Resizable = DataGridViewTriState.False;
+            entityNameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridView.Columns.Add(entityNameColumn);
 
             DataGridViewColumn nameColumn = new DataGridViewTextBoxColumn();
             nameColumn.DataPropertyName = "Name";
@@ -392,7 +527,6 @@ namespace Blueprint41.Modeller
             pre.DataGridViewRelationship.AutoGenerateColumns = false;
             pre.DataGridViewRelationship.AutoSize = true;
 
-
             SourceEntitiesColumn = new DataGridViewComboBoxColumn();
             SourceEntitiesColumn.DataPropertyName = "InEntity";
             SourceEntitiesColumn.Name = "IN Entity";
@@ -401,7 +535,8 @@ namespace Blueprint41.Modeller
 
             DataGridViewColumn sourceNameColumn = new DataGridViewTextBoxColumn();
             sourceNameColumn.DataPropertyName = "InProperty";
-            sourceNameColumn.Name = "IN Property";
+            sourceNameColumn.Name = "Property";
+            sourceNameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             pre.DataGridViewRelationship.Columns.Add(sourceNameColumn);
 
             DataGridViewComboBoxColumn sourceTypeColumn = new DataGridViewComboBoxColumn();
@@ -409,22 +544,24 @@ namespace Blueprint41.Modeller
             sourceTypeColumn.Items.Add(PropertyType.Lookup.ToString());
             sourceTypeColumn.Items.Add(PropertyType.Collection.ToString());
             sourceTypeColumn.DataPropertyName = "InPropertyType";
-            sourceTypeColumn.Name = "IN Prop. Type";
+            sourceTypeColumn.Name = "Type";
             pre.DataGridViewRelationship.Columns.Add(sourceTypeColumn);
 
             DataGridViewCheckBoxColumn sourceNullableColumn = new DataGridViewCheckBoxColumn();
             sourceNullableColumn.DataPropertyName = "InNullable";
-            sourceNullableColumn.Name = "IN Prop. Optional";
+            sourceNullableColumn.Name = "Optional";
             pre.DataGridViewRelationship.Columns.Add(sourceNullableColumn);
 
             DataGridViewUpperCaseTextBoxColumn relationshipNameColumn = new DataGridViewUpperCaseTextBoxColumn();
             relationshipNameColumn.DataPropertyName = "Name";
             relationshipNameColumn.Name = "Relationship Name";
+            relationshipNameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             pre.DataGridViewRelationship.Columns.Add(relationshipNameColumn);
 
             DataGridViewUpperCaseTextBoxColumn neo4jNameColumn = new DataGridViewUpperCaseTextBoxColumn();
             neo4jNameColumn.DataPropertyName = "Type";
             neo4jNameColumn.Name = "Neo4j Name";
+            neo4jNameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             pre.DataGridViewRelationship.Columns.Add(neo4jNameColumn);
 
             TargetEntitiesColumn = new DataGridViewComboBoxColumn();
@@ -434,7 +571,7 @@ namespace Blueprint41.Modeller
 
             DataGridViewColumn targetNameColumn = new DataGridViewTextBoxColumn();
             targetNameColumn.DataPropertyName = "OutProperty";
-            targetNameColumn.Name = "OUT Property";
+            targetNameColumn.Name = "Property";
             pre.DataGridViewRelationship.Columns.Add(targetNameColumn);
 
             DataGridViewComboBoxColumn targetTypeColumn = new DataGridViewComboBoxColumn();
@@ -442,104 +579,74 @@ namespace Blueprint41.Modeller
             targetTypeColumn.Items.Add(PropertyType.Lookup.ToString());
             targetTypeColumn.Items.Add(PropertyType.Collection.ToString());
             targetTypeColumn.DataPropertyName = "OutPropertyType";
-            targetTypeColumn.Name = "OUT Prop. Type";
+            targetTypeColumn.Name = "Type";
             pre.DataGridViewRelationship.Columns.Add(targetTypeColumn);
 
             DataGridViewCheckBoxColumn targetNullableColumn = new DataGridViewCheckBoxColumn();
             targetNullableColumn.DataPropertyName = "OutNullable";
-            targetNullableColumn.Name = "OUT Prop. Optional";
+            targetNullableColumn.Name = "Optional";
+            targetNullableColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             pre.DataGridViewRelationship.Columns.Add(targetNullableColumn);
         }
 
-        private void CreateGridColumnsForInheritedRelationships()
+        private class GridPrimitiveItem
         {
-            // Initialize the DataGridView.
-            pre.DataGridViewInheritedRelationship.AutoGenerateColumns = false;
-            pre.DataGridViewInheritedRelationship.AutoSize = true;
+            public GridPrimitiveItem()
+            {
+                Item = new Primitive();
+            }
 
+            public GridPrimitiveItem(string entityName, Primitive item)
+            {
+                Item = item;
+                EntityName = entityName + ".";
+            }
 
-            DataGridViewTextBoxColumn sourceEntity = new DataGridViewTextBoxColumn();
-            sourceEntity.DataPropertyName = "InEntity";
-            sourceEntity.Name = "IN Entity";
-            sourceEntity.ReadOnly = true;
-            sourceEntity.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(sourceEntity);
+            public Primitive Item { get; }
+            public string EntityName { get; set; }
 
+            public string Name
+            {
+                get { return Item.Name; }
+                set { Item.Name = value; }
+            }
 
-            DataGridViewTextBoxColumn sourceNameColumn = new DataGridViewTextBoxColumn();
-            sourceNameColumn.DataPropertyName = "InProperty";
-            sourceNameColumn.Name = "IN Property";
-            sourceNameColumn.ReadOnly = true;
-            sourceNameColumn.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(sourceNameColumn);
+            public bool IsKey
+            {
+                get { return Item.IsKey; }
+                set { Item.IsKey = value; }
+            }
 
-            DataGridViewTextBoxColumn sourceTypeColumn = new DataGridViewTextBoxColumn();
-            sourceTypeColumn.DataPropertyName = "InPropertyType";
-            sourceTypeColumn.Name = "IN Prop. Type";
-            sourceTypeColumn.ReadOnly = true;
-            sourceTypeColumn.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(sourceTypeColumn);
+            public bool Nullable
+            {
+                get { return Item.Nullable; }
+                set { Item.Nullable = value; }
+            }
 
-            DataGridViewTextBoxColumn sourceNullableColumn = new DataGridViewTextBoxColumn();
-            sourceNullableColumn.DataPropertyName = "InNullable";
-            sourceNullableColumn.Name = "IN Prop. Optional";
-            sourceNullableColumn.ReadOnly = true;
-            sourceNullableColumn.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(sourceNullableColumn);
+            public string Type
+            {
+                get { return Item.Type; }
+                set { Item.Type = value; }
+            }
 
-            DataGridViewUpperCaseTextBoxColumn relationshipNameColumn = new DataGridViewUpperCaseTextBoxColumn();
-            relationshipNameColumn.DataPropertyName = "Name";
-            relationshipNameColumn.Name = "Relationship Name";
-            relationshipNameColumn.ReadOnly = true;
-            relationshipNameColumn.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(relationshipNameColumn);
-
-            DataGridViewUpperCaseTextBoxColumn neo4jNameColumn = new DataGridViewUpperCaseTextBoxColumn();
-            neo4jNameColumn.DataPropertyName = "Type";
-            neo4jNameColumn.Name = "Neo4j Name";
-            neo4jNameColumn.ReadOnly = true;
-            neo4jNameColumn.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(neo4jNameColumn);
-
-            DataGridViewTextBoxColumn targetEntity = new DataGridViewTextBoxColumn();
-            targetEntity.DataPropertyName = "OutEntity";
-            targetEntity.Name = "OUT Entity";
-            targetEntity.ReadOnly = true;
-            targetEntity.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(targetEntity);
-
-            DataGridViewTextBoxColumn targetNameColumn = new DataGridViewTextBoxColumn();
-            targetNameColumn.DataPropertyName = "OutProperty";
-            targetNameColumn.Name = "OUT Property";
-            targetNameColumn.ReadOnly = true;
-            targetNameColumn.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(targetNameColumn);
-
-            DataGridViewTextBoxColumn targetTypeColumn = new DataGridViewTextBoxColumn();
-            targetTypeColumn.DataPropertyName = "OutPropertyType";
-            targetTypeColumn.Name = "OUT Prop. Type";
-            targetTypeColumn.ReadOnly = true;
-            targetTypeColumn.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(targetTypeColumn);
-
-            DataGridViewTextBoxColumn targetNullableColumn = new DataGridViewTextBoxColumn();
-            targetNullableColumn.DataPropertyName = "OutNullable";
-            targetNullableColumn.Name = "OUT Prop. Optional";
-            targetNullableColumn.ReadOnly = true;
-            targetNullableColumn.DefaultCellStyle.BackColor = Color.LightGray;
-            pre.DataGridViewInheritedRelationship.Columns.Add(targetNullableColumn);
+            public string Index
+            {
+                get { return Item.Index; }
+                set { Item.Index = value; }
+            }
         }
 
-        private Collection<Primitive> GetPrimitivesOfBaseTypes(Entity Entity)
+        private Collection<GridPrimitiveItem> GetPrimitivesOfSelfAndBaseTypes(Entity entity)
         {
-            Collection<Primitive> inheritedPrimitives = new Collection<Primitive>();
-            Entity current = Entity.ParentEntity;
+            Collection<GridPrimitiveItem> inheritedPrimitives = new Collection<GridPrimitiveItem>();
+            Entity current = entity;
+
             if (current == null)
                 return null;
             do
             {
-                foreach (var primitive in current.Primitive)
-                    inheritedPrimitives.Add(primitive);
+                foreach (Primitive primitive in current.Primitive)
+                    inheritedPrimitives.Add(new GridPrimitiveItem(current.Name, primitive));
 
                 current = current.ParentEntity;
 
@@ -548,15 +655,17 @@ namespace Blueprint41.Modeller
             return inheritedPrimitives;
         }
 
-        private Collection<Relationship> GetInheritedRelationShipsOfBaseWithinSubmodel()
+        private Collection<Relationship> GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity entity, bool showAll = false)
         {
             Collection<Relationship> inheritedRelationships = new Collection<Relationship>();
-            Entity current = Entity.ParentEntity;
+            Entity current = entity;
+
             if (current == null)
                 return null;
+
             do
             {
-                foreach (Relationship rel in current.GetRelationships(StorageModel.DisplayedSubmodel, true))
+                foreach (Relationship rel in current.GetRelationships(StorageModel.DisplayedSubmodel, showAll ? RelationshipDirection.Both : RelationshipDirection.In, true))
                     inheritedRelationships.Add(rel);
 
                 current = current.ParentEntity;
@@ -574,8 +683,7 @@ namespace Blueprint41.Modeller
             bindingSourcePrimitiveProperties.DataSource = null;
             pre.DataGridViewPrimitive.DataSource = null;
 
-            primitiveObservable = new ObservableCollection<Primitive>(Entity.Primitive);
-
+            primitiveObservable = new ObservableCollection<GridPrimitiveItem>(GetPrimitivesOfSelfAndBaseTypes(Entity));
             primitiveObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
             {
                 switch (e.Action)
@@ -583,18 +691,22 @@ namespace Blueprint41.Modeller
                     case NotifyCollectionChangedAction.Remove:
                     case NotifyCollectionChangedAction.Reset:
                         {
-                            foreach (Primitive item in e.OldItems)
+                            foreach (GridPrimitiveItem item in e.OldItems)
                             {
-                                RemoveRecordPropertyAndFromChildEntity(item);
-                                Entity.Primitive.Remove(item);
+                                RemoveRecordPropertyAndFromChildEntity(item.Item);
+                                Entity.Primitive.Remove(item.Item);
                             }
 
                         }
                         break;
                     case NotifyCollectionChangedAction.Add:
                         {
-                            foreach (Primitive item in e.NewItems)
-                                Entity.Primitive.Add(item);
+                            foreach (GridPrimitiveItem item in e.NewItems)
+                            {
+                                item.EntityName = Entity.Name;
+                                Entity.Primitive.Add(item.Item);
+                            }
+
                         }
                         break;
                     case NotifyCollectionChangedAction.Replace:
@@ -606,29 +718,12 @@ namespace Blueprint41.Modeller
             bindingSourcePrimitiveProperties.DataSource = primitiveObservable;
             pre.DataGridViewPrimitive.DataSource = bindingSourcePrimitiveProperties;
 
-
-            // Inherited Primitive Properties
-            bindingSourceInheritedPrimitiveProperties.DataSource = null;
-            pre.DataGridViewInheritedPrimitive.DataSource = null;
-
-            bindingSourceInheritedPrimitiveProperties.DataSource = GetPrimitivesOfBaseTypes(Entity);
-            pre.DataGridViewInheritedPrimitive.DataSource = bindingSourceInheritedPrimitiveProperties;
-
             // Relationships
             bindingSourceCollectionProperties.DataSource = null;
             pre.DataGridViewRelationship.DataSource = null;
 
-            if (showAllRelationships)
-            {
-                List<Relationship> allRelationships = new List<Relationship>();
-                allRelationships.AddRange(Entity.GetRelationships(RelationshipDirection.In, false));
-                allRelationships.AddRange(Entity.GetRelationships(RelationshipDirection.Out, false));
 
-                relationshipsObservable = new ObservableCollection<Schemas.Relationship>(allRelationships);
-            }
-            else
-                relationshipsObservable = new ObservableCollection<Schemas.Relationship>(Entity.GetRelationships(StorageModel.DisplayedSubmodel));
-
+            relationshipsObservable = new ObservableCollection<Schemas.Relationship>(GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity, showAllRelationships));
             relationshipsObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
             {
                 switch (e.Action)
@@ -668,11 +763,8 @@ namespace Blueprint41.Modeller
 
             bindingSourceCollectionProperties.DataSource = relationshipsObservable;
             pre.DataGridViewRelationship.DataSource = bindingSourceCollectionProperties;
-            pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
-            pre.DataGridViewRelationship.CurrentCellDirtyStateChanged += DataGridViewRelationships_CurrentCellDirtyStateChanged;
-
-            bindingSourceInheritedRelationships.DataSource = GetInheritedRelationShipsOfBaseWithinSubmodel();
-            pre.DataGridViewInheritedRelationship.DataSource = bindingSourceInheritedRelationships;
+            //pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
+            //pre.DataGridViewRelationship.CurrentCellDirtyStateChanged += DataGridViewRelationships_CurrentCellDirtyStateChanged;
 
             bindingSourceEntities.DataSource = null;
             bindingSourceEntities.DataSource = StorageModel.Entities.Entity.OrderBy(x => x.Label);
@@ -753,18 +845,6 @@ namespace Blueprint41.Modeller
             }
         }
 
-        private void DataGridViewRelationships_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.ColumnIndex == SourceEntitiesColumn.Index && e.RowIndex >= 0) //check if combobox column
-            {
-                object selectedValue = pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-            }
-
-            if (e.ColumnIndex == TargetEntitiesColumn.Index && e.RowIndex >= 0) //check if combobox column
-            {
-                object selectedValue = pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-            }
-        }
 
 
         private void CmbInherits_SelectedIndexChanged(object sender, EventArgs e)
@@ -893,46 +973,7 @@ namespace Blueprint41.Modeller
 
         }
 
-        private void dataGridViewPrimitiveProperties_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
-        {
-            e.Row.Cells["Type"].Value = "string";
-            e.Row.Cells["Index"].Value = PropertyIndex.None.ToString();
-        }
 
-        private void dataGridViewPrimitiveProperties_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.ColumnIndex == 0)
-            {
-                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewPrimitive.Rows[e.RowIndex].Cells[0];
-
-                if (textBox.Value == null)
-                {
-                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
-                    return;
-                }
-
-                string newName = ((string)textBox.Value).Replace(" ", string.Empty);
-
-                if (string.IsNullOrEmpty(newName))
-                {
-                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
-                    return;
-                }
-                else if (CheckInheritedPropertyExists(Entity, newName))
-                {
-                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" already exists in base entity.", newName), textBox);
-                    return;
-                }
-
-                if (CheckIfReservedKeyword(newName))
-                {
-                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" is a reserved keyword.", newName), textBox);
-                    return;
-                }
-
-                textBox.Value = newName;
-            }
-        }
 
         private void ShowMessageAndResetTextBoxValue(string message, DataGridViewTextBoxCell textBox)
         {
@@ -940,30 +981,7 @@ namespace Blueprint41.Modeller
             textBox.Value = "PropertyName";
         }
 
-        private void dataGridViewRelationships_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.ColumnIndex == 0)
-            {
-                DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[0];
-                relationshipsObservable[e.RowIndex].Source.ReferenceGuid = StorageModel.Entities.Entity.Where(x => x.Label == (string)cb.Value).SingleOrDefault()?.Guid;
-            }
 
-            if (e.ColumnIndex == 6)
-            {
-                DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[6];
-                relationshipsObservable[e.RowIndex].Target.ReferenceGuid = StorageModel.Entities.Entity.Where(x => x.Label == (string)cb.Value).SingleOrDefault()?.Guid;
-            }
-
-            if (e.ColumnIndex == 1 || e.ColumnIndex == 4 || e.ColumnIndex == 5 || e.ColumnIndex == 7)
-            {
-                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                string newName = ((string)textBox.Value)?.Replace(" ", string.Empty);
-                textBox.Value = newName;
-
-                if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
-                    relationshipsObservable[e.RowIndex].RecreateEdge();
-            }
-        }
 
         private void btnEditStaticData_Click(object sender, EventArgs e)
         {
@@ -1029,14 +1047,13 @@ namespace Blueprint41.Modeller
 
                 Entity.Primitive.Add(prim);
             }
+
             Entity.CleanPrimitive();
-            bindingSourcePrimitiveProperties.DataSource = null;
-            bindingSourcePrimitiveProperties.DataSource = Entity.Primitive;
-        }
 
-        private void InsertNonDataBoundItemsToComboBox()
-        {
+            Reload();
 
+            //bindingSourcePrimitiveProperties.DataSource = null;
+            //bindingSourcePrimitiveProperties.DataSource = Entity.Primitive;
         }
 
         private bool CheckInheritedPropertyExists(Entity entity, string propertyName)

@@ -220,7 +220,7 @@ namespace Blueprint41.Modeller.Schemas
 
         public void CreateAllEdges(Entity entity)
         {
-            List<Relationship> relationships = entity.GetRelationships(DisplayedSubmodel, ShowInheritedRelationships).ToList();
+            List<Relationship> relationships = entity.GetRelationships(DisplayedSubmodel, RelationshipDirection.Both, ShowInheritedRelationships).ToList();
             foreach (Relationship relationship in relationships)
             {
                 relationship.CreateEdge();
