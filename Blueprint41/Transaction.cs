@@ -63,7 +63,7 @@ namespace Blueprint41
         // Flush is private for now, until RelationshipActions will have their own persistence state. 
         protected virtual void FlushPrivate()
         {
-            List<OGM> entities = registeredEntities.Values.SelectMany(item => item).Where(item => item is OGMImpl).ToList();
+            List<OGM> entities = registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OGMImpl).ToList();
             foreach (OGMImpl entity in entities)
             {
                 if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
@@ -81,7 +81,7 @@ namespace Blueprint41
             {
                 foreach (var entitySet in registeredEntities.Values)
                 {
-                    foreach (OGM entity in entitySet)
+                    foreach (OGM entity in entitySet.Values)
                     {
                         if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                             continue;
@@ -96,7 +96,7 @@ namespace Blueprint41
 
             foreach (var entitySet in registeredEntities.Values)
             {
-                foreach (OGM entity in entitySet)
+                foreach (OGM entity in entitySet.Values)
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
@@ -117,7 +117,7 @@ namespace Blueprint41
 
             foreach (var entitySet in registeredEntities.Values)
             {
-                foreach (OGM entity in entitySet)
+                foreach (OGM entity in entitySet.Values)
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
@@ -129,7 +129,7 @@ namespace Blueprint41
 
             foreach (var entitySet in registeredEntities.Values)
             {
-                foreach (OGM entity in entitySet.ToList())
+                foreach (OGM entity in entitySet.Values.ToList())
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
@@ -264,7 +264,7 @@ namespace Blueprint41
 
         #region Registration
 
-        private Dictionary<string, HashSet<OGM>> registeredEntities = new Dictionary<string, HashSet<OGM>>(50);
+        private Dictionary<string, Dictionary<OGM, OGM>> registeredEntities = new Dictionary<string, Dictionary<OGM, OGM>>(50);
         private Dictionary<string, Dictionary<string, HashSet<Core.EntityCollectionBase>>> registeredCollections = new Dictionary<string, Dictionary<string, HashSet<Core.EntityCollectionBase>>>(100);
 
         internal void Register(OGM item)
@@ -276,18 +276,23 @@ namespace Blueprint41
 
             string entityName = item.GetEntity().Name;
 
-            HashSet<OGM> values;
+            Dictionary<OGM, OGM> values;
             if (!registeredEntities.TryGetValue(entityName, out values))
             {
-                values = new HashSet<OGM>();
-                values.SetCapacity(1000);
+                values = new Dictionary<OGM, OGM>(1000);
                 registeredEntities.Add(entityName, values);
             }
 
-            if (values.Any(v => v.PersistenceState != PersistenceState.DoesntExist && v == item))
-                throw new InvalidOperationException("You cannot register an already loaded object.");
-
-            values.Add(item);
+            OGM inSet;
+            if (values.TryGetValue(item, out inSet))
+            {
+                if (inSet.PersistenceState != PersistenceState.DoesntExist && inSet == item)
+                    throw new InvalidOperationException("You cannot register an already loaded object.");
+            }
+            else
+            {
+                values.Add(item, item);
+            }
         }
 
         internal void Register(string type, OGM item)
@@ -349,7 +354,7 @@ namespace Blueprint41
 
         private void Invalidate()
         {
-            foreach (OGM item in registeredEntities.Values.SelectMany(item => item))
+            foreach (OGM item in registeredEntities.Values.SelectMany(item => item.Values))
             {
                 item.PersistenceState = PersistenceState.OutOfScope;
                 item.Transaction = null;

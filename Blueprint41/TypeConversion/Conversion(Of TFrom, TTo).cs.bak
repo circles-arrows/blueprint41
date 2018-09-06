@@ -56,17 +56,7 @@ namespace Blueprint41.Core
                             }
 
                             if (fromIsNullable || toIsNullable)
-                            {
-                                Expression<Func<TFrom, TTo>> uncompiledConvert = CreateNullableVersion(fromType, fromIsNullable, toType, toIsNullable);
-                                Func<TFrom, TTo> compiledConvert = null;
-                                converterMethod = delegate (TFrom value)
-                                {
-                                    if (compiledConvert == null)
-                                        compiledConvert = uncompiledConvert.Compile();
-
-                                    return compiledConvert.Invoke(value);
-                                };
-                            }
+                                converterMethod = CreateNullableVersion(fromType, fromIsNullable, toType, toIsNullable);
                         }
 
                         // IConvertable
@@ -100,7 +90,7 @@ namespace Blueprint41.Core
                 return methods.Count() > 0;
             }
         }
-        private static Expression<Func<TFrom, TTo>> CreateNullableVersion(Type fromType, bool fromIsNullable, Type toType, bool toIsNullable)
+        private static Func<TFrom, TTo> CreateNullableVersion(Type fromType, bool fromIsNullable, Type toType, bool toIsNullable)
         {
             Type converterType = typeof(Conversion<,>).MakeGenericType(new Type[] { fromType, toType });
             MethodInfo canConvert = converterType.GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "CanConvert");
@@ -153,7 +143,7 @@ namespace Blueprint41.Core
                             fromParam
                         );
 
-                    return (Expression<Func<TFrom, TTo>>)expression;
+                    return (Func<TFrom, TTo>)expression.Compile();
                 }
                 else
                 {
@@ -162,7 +152,7 @@ namespace Blueprint41.Core
                            fromParam
                        );
 
-                    return (Expression<Func<TFrom, TTo>>)expression;
+                    return (Func<TFrom, TTo>)expression.Compile();
                 }
             }
 
@@ -201,7 +191,7 @@ namespace Blueprint41.Core
         }
         public static IEnumerable<Assembly> GetAssemblies()
         {
-            var list = new HashSet<string>();
+            var list = new List<string>();
             var stack = new Stack<Assembly>();
 
             stack.Push(typeof(Conversion).Assembly);
@@ -216,7 +206,7 @@ namespace Blueprint41.Core
 
                 foreach (var reference in asm.GetReferencedAssemblies())
                 {
-                    if (reference.FullName.StartsWith("mscorlib") || reference.FullName.StartsWith("netstandard") || reference.FullName.StartsWith("System") || reference.FullName.StartsWith("Microsoft") || reference.FullName.StartsWith("Xml.Schema"))
+                    if (reference.FullName.StartsWith("System") || reference.FullName.StartsWith("Microsoft") || reference.FullName.StartsWith("Xml.Schema"))
                         continue;
 
                     if (!list.Contains(reference.FullName))
