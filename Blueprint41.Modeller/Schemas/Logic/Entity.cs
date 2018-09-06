@@ -82,16 +82,14 @@ namespace Blueprint41.Modeller.Schemas
 
             foreach (var item in inheritedPropertyByDirection[RelationshipDirection.In])
             {
-                Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());
-                //relationship.Source.Label = this.Label;
+                Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());                
                 relationships.Add(relationship);
                 model.CreatedInheritedRelationships.Add(relationship);
             }
 
             foreach (var item in inheritedPropertyByDirection[RelationshipDirection.Out])
             {
-                Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());
-                //relationship.Target.Label = this.Label;
+                Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());                
                 relationships.Add(relationship);
                 model.CreatedInheritedRelationships.Add(relationship);
             }

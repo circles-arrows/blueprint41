@@ -167,6 +167,7 @@ namespace Blueprint41.Modeller
                 }
 
                 Model.DisplayedSubmodel = Model.Submodels.Submodel.Where(m => m.Name == RegistryHandler.LastOpenedSubmodel).FirstOrDefault();
+                Model.MainSubmodel = MainSubmodel;
 
                 if (Model.DisplayedSubmodel == null)
                     Model.DisplayedSubmodel = Model.Submodels.Submodel[0];

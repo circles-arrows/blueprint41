@@ -87,6 +87,7 @@ namespace Blueprint41.Modeller.Schemas
 
             GraphEditor.Viewer.CalculateLayout(Viewer.Graph);
             GraphEditor.Viewer.Graph = Viewer.Graph;
+            CaptureCoordinates();
         }
 
 
@@ -131,6 +132,8 @@ namespace Blueprint41.Modeller.Schemas
             }
         }
 
+        public Submodel MainSubmodel { get; set; }
+
         internal void RebindControl()
         {
             if (GraphEditor == null || DisplayedSubmodel == null)
@@ -152,14 +155,14 @@ namespace Blueprint41.Modeller.Schemas
             AutoResize();
         }
 
-        public void RedoAutoLayout()
-        {
-            GraphEditor.Viewer.NeedToCalculateLayout = true;
-            GraphEditor.Viewer.Graph = Viewer.Graph;
-            GraphEditor.Viewer.NeedToCalculateLayout = false;
-            GraphEditor.Viewer.Graph = Viewer.Graph;
-            CaptureCoordinates();
-        }
+        //public void RedoAutoLayout()
+        //{
+        //    GraphEditor.Viewer.NeedToCalculateLayout = true;
+        //    GraphEditor.Viewer.Graph = Viewer.Graph;
+        //    GraphEditor.Viewer.NeedToCalculateLayout = false;
+        //    GraphEditor.Viewer.Graph = Viewer.Graph;
+        //    CaptureCoordinates();
+        //}
 
         public void UpdateGraph()
         {

@@ -665,7 +665,7 @@ namespace Blueprint41.Modeller
 
             do
             {
-                foreach (Relationship rel in current.GetRelationships(StorageModel.DisplayedSubmodel, showAll ? RelationshipDirection.Both : RelationshipDirection.In, true))
+                foreach (Relationship rel in current.GetRelationships(showAll ? StorageModel.MainSubmodel : StorageModel.DisplayedSubmodel, RelationshipDirection.Both, true))
                     inheritedRelationships.Add(rel);
 
                 current = current.ParentEntity;
