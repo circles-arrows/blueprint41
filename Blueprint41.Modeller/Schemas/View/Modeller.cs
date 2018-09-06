@@ -206,6 +206,7 @@ namespace Blueprint41.Modeller.Schemas
                 node.CaptureCoordinates();
             }
         }
+
         internal void AutoResize()
         {
             if (GraphEditor != null)

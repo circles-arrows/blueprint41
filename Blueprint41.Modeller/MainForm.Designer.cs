@@ -52,8 +52,6 @@
             this.cmbSubmodels = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.graphEditor = new Blueprint41.Modeller.GraphEditorControl();
-            this.entityEditor = new Blueprint41.Modeller.EntityEditor();
             this.staticDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aPIDefinitionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
@@ -79,6 +77,8 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.functionalIdToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRight = new System.Windows.Forms.ToolStrip();
+            this.graphEditor = new Blueprint41.Modeller.GraphEditorControl();
+            this.entityEditor = new Blueprint41.Modeller.EntityEditor();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -343,40 +343,6 @@
             this.splitContainer.SplitterDistance = 832;
             this.splitContainer.TabIndex = 3;
             // 
-            // graphEditor
-            // 
-            this.graphEditor.BackColor = System.Drawing.SystemColors.Control;
-            this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.graphEditor.Location = new System.Drawing.Point(0, 0);
-            this.graphEditor.Margin = new System.Windows.Forms.Padding(4);
-            this.graphEditor.Name = "graphEditor";
-            this.graphEditor.SelectedEntities = null;
-            this.graphEditor.Size = new System.Drawing.Size(832, 644);
-            this.graphEditor.TabIndex = 0;
-            this.graphEditor.NodeInsertedByUser += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_NodeInsertedByUser);
-            this.graphEditor.SelectedNodeChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_SelectedNodeChanged);
-            this.graphEditor.SelectedEdgeChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_SelectedEdgeChanged);
-            this.graphEditor.InsertRelationship += new System.EventHandler<Blueprint41.Modeller.InsertRelationshipEventArgs>(this.graphEditor_InsertRelationship);
-            this.graphEditor.AddDisplayedEntities += new System.EventHandler<System.EventArgs>(this.graphEditor_AddDisplayedEntities);
-            this.graphEditor.RemoveNodeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromDiagramChanged);
-            this.graphEditor.RemoveEdgeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromDiagramChanged);
-            this.graphEditor.RemoveNodeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromStorageChanged);
-            this.graphEditor.RemoveEdgeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromStorageChanged);
-            this.graphEditor.NoSelectionEvent += new System.EventHandler(this.graphEditor_NoSelectionEvent);
-            // 
-            // entityEditor
-            // 
-            this.entityEditor.BackColor = System.Drawing.Color.White;
-            this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.entityEditor.FunctionalIdDataTable = null;
-            this.entityEditor.Location = new System.Drawing.Point(0, 0);
-            this.entityEditor.Margin = new System.Windows.Forms.Padding(4);
-            this.entityEditor.MinimumSize = new System.Drawing.Size(449, 2);
-            this.entityEditor.Name = "entityEditor";
-            this.entityEditor.Size = new System.Drawing.Size(449, 644);
-            this.entityEditor.TabIndex = 0;
-            // 
             // staticDataToolStripMenuItem
             // 
             this.staticDataToolStripMenuItem.Name = "staticDataToolStripMenuItem";
@@ -521,6 +487,7 @@
             // 
             // expandPropertiesWidthToolStripMenuItem
             // 
+            this.expandPropertiesWidthToolStripMenuItem.CheckOnClick = true;
             this.expandPropertiesWidthToolStripMenuItem.Name = "expandPropertiesWidthToolStripMenuItem";
             this.expandPropertiesWidthToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
             this.expandPropertiesWidthToolStripMenuItem.Text = "Auto Expand Properties";
@@ -584,6 +551,40 @@
             this.toolStripRight.Text = "Right Tool Strip";
             this.toolStripRight.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
             this.toolStripRight.Visible = false;
+            // 
+            // graphEditor
+            // 
+            this.graphEditor.BackColor = System.Drawing.SystemColors.Control;
+            this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.graphEditor.Location = new System.Drawing.Point(0, 0);
+            this.graphEditor.Margin = new System.Windows.Forms.Padding(4);
+            this.graphEditor.Name = "graphEditor";
+            this.graphEditor.SelectedEntities = null;
+            this.graphEditor.Size = new System.Drawing.Size(832, 644);
+            this.graphEditor.TabIndex = 0;
+            this.graphEditor.NodeInsertedByUser += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_NodeInsertedByUser);
+            this.graphEditor.SelectedNodeChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_SelectedNodeChanged);
+            this.graphEditor.SelectedEdgeChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_SelectedEdgeChanged);
+            this.graphEditor.InsertRelationship += new System.EventHandler<Blueprint41.Modeller.InsertRelationshipEventArgs>(this.graphEditor_InsertRelationship);
+            this.graphEditor.AddDisplayedEntities += new System.EventHandler<System.EventArgs>(this.graphEditor_AddDisplayedEntities);
+            this.graphEditor.RemoveNodeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromDiagramChanged);
+            this.graphEditor.RemoveEdgeFromDiagramChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromDiagramChanged);
+            this.graphEditor.RemoveNodeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.NodeEventArgs>(this.graphEditor_RemoveNodeFromStorageChanged);
+            this.graphEditor.RemoveEdgeFromStorageChanged += new System.EventHandler<Blueprint41.Modeller.EdgeEventArgs>(this.graphEditor_RemoveEdgeFromStorageChanged);
+            this.graphEditor.NoSelectionEvent += new System.EventHandler(this.graphEditor_NoSelectionEvent);
+            // 
+            // entityEditor
+            // 
+            this.entityEditor.BackColor = System.Drawing.Color.White;
+            this.entityEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.entityEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.entityEditor.FunctionalIdDataTable = null;
+            this.entityEditor.Location = new System.Drawing.Point(0, 0);
+            this.entityEditor.Margin = new System.Windows.Forms.Padding(4);
+            this.entityEditor.MinimumSize = new System.Drawing.Size(449, 2);
+            this.entityEditor.Name = "entityEditor";
+            this.entityEditor.Size = new System.Drawing.Size(449, 644);
+            this.entityEditor.TabIndex = 0;
             // 
             // MainForm
             // 
