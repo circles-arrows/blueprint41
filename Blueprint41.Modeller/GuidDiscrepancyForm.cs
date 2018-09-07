@@ -32,11 +32,11 @@ namespace Blueprint41.Modeller
             source.DataSource = Model.Entities.Entity.OrderBy(x => x.Label);
 
             (dataGridView.Columns["In Entity"] as DataGridViewComboBoxColumn).DisplayMember = "Label";
-            (dataGridView.Columns["In Entity"] as DataGridViewComboBoxColumn).ValueMember = "InEntityReferenceGuid";
+            (dataGridView.Columns["In Entity"] as DataGridViewComboBoxColumn).ValueMember = "Guid";
             (dataGridView.Columns["In Entity"] as DataGridViewComboBoxColumn).DataSource = source;
 
             (dataGridView.Columns["Out Entity"] as DataGridViewComboBoxColumn).DisplayMember = "Label";
-            (dataGridView.Columns["Out Entity"] as DataGridViewComboBoxColumn).ValueMember = "OutEntityReferenceGuid";
+            (dataGridView.Columns["Out Entity"] as DataGridViewComboBoxColumn).ValueMember = "Guid";
             (dataGridView.Columns["Out Entity"] as DataGridViewComboBoxColumn).DataSource = source;
 
             
