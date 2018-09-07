@@ -101,9 +101,37 @@ namespace Blueprint41.Modeller
                 }
             }
 
+            CheckGuidDiscrepancies();
 
             Model.ShowRelationshipLabels = false;
             Model.ShowInheritedRelationships = false;
+        }
+
+        private void CheckGuidDiscrepancies()
+        {
+            Dictionary<string, Entity> entitiesLookUp = Model.Entities.Entity.ToDictionary(x => x.Guid);
+            Dictionary<string, Relationship> relationshipLookUp = Model.Relationships.Relationship.ToDictionary(x => x.Guid);
+
+            IEnumerable<Relationship> relationshipDiscripancies = Model.Relationships.Relationship
+                .Where(x => (x.Source != null && x.Source.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Source?.ReferenceGuid) == false) || 
+                            (x.Target != null && x.Target.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Target.ReferenceGuid) == false))
+                .OrderBy(x => x.Name);
+
+            if (relationshipDiscripancies.Count() == 0)
+                return;
+
+            DialogResult result = MessageBox.Show("There are relationships in/out entities that are not mapped to its actual entity. This may affect on reflecting edges to the relationship. Please check the mapping by clicking Ok.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+
+            if (result == DialogResult.OK)
+            {
+                GuidDiscrepancyForm form = new GuidDiscrepancyForm
+                {
+                    Model = Model,
+                    RelationshipDiscrepancies = relationshipDiscripancies
+                };
+
+                form.ShowDialog();
+            }
         }
 
         int idcounter = 0;

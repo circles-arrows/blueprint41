@@ -95,7 +95,7 @@ namespace Blueprint41.Modeller
             pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
             pre.DataGridViewRelationship.DataSourceChanged += DataGridViewRelationship_DataSourceChanged;
             pre.DataGridViewRelationship.UserDeletingRow += DataGridViewRelationship_UserDeletingRow;
-            //pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
+            pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
 
             pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
 

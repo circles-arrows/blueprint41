@@ -30,7 +30,7 @@ namespace Blueprint41.Modeller.Schemas
             if (this.Source.Label == null || this.Target.Label == null)
                 return;
 
-            if (!Model.DisplayedSubmodel.Entities.Any(item => item.Label == this.Source.Label) || !Model.DisplayedSubmodel.Entities.Any(item => item.Label == this.Target.Label))
+            if (!Model.DisplayedSubmodel.Entities.Any(item => item.Guid == this.Source.ReferenceGuid) || !Model.DisplayedSubmodel.Entities.Any(item => item.Guid == this.Target.ReferenceGuid))
                 return;
 
             if (viewerEdge != null)
@@ -87,6 +87,19 @@ namespace Blueprint41.Modeller.Schemas
                 Source.Label = value;
             }
         }
+
+        public string InEntityReferenceGuid
+        {
+            get
+            {
+                return Source.ReferenceGuid;
+            }
+            set
+            {
+                Source.ReferenceGuid = value;
+            }
+        }
+
         public string InProperty
         {
             get
@@ -109,6 +122,7 @@ namespace Blueprint41.Modeller.Schemas
                 Source.Type = value;
             }
         }
+
         public bool InNullable
         {
             get
@@ -132,6 +146,19 @@ namespace Blueprint41.Modeller.Schemas
                 Target.Label = value;
             }
         }
+
+        public string OutEntityReferenceGuid
+        {
+            get
+            {
+                return Target.ReferenceGuid;
+            }
+            set
+            {
+                Target.ReferenceGuid = value;
+            }
+        }
+
         public string OutProperty
         {
             get

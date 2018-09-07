@@ -88,6 +88,12 @@
     <Compile Include="ColorExtension.cs" />
     <Compile Include="Generation\EntityTreeNode.cs" />
     <Compile Include="Generation\GenerationEnum.cs" />
+    <Compile Include="GuidDiscrepancyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GuidDiscrepancyForm.Designer.cs">
+      <DependentUpon>GuidDiscrepancyForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="HtmlEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -188,6 +194,9 @@
     </Compile>
     <EmbeddedResource Include="CodeGeneration.resx">
       <DependentUpon>CodeGeneration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GuidDiscrepancyForm.resx">
+      <DependentUpon>GuidDiscrepancyForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HtmlEditor.resx">
       <DependentUpon>HtmlEditor.cs</DependentUpon>

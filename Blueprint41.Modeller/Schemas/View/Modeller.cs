@@ -60,12 +60,14 @@ namespace Blueprint41.Modeller.Schemas
         {
             AutoResize();
         }
+
         private void NodeMouseUp(object sender, NodeEventArgs e)
         {
             Submodel.NodeLocalType entity = e?.Node?.UserData as Submodel.NodeLocalType;
             if (entity != null)
                 entity.CaptureCoordinates();
         }
+
         private void RedoLayout(object sender, EventArgs e)
         {
             //// SugiyamaScheme works without much trouble
@@ -154,15 +156,6 @@ namespace Blueprint41.Modeller.Schemas
 
             AutoResize();
         }
-
-        //public void RedoAutoLayout()
-        //{
-        //    GraphEditor.Viewer.NeedToCalculateLayout = true;
-        //    GraphEditor.Viewer.Graph = Viewer.Graph;
-        //    GraphEditor.Viewer.NeedToCalculateLayout = false;
-        //    GraphEditor.Viewer.Graph = Viewer.Graph;
-        //    CaptureCoordinates();
-        //}
 
         public void UpdateGraph()
         {
