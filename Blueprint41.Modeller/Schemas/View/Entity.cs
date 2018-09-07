@@ -17,5 +17,17 @@ namespace Blueprint41.Modeller.Schemas
         protected override void InitializeView()
         {
         }
+
+
+        // This is a helper properties for relationships
+        public string OutEntityReferenceGuid
+        {
+            get { return Guid; }
+        }
+
+        public string InEntityReferenceGuid
+        {
+            get { return Guid; }
+        }
     }
 }
