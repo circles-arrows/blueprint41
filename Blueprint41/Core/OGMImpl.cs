@@ -190,8 +190,22 @@ namespace Blueprint41.Core
         internal abstract object GetKey();
         internal abstract Data GetData();
 
-        public abstract void SetRowVersion(DateTime? value);
-        internal protected abstract DateTime GetRowVersion();
+        public virtual void SetRowVersion(DateTime? value)
+        {
+            Entity entity = GetEntity();
+            if (entity.RowVersion == null)
+                throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
+
+            entity.RowVersion.SetValue(this, value ?? DateTime.MinValue);
+        }
+        internal protected virtual DateTime GetRowVersion()
+        {
+            Entity entity = GetEntity();
+            if (entity.RowVersion == null)
+                throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
+
+            return (DateTime?)entity.RowVersion.GetValue(this) ?? DateTime.MinValue;
+        }
 
         public abstract PersistenceState PersistenceState { get; internal set; }
         internal Transaction DbTransaction { get; set; }
