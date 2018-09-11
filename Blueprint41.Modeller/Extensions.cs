@@ -30,49 +30,46 @@ namespace Blueprint41.Modeller
 
     public static class Extensions
     {
+        /// <summary>
+        /// Gets all the relationships from this submodel
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="includeInherited"></param>
+        /// <returns></returns>
         public static List<Relationship> GetRelationships(this Submodel model, bool includeInherited = false)
         {
-            List<Relationship> relationships = model.Model.Relationships.Relationship.Where(item => model.Node.Any(entity => entity.Label == item.Source.Label) && model.Node.Any(entity => entity.Label == item.Target.Label)).ToList();
+            // Gets all the relationships from the matching entities of submodel
+            Dictionary<string, Relationship> relationships = model.Model.Relationships.Relationship.Where(item => model.Node.Any(entity => entity.Label == item.Source.Label) && model.Node.Any(entity => entity.Label == item.Target.Label)).ToDictionary(x => x.Name);
 
             if (includeInherited == false)
-                return relationships;
+                return relationships.Select(x => x.Value).ToList();
 
             foreach (var node in model.Node)
             {
-                Dictionary<RelationshipDirection, List<Relationship>> inheritedPropertyByDirection = GetInheritedRelationships(node.Entity, model);
+                Dictionary<RelationshipDirection, List<Relationship>> inheritedPropertyByDirection = node.Entity.GetInheritedRelationships(model);
+
                 foreach (var item in inheritedPropertyByDirection[RelationshipDirection.In])
                 {
+                    if (relationships.ContainsKey(item.Name))
+                        continue;
+
                     Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());
                     relationship.Source.Label = node.Label;
-                    relationships.Add(relationship);
+                    relationships.Add(relationship.Name, relationship);
                     model.CreatedInheritedRelationships.Add(relationship);
                 }
                 foreach (var item in inheritedPropertyByDirection[RelationshipDirection.Out])
                 {
+                    if (relationships.ContainsKey(item.Name))
+                        continue;
                     Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());
                     relationship.Target.Label = node.Label;
-                    relationships.Add(relationship);
+                    relationships.Add(relationship.Name, relationship);
                     model.CreatedInheritedRelationships.Add(relationship);
                 }
             }
 
-            return relationships;
-        }
-
-        public static Dictionary<RelationshipDirection, List<Relationship>> GetInheritedRelationships(this Entity entity, Submodel model)
-        {
-            Dictionary<RelationshipDirection, List<Relationship>> result = new Dictionary<RelationshipDirection, List<Schemas.Relationship>>();
-            result.Add(RelationshipDirection.In, new List<Schemas.Relationship>());
-            result.Add(RelationshipDirection.Out, new List<Schemas.Relationship>());
-            Entity current = entity.ParentEntity;
-            while (current != null)
-            {
-                result[RelationshipDirection.In].AddRange(model.Model.Relationships.Relationship.Where(item => item.Source.Label == current.Label && model.Node.Any(node => node.Label == item.Target.Label)));
-                result[RelationshipDirection.Out].AddRange(model.Model.Relationships.Relationship.Where(item => item.Target.Label == current.Label && model.Node.Any(node => node.Label == item.Source.Label)));
-                current = current.ParentEntity;
-            }
-
-            return result;
+            return relationships.Select(x => x.Value).ToList();
         }
 
         public static List<Entity> GetChildStaticEntities(this Entity entity)
@@ -82,7 +79,7 @@ namespace Blueprint41.Modeller
 
         public static List<Relationship> GetCurrentRelationshipsInGraph(this Entity entity, Submodel model)
         {
-            List<Relationship> relationships = model.Model.Relationships.Relationship.Where(item => item.Source.ReferenceGuid == entity.Guid || item.Target.ReferenceGuid == entity.Guid).ToList();
+            List<Relationship> relationships = model.Relationships.Where(item => item.Source.ReferenceGuid == entity.Guid || item.Target.ReferenceGuid == entity.Guid).ToList();
 
             foreach (Relationship relationship in model.CreatedInheritedRelationships.Where(rel => rel.InEntity == entity.Label || rel.OutEntity == entity.Label))
             {
@@ -101,7 +98,7 @@ namespace Blueprint41.Modeller
                 newList.Add(new T() { Display = "--------", Value = null });
 
                 newList.AddRange(dataList);
-                dataList = newList;                
+                dataList = newList;
             }
 
             cbo.DisplayMember = "Display";

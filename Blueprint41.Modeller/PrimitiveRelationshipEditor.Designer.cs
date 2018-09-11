@@ -35,8 +35,9 @@
             this.tabPagePrimivite = new System.Windows.Forms.TabPage();
             this.dataGridViewPrimitive = new System.Windows.Forms.DataGridView();
             this.tabPageRelationship = new System.Windows.Forms.TabPage();
-            this.dataGridViewRelationship = new System.Windows.Forms.DataGridView();
             this.cbShowAll = new System.Windows.Forms.CheckBox();
+            this.dataGridViewRelationship = new System.Windows.Forms.DataGridView();
+            this.cbShowFromCurrentSubModel = new System.Windows.Forms.CheckBox();
             this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourcePrimitiveProperties = new System.Windows.Forms.BindingSource(this.components);
             this.tabControl.SuspendLayout();
@@ -92,8 +93,9 @@
             // 
             // tabPageRelationship
             // 
-            this.tabPageRelationship.Controls.Add(this.dataGridViewRelationship);
             this.tabPageRelationship.Controls.Add(this.cbShowAll);
+            this.tabPageRelationship.Controls.Add(this.dataGridViewRelationship);
+            this.tabPageRelationship.Controls.Add(this.cbShowFromCurrentSubModel);
             this.tabPageRelationship.Location = new System.Drawing.Point(4, 22);
             this.tabPageRelationship.Name = "tabPageRelationship";
             this.tabPageRelationship.Padding = new System.Windows.Forms.Padding(3);
@@ -101,6 +103,17 @@
             this.tabPageRelationship.TabIndex = 1;
             this.tabPageRelationship.Text = "Relationship";
             this.tabPageRelationship.UseVisualStyleBackColor = true;
+            // 
+            // cbShowAll
+            // 
+            this.cbShowAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbShowAll.AutoSize = true;
+            this.cbShowAll.Location = new System.Drawing.Point(434, 6);
+            this.cbShowAll.Name = "cbShowAll";
+            this.cbShowAll.Size = new System.Drawing.Size(67, 17);
+            this.cbShowAll.TabIndex = 3;
+            this.cbShowAll.Text = "Show All";
+            this.cbShowAll.UseVisualStyleBackColor = true;
             // 
             // dataGridViewRelationship
             // 
@@ -122,15 +135,17 @@
             this.dataGridViewRelationship.Size = new System.Drawing.Size(498, 566);
             this.dataGridViewRelationship.TabIndex = 0;
             // 
-            // cbShowAll
+            // cbShowFromCurrentSubModel
             // 
-            this.cbShowAll.AutoSize = true;
-            this.cbShowAll.Location = new System.Drawing.Point(6, 6);
-            this.cbShowAll.Name = "cbShowAll";
-            this.cbShowAll.Size = new System.Drawing.Size(133, 17);
-            this.cbShowAll.TabIndex = 2;
-            this.cbShowAll.Text = "Show All Relationships";
-            this.cbShowAll.UseVisualStyleBackColor = true;
+            this.cbShowFromCurrentSubModel.AutoSize = true;
+            this.cbShowFromCurrentSubModel.Checked = true;
+            this.cbShowFromCurrentSubModel.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbShowFromCurrentSubModel.Location = new System.Drawing.Point(6, 6);
+            this.cbShowFromCurrentSubModel.Name = "cbShowFromCurrentSubModel";
+            this.cbShowFromCurrentSubModel.Size = new System.Drawing.Size(226, 17);
+            this.cbShowFromCurrentSubModel.TabIndex = 2;
+            this.cbShowFromCurrentSubModel.Text = "Only show relationships from this submodel";
+            this.cbShowFromCurrentSubModel.UseVisualStyleBackColor = true;
             // 
             // PrimitiveRelationshipEditor
             // 
@@ -159,7 +174,8 @@
         private System.Windows.Forms.DataGridView dataGridViewPrimitive;
         private System.Windows.Forms.BindingSource bindingSource;
         private System.Windows.Forms.BindingSource bindingSourcePrimitiveProperties;
-        private System.Windows.Forms.CheckBox cbShowAll;
+        private System.Windows.Forms.CheckBox cbShowFromCurrentSubModel;
         private System.Windows.Forms.DataGridView dataGridViewRelationship;
+        private System.Windows.Forms.CheckBox cbShowAll;
     }
 }

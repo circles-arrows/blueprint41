@@ -24,6 +24,12 @@ namespace Blueprint41.Modeller.Schemas
             }
         }
 
+
+        /// <summary>
+        /// Gets all the relationships for this submodel
+        /// </summary>
+        /// <param name="submodel"></param>
+        /// <returns></returns>
         public IEnumerable<Relationship> GetRelationships(Submodel submodel)
         {
             if (Model == null)
@@ -32,29 +38,27 @@ namespace Blueprint41.Modeller.Schemas
             return submodel.Relationships.Where(item => item.Source.Label == Label || item.Target.Label == Label);
         }
 
+        /// <summary>
+        /// Gets all the relationships regardless of submodel
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="includeInherited"></param>
+        /// <returns></returns>
         public IEnumerable<Relationship> GetRelationships(RelationshipDirection direction, bool includeInherited)
         {
             if (Model == null)
                 throw new InvalidOperationException("Cannot get relationship of nodes when model is not set.");
 
-            List<Relationship> relationships = new List<Schemas.Relationship>();
-
-
-            Entity current = this;
-            do
-            {
-                if (direction != RelationshipDirection.Out)
-                    relationships.AddRange(Model.Relationships.Relationship.Where(item => item.Source.ReferenceGuid == current.Guid));
-
-                if (direction != RelationshipDirection.In)
-                    relationships.AddRange(Model.Relationships.Relationship.Where(item => item.Target.ReferenceGuid == current.Guid));
-
-                current = current.ParentEntity;
-            } while (current != null && includeInherited);
-
-            return relationships;
+            return Model.GetRelationships(this, includeInherited);
         }
 
+        /// <summary>
+        /// Gets all the relationships for this submodel
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="direction"></param>
+        /// <param name="includeInherited"></param>
+        /// <returns></returns>
         public IEnumerable<Relationship> GetRelationships(Submodel model, RelationshipDirection direction, bool includeInherited)
         {
             Func<Relationship, bool> func;
@@ -73,34 +77,39 @@ namespace Blueprint41.Modeller.Schemas
                     break;
             }
 
-            List<Relationship> relationships = model.Model.Relationships.Relationship.Where(func).ToList();
+            Dictionary<string, Relationship> relationships = model.Relationships.Where(func).ToDictionary(x => x.Name);
 
             if (includeInherited == false)
-                return relationships;
+                return relationships.Select(x=> x.Value).ToList();
 
             Dictionary<RelationshipDirection, List<Relationship>> inheritedPropertyByDirection = this.GetInheritedRelationships(model);
 
-            foreach (var item in inheritedPropertyByDirection[RelationshipDirection.In])
+            foreach (Relationship item in inheritedPropertyByDirection[RelationshipDirection.In])
             {
-                Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());                
-                relationships.Add(relationship);
+                if (relationships.ContainsKey(item.Name))
+                    continue;
+
+                Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());
+                relationships.Add(relationship.Name, relationship);
                 model.CreatedInheritedRelationships.Add(relationship);
             }
 
-            foreach (var item in inheritedPropertyByDirection[RelationshipDirection.Out])
+            foreach (Relationship item in inheritedPropertyByDirection[RelationshipDirection.Out])
             {
-                Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());                
-                relationships.Add(relationship);
+                if (relationships.ContainsKey(item.Name))
+                    continue;
+
+                Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());
+                relationships.Add(relationship.Name, relationship);
                 model.CreatedInheritedRelationships.Add(relationship);
             }
 
-            return relationships;
+            return relationships.Select(x => x.Value).ToList();
 
             bool RelationshipIn(Relationship item)
             {
                 return item.Source.ReferenceGuid == this.Guid;
             }
-
 
             bool RelationshipOut(Relationship item)
             {
@@ -112,6 +121,31 @@ namespace Blueprint41.Modeller.Schemas
                 return item.Source.ReferenceGuid == this.Guid || item.Target.ReferenceGuid == this.Guid;
             }
         }
+
+        /// <summary>
+        /// Gets the inherited relationship for this submodel
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public Dictionary<RelationshipDirection, List<Relationship>> GetInheritedRelationships(Submodel model)
+        {
+            Dictionary<RelationshipDirection, List<Relationship>> result = new Dictionary<RelationshipDirection, List<Schemas.Relationship>>();
+            result.Add(RelationshipDirection.In, new List<Schemas.Relationship>());
+            result.Add(RelationshipDirection.Out, new List<Schemas.Relationship>());
+
+            Entity current = ParentEntity;
+
+            while (current != null)
+            {
+                result[RelationshipDirection.In].AddRange(model.Relationships.Where(item => item.Source.ReferenceGuid == current.Guid));
+                result[RelationshipDirection.Out].AddRange(model.Relationships.Where(item => item.Target.ReferenceGuid == current.Guid));
+
+                current = current.ParentEntity;
+            }
+
+            return result;
+        }
+
 
         public void CleanPrimitive()
         {

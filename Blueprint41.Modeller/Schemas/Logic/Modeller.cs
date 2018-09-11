@@ -119,6 +119,72 @@ namespace Blueprint41.Modeller.Schemas
             if (!knownGuids.Contains(guid)) knownGuids.Add(guid);
         }
 
+        /// <summary>
+        /// Gets all the relationships of the Entity regardless of submodel
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="includeInherited"></param>
+        /// <returns></returns>
+        public List<Relationship> GetRelationships(Entity entity, RelationshipDirection direction = RelationshipDirection.Both, bool includeInherited = false)
+        {
+            Dictionary<string, Relationship> relationships = new Dictionary<string, Relationship>();
+            Entity current = entity;
+
+            Func<Relationship, bool> func;
+            switch (direction)
+            {
+                case RelationshipDirection.Out:
+                    func = RelationshipOut;
+                    break;
+                case RelationshipDirection.Both:
+                    func = RelationshipBoth;
+                    break;
+                case RelationshipDirection.In:
+                default:
+                    func = RelationshipIn;
+                    break;
+            }
+
+            do
+            {
+                foreach (Relationship rel in Relationships.Relationship.Where(func).ToList())
+                    if (relationships.ContainsKey(rel.Name) == false)
+                        relationships.Add(rel.Name, rel);
+
+                current = current.ParentEntity;
+
+            } while (current != null && includeInherited);
+
+            return relationships.Select(x => x.Value).ToList();
+
+            bool RelationshipIn(Relationship item)
+            {
+                return item.Source.ReferenceGuid == current.Guid;
+            }
+
+            bool RelationshipOut(Relationship item)
+            {
+                return item.Target.ReferenceGuid == current.Guid;
+            }
+
+            bool RelationshipBoth(Relationship item)
+            {
+                return item.Source.ReferenceGuid == current.Guid || item.Target.ReferenceGuid == current.Guid;
+            }
+        }
+
+        /// <summary>
+        /// Gets all the relationships of the entity regardless of submodel
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="entity"></param>
+        /// <param name="includeInherited"></param>
+        /// <returns></returns>
+        public List<Relationship> GetRelationships(Entity entity, bool includeInherited = false)
+        {
+            return GetRelationships(entity, RelationshipDirection.Both, includeInherited);
+        }
+
         public partial class EntitiesLocalType
         {
             protected override void InitializeLogic()

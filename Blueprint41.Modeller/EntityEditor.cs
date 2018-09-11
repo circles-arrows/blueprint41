@@ -39,7 +39,7 @@ namespace Blueprint41.Modeller
 
         private Dictionary<string, Relationship> relationshipLookUp
         {
-            get { return Entity.GetRelationships(RelationshipDirection.In, false).ToDictionary(x => x.Name); }
+            get { return Entity.GetRelationships(RelationshipDirection.Both, false).ToDictionary(x => x.Name); }
         }
 
         public DataTable FunctionalIdDataTable { get; set; }
@@ -98,6 +98,7 @@ namespace Blueprint41.Modeller
             pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
 
             pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
+            pre.CheckBoxShowFromCurrentModel.CheckedChanged += checkBoxShowFromCurrentModel_CheckedChanged;
 
             pre.Enabled = false;
             gbProperties.Enabled = false;
@@ -180,12 +181,13 @@ namespace Blueprint41.Modeller
         private void DataGridViewRelationship_DataSourceChanged(object sender, EventArgs e)
         {
             DataGridView dataGrid = (DataGridView)sender;
+            Dictionary<string, Relationship> lookUp = relationshipLookUp;
 
             for (int x = 0; x < dataGrid.RowCount; x++)
             {
                 DataGridViewRow row = dataGrid.Rows[x];
 
-                if (row.DataBoundItem is Relationship rel && relationshipLookUp.ContainsKey(rel.Name) == false)
+                if (row.DataBoundItem is Relationship rel && lookUp.ContainsKey(rel.Name) == false)
                 {
                     row.ReadOnly = true;
                     row.DefaultCellStyle.BackColor = Color.DarkGray;
@@ -655,22 +657,18 @@ namespace Blueprint41.Modeller
             return inheritedPrimitives;
         }
 
-        private Collection<Relationship> GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity entity, bool showAll = false)
+        private List<Relationship> GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity entity, bool showAll = false)
         {
-            Collection<Relationship> inheritedRelationships = new Collection<Relationship>();
+            List<Relationship> inheritedRelationships = new List<Relationship>();
             Entity current = entity;
 
             if (current == null)
                 return null;
 
-            do
-            {
-                foreach (Relationship rel in current.GetRelationships(showAll ? StorageModel.MainSubmodel : StorageModel.DisplayedSubmodel, RelationshipDirection.Both, true))
-                    inheritedRelationships.Add(rel);
-
-                current = current.ParentEntity;
-
-            } while (current != null);
+            if (showAll)
+                inheritedRelationships = StorageModel.GetRelationships(entity, true);
+            else
+                inheritedRelationships = current.GetRelationships(StorageModel.DisplayedSubmodel, RelationshipDirection.Both, true).ToList();
 
             return inheritedRelationships;
         }
@@ -722,8 +720,8 @@ namespace Blueprint41.Modeller
             bindingSourceCollectionProperties.DataSource = null;
             pre.DataGridViewRelationship.DataSource = null;
 
-
-            relationshipsObservable = new ObservableCollection<Schemas.Relationship>(GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity, showAllRelationships));
+            List<Relationship> relationships = GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity, showAllRelationships);
+            relationshipsObservable = new ObservableCollection<Schemas.Relationship>(relationships);
             relationshipsObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
             {
                 switch (e.Action)
@@ -762,9 +760,7 @@ namespace Blueprint41.Modeller
             };
 
             bindingSourceCollectionProperties.DataSource = relationshipsObservable;
-            pre.DataGridViewRelationship.DataSource = bindingSourceCollectionProperties;
-            //pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
-            //pre.DataGridViewRelationship.CurrentCellDirtyStateChanged += DataGridViewRelationships_CurrentCellDirtyStateChanged;
+            pre.DataGridViewRelationship.DataSource = relationships;
 
             bindingSourceEntities.DataSource = null;
             bindingSourceEntities.DataSource = StorageModel.Entities.Entity.OrderBy(x => x.Label);
@@ -845,8 +841,6 @@ namespace Blueprint41.Modeller
             }
         }
 
-
-
         private void CmbInherits_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbInherits.SelectedItem == null)
@@ -856,11 +850,10 @@ namespace Blueprint41.Modeller
                 return;
 
             StorageModel.RemoveAllEdges(Entity);
+
             this.isFromCmbInherits = true;
             if (cmbInherits.SelectedItem is EntityComboBoxItem cmbitem)
                 Entity.Inherits = (cmbitem.Value as Entity)?.Guid;
-
-            //cmbInherits.DataBindings[0].WriteValue();
         }
 
         private void BaseEntityBinding_BindingComplete(object sender, BindingCompleteEventArgs e)
@@ -877,6 +870,7 @@ namespace Blueprint41.Modeller
         {
             txtLabel.Text = Entity.Label;
         }
+
         private void Entity_OnNameChangeCancelled(object sender, PropertyChangedEventArgs<string> e)
         {
             txtName.Text = Entity.Name;
@@ -973,15 +967,11 @@ namespace Blueprint41.Modeller
 
         }
 
-
-
         private void ShowMessageAndResetTextBoxValue(string message, DataGridViewTextBoxCell textBox)
         {
             MessageBox.Show(message);
             textBox.Value = "PropertyName";
         }
-
-
 
         private void btnEditStaticData_Click(object sender, EventArgs e)
         {
@@ -1108,7 +1098,25 @@ namespace Blueprint41.Modeller
 
         private void checkBoxShowAllRelationships_CheckedChanged(object sender, EventArgs e)
         {
+            pre.CheckBoxShowFromCurrentModel.CheckedChanged -= checkBoxShowFromCurrentModel_CheckedChanged;
+
             showAllRelationships = pre.CheckBoxShowAllRelationship.Checked;
+            pre.CheckBoxShowFromCurrentModel.Checked = !showAllRelationships;
+
+            pre.CheckBoxShowFromCurrentModel.CheckedChanged += checkBoxShowFromCurrentModel_CheckedChanged;
+
+            Reload();
+        }
+
+        private void checkBoxShowFromCurrentModel_CheckedChanged(object sender, EventArgs e)
+        {
+            pre.CheckBoxShowAllRelationship.CheckedChanged -= checkBoxShowAllRelationships_CheckedChanged;
+
+            showAllRelationships = !pre.CheckBoxShowFromCurrentModel.Checked;
+            pre.CheckBoxShowAllRelationship.Checked = showAllRelationships;
+
+            pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
+
             Reload();
         }
 

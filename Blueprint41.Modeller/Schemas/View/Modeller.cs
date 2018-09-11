@@ -215,6 +215,7 @@ namespace Blueprint41.Modeller.Schemas
             {
                 relationship.DeleteEdge();
             }
+
             AutoResize();
         }
 

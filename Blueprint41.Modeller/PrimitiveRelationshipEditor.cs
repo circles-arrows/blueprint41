@@ -27,6 +27,11 @@ namespace Blueprint41.Modeller
             get { return this.cbShowAll; }
         }
 
+        public CheckBox CheckBoxShowFromCurrentModel
+        {
+            get { return this.cbShowFromCurrentSubModel; }
+        }
+
         public TabControl TabControl
         {
             get { return this.tabControl; }

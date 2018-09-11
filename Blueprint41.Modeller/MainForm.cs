@@ -110,7 +110,6 @@ namespace Blueprint41.Modeller
         private void CheckGuidDiscrepancies()
         {
             Dictionary<string, Entity> entitiesLookUp = Model.Entities.Entity.ToDictionary(x => x.Guid);
-            Dictionary<string, Relationship> relationshipLookUp = Model.Relationships.Relationship.ToDictionary(x => x.Guid);
 
             IEnumerable<Relationship> relationshipDiscripancies = Model.Relationships.Relationship
                 .Where(x => (x.Source != null && x.Source.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Source?.ReferenceGuid) == false) || 
