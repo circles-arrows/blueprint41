@@ -125,7 +125,7 @@ namespace Blueprint41.Modeller.Schemas
         /// <param name="entity"></param>
         /// <param name="includeInherited"></param>
         /// <returns></returns>
-        public List<Relationship> GetRelationships(Entity entity, RelationshipDirection direction = RelationshipDirection.Both, bool includeInherited = false)
+        public IEnumerable<Relationship> GetRelationships(Entity entity, RelationshipDirection direction = RelationshipDirection.Both, bool includeInherited = false)
         {
             Dictionary<string, Relationship> relationships = new Dictionary<string, Relationship>();
             Entity current = entity;
@@ -180,7 +180,7 @@ namespace Blueprint41.Modeller.Schemas
         /// <param name="entity"></param>
         /// <param name="includeInherited"></param>
         /// <returns></returns>
-        public List<Relationship> GetRelationships(Entity entity, bool includeInherited = false)
+        public IEnumerable<Relationship> GetRelationships(Entity entity, bool includeInherited = false)
         {
             return GetRelationships(entity, RelationshipDirection.Both, includeInherited);
         }

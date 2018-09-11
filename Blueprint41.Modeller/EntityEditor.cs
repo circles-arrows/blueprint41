@@ -254,7 +254,7 @@ namespace Blueprint41.Modeller
             entityNameColumn.Name = "Entity Name";
             entityNameColumn.ReadOnly = readOnly;
             entityNameColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
-            entityNameColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            entityNameColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             entityNameColumn.DefaultCellStyle.Font = new Font(dataGridView.Font, FontStyle.Bold);
             entityNameColumn.Resizable = DataGridViewTriState.False;
             entityNameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -601,7 +601,7 @@ namespace Blueprint41.Modeller
             public GridPrimitiveItem(string entityName, Primitive item)
             {
                 Item = item;
-                EntityName = entityName + ".";
+                EntityName = entityName;
             }
 
             public Primitive Item { get; }
@@ -657,18 +657,20 @@ namespace Blueprint41.Modeller
             return inheritedPrimitives;
         }
 
-        private List<Relationship> GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity entity, bool showAll = false)
+        private Collection<Relationship> GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity entity, bool showAll = false)
         {
-            List<Relationship> inheritedRelationships = new List<Relationship>();
+            Collection<Relationship> inheritedRelationships = new Collection<Relationship>();
             Entity current = entity;
 
             if (current == null)
                 return null;
 
             if (showAll)
-                inheritedRelationships = StorageModel.GetRelationships(entity, true);
+                foreach (Relationship item in StorageModel.GetRelationships(entity, true))
+                    inheritedRelationships.Add(item);
             else
-                inheritedRelationships = current.GetRelationships(StorageModel.DisplayedSubmodel, RelationshipDirection.Both, true).ToList();
+                foreach (Relationship item in current.GetRelationships(StorageModel.DisplayedSubmodel, RelationshipDirection.Both, true))
+                    inheritedRelationships.Add(item);
 
             return inheritedRelationships;
         }
@@ -720,7 +722,7 @@ namespace Blueprint41.Modeller
             bindingSourceCollectionProperties.DataSource = null;
             pre.DataGridViewRelationship.DataSource = null;
 
-            List<Relationship> relationships = GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity, showAllRelationships);
+            Collection<Relationship> relationships = GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity, showAllRelationships);
             relationshipsObservable = new ObservableCollection<Schemas.Relationship>(relationships);
             relationshipsObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
             {
@@ -760,7 +762,7 @@ namespace Blueprint41.Modeller
             };
 
             bindingSourceCollectionProperties.DataSource = relationshipsObservable;
-            pre.DataGridViewRelationship.DataSource = relationships;
+            pre.DataGridViewRelationship.DataSource = bindingSourceCollectionProperties;
 
             bindingSourceEntities.DataSource = null;
             bindingSourceEntities.DataSource = StorageModel.Entities.Entity.OrderBy(x => x.Label);
