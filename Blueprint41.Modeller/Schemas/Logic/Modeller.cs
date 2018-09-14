@@ -159,17 +159,17 @@ namespace Blueprint41.Modeller.Schemas
 
             bool RelationshipIn(Relationship item)
             {
-                return item.Source.ReferenceGuid == current.Guid;
+                return item.Source.Label == current.Label;
             }
 
             bool RelationshipOut(Relationship item)
             {
-                return item.Target.ReferenceGuid == current.Guid;
+                return item.Target?.Label == current.Label;
             }
 
             bool RelationshipBoth(Relationship item)
             {
-                return item.Source.ReferenceGuid == current.Guid || item.Target.ReferenceGuid == current.Guid;
+                return item.Source.Label == current.Label || item.Target?.Label == current.Label;
             }
         }
 

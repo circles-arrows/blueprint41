@@ -110,26 +110,24 @@ namespace Blueprint41.Modeller
         private void CheckGuidDiscrepancies()
         {
             Dictionary<string, Entity> entitiesLookUp = Model.Entities.Entity.ToDictionary(x => x.Guid);
+            Dictionary<string, Entity> entitiesLabelLookUp = Model.Entities.Entity.ToDictionary(x => x.Label);
 
             IEnumerable<Relationship> relationshipDiscripancies = Model.Relationships.Relationship
-                .Where(x => (x.Source != null && x.Source.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Source?.ReferenceGuid) == false) || 
+                .Where(x => (x.Source != null && x.Source.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Source?.ReferenceGuid) == false) ||
                             (x.Target != null && x.Target.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Target.ReferenceGuid) == false))
                 .OrderBy(x => x.Name);
 
             if (relationshipDiscripancies.Count() == 0)
                 return;
 
-            DialogResult result = MessageBox.Show("There are relationships in/out entities that are not mapped to its actual entity. This may affect on reflecting edges to the relationship. Please check the mapping by clicking Ok.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 
-            if (result == DialogResult.OK)
+            foreach (Relationship item in relationshipDiscripancies)
             {
-                GuidDiscrepancyForm form = new GuidDiscrepancyForm
-                {
-                    Model = Model,
-                    RelationshipDiscrepancies = relationshipDiscripancies
-                };
+                if (item.Source != null && item.Source.Label != null && entitiesLabelLookUp.ContainsKey(item.Source.Label))
+                    item.Source.ReferenceGuid = entitiesLabelLookUp[item.Source.Label].Guid;
 
-                form.ShowDialog();
+                if (item.Target != null && item.Target.Label != null && entitiesLabelLookUp.ContainsKey(item.Target.Label))
+                    item.Target.ReferenceGuid = entitiesLabelLookUp[item.Target.Label].Guid;
             }
         }
 
@@ -631,7 +629,7 @@ namespace Blueprint41.Modeller
                 tempRelationships.AddRange(Model.Relationships.Relationship);
                 foreach (Relationship relationship in tempRelationships)
                 {
-                    if (relationship.Target.Label == node.Label || relationship.Source.Label == node.Label)
+                    if (relationship.Target?.Label == node.Label || relationship.Source.Label == node.Label)
                         Model.Relationships.Relationship.Remove(relationship);
                 }
             }

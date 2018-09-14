@@ -79,7 +79,7 @@ namespace Blueprint41.Modeller
 
         public static List<Relationship> GetCurrentRelationshipsInGraph(this Entity entity, Submodel model)
         {
-            List<Relationship> relationships = model.Relationships.Where(item => item.Source.ReferenceGuid == entity.Guid || item.Target.ReferenceGuid == entity.Guid).ToList();
+            List<Relationship> relationships = model.Relationships.Where(item => item.Source?.Label == entity.Label || item.Target?.Label == entity.Label).ToList();
 
             foreach (Relationship relationship in model.CreatedInheritedRelationships.Where(rel => rel.InEntity == entity.Label || rel.OutEntity == entity.Label))
             {

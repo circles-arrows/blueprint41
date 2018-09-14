@@ -35,7 +35,7 @@ namespace Blueprint41.Modeller.Schemas
             if (Model == null)
                 throw new InvalidOperationException("Cannot get relationship of nodes when model is not set.");
 
-            return submodel.Relationships.Where(item => item.Source.Label == Label || item.Target.Label == Label);
+            return submodel.Relationships.Where(item => item.Source.Label == Label || item.Target?.Label == Label);
         }
 
         /// <summary>
@@ -108,17 +108,17 @@ namespace Blueprint41.Modeller.Schemas
 
             bool RelationshipIn(Relationship item)
             {
-                return item.Source.ReferenceGuid == this.Guid;
+                return item.Source.Label == this.Label;
             }
 
             bool RelationshipOut(Relationship item)
             {
-                return item.Target.ReferenceGuid == this.Guid;
+                return item.Target?.Label == this.Label;
             }
 
             bool RelationshipBoth(Relationship item)
             {
-                return item.Source.ReferenceGuid == this.Guid || item.Target.ReferenceGuid == this.Guid;
+                return item.Source.Label == this.Label || item.Target?.Label == this.Label;
             }
         }
 
@@ -137,8 +137,8 @@ namespace Blueprint41.Modeller.Schemas
 
             while (current != null)
             {
-                result[RelationshipDirection.In].AddRange(model.Relationships.Where(item => item.Source.ReferenceGuid == current.Guid));
-                result[RelationshipDirection.Out].AddRange(model.Relationships.Where(item => item.Target.ReferenceGuid == current.Guid));
+                result[RelationshipDirection.In].AddRange(model.Relationships.Where(item => item.Source.Label == current.Label));
+                result[RelationshipDirection.Out].AddRange(model.Relationships.Where(item => item.Target?.Label == current.Label));
 
                 current = current.ParentEntity;
             }

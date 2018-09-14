@@ -30,7 +30,7 @@ namespace Blueprint41.Modeller.Schemas
             if (this.Source.Label == null || this.Target.Label == null)
                 return;
 
-            if (!Model.DisplayedSubmodel.Entities.Any(item => item.Guid == this.Source.ReferenceGuid) || !Model.DisplayedSubmodel.Entities.Any(item => item.Guid == this.Target.ReferenceGuid))
+            if (!Model.DisplayedSubmodel.Entities.Any(item => item.Label == this.Source.Label) || !Model.DisplayedSubmodel.Entities.Any(item => item.Label == this.Target.Label))
                 return;
 
             if (viewerEdge != null)

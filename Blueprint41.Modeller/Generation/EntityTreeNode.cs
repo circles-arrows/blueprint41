@@ -123,8 +123,8 @@ namespace Blueprint41.Modeller.Generation
 
         public RelationshipTreeNode(Model model, Relationship rel) : base(rel.Name)
         {
-            inEntity = new Lazy<Entity>(() => model.Entities.Entity.Where(x => x.Guid == rel.Source.ReferenceGuid).FirstOrDefault());
-            outEntity = new Lazy<Entity>(() => model.Entities.Entity.Where(x => x.Guid == rel.Target.ReferenceGuid).FirstOrDefault());
+            inEntity = new Lazy<Entity>(() => model.Entities.Entity.Where(x => x.Label == rel.Source.Label).FirstOrDefault());
+            outEntity = new Lazy<Entity>(() => model.Entities.Entity.Where(x => x.Label == rel.Target?.Label).FirstOrDefault());
 
             Checked = true;
             Relationship = rel;
