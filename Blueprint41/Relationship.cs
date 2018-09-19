@@ -158,22 +158,45 @@ namespace Blueprint41
             string oldName = Neo4JRelationshipType;
             Rename(newName, alias);
 
-            Parser.ExecuteBatched<RenameRelationship>(delegate (RenameRelationship template)
+            if (oldName != Neo4JRelationshipType)
             {
-                template.Relationship = this;
-                template.OldName = oldName;
-                template.NewName = Neo4JRelationshipType;
-            });
+                Parser.ExecuteBatched<RenameRelationship>(delegate (RenameRelationship template)
+                {
+                    template.Relationship = this;
+                    template.OldName = oldName;
+                    template.NewName = Neo4JRelationshipType;
+                });
+            }
         }
 
-        void IRefactorRelationship.SetInEntity(Entity target)
+        void IRefactorRelationship.SetInEntity(Entity target, bool allowLosingData)
         {
             Parent.EnsureSchemaMigration();
 
-            if (!InEntity.IsSubsclassOf(target))
-                throw new ArgumentException(string.Format("Target {0} is not a base type of {1}", target.Name, InEntity.Name), "baseType");
+            if (target.IsSubsclassOf(InEntity))
+            {
+                if(!allowLosingData)
+                    throw new ArgumentException(string.Format("Target {0} is a sub type of {1}, you could lose data. If you want to do this anyway, you can set allowLosingData to true.", target.Name, InEntity.Name), "baseType");
 
-            // No changes in DB needed for this action!!!
+                foreach (var item in InEntity.GetSubclasses())
+                {
+                    if (item.IsAbstract || item.IsVirtual)
+                        continue;
+
+                    if (item.IsSelfOrSubclassOf(target))
+                        continue;
+
+                    //delete relations
+                    Parser.ExecuteBatched<RemoveRelationship>(delegate (RemoveRelationship template)
+                    {
+                        template.InEntity = item.Label.Name;
+                        template.Relation = Neo4JRelationshipType;
+                        template.OutEntity = OutEntity.Label.Name;
+                    });
+                }
+            }
+            else if (!InEntity.IsSubsclassOf(target))
+                throw new ArgumentException(string.Format("Target {0} is not a base or sub type of {1}. Consider using 'Reroute'.", target.Name, InEntity.Name), "baseType");
 
             if (InProperty != null)
             {
@@ -186,14 +209,34 @@ namespace Blueprint41
 
             InEntity = target;
         }
-        void IRefactorRelationship.SetOutEntity(Entity target)
+        void IRefactorRelationship.SetOutEntity(Entity target, bool allowLosingData)
         {
             Parent.EnsureSchemaMigration();
 
-            if (!OutEntity.IsSubsclassOf(target))
-                throw new ArgumentException(string.Format("Target {0} is not a base type of {1}", target.Name, OutEntity.Name), "baseType");
+            if (target.IsSubsclassOf(OutEntity))
+            {
+                if (!allowLosingData)
+                    throw new ArgumentException(string.Format("Target {0} is a sub type of {1}, you could lose data. If you want to do this anyway, you can set allowLosingData to true.", target.Name, OutEntity.Name), "baseType");
 
-            // No changes in DB needed for this action!!!
+                foreach (var item in OutEntity.GetSubclasses())
+                {
+                    if (item.IsAbstract || item.IsVirtual)
+                        continue;
+
+                    if (item.IsSelfOrSubclassOf(target))
+                        continue;
+
+                    //delete relations
+                    Parser.ExecuteBatched<RemoveRelationship>(delegate (RemoveRelationship template)
+                    {
+                        template.InEntity = InEntity.Label.Name;
+                        template.Relation = Neo4JRelationshipType;
+                        template.OutEntity = item.Label.Name;
+                    });
+                }
+            }
+            else if (!OutEntity.IsSubsclassOf(target))
+                throw new ArgumentException(string.Format("Target {0} is not a base or sub type of {1}. Consider using 'Reroute'.", target.Name, OutEntity.Name), "baseType");
 
             if (OutProperty != null)
             {

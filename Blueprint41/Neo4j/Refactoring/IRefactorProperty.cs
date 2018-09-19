@@ -18,7 +18,7 @@ namespace Blueprint41.Neo4j.Refactoring
         void Merge(Property target, MergeAlgorithm mergeAlgorithm);
 
 
-        void Convert(Type target);
+        void Convert(Type target, bool skipConvertionLogic = false);
 
         void SetIndexType(IndexType indexType);
 
@@ -28,7 +28,9 @@ namespace Blueprint41.Neo4j.Refactoring
         void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType = null, bool strict = true);
 
         void ConvertToCollection();
+        void ConvertToCollection(string newName);
         void ConvertToLookup(ConvertAlgorithm conversionAlgorithm);
+        void ConvertToLookup(string newName, ConvertAlgorithm conversionAlgorithm);
 
         void MakeNullable();
         void MakeMandatory();

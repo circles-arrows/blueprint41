@@ -428,7 +428,7 @@ namespace Blueprint41
             });
         }
 
-        void IRefactorProperty.Convert(Type target)
+        void IRefactorProperty.Convert(Type target, bool skipConvertionLogic)
         {
             Parent.Parent.EnsureSchemaMigration();
 
@@ -441,28 +441,31 @@ namespace Blueprint41
             if (from == to)
                 throw new NotSupportedException("The property is already of this type.");
 
-            Type fromDb = Transaction.Current.GetStoredType(from);
-            Type toDb = Transaction.Current.GetStoredType(from);
-
-            string chkScript, convScript;
-            (_, _, chkScript, convScript) = specificConvertTabel.FirstOrDefault(item => item.fromType == from && (item.toType == null || item.toType == to));
-            if (chkScript == null || convScript == null)
-                (_, _, chkScript, convScript) = genericConvertTabel.FirstOrDefault(item => item.fromType == fromDb && (item.toType == null || item.toType == toDb));
-
-            if (chkScript == null || convScript == null || chkScript == NOT_SUPPORTED || convScript == NOT_SUPPORTED)
-                throw new NotSupportedException($"A refactor conversion from '{from.Name}' to '{to.Name}' is not supported.");
-                
-            if (chkScript != NO_SCRIPT && convScript != NO_SCRIPT)
+            if (!skipConvertionLogic)
             {
-                foreach (var entity in Parent.GetConcreteClasses())
+                Type fromDb = Transaction.Current.GetStoredType(from);
+                Type toDb = Transaction.Current.GetStoredType(to);
+
+                string chkScript, convScript;
+                (_, _, chkScript, convScript) = specificConvertTabel.FirstOrDefault(item => item.fromType == from && (item.toType == null || item.toType == to));
+                if (chkScript == null || convScript == null)
+                    (_, _, chkScript, convScript) = genericConvertTabel.FirstOrDefault(item => item.fromType == fromDb && (item.toType == null || item.toType == toDb));
+
+                if (chkScript == null || convScript == null || chkScript == NOT_SUPPORTED || convScript == NOT_SUPPORTED)
+                    throw new NotSupportedException($"A refactor conversion from '{from.Name}' to '{to.Name}' is not supported.");
+
+                if (chkScript != NO_SCRIPT && convScript != NO_SCRIPT)
                 {
-                    Parser.ExecuteBatched<Templates.Convert>(delegate (Templates.Convert template)
+                    foreach (var entity in Parent.GetConcreteClasses())
                     {
-                        template.Entity = entity;
-                        template.Property = this;
-                        template.WhereScript = chkScript;
-                        template.AssignScript = convScript;
-                    });
+                        Parser.ExecuteBatched<Templates.Convert>(delegate (Templates.Convert template)
+                        {
+                            template.Entity = entity;
+                            template.Property = this;
+                            template.WhereScript = chkScript;
+                            template.AssignScript = convScript;
+                        });
+                    }
                 }
             }
 
@@ -626,6 +629,12 @@ namespace Blueprint41
             PropertyType = PropertyType.Collection;
             Nullable = true;
         }
+
+        void IRefactorProperty.ConvertToCollection(string newName)
+        {
+            Refactor.ConvertToCollection();
+            Refactor.Rename(newName);
+        }
         void IRefactorProperty.ConvertToLookup(ConvertAlgorithm conversionAlgorithm)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -634,6 +643,11 @@ namespace Blueprint41
             Nullable = true;
 
             throw new NotImplementedException("Apply the conversion algorithm");
+        }
+        void IRefactorProperty.ConvertToLookup(string newName, ConvertAlgorithm conversionAlgorithm)
+        {
+            Refactor.ConvertToLookup(conversionAlgorithm);
+            Refactor.Rename(newName);
         }
 
         void IRefactorProperty.MakeNullable()
