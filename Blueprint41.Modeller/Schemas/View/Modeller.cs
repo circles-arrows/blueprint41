@@ -15,6 +15,8 @@ namespace Blueprint41.Modeller.Schemas
 {
     public partial class Modeller
     {
+        public EditorViewMode ViewMode { get; set; }
+
         private GraphEditorControl m_GraphEditor = null;
         public GraphEditorControl GraphEditor
         {
@@ -35,7 +37,7 @@ namespace Blueprint41.Modeller.Schemas
 
                 if (m_GraphEditor != null)
                 {
-                    GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.UseSettingsOfTheGraph;
+                    //GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.UseSettingsOfTheGraph;
 
                     RebindControl();
                     ((IViewer)m_GraphEditor.Viewer).MouseUp += MouseUp;
@@ -78,20 +80,53 @@ namespace Blueprint41.Modeller.Schemas
             //CaptureCoordinates();
 
             // MDS does not work well, after redoing the layout it crashes when you drag a node...
-            //GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.SugiyamaScheme;
+            //GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.MDS;
             //GraphEditor.Viewer.NeedToCalculateLayout = true;
             //GraphEditor.Viewer.Graph = Viewer.Graph;
             //GraphEditor.Viewer.NeedToCalculateLayout = false;
             //GraphEditor.Viewer.Graph = Viewer.Graph;
             //CaptureCoordinates();
 
-            //  GraphEditor = m_GraphEditor; // <--- MDS has bugs in the layout engine, rebind the control with captured coordinates & Sugiyama...
+            //GraphEditor = m_GraphEditor; // <--- MDS has bugs in the layout engine, rebind the control with captured coordinates & Sugiyama...
 
-            GraphEditor.Viewer.CalculateLayout(Viewer.Graph);
+            //GraphEditor.Viewer.CalculateLayout(Viewer.Graph);
+            //GraphEditor.Viewer.Graph = Viewer.Graph;
+            //CaptureCoordinates();
+
+            if (ViewMode == EditorViewMode.Draggable)
+                MDSLayout();
+            else
+                SugiyamaLayout();
+        }
+
+        internal void RedoLayout()
+        {
+            RedoLayout(this, EventArgs.Empty);
+        }
+
+        private void SugiyamaLayout()
+        {
+            GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.SugiyamaScheme;
+            GraphEditor.Viewer.NeedToCalculateLayout = true;
             GraphEditor.Viewer.Graph = Viewer.Graph;
+            GraphEditor.Viewer.NeedToCalculateLayout = false;
+            GraphEditor.Viewer.Graph = Viewer.Graph;
+
             CaptureCoordinates();
         }
 
+        private void MDSLayout()
+        {
+            // MDS does not work well, after redoing the layout it crashes when you drag a node...
+            GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.MDS;
+            GraphEditor.Viewer.NeedToCalculateLayout = true;
+            GraphEditor.Viewer.Graph = Viewer.Graph;
+            GraphEditor.Viewer.NeedToCalculateLayout = false;
+            GraphEditor.Viewer.Graph = Viewer.Graph;
+            CaptureCoordinates();
+
+            GraphEditor = m_GraphEditor; // <--- MDS has bugs in the layout engine, rebind the control with captured coordinates & Sugiyama...
+        }
 
 
         public bool ShowRelationshipLabels
@@ -202,6 +237,9 @@ namespace Blueprint41.Modeller.Schemas
 
         internal void AutoResize()
         {
+            if (ViewMode == EditorViewMode.Fix)
+                SugiyamaLayout();
+
             if (GraphEditor != null)
             {
                 GraphEditor.Viewer.FitGraphBoundingBox();

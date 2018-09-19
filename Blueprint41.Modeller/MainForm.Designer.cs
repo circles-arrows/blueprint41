@@ -64,6 +64,9 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.draggableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fixedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.zoomInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -454,6 +457,9 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.draggableToolStripMenuItem,
+            this.fixedToolStripMenuItem,
+            this.toolStripSeparator3,
             this.zoomInToolStripMenuItem,
             this.zoomOutToolStripMenuItem,
             this.panToolStripMenuItem,
@@ -465,6 +471,29 @@
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.viewToolStripMenuItem.Text = "&View";
+            // 
+            // draggableToolStripMenuItem
+            // 
+            this.draggableToolStripMenuItem.Checked = true;
+            this.draggableToolStripMenuItem.CheckOnClick = true;
+            this.draggableToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.draggableToolStripMenuItem.Name = "draggableToolStripMenuItem";
+            this.draggableToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.draggableToolStripMenuItem.Text = "Draggable";
+            this.draggableToolStripMenuItem.CheckedChanged += new System.EventHandler(this.draggableToolStripMenuItem_CheckedChanged);
+            // 
+            // fixedToolStripMenuItem
+            // 
+            this.fixedToolStripMenuItem.CheckOnClick = true;
+            this.fixedToolStripMenuItem.Name = "fixedToolStripMenuItem";
+            this.fixedToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.fixedToolStripMenuItem.Text = "Fix";
+            this.fixedToolStripMenuItem.CheckedChanged += new System.EventHandler(this.fixedToolStripMenuItem_CheckedChanged);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(223, 6);
             // 
             // zoomInToolStripMenuItem
             // 
@@ -667,6 +696,9 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem functionalIdToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem expandPropertiesWidthToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem draggableToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fixedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 

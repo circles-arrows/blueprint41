@@ -743,6 +743,27 @@ namespace Blueprint41.Modeller
         }
 
         #region View Menu
+
+        private void draggableToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            fixedToolStripMenuItem.CheckedChanged -= fixedToolStripMenuItem_CheckedChanged;
+            fixedToolStripMenuItem.Checked = !draggableToolStripMenuItem.Checked;
+            fixedToolStripMenuItem.CheckedChanged += fixedToolStripMenuItem_CheckedChanged;
+
+            Model.ViewMode = draggableToolStripMenuItem.Checked ? EditorViewMode.Draggable : EditorViewMode.Fix;
+            Model.RedoLayout();
+        }
+
+        private void fixedToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            draggableToolStripMenuItem.CheckedChanged -= draggableToolStripMenuItem_CheckedChanged;
+            draggableToolStripMenuItem.Checked = !fixedToolStripMenuItem.Checked;
+            draggableToolStripMenuItem.CheckedChanged += draggableToolStripMenuItem_CheckedChanged;
+
+            Model.ViewMode = fixedToolStripMenuItem.Checked ? EditorViewMode.Fix : EditorViewMode.Draggable;
+            Model.RedoLayout();
+        }
+
         private void showLabelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             btnShowLabels.Checked = !btnShowLabels.Checked;
@@ -870,6 +891,7 @@ namespace Blueprint41.Modeller
         {
             functionalIdToolStripMenuItem_Click(sender, EventArgs.Empty);
         }
-        #endregion                
+        #endregion
+
     }
 }
