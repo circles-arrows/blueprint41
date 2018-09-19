@@ -10,8 +10,8 @@ namespace Blueprint41.Neo4j.Refactoring
     {
         void Rename(string newName, string alias = null);
 
-        void SetInEntity(Entity target);
-        void SetOutEntity(Entity target);
+        void SetInEntity(Entity target, bool allowLosingData = false);
+        void SetOutEntity(Entity target, bool allowLosingData = false);
 
         void RemoveTimeDependance();
 
