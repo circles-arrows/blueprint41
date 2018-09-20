@@ -22,6 +22,7 @@ namespace Blueprint41.Modeller
     {
         private bool showLabels = false;
         private bool showInherited = false;
+        private bool performNoSelection = false;
 
         private const string NEWSUBMODEL = "New...";
         //private const string DATASTORE_MODEL_REGISTRY_KEY = "DatastoreModelDll";
@@ -260,20 +261,29 @@ namespace Blueprint41.Modeller
 
             entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
             DefaultOrExpandPropertiesWidth(false);
+
+            performNoSelection = false;
         }
 
         private void graphEditor_SelectedEdgeChanged(object sender, EdgeEventArgs e)
         {
             //txtNodeLabel.Enabled = true;
             //txtNodeLabel.Text = e.Edge.LabelText;
+
+            performNoSelection = false;
         }
 
         private void graphEditor_NoSelectionEvent(object sender, EventArgs e)
         {
-            CloseNodeEditor();
-            CloseEdgeEditor();
-            RefreshNodeCombobox();
-            DefaultOrExpandPropertiesWidth(false);
+            if (performNoSelection)
+            {
+                CloseNodeEditor();
+                CloseEdgeEditor();
+                RefreshNodeCombobox();
+                DefaultOrExpandPropertiesWidth(false);
+            }
+
+            performNoSelection = true;
         }
 
         private void entityEditor_ApplyChangesButtonClicked(object sender, EventArgs e)

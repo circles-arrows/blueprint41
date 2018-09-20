@@ -893,8 +893,7 @@ namespace Blueprint41.Modeller
             gbProperties.Enabled = false;
             ClearDataSourceAndHandlers();
             Entity = null;
-            bindingSource.Clear();
-            bindingSourceEntities.Clear();
+            bindingSource.DataSource = typeof(Entity);
             cmbInherits.DataSource = null;
             cmbInherits.SelectedIndex = -1;
         }
