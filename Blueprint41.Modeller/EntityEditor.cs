@@ -881,7 +881,6 @@ namespace Blueprint41.Modeller
         public void Show(Entity model, Model modeller)
         {
             ClearDataSourceAndHandlers();
-            //Enabled = true;
             gbProperties.Enabled = true;
             pre.Enabled = true;
             Entity = model;
@@ -891,10 +890,13 @@ namespace Blueprint41.Modeller
 
         public void CloseEditor()
         {
-            //Enabled = false;
             gbProperties.Enabled = false;
-            pre.Enabled = false;
             ClearDataSourceAndHandlers();
+            Entity = null;
+            bindingSource.Clear();
+            bindingSourceEntities.Clear();
+            cmbInherits.DataSource = null;
+            cmbInherits.SelectedIndex = -1;
         }
 
         public void ClearDataSourceAndHandlers()
@@ -905,6 +907,7 @@ namespace Blueprint41.Modeller
             bindingSourceInheritedRelationships.DataSource = null;
             cmbFunctionalId.SelectedIndexChanged -= cmbFunctionalId_SelectedIndexChanged;
             cmbInherits.SelectedIndexChanged -= CmbInherits_SelectedIndexChanged;
+
             if (Entity != null)
             {
                 Entity.OnLabelChangeCancelled -= Entity_OnLabelChangeCancelled;
@@ -914,6 +917,9 @@ namespace Blueprint41.Modeller
 
         internal void Reload()
         {
+            if (Entity == null)
+                return;
+
             ClearDataSourceAndHandlers();
             Assign();
         }
@@ -1007,6 +1013,9 @@ namespace Blueprint41.Modeller
 
         private void chkIsVirtual_CheckedChanged(object sender, EventArgs e)
         {
+            if (Entity == null)
+                return;
+
             Entity.FunctionalId = null;
             cmbFunctionalId.SelectedItem = null;
 
@@ -1081,6 +1090,9 @@ namespace Blueprint41.Modeller
 
         private void chkIsStaticData_CheckedChanged(object sender, EventArgs e)
         {
+            if (Entity == null)
+                return;
+
             if (!chkIsStaticData.Checked && Entity.IsStaticData && Entity.StaticData.Records.Record.Count != 0)
             {
                 DialogResult result = MessageBox.Show($"This will delete all the existing '{Entity.Label}' static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
@@ -1180,6 +1192,9 @@ namespace Blueprint41.Modeller
 
         private void chkIsAbstract_CheckedChanged(object sender, EventArgs e)
         {
+            if (Entity == null)
+                return;
+
             Entity.Abstract = chkIsAbstract.Checked;
 
             UncheckVirtual();

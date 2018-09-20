@@ -58,8 +58,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.btnPin = new System.Windows.Forms.Button();
-            this.pre = new Blueprint41.Modeller.PrimitiveRelationshipEditor();
             this.gbProperties = new System.Windows.Forms.GroupBox();
+            this.pre = new Blueprint41.Modeller.PrimitiveRelationshipEditor();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceCollectionProperties)).BeginInit();
@@ -320,16 +320,6 @@
             this.btnPin.UseVisualStyleBackColor = false;
             this.btnPin.Click += new System.EventHandler(this.btnPin_Click);
             // 
-            // pre
-            // 
-            this.pre.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pre.Location = new System.Drawing.Point(3, 290);
-            this.pre.Name = "pre";
-            this.pre.Size = new System.Drawing.Size(443, 529);
-            this.pre.TabIndex = 31;
-            // 
             // gbProperties
             // 
             this.gbProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -361,6 +351,16 @@
             this.gbProperties.TabIndex = 33;
             this.gbProperties.TabStop = false;
             this.gbProperties.Text = "Properties";
+            // 
+            // pre
+            // 
+            this.pre.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pre.Location = new System.Drawing.Point(3, 290);
+            this.pre.Name = "pre";
+            this.pre.Size = new System.Drawing.Size(443, 529);
+            this.pre.TabIndex = 31;
             // 
             // EntityEditor
             // 
