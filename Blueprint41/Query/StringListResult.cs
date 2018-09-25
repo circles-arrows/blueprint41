@@ -30,5 +30,10 @@ namespace Blueprint41.Query
 
             return new StringResult(this, "reduce(value = {0}, item in {base} | {1})", new object[] { Parameter.Constant<string>(init), result }, typeof(string));
         }
+
+        public StringResult Union(StringListResult stringListResult)
+        {
+            return new StringResult(this, "{base} + {0}", new object[] { stringListResult });
+        }
     }
 }
