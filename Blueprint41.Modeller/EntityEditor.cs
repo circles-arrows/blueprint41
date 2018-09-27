@@ -18,6 +18,8 @@ namespace Blueprint41.Modeller
 {
     public partial class EntityEditor : UserControl
     {
+        public event EventHandler<EventArgs> EntityTypeChanged;
+
         private bool isFromCmbInherits = false;
 
         private bool showAllRelationships = false;
@@ -1022,6 +1024,7 @@ namespace Blueprint41.Modeller
 
             CheckAbstract();
             UncheckStaticData();
+            EntityTypeChanged?.Invoke(sender, new EventArgs());
         }
 
         private void dataGridViewPrimitiveProperties_KeyDown(object sender, KeyEventArgs e)
@@ -1195,9 +1198,10 @@ namespace Blueprint41.Modeller
                 return;
 
             Entity.Abstract = chkIsAbstract.Checked;
-
+            
             UncheckVirtual();
             UncheckStaticData();
+            EntityTypeChanged?.Invoke(sender, new EventArgs());
         }
 
         private void btnPin_Click(object sender, EventArgs e)
