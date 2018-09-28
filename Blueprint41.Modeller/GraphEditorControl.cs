@@ -261,6 +261,7 @@ namespace Blueprint41.Modeller
                 mi = new ToolStripMenuItem();
                 mi.Text = "Insert " + nte.Name;
                 mi.Click += new EventHandler(insertNode_Click);
+                mi.Tag = new Microsoft.Msagl.Point(x, y);
                 cm.Items.Add(mi);
             }
 
@@ -567,6 +568,9 @@ namespace Blueprint41.Modeller
         private void insertNode_Click(object sender, EventArgs e)
         {
             NodeTypeEntry selectedNTE = null;
+            //if(sender is ToolStripMenuItem)
+
+            Microsoft.Msagl.Point point = (Microsoft.Msagl.Point)(sender as ToolStripMenuItem).Tag;
             foreach (NodeTypeEntry nte in NodeTypes)
             {
                 if (nte.MenuItem == sender)
@@ -577,7 +581,10 @@ namespace Blueprint41.Modeller
             if (NodeInsertedByUser != null)
                 NodeInsertedByUser(this, new NodeEventArgs(null, MouseRightButtonDownPoint));
 
-            SelectedNode = GetNodeAtPosition((int)MouseRightButtonDownPoint.X, (int)MouseRightButtonDownPoint.Y);
+            Node node = GetNodeAtPosition((int)point.X, (int)point.Y);
+
+            SelectedNodeChanged(this, new NodeEventArgs(node, point));
+            SelectedNode = GetNodeAtPosition((int)point.X, (int)point.Y);
         }
 
         private void insertRelationship_Click(object sender, EventArgs e)
