@@ -903,5 +903,13 @@ namespace Blueprint41.Modeller
         }
         #endregion
 
+        private void entityEditor_EntityTypeChanged(object sender, EventArgs e)
+        {
+            if (graphEditor.SelectedNode == null)
+                return;
+
+            Submodel.NodeLocalType selectedNode = (graphEditor.SelectedNode.UserData as Submodel.NodeLocalType);
+            selectedNode.RemoveHighlight();
+        }
     }
 }

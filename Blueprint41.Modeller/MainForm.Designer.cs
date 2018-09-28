@@ -379,6 +379,7 @@
             this.entityEditor.Name = "entityEditor";
             this.entityEditor.Size = new System.Drawing.Size(449, 644);
             this.entityEditor.TabIndex = 0;
+            this.entityEditor.EntityTypeChanged += new System.EventHandler<System.EventArgs>(this.entityEditor_EntityTypeChanged);
             // 
             // staticDataToolStripMenuItem
             // 
