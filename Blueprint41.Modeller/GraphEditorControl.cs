@@ -300,12 +300,15 @@ namespace Blueprint41.Modeller
                         targetPropertyTypeMenuItem.Click += new EventHandler(insertRelationship_Click);
                         sourcePropertyTypeMenuItem.DropDownItems.Add(targetPropertyTypeMenuItem);
                     }
-                }                
+                }
             }
+
+            if (Viewer.Entities.Count() == 0)
+                return cm;
 
             ToolStripSeparator separator = new ToolStripSeparator();
             cm.Items.Add(separator);
-
+            
             RightClickedObject = Viewer.ObjectUnderMouseCursor;
             if (RightClickedObject != null)
             {
