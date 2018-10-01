@@ -580,11 +580,6 @@ namespace Blueprint41.Modeller
             //Microsoft.Msagl.Drawing.Node newNode = InsertNode(MouseRightButtonDownPoint, selectedNTE);
             if (NodeInsertedByUser != null)
                 NodeInsertedByUser(this, new NodeEventArgs(null, MouseRightButtonDownPoint));
-
-            Node node = GetNodeAtPosition((int)point.X, (int)point.Y);
-
-            SelectedNodeChanged(this, new NodeEventArgs(node, point));
-            SelectedNode = GetNodeAtPosition((int)point.X, (int)point.Y);
         }
 
         private void insertRelationship_Click(object sender, EventArgs e)

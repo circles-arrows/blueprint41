@@ -1110,6 +1110,7 @@ namespace Blueprint41.Modeller
 
             UncheckVirtual();
             UncheckAbstract();
+            EntityTypeChanged?.Invoke(sender, new EventArgs());
         }
 
         private void checkBoxShowAllRelationships_CheckedChanged(object sender, EventArgs e)

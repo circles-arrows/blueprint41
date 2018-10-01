@@ -259,6 +259,7 @@ namespace Blueprint41.Modeller
             if (!(e.Node.UserData is Submodel.NodeLocalType))
                 throw new NotSupportedException();
 
+            SelectedNode = e.Node.UserData as Submodel.NodeLocalType;
             entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
             DefaultOrExpandPropertiesWidth(false);
 
@@ -317,6 +318,7 @@ namespace Blueprint41.Modeller
             }
 
             // Auto select newly created entity
+            SelectedNode = model;
             entityEditor.Show(model.Entity, Model);
         }
 
@@ -584,6 +586,7 @@ namespace Blueprint41.Modeller
 
             SelectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
             SelectedNode.Highlight();
+            entityEditor.Show(SelectedNode.Entity, Model);
         }
 
 
@@ -905,11 +908,7 @@ namespace Blueprint41.Modeller
 
         private void entityEditor_EntityTypeChanged(object sender, EventArgs e)
         {
-            if (graphEditor.SelectedNode == null)
-                return;
-
-            Submodel.NodeLocalType selectedNode = (graphEditor.SelectedNode.UserData as Submodel.NodeLocalType);
-            selectedNode.RemoveHighlight();
+            SelectedNode.RemoveHighlight();
         }
     }
 }
