@@ -144,7 +144,7 @@ namespace Blueprint41.Neo4j.Persistence
 
                 node.Remove(entity.Key.Name);
             }
-            else
+            else if (entity.FunctionalId != null)
             {
                 entity.FunctionalId.SeenUid(item.GetKey().ToString());
             }
