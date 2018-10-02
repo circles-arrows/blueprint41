@@ -39,7 +39,7 @@ namespace Blueprint41.Modeller
 
     public enum EditorViewMode
     {
-        Draggable,
-        Fix,
+        MDS,
+        Sugiyama,
     }
 }
