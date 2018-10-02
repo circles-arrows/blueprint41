@@ -480,7 +480,7 @@
             this.draggableToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.draggableToolStripMenuItem.Name = "draggableToolStripMenuItem";
             this.draggableToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.draggableToolStripMenuItem.Text = "Draggable";
+            this.draggableToolStripMenuItem.Text = "MDS";
             this.draggableToolStripMenuItem.CheckedChanged += new System.EventHandler(this.draggableToolStripMenuItem_CheckedChanged);
             // 
             // fixedToolStripMenuItem
@@ -488,7 +488,7 @@
             this.fixedToolStripMenuItem.CheckOnClick = true;
             this.fixedToolStripMenuItem.Name = "fixedToolStripMenuItem";
             this.fixedToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.fixedToolStripMenuItem.Text = "Fix";
+            this.fixedToolStripMenuItem.Text = "Sugiyama";
             this.fixedToolStripMenuItem.CheckedChanged += new System.EventHandler(this.fixedToolStripMenuItem_CheckedChanged);
             // 
             // toolStripSeparator3

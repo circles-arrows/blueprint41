@@ -763,7 +763,7 @@ namespace Blueprint41.Modeller
             fixedToolStripMenuItem.Checked = !draggableToolStripMenuItem.Checked;
             fixedToolStripMenuItem.CheckedChanged += fixedToolStripMenuItem_CheckedChanged;
 
-            Model.ViewMode = draggableToolStripMenuItem.Checked ? EditorViewMode.Draggable : EditorViewMode.Fix;
+            Model.ViewMode = draggableToolStripMenuItem.Checked ? EditorViewMode.MDS : EditorViewMode.Sugiyama;
             Model.RedoLayout();
         }
 
@@ -773,7 +773,7 @@ namespace Blueprint41.Modeller
             draggableToolStripMenuItem.Checked = !fixedToolStripMenuItem.Checked;
             draggableToolStripMenuItem.CheckedChanged += draggableToolStripMenuItem_CheckedChanged;
 
-            Model.ViewMode = fixedToolStripMenuItem.Checked ? EditorViewMode.Fix : EditorViewMode.Draggable;
+            Model.ViewMode = fixedToolStripMenuItem.Checked ? EditorViewMode.Sugiyama : EditorViewMode.MDS;
             Model.RedoLayout();
         }
 
