@@ -124,9 +124,9 @@ namespace Blueprint41.Modeller.Generation
             
             #line default
             #line hidden
-            this.Write("\t\t\r\n");
+            this.Write("\r\n\r\n");
             
-            #line 29 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 30 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
 foreach (var entity in Entities)
 {
@@ -138,16 +138,16 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("        Entities.New(\"");
+            this.Write("    Entities.New(\"");
             
-            #line 37 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 38 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
             
             #line default
             #line hidden
             this.Write("\")\r\n");
             
-            #line 38 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 39 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         } 
         else 
@@ -158,23 +158,23 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("        Entities.New(\"");
+            this.Write("    Entities.New(\"");
             
-            #line 45 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 46 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
             
             #line default
             #line hidden
             this.Write("\"");
             
-            #line 45 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 46 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entityFunctionalId));
             
             #line default
             #line hidden
             this.Write(")\r\n");
             
-            #line 46 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 47 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         }
     }
@@ -187,23 +187,23 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("        Entities.New(\"");
+            this.Write("    Entities.New(\"");
             
-            #line 55 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 56 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
             
             #line default
             #line hidden
             this.Write("\", Entities[\"");
             
-            #line 55 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 56 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedEntityName));
             
             #line default
             #line hidden
             this.Write("\"])\r\n");
             
-            #line 56 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 57 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         }
         else
@@ -214,30 +214,30 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("        Entities.New(\"");
+            this.Write("    Entities.New(\"");
             
-            #line 63 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 64 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
             
             #line default
             #line hidden
             this.Write("\", ");
             
-            #line 63 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 64 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entityFunctionalId));
             
             #line default
             #line hidden
             this.Write("Entities[\"");
             
-            #line 63 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 64 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedEntityName));
             
             #line default
             #line hidden
             this.Write("\"])\r\n");
             
-            #line 64 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 65 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 				
         }
         if(!string.IsNullOrEmpty(entity.Summary))
@@ -246,16 +246,16 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("                .Summary(\"");
+            this.Write("        .Summary(\"");
             
-            #line 69 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 70 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Summary.Replace("\"", "\\\"")));
             
             #line default
             #line hidden
             this.Write("\")\r\n");
             
-            #line 70 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 71 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         }
     }
@@ -265,9 +265,9 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("                .Abstract(true)\r\n");
+            this.Write("        .Abstract(true)\r\n");
             
-            #line 77 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 78 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
     }
     if(entity.Virtual)
@@ -276,11 +276,22 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("                .Virtual(true)\r\n");
+            this.Write("        .Virtual(true)\r\n");
             
-            #line 83 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 84 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
     }
+	if (entity.StaticData != null)
+	{
+
+            
+            #line default
+            #line hidden
+            this.Write("        .HasStaticData(true)\r\n");
+            
+            #line 90 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+	}
     foreach (var primitive in entity.Primitive)
     {
         if(!string.IsNullOrEmpty(primitive.Index) && !primitive.Index.Equals("None"))
@@ -289,37 +300,37 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("                .AddProperty(\"");
+            this.Write("        .AddProperty(\"");
             
-            #line 90 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 97 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
             
             #line default
             #line hidden
             this.Write("\", typeof(");
             
-            #line 90 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 97 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Type));
             
             #line default
             #line hidden
             this.Write("), ");
             
-            #line 90 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 97 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(!primitive.Nullable?"false,":""));
             
             #line default
             #line hidden
             this.Write(" IndexType.");
             
-            #line 90 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 97 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Index));
             
             #line default
             #line hidden
             this.Write(")\r\n");
             
-            #line 91 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 98 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         }
         else
@@ -328,30 +339,30 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("                .AddProperty(\"");
+            this.Write("        .AddProperty(\"");
             
-            #line 96 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 103 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
             
             #line default
             #line hidden
             this.Write("\", typeof(");
             
-            #line 96 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 103 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Type ?? ""));
             
             #line default
             #line hidden
             this.Write(")");
             
-            #line 96 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 103 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(!primitive.Nullable?", false":""));
             
             #line default
             #line hidden
             this.Write(")\r\n");
             
-            #line 97 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 104 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         }
         if(primitive.IsKey)
@@ -360,16 +371,16 @@ foreach (var entity in Entities)
             
             #line default
             #line hidden
-            this.Write("                .SetKey(\"");
+            this.Write("        .SetKey(\"");
             
-            #line 102 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 109 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
             
             #line default
             #line hidden
             this.Write("\", true)\r\n");
             
-            #line 103 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 110 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         }
     } // end of foreach primitive
@@ -381,7 +392,7 @@ foreach (var entity in Entities)
             #line default
             #line hidden
             
-            #line 110 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 117 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
 } // end foreach entities
 foreach (var relationship in Relationships)
@@ -396,37 +407,30 @@ foreach (var relationship in Relationships)
             
             #line default
             #line hidden
-            this.Write("\r\n        Relationship ");
+            this.Write("\r\n    Relations.New(Entities[\"");
             
-            #line 122 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Name));
-            
-            #line default
-            #line hidden
-            this.Write(" = Relations.New(Entities[\"");
-            
-            #line 122 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 129 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Label));
             
             #line default
             #line hidden
             this.Write("\"], ");
             
-            #line 122 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 129 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Label != null ? $"Entities[\"{relationship.Target.Label}\"]" : "null"));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 122 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 129 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Type));
             
             #line default
             #line hidden
             this.Write(")\r\n");
             
-            #line 123 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 130 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
     }
     else
@@ -435,44 +439,37 @@ foreach (var relationship in Relationships)
             
             #line default
             #line hidden
-            this.Write("\r\n        Relationship ");
+            this.Write("\r\n    Relations.New(Entities[\"");
             
-            #line 129 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Name));
-            
-            #line default
-            #line hidden
-            this.Write(" = Relations.New(Entities[\"");
-            
-            #line 129 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 136 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Label));
             
             #line default
             #line hidden
             this.Write("\"], ");
             
-            #line 129 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 136 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Label != null ? $"Entities[\"{relationship.Target.Label}\"]" : "null"));
             
             #line default
             #line hidden
             this.Write(", \"");
             
-            #line 129 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 136 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Name));
             
             #line default
             #line hidden
             this.Write("\", \"");
             
-            #line 129 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 136 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Type));
             
             #line default
             #line hidden
             this.Write("\")\r\n");
             
-            #line 130 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 137 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
     }
     if(!hasRelationshipSourceName)
@@ -483,30 +480,30 @@ foreach (var relationship in Relationships)
             
             #line default
             #line hidden
-            this.Write("                .SetInProperty(\"");
+            this.Write("        .SetInProperty(\"");
             
-            #line 137 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 144 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Name));
             
             #line default
             #line hidden
             this.Write("\", PropertyType.");
             
-            #line 137 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 144 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Type));
             
             #line default
             #line hidden
             this.Write(")");
             
-            #line 137 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 144 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(postfix));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 138 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 145 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
 			}
 			else
@@ -515,37 +512,37 @@ foreach (var relationship in Relationships)
             
             #line default
             #line hidden
-            this.Write("                .SetInProperty(\"");
+            this.Write("        .SetInProperty(\"");
             
-            #line 143 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 150 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Name));
             
             #line default
             #line hidden
             this.Write("\", PropertyType.");
             
-            #line 143 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 150 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Type));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 143 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 150 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Source.Nullable.ToString().ToLower()));
             
             #line default
             #line hidden
             this.Write(")");
             
-            #line 143 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 150 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(postfix));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 144 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 151 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
             }
     }
@@ -557,23 +554,23 @@ foreach (var relationship in Relationships)
             
             #line default
             #line hidden
-            this.Write("                .SetOutProperty(\"");
+            this.Write("        .SetOutProperty(\"");
             
-            #line 152 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 159 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Name));
             
             #line default
             #line hidden
             this.Write("\", PropertyType.");
             
-            #line 152 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 159 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Type));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 153 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 160 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         }
 		else
@@ -582,30 +579,30 @@ foreach (var relationship in Relationships)
             
             #line default
             #line hidden
-            this.Write("                .SetOutProperty(\"");
+            this.Write("        .SetOutProperty(\"");
             
-            #line 158 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 165 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Name));
             
             #line default
             #line hidden
             this.Write("\", PropertyType.");
             
-            #line 158 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 165 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Type));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 158 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 165 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(relationship.Target.Nullable.ToString().ToLower()));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 159 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 166 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
         }
     }
@@ -613,6 +610,97 @@ foreach (var relationship in Relationships)
     {
     }
 } // end of foreach entities
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n");
+            
+            #line 175 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+foreach (var entity in Entities)
+{
+	if (entity.StaticData != null)
+	{
+		foreach(var record in entity.StaticData.Records.Record)
+		{
+			var allProperties = new List<Primitive>();
+            Entity current = entity;
+            do
+            {
+               allProperties.AddRange(current.Primitive);
+               current = current.ParentEntity;
+            } while (current != null);
+            var primitiveRecords = record.Property.Where(r => allProperties.Any(p => p.Guid == r.PropertyGuid));
+
+
+            
+            #line default
+            #line hidden
+            this.Write("    Entities[\"");
+            
+            #line 192 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
+            
+            #line default
+            #line hidden
+            this.Write("\"].Refactor.CreateNode(new {");
+            
+            #line 192 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+			for(int index = 0; index < primitiveRecords.Count(); index++)
+			{
+				var prop = primitiveRecords.ElementAt(index);
+				string comma = index == primitiveRecords.Count() - 1 ? " " : ",";
+				var primitive = allProperties.Where(p => p.Guid == prop.PropertyGuid).FirstOrDefault();
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 197 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" = \"");
+            
+            #line 197 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(prop.Value));
+            
+            #line default
+            #line hidden
+            this.Write("\"");
+            
+            #line 197 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(comma));
+            
+            #line default
+            #line hidden
+            
+            #line 197 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+			}
+
+            
+            #line default
+            #line hidden
+            this.Write("});\r\n");
+            
+            #line 200 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+		}
+	}
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n");
+            
+            #line 205 "D:\_Xirqlz\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+	
+} // end foreach entities
 
             
             #line default
