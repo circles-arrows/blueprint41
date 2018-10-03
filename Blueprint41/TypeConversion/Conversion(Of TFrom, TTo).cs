@@ -29,6 +29,7 @@ namespace Blueprint41.Core
                 {
                     if (!isInitialized)
                     {
+
                         Register();
 
                         // Simple cast conversion
@@ -144,7 +145,7 @@ namespace Blueprint41.Core
                             Expression.Block(typeof(TTo), new[] { returnValue },
                                     Expression.IfThenElse(
                                             (fromIsNullable) ? (Expression)Expression.Not(Expression.Property(fromParam, hasValuePropertyInfo)) :
-                                                               (Expression)Expression.NotEqual(fromParam, Expression.Constant(null)),
+                                                               (Expression)Expression.Equal(fromParam, Expression.Constant(null)),
                                             thenExpr,
                                             Expression.Assign(returnValue, elseExpr)
                                         ),
