@@ -101,7 +101,7 @@ if (!DALModel.IsAbstract)
 
         protected override void RegisterGeneratedStoredQueries()
         {
-            #region LoadFromNaturalKey
+            #region LoadByKeys
             
             RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
                 Where(alias.<#= DALModel.Key.Name #>.In(Parameter.New<<#= DALModel.Key.SystemReturnType #>>(Param0))));
@@ -176,11 +176,11 @@ if (!DALModel.IsAbstract)
 		}
     }
 #>
-		protected static void RegisterQuery(string name, Func<IMatchQuery, q.<#= DALModel.ClassName #>Alias, IWhereQuery> query)
+		protected static void RegisterQuery(string name, Func<IMatchQuery, q.<#= DALModel.Name #>Alias, IWhereQuery> query)
         {
-            q.<#= DALModel.ClassName #>Alias alias;
+            q.<#= DALModel.Name #>Alias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.<#= DALModel.ClassName #>.Alias(out alias));
+            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.<#= DALModel.Name #>.Alias(out alias));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 

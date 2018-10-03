@@ -139,9 +139,46 @@ if (DALModel.IsAbstract)
 
         protected override void RegisterGeneratedStoredQueries()
         {
+<#
+    if (!DALModel.IsVirtual)
+    {
+#>
+            #region LoadByKeys
+            
+            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+                Where(alias.<#= DALModel.Key.Name #>.In(Parameter.New<<#= DALModel.Key.SystemReturnType #>>(Param0))));
+
+            #endregion
+
+<#
+    }
+#>
 			AdditionalGeneratedStoredQueries();
         }
 		partial void AdditionalGeneratedStoredQueries();
+<#
+    if (!DALModel.IsVirtual)
+    {
+#>
+        
+        public static Dictionary<<#= DALModel.Key.SystemReturnType #>, <#= DALModel.ClassName #>> LoadByKeys(IEnumerable<<#= DALModel.Key.SystemReturnType #>> <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>)
+        {
+            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
+        }
+
+		protected static void RegisterQuery(string name, Func<IMatchQuery, q.<#= DALModel.Name #>Alias, IWhereQuery> query)
+        {
+            q.<#= DALModel.Name #>Alias alias;
+
+            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.<#= DALModel.Name #>.Alias(out alias));
+            IWhereQuery partial = query.Invoke(matchQuery, alias);
+            ICompiled compiled = partial.Return(alias).Compile();
+
+			RegisterQuery(name, compiled);
+        }
+<#
+    }
+#>
 
 		#endregion
 
