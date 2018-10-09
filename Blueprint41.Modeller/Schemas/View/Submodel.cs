@@ -149,12 +149,7 @@ namespace Blueprint41.Modeller.Schemas
                     return;
 
                 Model.GraphEditor.Graph.RemoveNode(viewerNode.Node);
-
-                if (Model.DisplayedSubmodel.Node.Count != 0)
-                {
-                    Model.Viewer.RemoveNode(viewerNode, false);
-                    Model.UpdateGraph();
-                }
+                Model.Viewer.RemoveNode(viewerNode, false);
 
                 Model.AutoResize();
             }
