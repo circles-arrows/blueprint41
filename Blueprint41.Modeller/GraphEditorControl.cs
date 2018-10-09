@@ -304,7 +304,7 @@ namespace Blueprint41.Modeller
                 }
             }
 
-            if (Viewer.Entities.Count() == 0)
+            if (Viewer.Graph.NodeCount == 0)
                 return cm;
 
             ToolStripSeparator separator = new ToolStripSeparator();

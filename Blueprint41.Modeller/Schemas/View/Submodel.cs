@@ -27,7 +27,7 @@ namespace Blueprint41.Modeller.Schemas
                         foreach (NodeLocalType item in e.NewItems)
                             item.CreateNode();
                         break;
-                    case NotifyCollectionChangedAction.Remove:
+                    case NotifyCollectionChangedAction.Remove:                
                         foreach (NodeLocalType item in e.OldItems)
                             item.DeleteNode();
                         break;
@@ -149,7 +149,12 @@ namespace Blueprint41.Modeller.Schemas
                     return;
 
                 Model.GraphEditor.Graph.RemoveNode(viewerNode.Node);
-                Model.Viewer.RemoveNode(viewerNode, false);
+
+                if (Model.DisplayedSubmodel.Node.Count != 0)
+                {
+                    Model.Viewer.RemoveNode(viewerNode, false);
+                    Model.UpdateGraph();
+                }
 
                 Model.AutoResize();
             }
