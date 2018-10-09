@@ -21,6 +21,7 @@ namespace Blueprint41.Query
         Contains,
         Match,
         HasLabel,
+        Not,
         In
     }
 
@@ -77,6 +78,9 @@ namespace Blueprint41.Query
                     break;
                 case Operator.In:
                     state.Text.Append(" IN ");
+                    break;
+                case Operator.Not:
+                    state.Text.Append("");
                     break;
                 default:
                     throw new NotSupportedException($"The operator {op.ToString()} is not supported yet.");

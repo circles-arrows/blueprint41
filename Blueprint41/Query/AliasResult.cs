@@ -47,6 +47,11 @@ namespace Blueprint41.Query
             return new QueryCondition(this, Operator.HasLabel, new Litheral(label));
         }
 
+        public QueryCondition Not(QueryCondition condition)
+        {
+            return new QueryCondition(string.Empty, Operator.Not, condition);
+        }
+
         public AsResult As(string alias)
         {
             return new AsResult(this, alias);

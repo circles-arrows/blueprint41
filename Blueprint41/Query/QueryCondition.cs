@@ -47,7 +47,10 @@ namespace Blueprint41.Query
             }
 
             state.Text.Append("(");
-            CompileOperand(state, Left);
+            if (Operator != Operator.Not)
+                CompileOperand(state, Left);
+            else
+                state.Text.Append("NOT(");
 
             if (Right is Parameter)
             {
@@ -68,7 +71,10 @@ namespace Blueprint41.Query
                 Operator.Compile(state, Right == null);
                 CompileOperand(state, Right);
             }
-            
+
+            if (Operator == Operator.Not)
+                state.Text.Append(")");
+
             state.Text.Append(")");
         }
 
