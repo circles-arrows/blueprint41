@@ -252,6 +252,7 @@ namespace Blueprint41.Modeller
                 RefreshNodeCombobox();
                 FillSubmodelComboBox(form.Submodel);
             }
+            EnableDisableLayoutButton();
         }
 
         private void graphEditor_SelectedNodeChanged(object sender, NodeEventArgs e)
@@ -320,6 +321,8 @@ namespace Blueprint41.Modeller
             // Auto select newly created entity
             SelectedNode = model;
             entityEditor.Show(model.Entity, Model);
+
+            EnableDisableLayoutButton();
         }
 
         private void graphEditor_InsertRelationship(object sender, InsertRelationshipEventArgs e)
@@ -507,6 +510,14 @@ namespace Blueprint41.Modeller
                 RefreshNodeCombobox();
                 entityEditor.CloseEditor();
             }
+            EnableDisableLayoutButton();
+        }
+
+        private void EnableDisableLayoutButton()
+        {
+            bool isLayOutButtonEnabled = graphEditor.Viewer.Graph.NodeCount > 0;
+            draggableToolStripMenuItem.Enabled = isLayOutButtonEnabled;
+            fixedToolStripMenuItem.Enabled = isLayOutButtonEnabled;
         }
 
         private void graphEditor_RemoveNodeFromStorageChanged(object sender, NodeEventArgs e)
@@ -527,6 +538,7 @@ namespace Blueprint41.Modeller
                     entityEditor.CloseEditor();
                 }
             }
+            EnableDisableLayoutButton();
         }
 
         private void splitContainer1_SizeChanged(object sender, EventArgs e)
@@ -568,6 +580,7 @@ namespace Blueprint41.Modeller
                 Model.DisplayedSubmodel = cmbSubmodels.SelectedItem as Submodel;
 
             RefreshNodeCombobox();
+            EnableDisableLayoutButton();
         }
 
         private void cmbNodes_SelectedIndexChanged(object sender, EventArgs e)
