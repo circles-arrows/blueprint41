@@ -97,6 +97,7 @@
             // 
             this.multiPurposeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.multiPurposeButton.BackColor = System.Drawing.Color.OrangeRed;
+            this.multiPurposeButton.Enabled = false;
             this.multiPurposeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.multiPurposeButton.Location = new System.Drawing.Point(960, 806);
             this.multiPurposeButton.Name = "multiPurposeButton";
@@ -107,6 +108,7 @@
             // btnCopyClipboard
             // 
             this.btnCopyClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCopyClipboard.Enabled = false;
             this.btnCopyClipboard.ForeColor = System.Drawing.Color.Black;
             this.btnCopyClipboard.Location = new System.Drawing.Point(826, 805);
             this.btnCopyClipboard.Name = "btnCopyClipboard";
@@ -167,12 +169,12 @@
             this.cmsCopy.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyToolStripMenuItem});
             this.cmsCopy.Name = "cmsCopy";
-            this.cmsCopy.Size = new System.Drawing.Size(181, 48);
+            this.cmsCopy.Size = new System.Drawing.Size(103, 26);
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
