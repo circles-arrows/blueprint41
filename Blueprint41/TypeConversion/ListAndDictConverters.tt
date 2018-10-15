@@ -29,6 +29,7 @@
             new [] { "Guid?",     "string", "s"  },
             new [] { "decimal",   "long",   "d"  },
             new [] { "decimal?",  "long?",  "d"  },
+			new [] { "CompressedString",  "byte[]",  "cs"  }
     };
 
 #>

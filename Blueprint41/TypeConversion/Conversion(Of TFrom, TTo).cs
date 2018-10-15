@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -31,10 +32,6 @@ namespace Blueprint41.Core
                     {
 
                         Register();
-
-                        // Simple cast conversion
-                        if (converterMethod == null && IsCastable)
-                            converterMethod = delegate(TFrom value) { return (TTo)(object)value; };
 
                         // Nullable version of existing non-nullable conversion
                         if (converterMethod == null)
@@ -70,11 +67,19 @@ namespace Blueprint41.Core
                             }
                         }
 
+                        // Basic cast conversion
+                        MethodInfo op_Impl_Expl = IsCastable();
+                        if (converterMethod == null && op_Impl_Expl != null)
+                        {
+                            ParameterExpression fromParam = Expression.Parameter(typeof(TFrom), "value");
+                            ParameterExpression toParam = Expression.Parameter(typeof(TTo));
+                            Expression<Func<TFrom, TTo>> expression = (Expression<Func<TFrom, TTo>>)Expression.Lambda<Func<TFrom, TTo>>(Expression.Call(null, op_Impl_Expl, fromParam), fromParam);
+                            converterMethod = expression.Compile();
+                        }
+
                         // IConvertable
                         if (converterMethod == null && typeof(TFrom).GetTypeInfo().ImplementedInterfaces.Any(item => item == typeof(IConvertible)))
-                        {
                             converterMethod = delegate (TFrom value) { return (TTo)System.Convert.ChangeType(value, typeof(TTo)); };
-                        }
 
                         isInitialized = true;
                     }
@@ -84,22 +89,22 @@ namespace Blueprint41.Core
 
         #region Standard Conversions
 
-        static private bool IsCastable
+        static private MethodInfo IsCastable()
         {
-            get
-            {
-                if (typeof(TTo).IsAssignableFrom(typeof(TFrom)))
-                {
-                    return true;
-                }
-                var methods = typeof(TFrom).GetMethods(BindingFlags.Public | BindingFlags.Static)
-                                  .Where(
-                                      m => m.ReturnType == typeof(TTo) &&
-                                           (m.Name == "op_Implicit" ||
-                                            m.Name == "op_Explicit")
-                                  );
-                return methods.Count() > 0;
-            }
+            var methods =   typeof(TFrom).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                                .Where(
+                                    m => m.ReturnType == typeof(TTo) && m.GetParameters().FirstOrDefault()?.ParameterType == typeof(TFrom) &&
+                                        (m.Name == "op_Implicit" ||
+                                        m.Name == "op_Explicit")
+                                ).Union(
+                            typeof(TTo).GetMethods(BindingFlags.Public | BindingFlags.Static)
+                                .Where(
+                                    m => m.ReturnType == typeof(TTo) && m.GetParameters().FirstOrDefault()?.ParameterType == typeof(TFrom) &&
+                                        (m.Name == "op_Implicit" ||
+                                        m.Name == "op_Explicit")
+                                )
+                            );
+            return methods.FirstOrDefault();
         }
         private static Expression<Func<TFrom, TTo>> CreateNullableVersion(Type fromType, bool fromIsNullable, Type toType, bool toIsNullable)
         {

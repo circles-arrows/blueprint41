@@ -53,6 +53,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(ListOfDecimalToListOfObject))]
 [assembly: Conversion(typeof(ListOfObjectToListOfDecimalNullable))]
 [assembly: Conversion(typeof(ListOfDecimalNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToListOfCompressedString))]
+[assembly: Conversion(typeof(ListOfCompressedStringToListOfObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolBool))]
 [assembly: Conversion(typeof(DictOfBoolBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolBoolNullable))]
@@ -99,6 +101,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfBoolDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolDecimalNullable))]
 [assembly: Conversion(typeof(DictOfBoolDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolCompressedString))]
+[assembly: Conversion(typeof(DictOfBoolCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolNullableBool))]
 [assembly: Conversion(typeof(DictOfBoolNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolNullableBoolNullable))]
@@ -145,6 +149,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfBoolNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfBoolNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfBoolNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfSbyteBool))]
 [assembly: Conversion(typeof(DictOfSbyteBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfSbyteBoolNullable))]
@@ -191,6 +197,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfSbyteDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfSbyteDecimalNullable))]
 [assembly: Conversion(typeof(DictOfSbyteDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfSbyteCompressedString))]
+[assembly: Conversion(typeof(DictOfSbyteCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfSbyteNullableBool))]
 [assembly: Conversion(typeof(DictOfSbyteNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfSbyteNullableBoolNullable))]
@@ -237,6 +245,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfSbyteNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfSbyteNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfSbyteNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfSbyteNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfSbyteNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfShortBool))]
 [assembly: Conversion(typeof(DictOfShortBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfShortBoolNullable))]
@@ -283,6 +293,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfShortDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfShortDecimalNullable))]
 [assembly: Conversion(typeof(DictOfShortDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfShortCompressedString))]
+[assembly: Conversion(typeof(DictOfShortCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfShortNullableBool))]
 [assembly: Conversion(typeof(DictOfShortNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfShortNullableBoolNullable))]
@@ -329,6 +341,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfShortNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfShortNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfShortNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfShortNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfShortNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfIntBool))]
 [assembly: Conversion(typeof(DictOfIntBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfIntBoolNullable))]
@@ -375,6 +389,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfIntDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfIntDecimalNullable))]
 [assembly: Conversion(typeof(DictOfIntDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfIntCompressedString))]
+[assembly: Conversion(typeof(DictOfIntCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfIntNullableBool))]
 [assembly: Conversion(typeof(DictOfIntNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfIntNullableBoolNullable))]
@@ -421,6 +437,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfIntNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfIntNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfIntNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfIntNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfIntNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfLongBool))]
 [assembly: Conversion(typeof(DictOfLongBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfLongBoolNullable))]
@@ -467,6 +485,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfLongDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfLongDecimalNullable))]
 [assembly: Conversion(typeof(DictOfLongDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfLongCompressedString))]
+[assembly: Conversion(typeof(DictOfLongCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfLongNullableBool))]
 [assembly: Conversion(typeof(DictOfLongNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfLongNullableBoolNullable))]
@@ -513,6 +533,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfLongNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfLongNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfLongNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfLongNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfLongNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfFloatBool))]
 [assembly: Conversion(typeof(DictOfFloatBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfFloatBoolNullable))]
@@ -559,6 +581,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfFloatDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfFloatDecimalNullable))]
 [assembly: Conversion(typeof(DictOfFloatDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfFloatCompressedString))]
+[assembly: Conversion(typeof(DictOfFloatCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfFloatNullableBool))]
 [assembly: Conversion(typeof(DictOfFloatNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfFloatNullableBoolNullable))]
@@ -605,6 +629,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfFloatNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfFloatNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfFloatNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfFloatNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfFloatNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDoubleBool))]
 [assembly: Conversion(typeof(DictOfDoubleBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDoubleBoolNullable))]
@@ -651,6 +677,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfDoubleDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDoubleDecimalNullable))]
 [assembly: Conversion(typeof(DictOfDoubleDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfDoubleCompressedString))]
+[assembly: Conversion(typeof(DictOfDoubleCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDoubleNullableBool))]
 [assembly: Conversion(typeof(DictOfDoubleNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDoubleNullableBoolNullable))]
@@ -697,6 +725,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfDoubleNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDoubleNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfDoubleNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfDoubleNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfDoubleNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfCharBool))]
 [assembly: Conversion(typeof(DictOfCharBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfCharBoolNullable))]
@@ -743,6 +773,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfCharDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfCharDecimalNullable))]
 [assembly: Conversion(typeof(DictOfCharDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCharCompressedString))]
+[assembly: Conversion(typeof(DictOfCharCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfCharNullableBool))]
 [assembly: Conversion(typeof(DictOfCharNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfCharNullableBoolNullable))]
@@ -789,6 +821,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfCharNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfCharNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfCharNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCharNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfCharNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfStringBool))]
 [assembly: Conversion(typeof(DictOfStringBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfStringBoolNullable))]
@@ -835,6 +869,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfStringDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfStringDecimalNullable))]
 [assembly: Conversion(typeof(DictOfStringDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfStringCompressedString))]
+[assembly: Conversion(typeof(DictOfStringCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDateTimeBool))]
 [assembly: Conversion(typeof(DictOfDateTimeBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDateTimeBoolNullable))]
@@ -881,6 +917,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfDateTimeDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDateTimeDecimalNullable))]
 [assembly: Conversion(typeof(DictOfDateTimeDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfDateTimeCompressedString))]
+[assembly: Conversion(typeof(DictOfDateTimeCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDateTimeNullableBool))]
 [assembly: Conversion(typeof(DictOfDateTimeNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDateTimeNullableBoolNullable))]
@@ -927,6 +965,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfDateTimeNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDateTimeNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfDateTimeNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfDateTimeNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfDateTimeNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfGuidBool))]
 [assembly: Conversion(typeof(DictOfGuidBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfGuidBoolNullable))]
@@ -973,6 +1013,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfGuidDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfGuidDecimalNullable))]
 [assembly: Conversion(typeof(DictOfGuidDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfGuidCompressedString))]
+[assembly: Conversion(typeof(DictOfGuidCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfGuidNullableBool))]
 [assembly: Conversion(typeof(DictOfGuidNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfGuidNullableBoolNullable))]
@@ -1019,6 +1061,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfGuidNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfGuidNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfGuidNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfGuidNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfGuidNullableCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDecimalBool))]
 [assembly: Conversion(typeof(DictOfDecimalBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDecimalBoolNullable))]
@@ -1065,6 +1109,8 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfDecimalDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDecimalDecimalNullable))]
 [assembly: Conversion(typeof(DictOfDecimalDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfDecimalCompressedString))]
+[assembly: Conversion(typeof(DictOfDecimalCompressedStringToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDecimalNullableBool))]
 [assembly: Conversion(typeof(DictOfDecimalNullableBoolToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDecimalNullableBoolNullable))]
@@ -1111,6 +1157,56 @@ using Blueprint41.TypeConversion;
 [assembly: Conversion(typeof(DictOfDecimalNullableDecimalToDictOfObjectObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfDecimalNullableDecimalNullable))]
 [assembly: Conversion(typeof(DictOfDecimalNullableDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfDecimalNullableCompressedString))]
+[assembly: Conversion(typeof(DictOfDecimalNullableCompressedStringToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringBool))]
+[assembly: Conversion(typeof(DictOfCompressedStringBoolToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringBoolNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringBoolNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringSbyte))]
+[assembly: Conversion(typeof(DictOfCompressedStringSbyteToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringSbyteNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringSbyteNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringShort))]
+[assembly: Conversion(typeof(DictOfCompressedStringShortToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringShortNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringShortNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringInt))]
+[assembly: Conversion(typeof(DictOfCompressedStringIntToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringIntNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringIntNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringLong))]
+[assembly: Conversion(typeof(DictOfCompressedStringLongToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringLongNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringLongNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringFloat))]
+[assembly: Conversion(typeof(DictOfCompressedStringFloatToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringFloatNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringFloatNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringDouble))]
+[assembly: Conversion(typeof(DictOfCompressedStringDoubleToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringDoubleNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringDoubleNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringChar))]
+[assembly: Conversion(typeof(DictOfCompressedStringCharToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringCharNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringCharNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringString))]
+[assembly: Conversion(typeof(DictOfCompressedStringStringToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringDateTime))]
+[assembly: Conversion(typeof(DictOfCompressedStringDateTimeToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringDateTimeNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringDateTimeNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringGuid))]
+[assembly: Conversion(typeof(DictOfCompressedStringGuidToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringGuidNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringGuidNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringDecimal))]
+[assembly: Conversion(typeof(DictOfCompressedStringDecimalToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringDecimalNullable))]
+[assembly: Conversion(typeof(DictOfCompressedStringDecimalNullableToDictOfObjectObject))]
+[assembly: Conversion(typeof(DictOfObjectObjectToDictOfCompressedStringCompressedString))]
+[assembly: Conversion(typeof(DictOfCompressedStringCompressedStringToDictOfObjectObject))]
 
 #endregion
 
@@ -1146,6 +1242,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Guid?), typeof(string), "s"),
             new TypeMapping(typeof(decimal), typeof(long), "d"),
             new TypeMapping(typeof(decimal?), typeof(long?), "d"),
+            new TypeMapping(typeof(CompressedString), typeof(byte[]), "cs"),
           
             // lists...
             new TypeMapping(typeof(List<bool>), typeof(List<object>), "l_b"),
@@ -1171,6 +1268,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(List<Guid?>), typeof(List<object>), "l_s"),
             new TypeMapping(typeof(List<decimal>), typeof(List<object>), "l_d"),
             new TypeMapping(typeof(List<decimal?>), typeof(List<object>), "l_d"),
+            new TypeMapping(typeof(List<CompressedString>), typeof(List<object>), "l_cs"),
           
 
             // dictionaries
@@ -1197,6 +1295,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<bool, Guid?>), typeof(string), "d_b_s"),
             new TypeMapping(typeof(Dictionary<bool, decimal>), typeof(string), "d_b_d"),
             new TypeMapping(typeof(Dictionary<bool, decimal?>), typeof(string), "d_b_d"),
+            new TypeMapping(typeof(Dictionary<bool, CompressedString>), typeof(string), "d_b_cs"),
             new TypeMapping(typeof(Dictionary<bool?, bool>), typeof(string), "d_b_b"),
             new TypeMapping(typeof(Dictionary<bool?, bool?>), typeof(string), "d_b_b"),
             new TypeMapping(typeof(Dictionary<bool?, sbyte>), typeof(string), "d_b_i"),
@@ -1220,6 +1319,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<bool?, Guid?>), typeof(string), "d_b_s"),
             new TypeMapping(typeof(Dictionary<bool?, decimal>), typeof(string), "d_b_d"),
             new TypeMapping(typeof(Dictionary<bool?, decimal?>), typeof(string), "d_b_d"),
+            new TypeMapping(typeof(Dictionary<bool?, CompressedString>), typeof(string), "d_b_cs"),
             new TypeMapping(typeof(Dictionary<sbyte, bool>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<sbyte, bool?>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<sbyte, sbyte>), typeof(string), "d_i_i"),
@@ -1243,6 +1343,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<sbyte, Guid?>), typeof(string), "d_i_s"),
             new TypeMapping(typeof(Dictionary<sbyte, decimal>), typeof(string), "d_i_d"),
             new TypeMapping(typeof(Dictionary<sbyte, decimal?>), typeof(string), "d_i_d"),
+            new TypeMapping(typeof(Dictionary<sbyte, CompressedString>), typeof(string), "d_i_cs"),
             new TypeMapping(typeof(Dictionary<sbyte?, bool>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<sbyte?, bool?>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<sbyte?, sbyte>), typeof(string), "d_i_i"),
@@ -1266,6 +1367,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<sbyte?, Guid?>), typeof(string), "d_i_s"),
             new TypeMapping(typeof(Dictionary<sbyte?, decimal>), typeof(string), "d_i_d"),
             new TypeMapping(typeof(Dictionary<sbyte?, decimal?>), typeof(string), "d_i_d"),
+            new TypeMapping(typeof(Dictionary<sbyte?, CompressedString>), typeof(string), "d_i_cs"),
             new TypeMapping(typeof(Dictionary<short, bool>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<short, bool?>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<short, sbyte>), typeof(string), "d_i_i"),
@@ -1289,6 +1391,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<short, Guid?>), typeof(string), "d_i_s"),
             new TypeMapping(typeof(Dictionary<short, decimal>), typeof(string), "d_i_d"),
             new TypeMapping(typeof(Dictionary<short, decimal?>), typeof(string), "d_i_d"),
+            new TypeMapping(typeof(Dictionary<short, CompressedString>), typeof(string), "d_i_cs"),
             new TypeMapping(typeof(Dictionary<short?, bool>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<short?, bool?>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<short?, sbyte>), typeof(string), "d_i_i"),
@@ -1312,6 +1415,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<short?, Guid?>), typeof(string), "d_i_s"),
             new TypeMapping(typeof(Dictionary<short?, decimal>), typeof(string), "d_i_d"),
             new TypeMapping(typeof(Dictionary<short?, decimal?>), typeof(string), "d_i_d"),
+            new TypeMapping(typeof(Dictionary<short?, CompressedString>), typeof(string), "d_i_cs"),
             new TypeMapping(typeof(Dictionary<int, bool>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<int, bool?>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<int, sbyte>), typeof(string), "d_i_i"),
@@ -1335,6 +1439,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<int, Guid?>), typeof(string), "d_i_s"),
             new TypeMapping(typeof(Dictionary<int, decimal>), typeof(string), "d_i_d"),
             new TypeMapping(typeof(Dictionary<int, decimal?>), typeof(string), "d_i_d"),
+            new TypeMapping(typeof(Dictionary<int, CompressedString>), typeof(string), "d_i_cs"),
             new TypeMapping(typeof(Dictionary<int?, bool>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<int?, bool?>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<int?, sbyte>), typeof(string), "d_i_i"),
@@ -1358,6 +1463,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<int?, Guid?>), typeof(string), "d_i_s"),
             new TypeMapping(typeof(Dictionary<int?, decimal>), typeof(string), "d_i_d"),
             new TypeMapping(typeof(Dictionary<int?, decimal?>), typeof(string), "d_i_d"),
+            new TypeMapping(typeof(Dictionary<int?, CompressedString>), typeof(string), "d_i_cs"),
             new TypeMapping(typeof(Dictionary<long, bool>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<long, bool?>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<long, sbyte>), typeof(string), "d_i_i"),
@@ -1381,6 +1487,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<long, Guid?>), typeof(string), "d_i_s"),
             new TypeMapping(typeof(Dictionary<long, decimal>), typeof(string), "d_i_d"),
             new TypeMapping(typeof(Dictionary<long, decimal?>), typeof(string), "d_i_d"),
+            new TypeMapping(typeof(Dictionary<long, CompressedString>), typeof(string), "d_i_cs"),
             new TypeMapping(typeof(Dictionary<long?, bool>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<long?, bool?>), typeof(string), "d_i_b"),
             new TypeMapping(typeof(Dictionary<long?, sbyte>), typeof(string), "d_i_i"),
@@ -1404,6 +1511,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<long?, Guid?>), typeof(string), "d_i_s"),
             new TypeMapping(typeof(Dictionary<long?, decimal>), typeof(string), "d_i_d"),
             new TypeMapping(typeof(Dictionary<long?, decimal?>), typeof(string), "d_i_d"),
+            new TypeMapping(typeof(Dictionary<long?, CompressedString>), typeof(string), "d_i_cs"),
             new TypeMapping(typeof(Dictionary<float, bool>), typeof(string), "d_f_b"),
             new TypeMapping(typeof(Dictionary<float, bool?>), typeof(string), "d_f_b"),
             new TypeMapping(typeof(Dictionary<float, sbyte>), typeof(string), "d_f_i"),
@@ -1427,6 +1535,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<float, Guid?>), typeof(string), "d_f_s"),
             new TypeMapping(typeof(Dictionary<float, decimal>), typeof(string), "d_f_d"),
             new TypeMapping(typeof(Dictionary<float, decimal?>), typeof(string), "d_f_d"),
+            new TypeMapping(typeof(Dictionary<float, CompressedString>), typeof(string), "d_f_cs"),
             new TypeMapping(typeof(Dictionary<float?, bool>), typeof(string), "d_f_b"),
             new TypeMapping(typeof(Dictionary<float?, bool?>), typeof(string), "d_f_b"),
             new TypeMapping(typeof(Dictionary<float?, sbyte>), typeof(string), "d_f_i"),
@@ -1450,6 +1559,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<float?, Guid?>), typeof(string), "d_f_s"),
             new TypeMapping(typeof(Dictionary<float?, decimal>), typeof(string), "d_f_d"),
             new TypeMapping(typeof(Dictionary<float?, decimal?>), typeof(string), "d_f_d"),
+            new TypeMapping(typeof(Dictionary<float?, CompressedString>), typeof(string), "d_f_cs"),
             new TypeMapping(typeof(Dictionary<double, bool>), typeof(string), "d_f_b"),
             new TypeMapping(typeof(Dictionary<double, bool?>), typeof(string), "d_f_b"),
             new TypeMapping(typeof(Dictionary<double, sbyte>), typeof(string), "d_f_i"),
@@ -1473,6 +1583,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<double, Guid?>), typeof(string), "d_f_s"),
             new TypeMapping(typeof(Dictionary<double, decimal>), typeof(string), "d_f_d"),
             new TypeMapping(typeof(Dictionary<double, decimal?>), typeof(string), "d_f_d"),
+            new TypeMapping(typeof(Dictionary<double, CompressedString>), typeof(string), "d_f_cs"),
             new TypeMapping(typeof(Dictionary<double?, bool>), typeof(string), "d_f_b"),
             new TypeMapping(typeof(Dictionary<double?, bool?>), typeof(string), "d_f_b"),
             new TypeMapping(typeof(Dictionary<double?, sbyte>), typeof(string), "d_f_i"),
@@ -1496,6 +1607,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<double?, Guid?>), typeof(string), "d_f_s"),
             new TypeMapping(typeof(Dictionary<double?, decimal>), typeof(string), "d_f_d"),
             new TypeMapping(typeof(Dictionary<double?, decimal?>), typeof(string), "d_f_d"),
+            new TypeMapping(typeof(Dictionary<double?, CompressedString>), typeof(string), "d_f_cs"),
             new TypeMapping(typeof(Dictionary<char, bool>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<char, bool?>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<char, sbyte>), typeof(string), "d_s_i"),
@@ -1519,6 +1631,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<char, Guid?>), typeof(string), "d_s_s"),
             new TypeMapping(typeof(Dictionary<char, decimal>), typeof(string), "d_s_d"),
             new TypeMapping(typeof(Dictionary<char, decimal?>), typeof(string), "d_s_d"),
+            new TypeMapping(typeof(Dictionary<char, CompressedString>), typeof(string), "d_s_cs"),
             new TypeMapping(typeof(Dictionary<char?, bool>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<char?, bool?>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<char?, sbyte>), typeof(string), "d_s_i"),
@@ -1542,6 +1655,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<char?, Guid?>), typeof(string), "d_s_s"),
             new TypeMapping(typeof(Dictionary<char?, decimal>), typeof(string), "d_s_d"),
             new TypeMapping(typeof(Dictionary<char?, decimal?>), typeof(string), "d_s_d"),
+            new TypeMapping(typeof(Dictionary<char?, CompressedString>), typeof(string), "d_s_cs"),
             new TypeMapping(typeof(Dictionary<string, bool>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<string, bool?>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<string, sbyte>), typeof(string), "d_s_i"),
@@ -1565,6 +1679,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<string, Guid?>), typeof(string), "d_s_s"),
             new TypeMapping(typeof(Dictionary<string, decimal>), typeof(string), "d_s_d"),
             new TypeMapping(typeof(Dictionary<string, decimal?>), typeof(string), "d_s_d"),
+            new TypeMapping(typeof(Dictionary<string, CompressedString>), typeof(string), "d_s_cs"),
             new TypeMapping(typeof(Dictionary<DateTime, bool>), typeof(string), "d_dt_b"),
             new TypeMapping(typeof(Dictionary<DateTime, bool?>), typeof(string), "d_dt_b"),
             new TypeMapping(typeof(Dictionary<DateTime, sbyte>), typeof(string), "d_dt_i"),
@@ -1588,6 +1703,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<DateTime, Guid?>), typeof(string), "d_dt_s"),
             new TypeMapping(typeof(Dictionary<DateTime, decimal>), typeof(string), "d_dt_d"),
             new TypeMapping(typeof(Dictionary<DateTime, decimal?>), typeof(string), "d_dt_d"),
+            new TypeMapping(typeof(Dictionary<DateTime, CompressedString>), typeof(string), "d_dt_cs"),
             new TypeMapping(typeof(Dictionary<DateTime?, bool>), typeof(string), "d_dt_b"),
             new TypeMapping(typeof(Dictionary<DateTime?, bool?>), typeof(string), "d_dt_b"),
             new TypeMapping(typeof(Dictionary<DateTime?, sbyte>), typeof(string), "d_dt_i"),
@@ -1611,6 +1727,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<DateTime?, Guid?>), typeof(string), "d_dt_s"),
             new TypeMapping(typeof(Dictionary<DateTime?, decimal>), typeof(string), "d_dt_d"),
             new TypeMapping(typeof(Dictionary<DateTime?, decimal?>), typeof(string), "d_dt_d"),
+            new TypeMapping(typeof(Dictionary<DateTime?, CompressedString>), typeof(string), "d_dt_cs"),
             new TypeMapping(typeof(Dictionary<Guid, bool>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<Guid, bool?>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<Guid, sbyte>), typeof(string), "d_s_i"),
@@ -1634,6 +1751,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<Guid, Guid?>), typeof(string), "d_s_s"),
             new TypeMapping(typeof(Dictionary<Guid, decimal>), typeof(string), "d_s_d"),
             new TypeMapping(typeof(Dictionary<Guid, decimal?>), typeof(string), "d_s_d"),
+            new TypeMapping(typeof(Dictionary<Guid, CompressedString>), typeof(string), "d_s_cs"),
             new TypeMapping(typeof(Dictionary<Guid?, bool>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<Guid?, bool?>), typeof(string), "d_s_b"),
             new TypeMapping(typeof(Dictionary<Guid?, sbyte>), typeof(string), "d_s_i"),
@@ -1657,6 +1775,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<Guid?, Guid?>), typeof(string), "d_s_s"),
             new TypeMapping(typeof(Dictionary<Guid?, decimal>), typeof(string), "d_s_d"),
             new TypeMapping(typeof(Dictionary<Guid?, decimal?>), typeof(string), "d_s_d"),
+            new TypeMapping(typeof(Dictionary<Guid?, CompressedString>), typeof(string), "d_s_cs"),
             new TypeMapping(typeof(Dictionary<decimal, bool>), typeof(string), "d_d_b"),
             new TypeMapping(typeof(Dictionary<decimal, bool?>), typeof(string), "d_d_b"),
             new TypeMapping(typeof(Dictionary<decimal, sbyte>), typeof(string), "d_d_i"),
@@ -1680,6 +1799,7 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<decimal, Guid?>), typeof(string), "d_d_s"),
             new TypeMapping(typeof(Dictionary<decimal, decimal>), typeof(string), "d_d_d"),
             new TypeMapping(typeof(Dictionary<decimal, decimal?>), typeof(string), "d_d_d"),
+            new TypeMapping(typeof(Dictionary<decimal, CompressedString>), typeof(string), "d_d_cs"),
             new TypeMapping(typeof(Dictionary<decimal?, bool>), typeof(string), "d_d_b"),
             new TypeMapping(typeof(Dictionary<decimal?, bool?>), typeof(string), "d_d_b"),
             new TypeMapping(typeof(Dictionary<decimal?, sbyte>), typeof(string), "d_d_i"),
@@ -1703,6 +1823,31 @@ namespace Blueprint41.Neo4j.Persistence
             new TypeMapping(typeof(Dictionary<decimal?, Guid?>), typeof(string), "d_d_s"),
             new TypeMapping(typeof(Dictionary<decimal?, decimal>), typeof(string), "d_d_d"),
             new TypeMapping(typeof(Dictionary<decimal?, decimal?>), typeof(string), "d_d_d"),
+            new TypeMapping(typeof(Dictionary<decimal?, CompressedString>), typeof(string), "d_d_cs"),
+            new TypeMapping(typeof(Dictionary<CompressedString, bool>), typeof(string), "d_cs_b"),
+            new TypeMapping(typeof(Dictionary<CompressedString, bool?>), typeof(string), "d_cs_b"),
+            new TypeMapping(typeof(Dictionary<CompressedString, sbyte>), typeof(string), "d_cs_i"),
+            new TypeMapping(typeof(Dictionary<CompressedString, sbyte?>), typeof(string), "d_cs_i"),
+            new TypeMapping(typeof(Dictionary<CompressedString, short>), typeof(string), "d_cs_i"),
+            new TypeMapping(typeof(Dictionary<CompressedString, short?>), typeof(string), "d_cs_i"),
+            new TypeMapping(typeof(Dictionary<CompressedString, int>), typeof(string), "d_cs_i"),
+            new TypeMapping(typeof(Dictionary<CompressedString, int?>), typeof(string), "d_cs_i"),
+            new TypeMapping(typeof(Dictionary<CompressedString, long>), typeof(string), "d_cs_i"),
+            new TypeMapping(typeof(Dictionary<CompressedString, long?>), typeof(string), "d_cs_i"),
+            new TypeMapping(typeof(Dictionary<CompressedString, float>), typeof(string), "d_cs_f"),
+            new TypeMapping(typeof(Dictionary<CompressedString, float?>), typeof(string), "d_cs_f"),
+            new TypeMapping(typeof(Dictionary<CompressedString, double>), typeof(string), "d_cs_f"),
+            new TypeMapping(typeof(Dictionary<CompressedString, double?>), typeof(string), "d_cs_f"),
+            new TypeMapping(typeof(Dictionary<CompressedString, char>), typeof(string), "d_cs_s"),
+            new TypeMapping(typeof(Dictionary<CompressedString, char?>), typeof(string), "d_cs_s"),
+            new TypeMapping(typeof(Dictionary<CompressedString, string>), typeof(string), "d_cs_s"),
+            new TypeMapping(typeof(Dictionary<CompressedString, DateTime>), typeof(string), "d_cs_dt"),
+            new TypeMapping(typeof(Dictionary<CompressedString, DateTime?>), typeof(string), "d_cs_dt"),
+            new TypeMapping(typeof(Dictionary<CompressedString, Guid>), typeof(string), "d_cs_s"),
+            new TypeMapping(typeof(Dictionary<CompressedString, Guid?>), typeof(string), "d_cs_s"),
+            new TypeMapping(typeof(Dictionary<CompressedString, decimal>), typeof(string), "d_cs_d"),
+            new TypeMapping(typeof(Dictionary<CompressedString, decimal?>), typeof(string), "d_cs_d"),
+            new TypeMapping(typeof(Dictionary<CompressedString, CompressedString>), typeof(string), "d_cs_cs"),
            
         };
     }
@@ -2174,6 +2319,26 @@ namespace Blueprint41.TypeConversion
             return value.Select(item => (object)Conversion<decimal?, long?>.Convert(item)).ToList();
         }
     }	
+    internal class ListOfObjectToListOfCompressedString : Conversion<List<object>, List<CompressedString>>
+    {
+        protected override List<CompressedString> Converter(List<object> value)
+        {
+			if ((object)value == null)
+				return null;
+
+            return value.Select(item => Conversion<byte[], CompressedString>.Convert((byte[])item)).ToList();
+        }
+    }	
+    internal class ListOfCompressedStringToListOfObject : Conversion<List<CompressedString>, List<object>>
+    {
+        protected override List<object> Converter(List<CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+            return value.Select(item => (object)Conversion<CompressedString, byte[]>.Convert(item)).ToList();
+        }
+    }	
           
 	#endregion
 
@@ -2639,6 +2804,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<bool, bool>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfBoolCompressedString : Conversion<string, Dictionary<bool, CompressedString>>
+    {
+        protected override Dictionary<bool, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<bool, byte[]>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfBoolCompressedStringToDictOfObjectObject : Conversion<Dictionary<bool, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<bool, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<bool, bool>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfBoolNullableBool : Conversion<string, Dictionary<bool?, bool>>
     {
         protected override Dictionary<bool?, bool> Converter(string value)
@@ -3097,6 +3282,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<bool?, bool?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfBoolNullableCompressedString : Conversion<string, Dictionary<bool?, CompressedString>>
+    {
+        protected override Dictionary<bool?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<bool?, byte[]>>().ToDictionary(item => Conversion<bool?, bool?>.Convert((bool?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfBoolNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<bool?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<bool?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<bool?, bool?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfSbyteBool : Conversion<string, Dictionary<sbyte, bool>>
@@ -3559,6 +3764,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<sbyte, long>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfSbyteCompressedString : Conversion<string, Dictionary<sbyte, CompressedString>>
+    {
+        protected override Dictionary<sbyte, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfSbyteCompressedStringToDictOfObjectObject : Conversion<Dictionary<sbyte, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<sbyte, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<sbyte, long>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfSbyteNullableBool : Conversion<string, Dictionary<sbyte?, bool>>
     {
         protected override Dictionary<sbyte?, bool> Converter(string value)
@@ -4017,6 +4242,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<sbyte?, long?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfSbyteNullableCompressedString : Conversion<string, Dictionary<sbyte?, CompressedString>>
+    {
+        protected override Dictionary<sbyte?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long?, byte[]>>().ToDictionary(item => Conversion<long?, sbyte?>.Convert((long?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfSbyteNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<sbyte?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<sbyte?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<sbyte?, long?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfShortBool : Conversion<string, Dictionary<short, bool>>
@@ -4479,6 +4724,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<short, long>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfShortCompressedString : Conversion<string, Dictionary<short, CompressedString>>
+    {
+        protected override Dictionary<short, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfShortCompressedStringToDictOfObjectObject : Conversion<Dictionary<short, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<short, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<short, long>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfShortNullableBool : Conversion<string, Dictionary<short?, bool>>
     {
         protected override Dictionary<short?, bool> Converter(string value)
@@ -4937,6 +5202,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<short?, long?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfShortNullableCompressedString : Conversion<string, Dictionary<short?, CompressedString>>
+    {
+        protected override Dictionary<short?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long?, byte[]>>().ToDictionary(item => Conversion<long?, short?>.Convert((long?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfShortNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<short?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<short?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<short?, long?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfIntBool : Conversion<string, Dictionary<int, bool>>
@@ -5399,6 +5684,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<int, long>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfIntCompressedString : Conversion<string, Dictionary<int, CompressedString>>
+    {
+        protected override Dictionary<int, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfIntCompressedStringToDictOfObjectObject : Conversion<Dictionary<int, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<int, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<int, long>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfIntNullableBool : Conversion<string, Dictionary<int?, bool>>
     {
         protected override Dictionary<int?, bool> Converter(string value)
@@ -5857,6 +6162,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<int?, long?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfIntNullableCompressedString : Conversion<string, Dictionary<int?, CompressedString>>
+    {
+        protected override Dictionary<int?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long?, byte[]>>().ToDictionary(item => Conversion<long?, int?>.Convert((long?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfIntNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<int?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<int?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<int?, long?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfLongBool : Conversion<string, Dictionary<long, bool>>
@@ -6319,6 +6644,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<long, long>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfLongCompressedString : Conversion<string, Dictionary<long, CompressedString>>
+    {
+        protected override Dictionary<long, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfLongCompressedStringToDictOfObjectObject : Conversion<Dictionary<long, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<long, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<long, long>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfLongNullableBool : Conversion<string, Dictionary<long?, bool>>
     {
         protected override Dictionary<long?, bool> Converter(string value)
@@ -6777,6 +7122,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<long?, long?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfLongNullableCompressedString : Conversion<string, Dictionary<long?, CompressedString>>
+    {
+        protected override Dictionary<long?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long?, byte[]>>().ToDictionary(item => Conversion<long?, long?>.Convert((long?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfLongNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<long?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<long?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<long?, long?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfFloatBool : Conversion<string, Dictionary<float, bool>>
@@ -7239,6 +7604,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<float, double>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfFloatCompressedString : Conversion<string, Dictionary<float, CompressedString>>
+    {
+        protected override Dictionary<float, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<double, byte[]>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfFloatCompressedStringToDictOfObjectObject : Conversion<Dictionary<float, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<float, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<float, double>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfFloatNullableBool : Conversion<string, Dictionary<float?, bool>>
     {
         protected override Dictionary<float?, bool> Converter(string value)
@@ -7697,6 +8082,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<float?, double?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfFloatNullableCompressedString : Conversion<string, Dictionary<float?, CompressedString>>
+    {
+        protected override Dictionary<float?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<double?, byte[]>>().ToDictionary(item => Conversion<double?, float?>.Convert((double?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfFloatNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<float?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<float?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<float?, double?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfDoubleBool : Conversion<string, Dictionary<double, bool>>
@@ -8159,6 +8564,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<double, double>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfDoubleCompressedString : Conversion<string, Dictionary<double, CompressedString>>
+    {
+        protected override Dictionary<double, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<double, byte[]>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfDoubleCompressedStringToDictOfObjectObject : Conversion<Dictionary<double, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<double, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<double, double>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfDoubleNullableBool : Conversion<string, Dictionary<double?, bool>>
     {
         protected override Dictionary<double?, bool> Converter(string value)
@@ -8617,6 +9042,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<double?, double?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfDoubleNullableCompressedString : Conversion<string, Dictionary<double?, CompressedString>>
+    {
+        protected override Dictionary<double?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<double?, byte[]>>().ToDictionary(item => Conversion<double?, double?>.Convert((double?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfDoubleNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<double?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<double?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<double?, double?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfCharBool : Conversion<string, Dictionary<char, bool>>
@@ -9079,6 +9524,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<char, string>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfCharCompressedString : Conversion<string, Dictionary<char, CompressedString>>
+    {
+        protected override Dictionary<char, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<string, byte[]>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfCharCompressedStringToDictOfObjectObject : Conversion<Dictionary<char, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<char, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<char, string>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfCharNullableBool : Conversion<string, Dictionary<char?, bool>>
     {
         protected override Dictionary<char?, bool> Converter(string value)
@@ -9537,6 +10002,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<char?, string>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCharNullableCompressedString : Conversion<string, Dictionary<char?, CompressedString>>
+    {
+        protected override Dictionary<char?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<string, byte[]>>().ToDictionary(item => Conversion<string, char?>.Convert((string)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfCharNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<char?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<char?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<char?, string>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfStringBool : Conversion<string, Dictionary<string, bool>>
@@ -9999,6 +10484,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<string, string>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfStringCompressedString : Conversion<string, Dictionary<string, CompressedString>>
+    {
+        protected override Dictionary<string, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<string, byte[]>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfStringCompressedStringToDictOfObjectObject : Conversion<Dictionary<string, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<string, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<string, string>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfDateTimeBool : Conversion<string, Dictionary<DateTime, bool>>
     {
         protected override Dictionary<DateTime, bool> Converter(string value)
@@ -10457,6 +10962,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<DateTime, long>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfDateTimeCompressedString : Conversion<string, Dictionary<DateTime, CompressedString>>
+    {
+        protected override Dictionary<DateTime, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfDateTimeCompressedStringToDictOfObjectObject : Conversion<Dictionary<DateTime, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<DateTime, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<DateTime, long>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfDateTimeNullableBool : Conversion<string, Dictionary<DateTime?, bool>>
@@ -10919,6 +11444,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<DateTime?, long?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfDateTimeNullableCompressedString : Conversion<string, Dictionary<DateTime?, CompressedString>>
+    {
+        protected override Dictionary<DateTime?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long?, byte[]>>().ToDictionary(item => Conversion<long?, DateTime?>.Convert((long?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfDateTimeNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<DateTime?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<DateTime?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<DateTime?, long?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfGuidBool : Conversion<string, Dictionary<Guid, bool>>
     {
         protected override Dictionary<Guid, bool> Converter(string value)
@@ -11377,6 +11922,26 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<Guid, string>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfGuidCompressedString : Conversion<string, Dictionary<Guid, CompressedString>>
+    {
+        protected override Dictionary<Guid, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<string, byte[]>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfGuidCompressedStringToDictOfObjectObject : Conversion<Dictionary<Guid, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<Guid, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<Guid, string>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
     internal class DictOfObjectObjectToDictOfGuidNullableBool : Conversion<string, Dictionary<Guid?, bool>>
@@ -11839,6 +12404,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<Guid?, string>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfGuidNullableCompressedString : Conversion<string, Dictionary<Guid?, CompressedString>>
+    {
+        protected override Dictionary<Guid?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<string, byte[]>>().ToDictionary(item => Conversion<string, Guid?>.Convert((string)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfGuidNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<Guid?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<Guid?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<Guid?, string>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfDecimalBool : Conversion<string, Dictionary<decimal, bool>>
     {
         protected override Dictionary<decimal, bool> Converter(string value)
@@ -12299,6 +12884,26 @@ namespace Blueprint41.TypeConversion
 			return value.ToDictionary(item => (object)Conversion<decimal, long>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
         }
     }	
+    internal class DictOfObjectObjectToDictOfDecimalCompressedString : Conversion<string, Dictionary<decimal, CompressedString>>
+    {
+        protected override Dictionary<decimal, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfDecimalCompressedStringToDictOfObjectObject : Conversion<Dictionary<decimal, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<decimal, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<decimal, long>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
     internal class DictOfObjectObjectToDictOfDecimalNullableBool : Conversion<string, Dictionary<decimal?, bool>>
     {
         protected override Dictionary<decimal?, bool> Converter(string value)
@@ -12757,6 +13362,506 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.ToDictionary(item => (object)Conversion<decimal?, long?>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfDecimalNullableCompressedString : Conversion<string, Dictionary<decimal?, CompressedString>>
+    {
+        protected override Dictionary<decimal?, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<long?, byte[]>>().ToDictionary(item => Conversion<long?, decimal?>.Convert((long?)item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfDecimalNullableCompressedStringToDictOfObjectObject : Conversion<Dictionary<decimal?, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<decimal?, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<decimal?, long?>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringBool : Conversion<string, Dictionary<CompressedString, bool>>
+    {
+        protected override Dictionary<CompressedString, bool> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], bool>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringBoolToDictOfObjectObject : Conversion<Dictionary<CompressedString, bool>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, bool> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<bool, bool>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringBoolNullable : Conversion<string, Dictionary<CompressedString, bool?>>
+    {
+        protected override Dictionary<CompressedString, bool?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], bool?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringBoolNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, bool?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, bool?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<bool?, bool?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringSbyte : Conversion<string, Dictionary<CompressedString, sbyte>>
+    {
+        protected override Dictionary<CompressedString, sbyte> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringSbyteToDictOfObjectObject : Conversion<Dictionary<CompressedString, sbyte>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, sbyte> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<sbyte, long>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringSbyteNullable : Conversion<string, Dictionary<CompressedString, sbyte?>>
+    {
+        protected override Dictionary<CompressedString, sbyte?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringSbyteNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, sbyte?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, sbyte?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<sbyte?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringShort : Conversion<string, Dictionary<CompressedString, short>>
+    {
+        protected override Dictionary<CompressedString, short> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long, short>.Convert((long)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringShortToDictOfObjectObject : Conversion<Dictionary<CompressedString, short>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, short> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<short, long>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringShortNullable : Conversion<string, Dictionary<CompressedString, short?>>
+    {
+        protected override Dictionary<CompressedString, short?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringShortNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, short?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, short?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<short?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringInt : Conversion<string, Dictionary<CompressedString, int>>
+    {
+        protected override Dictionary<CompressedString, int> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long, int>.Convert((long)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringIntToDictOfObjectObject : Conversion<Dictionary<CompressedString, int>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, int> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<int, long>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringIntNullable : Conversion<string, Dictionary<CompressedString, int?>>
+    {
+        protected override Dictionary<CompressedString, int?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringIntNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, int?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, int?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<int?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringLong : Conversion<string, Dictionary<CompressedString, long>>
+    {
+        protected override Dictionary<CompressedString, long> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long, long>.Convert((long)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringLongToDictOfObjectObject : Conversion<Dictionary<CompressedString, long>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, long> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<long, long>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringLongNullable : Conversion<string, Dictionary<CompressedString, long?>>
+    {
+        protected override Dictionary<CompressedString, long?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringLongNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, long?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, long?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<long?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringFloat : Conversion<string, Dictionary<CompressedString, float>>
+    {
+        protected override Dictionary<CompressedString, float> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], double>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<double, float>.Convert((double)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringFloatToDictOfObjectObject : Conversion<Dictionary<CompressedString, float>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, float> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<float, double>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringFloatNullable : Conversion<string, Dictionary<CompressedString, float?>>
+    {
+        protected override Dictionary<CompressedString, float?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], double?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringFloatNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, float?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, float?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<float?, double?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringDouble : Conversion<string, Dictionary<CompressedString, double>>
+    {
+        protected override Dictionary<CompressedString, double> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], double>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<double, double>.Convert((double)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringDoubleToDictOfObjectObject : Conversion<Dictionary<CompressedString, double>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, double> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<double, double>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringDoubleNullable : Conversion<string, Dictionary<CompressedString, double?>>
+    {
+        protected override Dictionary<CompressedString, double?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], double?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringDoubleNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, double?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, double?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<double?, double?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringChar : Conversion<string, Dictionary<CompressedString, char>>
+    {
+        protected override Dictionary<CompressedString, char> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<string, char>.Convert((string)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringCharToDictOfObjectObject : Conversion<Dictionary<CompressedString, char>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, char> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<char, string>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringCharNullable : Conversion<string, Dictionary<CompressedString, char?>>
+    {
+        protected override Dictionary<CompressedString, char?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringCharNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, char?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, char?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<char?, string>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringString : Conversion<string, Dictionary<CompressedString, string>>
+    {
+        protected override Dictionary<CompressedString, string> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<string, string>.Convert((string)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringStringToDictOfObjectObject : Conversion<Dictionary<CompressedString, string>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, string> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<string, string>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringDateTime : Conversion<string, Dictionary<CompressedString, DateTime>>
+    {
+        protected override Dictionary<CompressedString, DateTime> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringDateTimeToDictOfObjectObject : Conversion<Dictionary<CompressedString, DateTime>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, DateTime> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<DateTime, long>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringDateTimeNullable : Conversion<string, Dictionary<CompressedString, DateTime?>>
+    {
+        protected override Dictionary<CompressedString, DateTime?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, DateTime?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, DateTime?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<DateTime?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringGuid : Conversion<string, Dictionary<CompressedString, Guid>>
+    {
+        protected override Dictionary<CompressedString, Guid> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<string, Guid>.Convert((string)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringGuidToDictOfObjectObject : Conversion<Dictionary<CompressedString, Guid>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, Guid> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<Guid, string>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringGuidNullable : Conversion<string, Dictionary<CompressedString, Guid?>>
+    {
+        protected override Dictionary<CompressedString, Guid?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringGuidNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, Guid?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, Guid?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<Guid?, string>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringDecimal : Conversion<string, Dictionary<CompressedString, decimal>>
+    {
+        protected override Dictionary<CompressedString, decimal> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long, decimal>.Convert((long)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringDecimalToDictOfObjectObject : Conversion<Dictionary<CompressedString, decimal>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, decimal> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<decimal, long>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringDecimalNullable : Conversion<string, Dictionary<CompressedString, decimal?>>
+    {
+        protected override Dictionary<CompressedString, decimal?> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringDecimalNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, decimal?>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, decimal?> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<decimal?, long?>.Convert(item.Value)).ToJson();
+        }
+    }	
+    internal class DictOfObjectObjectToDictOfCompressedStringCompressedString : Conversion<string, Dictionary<CompressedString, CompressedString>>
+    {
+        protected override Dictionary<CompressedString, CompressedString> Converter(string value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.FromJson<Dictionary<byte[], byte[]>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key), item => Conversion<byte[], CompressedString>.Convert((byte[])item.Value));
+        }
+    }	
+    internal class DictOfCompressedStringCompressedStringToDictOfObjectObject : Conversion<Dictionary<CompressedString, CompressedString>, string>
+    {
+        protected override string Converter(Dictionary<CompressedString, CompressedString> value)
+        {
+			if ((object)value == null)
+				return null;
+
+			return value.ToDictionary(item => (object)Conversion<CompressedString, byte[]>.Convert(item.Key), item => (object)Conversion<CompressedString, byte[]>.Convert(item.Value)).ToJson();
         }
     }	
    
