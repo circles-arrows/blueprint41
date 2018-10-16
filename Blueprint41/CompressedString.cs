@@ -139,7 +139,8 @@ namespace System
         }
         public static explicit operator CompressedString(byte[] x)
         {
-            return Decompress(x);
+            if ((object)x == null) return null;
+            return new CompressedString(x);
         }
         public static implicit operator CompressedString(string x)
         {
@@ -539,7 +540,7 @@ namespace System
 
         public override string ToString()
         {
-            return Compress(Value).ToString();
+            return Value;
         }
 
         public int IndexOf(string x)
