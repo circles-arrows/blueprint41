@@ -1,5 +1,6 @@
 ﻿using Blueprint41.Core;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,6 +42,13 @@ namespace Blueprint41.Query
             {
                 if (leftType != rightType)
                 {
+                    if (Operator == Operator.In)
+                    {
+                        if(rightType.GetInterface(nameof(IEnumerable)) == null)
+                            state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, Right))} should be a collection.");
+
+                        rightType = rightType.GetGenericArguments()[0];
+                    }
                     if (GetConversionGroup(leftType, state.TypeMappings) != GetConversionGroup(rightType, state.TypeMappings))
                         state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, Left))} and {state.Preview(s => CompileOperand(s, Right))} are not compatible.");
                 }
