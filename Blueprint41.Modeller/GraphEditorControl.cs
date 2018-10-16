@@ -313,19 +313,22 @@ namespace Blueprint41.Modeller
             RightClickedObject = Viewer.ObjectUnderMouseCursor;
             if (RightClickedObject != null && (SelectedNode != null | SelectedEdge != null))
             {
-                if (!(RightClickedObject is IViewerEdge))
+                if (((RightClickedObject is IViewerNode && (Node)RightClickedObject.DrawingObject == SelectedNode) || RightClickedObject is IViewerEdge && (Edge)RightClickedObject.DrawingObject == SelectedEdge))
                 {
+                    if (!(RightClickedObject is IViewerEdge))
+                    {
+                        mi = new ToolStripMenuItem();
+                        mi.Text = "Remove from Diagram";
+                        mi.Click += new EventHandler(removeFromDiagram_Click);
+                        cm.Items.Add(mi);
+                    }
+
                     mi = new ToolStripMenuItem();
-                    mi.Text = "Remove from Diagram";
-                    mi.Click += new EventHandler(removeFromDiagram_Click);
+                    mi.Text = "Remove from Storage";
+                    mi.ForeColor = Styles.FORMS_WARNING;
+                    mi.Click += new EventHandler(removeFromStorage_Click);
                     cm.Items.Add(mi);
                 }
-
-                mi = new ToolStripMenuItem();
-                mi.Text = "Remove from Storage";
-                mi.ForeColor = Styles.FORMS_WARNING;
-                mi.Click += new EventHandler(removeFromStorage_Click);
-                cm.Items.Add(mi);
             }
 
             mi = new ToolStripMenuItem();
