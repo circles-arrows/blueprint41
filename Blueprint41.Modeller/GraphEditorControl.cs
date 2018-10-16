@@ -311,7 +311,7 @@ namespace Blueprint41.Modeller
             cm.Items.Add(separator);
             
             RightClickedObject = Viewer.ObjectUnderMouseCursor;
-            if (RightClickedObject != null)
+            if (RightClickedObject != null && (SelectedNode != null | SelectedEdge != null))
             {
                 if (!(RightClickedObject is IViewerEdge))
                 {
