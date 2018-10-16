@@ -475,7 +475,10 @@ namespace Blueprint41.Modeller
         {
             Relationship model = e?.Edge?.UserData as Relationship;
             if (model != null)
+            {
                 model.DeleteEdge();
+                Model.UpdateGraph();
+            }
         }
 
         private void graphEditor_RemoveEdgeFromStorageChanged(object sender, EdgeEventArgs e)
@@ -506,6 +509,7 @@ namespace Blueprint41.Modeller
                     if (model != null)
                     {
                         Model.DisplayedSubmodel.Node.Remove(model);
+                        Model.UpdateGraph();
                     }
                 }
                 RefreshNodeCombobox();
@@ -533,6 +537,7 @@ namespace Blueprint41.Modeller
                     {
                         Submodel.NodeLocalType node = selectedNode.DrawingObject.UserData as Submodel.NodeLocalType;
                         DeleteEntityFromStorage(node);
+                        Model.UpdateGraph();
                     }
 
                     RefreshNodeCombobox();
