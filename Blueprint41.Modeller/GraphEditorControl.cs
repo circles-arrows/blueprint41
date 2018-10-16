@@ -271,8 +271,9 @@ namespace Blueprint41.Modeller
             cm.Items.Add(mi);
 
             SelectedTargetNode = GetNodeAtPosition(x, y);
-
-            if (SelectedNode != null && SelectedTargetNode != null)
+                        
+            if ((SelectedNode != null && SelectedNode.Attr.GeometryNode.LineWidth == 2) &&
+                SelectedTargetNode != null)
             {
                 mi = new ToolStripMenuItem("Insert Relationship");
                 cm.Items.Add(mi);
@@ -312,8 +313,9 @@ namespace Blueprint41.Modeller
             
             RightClickedObject = Viewer.ObjectUnderMouseCursor;
             if (RightClickedObject != null && (SelectedNode != null | SelectedEdge != null))
-            {
-                if (((RightClickedObject is IViewerNode && (Node)RightClickedObject.DrawingObject == SelectedNode) || RightClickedObject is IViewerEdge && (Edge)RightClickedObject.DrawingObject == SelectedEdge))
+            {                
+                if ((RightClickedObject is IViewerNode && (Node)RightClickedObject.DrawingObject == SelectedNode && SelectedNode.Attr.GeometryNode.LineWidth == 2) || 
+                    (RightClickedObject is IViewerEdge && (Edge)RightClickedObject.DrawingObject == SelectedEdge))
                 {
                     if (!(RightClickedObject is IViewerEdge))
                     {
@@ -461,7 +463,6 @@ namespace Blueprint41.Modeller
             else*/
             if (e.RightButtonIsPressed && ShowContextMenuOnRightClick)
             {
-
                 MouseRightButtonDownPoint = Viewer.ScreenToSource(e);
 
                 ContextMenuStrip cm = BuildContextMenu(MouseRightButtonDownPoint, e.X, e.Y);
@@ -472,7 +473,6 @@ namespace Blueprint41.Modeller
 
         private void Viewer_MouseUp(object sender, Microsoft.Msagl.Drawing.MsaglMouseEventArgs e)
         {
-
             if (e.RightButtonIsPressed)
             {
                 _selectedEntities = new List<IViewerObject>();
@@ -499,7 +499,6 @@ namespace Blueprint41.Modeller
                     NoSelectionEvent(this, new EventArgs());
                 return;
             }
-
 
             if (node != null)
             {

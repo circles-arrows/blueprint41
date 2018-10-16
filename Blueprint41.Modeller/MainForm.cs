@@ -22,7 +22,7 @@ namespace Blueprint41.Modeller
     {
         private bool showLabels = false;
         private bool showInherited = false;
-        private bool performNoSelection = false;
+        private bool toggleSelection = false;
 
         private const string NEWSUBMODEL = "New...";
         //private const string DATASTORE_MODEL_REGISTRY_KEY = "DatastoreModelDll";
@@ -257,35 +257,44 @@ namespace Blueprint41.Modeller
 
         private void graphEditor_SelectedNodeChanged(object sender, NodeEventArgs e)
         {
-            if (!(e.Node.UserData is Submodel.NodeLocalType))
-                throw new NotSupportedException();
+            toggleSelection = e.Node.Attr.LineWidth == 1;
 
-            SelectedNode = e.Node.UserData as Submodel.NodeLocalType;
-            entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
-            DefaultOrExpandPropertiesWidth(false);
+            if (!toggleSelection)
+            {
+                if (!(e.Node.UserData is Submodel.NodeLocalType))
+                    throw new NotSupportedException();
 
-            performNoSelection = false;
+                SelectedNode = e.Node.UserData as Submodel.NodeLocalType;
+                entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
+                DefaultOrExpandPropertiesWidth(false);
+            }
+            else
+            {
+                SelectedNode = null;
+                DeSelectNode();
+            }
+
+            toggleSelection = !toggleSelection;
         }
 
         private void graphEditor_SelectedEdgeChanged(object sender, EdgeEventArgs e)
         {
-            //txtNodeLabel.Enabled = true;
-            //txtNodeLabel.Text = e.Edge.LabelText;
-
-            performNoSelection = false;
+            toggleSelection = false;
+            DeSelectNode();
         }
 
         private void graphEditor_NoSelectionEvent(object sender, EventArgs e)
         {
-            if (performNoSelection)
-            {
-                CloseNodeEditor();
-                CloseEdgeEditor();
-                RefreshNodeCombobox();
-                DefaultOrExpandPropertiesWidth(false);
-            }
+            DeSelectNode();
+            toggleSelection = true;
+        }
 
-            performNoSelection = true;
+        private void DeSelectNode()
+        {
+            CloseNodeEditor();
+            CloseEdgeEditor();
+            RefreshNodeCombobox();
+            DefaultOrExpandPropertiesWidth(false);
         }
 
         private void entityEditor_ApplyChangesButtonClicked(object sender, EventArgs e)

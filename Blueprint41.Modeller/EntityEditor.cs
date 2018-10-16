@@ -897,6 +897,7 @@ namespace Blueprint41.Modeller
             Entity = null;
             bindingSource.DataSource = typeof(Entity);
             cmbInherits.DataSource = null;
+            FunctionalIdComboBox.SelectedItem = null;
             cmbInherits.SelectedIndex = -1;
         }
 
