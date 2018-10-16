@@ -491,6 +491,7 @@ namespace Blueprint41.Modeller
                     {
                         this.entityEditor.UpdateRelationshipGridView();
                     }
+                    Model.UpdateGraph();
                 }
             }
         }
