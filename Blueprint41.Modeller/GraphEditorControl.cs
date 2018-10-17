@@ -271,7 +271,7 @@ namespace Blueprint41.Modeller
             cm.Items.Add(mi);
 
             SelectedTargetNode = GetNodeAtPosition(x, y);
-                        
+
             if ((SelectedNode != null && SelectedNode.Attr.GeometryNode.LineWidth == 2) &&
                 SelectedTargetNode != null)
             {
@@ -310,12 +310,12 @@ namespace Blueprint41.Modeller
 
             ToolStripSeparator separator = new ToolStripSeparator();
             cm.Items.Add(separator);
-            
+
             RightClickedObject = Viewer.ObjectUnderMouseCursor;
-            if (RightClickedObject != null && (SelectedNode != null | SelectedEdge != null))
-            {                
-                if ((RightClickedObject is IViewerNode && (Node)RightClickedObject.DrawingObject == SelectedNode && SelectedNode.Attr.GeometryNode.LineWidth == 2) || 
-                    (RightClickedObject is IViewerEdge && (Edge)RightClickedObject.DrawingObject == SelectedEdge))
+            if (RightClickedObject != null && (SelectedNode != null | SelectedEdge != null | SelectedEntities.Count > 0))
+            {
+                if (RightClickedObject is IViewerNode && (Node)RightClickedObject.DrawingObject == SelectedNode ||
+                   (RightClickedObject is IViewerEdge && (Edge)RightClickedObject.DrawingObject == SelectedEdge))
                 {
                     if (!(RightClickedObject is IViewerEdge))
                     {
@@ -330,6 +330,24 @@ namespace Blueprint41.Modeller
                     mi.ForeColor = Styles.FORMS_WARNING;
                     mi.Click += new EventHandler(removeFromStorage_Click);
                     cm.Items.Add(mi);
+                }
+                else if(SelectedEntities.Count > 0)
+                {
+                    var rightclickObject = SelectedEntities.Where(e => e.DrawingObject == RightClickedObject.DrawingObject).FirstOrDefault();
+
+                    if(rightclickObject != null)
+                    {
+                        mi = new ToolStripMenuItem();
+                        mi.Text = "Remove from Diagram";
+                        mi.Click += new EventHandler(removeFromDiagram_Click);
+                        cm.Items.Add(mi);
+
+                        mi = new ToolStripMenuItem();
+                        mi.Text = "Remove from Storage";
+                        mi.ForeColor = Styles.FORMS_WARNING;
+                        mi.Click += new EventHandler(removeFromStorage_Click);
+                        cm.Items.Add(mi);
+                    }
                 }
             }
 
@@ -461,14 +479,14 @@ namespace Blueprint41.Modeller
             /*if (e.RightButtonIsPressed && this.gViewer.DrawingLayoutEditor.SelectedEdge != null && this.gViewer.ObjectUnderMouseCursor == this.gViewer.DrawingLayoutEditor.SelectedEdge)
                 ProcessRightClickOnSelectedEdge(e);
             else*/
-            if (e.RightButtonIsPressed && ShowContextMenuOnRightClick)
-            {
-                MouseRightButtonDownPoint = Viewer.ScreenToSource(e);
+            //if (e.RightButtonIsPressed && ShowContextMenuOnRightClick)
+            //{
+            //    MouseRightButtonDownPoint = Viewer.ScreenToSource(e);
 
-                ContextMenuStrip cm = BuildContextMenu(MouseRightButtonDownPoint, e.X, e.Y);
+            //    ContextMenuStrip cm = BuildContextMenu(MouseRightButtonDownPoint, e.X, e.Y);
 
-                cm.Show(this, new System.Drawing.Point(e.X, e.Y));
-            }
+            //    cm.Show(this, new System.Drawing.Point(e.X, e.Y));
+            //}
         }
 
         private void Viewer_MouseUp(object sender, Microsoft.Msagl.Drawing.MsaglMouseEventArgs e)
@@ -482,6 +500,15 @@ namespace Blueprint41.Modeller
                     {
                         _selectedEntities.Add(en);
                     }
+                }
+
+                if (ShowContextMenuOnRightClick)
+                {
+                    MouseRightButtonDownPoint = Viewer.ScreenToSource(e);
+
+                    ContextMenuStrip cm = BuildContextMenu(MouseRightButtonDownPoint, e.X, e.Y);
+
+                    cm.Show(this, new System.Drawing.Point(e.X, e.Y));
                 }
                 return;
             }
@@ -500,7 +527,7 @@ namespace Blueprint41.Modeller
                 return;
             }
 
-            if (node != null)
+            if (node != null && node.Attr.LineWidth == 2)
             {
                 SelectedNode = node;
                 if (SelectedNodeChanged != null)
@@ -520,6 +547,7 @@ namespace Blueprint41.Modeller
                 if(NoSelectionEvent != null)
                     NoSelectionEvent(this, new EventArgs());
             }
+
         }
         
         private void Viewer_MouseMove(object sender, MsaglMouseEventArgs e)
