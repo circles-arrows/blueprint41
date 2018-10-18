@@ -575,6 +575,9 @@ namespace Blueprint41.Modeller
             showLabels = btnShowLabels.Checked;
             showLabelsToolStripMenuItem.Checked = btnShowLabels.Checked;
             Model.ShowRelationshipLabels = btnShowLabels.Checked;
+
+            if(Model.ViewMode == EditorViewMode.Sugiyama)
+                Model.RedoLayout();
         }
 
         private void cmbSubmodels_SelectedIndexChanged(object sender, EventArgs e)
@@ -790,7 +793,7 @@ namespace Blueprint41.Modeller
             fixedToolStripMenuItem.CheckedChanged -= fixedToolStripMenuItem_CheckedChanged;
             fixedToolStripMenuItem.Checked = !draggableToolStripMenuItem.Checked;
             fixedToolStripMenuItem.CheckedChanged += fixedToolStripMenuItem_CheckedChanged;
-
+            
             Model.ViewMode = draggableToolStripMenuItem.Checked ? EditorViewMode.MDS : EditorViewMode.Sugiyama;
             Model.RedoLayout();
         }
