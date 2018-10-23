@@ -576,7 +576,7 @@ namespace Blueprint41.Modeller
             showLabelsToolStripMenuItem.Checked = btnShowLabels.Checked;
             Model.ShowRelationshipLabels = btnShowLabels.Checked;
 
-            if(Model.ViewMode == EditorViewMode.Sugiyama)
+            if (Model.ViewMode == EditorViewMode.Sugiyama)
                 Model.RedoLayout();
         }
 
@@ -648,6 +648,9 @@ namespace Blueprint41.Modeller
             showInherited = btnShowInheritedRelationships.Checked;
             showInheritedRelationshipsToolStripMenuItem.Checked = btnShowInheritedRelationships.Checked;
             Model.ShowInheritedRelationships = btnShowInheritedRelationships.Checked;
+
+            if (Model.ViewMode == EditorViewMode.Sugiyama)
+                Model.RedoLayout();
         }
 
         private void DeleteEntityFromStorage(Submodel.NodeLocalType node)

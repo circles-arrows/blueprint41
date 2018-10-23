@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace Blueprint41.Modeller.Schemas
 {
-    internal static class Styles
+    public static class Styles
     {
         public static readonly Color NODE_BGCOLOR_SELECTED = Color.Red;
         public static readonly Color NODE_BGCOLOR_VIRTUAL  = Color.White;
