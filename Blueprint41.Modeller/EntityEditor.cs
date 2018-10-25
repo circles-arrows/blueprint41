@@ -783,13 +783,6 @@ namespace Blueprint41.Modeller
             bindingSource.DataSource = Entity;
             cmbInherits.SetDataSource(ref entityItems, true);
 
-            //BindingSource baseBindingSource = new BindingSource(this.components);
-            //baseBindingSource.DataSource = entityItems.SingleOrDefault(x => (x.Value as Entity)?.Guid == Entity.Inherits) ?? entityItems[0];
-
-            //Binding baseEntityBinding = new Binding("SelectedValue", baseBindingSource, "Value", true);//, DataSourceUpdateMode.OnPropertyChanged);
-            //baseEntityBinding.BindingComplete += BaseEntityBinding_BindingComplete;
-            //this.cmbInherits.DataBindings.Add(baseEntityBinding);
-
             EntityComboBoxItem inherited = entityItems.Where(item => (item.Value as Entity)?.Guid == Entity.Inherits).FirstOrDefault();
 
             if (inherited != null)
@@ -798,11 +791,11 @@ namespace Blueprint41.Modeller
             cmbInherits.SelectedIndexChanged += CmbInherits_SelectedIndexChanged;
 
             // FunctionalId Combobox
-            cmbFunctionalId.Enabled = !Entity.Virtual;
-            cmbFunctionalId.Items.Clear();
+            List<EntityComboBoxItem> functionalIDs = StorageModel.FunctionalIds.FunctionalId.Where(x => x.Guid == Entity.Guid || !string.IsNullOrEmpty(x.Name)).OrderBy(x => x.Name)
+                                                    .Select(x => new EntityComboBoxItem() { Display = string.Concat(x.Name ?? Entity.Label, " - ", x.Value), Value = x.Guid }).ToList();
 
-            foreach (var functionalId in StorageModel.FunctionalIds.FunctionalId.Where(x => x.Guid == Entity.Guid || !string.IsNullOrEmpty(x.Name)).OrderBy(x => x.Name))
-                cmbFunctionalId.InsertNonDataBoundItems(string.Concat(functionalId.Name ?? Entity.Label, " - ", functionalId.Value), functionalId.Guid);
+            cmbFunctionalId.Enabled = !Entity.Virtual;
+            cmbFunctionalId.SetDataSource(ref functionalIDs, true);
 
             FunctionalId entityFunctionalId = StorageModel.FunctionalIds.FunctionalId.Where(item => item.Guid == Entity.FunctionalId).SingleOrDefault();
 
@@ -810,6 +803,10 @@ namespace Blueprint41.Modeller
             {
                 string displayName = string.Concat(entityFunctionalId.Name ?? Entity.Label, " - ", entityFunctionalId.Value);
                 cmbFunctionalId.SelectedIndex = cmbFunctionalId.FindStringExact(displayName);
+            }
+            else
+            {
+                cmbFunctionalId.SelectedIndex = 0;
             }
 
             cmbFunctionalId.SelectedIndexChanged += cmbFunctionalId_SelectedIndexChanged;
@@ -899,6 +896,8 @@ namespace Blueprint41.Modeller
             cmbInherits.DataSource = null;
             FunctionalIdComboBox.SelectedItem = null;
             cmbInherits.SelectedIndex = -1;
+            cmbFunctionalId.DataSource = null;
+            cmbFunctionalId.SelectedIndex = -1;
         }
 
         public void ClearDataSourceAndHandlers()
@@ -1000,7 +999,7 @@ namespace Blueprint41.Modeller
             if (cmbFunctionalId.SelectedItem == null)// || Entity.Abstract) -- TODO: Ask reason for this condition
                 return;
 
-            StorageModel.Entities.Entity.Where(x => x.Guid == Entity.Guid).SingleOrDefault().FunctionalId = (cmbFunctionalId.SelectedItem as ComboxBoxItem).Value;
+            StorageModel.Entities.Entity.Where(x => x.Guid == Entity.Guid).SingleOrDefault().FunctionalId = (cmbFunctionalId.SelectedItem as EntityComboBoxItem)?.Value?.ToString();
         }
 
         private void txtLabel_Leave(object sender, EventArgs e)
@@ -1200,7 +1199,7 @@ namespace Blueprint41.Modeller
                 return;
 
             Entity.Abstract = chkIsAbstract.Checked;
-            
+
             UncheckVirtual();
             UncheckStaticData();
             EntityTypeChanged?.Invoke(sender, new EventArgs());
