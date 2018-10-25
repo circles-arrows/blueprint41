@@ -527,7 +527,7 @@ namespace Blueprint41.Modeller
                 return;
             }
 
-            if (node != null && node.Attr.LineWidth == 2)
+            if (node != null && node.Attr.LineWidth > 1)
             {
                 SelectedNode = node;
                 if (SelectedNodeChanged != null)
