@@ -105,47 +105,49 @@ namespace Blueprint41.Modeller
             IDictionary<string, object> fields = new Dictionary<string, object>();
             fields.Add("RecordGuid", "");
 
-            foreach (var recordProperty in recordProperties)
-            {
-                DataGridViewColumn column = new DataGridViewTextBoxColumn();
-                column.DataPropertyName = recordProperty.Key;
-                column.Name = primitiveGuidNameMapping[recordProperty.Key];
-                dataGridView.Columns.Add(column);
-                RecordPropertiesDataTable.Columns.Add(recordProperty.Key);
+            //foreach (var recordProperty in recordProperties)
+            //{
+            //    DataGridViewColumn column = new DataGridViewTextBoxColumn();
+            //    column.DataPropertyName = recordProperty.Key;
+            //    column.Name = primitiveGuidNameMapping[recordProperty.Key];
+            //    dataGridView.Columns.Add(column);
+            //    RecordPropertiesDataTable.Columns.Add(recordProperty.Key);
 
-                // Add the field names here so that it won't mixed up
-                fields.Add(recordProperty.Key, "");
-            }
+            //    // Add the field names here so that it won't mixed up
+            //    fields.Add(recordProperty.Key, "");
+            //}
 
             // if we don't have anything to map, add the primitive mapping instead
-            if (recordProperties.Count == 0)
+            //if (recordProperties.Count == 0)
+            //{
+            foreach (KeyValuePair<string, string> primiviteGuidName in primitiveGuidNameMapping)
             {
-                foreach (KeyValuePair<string, string> primiviteGuidName in primitiveGuidNameMapping)
-                {
-                    DataGridViewColumn column = new DataGridViewTextBoxColumn();
-                    column.DataPropertyName = primiviteGuidName.Key;
-                    column.Name = primiviteGuidName.Value;
-                    dataGridView.Columns.Add(column);
-                    RecordPropertiesDataTable.Columns.Add(primiviteGuidName.Key);
+                DataGridViewColumn column = new DataGridViewTextBoxColumn();
+                column.DataPropertyName = primiviteGuidName.Key;
+                column.Name = primiviteGuidName.Value;
+                dataGridView.Columns.Add(column);
+                RecordPropertiesDataTable.Columns.Add(primiviteGuidName.Key);
 
-                    fields.Add(primiviteGuidName.Key, "");
-                }
+                fields.Add(primiviteGuidName.Key, "");
             }
+            //}
 
             //TODO: Review this part with Marko
             //Entity and Parent Relationship and Properties
-            foreach (var relationship in Entity.GetRelationships(RelationshipDirection.In, true))
-            {
-                DataGridViewColumn column = new DataGridViewTextBoxColumn();
-                column.DataPropertyName = relationship.InProperty;
-                column.Name = relationship.InProperty;
-                dataGridView.Columns.Add(column);
-                RecordPropertiesDataTable.Columns.Add(relationship.InProperty);
-            }
+            //foreach (var relationship in Entity.GetRelationships(RelationshipDirection.In, true))
+            //{
+            //    DataGridViewColumn column = new DataGridViewTextBoxColumn();
+            //    column.DataPropertyName = relationship.InProperty;
+            //    column.Name = relationship.InProperty;
+            //    dataGridView.Columns.Add(column);
+            //    RecordPropertiesDataTable.Columns.Add(relationship.InProperty);
+            //}
 
             foreach (var record in Entity.StaticData.Records.Record)
             {
-                fields["RecordGuid"] = record.Guid;                
+                ResetFields(fields);
+
+                fields["RecordGuid"] = record.Guid;
 
                 foreach (var property in record.Property)
                 {
@@ -163,6 +165,12 @@ namespace Blueprint41.Modeller
 
             bindingSource.DataSource = RecordPropertiesDataTable;
             dataGridView.DataSource = bindingSource;
+        }
+
+        private void ResetFields(IDictionary<string, object> fields)
+        {
+            foreach (string key in fields.Keys.ToList())
+                fields[key] = "";
         }
     }
 }
