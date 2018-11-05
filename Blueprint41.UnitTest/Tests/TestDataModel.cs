@@ -186,6 +186,9 @@ namespace Blueprint41.UnitTest.Tests
                        .SetKey("Uid", true)
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
+
+                Assert.IsTrue(Entities["BaseEntity"].Properties["Uid"].IsKey);
+                Assert.IsTrue(Entities["BaseEntity"].Properties["Uid"].IndexType == IndexType.Unique);
             }
         }
 
@@ -236,9 +239,6 @@ namespace Blueprint41.UnitTest.Tests
 
             model = new DataModelKeyIsUnique();
             model.Execute(false);
-
-            Property uid = model.Entities["BaseEntity"].Properties["Uid"];
-            Assert.IsTrue(uid.IsKey && uid.IndexType == IndexType.Unique);
         }
 
         #endregion        
@@ -308,7 +308,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 Entities.New("Continent", Entities["BaseEntity"])
                     .AddProperty("Location", typeof(string));
-                
+
                 Assert.AreEqual(Entities["Continent"].Inherits, Entities["BaseEntity"]);
             }
 
@@ -345,7 +345,7 @@ namespace Blueprint41.UnitTest.Tests
                 DatastoreModel model = new DataModelEntityWithSamePropertiesFromChangedInheritance();
                 model.Execute(false);
             });
-            
+
             Assert.That(exception.Message, Contains.Substring("Property with the name Name already exists on base class Entity BaseEntity"));
         }
         #endregion
