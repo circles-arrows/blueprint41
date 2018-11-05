@@ -148,6 +148,7 @@ namespace Blueprint41.UnitTest.Mocks
             return RunAsync(statement.Text, statement.Parameters);
         }
 
+
         public T WriteTransaction<T>(Func<ITransaction, T> work)
         {
             Console.WriteLine("Write Transaction");
@@ -170,6 +171,102 @@ namespace Blueprint41.UnitTest.Mocks
         {
             Console.WriteLine("WriteTransactionAsync");
             return NeoSession.WriteTransactionAsync(work);
+        }
+
+        public ITransaction BeginTransaction(TransactionConfig txConfig)
+        {
+            Console.WriteLine("BeginTransaction");
+            return NeoSession.BeginTransaction(txConfig);
+        }
+
+        public Task<ITransaction> BeginTransactionAsync(TransactionConfig txConfig)
+        {
+            Console.WriteLine("BeginTransactionAsync");
+            return NeoSession.BeginTransactionAsync(txConfig);
+        }
+
+        public T ReadTransaction<T>(Func<ITransaction, T> work, TransactionConfig txConfig)
+        {
+            Console.WriteLine("ReadTransaction");
+            return NeoSession.ReadTransaction(work, txConfig);
+        }
+
+        public Task<T> ReadTransactionAsync<T>(Func<ITransaction, Task<T>> work, TransactionConfig txConfig)
+        {
+            Console.WriteLine("ReadTransactionAsync");
+            return NeoSession.ReadTransactionAsync(work, txConfig);
+        }
+
+        public void ReadTransaction(Action<ITransaction> work, TransactionConfig txConfig)
+        {
+            Console.WriteLine("ReadTransaction");
+            NeoSession.ReadTransaction(work, txConfig);
+        }
+
+        public Task ReadTransactionAsync(Func<ITransaction, Task> work, TransactionConfig txConfig)
+        {
+            Console.WriteLine("ReadTransactionAsync");
+            return NeoSession.ReadTransactionAsync(work, txConfig);
+        }
+
+        public T WriteTransaction<T>(Func<ITransaction, T> work, TransactionConfig txConfig)
+        {
+            Console.WriteLine("WriteTransaction");
+            return NeoSession.WriteTransaction(work, txConfig);
+        }
+
+        public Task<T> WriteTransactionAsync<T>(Func<ITransaction, Task<T>> work, TransactionConfig txConfig)
+        {
+            Console.WriteLine("WriteTransactionAsync");
+            return NeoSession.WriteTransactionAsync(work, txConfig);
+        }
+
+        public void WriteTransaction(Action<ITransaction> work, TransactionConfig txConfig)
+        {
+            Console.WriteLine("WriteTransaction");
+            NeoSession.WriteTransaction(work, txConfig);
+        }
+
+        public Task WriteTransactionAsync(Func<ITransaction, Task> work, TransactionConfig txConfig)
+        {
+            Console.WriteLine("WriteTransactionAsync");
+            return NeoSession.WriteTransactionAsync(work, txConfig);
+        }
+
+        public IStatementResult Run(string statement, TransactionConfig txConfig)
+        {
+            Console.WriteLine("Run");
+            return NeoSession.Run(statement, txConfig);
+        }
+
+        public Task<IStatementResultCursor> RunAsync(string statement, TransactionConfig txConfig)
+        {
+            Console.WriteLine("RunAsync");
+            return NeoSession.RunAsync(statement, txConfig);
+        }
+
+        public IStatementResult Run(string statement, IDictionary<string, object> parameters, TransactionConfig txConfig)
+        {
+            Console.WriteLine("Run");
+            return NeoSession.Run(statement, parameters, txConfig);
+        }
+
+        public Task<IStatementResultCursor> RunAsync(string statement, IDictionary<string, object> parameters, TransactionConfig txConfig)
+        {
+            Console.WriteLine("RunAsync");
+            return NeoSession.RunAsync(statement, parameters, txConfig);
+        }
+
+        public IStatementResult Run(Statement statement, TransactionConfig txConfig)
+        {
+            Console.WriteLine("Run");
+            return NeoSession.Run(statement, txConfig);
+        }
+
+        public Task<IStatementResultCursor> RunAsync(Statement statement, TransactionConfig txConfig)
+        {
+            Console.WriteLine("RunAsync");
+            return NeoSession.RunAsync(statement, txConfig);
         }
     }
 }
