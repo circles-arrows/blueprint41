@@ -36,9 +36,6 @@ namespace Blueprint41
         {
             long decoded = -1;
 
-            if ((object)this == null)
-                return;
-
             if (Format == IdFormat.Hash)
             {
                 if (!value.StartsWith(Prefix))
@@ -49,13 +46,16 @@ namespace Blueprint41
 
             if (Format == IdFormat.Numeric && !long.TryParse(value, out decoded))
                 return;
-            
 
-            if (highestSeenId < decoded)
+            SeenUid(decoded);
+        }
+        internal void SeenUid(long value)
+        {
+            if (highestSeenId < value)
             {
                 lock (this)
                 {
-                    highestSeenId = decoded;
+                    highestSeenId = value;
                     wasApplied = false;
                 }
             }

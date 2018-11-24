@@ -97,8 +97,14 @@ namespace Blueprint41.Neo4j.Persistence
 
             lock (functionalId)
             {
-                string query = $"CALL blueprint41.functionalid.setSequenceNumber('{functionalId.Label}', {functionalId.highestSeenId}, {(functionalId.Format == IdFormat.Numeric).ToString().ToLowerInvariant()})";
-                Run(query);
+                string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
+                IStatementResult result = Run(getFidQuery);
+                long? currentFid = result.FirstOrDefault()?.Values["Sequence"].As<long?>();
+                if (currentFid.HasValue)
+                    functionalId.SeenUid(currentFid.Value);
+
+                string setFidQuery = $"CALL blueprint41.functionalid.setSequenceNumber('{functionalId.Label}', {functionalId.highestSeenId}, {(functionalId.Format == IdFormat.Numeric).ToString().ToLowerInvariant()})";
+                Run(setFidQuery);
                 functionalId.wasApplied = true;
                 functionalId.highestSeenId = -1;
             }

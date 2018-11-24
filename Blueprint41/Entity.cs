@@ -145,6 +145,18 @@ namespace Blueprint41
         {
             return AddProperty(name, type, true, IndexType.None);
         }
+        public Entity AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        {
+            VerifyFromInheritedProperties(name);
+
+            Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            Properties.Add(name, value);
+
+            // StaticData
+            DynamicEntityPropertyAdded(value);
+
+            return this;
+        }
         public Entity AddProperty(string name, Type type, IndexType indexType)
         {
             return AddProperty(name, type, true, indexType);

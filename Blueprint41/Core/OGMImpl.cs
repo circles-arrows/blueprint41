@@ -282,6 +282,19 @@ namespace Blueprint41.Core
         private List<EntityEventArgs> eventHistory = new List<EntityEventArgs>(16);
 
         #endregion
+
+        protected TEnum? Parse<TEnum>(string self)
+            where TEnum : struct
+        {
+            if ((object)self == null)
+                return null;
+
+            TEnum result;
+            if (!Enum.TryParse<TEnum>(self, out result))
+                return null;
+
+            return result;
+        }
     }
 
     public interface ISetRuntimeType

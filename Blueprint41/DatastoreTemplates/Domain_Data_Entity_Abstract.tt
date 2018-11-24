@@ -222,6 +222,40 @@ if (DALModel.IsAbstract)
 	}
 #>
         }
+<#
+    var enumProperties = DALModel.Properties.Where(item => item.EnumValues != null).ToList();
+
+    if (enumProperties.Count != 0)
+    {
+#>
+
+        #region Enumerations
+
+<#
+		foreach (Property attr in enumProperties)
+		{
+			if (attr.EnumValues == null)
+                continue;
+#>
+        public enum <#= attr.Name #>Enum
+        {
+<#
+            foreach (string value in attr.EnumValues)
+            {
+#>
+            <#= value #>,
+<#
+            }
+#>
+        }
+
+<#
+        }
+#>
+        #endregion
+<#
+    }
+#>
 
 		sealed public override Entity GetEntity()
         {

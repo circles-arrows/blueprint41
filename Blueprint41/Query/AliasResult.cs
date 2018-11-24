@@ -57,6 +57,15 @@ namespace Blueprint41.Query
             return new AsResult(this, alias);
         }
 
+        public AsResult Properties(string alias, out PropertiesAliasResult propertiesAlias)
+        {
+            propertiesAlias = new PropertiesAliasResult()
+            {
+                AliasName = alias
+            };
+            return new AsResult(new MiscResult("properties({0})", new object[] { this }, null), alias);
+        }
+
         public override string GetFieldName()
         {
             return AliasName;

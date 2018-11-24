@@ -624,9 +624,27 @@ if (!DALModel.IsAbstract)
 			}
 			else
 			{
+                if (attr.EnumValues != null)
+                {
+                    if (attr.Nullable)
+                    {
+#>
+		public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(InnerData.<#= attr.Name #>); } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value?.ToString())) InnerData.<#= attr.Name #> = value?.ToString(); } }
+<#
+                    }
+                    else
+                    {
+#>
+		public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(InnerData.<#= attr.Name #>) ?? default; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value.ToString())) InnerData.<#= attr.Name #> = value.ToString(); } }
+<#
+                    }
+                }
+                else
+                {
 #>
 		public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return InnerData.<#= attr.Name #>; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value)) InnerData.<#= attr.Name #> = value; } }
 <#
+                }
 			}
 		}
 #>
@@ -889,6 +907,39 @@ if (!DALModel.IsAbstract)
 
         #endregion
 <#
+    var enumProperties = DALModel.Properties.Where(item => item.EnumValues != null).ToList();
+
+    if (enumProperties.Count != 0)
+    {
+#>
+
+        #region Enumerations
+
+<#
+		foreach (Property attr in enumProperties)
+		{
+			if (attr.EnumValues == null)
+                continue;
+#>
+        public enum <#= attr.Name #>Enum
+        {
+<#
+            foreach (string value in attr.EnumValues)
+            {
+#>
+            <#= value #>,
+<#
+            }
+#>
+        }
+
+<#
+        }
+#>
+        #endregion
+<#
+    }
+
 	if (DALModel.ContainsStaticData && SupportedKeyType(DALModel.Key.SystemReturnType))
     {
 #>
@@ -1004,9 +1055,27 @@ if (!DALModel.IsAbstract)
 			}
 			else
 			{
+                if (attr.EnumValues != null)
+                {
+                    if (attr.Nullable)
+                    {
+#>
+		<#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(OriginalData.<#= attr.Name #>); } }
+<#
+                    }
+                    else
+                    {
+#>
+		<#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return Parse<<#= attr.Parent.Name #>.<#= attr.Name #>Enum>(OriginalData.<#= attr.Name #>) ?? default; } }
+<#
+                    }
+                }
+                else
+                {
 #>
 		<#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>; } }
 <#
+                }
 			}
 		}
 #>
