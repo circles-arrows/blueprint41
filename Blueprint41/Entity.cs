@@ -87,10 +87,23 @@ namespace Blueprint41
         {
             get
             {
-                if (functionalId == null)
-                    functionalId = Inherits?.FunctionalId ?? Parent.FunctionalIds.Default;
+                if (functionalId == null && !IsAbstract)
+                    functionalId = FindFunctionalId();
 
                 return functionalId;
+
+                FunctionalId FindFunctionalId()
+                {
+                    Entity entity = this.Inherits;
+                    while(entity != null)
+                    {
+                        if (entity.functionalId != null)
+                            return entity.functionalId;
+
+                        entity = entity.Inherits;
+                    }
+                    return Parent.FunctionalIds.Default;
+                };
             }
         }
 
