@@ -87,7 +87,7 @@ namespace Blueprint41
         {
             get
             {
-                if (functionalId == null && !IsAbstract)
+                if (functionalId == null)
                     functionalId = Inherits?.FunctionalId ?? Parent.FunctionalIds.Default;
 
                 return functionalId;
