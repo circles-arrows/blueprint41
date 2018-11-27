@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Neo4j.Refactoring;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,6 @@ namespace Blueprint41.Core
 
             }, true);
         }
-
         internal abstract NodePersistenceProvider GetNodePersistenceProvider();
         internal abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider();
 
@@ -39,8 +39,19 @@ namespace Blueprint41.Core
         private Lazy<Dictionary<Type, Conversion>> convertFromStoredType;
         internal Dictionary<Type, Conversion> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
 
+        public static PersistenceProvider CurrentPersistenceProvider { get; private set; } = new Neo4JPersistenceProvider(null, null, null);
 
-        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4JPersistenceProvider(null, null, null);
+        private static GraphFeatures targetFeatures;
+        public static GraphFeatures TargetFeatures
+        {
+            get
+            {
+                if ((object)targetFeatures == null)
+                    throw new InvalidOperationException("Should call Initialize method.");
+
+                return targetFeatures;
+            }
+        }
 
         public static bool IsNeo4j
         {
@@ -51,6 +62,16 @@ namespace Blueprint41.Core
 
                 return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Neo4j.Persistence.Neo4JPersistenceProvider));
             }
+        }
+
+        public static void Initialize(Type type, params object[] connectionArgs)
+        {
+            if (type.IsSubclassOf(typeof(DatastoreModel)) == false)
+                throw new NotSupportedException($"{type} should be a subclass of DatastoreModel");
+
+            DatastoreModel model = (DatastoreModel)Activator.CreateInstance(type);
+            targetFeatures = model.TargetFeatures;
+            CurrentPersistenceProvider = (PersistenceProvider)Activator.CreateInstance(targetFeatures.PersistenceProviderType, connectionArgs);
         }
     }
 }

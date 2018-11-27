@@ -18,6 +18,9 @@ namespace Blueprint41.Neo4j.Schema
 
         internal static SchemaInfo FromDB(DatastoreModel model)
         {
+            if (model.TargetFeatures.Cypher == false)
+                return null;
+
             SchemaInfo info = new SchemaInfo(model);
 
             using (Transaction.Begin())
@@ -109,7 +112,7 @@ namespace Blueprint41.Neo4j.Schema
             }
             else
             {
-                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record.Values["sequence"].As<int?>()).FirstOrDefault()??0;
+                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record.Values["sequence"].As<int?>()).FirstOrDefault() ?? 0;
             }
         }
 
@@ -132,10 +135,10 @@ namespace Blueprint41.Neo4j.Schema
                     startFrom = startFrom > inDb.SequenceNumber ? startFrom : inDb.SequenceNumber;
                     actions.Add(
                         new Schema.ApplyFunctionalId(
-                            this, 
-                            inDb.Label, 
+                            this,
+                            inDb.Label,
                             inMemory.Prefix,
-                            startFrom, 
+                            startFrom,
                             ApplyFunctionalIdAction.UpdateFunctionalId));
                 }
             }
@@ -143,7 +146,7 @@ namespace Blueprint41.Neo4j.Schema
             foreach (var inDb in FunctionalIds)
             {
                 var inMemory = Model.FunctionalIds.FirstOrDefault(item => inDb.Label == item.Label);
-                if(inMemory == null)
+                if (inMemory == null)
                     actions.Add(new Schema.ApplyFunctionalId(this, inDb.Label, inDb.Prefix, inDb.SequenceNumber, ApplyFunctionalIdAction.DeleteFunctionalId));
             }
 

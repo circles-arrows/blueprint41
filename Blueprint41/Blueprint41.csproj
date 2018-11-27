@@ -45,9 +45,14 @@
 
   <ItemGroup>
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
+    <PackageReference Include="Gremlin.Net" Version="3.4.0-rc2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Neo4j.Driver" Version="1.7.0" />
     <PackageReference Include="System.CodeDom" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Gremlin\Blueprint41.Gremlin.csproj" />
   </ItemGroup>
 
   <ItemGroup>

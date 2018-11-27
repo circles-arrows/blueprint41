@@ -26,7 +26,7 @@ namespace Blueprint41.UnitTest.Tests
         public void OneTimeSetUp()
         {
             MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7687", "neo4j", "neo");
-            PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+            //PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();
 

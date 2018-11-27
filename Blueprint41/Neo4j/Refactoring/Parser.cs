@@ -37,6 +37,9 @@ namespace Blueprint41.Neo4j.Refactoring
 
             T template = new T();
 
+            if (PersistenceProvider.TargetFeatures.SupportsTemplate(template) == false)
+                return null;
+
             if (setup != null)
                 setup.Invoke(template);
 
@@ -85,7 +88,7 @@ namespace Blueprint41.Neo4j.Refactoring
         {
             if (!ShouldExecute)
                 return;
-
+                        
             ICounters counters;
             do
             {
@@ -94,10 +97,10 @@ namespace Blueprint41.Neo4j.Refactoring
                     IStatementResult result = Parser.PrivateExecute<T>(setup);
                     Transaction.Commit();
 
-                    counters = result.Consume().Counters;
+                    counters = result?.Consume().Counters;
                 }
             }
-            while (counters.ContainsUpdates);
+            while (counters != null && counters.ContainsUpdates);
         }
 
         internal static void ExecuteBatched(string cypher, Dictionary<string, object> parameters, bool withTransaction = true)
@@ -131,12 +134,12 @@ namespace Blueprint41.Neo4j.Refactoring
         {
             // the HasScriptPrivate method doesn't set hasScript = true
             hasScript = HasScriptPrivate(script);
-            return hasScript; 
+            return hasScript;
         }
         private static bool HasScriptPrivate(DatastoreModel.UpgradeScript script)
         {
             string query = "MATCH (version:RefactorVersion) RETURN version;";
-            var result = Neo4jTransaction.Run(query);
+            var result = Transaction.Run(query);
 
             IRecord record = result.FirstOrDefault();
             if (record == null)
@@ -207,7 +210,7 @@ namespace Blueprint41.Neo4j.Refactoring
         private static bool ShouldRefreshFunctionalIdsPrivate()
         {
             string query = "MATCH (version:RefactorVersion) RETURN version.LastRun as LastRun";
-            var result = Neo4jTransaction.Run(query);
+            var result = Transaction.Run(query);
 
             IRecord record = result.FirstOrDefault();
             if (record == null)

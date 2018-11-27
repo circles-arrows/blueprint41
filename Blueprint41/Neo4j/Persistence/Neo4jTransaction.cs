@@ -1,4 +1,5 @@
-﻿using Neo4j.Driver.V1;
+﻿using Blueprint41.Gremlin;
+using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Neo4j.Persistence
 {
-    
+
     public class Neo4jTransaction : Transaction
     {
         internal Neo4jTransaction(IDriver driver, bool withTransaction)
@@ -23,20 +24,49 @@ namespace Blueprint41.Neo4j.Persistence
             }
         }
 
-        public static IStatementResult Run(string cypher)
+        protected override IStatementResult RunPrivate(string cypher)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
+            Console.WriteLine("===========Neo4j Transaction=====================");
+            Console.WriteLine(cypher);
+            Console.WriteLine("===================================================");
+
+            Console.WriteLine();
+
+            Console.WriteLine("===========Gremlin Translation=====================");
+            Console.WriteLine(Translate.ToCosmos(cypher.Replace(Environment.NewLine, " ")) ?? "No translation");
+            Console.WriteLine("====================================================");
+
+            Console.WriteLine("#####################################################");
+            Console.WriteLine("#####################################################");
+            Console.WriteLine();
+
             IStatementResult results = trans.StatementRunner.Run(cypher);
             return results;
         }
-        public static IStatementResult Run(string cypher, Dictionary<string, object> parameters)
+        protected override IStatementResult RunPrivate(string cypher, Dictionary<string, object> parameters)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
+
+            Console.WriteLine("===========Neo4j Transaction=====================");
+            Console.WriteLine(cypher);
+            Console.WriteLine("===================================================");
+
+            Console.WriteLine();
+
+            Console.WriteLine("===========Gremlin Translation=====================");
+            Console.WriteLine(Translate.ToCosmos(cypher.ToCypherString(parameters).Replace(Environment.NewLine, " ")) ?? "No translation");
+            Console.WriteLine("====================================================");
+
+            Console.WriteLine("#####################################################");
+            Console.WriteLine("#####################################################");
+            Console.WriteLine();
+
 
             IStatementResult results = trans.StatementRunner.Run(cypher, parameters);
             return results;
@@ -57,7 +87,7 @@ namespace Blueprint41.Neo4j.Persistence
                 {
                     Transaction.Success();
                     Transaction.Dispose();
-                }   
+                }
             }
 
             if (Session != null)

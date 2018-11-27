@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Collections.ObjectModel;
 using Blueprint41;
 using System.Runtime.Serialization.Json;
+using System.Text.RegularExpressions;
 
 namespace System.Linq
 {
@@ -210,6 +211,29 @@ namespace System
             }
         }
 
+        public static string ToCypherString(this string cypher, Dictionary<string, object> parameters)
+        {
+            if (parameters != null)
+            {
+                foreach (var par in parameters)
+                {
+                    string jsonValue;
+
+                    // it won't properly serialize a dictionary if not passed by the type itself.
+                    if (par.Value is Dictionary<string, object> dictionaryValue)
+                        jsonValue = ToJson(dictionaryValue);
+                    else
+                        jsonValue = ToJson(par.Value);
+
+                    jsonValue = Regex.Replace(jsonValue, "(\"*[\\w\\d]*\":)", (match) => { return match.Value.Replace("\"", string.Empty); });
+                    jsonValue = jsonValue.Replace('"', '\'');
+                    cypher = cypher.Replace("{" + par.Key + "}", jsonValue);
+                }
+            }
+
+            return cypher;
+        }
+
         public static T FromJson<T>(this string self)
         {
             using (MemoryStream reader = new MemoryStream(Encoding.UTF8.GetBytes(self)))
@@ -220,7 +244,10 @@ namespace System
 
         private class Cache<T>
         {
-            public static DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(T));
+            public static DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(T), new DataContractJsonSerializerSettings()
+            {
+                UseSimpleDictionaryFormat = true,
+            });
         }
     }
 }

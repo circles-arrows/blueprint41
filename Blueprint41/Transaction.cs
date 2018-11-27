@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Core;
+using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -632,6 +633,23 @@ namespace Blueprint41
 
         internal bool FireEntityEvents { get { return (FireEvents & EventOptions.EntityEvents) == EventOptions.EntityEvents; } }
         internal bool FireGraphEvents { get { return (FireEvents & EventOptions.GraphEvents) == EventOptions.GraphEvents; } }
+
+        #endregion
+
+        #region Run
+
+        protected abstract IStatementResult RunPrivate(string cypher);
+        protected abstract IStatementResult RunPrivate(string cypher, Dictionary<string, object> parameters);
+
+        public static IStatementResult Run(string cypher)
+        {
+            return RunningTransaction.RunPrivate(cypher);
+        }
+
+        public static IStatementResult Run(string cypher, Dictionary<string, object> parameters)
+        {
+            return RunningTransaction.RunPrivate(cypher, parameters);
+        }
 
         #endregion
     }

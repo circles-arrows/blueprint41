@@ -40,6 +40,8 @@ namespace Blueprint41
         public FunctionalIdCollection FunctionalIds { get; private set; }
         public static List<DatastoreModel> RegisteredModels { get; } = new List<DatastoreModel>();
 
+        public virtual GraphFeatures TargetFeatures { get; } = GraphFeatures.Neo4j;
+
         public bool IsUpgraded
         {
             get
@@ -299,7 +301,7 @@ namespace Blueprint41
             if (!Parser.ShouldExecute)
                 return;
 
-            GetSchema().UpdateFunctionalIds();
+            GetSchema()?.UpdateFunctionalIds();
         }
 
         void IRefactorGlobal.ApplyConstraints()
@@ -308,7 +310,7 @@ namespace Blueprint41
             if (!Parser.ShouldExecute)
                 return;
 
-            GetSchema().UpdateConstraints();
+            GetSchema()?.UpdateConstraints();
         }
 
         void IRefactorGlobal.SetCreationDate()

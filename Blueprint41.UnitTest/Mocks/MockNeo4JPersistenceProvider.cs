@@ -44,5 +44,15 @@ namespace Blueprint41.UnitTest.Mocks
         {
 
         }
+
+        protected override IStatementResult RunPrivate(string cypher)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override IStatementResult RunPrivate(string cypher, Dictionary<string, object> parameters)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
