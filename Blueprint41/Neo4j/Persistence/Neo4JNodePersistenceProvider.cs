@@ -84,7 +84,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             Dictionary<string, object> customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
-            
+
             IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
             if (result.Summary.Counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
@@ -113,7 +113,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             Dictionary<string, object> customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
-            
+
             IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
             if (result.Summary.Counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
@@ -134,19 +134,23 @@ namespace Blueprint41.Neo4j.Persistence
             IDictionary<string, object> node = item.GetData();
 
             string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
-            if (item.GetKey() == null && entity.FunctionalId != null)
-            {
-                string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", entity.FunctionalId.Label);
-                if (entity.FunctionalId.Format == IdFormat.Numeric)
-                    nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
 
-                create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
-
-                node.Remove(entity.Key.Name);
-            }
-            else if (entity.FunctionalId != null)
+            if (PersistenceProvider.TargetFeatures.Cypher)
             {
-                entity.FunctionalId.SeenUid(item.GetKey().ToString());
+                if (item.GetKey() == null && entity.FunctionalId != null)
+                {
+                    string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", entity.FunctionalId.Label);
+                    if (entity.FunctionalId.Format == IdFormat.Numeric)
+                        nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
+
+                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
+
+                    node.Remove(entity.Key.Name);
+                }
+                else if (entity.FunctionalId != null)
+                {
+                    entity.FunctionalId.SeenUid(item.GetKey().ToString());
+                }
             }
 
             Dictionary<string, object> parameters = new Dictionary<string, object>();
@@ -328,7 +332,7 @@ namespace Blueprint41.Neo4j.Persistence
                     args.Sender = wrapper;
                     args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object>)node.Properties);
                     wrapper.SetData(args.Properties);
-                    wrapper.PersistenceState = PersistenceState.Loaded; 
+                    wrapper.PersistenceState = PersistenceState.Loaded;
                 }
                 else
                 {
@@ -360,7 +364,7 @@ namespace Blueprint41.Neo4j.Persistence
             }
 
             string search = text.Trim(' ', '(', ')').Replace("  ", " ").Replace(" ", " AND ");
-         
+
 
             List<string> queries = new List<string>();
             foreach (var property in fullTextProperties)
@@ -413,8 +417,8 @@ namespace Blueprint41.Neo4j.Persistence
                 pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
 
             string match = string.Format(
-                pattern, 
-                item.GetEntity().Label.Name, 
+                pattern,
+                item.GetEntity().Label.Name,
                 item.GetEntity().Key.Name,
                 foreignProperty.Relationship.Neo4JRelationshipType,
                 foreignProperty.Parent.Label.Name);
@@ -447,7 +451,7 @@ namespace Blueprint41.Neo4j.Persistence
                                 if (entityInstance.IsAbstract)
                                     continue;
 
-                                activators.Add(entityInstance.Name, delegate()
+                                activators.Add(entityInstance.Name, delegate ()
                                 {
                                     return System.Activator.CreateInstance(type) as OGM;
                                 });

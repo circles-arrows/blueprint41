@@ -9,13 +9,14 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using Datastore.Manipulation;
+using System.Collections.Generic;
 
 namespace Blueprint41Test
 {
     public class MovieModel : DatastoreModel<MovieModel>
     {
 
-        public override GraphFeatures TargetFeatures => GraphFeatures.Neo4j;
+        public override GraphFeatures TargetFeatures => GraphFeatures.Cosmos;
 
         protected override void SubscribeEventHandlers()
         {
@@ -74,37 +75,55 @@ namespace Blueprint41Test
         //[STAThread]
         static void Main(string[] args)
         {
+            string hostname = "9caa0e3e-0ee0-4-231-b9ee.gremlin.cosmosdb.azure.com";
+            int port = 443;
+            string authKey = "8NTSGVQfWB5LWhPNutO5040rhZv8kene3pTS1dHHOG9xWWQ0oCYatdYcA6Z6S81RoCYnCjzWSqYye7bGAqvgQQ==";
+            string database = "sample-database";
+            string collection = "sample-graph";
+
             string uri = "bolt://localhost:7687";
             string username = "neo4j";
             string pass = "neo";
             //"bolt://localhost:7687", "neo4j", "neo"
 
 
-            //PersistenceProvider.Initialize(typeof(MovieModel), hostname, port, authKey, database, collection);
-            PersistenceProvider.Initialize(typeof(MovieModel), uri, username, pass);
+            PersistenceProvider.Initialize(typeof(MovieModel), hostname, port, authKey, database, collection);
+            //PersistenceProvider.Initialize(typeof(MovieModel), uri, username, pass);
 
 
-            MovieModel model = new MovieModel();
-            model.Execute(true);
+            //MovieModel model = new MovieModel();
+            //model.Execute(true);
 
 
-            using (Transaction.Begin(true))
+            using (Transaction.Begin())
             {
-                Film matrix = new Film
-                {
-                    title = "The Matrix",
-                    release = 1999,
-                    tagline = "Welcome to the Real World"
-                };
+                //for(int i = 0; i < 10; i++)
+                //{
+                //    Film matrix = new Film()
+                //    {
+                //        title = "The Matrix",
+                //        release = 1999,
+                //        tagline = "Welcome to the Real World"
+                //    };
+                //}
+                    
 
-                Actor keanu = new Actor()
-                {
-                    fullname = "Keanu Reeves"
-                };
+                List<Film> film = Film.GetAll();
 
-                keanu.ActedFilms.Add(matrix);
+                //Film matrix = new Film
+                //{
+                //    Uid = "matrix",
+                //    title = "The Matrix",
+                //    release = 1999,
+                //    tagline = "Welcome to the Real World"
+                //};
 
-                Transaction.Commit();
+                //Actor keanu = new Actor()
+                //{
+                //    fullname = "Keanu Reeves"
+                //};
+
+                //keanu.ActedFilms.Add(matrix);
             }
 
             //string cypherText = File.ReadAllText(Environment.CurrentDirectory + "/moviegraph.txt");

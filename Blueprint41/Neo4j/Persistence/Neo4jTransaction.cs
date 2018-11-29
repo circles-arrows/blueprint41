@@ -30,19 +30,19 @@ namespace Blueprint41.Neo4j.Persistence
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
-            Console.WriteLine("===========Neo4j Transaction=====================");
-            Console.WriteLine(cypher);
-            Console.WriteLine("===================================================");
+            //Console.WriteLine("===========Neo4j Transaction=====================");
+            //Console.WriteLine(cypher);
+            //Console.WriteLine("===================================================");
 
-            Console.WriteLine();
+            //Console.WriteLine();
 
-            Console.WriteLine("===========Gremlin Translation=====================");
-            Console.WriteLine(Translate.ToCosmos(cypher.Replace(Environment.NewLine, " ")) ?? "No translation");
-            Console.WriteLine("====================================================");
+            //Console.WriteLine("===========Gremlin Translation=====================");
+            //Console.WriteLine(Translate.ToCosmos(cypher.Replace(Environment.NewLine, " ")) ?? "No translation");
+            //Console.WriteLine("====================================================");
 
-            Console.WriteLine("#####################################################");
-            Console.WriteLine("#####################################################");
-            Console.WriteLine();
+            //Console.WriteLine("#####################################################");
+            //Console.WriteLine("#####################################################");
+            //Console.WriteLine();
 
             IStatementResult results = trans.StatementRunner.Run(cypher);
             return results;
@@ -53,19 +53,19 @@ namespace Blueprint41.Neo4j.Persistence
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
-            Console.WriteLine("===========Neo4j Transaction=====================");
-            Console.WriteLine(cypher);
-            Console.WriteLine("===================================================");
+            //Console.WriteLine("===========Neo4j Transaction=====================");
+            //Console.WriteLine(cypher);
+            //Console.WriteLine("===================================================");
 
-            Console.WriteLine();
+            //Console.WriteLine();
 
-            Console.WriteLine("===========Gremlin Translation=====================");
-            Console.WriteLine(Translate.ToCosmos(cypher.ToCypherString(parameters).Replace(Environment.NewLine, " ")) ?? "No translation");
-            Console.WriteLine("====================================================");
+            //Console.WriteLine("===========Gremlin Translation=====================");
+            //Console.WriteLine(Translate.ToCosmos(cypher.ToCypherString(parameters).Replace(Environment.NewLine, " ")) ?? "No translation");
+            //Console.WriteLine("====================================================");
 
-            Console.WriteLine("#####################################################");
-            Console.WriteLine("#####################################################");
-            Console.WriteLine();
+            //Console.WriteLine("#####################################################");
+            //Console.WriteLine("#####################################################");
+            //Console.WriteLine();
 
 
             IStatementResult results = trans.StatementRunner.Run(cypher, parameters);
