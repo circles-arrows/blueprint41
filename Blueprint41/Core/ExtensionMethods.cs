@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using Blueprint41;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
+using Blueprint41.Response;
 
 namespace System.Linq
 {
@@ -248,6 +249,24 @@ namespace System
             {
                 UseSimpleDictionaryFormat = true,
             });
+        }
+    }
+}
+
+namespace Neo4j.Driver.V1
+{
+    public static partial class ExtensionMethods
+    {
+        public static IGraphResponse RunCypher(this IStatementRunner runner, string statement)
+        {
+            IStatementResult result = runner.Run(statement);
+            return GraphResponse.GetGraphResponse<IStatementResult>(result);
+        }
+
+        public static IGraphResponse RunCypher(this IStatementRunner runner, string statement, Dictionary<string, object> parameters)
+        {
+            IStatementResult result = runner.Run(statement);
+            return GraphResponse.GetGraphResponse<IStatementResult>(result);
         }
     }
 }

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Blueprint41;
+using Blueprint41.Response;
 
 namespace Blueprint41.Neo4j.Persistence
 {
@@ -24,7 +26,7 @@ namespace Blueprint41.Neo4j.Persistence
             }
         }
 
-        protected override IStatementResult RunPrivate(string cypher)
+        protected override IGraphResponse RunPrivate(string cypher)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
@@ -44,10 +46,10 @@ namespace Blueprint41.Neo4j.Persistence
             //Console.WriteLine("#####################################################");
             //Console.WriteLine();
 
-            IStatementResult results = trans.StatementRunner.Run(cypher);
+            IGraphResponse results = trans.StatementRunner.RunCypher(cypher);
             return results;
         }
-        protected override IStatementResult RunPrivate(string cypher, Dictionary<string, object> parameters)
+        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
@@ -68,7 +70,7 @@ namespace Blueprint41.Neo4j.Persistence
             //Console.WriteLine();
 
 
-            IStatementResult results = trans.StatementRunner.Run(cypher, parameters);
+            IGraphResponse results = trans.StatementRunner.RunCypher(cypher, parameters);
             return results;
         }
 
@@ -128,7 +130,7 @@ namespace Blueprint41.Neo4j.Persistence
             lock (functionalId)
             {
                 string query = $"CALL blueprint41.functionalid.setSequenceNumber('{functionalId.Label}', {functionalId.highestSeenId}, {(functionalId.Format == IdFormat.Numeric).ToString().ToLowerInvariant()})";
-                Run(query);
+                RunPrivate(query);
                 functionalId.wasApplied = true;
                 functionalId.highestSeenId = -1;
             }

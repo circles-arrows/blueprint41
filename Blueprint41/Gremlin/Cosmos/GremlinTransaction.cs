@@ -59,27 +59,22 @@ namespace Blueprint41.Gremlin.Cosmos
             base.FlushPrivate();
         }
 
-        protected override IStatementResult RunPrivate(string cypher)
+        protected override IGraphResponse RunPrivate(string cypher)
         {
             if ((RunningTransaction is GremlinTransaction grem && this == grem) == false)
                 throw new InvalidOperationException("The current transaction is not a Gremlin transaction.");
 
             string gremlinQuery = Translate.ToCosmos(cypher);
-
-            ResponseResult resultSet = Client.QueryAsync(gremlinQuery).Result;
-            return new CustomIStatementResult();
+            return Client.QueryAsync(gremlinQuery).Result;
         }
 
-        protected override IStatementResult RunPrivate(string cypher, Dictionary<string, object> parameters)
+        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters)
         {
             if ((RunningTransaction is GremlinTransaction grem && this == grem) == false)
                 throw new InvalidOperationException("The current transaction is not a Gremlin transaction.");
 
             string gremlinQuery = Translate.ToCosmos(cypher.ToCypherString(parameters));
-
-            ResponseResult a = Client.QueryAsync(gremlinQuery).Result;
-
-            return new CustomIStatementResult();
+            return Client.QueryAsync(gremlinQuery).Result;
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using Gremlin.Net.Driver;
 using Gremlin.Net.Driver.Exceptions;
+using Neo4j.Driver.V1;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -12,7 +13,7 @@ using System.Text;
 
 namespace Blueprint41.Response
 {
-    public class ResponseResult
+    public class GremlinResult
     {
         public static JsonSerializerSettings DefaultSerializerSettings = new JsonSerializerSettings()
         {
@@ -47,13 +48,13 @@ namespace Blueprint41.Response
         public long StatusCode { get; }
         public string ErrorMessage { get; }
 
-        public ResponseResult(ResultSet<JToken> resultSet)
+        public GremlinResult(ResultSet<JToken> resultSet)
         {
             ResultSet = resultSet ?? throw new System.ArgumentNullException(nameof(resultSet));
             StatusCode = (long)ResultSet.StatusAttributes["x-ms-status-code"];
         }
 
-        public ResponseResult(ResponseException ex)
+        public GremlinResult(ResponseException ex)
         {
             ErrorMessage = ex.Message;
             long.TryParse(ex.StatusCode.ToString(), out long statusCode);

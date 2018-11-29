@@ -1,4 +1,7 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.Response;
+using Gremlin.Net.Driver.Exceptions;
+using Gremlin.Net.Driver.Messages;
 using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
@@ -17,7 +20,7 @@ namespace Blueprint41
         {
             InTransaction = true;
             DisableForeignKeyChecks = false;
-        } 
+        }
 
         #region Transaction Logic
 
@@ -138,7 +141,7 @@ namespace Blueprint41
                     if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
                     {
                         entity.Save();
-                        Dictionary<object, OGM> cache; 
+                        Dictionary<object, OGM> cache;
                         if (entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
                             cache.Remove(entity.GetKey());
                         entitySet.Remove(entity);
@@ -208,7 +211,7 @@ namespace Blueprint41
 
         protected void ApplyFunctionalIds()
         {
-            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item=> item != null))
+            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item => item != null))
             {
                 ApplyFunctionalId(functionalId);
             }
@@ -443,7 +446,7 @@ namespace Blueprint41
             {
                 List<OGM> parents = new List<OGM>(initialSize);
                 foreach (Core.EntityCollectionBase item in chunk)
-                    if(item.Parent.PersistenceState != PersistenceState.New && item.Parent.PersistenceState != PersistenceState.NewAndChanged)
+                    if (item.Parent.PersistenceState != PersistenceState.New && item.Parent.PersistenceState != PersistenceState.NewAndChanged)
                         parents.Add(item.Parent);
 
                 Dictionary<OGM, CollectionItemList> allItems = RelationshipPersistenceProvider.Load(parents, collection);
@@ -451,7 +454,7 @@ namespace Blueprint41
                 foreach (Core.EntityCollectionBase item in chunk)
                 {
                     CollectionItemList items = null;
-                    if(allItems.TryGetValue(item.Parent, out items))
+                    if (allItems.TryGetValue(item.Parent, out items))
                         item.InitialLoad(items.Items);
                     else
                         item.InitialLoad(new List<CollectionItem>());
@@ -638,15 +641,15 @@ namespace Blueprint41
 
         #region Run
 
-        protected abstract IStatementResult RunPrivate(string cypher);
-        protected abstract IStatementResult RunPrivate(string cypher, Dictionary<string, object> parameters);
+        protected abstract IGraphResponse RunPrivate(string cypher);
+        protected abstract IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters);
 
-        public static IStatementResult Run(string cypher)
+        public static IGraphResponse Run(string cypher)
         {
             return RunningTransaction.RunPrivate(cypher);
         }
 
-        public static IStatementResult Run(string cypher, Dictionary<string, object> parameters)
+        public static IGraphResponse Run(string cypher, Dictionary<string, object> parameters)
         {
             return RunningTransaction.RunPrivate(cypher, parameters);
         }
