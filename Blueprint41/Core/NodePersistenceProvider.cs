@@ -160,7 +160,7 @@ namespace Blueprint41.Core
 
             var result = Transaction.Run(args.Cypher, args.Parameters);
             return Load<T>(entity, args, result, trans);
-        } 
+        }
         #endregion
 
         #region Load
@@ -197,6 +197,7 @@ namespace Blueprint41.Core
 
             string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
 
+            // TODO: Check for a better way to check it supports functional Id
             if (PersistenceProvider.TargetFeatures.FunctionalId)
             {
                 if (item.GetKey() == null && entity.FunctionalId != null)
@@ -225,17 +226,138 @@ namespace Blueprint41.Core
             Insert(item, entity, response, args);
         }
 
-        protected abstract void Insert(OGM item, Entity entity, IGraphResponse response, NodeEventArgs args); 
+        protected abstract void Insert(OGM item, Entity entity, IGraphResponse response, NodeEventArgs args);
         #endregion
 
+        #region Update
+        public virtual void Update(OGM item)
+        {
+            Transaction trans = Transaction.RunningTransaction;
+            Entity entity = item.GetEntity();
 
-        public abstract void Update(OGM item);
-        public abstract void Delete(OGM item);
+            string match;
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("key", item.GetKey());
 
-        public abstract void ForceDelete(OGM item);
+            if (entity.RowVersion == null)
+            {
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name);
+            }
+            else
+            {
+                parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                item.SetRowVersion(trans.TransactionDate);
+            }
+
+            IDictionary<string, object> node = item.GetData();
+            parameters.Add("newValues", node);
+
+            Dictionary<string, object> customState = null;
+            var args = entity.RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
+
+            IGraphResponse response = Transaction.Run(args.Cypher, args.Parameters);
+
+            Update(response, item, entity);
+
+            entity.RaiseOnNodeUpdated(trans, args);
+            item.PersistenceState = PersistenceState.Persisted;
+        }
+
+        protected abstract void Update(IGraphResponse response, OGM item, Entity entity);
+        #endregion
+
+        #region Delete
+        public virtual void Delete(OGM item)
+        {
+            Transaction trans = Transaction.RunningTransaction;
+            Entity entity = item.GetEntity();
+
+            string match;
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("key", item.GetKey());
+
+            if (entity.RowVersion == null)
+            {
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DELETE node", entity.Label.Name, entity.Key.Name);
+            }
+            else
+            {
+                parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+            }
+
+            Dictionary<string, object> customState = null;
+            var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
+
+            IGraphResponse response = Transaction.Run(args.Cypher, args.Parameters);
+
+            Delete(response, item, entity);
+
+            entity.RaiseOnNodeDeleted(trans, args);
+        }
+
+        protected abstract void Delete(IGraphResponse response, OGM item, Entity entity);
+        #endregion
+
+        #region ForceDelete
+        public virtual void ForceDelete(OGM item)
+        {
+            Transaction trans = Transaction.RunningTransaction;
+            Entity entity = item.GetEntity();
+
+            string match;
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("key", item.GetKey());
+
+            if (entity.RowVersion == null)
+            {
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DETACH DELETE node", entity.Label.Name, entity.Key.Name);
+            }
+            else
+            {
+                parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+            }
+
+            Dictionary<string, object> customState = null;
+            var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
+
+            IGraphResponse response = Transaction.Run(args.Cypher, args.Parameters);
+            ForceDelete(response, item, entity);
+            entity.RaiseOnNodeDeleted(trans, args);
+        }
+
+        protected abstract void ForceDelete(IGraphResponse response, OGM item, Entity entity); 
+        #endregion
 
         public abstract string NextFunctionID(FunctionalId functionalId);
 
-        public abstract bool RelationshipExists(Property foreignProperty, OGM instance);
+        #region RelationsipExists
+        public virtual bool RelationshipExists(Property foreignProperty, OGM item)
+        {
+            string pattern;
+            if (foreignProperty.Direction == DirectionEnum.In)
+                pattern = "MATCH (node:{0})<-[:{2}]-(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
+            else
+                pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
+
+            string match = string.Format(
+                pattern,
+                item.GetEntity().Label.Name,
+                item.GetEntity().Key.Name,
+                foreignProperty.Relationship.Neo4JRelationshipType,
+                foreignProperty.Parent.Label.Name);
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("key", item.GetKey());
+
+            IGraphResponse response = Transaction.Run(match, parameters);
+
+            return RelationshipExists(response);
+        }
+
+        protected abstract bool RelationshipExists(IGraphResponse response); 
+        #endregion
     }
 }

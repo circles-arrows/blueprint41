@@ -14,17 +14,17 @@ namespace Blueprint41.Gremlin
 {
     public static class GremlinClientExtension
     {
-        public static async Task<GraphResponse<GremlinResult>> QueryAsync(this GremlinClient client, string query)
+        public static async Task<GraphResponse> QueryAsync(this GremlinClient client, string query)
         {
             try
             {
                 ResultSet<JToken> result = await client.SubmitAsync<JToken>(query);
-                return GraphResponse<GremlinResult>.GetGraphResponse<GremlinResult>(result);
+                return GraphResponse.GetGraphResponse<GremlinResult>(result);
             }
 
             catch (ResponseException ex)
             {
-                return GraphResponse<GremlinResult>.GetGraphResponse<GremlinResult>(ex);
+                return GraphResponse.GetGraphResponse<GremlinResult>(ex);
             }
         }
     }

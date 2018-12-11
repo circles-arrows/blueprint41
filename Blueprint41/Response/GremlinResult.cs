@@ -73,8 +73,7 @@ namespace Blueprint41.Response
         {
             switch (reader.TokenType)
             {
-                case JsonToken.Null:
-                    return null;
+                case JsonToken.StartArray:
                 case JsonToken.StartObject:
                     JToken o = JToken.ReadFrom(reader);
                     return ConvertToType(o);
@@ -120,16 +119,14 @@ namespace Blueprint41.Response
                     JArray arr = (JArray)token;
 
                     //Gremlin seems to add "id" on the property thus making the result an array of values
-                    // So when an array is equal to 1, just return the first value and not making it an array.
+                    // So when an array is equal to 1, just return the first value.
 
                     if (arr.Count == 1)
                         return ConvertToType(arr[0]);
 
                     List<object> array = new List<object>();
                     for (var i = 0; i < arr.Count; i++)
-                    {
                         array.Add(ConvertToType(arr[i]));
-                    }
 
                     return array.ToArray();
             }
