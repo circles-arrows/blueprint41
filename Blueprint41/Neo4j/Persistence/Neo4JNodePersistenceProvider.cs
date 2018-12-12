@@ -334,7 +334,9 @@ namespace Blueprint41.Neo4j.Persistence
                 {
                     args.Sender = wrapper;
                     args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object>)node.Properties);
-                    if (wrapper.PersistenceState == PersistenceState.HasUid || wrapper.PersistenceState == PersistenceState.Loaded || wrapper.PersistenceState == PersistenceState.Persisted)
+
+                    PersistenceState tmp = wrapper.PersistenceState;
+                    if (tmp == PersistenceState.HasUid || tmp == PersistenceState.Loaded || tmp == PersistenceState.Persisted)
                     {
                         wrapper.SetData(args.Properties);
                         wrapper.PersistenceState = PersistenceState.Loaded;
