@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Neo4j.Driver.V1;
 using Blueprint41.Dynamic;
 using Blueprint41.Neo4j.Refactoring;
+using Blueprint41.Response;
 
 namespace Blueprint41.Neo4j.Persistence
 {
@@ -344,7 +345,7 @@ namespace Blueprint41.Neo4j.Persistence
                 parameters.Add("MinDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
-                IStatementResult result = Neo4jTransaction.Run(find, parameters);
+                IGraphResponse result = Neo4jTransaction.Run(find, parameters);
                 IRecord record = result.FirstOrDefault();
                 int count = record["Count"].As<int>();
                 if (count > 0)
