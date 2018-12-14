@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Blueprint41.Response
 {
-    public class GremlinResult
+    public class GremlinResult : IEnumerable<IRecord>, IEnumerable
     {
         public static JsonSerializerSettings DefaultSerializerSettings = new JsonSerializerSettings()
         {
@@ -29,20 +29,23 @@ namespace Blueprint41.Response
         /// </summary>
         public ResultSet<JToken> ResultSet { get; }
 
-        private List<object> data;
-        public List<object> Data
+        /// <summary>
+        /// The gremlin result
+        /// </summary>
+        private List<IRecord> result;
+        public List<IRecord> Result
         {
             get
             {
-                if (data == null)
+                if (result == null)
                 {
                     JsonSerializer serializer = JsonSerializer.Create(DefaultSerializerSettings);
-                    data = new List<object>();
+                    result = new List<IRecord>();
 
                     foreach (JToken token in ResultSet)
-                        data.Add(token.ToObject<object>(serializer));
+                        result.Add(token.ToObject<IRecord>(serializer));
                 }
-                return data;
+                return result;
             }
         }
         public long StatusCode { get; }
@@ -58,15 +61,27 @@ namespace Blueprint41.Response
         {
             ErrorMessage = ex.Message;
             long.TryParse(ex.StatusCode.ToString(), out long statusCode);
-            StatusCode = statusCode;
+            StatusCode = (long)ex.StatusAttributes["x-ms-status-code"];
+        }
+
+        public IEnumerator<IRecord> GetEnumerator()
+        {
+            return Result.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
+
+    
 
     public class GremlinConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(object);
+            return objectType == typeof(IRecord);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -74,9 +89,11 @@ namespace Blueprint41.Response
             switch (reader.TokenType)
             {
                 case JsonToken.StartArray:
+                    JToken array = JToken.ReadFrom(reader);
+                    return RecordWrapper.CreateFromJArray((JArray)array);
                 case JsonToken.StartObject:
-                    JToken o = JToken.ReadFrom(reader);
-                    return ConvertToType(o);
+                    JToken obj = JToken.ReadFrom(reader);
+                    return RecordWrapper.CreateFromJObject((JObject)obj);
                 default:
                     throw new JsonSerializationException("Unexpected reader.TokenType: " + reader.TokenType);
             }
@@ -85,52 +102,6 @@ namespace Blueprint41.Response
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
-        }
-
-        private static Dictionary<JTokenType, Type> ScalerTypeCache = new Dictionary<JTokenType, Type>()
-        {
-            { JTokenType.Boolean, typeof(bool) },
-            { JTokenType.String, typeof(string) },
-            { JTokenType.Date, typeof(DateTime) },
-            { JTokenType.Float, typeof(float) },
-            { JTokenType.Integer, typeof(int) },
-            { JTokenType.TimeSpan, typeof(TimeSpan) },
-        };
-
-        private object ConvertToType(JToken token)
-        {
-            if (ScalerTypeCache.ContainsKey(token.Type))
-                return token.ToObject(ScalerTypeCache[token.Type]);
-
-            switch (token.Type)
-            {
-                case JTokenType.Property:
-                    JProperty prop = (JProperty)token;
-                    return ConvertToType(prop.Value);
-
-                case JTokenType.Object:
-                    Dictionary<string, object> values = new Dictionary<string, object>();
-                    JObject obj = (JObject)token;
-                    foreach (JProperty property in obj.Properties())
-                        values.Add(property.Name, ConvertToType(property));
-
-                    return values;
-                case JTokenType.Array:
-                    JArray arr = (JArray)token;
-
-                    //Gremlin seems to add "id" on the property thus making the result an array of values
-                    // So when an array is equal to 1, just return the first value.
-
-                    if (arr.Count == 1)
-                        return ConvertToType(arr[0]);
-
-                    List<object> array = new List<object>();
-                    for (var i = 0; i < arr.Count; i++)
-                        array.Add(ConvertToType(arr[i]));
-
-                    return array.ToArray();
-            }
-            return null;
         }
     }
 }

@@ -72,17 +72,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\_Projects\Xirqlz\Blueprint41.Modeller.Document\Blueprint41.Modeller.Document.csproj">
-      <Project>{af87ce1c-53d9-460d-b0d3-30c8152f78e4}</Project>
-      <Name>Blueprint41.Modeller.Document</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Blueprint41.Gremlin\Blueprint41.Gremlin.csproj">
       <Project>{36e7c5f8-e652-4efa-9c48-45d8932a4ec7}</Project>
       <Name>Blueprint41.Gremlin</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Blueprint41.Modeller.Schemas\Blueprint41.Modeller.Schemas.csproj">
-      <Project>{ce27c579-0842-46a2-8aba-d21908ac00b6}</Project>
-      <Name>Blueprint41.Modeller.Schemas</Name>
     </ProjectReference>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj">
       <Project>{B24F3C43-0B21-474A-8B42-E9E165E2F8CF}</Project>

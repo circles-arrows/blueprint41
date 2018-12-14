@@ -3,6 +3,7 @@ using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Refactoring;
 using Blueprint41.Neo4j.Refactoring.Templates;
 using Blueprint41.Neo4j.Schema;
+using Blueprint41.Response;
 using Force.Crc32;
 using Neo4j.Driver.V1;
 using System;
@@ -409,8 +410,8 @@ namespace Blueprint41
             /// </summary>
             /// <param name="cypher">The query</param>
             /// <param name="parameters">Any parameters used in the query</param>
-            /// <returns>An IStatementResult object</returns>
-            public IStatementResult ExecuteCypher(string cypher, Dictionary<string, object> parameters = null)
+            /// <returns>An IGraphResponse object</returns>
+            public IGraphResponse ExecuteCypher(string cypher, Dictionary<string, object> parameters = null)
             {
                 Transaction trans = Transaction.RunningTransaction;
 
@@ -419,7 +420,7 @@ namespace Blueprint41
 
                 Dictionary<string, object> convertedParams = parameters.ToDictionary(item => item.Key, item => ((object)item.Value == null) ? null : trans.ConvertToStoredType(item.Value.GetType(), item.Value));
 
-                return Neo4jTransaction.Run(cypher, convertedParams);
+                return Transaction.Run(cypher, convertedParams);
             }
 
             #endregion

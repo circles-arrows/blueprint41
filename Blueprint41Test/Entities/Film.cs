@@ -15,7 +15,7 @@ namespace Datastore.Manipulation
 		string Uid { get; }
 		string title { get; }
 		string tagline { get; }
-		int? release { get; }
+		int release { get; }
 		IEnumerable<Actor> Actors { get; }
 		IEnumerable<Actor> Directors { get; }
 		IEnumerable<Actor> Producers { get; }
@@ -73,7 +73,7 @@ namespace Datastore.Manipulation
 
 		public override string ToString()
         {
-            return $"Film => Uid : {this.Uid}, title : {this.title?.ToString() ?? "null"}, tagline : {this.tagline?.ToString() ?? "null"}, release : {this.release?.ToString() ?? "null"}";
+            return $"Film => Uid : {this.Uid}, title : {this.title}, tagline : {this.tagline?.ToString() ?? "null"}, release : {this.release}";
         }
 
         public override int GetHashCode()
@@ -101,6 +101,10 @@ namespace Datastore.Manipulation
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
 #pragma warning disable CS0472
+			if (InnerData.title == null)
+				throw new PersistenceException(string.Format("Cannot save Film with key '{0}' because the title cannot be null.", this.Uid?.ToString() ?? "<null>"));
+			if (InnerData.release == null)
+				throw new PersistenceException(string.Format("Cannot save Film with key '{0}' because the release cannot be null.", this.Uid?.ToString() ?? "<null>"));
 #pragma warning restore CS0472
 		}
 
@@ -156,7 +160,7 @@ namespace Datastore.Manipulation
 				dictionary.Add("Uid",  Uid);
 				dictionary.Add("title",  title);
 				dictionary.Add("tagline",  tagline);
-				dictionary.Add("release",  Conversion<int?, long?>.Convert(release));
+				dictionary.Add("release",  Conversion<int, long>.Convert(release));
 				return dictionary;
 			}
 
@@ -180,7 +184,7 @@ namespace Datastore.Manipulation
 			public string Uid { get; set; }
 			public string title { get; set; }
 			public string tagline { get; set; }
-			public int? release { get; set; }
+			public int release { get; set; }
 			public EntityCollection<Actor> Actors { get; private set; }
 			public EntityCollection<Actor> Directors { get; private set; }
 			public EntityCollection<Actor> Producers { get; private set; }
@@ -198,7 +202,7 @@ namespace Datastore.Manipulation
 		public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
 		public string title { get { LazyGet(); return InnerData.title; } set { if (LazySet(Members.title, InnerData.title, value)) InnerData.title = value; } }
 		public string tagline { get { LazyGet(); return InnerData.tagline; } set { if (LazySet(Members.tagline, InnerData.tagline, value)) InnerData.tagline = value; } }
-		public int? release { get { LazyGet(); return InnerData.release; } set { if (LazySet(Members.release, InnerData.release, value)) InnerData.release = value; } }
+		public int release { get { LazyGet(); return InnerData.release; } set { if (LazySet(Members.release, InnerData.release, value)) InnerData.release = value; } }
 		public EntityCollection<Actor> Actors { get { return InnerData.Actors; } }
 		private void ClearActors(DateTime? moment)
 		{
@@ -815,7 +819,7 @@ namespace Datastore.Manipulation
 		string IFilmOriginalData.Uid { get { return OriginalData.Uid; } }
 		string IFilmOriginalData.title { get { return OriginalData.title; } }
 		string IFilmOriginalData.tagline { get { return OriginalData.tagline; } }
-		int? IFilmOriginalData.release { get { return OriginalData.release; } }
+		int IFilmOriginalData.release { get { return OriginalData.release; } }
 		IEnumerable<Actor> IFilmOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
 		IEnumerable<Actor> IFilmOriginalData.Directors { get { return OriginalData.Directors.OriginalData; } }
 		IEnumerable<Actor> IFilmOriginalData.Producers { get { return OriginalData.Producers.OriginalData; } }

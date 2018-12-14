@@ -1,18 +1,19 @@
 ﻿using Neo4j.Driver.V1;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Blueprint41.Response
 {
-    public interface IGraphResponse
+    public interface IGraphResponse : IEnumerable<IRecord>, IEnumerable
     {
-        object Data { get; }
+        object Result { get; }
     }
 
     public class GraphResponse : IGraphResponse
     {
-        public object Data { get; private set; }
+        public object Result { get; private set; }
 
         public static GraphResponse GetGraphResponse<T>(object result)
         {
@@ -21,16 +22,32 @@ namespace Blueprint41.Response
             Type t = typeof(T);
             if (t == (typeof(IStatementResult)))
             {
-                graph.Data = (T)result;
+                graph.Result = (T)result;
             }
             else if (t == typeof(GremlinResult))
             {
-                graph.Data = (T)Activator.CreateInstance(t, result);
+                graph.Result = (T)Activator.CreateInstance(t, result);
             }
             else
                 throw new NotSupportedException($"The type {t} is not yet supported");
 
             return graph;
+        }
+
+        public IEnumerator<IRecord> GetEnumerator()
+        {
+            if (Result is IStatementResult res)
+                return res.GetEnumerator();
+
+            if (Result is GremlinResult grem)
+                return grem.GetEnumerator();
+
+            throw new NotSupportedException($"The type {Result.GetType()} is not supported.");
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 

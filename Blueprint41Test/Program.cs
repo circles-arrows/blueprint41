@@ -1,7 +1,6 @@
 ﻿using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Gremlin;
-using Blueprint41.Modeller.Schemas;
 using org.opencypher.gremlin.translation;
 using org.opencypher.gremlin.translation.groovy;
 using org.opencypher.gremlin.translation.translator;
@@ -10,6 +9,7 @@ using System.IO;
 using System.Windows.Forms;
 using Datastore.Manipulation;
 using System.Collections.Generic;
+using Blueprint41.DatastoreTemplates;
 
 namespace Blueprint41Test
 {
@@ -31,15 +31,15 @@ namespace Blueprint41Test
             Entities.New("Film")
                 .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                 .SetKey("Uid", true)
-                .AddProperty("title", typeof(string))
+                .AddProperty("title", typeof(string), false)
                 .AddProperty("tagline", typeof(string))
-                .AddProperty("release", typeof(int));
+                .AddProperty("release", typeof(int), false);
 
             Entities.New("Actor")
                  .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                 .SetKey("Uid", true)
-                .AddProperty("name", typeof(string))
-                .AddProperty("born", typeof(int));
+                .AddProperty("name", typeof(string), false)
+                .AddProperty("born", typeof(int), false);
 
             Relations.New(Entities["Actor"], Entities["Film"], "PERSON_ACTED_IN_FILM", "ACTED_IN")
                 .SetInProperty("ActedFilms", PropertyType.Collection)
@@ -58,7 +58,6 @@ namespace Blueprint41Test
                 .SetOutProperty("Writers", PropertyType.Collection);
         }
 
-
         [Version(0, 0, 1)]
         public void RefactorModel()
         {
@@ -66,7 +65,6 @@ namespace Blueprint41Test
             Entities["Actor"].Properties["born"].Refactor.Deprecate();
 
             Relations["PERSON_DIRECTED_FILM"].Refactor.Rename("ACTOR_DIRECTED_FILM");
-
         }
     }
 
@@ -75,6 +73,18 @@ namespace Blueprint41Test
         //[STAThread]
         static void Main(string[] args)
         {
+            //int a = 10999;
+            //object value = a;
+            //long val = (int)value;
+            //int release = Conversion<long, int>.Convert((long)value);
+
+            //object ooo = 10999;
+            //var kkk = (long)ooo;
+
+            //return;
+
+
+
             string hostname = "9caa0e3e-0ee0-4-231-b9ee.gremlin.cosmosdb.azure.com";
             int port = 443;
             string authKey = "8NTSGVQfWB5LWhPNutO5040rhZv8kene3pTS1dHHOG9xWWQ0oCYatdYcA6Z6S81RoCYnCjzWSqYye7bGAqvgQQ==";
@@ -90,25 +100,32 @@ namespace Blueprint41Test
             PersistenceProvider.Initialize(typeof(MovieModel), hostname, port, authKey, database, collection);
             //PersistenceProvider.Initialize(typeof(MovieModel), uri, username, pass);
 
+            //string projectFolder = Environment.CurrentDirectory + "\\..\\..\\";
+            //GeneratorSettings settings = new GeneratorSettings(projectFolder);
+            //GeneratorResult result = Generator.Execute<MovieModel>(settings);
+
 
             //MovieModel model = new MovieModel();
             //model.Execute(true);
 
-
-            using (Transaction.Begin())
+            //return;
+            using (Transaction.Begin(true))
             {
                 //for(int i = 0; i < 10; i++)
                 //{
-                //    Film matrix = new Film()
-                //    {
-                //        title = "The Matrix",
-                //        release = 1999,
-                //        tagline = "Welcome to the Real World"
-                //    };
+                //Film matrix = new Film()
+                //{
+                //    Uid = Guid.NewGuid().ToString(),
+                //    title = "The Matrix",
+                //    release = 1999,
+                //    tagline = "Welcome to the Real World"
+                //};
                 //}
-                    
 
-                List<Film> film = Film.GetAll();
+                Film f = Film.Load("7c71dfe3-83c6-4527-a1c1-8bf089073fa3");
+                f.ForceDelete();
+
+                // List<Film> films = Film.GetAll();
 
                 //Film matrix = new Film
                 //{
@@ -124,6 +141,8 @@ namespace Blueprint41Test
                 //};
 
                 //keanu.ActedFilms.Add(matrix);
+
+                Transaction.Commit();
             }
 
             //string cypherText = File.ReadAllText(Environment.CurrentDirectory + "/moviegraph.txt");
@@ -135,7 +154,7 @@ namespace Blueprint41Test
             //    c += "CREATE " + cy.Trim() + " ";
             //}
 
-            Console.ReadLine();
+            // Console.ReadLine();
 
             return;
 

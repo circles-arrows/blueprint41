@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Blueprint41.Response;
 using Neo4j.Driver.V1;
 
 namespace Blueprint41.Neo4j.Schema
@@ -47,7 +48,7 @@ namespace Blueprint41.Neo4j.Schema
                 try
                 {
                     retry = false;
-                    IStatementResult result = Persistence.Neo4jTransaction.Run(procedure);
+                    IGraphResponse result = Transaction.Run(procedure);
                     data = result.Select(processor).ToArray();
                 }
                 catch (ClientException clientException)

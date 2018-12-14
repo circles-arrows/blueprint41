@@ -1,6 +1,7 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Refactoring.Templates;
+using Blueprint41.Response;
 using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace Blueprint41.Neo4j.Refactoring
         //    }
         //}
 
-        private static IStatementResult PrivateExecute<T>(Action<T> setup)
+        private static IGraphResponse PrivateExecute<T>(Action<T> setup)
             where T : TemplateBase, new()
         {
             if (!ShouldExecute)
@@ -46,9 +47,9 @@ namespace Blueprint41.Neo4j.Refactoring
             string cypher = template.TransformText();
 
             if (template.OutputParameters.Count == 0)
-                return Neo4jTransaction.Run(cypher);
+                return Transaction.Run(cypher);
             else
-                return Neo4jTransaction.Run(cypher, template.OutputParameters);
+                return Transaction.Run(cypher, template.OutputParameters);
         }
 
         internal static void Execute<T>(Action<T> setup, bool withTransaction = true)
@@ -59,48 +60,49 @@ namespace Blueprint41.Neo4j.Refactoring
 
             using (Transaction.Begin(withTransaction))
             {
-                IStatementResult result = Parser.PrivateExecute<T>(setup);
+                IGraphResponse result = Parser.PrivateExecute<T>(setup);
                 Transaction.Commit();
             }
         }
 
-        internal static IStatementResult Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true)
+        internal static IGraphResponse Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true)
         {
             if (!ShouldExecute)
                 return null;
 
-            IStatementResult result;
+            IGraphResponse result;
 
             using (Transaction.Begin(withTransaction))
             {
                 if (parameters == null || parameters.Count == 0)
-                    result = Neo4jTransaction.Run(cypher);
+                    result = Transaction.Run(cypher);
                 else
-                    result = Neo4jTransaction.Run(cypher, parameters);
+                    result = Transaction.Run(cypher, parameters);
                 Transaction.Commit();
             }
 
             return result;
         }
 
+        // TODO: Execute Batches
         internal static void ExecuteBatched<T>(Action<T> setup, bool withTransaction = true)
             where T : TemplateBase, new()
         {
-            if (!ShouldExecute)
-                return;
+            //if (!ShouldExecute)
+            //    return;
                         
-            ICounters counters;
-            do
-            {
-                using (Transaction.Begin(withTransaction))
-                {
-                    IStatementResult result = Parser.PrivateExecute<T>(setup);
-                    Transaction.Commit();
+            //ICounters counters;
+            //do
+            //{
+            //    using (Transaction.Begin(withTransaction))
+            //    {
+            //        IGraphResponse result = Parser.PrivateExecute<T>(setup);
+            //        Transaction.Commit();
 
-                    counters = result?.Consume().Counters;
-                }
-            }
-            while (counters != null && counters.ContainsUpdates);
+            //        counters = result?.Consume().Counters;
+            //    }
+            //}
+            //while (counters != null && counters.ContainsUpdates);
         }
 
         internal static void ExecuteBatched(string cypher, Dictionary<string, object> parameters, bool withTransaction = true)
@@ -108,22 +110,22 @@ namespace Blueprint41.Neo4j.Refactoring
             if (!ShouldExecute)
                 return;
 
-            ICounters counters;
-            do
-            {
-                using (Transaction.Begin(withTransaction))
-                {
-                    IStatementResult result;
-                    if (parameters == null || parameters.Count == 0)
-                        result = Neo4jTransaction.Run(cypher);
-                    else
-                        result = Neo4jTransaction.Run(cypher, parameters);
-                    Transaction.Commit();
+            //ICounters counters;
+            //do
+            //{
+            //    using (Transaction.Begin(withTransaction))
+            //    {
+            //        IStatementResult result;
+            //        if (parameters == null || parameters.Count == 0)
+            //            result = Transaction.Run(cypher);
+            //        else
+            //            result = Transaction.Run(cypher, parameters);
+            //        Transaction.Commit();
 
-                    counters = result.Consume().Counters;
-                }
-            }
-            while (counters.ContainsUpdates);
+            //        counters = result.Consume().Counters;
+            //    }
+            //}
+            //while (counters.ContainsUpdates);
         }
 
         #endregion
@@ -192,7 +194,7 @@ namespace Blueprint41.Neo4j.Refactoring
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("node", node);
 
-            Neo4jTransaction.Run(create, parameters);
+            Transaction.Run(create, parameters);
             Transaction.Commit();
 
             hasScript = true;

@@ -24,6 +24,7 @@ namespace Blueprint41
         public static readonly GraphFeatures Cosmos = new GraphFeatures()
         {
             Cypher = false,
+            Delete = false,
             FunctionalId = false,
             CreateIndex = false,
             CreateUniqueConstraint = false,
@@ -60,6 +61,7 @@ namespace Blueprint41
         }
 
         public bool Cypher { get; private set; } = true;
+        public bool Delete { get; private set; } = true;
         public bool FunctionalId { get; private set; } = true;
         public bool Convert { get; private set; } = true;
         public bool CopyProperty { get; private set; } = true;

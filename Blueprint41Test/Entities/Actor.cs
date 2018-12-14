@@ -71,7 +71,7 @@ namespace Datastore.Manipulation
 
 		public override string ToString()
         {
-            return $"Actor => Uid : {this.Uid}, fullname : {this.fullname?.ToString() ?? "null"}";
+            return $"Actor => Uid : {this.Uid}, fullname : {this.fullname}";
         }
 
         public override int GetHashCode()
@@ -99,6 +99,8 @@ namespace Datastore.Manipulation
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
 #pragma warning disable CS0472
+			if (InnerData.fullname == null)
+				throw new PersistenceException(string.Format("Cannot save Actor with key '{0}' because the fullname cannot be null.", this.Uid?.ToString() ?? "<null>"));
 #pragma warning restore CS0472
 		}
 

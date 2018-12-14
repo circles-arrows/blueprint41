@@ -66,6 +66,9 @@ namespace Blueprint41.Neo4j.Persistence
 
         public override void Delete(OGM item)
         {
+            if (PersistenceProvider.TargetFeatures.Delete == false)
+                throw new NotSupportedException();
+
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
 
@@ -89,6 +92,9 @@ namespace Blueprint41.Neo4j.Persistence
             IGraphResponse result = Transaction.Run(args.Cypher, args.Parameters);
 
             // TODO: Implement Delete Gremlin result counters
+            if (result.Result is GremlinResult grem)
+                if (grem.StatusCode != 200)
+                    throw new DBConcurrencyException(grem.ErrorMessage);
 
             if (result.Result is IStatementResult statementResult)
                 if (statementResult.Summary.Counters.NodesDeleted == 0)
@@ -122,6 +128,9 @@ namespace Blueprint41.Neo4j.Persistence
             IGraphResponse result = Transaction.Run(args.Cypher, args.Parameters);
 
             // TODO: Implement Force Delete Gremlin result
+            if (result.Result is GremlinResult grem)
+                if (grem.StatusCode != 200)
+                    throw new DBConcurrencyException(grem.ErrorMessage);
 
             if (result.Result is IStatementResult statementResult)
                 if (statementResult.Summary.Counters.NodesDeleted == 0)
@@ -175,6 +184,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             INode inserted = record["inserted"].As<INode>();
 
+            // TODO: Support for Gremlin Id
             args.Id = inserted.Id;
             args.Labels = inserted.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
@@ -222,7 +232,6 @@ namespace Blueprint41.Neo4j.Persistence
                     throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeUpdated(trans, args);
-
             item.PersistenceState = PersistenceState.Persisted;
         }
 
