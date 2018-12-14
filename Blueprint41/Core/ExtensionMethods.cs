@@ -265,7 +265,7 @@ namespace Neo4j.Driver.V1
 
         public static IGraphResponse RunCypher(this IStatementRunner runner, string statement, Dictionary<string, object> parameters)
         {
-            IStatementResult result = runner.Run(statement);
+            IStatementResult result = runner.Run(statement, parameters);
             return GraphResponse.GetGraphResponse<IStatementResult>(result);
         }
     }
