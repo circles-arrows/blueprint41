@@ -73,12 +73,12 @@ namespace Blueprint41.Response
             {
                 foreach (JProperty prop in obj.Properties())
                 {
-                    if (recordDictionary.ContainsKey(prop.Name))
+                    if (recordDictionary.ContainsKey(prop.Name.Trim()))
                         continue;
 
                     object value = ConvertToType(prop);
 
-                    recordDictionary.Add(prop.Name, ConvertToType(prop));
+                    recordDictionary.Add(prop.Name.Trim(), ConvertToType(prop));
                     recordList.Add(value);
                 }
             }
@@ -115,7 +115,7 @@ namespace Blueprint41.Response
             { JTokenType.TimeSpan, typeof(TimeSpan) },
         };
 
-        private object ConvertToType(JToken token)
+        private object ConvertToType(JToken token, bool isRelationship = false)
         {
             if (ScalerTypeCache.ContainsKey(token.Type))
                 return token.ToObject(ScalerTypeCache[token.Type]);
@@ -124,15 +124,28 @@ namespace Blueprint41.Response
             {
                 case JTokenType.Property:
                     JProperty prop = (JProperty)token;
-                    return ConvertToType(prop.Value);
+                    return ConvertToType(prop.Value, prop.Name.Trim() == "rel");
 
                 case JTokenType.Object:
-                    NodeWrapper node = new NodeWrapper();
                     JObject obj = (JObject)token;
-                    foreach (JProperty property in obj.Properties())
-                        node.AddProperty(property.Name, ConvertToType(property));
 
-                    return node;
+                    if (isRelationship)
+                    {
+                        RelationshipWrapper rel = new RelationshipWrapper();
+
+                        foreach (JProperty property in obj.Properties())
+                            rel.AddProperty(property.Name.Trim(), ConvertToType(property));
+
+                        return rel;
+                    }
+                    else
+                    {
+                        NodeWrapper node = new NodeWrapper();
+                        foreach (JProperty property in obj.Properties())
+                            node.AddProperty(property.Name.Trim(), ConvertToType(property));
+
+                        return node;
+                    }
                 case JTokenType.Array:
                     JArray arr = (JArray)token;
 
@@ -152,5 +165,5 @@ namespace Blueprint41.Response
         }
     }
 
-   
+
 }

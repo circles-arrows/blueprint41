@@ -16,11 +16,19 @@ namespace Blueprint41.Response
 
         public IReadOnlyDictionary<string, object> Properties => properties;
 
-        public long Id => properties.ContainsKey("Uid") == false ? -1 : long.TryParse(properties["Uid"].ToString(), out long id) ? id : -1;
+        /// <summary>
+        /// Don't confuse Id to the Key of an entity, e.g Uid
+        /// </summary>
+        public long Id => properties.ContainsKey("id") == false ? -1 : long.TryParse(properties["id"].ToString(), out long id) ? id : -1;
+
+        public string GremlinId => properties["id"].ToString();
 
         public bool Equals(INode other)
         {
-            return Id == other.Id && Id > 0;
+            if (other is NodeWrapper otherNode)
+                return GremlinId == otherNode.GremlinId;
+
+            return false;
         }
 
         internal NodeWrapper() { }

@@ -29,7 +29,7 @@ namespace Blueprint41.Neo4j.Persistence
             string pattern = string.Empty;
             if (target.Direction == DirectionEnum.In)
                 pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} = {{key}} RETURN out, rel";
-            else if(target.Direction == DirectionEnum.Out)
+            else if (target.Direction == DirectionEnum.Out)
                 pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} = {{key}} RETURN out, rel";
 
             Entity targetEntity = target.ForeignEntity;
@@ -43,7 +43,7 @@ namespace Blueprint41.Neo4j.Persistence
             parameters2.Add("key", parent.GetKey());
 
             List<CollectionItem> items = new List<CollectionItem>();
-            var result = Neo4jTransaction.Run(match, parameters2);
+            var result = Transaction.Run(match, parameters2);
 
             foreach (var record in result)
             {
@@ -76,7 +76,7 @@ namespace Blueprint41.Neo4j.Persistence
             Dictionary<object, OGM> parentDict = new Dictionary<object, OGM>();
             foreach (OGM parent in parents)
             {
-                if(!parentDict.ContainsKey(parent.GetKey()))
+                if (!parentDict.ContainsKey(parent.GetKey()))
                     parentDict.Add(parent.GetKey(), parent);
             }
 
@@ -170,9 +170,9 @@ namespace Blueprint41.Neo4j.Persistence
             if (keyObject != null)
             {
                 item = Transaction.Current.GetEntityByKey(typeName, keyObject);
-                if (item != null && 
-                    (item.PersistenceState == PersistenceState.HasUid 
-                        || 
+                if (item != null &&
+                    (item.PersistenceState == PersistenceState.HasUid
+                        ||
                     item.PersistenceState == PersistenceState.Loaded))
                 {
                     item.SetData(node.Properties);
@@ -182,7 +182,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             if (item == null)
             {
-                if(targetEntity.Parent.IsUpgraded)
+                if (targetEntity.Parent.IsUpgraded)
                     item = (OGM)Activator.CreateInstance(type);
                 else
                     item = new DynamicEntity(targetEntity, Parser.ShouldExecute);
@@ -223,7 +223,7 @@ namespace Blueprint41.Neo4j.Persistence
             parameters.Add("node", node);
 
             string query = match + "\r\n" + create;
-            Neo4jTransaction.Run(query, parameters);
+            Transaction.Run(query, parameters);
         }
         public override void Remove(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
         {
@@ -287,7 +287,7 @@ namespace Blueprint41.Neo4j.Persistence
             if (timedependent)
             {
                 parameters.Add("moment", Conversion<DateTime, long>.Convert(moment ?? DateTime.MinValue));
-                
+
                 // End Current
                 cypher = string.Format(
                     match + " WHERE item.{2} = {{key}} and (r.{4} > {{moment}} OR r.{4} IS NULL) AND (r.{3} <={{moment}} OR r.{3} IS NULL) SET r.EndDate = {{moment}}",
