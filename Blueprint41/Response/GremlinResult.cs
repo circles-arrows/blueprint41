@@ -50,6 +50,7 @@ namespace Blueprint41.Response
         }
         public long StatusCode { get; }
         public string ErrorMessage { get; }
+        public bool HasError => StatusCode != 200;
 
         public GremlinResult(ResultSet<JToken> resultSet)
         {
@@ -75,7 +76,7 @@ namespace Blueprint41.Response
         }
     }
 
-    
+
 
     public class GremlinConverter : JsonConverter
     {

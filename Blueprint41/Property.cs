@@ -237,7 +237,7 @@ namespace Blueprint41
         }
         internal void SetReturnTypeEntity(Entity returnType)
         {
-            EntityReturnType = returnType; 
+            EntityReturnType = returnType;
         }
 
         #endregion
@@ -281,6 +281,9 @@ namespace Blueprint41
         private void RemoveIndexesAndContraints()
         {
             Parent.Parent.EnsureSchemaMigration();
+
+            if (PersistenceProvider.TargetFeatures.SupportsFeature(typeof(ApplyConstraintEntity)) == false)
+                return;
 
             if (Parser.ShouldExecute && (Nullable == false || IndexType != IndexType.None))
             {
@@ -475,11 +478,11 @@ namespace Blueprint41
             this.SystemReturnType = to;
         }
         private const string NOT_SUPPORTED = nameof(NOT_SUPPORTED);
-        private const string NO_SCRIPT     = nameof(NO_SCRIPT);
-        private const string TO_BOOL       = "ToBoolean({0})";
-        private const string TO_LONG       = "ToInt({0})";
-        private const string TO_DOUBLE     = "ToFloat({0})";
-        private const string TO_STRING     = "ToString({0})";
+        private const string NO_SCRIPT = nameof(NO_SCRIPT);
+        private const string TO_BOOL = "ToBoolean({0})";
+        private const string TO_LONG = "ToInt({0})";
+        private const string TO_DOUBLE = "ToFloat({0})";
+        private const string TO_STRING = "ToString({0})";
 
         private static readonly (Type fromType, Type toType, string typeCheck, string typeConv)[] specificConvertTabel = new[] {
             (typeof(DateTime), typeof(long),  NO_SCRIPT,     NO_SCRIPT),
@@ -551,7 +554,7 @@ namespace Blueprint41
             // commit to db is automatic after any script ran during upgrade...
         }
 
-        
+
         void IRefactorProperty.Reroute(string pattern, string newPropertyName, bool strict)
         {
             Reroute(pattern, newPropertyName, Relationship.Name, Relationship.Neo4JRelationshipType, strict);
@@ -733,7 +736,7 @@ namespace Blueprint41
             if (PropertyType == PropertyType.Attribute)
                 throw new ArgumentException("The property type does not match the type of the supplied 'defaultValue'.");
 
-            if(defaultValue.GetEntity().Name != ForeignEntity.Name)
+            if (defaultValue.GetEntity().Name != ForeignEntity.Name)
                 throw new ArgumentException("The supplied default value does not match the entity type of the property.");
 
             Nullable = false;
@@ -816,7 +819,7 @@ namespace Blueprint41
             {
                 ValidateRecursive(fromEntity, strict);
 
-                if (EntityAlias !=  "from")
+                if (EntityAlias != "from")
                     throw new FormatException("The pattern should start with the 'from' entity");
 
                 if (HasAlias("from") != 1 || HasAlias("to") != 1)

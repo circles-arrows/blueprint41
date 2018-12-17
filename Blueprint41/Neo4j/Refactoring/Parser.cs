@@ -38,7 +38,7 @@ namespace Blueprint41.Neo4j.Refactoring
 
             T template = new T();
 
-            if (PersistenceProvider.TargetFeatures.SupportsTemplate(template) == false)
+            if (PersistenceProvider.TargetFeatures.SupportsFeature(template) == false)
                 return null;
 
             if (setup != null)
@@ -88,21 +88,22 @@ namespace Blueprint41.Neo4j.Refactoring
         internal static void ExecuteBatched<T>(Action<T> setup, bool withTransaction = true)
             where T : TemplateBase, new()
         {
-            //if (!ShouldExecute)
-            //    return;
-                        
-            //ICounters counters;
-            //do
-            //{
-            //    using (Transaction.Begin(withTransaction))
-            //    {
-            //        IGraphResponse result = Parser.PrivateExecute<T>(setup);
-            //        Transaction.Commit();
+            if (!ShouldExecute)
+                return;
 
-            //        counters = result?.Consume().Counters;
-            //    }
-            //}
-            //while (counters != null && counters.ContainsUpdates);
+            ICounters counters = null;
+            do
+            {
+                using (Transaction.Begin(withTransaction))
+                {
+                    IGraphResponse result = Parser.PrivateExecute<T>(setup);
+                    Transaction.Commit();
+
+                    if (result.Result is IStatementResult statementResult)
+                        counters = statementResult.Consume().Counters;
+                }
+            }
+            while (counters != null && counters.ContainsUpdates);
         }
 
         internal static void ExecuteBatched(string cypher, Dictionary<string, object> parameters, bool withTransaction = true)
@@ -110,22 +111,24 @@ namespace Blueprint41.Neo4j.Refactoring
             if (!ShouldExecute)
                 return;
 
-            //ICounters counters;
-            //do
-            //{
-            //    using (Transaction.Begin(withTransaction))
-            //    {
-            //        IStatementResult result;
-            //        if (parameters == null || parameters.Count == 0)
-            //            result = Transaction.Run(cypher);
-            //        else
-            //            result = Transaction.Run(cypher, parameters);
-            //        Transaction.Commit();
+            ICounters counters = null;
+            do
+            {
+                using (Transaction.Begin(withTransaction))
+                {
+                    IGraphResponse result;
+                    if (parameters == null || parameters.Count == 0)
+                        result = Transaction.Run(cypher);
+                    else
+                        result = Transaction.Run(cypher, parameters);
 
-            //        counters = result.Consume().Counters;
-            //    }
-            //}
-            //while (counters.ContainsUpdates);
+                    Transaction.Commit();
+
+                    if (result.Result is IStatementResult statementResult)
+                        counters = statementResult.Consume().Counters;
+                }
+            }
+            while (counters != null && counters.ContainsUpdates);
         }
 
         #endregion
@@ -183,7 +186,7 @@ namespace Blueprint41.Neo4j.Refactoring
         public static void CommitScript(DatastoreModel.UpgradeScript script)
         {
             // write version nr
-            string create = "MERGE (n:RefactorVersion) ON CREATE SET n = {node} ON MATCH SET n = {node}";
+            string create = "MERGE (n:RefactorVersion {node})";
 
             Dictionary<string, object> node = new Dictionary<string, object>();
             node.Add("Major", script.Major);
@@ -236,7 +239,7 @@ namespace Blueprint41.Neo4j.Refactoring
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow));
 
-            Neo4jTransaction.Run(query, parameters);
+            Transaction.Run(query, parameters);
 
             hasScript = true;
         }

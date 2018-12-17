@@ -1,6 +1,7 @@
 ﻿using Blueprint41.Gremlin.Cosmos;
 using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Refactoring.Templates;
+using Schema = Blueprint41.Neo4j.Schema;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +20,9 @@ namespace Blueprint41
         {
             PersistenceProviderType = typeof(Neo4JPersistenceProvider),
 
-        }.SetTemplateFeatures();
+        }
+        .SetTemplateFeatures()
+        .SetSchemaFeatures();
 
         public static readonly GraphFeatures Cosmos = new GraphFeatures()
         {
@@ -29,9 +32,12 @@ namespace Blueprint41
             CreateIndex = false,
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
+            ApplyConstraintEntity = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
-        }.SetTemplateFeatures();
+        }
+        .SetTemplateFeatures()
+        .SetSchemaFeatures();
 
         private Dictionary<Type, bool> templateFeatures;
         GraphFeatures SetTemplateFeatures()
@@ -60,6 +66,15 @@ namespace Blueprint41
             return this;
         }
 
+        private Dictionary<Type, bool> schemaFeatures;
+        GraphFeatures SetSchemaFeatures()
+        {
+            schemaFeatures = new Dictionary<Type, bool>();
+            schemaFeatures.Add(typeof(Schema.ApplyConstraintEntity), ApplyConstraintEntity);
+
+            return this;
+        }
+
         public bool Cypher { get; private set; } = true;
         public bool Delete { get; private set; } = true;
         public bool FunctionalId { get; private set; } = true;
@@ -81,15 +96,25 @@ namespace Blueprint41
         public bool SetLabel { get; private set; } = true;
         public bool SetRelationshipPropertyValue { get; private set; } = true;
 
+
+        // Schema
+        public bool ApplyConstraintEntity { get; private set; } = true;
+
         internal Type PersistenceProviderType { get; private set; }
 
-        internal bool SupportsTemplate<T>(T template)
-            where T : TemplateBase
+        internal bool SupportsFeature<T>(T feature)
         {
-            Type templateType = typeof(T);
+            Type featureType = typeof(T);
+            return SupportsFeature(featureType);
+        }
 
-            if (templateFeatures.ContainsKey(templateType))
-                return templateFeatures[templateType];
+        internal bool SupportsFeature(Type feature)
+        {
+            if (templateFeatures.ContainsKey(feature))
+                return templateFeatures[feature];
+
+            if (schemaFeatures.ContainsKey(feature))
+                return schemaFeatures[feature];
 
             // Default: all template features are supported
             return true;

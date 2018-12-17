@@ -132,7 +132,7 @@ namespace Blueprint41
             bool anyScriptRan = false;
             foreach (UpgradeScript script in scripts.Where(item => predicate.Invoke(item)))
             {
-                if (upgradeDatastore && PersistenceProvider.IsNeo4j)
+                if (upgradeDatastore /*&& PersistenceProvider.IsNeo4j*/)
                 {
                     using (Transaction.Begin(true))
                     {
