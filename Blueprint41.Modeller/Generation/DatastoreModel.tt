@@ -49,7 +49,8 @@ foreach (var entity in Entities)
     }
     else
     {
-        string inheritedEntityName = Modeller.Model.Entities.Entity.Where(x => x.Guid == entity.Inherits).First().Name;			
+		Entity inheritedEntity = Modeller.Model.Entities.Entity.Where(x => x.Guid == entity.Inherits).First();
+        string inheritedEntityName = inheritedEntity.Name;
         if(string.IsNullOrEmpty(entity.FunctionalId))
         {
 #>
@@ -60,6 +61,14 @@ foreach (var entity in Entities)
         {
             var ids = FunctionalIds.Where(x => x.Guid == entity.FunctionalId && x.IsDefault == false).ToList();
             string entityFunctionalId = ids.Count > 0 ?  ids.First().Name.ToLower() + "Id, ": "";
+
+			if(!string.IsNullOrEmpty(entity.FunctionalId) && !string.IsNullOrEmpty(inheritedEntity.FunctionalId))
+			{
+				if(entity.FunctionalId == inheritedEntity.FunctionalId)
+				{
+					entityFunctionalId = "";
+				}
+			}
 #>
     Entities.New("<#=entity.Name #>", <#=entityFunctionalId#>Entities["<#= inheritedEntityName #>"])
 <#				
