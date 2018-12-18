@@ -186,7 +186,7 @@ namespace Blueprint41.Neo4j.Refactoring
         public static void CommitScript(DatastoreModel.UpgradeScript script)
         {
             // write version nr
-            string create = "MERGE (n:RefactorVersion {node})";
+            string create = "MERGE (n:RefactorVersion) ON CREATE SET n = {node} ON MATCH SET n = {node}";
 
             Dictionary<string, object> node = new Dictionary<string, object>();
             node.Add("Major", script.Major);
