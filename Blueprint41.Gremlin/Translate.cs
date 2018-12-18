@@ -1,13 +1,6 @@
-﻿using Gremlin.Net.Driver;
-using Gremlin.Net.Driver.Exceptions;
-using Newtonsoft.Json;
-using org.opencypher.gremlin.translation;
+﻿using org.opencypher.gremlin.translation;
 using org.opencypher.gremlin.translation.translator;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blueprint41.Gremlin
 {
@@ -23,14 +16,17 @@ namespace Blueprint41.Gremlin
         {
             try
             {
+                cypher = cypher.Replace(System.Environment.NewLine, " ");
+                cypher = cypher.Replace("\r\n", " ").Trim();
+
                 CypherAst ast = CypherAst.parse(cypher);
                 Translator cosmosTranslator = Translator.builder().gremlinGroovy().build(TranslatorFlavor.cosmosDb());
 
                 return ast.buildTranslation(cosmosTranslator).ToString();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                throw new TranslationException($"Unable to translate cypher '{cypher}'");
             }
         }
     }
