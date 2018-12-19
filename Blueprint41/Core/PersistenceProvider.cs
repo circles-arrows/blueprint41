@@ -64,6 +64,17 @@ namespace Blueprint41.Core
             }
         }
 
+        public static bool IsCosmos
+        {
+            get
+            {
+                if (CurrentPersistenceProvider == null)
+                    return false;
+
+                return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Gremlin.Cosmos.GremlinPersistenceProvider));
+            }
+        }
+
         public static void Initialize(Type type, params object[] connectionArgs)
         {
             if (type.IsSubclassOf(typeof(DatastoreModel)) == false)
