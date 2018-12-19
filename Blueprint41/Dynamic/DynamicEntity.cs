@@ -567,7 +567,13 @@ namespace Blueprint41.Dynamic
             DynamicEntityValues.Clear();
             foreach (KeyValuePair<string, object> item in data)
             {
-                DynamicEntityValues.Add(item.Key, current.ConvertFromStoredType(DynamicEntityType.Search(item.Key).SystemReturnType, item.Value));
+                Property property = DynamicEntityType.Search(item.Key);
+
+                // Fixed issue when cosmos data returns not available on the DynamicEntityType
+                if (property == null)
+                    continue;
+
+                DynamicEntityValues.Add(item.Key, current.ConvertFromStoredType(property.SystemReturnType, item.Value));
             }
         }
 
