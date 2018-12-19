@@ -185,6 +185,12 @@ namespace Blueprint41.Neo4j.Refactoring
         }
         public static void CommitScript(DatastoreModel.UpgradeScript script)
         {
+            if (PersistenceProvider.IsCosmos)
+            {
+                CommitScriptCosmos(script);
+                return;
+            }
+
             // write version nr
             string create = "MERGE (n:RefactorVersion) ON CREATE SET n = {node} ON MATCH SET n = {node}";
 
@@ -200,6 +206,28 @@ namespace Blueprint41.Neo4j.Refactoring
             Transaction.Run(create, parameters);
             Transaction.Commit();
 
+            hasScript = true;
+        }
+
+        /// <summary>
+        /// Commit Script Workaround for Cosmos
+        /// The cosmos db throws an error when setting n = {node} but setting it individually works.
+        /// TODO: Verify for other graph gremlin db if works with n = {node}
+        /// </summary>
+        /// <param name="script"></param>
+        private static void CommitScriptCosmos(DatastoreModel.UpgradeScript script)
+        {
+            string createMajor = "MERGE (n:RefactorVersion) ON CREATE SET n.Major = {major} ON MATCH SET n.Major = {major}";
+            string createMinor = "MERGE (n:RefactorVersion) ON CREATE SET n.Minor = {minor} ON MATCH SET n.Minor = {minor}";
+            string createPatch = "MERGE (n:RefactorVersion) ON CREATE SET n.Patch = {patch} ON MATCH SET n.Patch = {patch}";
+            string createLastRun = "MERGE (n:RefactorVersion) ON CREATE SET n.LastRun = {lastRun} ON MATCH SET n.LastRun = {lastRun}";
+
+            Transaction.Run(createMajor, new Dictionary<string, object>() { { "major", script.Major } });
+            Transaction.Run(createMinor, new Dictionary<string, object>() { { "minor", script.Minor } });
+            Transaction.Run(createPatch, new Dictionary<string, object>() { { "patch", script.Patch } });
+            Transaction.Run(createLastRun, new Dictionary<string, object>() { { "lastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow) } });
+
+            Transaction.Commit();
             hasScript = true;
         }
 
