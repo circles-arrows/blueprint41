@@ -1,4 +1,4 @@
-﻿using Blueprint41.Gremlin.Cosmos;
+﻿using Blueprint41.Gremlin;
 using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Refactoring.Templates;
 using Schema = Blueprint41.Neo4j.Schema;

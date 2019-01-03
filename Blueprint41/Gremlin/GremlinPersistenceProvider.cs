@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Gremlin.Cosmos
+namespace Blueprint41.Gremlin
 {
     public class GremlinPersistenceProvider : PersistenceProvider
     {
@@ -20,7 +20,7 @@ namespace Blueprint41.Gremlin.Cosmos
                     lock (typeof(GremlinPersistenceProvider))
                     {
                         if (driver == null)
-                            driver = new GremlinServer(hostname, port, enableSsl: true,
+                            driver = new GremlinServer(hostname, port, enableSsl: ssl,
                                                     username: "/dbs/" + database + "/colls/" + collection,
                                                     password: authKey);
                     }
@@ -30,19 +30,21 @@ namespace Blueprint41.Gremlin.Cosmos
         }
 
 
-        private string hostname;
-        private int port;
-        private string authKey;
-        private string database;
-        private string collection;
+        readonly string hostname;
+        readonly int port;
+        readonly string authKey;
+        readonly string database;
+        readonly string collection;
+        readonly bool ssl = false;
 
-        public GremlinPersistenceProvider(string hostname, int port, string authKey, string database, string collection)
+        public GremlinPersistenceProvider(string hostname, int port = 8182, string authKey = null, string database = null, string collection = null)
         {
             this.hostname = hostname;
             this.port = port;
             this.authKey = authKey;
             this.database = database;
             this.collection = collection;
+            this.ssl = !(port == 8182) && hostname.Contains("localhost") == false;
         }
 
         public override IEnumerable<TypeMapping> SupportedTypeMappings => Neo4JPersistenceProvider.supportedTypeMappings;

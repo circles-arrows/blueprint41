@@ -51,12 +51,7 @@ namespace Blueprint41.Response
 
         internal RecordWrapper() { }
 
-        internal RecordWrapper(JObject token)
-        {
-            this.token = token;
-        }
-
-        internal RecordWrapper(JArray token)
+        internal RecordWrapper(JToken token)
         {
             this.token = token;
         }
@@ -82,8 +77,7 @@ namespace Blueprint41.Response
                     recordList.Add(value);
                 }
             }
-
-            if (token is JArray array)
+            else if (token is JArray array)
             {
                 for (var i = 0; i < array.Count; i++)
                 {
@@ -95,12 +89,7 @@ namespace Blueprint41.Response
             }
         }
 
-        internal static RecordWrapper CreateFromJObject(JObject token)
-        {
-            return new RecordWrapper(token);
-        }
-
-        internal static RecordWrapper CreateFromJArray(JArray token)
+        internal static RecordWrapper CreateFromToken(JToken token)
         {
             return new RecordWrapper(token);
         }
@@ -149,7 +138,7 @@ namespace Blueprint41.Response
                 case JTokenType.Array:
                     JArray arr = (JArray)token;
 
-                    //Gremlin seems to add "id" on the property thus making the result an array of values
+                    //Cosmos db seems to add "id" on the property thus making the result an array of values
                     // So when an array is equal to 1, just return the first value.
 
                     if (arr.Count == 1)

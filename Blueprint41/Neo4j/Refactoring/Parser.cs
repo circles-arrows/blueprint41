@@ -83,8 +83,7 @@ namespace Blueprint41.Neo4j.Refactoring
 
             return result;
         }
-
-        // TODO: Execute Batches
+                
         internal static void ExecuteBatched<T>(Action<T> setup, bool withTransaction = true)
             where T : TemplateBase, new()
         {

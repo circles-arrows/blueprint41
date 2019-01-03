@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Gremlin.Cosmos
+namespace Blueprint41.Gremlin
 {
     internal sealed class GraphSONJTokenReader : GraphSONReader
     {

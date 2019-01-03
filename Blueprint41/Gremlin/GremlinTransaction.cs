@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Blueprint41.Gremlin.Cosmos
+namespace Blueprint41.Gremlin
 {
     public class GremlinTransaction : Transaction
     {

@@ -36,11 +36,8 @@ namespace Blueprint41.Response
 
         public IEnumerator<IRecord> GetEnumerator()
         {
-            if (Result is IStatementResult res)
+            if (Result is IEnumerable<IRecord> res)
                 return res.GetEnumerator();
-
-            if (Result is GremlinResult grem)
-                return grem.GetEnumerator();
 
             throw new NotSupportedException($"The type {Result.GetType()} is not supported.");
         }

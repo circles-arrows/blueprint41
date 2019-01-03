@@ -55,14 +55,24 @@ namespace Blueprint41.Response
         public GremlinResult(ResultSet<JToken> resultSet)
         {
             ResultSet = resultSet ?? throw new System.ArgumentNullException(nameof(resultSet));
-            StatusCode = (long)ResultSet.StatusAttributes["x-ms-status-code"];
+
+            StatusCode = 200;
+
+            // For cosmos db status code
+            if (ResultSet.StatusAttributes.ContainsKey("x-ms-status-code"))
+                StatusCode = (long)ResultSet.StatusAttributes["x-ms-status-code"];
         }
 
         public GremlinResult(ResponseException ex)
         {
             ErrorMessage = ex.Message;
             long.TryParse(ex.StatusCode.ToString(), out long statusCode);
-            StatusCode = (long)ex.StatusAttributes["x-ms-status-code"];
+
+            StatusCode = statusCode;
+
+            // For cosmos db status code
+            if (ex.StatusAttributes.ContainsKey("x-ms-status-code"))
+                StatusCode = (long)ex.StatusAttributes["x-ms-status-code"];
         }
 
         public IEnumerator<IRecord> GetEnumerator()
@@ -90,11 +100,9 @@ namespace Blueprint41.Response
             switch (reader.TokenType)
             {
                 case JsonToken.StartArray:
-                    JToken array = JToken.ReadFrom(reader);
-                    return RecordWrapper.CreateFromJArray((JArray)array);
                 case JsonToken.StartObject:
                     JToken obj = JToken.ReadFrom(reader);
-                    return RecordWrapper.CreateFromJObject((JObject)obj);
+                    return RecordWrapper.CreateFromToken(obj);
                 default:
                     throw new JsonSerializationException("Unexpected reader.TokenType: " + reader.TokenType);
             }
