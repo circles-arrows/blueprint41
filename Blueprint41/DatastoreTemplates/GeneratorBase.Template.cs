@@ -110,7 +110,7 @@ namespace Blueprint41.DatastoreTemplates
                 this.endsWithNewline = false;
             }
             // Check if the current text ends with a newline
-            if (textToAppend.EndsWith(global::System.Environment.NewLine, global::System.StringComparison.CurrentCulture))
+            if (textToAppend.EndsWith(global::System.Environment.NewLine, global::System.StringComparison.Ordinal))
             {
                 this.endsWithNewline = true;
             }

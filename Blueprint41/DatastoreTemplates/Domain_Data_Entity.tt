@@ -982,7 +982,7 @@ if (!DALModel.IsAbstract)
 			foreach (TypeSafeStaticData value in values)
             {
 #>
-                    if (<#= property.Name.ToCamelCase() #> == "<#= value.OriginalValue #>")
+                    if (<#= property.Name.ToCamelCase() #> == "<#= value.OriginalValue.Replace("\"", "\\\"") #>")
                         return true;
 <#
             }
