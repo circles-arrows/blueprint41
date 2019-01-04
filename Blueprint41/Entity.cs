@@ -88,9 +88,22 @@ namespace Blueprint41
             get
             {
                 if (functionalId == null && !IsAbstract)
-                    functionalId = Inherits?.FunctionalId ?? Parent.FunctionalIds.Default;
+                    functionalId = FindFunctionalId();
 
                 return functionalId;
+
+                FunctionalId FindFunctionalId()
+                {
+                    Entity entity = this.Inherits;
+                    while(entity != null)
+                    {
+                        if (entity.functionalId != null)
+                            return entity.functionalId;
+
+                        entity = entity.Inherits;
+                    }
+                    return Parent.FunctionalIds.Default;
+                };
             }
         }
 
@@ -144,6 +157,18 @@ namespace Blueprint41
         public Entity AddProperty(string name, Type type)
         {
             return AddProperty(name, type, true, IndexType.None);
+        }
+        public Entity AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        {
+            VerifyFromInheritedProperties(name);
+
+            Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            Properties.Add(name, value);
+
+            // StaticData
+            DynamicEntityPropertyAdded(value);
+
+            return this;
         }
         public Entity AddProperty(string name, Type type, IndexType indexType)
         {

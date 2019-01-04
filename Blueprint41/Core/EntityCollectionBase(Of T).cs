@@ -48,7 +48,17 @@ namespace Blueprint41.Core
         }
         protected virtual void LazySet()
         {
+            if (Parent.PersistenceState == PersistenceState.Persisted)
+                throw new InvalidOperationException("This object was already flushed to the data store.");
+            else if (Parent.PersistenceState == PersistenceState.OutOfScope)
+                throw new InvalidOperationException("The transaction for this object has already ended.");
 
+            LazyLoad();
+
+            if (Parent.PersistenceState == PersistenceState.New)
+                Parent.PersistenceState = PersistenceState.NewAndChanged;
+            else if (Parent.PersistenceState == PersistenceState.Loaded)
+                Parent.PersistenceState = PersistenceState.LoadedAndChanged;
         }
 
         int ICollection<TEntity>.Count { get { return CountInternal; } }

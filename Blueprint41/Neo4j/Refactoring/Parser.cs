@@ -184,11 +184,11 @@ namespace Blueprint41.Neo4j.Refactoring
         }
         public static void CommitScript(DatastoreModel.UpgradeScript script)
         {
-            if (PersistenceProvider.IsCosmos)
-            {
-                CommitScriptCosmos(script);
-                return;
-            }
+            //if (PersistenceProvider.IsCosmos)
+            //{
+            //    CommitScriptCosmos(script);
+            //    return;
+            //}
 
             // write version nr
             string create = "MERGE (n:RefactorVersion) ON CREATE SET n = {node} ON MATCH SET n = {node}";
@@ -211,7 +211,7 @@ namespace Blueprint41.Neo4j.Refactoring
         /// <summary>
         /// Commit Script Workaround for Cosmos
         /// The cosmos db throws an error when setting n = {node} but setting it individually works.
-        /// TODO: Verify for other graph gremlin db if works with n = {node}
+        /// TODO: Verify for other graph gremlin db if works with n = {node}: (Gremlin Server - it works)
         /// </summary>
         /// <param name="script"></param>
         private static void CommitScriptCosmos(DatastoreModel.UpgradeScript script)

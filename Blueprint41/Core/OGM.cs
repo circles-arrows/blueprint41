@@ -20,4 +20,6 @@ public interface OGM
     Transaction Transaction { get; set; }
 
     Entity GetEntity();
+
+    void SetChanged();
 }

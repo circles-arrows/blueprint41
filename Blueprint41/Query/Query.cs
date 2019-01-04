@@ -1,6 +1,7 @@
 ﻿using Blueprint41.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using query = Blueprint41.Query;
 
 namespace Blueprint41.Query
 {
+    [DebuggerDisplay("{DebuggerDisplay}")]
     public class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled
     {
         internal Query(PersistenceProvider persistenceProvider)
@@ -82,7 +84,7 @@ namespace Blueprint41.Query
             SetType(PartType.Return);
             int index = 0;
             Distinct = true;
-            Results = results.Select(delegate(Result item)
+            Results = results.Select(delegate (Result item)
             {
                 index++;
                 if (item is AsResult)
@@ -234,7 +236,7 @@ namespace Blueprint41.Query
                     break;
                 case PartType.OrderBy:
                     state.Text.Append("ORDER BY ");
-                    ForEach(Fields, state.Text, ", ", delegate(FieldResult item)
+                    ForEach(Fields, state.Text, ", ", delegate (FieldResult item)
                     {
                         item?.Compile(state);
                         if (!Ascending)
@@ -281,6 +283,31 @@ namespace Blueprint41.Query
         public QueryExecutionContext GetExecutionContext()
         {
             return new QueryExecutionContext(CompiledQuery);
+        }
+
+        public override string ToString()
+        {
+            if (CompiledQuery == null)
+                return null;
+
+            Transaction transaction = Transaction.RunningTransaction;
+            string cypherQuery = CompiledQuery.QueryText;
+            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
+
+            foreach (var queryParameter in CompiledQuery.ConstantValues)
+            {
+                if (queryParameter.Value == null)
+                    parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), null);
+                else
+                    parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), transaction.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
+            }
+
+            foreach (var queryParam in parameterValues)
+            {
+                object paramValue = queryParam.Value.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value.ToString();
+                cypherQuery = cypherQuery.Replace(queryParam.Key, paramValue.ToString());
+            }
+            return cypherQuery;
         }
 
         private Query[] GetParts()
@@ -336,6 +363,7 @@ namespace Blueprint41.Query
             Skip,
             Limit
         }
+        private string DebuggerDisplay { get => ToString(); }
     }
 
     #region Interfaces
@@ -420,6 +448,7 @@ namespace Blueprint41.Query
     {
         QueryExecutionContext GetExecutionContext();
         CompiledQuery CompiledQuery { get; }
+        string ToString();
     }
 
     #endregion

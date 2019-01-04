@@ -20,7 +20,7 @@ namespace Blueprint41
     [DebuggerDisplay("{Parent.Name}.{Name}")]
     public class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
     {
-        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType)
+        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[] enumeration = null)
         {
             Parent = parent;
             PropertyType = storage;
@@ -31,6 +31,7 @@ namespace Blueprint41
             IndexType = indexType;
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
+            EnumValues = (enumeration == null || enumeration.Length == 0) ? null : enumeration;
         }
         internal Property(Entity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
         {
@@ -62,6 +63,7 @@ namespace Blueprint41
         public Entity Parent { get; private set; }
         public PropertyType PropertyType { get; private set; }
         public string Name { get; private set; }
+        public IReadOnlyList<string> EnumValues { get; private set; }
         public Type SystemReturnType { get; private set; }
         public Type SystemReturnTypeWithNullability
         {
@@ -142,7 +144,9 @@ namespace Blueprint41
                             sb.Append("EntityCollection<");
                     }
 
-                    if (SystemReturnType != null)
+                    if (SystemReturnType == typeof(string) && EnumValues != null)
+                        sb.Append($"{this.Parent.Name}.{this.Name}Enum" + (this.Nullable ? "?" : ""));
+                    else if (SystemReturnType != null)
                         sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
                     else if (EntityReturnType != null)
                         sb.Append(EntityReturnType.ClassName);
@@ -174,7 +178,9 @@ namespace Blueprint41
                         sb.Append("IEnumerable<");
                     }
 
-                    if (SystemReturnType != null)
+                    if (SystemReturnType == typeof(string) && EnumValues != null)
+                        sb.Append($"{this.Parent.Name}.{this.Name}Enum" + (this.Nullable ? "?" : ""));
+                    else if (SystemReturnType != null)
                         sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
                     else if (EntityReturnType != null)
                         sb.Append(EntityReturnType.ClassName);
