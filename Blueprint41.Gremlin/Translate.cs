@@ -16,7 +16,7 @@ namespace Blueprint41.Gremlin
         {
             try
             {
-                cypher = cypher.Replace(System.Environment.NewLine, " ");
+                cypher = cypher.Replace(Environment.NewLine, " ");
                 cypher = cypher.Replace("\r\n", " ").Trim();
 
                 CypherAst ast = CypherAst.parse(cypher);
@@ -26,7 +26,7 @@ namespace Blueprint41.Gremlin
             }
             catch (Exception ex)
             {
-                throw new TranslationException($"Unable to translate cypher '{cypher}'");
+                throw new TranslationException($"Unable to translate cypher '{cypher}'", ex);
             }
         }
     }
