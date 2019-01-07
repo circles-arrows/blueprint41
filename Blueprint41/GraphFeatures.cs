@@ -24,7 +24,7 @@ namespace Blueprint41
         .SetTemplateFeatures()
         .SetSchemaFeatures();
 
-        public static readonly GraphFeatures Cosmos = new GraphFeatures()
+        public static readonly GraphFeatures Gremlin = new GraphFeatures()
         {
             Cypher = false,
             Delete = false,
