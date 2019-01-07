@@ -75,6 +75,11 @@ namespace Blueprint41.Core
             }
         }
 
+        /// <summary>
+        /// Instantiate graph database connection with features supported by the datastore model.
+        /// </summary>
+        /// <param name="type">The Datastore model</param>
+        /// <param name="connectionArgs">Connection arguments, Check the params from the provider</param>
         public static void Initialize(Type type, params object[] connectionArgs)
         {
             if (type.IsSubclassOf(typeof(DatastoreModel)) == false)
@@ -82,7 +87,7 @@ namespace Blueprint41.Core
 
             DatastoreModel model = (DatastoreModel)Activator.CreateInstance(type);
             targetFeatures = model.TargetFeatures;
-            CurrentPersistenceProvider = (PersistenceProvider)Activator.CreateInstance(targetFeatures.PersistenceProviderType, connectionArgs);
+            CurrentPersistenceProvider = (PersistenceProvider)Activator.CreateInstance(targetFeatures.PersistenceProviderType, connectionArgs);            
         }
     }
 }
