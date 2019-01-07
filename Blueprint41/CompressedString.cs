@@ -766,14 +766,12 @@ namespace System
 
             memoryStream.Position = 0;
 
-            var compressedData = new byte[memoryStream.Length];
-            memoryStream.Read(compressedData, 0, compressedData.Length);
+            var compressedData = new byte[memoryStream.Length + 4];
+            memoryStream.Read(compressedData, 4, (int)memoryStream.Length);
 
-            var gZipBuffer = new byte[compressedData.Length + 4];
-            Buffer.BlockCopy(compressedData, 0, gZipBuffer, 4, compressedData.Length);
-            Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gZipBuffer, 0, 4);
-            string Cstr = Convert.ToBase64String(gZipBuffer);
-            return gZipBuffer;
+            Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, compressedData, 0, 4);
+
+            return compressedData;
         }
         private static string Decompress(byte[] gZipBuffer)
         {

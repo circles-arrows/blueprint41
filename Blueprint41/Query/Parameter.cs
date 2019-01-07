@@ -175,6 +175,7 @@ namespace Blueprint41
             throw new NotSupportedException();
         }
 
+        public static Parameter Null => Constant(null, null);
         public static Parameter Constant<T>(T value)
         {
             Parameter p = new Parameter();
