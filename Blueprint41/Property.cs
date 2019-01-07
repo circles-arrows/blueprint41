@@ -450,7 +450,7 @@ namespace Blueprint41
             if (from == to)
                 throw new NotSupportedException("The property is already of this type.");
 
-            if (!skipConvertionLogic)
+            if (!skipConvertionLogic && Parser.ShouldExecute)
             {
                 Type fromDb = Transaction.Current.GetStoredType(from);
                 Type toDb = Transaction.Current.GetStoredType(to);
