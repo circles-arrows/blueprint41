@@ -8,6 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DataStore\**" />
+    <Compile Remove="Entities\**" />
+    <Compile Remove="Nodes\**" />
+    <Compile Remove="Relationships\**" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="DataStore\**" />
+    <EmbeddedResource Remove="Entities\**" />
+    <EmbeddedResource Remove="Nodes\**" />
+    <EmbeddedResource Remove="Relationships\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="DataStore\**" />
+    <None Remove="Entities\**" />
+    <None Remove="Nodes\**" />
+    <None Remove="Relationships\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />

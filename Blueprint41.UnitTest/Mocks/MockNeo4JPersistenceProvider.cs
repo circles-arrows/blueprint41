@@ -1,5 +1,6 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Response;
 using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
@@ -45,12 +46,12 @@ namespace Blueprint41.UnitTest.Mocks
 
         }
 
-        protected override IStatementResult RunPrivate(string cypher)
+        protected override IGraphResponse RunPrivate(string cypher)
         {
             throw new NotImplementedException();
         }
 
-        protected override IStatementResult RunPrivate(string cypher, Dictionary<string, object> parameters)
+        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters)
         {
             throw new NotImplementedException();
         }
