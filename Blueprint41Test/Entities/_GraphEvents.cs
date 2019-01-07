@@ -761,9 +761,9 @@ namespace Datastore.Manipulation
 		}
 		public static class Relationships
         {
-			public static class ACTOR_DIRECTED_FILM
+			public static class PERSON_ACTED_IN_FILM
             {
-				private static readonly Relationship Relationship = Blueprint41Test.MovieModel.Model.Relations["ACTOR_DIRECTED_FILM"];
+				private static readonly Relationship Relationship = Blueprint41Test.MovieModel.Model.Relations["PERSON_ACTED_IN_FILM"];
 
 				#region OnRelationCreate
 
@@ -930,9 +930,9 @@ namespace Datastore.Manipulation
 
 				#endregion
             }
-			public static class PERSON_ACTED_IN_FILM
+			public static class PERSON_DIRECTED_FILM
             {
-				private static readonly Relationship Relationship = Blueprint41Test.MovieModel.Model.Relations["PERSON_ACTED_IN_FILM"];
+				private static readonly Relationship Relationship = Blueprint41Test.MovieModel.Model.Relations["PERSON_DIRECTED_FILM"];
 
 				#region OnRelationCreate
 

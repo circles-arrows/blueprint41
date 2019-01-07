@@ -49,8 +49,8 @@ namespace Datastore.Query
 			{
                 Parent = parent;
 			}
-			public IFromOut_ACTOR_DIRECTED_FILM_REL ACTOR_DIRECTED_FILM { get { return new ACTOR_DIRECTED_FILM_REL(Parent, DirectionEnum.Out); } }
 			public IFromOut_PERSON_ACTED_IN_FILM_REL PERSON_ACTED_IN_FILM { get { return new PERSON_ACTED_IN_FILM_REL(Parent, DirectionEnum.Out); } }
+			public IFromOut_PERSON_DIRECTED_FILM_REL PERSON_DIRECTED_FILM { get { return new PERSON_DIRECTED_FILM_REL(Parent, DirectionEnum.Out); } }
 			public IFromOut_PERSON_PRODUCED_FILM_REL PERSON_PRODUCED_FILM { get { return new PERSON_PRODUCED_FILM_REL(Parent, DirectionEnum.Out); } }
 			public IFromOut_PERSON_WROTE_FILM_REL PERSON_WROTE_FILM { get { return new PERSON_WROTE_FILM_REL(Parent, DirectionEnum.Out); } }
 		}

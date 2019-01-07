@@ -16,7 +16,7 @@ namespace Datastore.Manipulation
 		string title { get; }
 		string tagline { get; }
 		int release { get; }
-		IEnumerable<Actor> Actors { get; }
+		IEnumerable<Actor> Actor { get; }
 		IEnumerable<Actor> Directors { get; }
 		IEnumerable<Actor> Producers { get; }
 		IEnumerable<Actor> Writers { get; }
@@ -129,7 +129,7 @@ namespace Datastore.Manipulation
 				title = data.title;
 				tagline = data.tagline;
 				release = data.release;
-				Actors = data.Actors;
+				Actor = data.Actor;
 				Directors = data.Directors;
 				Producers = data.Producers;
 				Writers = data.Writers;
@@ -142,7 +142,7 @@ namespace Datastore.Manipulation
 			{
 				NodeType = "Film";
 
-				Actors = new EntityCollection<Actor>(Wrapper, Members.Actors, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedFilms.Count; } });
+				Actor = new EntityCollection<Actor>(Wrapper, Members.Actor, item => { if (Members.Actor.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedFilms.Count; } });
 				Directors = new EntityCollection<Actor>(Wrapper, Members.Directors, item => { if (Members.Directors.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedFilms.Count; } });
 				Producers = new EntityCollection<Actor>(Wrapper, Members.Producers, item => { if (Members.Producers.Events.HasRegisteredChangeHandlers) { int loadHack = item.ProducedFilms.Count; } });
 				Writers = new EntityCollection<Actor>(Wrapper, Members.Writers, item => { if (Members.Writers.Events.HasRegisteredChangeHandlers) { int loadHack = item.FilmsWrited.Count; } });
@@ -185,7 +185,7 @@ namespace Datastore.Manipulation
 			public string title { get; set; }
 			public string tagline { get; set; }
 			public int release { get; set; }
-			public EntityCollection<Actor> Actors { get; private set; }
+			public EntityCollection<Actor> Actor { get; private set; }
 			public EntityCollection<Actor> Directors { get; private set; }
 			public EntityCollection<Actor> Producers { get; private set; }
 			public EntityCollection<Actor> Writers { get; private set; }
@@ -203,10 +203,10 @@ namespace Datastore.Manipulation
 		public string title { get { LazyGet(); return InnerData.title; } set { if (LazySet(Members.title, InnerData.title, value)) InnerData.title = value; } }
 		public string tagline { get { LazyGet(); return InnerData.tagline; } set { if (LazySet(Members.tagline, InnerData.tagline, value)) InnerData.tagline = value; } }
 		public int release { get { LazyGet(); return InnerData.release; } set { if (LazySet(Members.release, InnerData.release, value)) InnerData.release = value; } }
-		public EntityCollection<Actor> Actors { get { return InnerData.Actors; } }
-		private void ClearActors(DateTime? moment)
+		public EntityCollection<Actor> Actor { get { return InnerData.Actor; } }
+		private void ClearActor(DateTime? moment)
 		{
-			((ILookupHelper<Actor>)InnerData.Actors).ClearLookup(moment);
+			((ILookupHelper<Actor>)InnerData.Actor).ClearLookup(moment);
 		}
 		public EntityCollection<Actor> Directors { get { return InnerData.Directors; } }
 		private void ClearDirectors(DateTime? moment)
@@ -262,7 +262,7 @@ namespace Datastore.Manipulation
             public Property title { get; } = Blueprint41Test.MovieModel.Model.Entities["Film"].Properties["title"];
             public Property tagline { get; } = Blueprint41Test.MovieModel.Model.Entities["Film"].Properties["tagline"];
             public Property release { get; } = Blueprint41Test.MovieModel.Model.Entities["Film"].Properties["release"];
-            public Property Actors { get; } = Blueprint41Test.MovieModel.Model.Entities["Film"].Properties["Actors"];
+            public Property Actor { get; } = Blueprint41Test.MovieModel.Model.Entities["Film"].Properties["Actor"];
             public Property Directors { get; } = Blueprint41Test.MovieModel.Model.Entities["Film"].Properties["Directors"];
             public Property Producers { get; } = Blueprint41Test.MovieModel.Model.Entities["Film"].Properties["Producers"];
             public Property Writers { get; } = Blueprint41Test.MovieModel.Model.Entities["Film"].Properties["Writers"];
@@ -631,43 +631,43 @@ namespace Datastore.Manipulation
 
 				#endregion
 
-				#region OnActors
+				#region OnActor
 
-				private static bool onActorsIsRegistered = false;
+				private static bool onActorIsRegistered = false;
 
-				private static EventHandler<Film, PropertyEventArgs> onActors;
-				public static event EventHandler<Film, PropertyEventArgs> OnActors
+				private static EventHandler<Film, PropertyEventArgs> onActor;
+				public static event EventHandler<Film, PropertyEventArgs> OnActor
 				{
 					add
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							if (!onActorsIsRegistered)
+							if (!onActorIsRegistered)
 							{
-								Members.Actors.Events.OnChange -= onActorsProxy;
-								Members.Actors.Events.OnChange += onActorsProxy;
-								onActorsIsRegistered = true;
+								Members.Actor.Events.OnChange -= onActorProxy;
+								Members.Actor.Events.OnChange += onActorProxy;
+								onActorIsRegistered = true;
 							}
-							onActors += value;
+							onActor += value;
 						}
 					}
 					remove
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							onActors -= value;
-							if (onActors == null && onActorsIsRegistered)
+							onActor -= value;
+							if (onActor == null && onActorIsRegistered)
 							{
-								Members.Actors.Events.OnChange -= onActorsProxy;
-								onActorsIsRegistered = false;
+								Members.Actor.Events.OnChange -= onActorProxy;
+								onActorIsRegistered = false;
 							}
 						}
 					}
 				}
             
-				private static void onActorsProxy(object sender, PropertyEventArgs args)
+				private static void onActorProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Film, PropertyEventArgs> handler = onActors;
+					EventHandler<Film, PropertyEventArgs> handler = onActor;
 					if ((object)handler != null)
 						handler.Invoke((Film)sender, args);
 				}
@@ -820,7 +820,7 @@ namespace Datastore.Manipulation
 		string IFilmOriginalData.title { get { return OriginalData.title; } }
 		string IFilmOriginalData.tagline { get { return OriginalData.tagline; } }
 		int IFilmOriginalData.release { get { return OriginalData.release; } }
-		IEnumerable<Actor> IFilmOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
+		IEnumerable<Actor> IFilmOriginalData.Actor { get { return OriginalData.Actor.OriginalData; } }
 		IEnumerable<Actor> IFilmOriginalData.Directors { get { return OriginalData.Directors.OriginalData; } }
 		IEnumerable<Actor> IFilmOriginalData.Producers { get { return OriginalData.Producers.OriginalData; } }
 		IEnumerable<Actor> IFilmOriginalData.Writers { get { return OriginalData.Writers.OriginalData; } }

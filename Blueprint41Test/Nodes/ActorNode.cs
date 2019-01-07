@@ -49,8 +49,8 @@ namespace Datastore.Query
 			{
                 Parent = parent;
 			}
-			public IFromIn_ACTOR_DIRECTED_FILM_REL ACTOR_DIRECTED_FILM { get { return new ACTOR_DIRECTED_FILM_REL(Parent, DirectionEnum.In); } }
 			public IFromIn_PERSON_ACTED_IN_FILM_REL PERSON_ACTED_IN_FILM { get { return new PERSON_ACTED_IN_FILM_REL(Parent, DirectionEnum.In); } }
+			public IFromIn_PERSON_DIRECTED_FILM_REL PERSON_DIRECTED_FILM { get { return new PERSON_DIRECTED_FILM_REL(Parent, DirectionEnum.In); } }
 			public IFromIn_PERSON_PRODUCED_FILM_REL PERSON_PRODUCED_FILM { get { return new PERSON_PRODUCED_FILM_REL(Parent, DirectionEnum.In); } }
 			public IFromIn_PERSON_WROTE_FILM_REL PERSON_WROTE_FILM { get { return new PERSON_WROTE_FILM_REL(Parent, DirectionEnum.In); } }
 
@@ -73,7 +73,8 @@ namespace Datastore.Query
                     m_AliasFields = new Dictionary<string, FieldResult>()
                     {
 						{ "Uid", new StringResult(this, "Uid", Blueprint41Test.MovieModel.Model.Entities["Actor"], Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["Uid"]) },
-						{ "fullname", new StringResult(this, "fullname", Blueprint41Test.MovieModel.Model.Entities["Actor"], Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["fullname"]) },
+						{ "name", new StringResult(this, "name", Blueprint41Test.MovieModel.Model.Entities["Actor"], Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["name"]) },
+						{ "born", new StringListResult(this, "born", Blueprint41Test.MovieModel.Model.Entities["Actor"], Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["born"]) },
 					};
 				}
 				return m_AliasFields;
@@ -94,16 +95,27 @@ namespace Datastore.Query
 			}
 		} 
         private StringResult m_Uid = null;
-        public StringResult fullname
+        public StringResult name
 		{
 			get
 			{
-				if ((object)m_fullname == null)
-					m_fullname = (StringResult)AliasFields["fullname"];
+				if ((object)m_name == null)
+					m_name = (StringResult)AliasFields["name"];
 
-				return m_fullname;
+				return m_name;
 			}
 		} 
-        private StringResult m_fullname = null;
+        private StringResult m_name = null;
+        public StringListResult born
+		{
+			get
+			{
+				if ((object)m_born == null)
+					m_born = (StringListResult)AliasFields["born"];
+
+				return m_born;
+			}
+		} 
+        private StringListResult m_born = null;
     }
 }

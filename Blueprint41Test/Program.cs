@@ -16,7 +16,7 @@ namespace Blueprint41Test
     public class MovieModel : DatastoreModel<MovieModel>
     {
 
-        public override GraphFeatures TargetFeatures => GraphFeatures.Cosmos;
+        public override GraphFeatures TargetFeatures => GraphFeatures.Gremlin;
 
         protected override void SubscribeEventHandlers()
         {
@@ -38,12 +38,12 @@ namespace Blueprint41Test
             Entities.New("Actor")
                  .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                 .SetKey("Uid", true)
-                .AddProperty("name", typeof(string), false)
+                .AddProperty("fullname", typeof(string), false)
                 .AddProperty("born", typeof(int), false);
 
             Relations.New(Entities["Actor"], Entities["Film"], "PERSON_ACTED_IN_FILM", "ACTED_IN")
                 .SetInProperty("ActedFilms", PropertyType.Collection)
-                .SetOutProperty("Actors", PropertyType.Collection);
+                .SetOutProperty("Actor", PropertyType.Collection);
 
             Relations.New(Entities["Actor"], Entities["Film"], "PERSON_DIRECTED_FILM", "DIRECTED")
                 .SetInProperty("DirectedFilms", PropertyType.Collection)
@@ -61,30 +61,85 @@ namespace Blueprint41Test
         [Version(0, 0, 1)]
         public void RefactorModel()
         {
-            Entities["Actor"].Properties["name"].Refactor.Rename("fullname");
-            Entities["Actor"].Properties["born"].Refactor.Deprecate();
+            // TODO: Cosmos DB not supported property refactor rename
+            // https://github.com/Azure/azure-cosmos-dotnet-v2/issues/566
+            Entities["Actor"].Properties["fullname"].Refactor.Rename("name");
 
-            Relations["PERSON_DIRECTED_FILM"].Refactor.Rename("ACTOR_DIRECTED_FILM");
+            // TODO: Supports Property Refactor Deprecate
+            //Entities["Actor"].Properties["born"].Refactor.Deprecate();
+            //          Entities["Film"].Properties["release"].Refactor.Deprecate();
+
+            //            Entities["Actor"].Refactor.Rename("Actor");
+
+            // TODO: Not Supported Relationship Refactor Rename
+            //Relations["PERSON_DIRECTED_FILM"].Refactor.Rename("ACTOR_DIRECTED_FILM");
         }
-    }
+
+        [Version(0, 0, 2)]
+        public void RefactorModel2()
+        {
+            Entities["Actor"].Properties["born"].Refactor.Convert(typeof(List<string>), true);
+            Entities["Actor"].Properties["born"].Refactor.MakeMandatory();
+        }
+
+            //[Version(0, 0, 2)]
+            //public void RefactorModel2()
+            //{
+            //    //TODO: Static Data Supported add
+
+            //    // Static Data
+            //    Entities.New("AccountType")
+            //        .HasStaticData(true)
+            //        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+            //        .SetKey("Uid", true)
+            //        .AddProperty("Name", typeof(string))
+            //        .AddProperty("Description", typeof(string));
+
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "6", Name = "Account" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "81", Name = "MTMSAccount" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "89", Name = "FinancialAccount" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "90", Name = "BillingAccount" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "91", Name = "AxaptaAccount" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "349", Name = "Aircraft" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "350", Name = "Installation" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "351", Name = "SiteTrackingObject" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "352", Name = "StaticSite" });
+            //    Entities["AccountType"].Refactor.CreateNode(new { Uid = "353", Name = "Vessel" });
+            //}
+
+            //[Version(0, 0, 3)]
+            //public void RefactorModel3()
+            //{
+            //    Entities["Actor"].Properties["fullname"].Refactor.Rename("name");
+            //}
+
+            //[Version(0, 0, 4)]
+            //public void RefactorModel4()
+            //{
+
+            //    Entities["Actor"].Properties["born"].Refactor.Deprecate();
+            //    Entities["Film"].Properties["release"].Refactor.Deprecate();
+            //}
+
+            //[Version(0, 0, 5)]
+            //public void RefactorModel5()
+            //{            
+            //    Entities["Actor"].Refactor.Deprecate();            
+            //}
+
+            //[Version(0, 0, 6)]
+            //public void RefactorModel6()
+            //{
+            //    // TODO: NOt supported
+            //    Entities["Film"].Refactor.Rename("Movie");
+            //}
+        }
 
     class Program
     {
         //[STAThread]
         static void Main(string[] args)
         {
-            //int a = 10999;
-            //object value = a;
-            //long val = (int)value;
-            //int release = Conversion<long, int>.Convert((long)value);
-
-            //object ooo = 10999;
-            //var kkk = (long)ooo;
-
-            //return;
-
-
-
             string hostname = "9caa0e3e-0ee0-4-231-b9ee.gremlin.cosmosdb.azure.com";
             int port = 443;
             string authKey = "8NTSGVQfWB5LWhPNutO5040rhZv8kene3pTS1dHHOG9xWWQ0oCYatdYcA6Z6S81RoCYnCjzWSqYye7bGAqvgQQ==";
@@ -97,53 +152,62 @@ namespace Blueprint41Test
             //"bolt://localhost:7687", "neo4j", "neo"
 
 
+            hostname = "localhost";
+            port = 8182;
+            authKey = database = collection = null;
+
             PersistenceProvider.Initialize(typeof(MovieModel), hostname, port, authKey, database, collection);
             //PersistenceProvider.Initialize(typeof(MovieModel), uri, username, pass);
 
-            //string projectFolder = Environment.CurrentDirectory + "\\..\\..\\";
-            //GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            //GeneratorResult result = Generator.Execute<MovieModel>(settings);
+            string projectFolder = Environment.CurrentDirectory + "\\..\\..\\";
+            GeneratorSettings settings = new GeneratorSettings(projectFolder);
+            GeneratorResult result = Generator.Execute<MovieModel>(settings);
 
 
             //MovieModel model = new MovieModel();
             //model.Execute(true);
+            
+            ////return;
+            //using (Transaction.Begin())
+            //{
+            //    //for(int i = 0; i < 10; i++)
+            //    //{
 
-            //return;
-            using (Transaction.Begin(true))
-            {
-                //for(int i = 0; i < 10; i++)
-                //{
-                //Film matrix = new Film()
-                //{
-                //    Uid = Guid.NewGuid().ToString(),
-                //    title = "The Matrix",
-                //    release = 1999,
-                //    tagline = "Welcome to the Real World"
-                //};
-                //}
+            //    Film matrix = new Film()
+            //    {
+            //        Uid = Guid.NewGuid().ToString(),
+            //        title = "Film Relationship",
+            //        release = 1999,
+            //        tagline = "Welcome to the Real World"
+            //    };
 
-                Film f = Film.Load("7c71dfe3-83c6-4527-a1c1-8bf089073fa3");
-                f.ForceDelete();
+            //    Actor keanu = new Actor()
+            //    {
+            //        Uid = Guid.NewGuid().ToString(),
+            //        fullname = "Actor Relationship"
+            //    };
 
-                // List<Film> films = Film.GetAll();
+            //    keanu.ActedFilms.Add(matrix);
 
-                //Film matrix = new Film
-                //{
-                //    Uid = "matrix",
-                //    title = "The Matrix",
-                //    release = 1999,
-                //    tagline = "Welcome to the Real World"
-                //};
+            //    //Film f = Film.Load("0a5e7812-cc1f-443d-b305-90a04c7f9d10");
 
-                //Actor keanu = new Actor()
-                //{
-                //    fullname = "Keanu Reeves"
-                //};
+            //    //Actor a = f.Actor[0];
 
-                //keanu.ActedFilms.Add(matrix);
+            //    //Actor a = Actor.Load("2fd16c7b-463c-4a3c-b11b-b18fad1dc034");
 
-                Transaction.Commit();
-            }
+            //    // List<Film> films = Film.GetAll();
+
+            //    //Film matrix = new Film
+            //    //{
+            //    //    Uid = "matrix",
+            //    //    title = "The Matrix",
+            //    //    release = 1999,
+            //    //    tagline = "Welcome to the Real World"
+            //    //};
+
+
+            //    Transaction.Commit();
+            //}
 
             //string cypherText = File.ReadAllText(Environment.CurrentDirectory + "/moviegraph.txt");
 

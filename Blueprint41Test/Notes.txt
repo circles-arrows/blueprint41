@@ -1,0 +1,25 @@
+﻿Cosmos DB
+
+https://github.com/Azure/azure-cosmos-dotnet-v2/issues/566
+
+Not Supported Feature
+- Entity Refactor
+--- Rename
+
+- Property Refactor
+--- Rename
+--- 
+
+- Relationship Refactor
+--- Rename
+
+- Could not set multiple properties
+-- e.g. MERGE (n:RefactorVersion) ON CREATE SET n = {node} ON MATCH SET n = {node}
+
+=========================================
+
+Gremlin Server
+
+Not Supported Feature
+- Entity Refactor
+--- Rename
