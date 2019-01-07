@@ -64,7 +64,7 @@ namespace Blueprint41.Core
             }
         }
 
-        public static bool IsCosmos
+        public static bool IsGremlin
         {
             get
             {
