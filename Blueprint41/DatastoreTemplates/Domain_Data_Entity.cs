@@ -3195,7 +3195,7 @@ if (!DALModel.IsAbstract)
             this.Write(" == \"");
             
             #line 985 "C:\_SatCom\BS.GBM\trunk core 2.0\code\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(value.OriginalValue));
+            this.Write(this.ToStringHelper.ToStringWithCulture(value.OriginalValue.Replace("\"", "\\\"")));
             
             #line default
             #line hidden
