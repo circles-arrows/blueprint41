@@ -23,6 +23,7 @@ namespace Blueprint41.UnitTest
             protected override void SubscribeEventHandlers() { }
         }
 
+
         [Test]
         public void ItShoudBeANeo4jConnection()
         {

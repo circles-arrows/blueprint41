@@ -54,6 +54,7 @@
     <Compile Include="Nodes\FilmNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Relationships\ACTOR_DIRECTED_FILM.cs" />
     <Compile Include="Relationships\PERSON_ACTED_IN_FILM.cs" />
     <Compile Include="Relationships\PERSON_DIRECTED_FILM.cs" />
     <Compile Include="Relationships\PERSON_PRODUCED_FILM.cs" />
@@ -85,8 +86,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="moviematch.txt" />
-    <Content Include="Notes.txt" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

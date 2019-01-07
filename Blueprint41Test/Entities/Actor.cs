@@ -13,8 +13,7 @@ namespace Datastore.Manipulation
 	public interface IActorOriginalData
     {
 		string Uid { get; }
-		string name { get; }
-		System.Collections.Generic.List<string> born { get; }
+		string fullname { get; }
 		IEnumerable<Film> ActedFilms { get; }
 		IEnumerable<Film> DirectedFilms { get; }
 		IEnumerable<Film> ProducedFilms { get; }
@@ -72,7 +71,7 @@ namespace Datastore.Manipulation
 
 		public override string ToString()
         {
-            return $"Actor => Uid : {this.Uid}, name : {this.name}, born : {this.born}";
+            return $"Actor => Uid : {this.Uid}, fullname : {this.fullname}";
         }
 
         public override int GetHashCode()
@@ -100,10 +99,8 @@ namespace Datastore.Manipulation
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
 #pragma warning disable CS0472
-			if (InnerData.name == null)
-				throw new PersistenceException(string.Format("Cannot save Actor with key '{0}' because the name cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.born == null)
-				throw new PersistenceException(string.Format("Cannot save Actor with key '{0}' because the born cannot be null.", this.Uid?.ToString() ?? "<null>"));
+			if (InnerData.fullname == null)
+				throw new PersistenceException(string.Format("Cannot save Actor with key '{0}' because the fullname cannot be null.", this.Uid?.ToString() ?? "<null>"));
 #pragma warning restore CS0472
 		}
 
@@ -125,8 +122,7 @@ namespace Datastore.Manipulation
             public ActorData(ActorData data)
             {
 				Uid = data.Uid;
-				name = data.name;
-				born = data.born;
+				fullname = data.fullname;
 				ActedFilms = data.ActedFilms;
 				DirectedFilms = data.DirectedFilms;
 				ProducedFilms = data.ProducedFilms;
@@ -140,7 +136,7 @@ namespace Datastore.Manipulation
 			{
 				NodeType = "Actor";
 
-				ActedFilms = new EntityCollection<Film>(Wrapper, Members.ActedFilms, item => { if (Members.ActedFilms.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actor.Count; } });
+				ActedFilms = new EntityCollection<Film>(Wrapper, Members.ActedFilms, item => { if (Members.ActedFilms.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actors.Count; } });
 				DirectedFilms = new EntityCollection<Film>(Wrapper, Members.DirectedFilms, item => { if (Members.DirectedFilms.Events.HasRegisteredChangeHandlers) { int loadHack = item.Directors.Count; } });
 				ProducedFilms = new EntityCollection<Film>(Wrapper, Members.ProducedFilms, item => { if (Members.ProducedFilms.Events.HasRegisteredChangeHandlers) { int loadHack = item.Producers.Count; } });
 				FilmsWrited = new EntityCollection<Film>(Wrapper, Members.FilmsWrited, item => { if (Members.FilmsWrited.Events.HasRegisteredChangeHandlers) { int loadHack = item.Writers.Count; } });
@@ -156,8 +152,7 @@ namespace Datastore.Manipulation
 			{
 				IDictionary<string, object> dictionary = new Dictionary<string, object>();
 				dictionary.Add("Uid",  Uid);
-				dictionary.Add("name",  name);
-				dictionary.Add("born",  Conversion<System.Collections.Generic.List<string>, System.Collections.Generic.List<object>>.Convert(born));
+				dictionary.Add("fullname",  fullname);
 				return dictionary;
 			}
 
@@ -166,10 +161,8 @@ namespace Datastore.Manipulation
 				object value;
 				if (properties.TryGetValue("Uid", out value))
 					Uid = (string)value;
-				if (properties.TryGetValue("name", out value))
-					name = (string)value;
-				if (properties.TryGetValue("born", out value))
-					born = Conversion<System.Collections.Generic.List<object>, System.Collections.Generic.List<string>>.Convert((System.Collections.Generic.List<object>)value);
+				if (properties.TryGetValue("fullname", out value))
+					fullname = (string)value;
 			}
 
 			#endregion
@@ -177,8 +170,7 @@ namespace Datastore.Manipulation
 			#region Members for interface IActor
 
 			public string Uid { get; set; }
-			public string name { get; set; }
-			public System.Collections.Generic.List<string> born { get; set; }
+			public string fullname { get; set; }
 			public EntityCollection<Film> ActedFilms { get; private set; }
 			public EntityCollection<Film> DirectedFilms { get; private set; }
 			public EntityCollection<Film> ProducedFilms { get; private set; }
@@ -194,8 +186,7 @@ namespace Datastore.Manipulation
 		#region Members for interface IActor
 
 		public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
-		public string name { get { LazyGet(); return InnerData.name; } set { if (LazySet(Members.name, InnerData.name, value)) InnerData.name = value; } }
-		public System.Collections.Generic.List<string> born { get { LazyGet(); return InnerData.born; } set { if (LazySet(Members.born, InnerData.born, value)) InnerData.born = value; } }
+		public string fullname { get { LazyGet(); return InnerData.fullname; } set { if (LazySet(Members.fullname, InnerData.fullname, value)) InnerData.fullname = value; } }
 		public EntityCollection<Film> ActedFilms { get { return InnerData.ActedFilms; } }
 		private void ClearActedFilms(DateTime? moment)
 		{
@@ -252,8 +243,7 @@ namespace Datastore.Manipulation
 			#region Members for interface IActor
 
             public Property Uid { get; } = Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["Uid"];
-            public Property name { get; } = Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["name"];
-            public Property born { get; } = Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["born"];
+            public Property fullname { get; } = Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["fullname"];
             public Property ActedFilms { get; } = Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["ActedFilms"];
             public Property DirectedFilms { get; } = Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["DirectedFilms"];
             public Property ProducedFilms { get; } = Blueprint41Test.MovieModel.Model.Entities["Actor"].Properties["ProducedFilms"];
@@ -494,86 +484,43 @@ namespace Datastore.Manipulation
 
 				#endregion
 
-				#region Onname
+				#region Onfullname
 
-				private static bool onnameIsRegistered = false;
+				private static bool onfullnameIsRegistered = false;
 
-				private static EventHandler<Actor, PropertyEventArgs> onname;
-				public static event EventHandler<Actor, PropertyEventArgs> Onname
+				private static EventHandler<Actor, PropertyEventArgs> onfullname;
+				public static event EventHandler<Actor, PropertyEventArgs> Onfullname
 				{
 					add
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							if (!onnameIsRegistered)
+							if (!onfullnameIsRegistered)
 							{
-								Members.name.Events.OnChange -= onnameProxy;
-								Members.name.Events.OnChange += onnameProxy;
-								onnameIsRegistered = true;
+								Members.fullname.Events.OnChange -= onfullnameProxy;
+								Members.fullname.Events.OnChange += onfullnameProxy;
+								onfullnameIsRegistered = true;
 							}
-							onname += value;
+							onfullname += value;
 						}
 					}
 					remove
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							onname -= value;
-							if (onname == null && onnameIsRegistered)
+							onfullname -= value;
+							if (onfullname == null && onfullnameIsRegistered)
 							{
-								Members.name.Events.OnChange -= onnameProxy;
-								onnameIsRegistered = false;
+								Members.fullname.Events.OnChange -= onfullnameProxy;
+								onfullnameIsRegistered = false;
 							}
 						}
 					}
 				}
             
-				private static void onnameProxy(object sender, PropertyEventArgs args)
+				private static void onfullnameProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Actor, PropertyEventArgs> handler = onname;
-					if ((object)handler != null)
-						handler.Invoke((Actor)sender, args);
-				}
-
-				#endregion
-
-				#region Onborn
-
-				private static bool onbornIsRegistered = false;
-
-				private static EventHandler<Actor, PropertyEventArgs> onborn;
-				public static event EventHandler<Actor, PropertyEventArgs> Onborn
-				{
-					add
-					{
-						lock (typeof(OnPropertyChange))
-						{
-							if (!onbornIsRegistered)
-							{
-								Members.born.Events.OnChange -= onbornProxy;
-								Members.born.Events.OnChange += onbornProxy;
-								onbornIsRegistered = true;
-							}
-							onborn += value;
-						}
-					}
-					remove
-					{
-						lock (typeof(OnPropertyChange))
-						{
-							onborn -= value;
-							if (onborn == null && onbornIsRegistered)
-							{
-								Members.born.Events.OnChange -= onbornProxy;
-								onbornIsRegistered = false;
-							}
-						}
-					}
-				}
-            
-				private static void onbornProxy(object sender, PropertyEventArgs args)
-				{
-					EventHandler<Actor, PropertyEventArgs> handler = onborn;
+					EventHandler<Actor, PropertyEventArgs> handler = onfullname;
 					if ((object)handler != null)
 						handler.Invoke((Actor)sender, args);
 				}
@@ -766,8 +713,7 @@ namespace Datastore.Manipulation
 		#region Members for interface IActor
 
 		string IActorOriginalData.Uid { get { return OriginalData.Uid; } }
-		string IActorOriginalData.name { get { return OriginalData.name; } }
-		System.Collections.Generic.List<string> IActorOriginalData.born { get { return OriginalData.born; } }
+		string IActorOriginalData.fullname { get { return OriginalData.fullname; } }
 		IEnumerable<Film> IActorOriginalData.ActedFilms { get { return OriginalData.ActedFilms.OriginalData; } }
 		IEnumerable<Film> IActorOriginalData.DirectedFilms { get { return OriginalData.DirectedFilms.OriginalData; } }
 		IEnumerable<Film> IActorOriginalData.ProducedFilms { get { return OriginalData.ProducedFilms.OriginalData; } }
