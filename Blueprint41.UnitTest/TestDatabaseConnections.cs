@@ -7,7 +7,7 @@ using System.Text;
 namespace Blueprint41.UnitTest
 {
     [TestFixture]
-    public class TestDatabaseConnections
+    internal class TestDatabaseConnections
     {
         class Neo4jDatastoremodel : DatastoreModel<Neo4jDatastoremodel>
         {
@@ -25,7 +25,7 @@ namespace Blueprint41.UnitTest
 
 
         [Test]
-        public void ItShoudBeANeo4jConnection()
+        public void EnsureConnectionIsNeo4jConnection()
         {
             string uri = "bolt://localhost:7687";
             string username = "neo4j";
@@ -37,7 +37,7 @@ namespace Blueprint41.UnitTest
         }
 
         [Test]
-        public void ItShoudBeAGremlinConnection()
+        public void EnsureConnectionIsGremlinConnection()
         {
             // Connection details for cosmos
             string hostname = "*.gremlin.cosmosdb.azure.com";
