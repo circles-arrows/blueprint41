@@ -95,7 +95,7 @@ namespace Blueprint41
                 FunctionalId FindFunctionalId()
                 {
                     Entity entity = this.Inherits;
-                    while(entity != null)
+                    while (entity != null)
                     {
                         if (entity.functionalId != null)
                             return entity.functionalId;
@@ -371,7 +371,8 @@ namespace Blueprint41
 
         private void VerifyFromInheritedProperties(string propertyName, bool excludeThis = false)
         {
-            Entity item = this;
+            Entity item = this.Inherits;
+
             while (item != null && item.Name != "Neo4jBase")
             {
                 if (excludeThis && item == this)
@@ -381,12 +382,8 @@ namespace Blueprint41
                 }
 
                 if (item.Properties.Contains(propertyName))
-                {
-                    if (item == this)
-                        throw new NotSupportedException(string.Format("Property with the name {0} already exists on Entity {1}", propertyName, item.Name));
-                    else
-                        throw new NotSupportedException(string.Format("Property with the name {0} already exists on base class Entity {1}", propertyName, item.Name));
-                }
+                    throw new NotSupportedException(string.Format("Property with the name {0} already exists on base class Entity {1}", propertyName, item.Name));
+
                 item = item.Inherits;
             }
         }
