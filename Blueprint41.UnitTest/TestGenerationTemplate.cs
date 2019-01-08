@@ -10,7 +10,7 @@ using System.Text;
 namespace Blueprint41.UnitTest
 {
     [TestFixture]
-    public class TestGenerationTemplate : Neo4jBase
+    internal class TestGenerationTemplate : Neo4jBase
     {
         class GenerationStoreModel : DatastoreModel<GenerationStoreModel>
         {
