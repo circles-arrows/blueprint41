@@ -1,9 +1,10 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Blueprint41.UnitTest.Helper
+namespace Blueprint41.UnitTest.Misc
 {
     public class ConsoleOutput : IDisposable
     {
@@ -26,6 +27,21 @@ namespace Blueprint41.UnitTest.Helper
         {
             Console.SetOut(originalOutput);
             stringWriter.Dispose();
+        }
+    }
+
+    public static class Helper
+    {
+        public static void AssertThrows<T>(TestDelegate testDelegate, string expectedExceptionMessage = null) where T : Exception
+        {
+            if (string.IsNullOrEmpty(expectedExceptionMessage))
+            {
+                T exception = NUnit.Framework.Assert.Throws<T>(testDelegate);
+                return;
+            }
+
+            Assert.That(testDelegate, Throws.TypeOf<T>()
+                .With.Property("Message").EqualTo(expectedExceptionMessage));
         }
     }
 }
