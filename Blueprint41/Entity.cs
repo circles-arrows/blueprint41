@@ -482,7 +482,7 @@ namespace Blueprint41
             {
                 Property property = GetPropertiesOfBaseTypesAndSelf().FirstOrDefault(item => item.Name == key);
                 if (property == null)
-                    throw new ArgumentException(string.Format("The field '{0}' was not present on entity '{1}'. ", key, Name));
+                    throw new ArgumentException(string.Format("The field '{0}' was not present on entity '{1}'.", key, Name));
 
                 Parser.ExecuteBatched<SetDefaultConstantValue>(delegate (SetDefaultConstantValue template)
                 {
@@ -492,6 +492,7 @@ namespace Blueprint41
                 });
             }
         }
+
         void IRefactorEntity.CopyValue(string sourceProperty, string targetProperty)
         {
             Parent.EnsureSchemaMigration();
@@ -602,7 +603,7 @@ namespace Blueprint41
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
 
             if (!staticData.Remove(key))
-                throw new ArgumentOutOfRangeException($"Only statically created data (via the upgrade script) can be deleted here.");
+                throw new ArgumentOutOfRangeException("Only statically created data (via the upgrade script) can be deleted here.");
 
             if (Parser.ShouldExecute)
                 DynamicEntity.Delete(this, key);
