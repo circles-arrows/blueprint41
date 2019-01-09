@@ -16,7 +16,7 @@ namespace Blueprint41Test
     public class MovieModel : DatastoreModel<MovieModel>
     {
 
-        public override GraphFeatures TargetFeatures => GraphFeatures.Cosmos;
+        public override GraphFeatures TargetFeatures => GraphFeatures.Gremlin;
 
         protected override void SubscribeEventHandlers()
         {
@@ -64,7 +64,7 @@ namespace Blueprint41Test
             Entities["Actor"].Properties["name"].Refactor.Rename("fullname");
             Entities["Actor"].Properties["born"].Refactor.Deprecate();
 
-            Relations["PERSON_DIRECTED_FILM"].Refactor.Rename("ACTOR_DIRECTED_FILM");
+            //Relations["PERSON_DIRECTED_FILM"].Refactor.Rename("ACTOR_DIRECTED_FILM");
         }
     }
 

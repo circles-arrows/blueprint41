@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Blueprint41.UnitTest.Tests
+namespace Blueprint41.UnitTest
 {
     [TestFixture]
     internal class TestDataModel : TestBase
