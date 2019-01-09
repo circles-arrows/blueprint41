@@ -675,7 +675,7 @@ foreach (var entity in Entities)
             this.Write(" = \"");
             
             #line 206 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(prop.Value));
+            this.Write(this.ToStringHelper.ToStringWithCulture(prop.Value.Replace("\"","\\\"")));
             
             #line default
             #line hidden

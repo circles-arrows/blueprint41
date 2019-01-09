@@ -203,7 +203,7 @@ foreach (var entity in Entities)
 			{
 				var prop = primitiveRecords.ElementAt(index);
 				string comma = index == primitiveRecords.Count() - 1 ? " " : ",";
-				var primitive = allProperties.Where(p => p.Guid == prop.PropertyGuid).FirstOrDefault();#> <#=primitive.Name#> = "<#=prop.Value#>"<#= comma #><#
+				var primitive = allProperties.Where(p => p.Guid == prop.PropertyGuid).FirstOrDefault();#> <#=primitive.Name#> = "<#=prop.Value.Replace("\"","\\\"")#>"<#= comma #><#
 			}
 #>});
 <#
