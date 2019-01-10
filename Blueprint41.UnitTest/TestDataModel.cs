@@ -187,6 +187,51 @@ namespace Blueprint41.UnitTest.Tests
             DatastoreModel model = new DataModelEntityProperties();
             model.Execute(false);
         }
-        #endregion        
+        #endregion
+
+        #region DataModelRelationships()
+        private class DataModelEntityRelationships : DatastoreModel<DataModelEntityRelationships>
+        {
+            protected override void SubscribeEventHandlers() { }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                Entities.New("RelationshipOne")
+                     .AddProperty("Name", typeof(string));
+
+                Entities.New("RelationshipTwo")
+                    .AddProperty("Name", typeof(string));
+
+                Relations.New(Entities["RelationshipOne"], Entities["RelationshipTwo"], "HAS_RELATIONSHIP", "HAS")
+                    .SetInProperty("InRels", PropertyType.Collection)
+                    .SetOutProperty("OutRels", PropertyType.Lookup);
+
+                Assert.IsTrue(Relations.Contains("HAS_RELATIONSHIP"));
+                Assert.AreEqual(Relations["HAS_RELATIONSHIP"].Neo4JRelationshipType, "HAS");
+
+                Assert.IsTrue(Entities["RelationshipOne"].HaveRelationship);
+                Assert.IsTrue(Entities["RelationshipOne"].GetRelationships().Count() == 1);
+
+                Assert.IsTrue(Entities["RelationshipTwo"].HaveRelationship);
+                Assert.IsTrue(Entities["RelationshipTwo"].GetRelationships().Count() == 1);
+
+                Assert.IsTrue(Relations["HAS_RELATIONSHIP"].InEntity == Entities["RelationshipTwo"]);
+                Assert.IsTrue(Relations["HAS_RELATIONSHIP"].OutEntity == Entities["RelationshipOne"]);
+
+                Assert.IsTrue(Relations["HAS_RELATIONSHIP"].InProperty.PropertyType == PropertyType.Collection);
+                Assert.IsTrue(Relations["HAS_RELATIONSHIP"].OutProperty.PropertyType == PropertyType.Lookup);
+            }
+        }
+
+        [Test]
+        public void EnsureRelationshipsAreValid()
+        {
+            DatastoreModel model = new DataModelEntityProperties();
+            model.Execute(false);
+        }
+
+        #endregion
+
     }
 }
