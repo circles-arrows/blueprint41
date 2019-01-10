@@ -380,7 +380,7 @@ namespace Blueprint41.Modeller
             }
 
             // getting strings
-            string strings = "\".*?\"";
+            string strings = "\"(?:[^\"\\\\]|\\\\.)*\"";
             MatchCollection stringMatches = Regex.Matches(richTextBox.Text, strings);
 
             foreach (Match m in stringMatches)
