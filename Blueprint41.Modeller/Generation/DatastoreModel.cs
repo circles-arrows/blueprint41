@@ -79,14 +79,7 @@ namespace Blueprint41.Modeller.Generation
             
             #line default
             #line hidden
-            this.Write("    FunctionalId ");
-            
-            #line 21 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(functionalId.Name.ToLower()));
-            
-            #line default
-            #line hidden
-            this.Write("Id = FunctionalIds.New(\"");
+            this.Write("    FunctionalIds.New(\"");
             
             #line 21 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(functionalId.Name));
@@ -153,7 +146,7 @@ foreach (var entity in Entities)
         else 
         {
             var ids = FunctionalIds.Where(x => x.Guid == entity.FunctionalId && x.IsDefault == false).ToList();
-            string entityFunctionalId = ids.Count > 0 ?  ", " + ids.First().Name.ToLower() + "Id": "";
+            string entityFunctionalId = ids.Count > 0 ? ", FunctionalIds[\"" + ids.First().Name + "\"]" : "";
 
             
             #line default
@@ -210,7 +203,7 @@ foreach (var entity in Entities)
         else
         {
             var ids = FunctionalIds.Where(x => x.Guid == entity.FunctionalId && x.IsDefault == false).ToList();
-            string entityFunctionalId = ids.Count > 0 ?  ids.First().Name.ToLower() + "Id, ": "";
+			string entityFunctionalId = ids.Count > 0 ? "FunctionalIds[\"" + ids.First().Name + "\"], " : "";
 
 			if(!string.IsNullOrEmpty(entity.FunctionalId) && !string.IsNullOrEmpty(inheritedEntity.FunctionalId))
 			{
@@ -290,7 +283,7 @@ foreach (var entity in Entities)
             #line 93 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
     }
-	if (entity.StaticData != null)
+	if (entity.IsStaticData)
 	{
 
             
@@ -627,78 +620,74 @@ foreach (var relationship in Relationships)
             
             #line 184 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-foreach (var entity in Entities)
+foreach (var entity in Entities.Where(x => x.StaticData != null && x.StaticData?.Records.Record.Count > 0))
 {
-	if (entity.StaticData != null)
+	foreach(var record in entity.StaticData.Records.Record)
 	{
-		foreach(var record in entity.StaticData.Records.Record)
+		var allProperties = new List<Primitive>();
+		Entity current = entity;
+		do
 		{
-			var allProperties = new List<Primitive>();
-            Entity current = entity;
-            do
-            {
-               allProperties.AddRange(current.Primitive);
-               current = current.ParentEntity;
-            } while (current != null);
-            var primitiveRecords = record.Property.Where(r => allProperties.Any(p => p.Guid == r.PropertyGuid));
-
+			allProperties.AddRange(current.Primitive);
+			current = current.ParentEntity;
+		} while (current != null);
+		var primitiveRecords = record.Property.Where(r => allProperties.Any(p => p.Guid == r.PropertyGuid));
 
             
             #line default
             #line hidden
             this.Write("    Entities[\"");
             
-            #line 201 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 197 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(entity.Name));
             
             #line default
             #line hidden
             this.Write("\"].Refactor.CreateNode(new {");
             
-            #line 201 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 197 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-			for(int index = 0; index < primitiveRecords.Count(); index++)
-			{
-				var prop = primitiveRecords.ElementAt(index);
-				string comma = index == primitiveRecords.Count() - 1 ? " " : ",";
-				var primitive = allProperties.Where(p => p.Guid == prop.PropertyGuid).FirstOrDefault();
+		for(int index = 0; index < primitiveRecords.Count(); index++)
+		{
+			var prop = primitiveRecords.ElementAt(index);
+			string comma = index == primitiveRecords.Count() - 1 ? " " : ",";
+			var primitive = allProperties.Where(p => p.Guid == prop.PropertyGuid).FirstOrDefault();
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 206 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
-            #line 206 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(prop.Value.Replace("\"","\\\"")));
             
             #line default
             #line hidden
             this.Write("\"");
             
-            #line 206 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(comma));
             
             #line default
             #line hidden
             
-            #line 206 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-			}
+		}
 
             
             #line default
             #line hidden
             this.Write("});\r\n");
             
-            #line 209 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 205 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-		}
 	}
 
             
@@ -706,9 +695,8 @@ foreach (var entity in Entities)
             #line hidden
             this.Write("\r\n");
             
-            #line 214 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 209 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
-	
 } // end foreach entities
 
             
