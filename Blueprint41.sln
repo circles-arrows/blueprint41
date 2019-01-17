@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint41.Modeller.V2", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint41.Gremlin", "Blueprint41.Gremlin\Blueprint41.Gremlin.csproj", "{36E7C5F8-E652-4EFA-9C48-45D8932A4EC7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blueprint41.GremlinUnitTest", "Blueprint41.GremlinUnitTest\Blueprint41.GremlinUnitTest.csproj", "{0A208DA3-BDC5-4800-B7FE-DA653FE3C577}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{36E7C5F8-E652-4EFA-9C48-45D8932A4EC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36E7C5F8-E652-4EFA-9C48-45D8932A4EC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36E7C5F8-E652-4EFA-9C48-45D8932A4EC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A208DA3-BDC5-4800-B7FE-DA653FE3C577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A208DA3-BDC5-4800-B7FE-DA653FE3C577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A208DA3-BDC5-4800-B7FE-DA653FE3C577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A208DA3-BDC5-4800-B7FE-DA653FE3C577}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
