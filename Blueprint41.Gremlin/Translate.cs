@@ -4,6 +4,14 @@ using System;
 
 namespace Blueprint41.Gremlin
 {
+    public enum GremlinFlavor
+    {
+        Default,
+        Cosmos,
+        Neptune
+    }
+
+
     public class Translate
     {
 
@@ -12,7 +20,7 @@ namespace Blueprint41.Gremlin
         /// </summary>
         /// <param name="cypher">Neo4j cypher to be translated</param>
         /// <returns>string</returns>
-        public static string ToCosmos(string cypher)
+        public static string ToGremlin(string cypher, GremlinFlavor flavor = GremlinFlavor.Default)
         {
             try
             {
@@ -20,8 +28,31 @@ namespace Blueprint41.Gremlin
                 cypher = cypher.Replace("\r\n", " ").Trim();
 
                 CypherAst ast = CypherAst.parse(cypher);
-                Translator cosmosTranslator = Translator.builder().gremlinGroovy().build(TranslatorFlavor.cosmosDb());
 
+                TranslatorFlavor tflavor = TranslatorFlavor.gremlinServer();
+                Translator.FlavorBuilder builder = Translator.builder().gremlinGroovy();
+
+                switch (flavor)
+                {
+                    case GremlinFlavor.Cosmos:
+                        tflavor = TranslatorFlavor.cosmosDb();
+                        break;
+                    case GremlinFlavor.Neptune:
+                        tflavor = TranslatorFlavor.neptune();
+                        builder = (builder as Translator.ParametrizedFlavorBuilder)
+                            .inlineParameters()
+                            .enableCypherExtensions()
+                            .enableMultipleLabels();
+                        break;
+                    default:
+                        builder = (builder as Translator.ParametrizedFlavorBuilder)
+                            .inlineParameters()
+                            .enableCypherExtensions()
+                            .enableMultipleLabels();
+                        break;
+                }
+
+                Translator cosmosTranslator = builder.build(TranslatorFlavor.cosmosDb());
                 return ast.buildTranslation(cosmosTranslator).ToString();
             }
             catch (Exception ex)
