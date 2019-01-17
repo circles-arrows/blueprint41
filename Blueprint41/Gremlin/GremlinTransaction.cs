@@ -1,4 +1,5 @@
-﻿using Blueprint41.Response;
+﻿using Blueprint41.Core;
+using Blueprint41.Response;
 using Gremlin.Net.Driver;
 using Gremlin.Net.Driver.Exceptions;
 using Gremlin.Net.Structure.IO.GraphSON;
@@ -64,7 +65,7 @@ namespace Blueprint41.Gremlin
             if ((RunningTransaction is GremlinTransaction grem && this == grem) == false)
                 throw new InvalidOperationException("The current transaction is not a Gremlin transaction.");
 
-            string gremlinQuery = Translate.ToCosmos(cypher);
+            string gremlinQuery = Translate.ToGremlin(cypher, PersistenceProvider.TargetFeatures.GremlinFlavor);
             return Client.QueryAsync(gremlinQuery).Result;
         }
 
@@ -73,7 +74,7 @@ namespace Blueprint41.Gremlin
             if ((RunningTransaction is GremlinTransaction grem && this == grem) == false)
                 throw new InvalidOperationException("The current transaction is not a Gremlin transaction.");
 
-            string gremlinQuery = Translate.ToCosmos(cypher.ToCypherString(parameters));
+            string gremlinQuery = Translate.ToGremlin(cypher.ToCypherString(parameters), PersistenceProvider.TargetFeatures.GremlinFlavor);
             return Client.QueryAsync(gremlinQuery).Result;
         }
 

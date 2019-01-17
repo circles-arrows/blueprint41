@@ -27,6 +27,7 @@ namespace Blueprint41
         public static readonly GraphFeatures Gremlin = new GraphFeatures()
         {
             Cypher = false,
+            GremlinFlavor = GremlinFlavor.Default,
             Delete = false,
             FunctionalId = false,
             CreateIndex = false,
@@ -35,6 +36,37 @@ namespace Blueprint41
             ApplyConstraintEntity = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
+        }
+        .SetTemplateFeatures()
+        .SetSchemaFeatures();
+
+        public static readonly GraphFeatures Cosmos = new GraphFeatures()
+        {
+            Cypher = false,
+            GremlinFlavor = GremlinFlavor.Cosmos,
+            Delete = false,
+            FunctionalId = false,
+            CreateIndex = false,
+            CreateUniqueConstraint = false,
+            DropExistConstraints = false,
+            ApplyConstraintEntity = false,
+            PersistenceProviderType = typeof(GremlinPersistenceProvider),
+
+        }
+        .SetTemplateFeatures()
+        .SetSchemaFeatures();
+
+        public static readonly GraphFeatures Neptune = new GraphFeatures()
+        {
+            Cypher = false,
+            GremlinFlavor = GremlinFlavor.Neptune,
+            Delete = false,
+            FunctionalId = false,
+            CreateIndex = false,
+            CreateUniqueConstraint = false,
+            DropExistConstraints = false,
+            ApplyConstraintEntity = false,
+            PersistenceProviderType = typeof(GremlinPersistenceProvider),
         }
         .SetTemplateFeatures()
         .SetSchemaFeatures();
@@ -73,6 +105,19 @@ namespace Blueprint41
             schemaFeatures.Add(typeof(Schema.ApplyConstraintEntity), ApplyConstraintEntity);
 
             return this;
+        }
+
+        private GremlinFlavor gremlinFlavor;
+        public GremlinFlavor GremlinFlavor
+        {
+            get
+            {
+                if (Cypher)
+                    throw new NotSupportedException("The current graph db does not support this property");
+
+                return gremlinFlavor;
+            }
+            set { gremlinFlavor = value; }
         }
 
         public bool Cypher { get; private set; } = true;
