@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.Gremlin;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace Blueprint41.UnitTest
             authKey = database = collection = null;
 
             PersistenceProvider.Initialize(typeof(GremlinDatastoremodel), hostname, port, authKey, database, collection);
-            Assert.IsTrue(PersistenceProvider.CurrentPersistenceProvider.GetType() == typeof(Gremlin.GremlinPersistenceProvider));
+            Assert.IsTrue(PersistenceProvider.CurrentPersistenceProvider.GetType() == typeof(GremlinPersistenceProvider));
             Assert.Throws<MissingMethodException>(() => { PersistenceProvider.Initialize(typeof(Neo4jDatastoremodel), hostname, port, authKey, database, collection); });
         }
     }
