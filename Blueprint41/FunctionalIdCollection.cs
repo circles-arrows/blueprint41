@@ -28,10 +28,16 @@ namespace Blueprint41
 
         public FunctionalId New(Entity entity, string prefix, IdFormat format = IdFormat.Hash, int startFrom = 0)
         {
+            if (Parent.TargetFeatures.FunctionalId == false)
+                throw new NotSupportedException("The current graph database does not support this feature");
+
             return New(entity.Label.Name, prefix, format, startFrom);
         }
         public FunctionalId New(string label, string prefix, IdFormat format = IdFormat.Hash, int startFrom = 0)
         {
+            if (Parent.TargetFeatures.FunctionalId == false)
+                throw new NotSupportedException("The current graph database does not support this feature");
+
             if (collection.Any(item => item.Value.Prefix == prefix))
                 throw new InvalidOperationException(string.Format("You cannot have multiple FunctionalIds that have the same prefix '{0}'.", prefix));
 
