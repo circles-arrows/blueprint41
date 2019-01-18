@@ -9,43 +9,43 @@ namespace Datastore.Query
 {
 	public partial class Node
 	{
-		public static ActorNode Actor { get { return new ActorNode(); } }
+		public static PersonNode Person { get { return new PersonNode(); } }
 	}
 
-	public partial class ActorNode : Blueprint41.Query.Node
+	public partial class PersonNode : Blueprint41.Query.Node
 	{
         protected override string GetNeo4jLabel()
         {
-			return "Actor";
+			return "Person";
         }
 
-		internal ActorNode() { }
-		internal ActorNode(ActorAlias alias, bool isReference = false)
+		internal PersonNode() { }
+		internal PersonNode(PersonAlias alias, bool isReference = false)
 		{
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal ActorNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
+		internal PersonNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
 
-		public ActorNode Alias(out ActorAlias alias)
+		public PersonNode Alias(out PersonAlias alias)
 		{
-			alias = new ActorAlias(this);
+			alias = new PersonAlias(this);
             NodeAlias = alias;
 			return this;
 		}
 
-		public ActorNode UseExistingAlias(AliasResult alias)
+		public PersonNode UseExistingAlias(AliasResult alias)
         {
             NodeAlias = alias;
 			return this;
         }
 
 	
-		public ActorIn  In  { get { return new ActorIn(this); } }
-		public class ActorIn
+		public PersonIn  In  { get { return new PersonIn(this); } }
+		public class PersonIn
 		{
-			private ActorNode Parent;
-			internal ActorIn(ActorNode parent)
+			private PersonNode Parent;
+			internal PersonIn(PersonNode parent)
 			{
                 Parent = parent;
 			}
@@ -57,9 +57,9 @@ namespace Datastore.Query
 		}
 	}
 
-    public class ActorAlias : AliasResult
+    public class PersonAlias : AliasResult
     {
-        internal ActorAlias(ActorNode parent)
+        internal PersonAlias(PersonNode parent)
         {
 			Node = parent;
         }
@@ -72,9 +72,9 @@ namespace Datastore.Query
                 {
                     m_AliasFields = new Dictionary<string, FieldResult>()
                     {
-						{ "Name", new StringResult(this, "Name", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"].Properties["Name"]) },
-						{ "Uid", new StringResult(this, "Uid", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"]) },
-						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"]) },
+						{ "Name", new StringResult(this, "Name", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["Name"]) },
+						{ "Uid", new StringResult(this, "Uid", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"]) },
+						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"]) },
 					};
 				}
 				return m_AliasFields;
@@ -82,7 +82,7 @@ namespace Datastore.Query
 		}
         private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
-        public ActorNode.ActorIn In { get { return new ActorNode.ActorIn(new ActorNode(this, true)); } }
+        public PersonNode.PersonIn In { get { return new PersonNode.PersonIn(new PersonNode(this, true)); } }
 
         public StringResult Name
 		{

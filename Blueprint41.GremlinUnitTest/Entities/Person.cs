@@ -10,7 +10,7 @@ using q = Datastore.Query;
 
 namespace Datastore.Manipulation
 {
-	public interface IActorOriginalData : IBaseOriginalData
+	public interface IPersonOriginalData : IBaseOriginalData
     {
 		string Name { get; }
 		IEnumerable<Film> ActedFilms { get; }
@@ -19,11 +19,11 @@ namespace Datastore.Manipulation
 		IEnumerable<Film> FilmsWrited { get; }
     }
 
-	public partial class Actor : OGM<Actor, Actor.ActorData, System.String>, IBase, IActorOriginalData
+	public partial class Person : OGM<Person, Person.PersonData, System.String>, IBase, IPersonOriginalData
 	{
         #region Initialize
 
-        static Actor()
+        static Person()
         {
             Register.Types();
         }
@@ -41,16 +41,16 @@ namespace Datastore.Manipulation
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Actor> LoadByKeys(IEnumerable<System.String> uids)
+        public static Dictionary<System.String, Person> LoadByKeys(IEnumerable<System.String> uids)
         {
             return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
-		protected static void RegisterQuery(string name, Func<IMatchQuery, q.ActorAlias, IWhereQuery> query)
+		protected static void RegisterQuery(string name, Func<IMatchQuery, q.PersonAlias, IWhereQuery> query)
         {
-            q.ActorAlias alias;
+            q.PersonAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Actor.Alias(out alias));
+            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Person.Alias(out alias));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
@@ -59,7 +59,7 @@ namespace Datastore.Manipulation
 
 		public override string ToString()
         {
-            return $"Actor => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Person => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -73,7 +73,7 @@ namespace Datastore.Manipulation
             if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
             {
                 if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new ActorData(InnerData);
+                    OriginalData = new PersonData(InnerData);
             }
         }
 
@@ -88,9 +88,9 @@ namespace Datastore.Manipulation
 
 #pragma warning disable CS0472
 			if (InnerData.Name == null)
-				throw new PersistenceException(string.Format("Cannot save Actor with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
+				throw new PersistenceException(string.Format("Cannot save Person with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
 			if (InnerData.Uid == null)
-				throw new PersistenceException(string.Format("Cannot save Actor with key '{0}' because the Uid cannot be null.", this.Uid?.ToString() ?? "<null>"));
+				throw new PersistenceException(string.Format("Cannot save Person with key '{0}' because the Uid cannot be null.", this.Uid?.ToString() ?? "<null>"));
 #pragma warning restore CS0472
 		}
 
@@ -102,14 +102,14 @@ namespace Datastore.Manipulation
 
 		#region Inner Data
 
-		public class ActorData : Data<System.String>
+		public class PersonData : Data<System.String>
 		{
-			public ActorData()
+			public PersonData()
             {
 
             }
 
-            public ActorData(ActorData data)
+            public PersonData(PersonData data)
             {
 				Name = data.Name;
 				ActedFilms = data.ActedFilms;
@@ -125,7 +125,7 @@ namespace Datastore.Manipulation
 
 			protected override void InitializeCollections()
 			{
-				NodeType = "Actor";
+				NodeType = "Person";
 
 				ActedFilms = new EntityCollection<Film>(Wrapper, Members.ActedFilms, item => { if (Members.ActedFilms.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actors.Count; } });
 				DirectedFilms = new EntityCollection<Film>(Wrapper, Members.DirectedFilms, item => { if (Members.DirectedFilms.Events.HasRegisteredChangeHandlers) { int loadHack = item.Directors.Count; } });
@@ -161,7 +161,7 @@ namespace Datastore.Manipulation
 
 			#endregion
 
-			#region Members for interface IActor
+			#region Members for interface IPerson
 
 			public string Name { get; set; }
 			public EntityCollection<Film> ActedFilms { get; private set; }
@@ -182,7 +182,7 @@ namespace Datastore.Manipulation
 
 		#region Outer Data
 
-		#region Members for interface IActor
+		#region Members for interface IPerson
 
 		public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
 		public EntityCollection<Film> ActedFilms { get { return InnerData.ActedFilms; } }
@@ -226,33 +226,33 @@ namespace Datastore.Manipulation
 
 		#region Reflection
 
-        private static ActorMembers members = null;
-        public static ActorMembers Members
+        private static PersonMembers members = null;
+        public static PersonMembers Members
         {
             get
             {
                 if (members == null)
                 {
-                    lock (typeof(Actor))
+                    lock (typeof(Person))
                     {
                         if (members == null)
-                            members = new ActorMembers();
+                            members = new PersonMembers();
                     }
                 }
                 return members;
             }
         }
-        public class ActorMembers
+        public class PersonMembers
         {
-            internal ActorMembers() { }
+            internal PersonMembers() { }
 
-			#region Members for interface IActor
+			#region Members for interface IPerson
 
-            public Property Name { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"].Properties["Name"];
-            public Property ActedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"].Properties["ActedFilms"];
-            public Property DirectedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"].Properties["DirectedFilms"];
-            public Property ProducedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"].Properties["ProducedFilms"];
-            public Property FilmsWrited { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"].Properties["FilmsWrited"];
+            public Property Name { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["Name"];
+            public Property ActedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["ActedFilms"];
+            public Property DirectedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["DirectedFilms"];
+            public Property ProducedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["ProducedFilms"];
+            public Property FilmsWrited { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["FilmsWrited"];
 			#endregion
 
 			#region Members for interface IBase
@@ -263,26 +263,26 @@ namespace Datastore.Manipulation
 
         }
 
-        private static ActorFullTextMembers fullTextMembers = null;
-        public static ActorFullTextMembers FullTextMembers
+        private static PersonFullTextMembers fullTextMembers = null;
+        public static PersonFullTextMembers FullTextMembers
         {
             get
             {
                 if (fullTextMembers == null)
                 {
-                    lock (typeof(Actor))
+                    lock (typeof(Person))
                     {
                         if (fullTextMembers == null)
-                            fullTextMembers = new ActorFullTextMembers();
+                            fullTextMembers = new PersonFullTextMembers();
                     }
                 }
                 return fullTextMembers;
             }
         }
 
-        public class ActorFullTextMembers
+        public class PersonFullTextMembers
         {
-            internal ActorFullTextMembers() { }
+            internal PersonFullTextMembers() { }
 
         }
 
@@ -290,40 +290,40 @@ namespace Datastore.Manipulation
         {
             if (entity == null)
             {
-                lock (typeof(Actor))
+                lock (typeof(Person))
                 {
                     if (entity == null)
-                        entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Actor"];
+                        entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"];
                 }
             }
             return entity;
         }
 
-		private static ActorEvents events = null;
-        public static ActorEvents Events
+		private static PersonEvents events = null;
+        public static PersonEvents Events
         {
             get
             {
                 if (events == null)
                 {
-                    lock (typeof(Actor))
+                    lock (typeof(Person))
                     {
                         if (events == null)
-                            events = new ActorEvents();
+                            events = new PersonEvents();
                     }
                 }
                 return events;
             }
         }
-        public class ActorEvents
+        public class PersonEvents
         {
 
             #region OnNew
 
             private bool onNewIsRegistered = false;
 
-            private EventHandler<Actor, EntityEventArgs> onNew;
-            public event EventHandler<Actor, EntityEventArgs> OnNew
+            private EventHandler<Person, EntityEventArgs> onNew;
+            public event EventHandler<Person, EntityEventArgs> OnNew
             {
                 add
                 {
@@ -354,9 +354,9 @@ namespace Datastore.Manipulation
             
 			private void onNewProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<Actor, EntityEventArgs> handler = onNew;
+                EventHandler<Person, EntityEventArgs> handler = onNew;
                 if ((object)handler != null)
-                    handler.Invoke((Actor)sender, args);
+                    handler.Invoke((Person)sender, args);
             }
 
             #endregion
@@ -365,8 +365,8 @@ namespace Datastore.Manipulation
 
             private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Actor, EntityEventArgs> onDelete;
-            public event EventHandler<Actor, EntityEventArgs> OnDelete
+            private EventHandler<Person, EntityEventArgs> onDelete;
+            public event EventHandler<Person, EntityEventArgs> OnDelete
             {
                 add
                 {
@@ -397,9 +397,9 @@ namespace Datastore.Manipulation
             
 			private void onDeleteProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<Actor, EntityEventArgs> handler = onDelete;
+                EventHandler<Person, EntityEventArgs> handler = onDelete;
                 if ((object)handler != null)
-                    handler.Invoke((Actor)sender, args);
+                    handler.Invoke((Person)sender, args);
             }
 
             #endregion
@@ -408,8 +408,8 @@ namespace Datastore.Manipulation
 
             private bool onSaveIsRegistered = false;
 
-            private EventHandler<Actor, EntityEventArgs> onSave;
-            public event EventHandler<Actor, EntityEventArgs> OnSave
+            private EventHandler<Person, EntityEventArgs> onSave;
+            public event EventHandler<Person, EntityEventArgs> OnSave
             {
                 add
                 {
@@ -440,9 +440,9 @@ namespace Datastore.Manipulation
             
 			private void onSaveProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<Actor, EntityEventArgs> handler = onSave;
+                EventHandler<Person, EntityEventArgs> handler = onSave;
                 if ((object)handler != null)
-                    handler.Invoke((Actor)sender, args);
+                    handler.Invoke((Person)sender, args);
             }
 
             #endregion
@@ -456,8 +456,8 @@ namespace Datastore.Manipulation
 
 				private static bool onNameIsRegistered = false;
 
-				private static EventHandler<Actor, PropertyEventArgs> onName;
-				public static event EventHandler<Actor, PropertyEventArgs> OnName
+				private static EventHandler<Person, PropertyEventArgs> onName;
+				public static event EventHandler<Person, PropertyEventArgs> OnName
 				{
 					add
 					{
@@ -488,9 +488,9 @@ namespace Datastore.Manipulation
             
 				private static void onNameProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Actor, PropertyEventArgs> handler = onName;
+					EventHandler<Person, PropertyEventArgs> handler = onName;
 					if ((object)handler != null)
-						handler.Invoke((Actor)sender, args);
+						handler.Invoke((Person)sender, args);
 				}
 
 				#endregion
@@ -499,8 +499,8 @@ namespace Datastore.Manipulation
 
 				private static bool onActedFilmsIsRegistered = false;
 
-				private static EventHandler<Actor, PropertyEventArgs> onActedFilms;
-				public static event EventHandler<Actor, PropertyEventArgs> OnActedFilms
+				private static EventHandler<Person, PropertyEventArgs> onActedFilms;
+				public static event EventHandler<Person, PropertyEventArgs> OnActedFilms
 				{
 					add
 					{
@@ -531,9 +531,9 @@ namespace Datastore.Manipulation
             
 				private static void onActedFilmsProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Actor, PropertyEventArgs> handler = onActedFilms;
+					EventHandler<Person, PropertyEventArgs> handler = onActedFilms;
 					if ((object)handler != null)
-						handler.Invoke((Actor)sender, args);
+						handler.Invoke((Person)sender, args);
 				}
 
 				#endregion
@@ -542,8 +542,8 @@ namespace Datastore.Manipulation
 
 				private static bool onDirectedFilmsIsRegistered = false;
 
-				private static EventHandler<Actor, PropertyEventArgs> onDirectedFilms;
-				public static event EventHandler<Actor, PropertyEventArgs> OnDirectedFilms
+				private static EventHandler<Person, PropertyEventArgs> onDirectedFilms;
+				public static event EventHandler<Person, PropertyEventArgs> OnDirectedFilms
 				{
 					add
 					{
@@ -574,9 +574,9 @@ namespace Datastore.Manipulation
             
 				private static void onDirectedFilmsProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Actor, PropertyEventArgs> handler = onDirectedFilms;
+					EventHandler<Person, PropertyEventArgs> handler = onDirectedFilms;
 					if ((object)handler != null)
-						handler.Invoke((Actor)sender, args);
+						handler.Invoke((Person)sender, args);
 				}
 
 				#endregion
@@ -585,8 +585,8 @@ namespace Datastore.Manipulation
 
 				private static bool onProducedFilmsIsRegistered = false;
 
-				private static EventHandler<Actor, PropertyEventArgs> onProducedFilms;
-				public static event EventHandler<Actor, PropertyEventArgs> OnProducedFilms
+				private static EventHandler<Person, PropertyEventArgs> onProducedFilms;
+				public static event EventHandler<Person, PropertyEventArgs> OnProducedFilms
 				{
 					add
 					{
@@ -617,9 +617,9 @@ namespace Datastore.Manipulation
             
 				private static void onProducedFilmsProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Actor, PropertyEventArgs> handler = onProducedFilms;
+					EventHandler<Person, PropertyEventArgs> handler = onProducedFilms;
 					if ((object)handler != null)
-						handler.Invoke((Actor)sender, args);
+						handler.Invoke((Person)sender, args);
 				}
 
 				#endregion
@@ -628,8 +628,8 @@ namespace Datastore.Manipulation
 
 				private static bool onFilmsWritedIsRegistered = false;
 
-				private static EventHandler<Actor, PropertyEventArgs> onFilmsWrited;
-				public static event EventHandler<Actor, PropertyEventArgs> OnFilmsWrited
+				private static EventHandler<Person, PropertyEventArgs> onFilmsWrited;
+				public static event EventHandler<Person, PropertyEventArgs> OnFilmsWrited
 				{
 					add
 					{
@@ -660,9 +660,9 @@ namespace Datastore.Manipulation
             
 				private static void onFilmsWritedProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Actor, PropertyEventArgs> handler = onFilmsWrited;
+					EventHandler<Person, PropertyEventArgs> handler = onFilmsWrited;
 					if ((object)handler != null)
-						handler.Invoke((Actor)sender, args);
+						handler.Invoke((Person)sender, args);
 				}
 
 				#endregion
@@ -671,8 +671,8 @@ namespace Datastore.Manipulation
 
 				private static bool onUidIsRegistered = false;
 
-				private static EventHandler<Actor, PropertyEventArgs> onUid;
-				public static event EventHandler<Actor, PropertyEventArgs> OnUid
+				private static EventHandler<Person, PropertyEventArgs> onUid;
+				public static event EventHandler<Person, PropertyEventArgs> OnUid
 				{
 					add
 					{
@@ -703,9 +703,9 @@ namespace Datastore.Manipulation
             
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Actor, PropertyEventArgs> handler = onUid;
+					EventHandler<Person, PropertyEventArgs> handler = onUid;
 					if ((object)handler != null)
-						handler.Invoke((Actor)sender, args);
+						handler.Invoke((Person)sender, args);
 				}
 
 				#endregion
@@ -714,8 +714,8 @@ namespace Datastore.Manipulation
 
 				private static bool onLastModifiedOnIsRegistered = false;
 
-				private static EventHandler<Actor, PropertyEventArgs> onLastModifiedOn;
-				public static event EventHandler<Actor, PropertyEventArgs> OnLastModifiedOn
+				private static EventHandler<Person, PropertyEventArgs> onLastModifiedOn;
+				public static event EventHandler<Person, PropertyEventArgs> OnLastModifiedOn
 				{
 					add
 					{
@@ -746,9 +746,9 @@ namespace Datastore.Manipulation
             
 				private static void onLastModifiedOnProxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<Actor, PropertyEventArgs> handler = onLastModifiedOn;
+					EventHandler<Person, PropertyEventArgs> handler = onLastModifiedOn;
 					if ((object)handler != null)
-						handler.Invoke((Actor)sender, args);
+						handler.Invoke((Person)sender, args);
 				}
 
 				#endregion
@@ -760,17 +760,17 @@ namespace Datastore.Manipulation
 
         #endregion
 
-		#region IActorOriginalData
+		#region IPersonOriginalData
 
-		public IActorOriginalData OriginalVersion { get { return this; } }
+		public IPersonOriginalData OriginalVersion { get { return this; } }
 
-		#region Members for interface IActor
+		#region Members for interface IPerson
 
-		string IActorOriginalData.Name { get { return OriginalData.Name; } }
-		IEnumerable<Film> IActorOriginalData.ActedFilms { get { return OriginalData.ActedFilms.OriginalData; } }
-		IEnumerable<Film> IActorOriginalData.DirectedFilms { get { return OriginalData.DirectedFilms.OriginalData; } }
-		IEnumerable<Film> IActorOriginalData.ProducedFilms { get { return OriginalData.ProducedFilms.OriginalData; } }
-		IEnumerable<Film> IActorOriginalData.FilmsWrited { get { return OriginalData.FilmsWrited.OriginalData; } }
+		string IPersonOriginalData.Name { get { return OriginalData.Name; } }
+		IEnumerable<Film> IPersonOriginalData.ActedFilms { get { return OriginalData.ActedFilms.OriginalData; } }
+		IEnumerable<Film> IPersonOriginalData.DirectedFilms { get { return OriginalData.DirectedFilms.OriginalData; } }
+		IEnumerable<Film> IPersonOriginalData.ProducedFilms { get { return OriginalData.ProducedFilms.OriginalData; } }
+		IEnumerable<Film> IPersonOriginalData.FilmsWrited { get { return OriginalData.FilmsWrited.OriginalData; } }
 
 		#endregion
 		#region Members for interface IBase

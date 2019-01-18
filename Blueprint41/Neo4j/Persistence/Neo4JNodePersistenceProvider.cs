@@ -65,10 +65,7 @@ namespace Blueprint41.Neo4j.Persistence
         }
 
         public override void Delete(OGM item)
-        {
-            if (PersistenceProvider.TargetFeatures.Delete == false)
-                throw new NotSupportedException();
-
+        {            
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
 

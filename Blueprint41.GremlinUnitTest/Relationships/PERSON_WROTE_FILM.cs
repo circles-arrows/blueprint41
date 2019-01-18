@@ -67,7 +67,7 @@ public partial class PERSON_WROTE_FILM_REL : RELATIONSHIP, IFromIn_PERSON_WROTE_
                 Parent = parent;
             }
 
-			public ActorNode Actor { get { return new ActorNode(Parent, DirectionEnum.In); } }
+			public PersonNode Person { get { return new PersonNode(Parent, DirectionEnum.In); } }
         }
 
         public PERSON_WROTE_FILM_OUT Out { get { return new PERSON_WROTE_FILM_OUT(this); } }

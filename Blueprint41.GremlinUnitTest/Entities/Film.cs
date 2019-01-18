@@ -15,10 +15,10 @@ namespace Datastore.Manipulation
 		string Title { get; }
 		string TagLine { get; }
 		System.DateTime? ReleaseDate { get; }
-		IEnumerable<Actor> Actors { get; }
-		IEnumerable<Actor> Directors { get; }
-		IEnumerable<Actor> Producers { get; }
-		IEnumerable<Actor> Writers { get; }
+		IEnumerable<Person> Actors { get; }
+		IEnumerable<Person> Directors { get; }
+		IEnumerable<Person> Producers { get; }
+		IEnumerable<Person> Writers { get; }
     }
 
 	public partial class Film : OGM<Film, Film.FilmData, System.String>, IBase, IFilmOriginalData
@@ -61,7 +61,7 @@ namespace Datastore.Manipulation
 
 		public override string ToString()
         {
-            return $"Film => Title : {this.Title}, TagLine : {this.TagLine}, ReleaseDate : {this.ReleaseDate?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Film => Title : {this.Title}, TagLine : {this.TagLine?.ToString() ?? "null"}, ReleaseDate : {this.ReleaseDate?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -91,8 +91,6 @@ namespace Datastore.Manipulation
 #pragma warning disable CS0472
 			if (InnerData.Title == null)
 				throw new PersistenceException(string.Format("Cannot save Film with key '{0}' because the Title cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.TagLine == null)
-				throw new PersistenceException(string.Format("Cannot save Film with key '{0}' because the TagLine cannot be null.", this.Uid?.ToString() ?? "<null>"));
 			if (InnerData.Uid == null)
 				throw new PersistenceException(string.Format("Cannot save Film with key '{0}' because the Uid cannot be null.", this.Uid?.ToString() ?? "<null>"));
 #pragma warning restore CS0472
@@ -133,10 +131,10 @@ namespace Datastore.Manipulation
 			{
 				NodeType = "Film";
 
-				Actors = new EntityCollection<Actor>(Wrapper, Members.Actors, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedFilms.Count; } });
-				Directors = new EntityCollection<Actor>(Wrapper, Members.Directors, item => { if (Members.Directors.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedFilms.Count; } });
-				Producers = new EntityCollection<Actor>(Wrapper, Members.Producers, item => { if (Members.Producers.Events.HasRegisteredChangeHandlers) { int loadHack = item.ProducedFilms.Count; } });
-				Writers = new EntityCollection<Actor>(Wrapper, Members.Writers, item => { if (Members.Writers.Events.HasRegisteredChangeHandlers) { int loadHack = item.FilmsWrited.Count; } });
+				Actors = new EntityCollection<Person>(Wrapper, Members.Actors, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedFilms.Count; } });
+				Directors = new EntityCollection<Person>(Wrapper, Members.Directors, item => { if (Members.Directors.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedFilms.Count; } });
+				Producers = new EntityCollection<Person>(Wrapper, Members.Producers, item => { if (Members.Producers.Events.HasRegisteredChangeHandlers) { int loadHack = item.ProducedFilms.Count; } });
+				Writers = new EntityCollection<Person>(Wrapper, Members.Writers, item => { if (Members.Writers.Events.HasRegisteredChangeHandlers) { int loadHack = item.FilmsWrited.Count; } });
 			}
 			public string NodeType { get; private set; }
 			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(Uid); }
@@ -178,10 +176,10 @@ namespace Datastore.Manipulation
 			public string Title { get; set; }
 			public string TagLine { get; set; }
 			public System.DateTime? ReleaseDate { get; set; }
-			public EntityCollection<Actor> Actors { get; private set; }
-			public EntityCollection<Actor> Directors { get; private set; }
-			public EntityCollection<Actor> Producers { get; private set; }
-			public EntityCollection<Actor> Writers { get; private set; }
+			public EntityCollection<Person> Actors { get; private set; }
+			public EntityCollection<Person> Directors { get; private set; }
+			public EntityCollection<Person> Producers { get; private set; }
+			public EntityCollection<Person> Writers { get; private set; }
 
 			#endregion
 			#region Members for interface IBase
@@ -201,25 +199,25 @@ namespace Datastore.Manipulation
 		public string Title { get { LazyGet(); return InnerData.Title; } set { if (LazySet(Members.Title, InnerData.Title, value)) InnerData.Title = value; } }
 		public string TagLine { get { LazyGet(); return InnerData.TagLine; } set { if (LazySet(Members.TagLine, InnerData.TagLine, value)) InnerData.TagLine = value; } }
 		public System.DateTime? ReleaseDate { get { LazyGet(); return InnerData.ReleaseDate; } set { if (LazySet(Members.ReleaseDate, InnerData.ReleaseDate, value)) InnerData.ReleaseDate = value; } }
-		public EntityCollection<Actor> Actors { get { return InnerData.Actors; } }
+		public EntityCollection<Person> Actors { get { return InnerData.Actors; } }
 		private void ClearActors(DateTime? moment)
 		{
-			((ILookupHelper<Actor>)InnerData.Actors).ClearLookup(moment);
+			((ILookupHelper<Person>)InnerData.Actors).ClearLookup(moment);
 		}
-		public EntityCollection<Actor> Directors { get { return InnerData.Directors; } }
+		public EntityCollection<Person> Directors { get { return InnerData.Directors; } }
 		private void ClearDirectors(DateTime? moment)
 		{
-			((ILookupHelper<Actor>)InnerData.Directors).ClearLookup(moment);
+			((ILookupHelper<Person>)InnerData.Directors).ClearLookup(moment);
 		}
-		public EntityCollection<Actor> Producers { get { return InnerData.Producers; } }
+		public EntityCollection<Person> Producers { get { return InnerData.Producers; } }
 		private void ClearProducers(DateTime? moment)
 		{
-			((ILookupHelper<Actor>)InnerData.Producers).ClearLookup(moment);
+			((ILookupHelper<Person>)InnerData.Producers).ClearLookup(moment);
 		}
-		public EntityCollection<Actor> Writers { get { return InnerData.Writers; } }
+		public EntityCollection<Person> Writers { get { return InnerData.Writers; } }
 		private void ClearWriters(DateTime? moment)
 		{
-			((ILookupHelper<Actor>)InnerData.Writers).ClearLookup(moment);
+			((ILookupHelper<Person>)InnerData.Writers).ClearLookup(moment);
 		}
 
 		#endregion
@@ -873,10 +871,10 @@ namespace Datastore.Manipulation
 		string IFilmOriginalData.Title { get { return OriginalData.Title; } }
 		string IFilmOriginalData.TagLine { get { return OriginalData.TagLine; } }
 		System.DateTime? IFilmOriginalData.ReleaseDate { get { return OriginalData.ReleaseDate; } }
-		IEnumerable<Actor> IFilmOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
-		IEnumerable<Actor> IFilmOriginalData.Directors { get { return OriginalData.Directors.OriginalData; } }
-		IEnumerable<Actor> IFilmOriginalData.Producers { get { return OriginalData.Producers.OriginalData; } }
-		IEnumerable<Actor> IFilmOriginalData.Writers { get { return OriginalData.Writers.OriginalData; } }
+		IEnumerable<Person> IFilmOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
+		IEnumerable<Person> IFilmOriginalData.Directors { get { return OriginalData.Directors.OriginalData; } }
+		IEnumerable<Person> IFilmOriginalData.Producers { get { return OriginalData.Producers.OriginalData; } }
+		IEnumerable<Person> IFilmOriginalData.Writers { get { return OriginalData.Writers.OriginalData; } }
 
 		#endregion
 		#region Members for interface IBase

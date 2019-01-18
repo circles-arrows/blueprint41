@@ -52,7 +52,7 @@ namespace Datastore.Query
             return new FilmNode(FromRelationship, Direction, this.Neo4jLabel);
         }
 
-		public ActorNode CastToActor()
+		public PersonNode CastToPerson()
         {
 			if (this.Neo4jLabel == null)
 				throw new InvalidOperationException("Casting is not supported for virtual entities.");
@@ -60,7 +60,7 @@ namespace Datastore.Query
             if (FromRelationship == null)
                 throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
-            return new ActorNode(FromRelationship, Direction, this.Neo4jLabel);
+            return new PersonNode(FromRelationship, Direction, this.Neo4jLabel);
         }
 
 		public GenreNode CastToGenre()

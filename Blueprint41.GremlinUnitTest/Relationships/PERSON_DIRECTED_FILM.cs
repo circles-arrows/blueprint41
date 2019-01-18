@@ -67,7 +67,7 @@ public partial class PERSON_DIRECTED_FILM_REL : RELATIONSHIP, IFromIn_PERSON_DIR
                 Parent = parent;
             }
 
-			public ActorNode Actor { get { return new ActorNode(Parent, DirectionEnum.In); } }
+			public PersonNode Person { get { return new PersonNode(Parent, DirectionEnum.In); } }
         }
 
         public PERSON_DIRECTED_FILM_OUT Out { get { return new PERSON_DIRECTED_FILM_OUT(this); } }

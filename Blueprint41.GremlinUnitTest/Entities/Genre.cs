@@ -13,6 +13,7 @@ namespace Datastore.Manipulation
 	public interface IGenreOriginalData : IBaseOriginalData
     {
 		string Name { get; }
+		System.DateTime? DateAdded { get; }
 		IEnumerable<Genre> SubGenre { get; }
 		IEnumerable<Genre> ParentGenre { get; }
     }
@@ -57,7 +58,7 @@ namespace Datastore.Manipulation
 
 		public override string ToString()
         {
-            return $"Genre => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Genre => Name : {this.Name}, DateAdded : {this.DateAdded?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -110,6 +111,7 @@ namespace Datastore.Manipulation
             public GenreData(GenreData data)
             {
 				Name = data.Name;
+				DateAdded = data.DateAdded;
 				SubGenre = data.SubGenre;
 				ParentGenre = data.ParentGenre;
 				Uid = data.Uid;
@@ -137,6 +139,7 @@ namespace Datastore.Manipulation
 			{
 				IDictionary<string, object> dictionary = new Dictionary<string, object>();
 				dictionary.Add("Name",  Name);
+				dictionary.Add("DateAdded",  Conversion<System.DateTime?, long?>.Convert(DateAdded));
 				dictionary.Add("Uid",  Uid);
 				dictionary.Add("LastModifiedOn",  Conversion<System.DateTime, long>.Convert(LastModifiedOn));
 				return dictionary;
@@ -147,6 +150,8 @@ namespace Datastore.Manipulation
 				object value;
 				if (properties.TryGetValue("Name", out value))
 					Name = (string)value;
+				if (properties.TryGetValue("DateAdded", out value))
+					DateAdded = Conversion<long, System.DateTime>.Convert((long)value);
 				if (properties.TryGetValue("Uid", out value))
 					Uid = (string)value;
 				if (properties.TryGetValue("LastModifiedOn", out value))
@@ -158,6 +163,7 @@ namespace Datastore.Manipulation
 			#region Members for interface IGenre
 
 			public string Name { get; set; }
+			public System.DateTime? DateAdded { get; set; }
 			public EntityCollection<Genre> SubGenre { get; private set; }
 			public EntityCollection<Genre> ParentGenre { get; private set; }
 
@@ -177,6 +183,7 @@ namespace Datastore.Manipulation
 		#region Members for interface IGenre
 
 		public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
+		public System.DateTime? DateAdded { get { LazyGet(); return InnerData.DateAdded; } set { if (LazySet(Members.DateAdded, InnerData.DateAdded, value)) InnerData.DateAdded = value; } }
 		public EntityCollection<Genre> SubGenre { get { return InnerData.SubGenre; } }
 		private void ClearSubGenre(DateTime? moment)
 		{
@@ -231,6 +238,7 @@ namespace Datastore.Manipulation
 			#region Members for interface IGenre
 
             public Property Name { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["Name"];
+            public Property DateAdded { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["DateAdded"];
             public Property SubGenre { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["SubGenre"];
             public Property ParentGenre { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["ParentGenre"];
 			#endregion
@@ -475,6 +483,49 @@ namespace Datastore.Manipulation
 
 				#endregion
 
+				#region OnDateAdded
+
+				private static bool onDateAddedIsRegistered = false;
+
+				private static EventHandler<Genre, PropertyEventArgs> onDateAdded;
+				public static event EventHandler<Genre, PropertyEventArgs> OnDateAdded
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onDateAddedIsRegistered)
+							{
+								Members.DateAdded.Events.OnChange -= onDateAddedProxy;
+								Members.DateAdded.Events.OnChange += onDateAddedProxy;
+								onDateAddedIsRegistered = true;
+							}
+							onDateAdded += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onDateAdded -= value;
+							if (onDateAdded == null && onDateAddedIsRegistered)
+							{
+								Members.DateAdded.Events.OnChange -= onDateAddedProxy;
+								onDateAddedIsRegistered = false;
+							}
+						}
+					}
+				}
+            
+				private static void onDateAddedProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Genre, PropertyEventArgs> handler = onDateAdded;
+					if ((object)handler != null)
+						handler.Invoke((Genre)sender, args);
+				}
+
+				#endregion
+
 				#region OnSubGenre
 
 				private static bool onSubGenreIsRegistered = false;
@@ -713,6 +764,7 @@ namespace Datastore.Manipulation
 		#region Members for interface IGenre
 
 		string IGenreOriginalData.Name { get { return OriginalData.Name; } }
+		System.DateTime? IGenreOriginalData.DateAdded { get { return OriginalData.DateAdded; } }
 		IEnumerable<Genre> IGenreOriginalData.SubGenre { get { return OriginalData.SubGenre.OriginalData; } }
 		IEnumerable<Genre> IGenreOriginalData.ParentGenre { get { return OriginalData.ParentGenre.OriginalData; } }
 
