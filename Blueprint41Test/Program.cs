@@ -174,7 +174,7 @@ namespace Blueprint41Test
                 }
 
                 Console.WriteLine("========Cosmos=========");
-                Console.WriteLine(Translate.ToCosmos(cypher));
+                //Console.WriteLine(Translate.ToCosmos(cypher));
                 Console.WriteLine("=================");
 
                 Console.WriteLine();
