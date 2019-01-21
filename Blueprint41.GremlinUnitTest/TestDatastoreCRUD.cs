@@ -1,5 +1,8 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.GremlinUnitTest.Misc;
+using Blueprint41.Query;
 using Datastore.Manipulation;
+using Datastore.Query;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -178,10 +181,22 @@ namespace Blueprint41.GremlinUnitTest
         [Test, Order(3)]
         public void GremlinDelete()
         {
+            // TODO: Normal Delete is not supported
+            Helper.AssertThrows<System.Data.DBConcurrencyException>(delegate ()
+            {
+                using (Transaction.Begin())
+                {
+                    Person keanu = Person.Load("11");
+                    keanu.Delete();
+
+                    Transaction.Commit();
+                }
+            });
+
             using (Transaction.Begin())
             {
                 Person keanu = Person.Load("11");
-                keanu.Delete();
+                keanu.ForceDelete();
 
                 Transaction.Commit();
             }
@@ -189,7 +204,64 @@ namespace Blueprint41.GremlinUnitTest
             using (Transaction.Begin())
             {
                 Person keanu = Person.Load("11");
-                Assert.IsNull(keanu);                
+                Assert.IsNull(keanu);
+            }
+        }
+
+        [Test, Order(4)]
+        public void GremlinList()
+        {
+            Assert.Throws<NotSupportedException>(delegate ()
+            {
+                using (Transaction.Begin())
+                {
+                    Person.Search("Derek");
+                }
+
+            });
+
+            Parameter Uid = Parameter.New<string>("P0");
+
+            ICompiled query = Transaction.CompiledQuery
+                .Match(Datastore.Query.Node
+                    .Film.Alias(out var filmAlias)
+                    .Out.PERSON_WROTE_FILM.In
+                    .Person.Alias(out var persons)
+                ).Where(
+                    filmAlias.Uid == Uid
+                ).Return(persons)
+                .Compile();
+
+            using (Transaction.Begin())
+            {
+                List<Person> writers = Person.LoadWhere(query, new Parameter("P0", "16"));
+                Assert.IsNotNull(writers);
+                Assert.IsTrue(writers.Count == 1);
+
+                Assert.AreEqual(writers[0].Name, "Derek Kolstad");
+            }
+
+            using (Transaction.Begin())
+            {
+                List<Person> allPersons = Person.GetAll();
+                Assert.IsNotNull(allPersons);
+                Assert.AreEqual(allPersons.Count, 5);
+            }
+
+            using (Transaction.Begin())
+            {
+                List<Person> allPersons = Person.GetAll(0, 10, Person.Members.Name);
+                Assert.IsNotNull(allPersons);
+                Assert.AreEqual(allPersons.Count, 5);
+                Assert.AreEqual(allPersons[4].Name, "Eva Longoria");
+            }
+
+            using (Transaction.Begin())
+            {
+                List<Person> david = Person.GetAll(2, 1, Person.Members.Name);
+                Assert.IsNotNull(david);
+                Assert.AreEqual(david.Count, 1);
+                Assert.AreEqual(david[0].Name, "David Leitch");
             }
         }
     }
