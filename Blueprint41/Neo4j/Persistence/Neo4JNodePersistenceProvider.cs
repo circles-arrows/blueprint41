@@ -373,6 +373,9 @@ namespace Blueprint41.Neo4j.Persistence
 
         internal override List<T> Search<T>(Entity entity, string text, Property[] fullTextProperties, int page = 0, int pageSize = 0, params Property[] orderBy)
         {
+            if (PersistenceProvider.IsGremlin)
+                throw new NotSupportedException("The current graph db currently does not support this functionality");
+
             Transaction trans = Transaction.RunningTransaction;
             HashSet<string> keys = new HashSet<string>()
             {
