@@ -39,7 +39,7 @@ namespace Blueprint41.Neo4j.Refactoring
             T template = new T();
 
             if (PersistenceProvider.TargetFeatures.SupportsFeature(template) == false)
-                return null;
+                throw new NotSupportedException(template.GetType().Name);
 
             if (setup != null)
                 setup.Invoke(template);
