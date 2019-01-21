@@ -34,6 +34,7 @@ namespace Blueprint41
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
             ApplyConstraintEntity = false,
+            RenameEntity = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
         }
@@ -50,6 +51,7 @@ namespace Blueprint41
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
             ApplyConstraintEntity = false,
+            RenameEntity = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
         }
@@ -66,6 +68,7 @@ namespace Blueprint41
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
             ApplyConstraintEntity = false,
+            RenameEntity = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
         }
         .SetTemplateFeatures()
