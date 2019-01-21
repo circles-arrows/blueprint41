@@ -52,8 +52,8 @@ namespace Blueprint41.Gremlin
                         break;
                 }
 
-                Translator cosmosTranslator = builder.build(TranslatorFlavor.cosmosDb());
-                return ast.buildTranslation(cosmosTranslator).ToString();
+                Translator translator = builder.build(tflavor);
+                return ast.buildTranslation(translator).ToString();
             }
             catch (Exception ex)
             {
