@@ -413,6 +413,9 @@ namespace Blueprint41
         /// <param name="newName"></param>
         void IRefactorEntity.Rename(string newName)
         {
+            if (!Parent.TargetFeatures.RenameEntity)
+                throw new NotSupportedException("Entity: Rename");
+
             if (string.IsNullOrEmpty(newName))
                 throw new ArgumentNullException(nameof(newName));
 
