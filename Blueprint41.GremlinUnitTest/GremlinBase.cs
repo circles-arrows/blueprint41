@@ -12,8 +12,7 @@ namespace Blueprint41.GremlinUnitTest
         /// </summary>
         public abstract Type Datastoremodel { get; }
 
-        [SetUp]
-        [Order(1)]
+        [OneTimeSetUp, Order(1)]
         public void InitConnection()
         {
             string hostname = "localhost";
@@ -24,16 +23,8 @@ namespace Blueprint41.GremlinUnitTest
 
             PersistenceProvider.Initialize(Datastoremodel, hostname, port, authKey, database, collection);
 
-            TearDown();
-        }
-
-        //[TearDown]
-        public void TearDown()
-        {
             using (Transaction.Begin())
-            {
                 Transaction.Run("Match (n) detach delete n");
-            }
         }
     }
 }

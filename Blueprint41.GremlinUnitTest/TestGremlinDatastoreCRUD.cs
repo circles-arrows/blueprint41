@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 namespace Blueprint41.GremlinUnitTest
 {
     [TestFixture]
-    internal class TestDatastoreCRUD
+    internal class TestGremlinDatastoreCRUD
     {
-        public Type Datastoremodel => typeof(GremlinStore);
+        public Type Datastoremodel => typeof(GremlinStoreCRUD);
 
         [OneTimeSetUp]
         public void Init()

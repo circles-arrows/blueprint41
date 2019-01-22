@@ -1,5 +1,5 @@
 ﻿using Blueprint41.GremlinUnitTest.Misc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.GremlinUnitTest
 {
-    internal class GremlinStore : DatastoreModel<GremlinStore>
+    internal class GremlinStoreCRUD : DatastoreModel<GremlinStoreCRUD>
     {
         public override GraphFeatures TargetFeatures => GraphFeatures.Gremlin;
 
@@ -73,39 +73,5 @@ namespace Blueprint41.GremlinUnitTest
             Entities["Genre"].Refactor.MatchNode("1").SubGenre.Add(comedy);
             Entities["Genre"].Refactor.MatchNode("1").SubGenre.Add(doc);
         }
-
-        // TODO: Uncomment when testing TestGremlinDataStore
-        //[Version(0, 0, 1)]
-        //public void RefactorProperties()
-        //{
-        //    Entities["Genre"].Properties["Name"].Refactor.Rename("Title");
-        //    Entities["Genre"].Properties["DateAdded"].Refactor.MakeMandatory();
-        //    Assert.IsFalse(Entities["Genre"].Properties["DateAdded"].Nullable);
-
-        //    // TODO: Refactor Reroute 
-        //    // Not sure how to implement this, will check for samples.
-        //    //Entities["Genre"].Properties["DateAdded"].Refactor.Reroute();
-        //    Entities["Genre"].Properties["DateAdded"].Refactor.Deprecate();
-        //}
-
-        //[Version(0, 0, 2)]
-        //public void RefactorRelationship()
-        //{
-
-        //    Entities.New("SubGenre", Entities["Genre"])
-        //        .HasStaticData()
-        //        .AddProperty("Name", typeof(string), false)
-        //        .AddProperty("DateAdded", typeof(DateTime));
-
-        //    Relations["GENRE_HAS_SUBGENRE"].Refactor.Deprecate();
-        //    //Relations["GENRE_HAS_SUBGENRE"].Refactor.SetOutEntity(Entities["SubGenre"], true);
-
-        //    // TODO: Relationship Refactor Rename  translation error
-        //    // maybe changing the cypher will help
-        //    //Assert.Throws<TranslationException>(delegate ()
-        //    //{
-        //    //    Relations["GENRE_HAS_SUBGENRE"].Refactor.Rename("HAS_SUB_GENRE", "HAS_SUB");
-        //    //});
-        //}
-    }
+    }    
 }

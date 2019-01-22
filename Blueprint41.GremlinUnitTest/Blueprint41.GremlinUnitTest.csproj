@@ -108,7 +108,7 @@
     <Compile Include="Relationships\PERSON_DIRECTED_FILM.cs" />
     <Compile Include="Relationships\PERSON_PRODUCED_FILM.cs" />
     <Compile Include="Relationships\PERSON_WROTE_FILM.cs" />
-    <Compile Include="TestDatastoreCRUD.cs" />
+    <Compile Include="TestGremlinDatastoreCRUD.cs" />
     <Compile Include="TestGremlinDataStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
