@@ -199,7 +199,23 @@ foreach (var entity in Entities.Where(x => x.StaticData != null && x.StaticData?
 		{
 			var prop = primitiveRecords.ElementAt(index);
 			string comma = index == primitiveRecords.Count() - 1 ? " " : ",";
-			var primitive = allProperties.Where(p => p.Guid == prop.PropertyGuid).FirstOrDefault();#> <#=primitive.Name#> = "<#=prop.Value.Replace("\"","\\\"")#>"<#= comma #><#
+			string value = prop.Value.Replace("\"","\\\"");
+
+			var primitiveType = allProperties.Where(a=>a.Guid == prop.PropertyGuid).FirstOrDefault().Type;
+			var primitive = allProperties.Where(p => p.Guid == prop.PropertyGuid).FirstOrDefault();#> <#=primitive.Name#> = <#
+			if(primitiveType == "List<string>")
+			{
+				var values = prop.Value.Substring(1, prop.Value.Length-2).TrimEnd().TrimStart();
+			#>new List<string>()<#
+				if(!string.IsNullOrEmpty(values))
+				{
+					#> { <#=values#> }<#
+				}
+			}
+			else
+			{#>"<#=value#>"<#
+			}
+			#><#= comma #><#
 		}
 #>});
 <#
