@@ -18,6 +18,7 @@ namespace Blueprint41.Neo4j.Refactoring
         void Merge(Property target, MergeAlgorithm mergeAlgorithm);
 
 
+        void ToCompressedString(int batchSize = 100);
         void Convert(Type target, bool skipConvertionLogic = false);
 
         void SetIndexType(IndexType indexType);

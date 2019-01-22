@@ -437,6 +437,54 @@ namespace Blueprint41
             });
         }
 
+        void IRefactorProperty.ToCompressedString(int batchSize)
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            if (PropertyType != PropertyType.Attribute || SystemReturnType != typeof(string))
+                throw new NotSupportedException("Only string properties can be converted to compressed string.");
+
+            if (Parser.ShouldExecute)
+            {
+
+                foreach (Entity entity in Parent.GetConcreteClasses())
+                {
+                    List<object> list;
+                    string cypherRead = $"MATCH (node:{entity.Label.Name}) WHERE [x IN node.`{Name}` | x] <> node.`{Name}` RETURN DISTINCT node.`{Name}` as Text LIMIT {batchSize}";
+                    string cypherWrite = $"UNWIND $Batch as map MATCH (node:{entity.Label.Name}) WHERE node.`{Name}` = map['Text'] SET node.`{Name}` = map['Blob']";
+
+                    do
+                    {
+                        list = new List<object>();
+
+                        IStatementResult result = Parser.Execute(cypherRead, null);
+                        foreach (IRecord item in result)
+                        {
+                            string text = item["Text"].As<string>();
+
+                            Dictionary<string, object> map = new Dictionary<string, object>();
+                            map.Add("Text", text);
+                            map.Add("Blob", (byte[])(CompressedString)text);
+                            list.Add(map);
+                        }
+
+                        if (list.Count > 0)
+                        {
+                            Dictionary<string, object> batch = new Dictionary<string, object>();
+                            batch.Add("Batch", list);
+
+                            Parser.Execute(cypherWrite, batch);
+                        }
+                    }
+                    while (list.Count > 0);
+                }
+            }
+
+            // StaticData
+            Parent.DynamicEntityPropertyConverted(this, typeof(CompressedString));
+
+            this.SystemReturnType = typeof(CompressedString);
+        }
         void IRefactorProperty.Convert(Type target, bool skipConvertionLogic)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -484,12 +532,11 @@ namespace Blueprint41
             this.SystemReturnType = to;
         }
         private const string NOT_SUPPORTED = nameof(NOT_SUPPORTED);
-        private const string NO_SCRIPT = nameof(NO_SCRIPT);
-        private const string TO_BOOL = "ToBoolean({0})";
-        private const string TO_LONG = "ToInt({0})";
-        private const string TO_DOUBLE = "ToFloat({0})";
-        private const string TO_STRING = "ToString({0})";
-
+        private const string NO_SCRIPT     = nameof(NO_SCRIPT);
+        private const string TO_BOOL       = "toBoolean({0})";
+        private const string TO_LONG       = "toInteger({0})";
+        private const string TO_DOUBLE     = "toFloat({0})";
+        private const string TO_STRING     = "toString({0})";
         private static readonly (Type fromType, Type toType, string typeCheck, string typeConv)[] specificConvertTabel = new[] {
             (typeof(DateTime), typeof(long),  NO_SCRIPT,     NO_SCRIPT),
             (typeof(DateTime), typeof(ulong), NO_SCRIPT,     NO_SCRIPT),
@@ -498,17 +545,17 @@ namespace Blueprint41
         };
         private static readonly (Type fromType, Type toType, string typeCheck, string typeConv)[] genericConvertTabel = new[] {
             // bool
-            (typeof(bool),   typeof(long),   TO_BOOL, "CASE WHEN {0} THEN ToInt(1) ELSE ToInt(0) END"),
-            (typeof(bool),   typeof(double), TO_BOOL, "CASE WHEN {0} THEN ToFloat(1) ELSE ToFloat(0) END"),
+            (typeof(bool),   typeof(long),   TO_BOOL, "CASE WHEN {0} THEN toInteger(1) ELSE toInteger(0) END"),
+            (typeof(bool),   typeof(double), TO_BOOL, "CASE WHEN {0} THEN toFloat(1) ELSE toFloat(0) END"),
             (typeof(bool),   typeof(string), TO_BOOL, TO_STRING),
 
             // long
-            (typeof(long),   typeof(bool),   TO_LONG, "ToInt({0}) <> ToInt(0)"),
+            (typeof(long),   typeof(bool),   TO_LONG, "toInteger({0}) <> toInteger(0)"),
             (typeof(long),   typeof(double), TO_LONG, TO_DOUBLE),
             (typeof(long),   typeof(string), TO_LONG, TO_STRING),
 
             // double
-            (typeof(double), typeof(bool),   TO_DOUBLE, "ToInt({0}) <> ToInt(0)"),
+            (typeof(double), typeof(bool),   TO_DOUBLE, "toInteger({0}) <> toInteger(0)"),
             (typeof(double), typeof(long),   TO_DOUBLE, TO_LONG),
             (typeof(double), typeof(string), TO_DOUBLE, TO_STRING),
 
