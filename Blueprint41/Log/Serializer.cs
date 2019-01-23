@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -11,10 +12,16 @@ namespace Blueprint41.Log
     {
         static internal DataContractJsonSerializerSettings settings = new DataContractJsonSerializerSettings()
         {
+            EmitTypeInformation = EmitTypeInformation.AsNeeded,
             UseSimpleDictionaryFormat = true,
-            DateTimeFormat = new DateTimeFormat(@"yyyy-MM-dd\THH:mm:ss.fff\Z")
+            DateTimeFormat = new DateTimeFormat(@"yyyy-MM-dd\THH:mm:ss.fff\Z"),
+            KnownTypes = new[]
+            {
+                typeof(List<object>),
+                typeof(Dictionary<object, object>),
+            },
         };
-
+            
         protected abstract string SerializeInternal(object value);
         protected abstract object DeserializeInternal(string value);
 
@@ -55,11 +62,11 @@ namespace Blueprint41.Log
 
         protected sealed override string SerializeInternal(object value)
         {
-            return Serialize(value);
+            return this.Serialize((T)value);
         }
         protected sealed override object DeserializeInternal(string value)
         {
-            return Deserialize(value);
+            return this.Deserialize(value);
         }
 
         public string Serialize(T value)
