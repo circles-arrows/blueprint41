@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using Blueprint41.Gremlin.Persistence;
 
 namespace Blueprint41
 {

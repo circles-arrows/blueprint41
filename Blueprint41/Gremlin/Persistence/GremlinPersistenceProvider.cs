@@ -1,11 +1,12 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.Gremlin.Persistence;
 using Blueprint41.Neo4j.Persistence;
 using Gremlin.Net.Driver;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Gremlin
+namespace Blueprint41.Gremlin.Persistence
 {
     public class GremlinPersistenceProvider : PersistenceProvider
     {
@@ -56,7 +57,7 @@ namespace Blueprint41.Gremlin
 
         internal override NodePersistenceProvider GetNodePersistenceProvider()
         {
-            return new Neo4JNodePersistenceProvider(this);
+            return new GremlinNodePersistenceProvider(this);
         }
 
         internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider()

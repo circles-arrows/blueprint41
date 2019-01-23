@@ -14,6 +14,7 @@ using Blueprint41.Core;
 using System.Reflection;
 using Blueprint41.Dynamic;
 using Blueprint41.Neo4j.Schema;
+using Blueprint41.Response;
 
 namespace Blueprint41
 {
@@ -457,7 +458,7 @@ namespace Blueprint41
                     {
                         list = new List<object>();
 
-                        IStatementResult result = Parser.Execute(cypherRead, null);
+                        IGraphResponse result = Parser.Execute(cypherRead, null);
                         foreach (IRecord item in result)
                         {
                             string text = item["Text"].As<string>();

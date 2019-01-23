@@ -65,7 +65,7 @@ namespace Blueprint41.Neo4j.Persistence
         }
 
         public override void Delete(OGM item)
-        {            
+        {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
 
@@ -87,11 +87,6 @@ namespace Blueprint41.Neo4j.Persistence
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
             IGraphResponse result = Transaction.Run(args.Cypher, args.Parameters);
-
-            // TODO: Implement Delete Gremlin result counters
-            if (result.Result is GremlinResult grem)
-                if (grem.StatusCode != 200)
-                    throw new DBConcurrencyException(grem.ErrorMessage);
 
             if (result.Result is IStatementResult statementResult)
                 if (statementResult.Summary.Counters.NodesDeleted == 0)
@@ -127,7 +122,7 @@ namespace Blueprint41.Neo4j.Persistence
             // TODO: Implement Force Delete Gremlin result
             if (result.Result is GremlinResult grem)
                 if (grem.StatusCode != 200)
-                    throw new DBConcurrencyException(grem.ErrorMessage);
+                    throw new InvalidOperationException(grem.ErrorMessage);
 
             if (result.Result is IStatementResult statementResult)
                 if (statementResult.Summary.Counters.NodesDeleted == 0)

@@ -71,7 +71,7 @@ namespace Blueprint41.Core
                 if (CurrentPersistenceProvider == null)
                     return false;
 
-                return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Gremlin.GremlinPersistenceProvider));
+                return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Gremlin.Persistence.GremlinPersistenceProvider));
             }
         }
 
