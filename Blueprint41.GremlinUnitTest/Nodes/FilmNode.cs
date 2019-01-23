@@ -71,11 +71,11 @@ namespace Datastore.Query
                 {
                     m_AliasFields = new Dictionary<string, FieldResult>()
                     {
-						{ "Title", new StringResult(this, "Title", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["Title"]) },
-						{ "TagLine", new StringResult(this, "TagLine", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["TagLine"]) },
-						{ "ReleaseDate", new DateTimeResult(this, "ReleaseDate", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["ReleaseDate"]) },
-						{ "Uid", new StringResult(this, "Uid", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"]) },
-						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"]) },
+						{ "Title", new StringResult(this, "Title", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["Title"]) },
+						{ "TagLine", new StringResult(this, "TagLine", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["TagLine"]) },
+						{ "ReleaseDate", new DateTimeResult(this, "ReleaseDate", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["ReleaseDate"]) },
+						{ "Uid", new StringResult(this, "Uid", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["Uid"]) },
+						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["LastModifiedOn"]) },
 					};
 				}
 				return m_AliasFields;

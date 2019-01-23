@@ -248,17 +248,17 @@ namespace Datastore.Manipulation
 
 			#region Members for interface IPerson
 
-            public Property Name { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["Name"];
-            public Property ActedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["ActedFilms"];
-            public Property DirectedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["DirectedFilms"];
-            public Property ProducedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["ProducedFilms"];
-            public Property FilmsWrited { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"].Properties["FilmsWrited"];
+            public Property Name { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["Name"];
+            public Property ActedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["ActedFilms"];
+            public Property DirectedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["DirectedFilms"];
+            public Property ProducedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["ProducedFilms"];
+            public Property FilmsWrited { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["FilmsWrited"];
 			#endregion
 
 			#region Members for interface IBase
 
-            public Property Uid { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"];
+            public Property Uid { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["Uid"];
+            public Property LastModifiedOn { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["LastModifiedOn"];
 			#endregion
 
         }
@@ -293,7 +293,7 @@ namespace Datastore.Manipulation
                 lock (typeof(Person))
                 {
                     if (entity == null)
-                        entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"];
+                        entity = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"];
                 }
             }
             return entity;

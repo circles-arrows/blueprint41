@@ -91,8 +91,8 @@ namespace Datastore.Query
                 {
                     m_AliasFields = new Dictionary<string, FieldResult>()
                     {
-						{ "Uid", new StringResult(this, "Uid", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"]) },
-						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"]) },
+						{ "Uid", new StringResult(this, "Uid", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["Uid"]) },
+						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["LastModifiedOn"]) },
 					};
 				}
 				return m_AliasFields;

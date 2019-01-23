@@ -66,8 +66,8 @@ namespace Datastore.Manipulation
 
 			#region Members for interface IBase
 
-            public Property Uid { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"];
+            public Property Uid { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["Uid"];
+            public Property LastModifiedOn { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["LastModifiedOn"];
 			#endregion
 
         }
@@ -79,7 +79,7 @@ namespace Datastore.Manipulation
                 lock (typeof(IBase))
                 {
                     if (entity == null)
-                        entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"];
+                        entity = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"];
                 }
             }
             return entity;

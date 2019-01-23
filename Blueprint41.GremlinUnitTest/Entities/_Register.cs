@@ -20,10 +20,10 @@ namespace Datastore.Manipulation
 
 				isInitialized = true;
 
-                ((ISetRuntimeType)Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"]).SetRuntimeTypes(typeof(IBase), typeof(Base));
-                ((ISetRuntimeType)Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"]).SetRuntimeTypes(typeof(Film), typeof(Film));
-                ((ISetRuntimeType)Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"]).SetRuntimeTypes(typeof(Genre), typeof(Genre));
-                ((ISetRuntimeType)Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"]).SetRuntimeTypes(typeof(Person), typeof(Person));
+                ((ISetRuntimeType)Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"]).SetRuntimeTypes(typeof(IBase), typeof(Base));
+                ((ISetRuntimeType)Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"]).SetRuntimeTypes(typeof(Film), typeof(Film));
+                ((ISetRuntimeType)Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"]).SetRuntimeTypes(typeof(Genre), typeof(Genre));
+                ((ISetRuntimeType)Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"]).SetRuntimeTypes(typeof(Person), typeof(Person));
             }
         }
     }

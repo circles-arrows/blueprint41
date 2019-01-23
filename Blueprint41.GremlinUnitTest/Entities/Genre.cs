@@ -237,16 +237,16 @@ namespace Datastore.Manipulation
 
 			#region Members for interface IGenre
 
-            public Property Name { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["Name"];
-            public Property DateAdded { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["DateAdded"];
-            public Property SubGenre { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["SubGenre"];
-            public Property ParentGenre { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["ParentGenre"];
+            public Property Name { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"].Properties["Name"];
+            public Property DateAdded { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"].Properties["DateAdded"];
+            public Property SubGenre { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"].Properties["SubGenre"];
+            public Property ParentGenre { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"].Properties["ParentGenre"];
 			#endregion
 
 			#region Members for interface IBase
 
-            public Property Uid { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"];
+            public Property Uid { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["Uid"];
+            public Property LastModifiedOn { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["LastModifiedOn"];
 			#endregion
 
         }
@@ -281,7 +281,7 @@ namespace Datastore.Manipulation
                 lock (typeof(Genre))
                 {
                     if (entity == null)
-                        entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"];
+                        entity = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"];
                 }
             }
             return entity;

@@ -12,7 +12,7 @@ namespace Datastore.Manipulation
         {
 			public static class Film
             {
-                private static readonly Entity Entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"];
+                private static readonly Entity Entity = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"];
 
 				#region OnNodeLoading
 
@@ -386,7 +386,7 @@ namespace Datastore.Manipulation
             }
 			public static class Genre
             {
-                private static readonly Entity Entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"];
+                private static readonly Entity Entity = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"];
 
 				#region OnNodeLoading
 
@@ -760,7 +760,7 @@ namespace Datastore.Manipulation
             }
 			public static class Person
             {
-                private static readonly Entity Entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Person"];
+                private static readonly Entity Entity = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"];
 
 				#region OnNodeLoading
 
@@ -1137,7 +1137,7 @@ namespace Datastore.Manipulation
         {
 			public static class GENRE_HAS_SUBGENRE
             {
-				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStore.Model.Relations["GENRE_HAS_SUBGENRE"];
+				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Relations["GENRE_HAS_SUBGENRE"];
 
 				#region OnRelationCreate
 
@@ -1306,7 +1306,7 @@ namespace Datastore.Manipulation
             }
 			public static class PERSON_ACTED_IN_FILM
             {
-				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStore.Model.Relations["PERSON_ACTED_IN_FILM"];
+				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Relations["PERSON_ACTED_IN_FILM"];
 
 				#region OnRelationCreate
 
@@ -1475,7 +1475,7 @@ namespace Datastore.Manipulation
             }
 			public static class PERSON_DIRECTED_FILM
             {
-				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStore.Model.Relations["PERSON_DIRECTED_FILM"];
+				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Relations["PERSON_DIRECTED_FILM"];
 
 				#region OnRelationCreate
 
@@ -1644,7 +1644,7 @@ namespace Datastore.Manipulation
             }
 			public static class PERSON_PRODUCED_FILM
             {
-				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStore.Model.Relations["PERSON_PRODUCED_FILM"];
+				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Relations["PERSON_PRODUCED_FILM"];
 
 				#region OnRelationCreate
 
@@ -1813,7 +1813,7 @@ namespace Datastore.Manipulation
             }
 			public static class PERSON_WROTE_FILM
             {
-				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStore.Model.Relations["PERSON_WROTE_FILM"];
+				private static readonly Relationship Relationship = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Relations["PERSON_WROTE_FILM"];
 
 				#region OnRelationCreate
 

@@ -262,19 +262,19 @@ namespace Datastore.Manipulation
 
 			#region Members for interface IFilm
 
-            public Property Title { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["Title"];
-            public Property TagLine { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["TagLine"];
-            public Property ReleaseDate { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["ReleaseDate"];
-            public Property Actors { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["Actors"];
-            public Property Directors { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["Directors"];
-            public Property Producers { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["Producers"];
-            public Property Writers { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"].Properties["Writers"];
+            public Property Title { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["Title"];
+            public Property TagLine { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["TagLine"];
+            public Property ReleaseDate { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["ReleaseDate"];
+            public Property Actors { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["Actors"];
+            public Property Directors { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["Directors"];
+            public Property Producers { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["Producers"];
+            public Property Writers { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"].Properties["Writers"];
 			#endregion
 
 			#region Members for interface IBase
 
-            public Property Uid { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"];
+            public Property Uid { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["Uid"];
+            public Property LastModifiedOn { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["LastModifiedOn"];
 			#endregion
 
         }
@@ -309,7 +309,7 @@ namespace Datastore.Manipulation
                 lock (typeof(Film))
                 {
                     if (entity == null)
-                        entity = Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Film"];
+                        entity = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Film"];
                 }
             }
             return entity;

@@ -91,10 +91,10 @@ namespace Datastore.Query
                 {
                     m_AliasFields = new Dictionary<string, FieldResult>()
                     {
-						{ "Name", new StringResult(this, "Name", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["Name"]) },
-						{ "DateAdded", new DateTimeResult(this, "DateAdded", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"].Properties["DateAdded"]) },
-						{ "Uid", new StringResult(this, "Uid", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["Uid"]) },
-						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Genre"], Blueprint41.GremlinUnitTest.GremlinStore.Model.Entities["Base"].Properties["LastModifiedOn"]) },
+						{ "Name", new StringResult(this, "Name", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"].Properties["Name"]) },
+						{ "DateAdded", new DateTimeResult(this, "DateAdded", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"].Properties["DateAdded"]) },
+						{ "Uid", new StringResult(this, "Uid", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["Uid"]) },
+						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Genre"], Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Base"].Properties["LastModifiedOn"]) },
 					};
 				}
 				return m_AliasFields;
