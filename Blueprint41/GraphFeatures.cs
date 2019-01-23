@@ -29,13 +29,13 @@ namespace Blueprint41
         {
             Cypher = false,
             GremlinFlavor = GremlinFlavor.Default,
-            Delete = false,
             FunctionalId = false,
             CreateIndex = false,
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
             ApplyConstraintEntity = false,
             RenameEntity = false,
+            RenameRelationship = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
         }
@@ -46,13 +46,13 @@ namespace Blueprint41
         {
             Cypher = false,
             GremlinFlavor = GremlinFlavor.Cosmos,
-            Delete = false,
             FunctionalId = false,
             CreateIndex = false,
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
             ApplyConstraintEntity = false,
             RenameEntity = false,
+            RenameRelationship = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
         }
@@ -63,13 +63,13 @@ namespace Blueprint41
         {
             Cypher = false,
             GremlinFlavor = GremlinFlavor.Neptune,
-            Delete = false,
             FunctionalId = false,
             CreateIndex = false,
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
             ApplyConstraintEntity = false,
             RenameEntity = false,
+            RenameRelationship = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
         }
         .SetTemplateFeatures()
@@ -125,7 +125,6 @@ namespace Blueprint41
         }
 
         public bool Cypher { get; private set; } = true;
-        public bool Delete { get; private set; } = true;
         public bool FunctionalId { get; private set; } = true;
         public bool Convert { get; private set; } = true;
         public bool CopyProperty { get; private set; } = true;

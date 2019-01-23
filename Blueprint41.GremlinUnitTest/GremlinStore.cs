@@ -21,7 +21,7 @@ namespace Blueprint41.GremlinUnitTest
             {
                 FunctionalIds.Default = FunctionalIds.New("Shared", "SH", IdFormat.Numeric);
 
-            }, "The current graph database does not support this feature");
+            }, "The current graph database does not support this feature 'Functional Id'");
 
             Entities.New("Base")
                 .Abstract()
@@ -37,7 +37,8 @@ namespace Blueprint41.GremlinUnitTest
             .AddProperty("ReleaseDate", typeof(DateTime));
 
             Entities.New("Person", Entities["Base"])
-                .AddProperty("Name", typeof(string), false);
+                .AddProperty("Name", typeof(string))
+                .AddProperty("Address", typeof(string));
 
             Entities.New("Genre", Entities["Base"])
                 .HasStaticData()

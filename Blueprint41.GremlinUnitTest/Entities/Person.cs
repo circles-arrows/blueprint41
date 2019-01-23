@@ -13,6 +13,7 @@ namespace Datastore.Manipulation
 	public interface IPersonOriginalData : IBaseOriginalData
     {
 		string Name { get; }
+		string Address { get; }
 		IEnumerable<Film> ActedFilms { get; }
 		IEnumerable<Film> DirectedFilms { get; }
 		IEnumerable<Film> ProducedFilms { get; }
@@ -59,7 +60,7 @@ namespace Datastore.Manipulation
 
 		public override string ToString()
         {
-            return $"Person => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Person => Name : {this.Name?.ToString() ?? "null"}, Address : {this.Address?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -87,8 +88,6 @@ namespace Datastore.Manipulation
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
 #pragma warning disable CS0472
-			if (InnerData.Name == null)
-				throw new PersistenceException(string.Format("Cannot save Person with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
 			if (InnerData.Uid == null)
 				throw new PersistenceException(string.Format("Cannot save Person with key '{0}' because the Uid cannot be null.", this.Uid?.ToString() ?? "<null>"));
 #pragma warning restore CS0472
@@ -112,6 +111,7 @@ namespace Datastore.Manipulation
             public PersonData(PersonData data)
             {
 				Name = data.Name;
+				Address = data.Address;
 				ActedFilms = data.ActedFilms;
 				DirectedFilms = data.DirectedFilms;
 				ProducedFilms = data.ProducedFilms;
@@ -143,6 +143,7 @@ namespace Datastore.Manipulation
 			{
 				IDictionary<string, object> dictionary = new Dictionary<string, object>();
 				dictionary.Add("Name",  Name);
+				dictionary.Add("Address",  Address);
 				dictionary.Add("Uid",  Uid);
 				dictionary.Add("LastModifiedOn",  Conversion<System.DateTime, long>.Convert(LastModifiedOn));
 				return dictionary;
@@ -153,6 +154,8 @@ namespace Datastore.Manipulation
 				object value;
 				if (properties.TryGetValue("Name", out value))
 					Name = (string)value;
+				if (properties.TryGetValue("Address", out value))
+					Address = (string)value;
 				if (properties.TryGetValue("Uid", out value))
 					Uid = (string)value;
 				if (properties.TryGetValue("LastModifiedOn", out value))
@@ -164,6 +167,7 @@ namespace Datastore.Manipulation
 			#region Members for interface IPerson
 
 			public string Name { get; set; }
+			public string Address { get; set; }
 			public EntityCollection<Film> ActedFilms { get; private set; }
 			public EntityCollection<Film> DirectedFilms { get; private set; }
 			public EntityCollection<Film> ProducedFilms { get; private set; }
@@ -185,6 +189,7 @@ namespace Datastore.Manipulation
 		#region Members for interface IPerson
 
 		public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
+		public string Address { get { LazyGet(); return InnerData.Address; } set { if (LazySet(Members.Address, InnerData.Address, value)) InnerData.Address = value; } }
 		public EntityCollection<Film> ActedFilms { get { return InnerData.ActedFilms; } }
 		private void ClearActedFilms(DateTime? moment)
 		{
@@ -249,6 +254,7 @@ namespace Datastore.Manipulation
 			#region Members for interface IPerson
 
             public Property Name { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["Name"];
+            public Property Address { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["Address"];
             public Property ActedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["ActedFilms"];
             public Property DirectedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["DirectedFilms"];
             public Property ProducedFilms { get; } = Blueprint41.GremlinUnitTest.GremlinStoreCRUD.Model.Entities["Person"].Properties["ProducedFilms"];
@@ -489,6 +495,49 @@ namespace Datastore.Manipulation
 				private static void onNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Person, PropertyEventArgs> handler = onName;
+					if ((object)handler != null)
+						handler.Invoke((Person)sender, args);
+				}
+
+				#endregion
+
+				#region OnAddress
+
+				private static bool onAddressIsRegistered = false;
+
+				private static EventHandler<Person, PropertyEventArgs> onAddress;
+				public static event EventHandler<Person, PropertyEventArgs> OnAddress
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onAddressIsRegistered)
+							{
+								Members.Address.Events.OnChange -= onAddressProxy;
+								Members.Address.Events.OnChange += onAddressProxy;
+								onAddressIsRegistered = true;
+							}
+							onAddress += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onAddress -= value;
+							if (onAddress == null && onAddressIsRegistered)
+							{
+								Members.Address.Events.OnChange -= onAddressProxy;
+								onAddressIsRegistered = false;
+							}
+						}
+					}
+				}
+            
+				private static void onAddressProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Person, PropertyEventArgs> handler = onAddress;
 					if ((object)handler != null)
 						handler.Invoke((Person)sender, args);
 				}
@@ -767,6 +816,7 @@ namespace Datastore.Manipulation
 		#region Members for interface IPerson
 
 		string IPersonOriginalData.Name { get { return OriginalData.Name; } }
+		string IPersonOriginalData.Address { get { return OriginalData.Address; } }
 		IEnumerable<Film> IPersonOriginalData.ActedFilms { get { return OriginalData.ActedFilms.OriginalData; } }
 		IEnumerable<Film> IPersonOriginalData.DirectedFilms { get { return OriginalData.DirectedFilms.OriginalData; } }
 		IEnumerable<Film> IPersonOriginalData.ProducedFilms { get { return OriginalData.ProducedFilms.OriginalData; } }

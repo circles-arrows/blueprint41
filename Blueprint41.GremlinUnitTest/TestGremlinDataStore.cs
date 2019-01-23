@@ -1,5 +1,6 @@
 ﻿using Blueprint41.DatastoreTemplates;
 using Blueprint41.GremlinUnitTest.Misc;
+using Datastore.Manipulation;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -22,7 +23,7 @@ namespace Blueprint41.GremlinUnitTest
                 {
                     FunctionalIds.Default = FunctionalIds.New("Shared", "SH", IdFormat.Numeric);
 
-                }, "The current graph database does not support this feature");
+                }, "The current graph database does not support this feature 'Functional Id'");
 
                 Entities.New("Base")
                     .Abstract()
@@ -38,7 +39,8 @@ namespace Blueprint41.GremlinUnitTest
                 .AddProperty("ReleaseDate", typeof(DateTime));
 
                 Entities.New("Person", Entities["Base"])
-                    .AddProperty("Name", typeof(string), false);
+                    .AddProperty("Name", typeof(string))
+                    .AddProperty("Address", typeof(string));
 
                 Entities.New("Genre", Entities["Base"])
                     .HasStaticData()
@@ -74,13 +76,16 @@ namespace Blueprint41.GremlinUnitTest
                 Entities["Genre"].Refactor.MatchNode("1").SubGenre.Add(comedy);
                 Entities["Genre"].Refactor.MatchNode("1").SubGenre.Add(doc);
             }
-                        
+
             [Version(0, 0, 1)]
             public void RefactorProperties()
             {
                 Entities["Genre"].Properties["Name"].Refactor.Rename("Title");
-                Entities["Genre"].Properties["DateAdded"].Refactor.MakeMandatory();
+                Entities["Genre"].Properties["DateAdded"].Refactor.MakeMandatory();                
                 Assert.IsFalse(Entities["Genre"].Properties["DateAdded"].Nullable);
+
+                Entities["Genre"].Properties["DateAdded"].Refactor.MakeNullable();
+                Assert.IsTrue(Entities["Genre"].Properties["DateAdded"].Nullable);
 
                 // TODO: Refactor Reroute 
                 // Not sure how to implement this, will check for samples.
@@ -96,20 +101,28 @@ namespace Blueprint41.GremlinUnitTest
                     .AddProperty("Name", typeof(string), false)
                     .AddProperty("DateAdded", typeof(DateTime));
 
-                // TODO: Relationship Refactor Rename translation error
-                //maybe changing the cypher will help
-                //Assert.Throws<TranslationException>(delegate ()
-                //{
-                //    Relations["GENRE_HAS_SUBGENRE"].Refactor.Rename("HAS_SUB_GENRE", "HAS_SUB");
-                //});
+                Assert.Throws<NotSupportedException>(delegate ()
+                {
+                    Relations["GENRE_HAS_SUBGENRE"].Refactor.Rename("HAS_SUB_GENRE", "HAS_SUB");
+                });
+
+                Assert.Throws<NotSupportedException>(delegate ()
+                {
+                    Relations["HAS_SUB_GENRE"].Refactor.Rename("GENRE_HAS_SUBGENRE", "SUBGENRE");
+                });
 
                 Relations["GENRE_HAS_SUBGENRE"].Refactor.SetOutEntity(Entities["SubGenre"], true);
-                Relations["GENRE_HAS_SUBGENRE"].Refactor.Deprecate();                
+                Relations["GENRE_HAS_SUBGENRE"].Refactor.Deprecate();
             }
 
             [Version(0, 0, 3)]
             public void RefactorEntities()
             {
+                Entities["Person"].Refactor.SetDefaultValue((a) =>
+                {
+                    a.Address = "DefaultAddress";
+                });
+
                 Assert.Throws<NotSupportedException>(() => Entities["Person"].Refactor.Rename("People"));
 
                 dynamic node = Entities["Genre"].Refactor.MatchNode("1");
@@ -117,8 +130,12 @@ namespace Blueprint41.GremlinUnitTest
 
                 Entities["Genre"].Refactor.DeleteNode("1");
                 Assert.Throws<ArgumentOutOfRangeException>(() => Entities["Genre"].Refactor.MatchNode("1"));
-                Entities["Genre"].Refactor.Deprecate();                
-            }            
+
+                Entities["Film"].Refactor.CopyValue("Title", "TagLine");
+                Assert.Throws<NotSupportedException>(() => Entities["Film"].Refactor.SetFunctionalId(null, ApplyAlgorithm.ReapplyAll));
+
+                Entities["Genre"].Refactor.Deprecate();
+            }
         }
 
         public override Type Datastoremodel => typeof(GremlinStore);
@@ -126,8 +143,33 @@ namespace Blueprint41.GremlinUnitTest
         [Test]
         public void CheckGremlinGraphFeatures()
         {
+            using (Transaction.Begin())
+            {
+                Film film = new Film();
+                film.Uid = "112";
+                film.Title = "Film Title";
+
+                Person person = new Person();
+                person.Uid = "113";
+                person.Name = "Name";
+
+                Transaction.Commit();
+            }
+
             GremlinStore store = new GremlinStore();
             store.Execute(true);
+
+            using (Transaction.Begin())
+            {
+                Film film = Film.Load("112");
+                Assert.AreEqual(film.Title, film.TagLine);
+            }
+
+            using (Transaction.Begin())
+            {
+                Person person = Person.Load("113");
+                Assert.AreEqual(person.Address, "DefaultAddress");
+            }
         }
     }
 }

@@ -43,8 +43,8 @@ namespace Blueprint41.GremlinUnitTest
             string nodesFolder = Path.Combine(projectFolder, settings.NodesFolder);
             string relationshipFolder = Path.Combine(projectFolder, settings.RelationshipsFolder);
 
-            if (Directory.Exists(entitiesFolder) && Directory.Exists(nodesFolder) && Directory.Exists(relationshipFolder))
-                return;
+            //if (Directory.Exists(entitiesFolder) && Directory.Exists(nodesFolder) && Directory.Exists(relationshipFolder))
+            //    return;
 
             GeneratorResult result = Generator.Execute<GremlinStoreCRUD>(settings);
 
