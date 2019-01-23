@@ -28,6 +28,7 @@ namespace System
         }
 
         #region To CompressedString
+
         public static explicit operator CompressedString(Nullable<bool> x)
         {
             if (x.HasValue == false) return null;
@@ -168,6 +169,7 @@ namespace System
         #endregion
 
         #region from CompressedString
+
         public static explicit operator Nullable<byte>(CompressedString x)
         {
             if ((object)x == null) return null;
@@ -329,6 +331,7 @@ namespace System
         {
             return new Guid(x.Value);
         }
+
         #endregion
 
         #region Operators
@@ -703,7 +706,7 @@ namespace System
             {
                 if ((qualifier != null) & (string.Compare(input.Substring(i, qualifier.Length), qualifier, ignoreCase) == 0))
                 {
-                    //edited by nitz : will still split acording to delimiter despite faulty qualifiers
+                    //edited by nitz : will still split according to delimiter despite faulty qualifiers
                     string nextStr = input.Substring(i + 1, qualifier.Length);
                     if ((qualifierState == false) || (string.Compare(nextStr, delimiter, ignoreCase) == 0))
                         qualifierState = !(qualifierState);

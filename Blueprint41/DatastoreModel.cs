@@ -129,6 +129,7 @@ namespace Blueprint41
             bool anyScriptRan = false;
             foreach (UpgradeScript script in scripts.Where(item => predicate.Invoke(item)))
             {
+                bool scriptCommitted = false;
                 if (upgradeDatastore && PersistenceProvider.IsNeo4j)
                 {
                     using (Transaction.Begin(true))
@@ -144,6 +145,7 @@ namespace Blueprint41
 
                             Parser.CommitScript(script);
                             anyScriptRan = true;
+                            scriptCommitted = true;
                             sw.Stop();
                             Debug.WriteLine("Finished script in {0} ms.", sw.ElapsedMilliseconds);
                         }
@@ -156,6 +158,18 @@ namespace Blueprint41
                 else
                 {
                     RunScriptChecked(script);
+                }
+
+                if (upgradeDatastore && scriptCommitted)
+                {
+                    using (Transaction.Begin(true))
+                    {
+                        Parser.ForceScript(delegate ()
+                        {
+                            Refactor.ApplyConstraints();
+                        });
+                        Transaction.Commit();
+                    }
                 }
             }
 

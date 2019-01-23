@@ -293,7 +293,7 @@ namespace Blueprint41
                 Nullable = true;
                 IndexType = IndexType.None;
 
-                foreach (var entity in Parent.GetConcreteClasses())
+                foreach (var entity in Parent.GetSubclassesOrSelf())
                 {
                     ApplyConstraintEntity applyConstraint = new ApplyConstraintEntity(Parent.Parent.GetSchema(), entity);
                     foreach (var action in applyConstraint.Actions.Where(c => c.Property == Name))

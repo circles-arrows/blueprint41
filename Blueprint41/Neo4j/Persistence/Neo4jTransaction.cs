@@ -1,19 +1,22 @@
-﻿using Neo4j.Driver.V1;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Neo4j.Driver.V1;
+using Blueprint41.Log;
 
 namespace Blueprint41.Neo4j.Persistence
 {
     
     public class Neo4jTransaction : Transaction
     {
-        internal Neo4jTransaction(IDriver driver, bool withTransaction)
+        internal Neo4jTransaction(IDriver driver, bool withTransaction, TransactionLogger logger)
         {
             Driver = driver;
             Session = driver.Session();
+            Logger = logger;
             WithTransaction = withTransaction;
             StatementRunner = Session;
             if (withTransaction)
@@ -23,22 +26,42 @@ namespace Blueprint41.Neo4j.Persistence
             }
         }
 
-        public static IStatementResult Run(string cypher)
+        public static IStatementResult Run(string cypher, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+        [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
+#if DEBUG
+            trans.Logger.Start();
+#endif
             IStatementResult results = trans.StatementRunner.Run(cypher);
+#if DEBUG
+            results.Peek();
+
+            trans.Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+#endif
+
             return results;
         }
-        public static IStatementResult Run(string cypher, Dictionary<string, object> parameters)
+        public static IStatementResult Run(string cypher, Dictionary<string, object> parameters, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
+#if DEBUG
+            trans.Logger.Start();
+#endif
             IStatementResult results = trans.StatementRunner.Run(cypher, parameters);
+
+#if DEBUG
+            results.Peek();
+
+            trans.Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+#endif
+
             return results;
         }
 
@@ -46,6 +69,7 @@ namespace Blueprint41.Neo4j.Persistence
         public ISession Session { get; set; }
         public ITransaction Transaction { get; set; }
         public IStatementRunner StatementRunner { get; set; }
+        private TransactionLogger Logger { get; set; }
 
         private bool WithTransaction;
 
