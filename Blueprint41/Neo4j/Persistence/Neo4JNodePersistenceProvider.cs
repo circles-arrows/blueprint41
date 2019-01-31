@@ -217,7 +217,9 @@ namespace Blueprint41.Neo4j.Persistence
 
             IGraphResponse result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
 
-            // TODO: Implement Force Delete Gremlin result
+            if (result.Result is GremlinResult grem)
+                if (grem.StatusCode != 200)
+                    throw new InvalidOperationException(grem.ErrorMessage);
 
             if (result.Result is IStatementResult statementResult)
                 if (!statementResult.Summary.Counters.ContainsUpdates)
