@@ -1,5 +1,6 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.Gremlin;
+using Blueprint41.Gremlin.Persistence;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

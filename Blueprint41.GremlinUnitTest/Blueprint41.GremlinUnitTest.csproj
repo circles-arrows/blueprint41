@@ -90,6 +90,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CosmosBase.cs" />
     <Compile Include="Entities\Base.cs" />
     <Compile Include="Entities\Film.cs" />
     <Compile Include="Entities\Genre.cs" />
@@ -97,7 +98,7 @@
     <Compile Include="Entities\_GraphEvents.cs" />
     <Compile Include="Entities\_Register.cs" />
     <Compile Include="GremlinBase.cs" />
-    <Compile Include="GremlinStore.cs" />
+    <Compile Include="GremlinStoreCRUD.cs" />
     <Compile Include="Misc\ConsoleOutput.cs" />
     <Compile Include="Nodes\BaseNode.cs" />
     <Compile Include="Nodes\FilmNode.cs" />
