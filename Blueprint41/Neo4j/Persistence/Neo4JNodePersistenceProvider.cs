@@ -219,7 +219,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             if (result.Result is GremlinResult grem)
                 if (grem.StatusCode != 200)
-                    throw new InvalidOperationException(grem.ErrorMessage);
+                    throw new InvalidOperationException("Check if nullable properties are not null. May happen only on Cosmos DB.\n" + grem.ErrorMessage);
 
             if (result.Result is IStatementResult statementResult)
                 if (!statementResult.Summary.Counters.ContainsUpdates)
