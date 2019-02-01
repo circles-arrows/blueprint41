@@ -47,10 +47,11 @@ namespace Blueprint41.Core
             get
             {
                 if ((object)targetFeatures == null)
-                    throw new InvalidOperationException("Should call Initialize method.");
+                    targetFeatures = GraphFeatures.Neo4j;
 
                 return targetFeatures;
             }
+            set { targetFeatures = value; }
         }
 
         public static bool IsNeo4j
@@ -87,7 +88,7 @@ namespace Blueprint41.Core
 
             DatastoreModel model = (DatastoreModel)Activator.CreateInstance(type);
             targetFeatures = model.TargetFeatures;
-            CurrentPersistenceProvider = (PersistenceProvider)Activator.CreateInstance(targetFeatures.PersistenceProviderType, connectionArgs);            
+            CurrentPersistenceProvider = (PersistenceProvider)Activator.CreateInstance(targetFeatures.PersistenceProviderType, connectionArgs);
         }
     }
 }
