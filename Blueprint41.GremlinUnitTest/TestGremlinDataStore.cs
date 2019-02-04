@@ -81,7 +81,7 @@ namespace Blueprint41.GremlinUnitTest
             public void RefactorProperties()
             {
                 Entities["Genre"].Properties["Name"].Refactor.Rename("Title");
-                Entities["Genre"].Properties["DateAdded"].Refactor.MakeMandatory();                
+                Entities["Genre"].Properties["DateAdded"].Refactor.MakeMandatory();
                 Assert.IsFalse(Entities["Genre"].Properties["DateAdded"].Nullable);
 
                 Entities["Genre"].Properties["DateAdded"].Refactor.MakeNullable();
@@ -246,7 +246,11 @@ namespace Blueprint41.GremlinUnitTest
             [Version(0, 0, 1)]
             public void RefactorProperties()
             {
-                Entities["Genre"].Properties["Name"].Refactor.Rename("Title");
+                Assert.Throws<NotSupportedException>(delegate ()
+                {
+                    Entities["Genre"].Properties["Name"].Refactor.Rename("Title");
+                });
+
                 Entities["Genre"].Properties["DateAdded"].Refactor.MakeMandatory();
                 Assert.IsFalse(Entities["Genre"].Properties["DateAdded"].Nullable);
 
@@ -264,7 +268,7 @@ namespace Blueprint41.GremlinUnitTest
             {
                 Entities.New("SubGenre", Entities["Genre"])
                     .HasStaticData()
-                    .AddProperty("Name", typeof(string), false)
+                    .AddProperty("SubName", typeof(string), false)
                     .AddProperty("DateAdded", typeof(DateTime));
 
                 Assert.Throws<NotSupportedException>(delegate ()
@@ -297,7 +301,7 @@ namespace Blueprint41.GremlinUnitTest
                 Entities["Genre"].Refactor.DeleteNode("1");
                 Assert.Throws<ArgumentOutOfRangeException>(() => Entities["Genre"].Refactor.MatchNode("1"));
 
-                Entities["Film"].Refactor.CopyValue("Title", "TagLine");
+                Assert.Throws<NotSupportedException>(() => Entities["Film"].Refactor.CopyValue("Title", "TagLine"));
                 Assert.Throws<NotSupportedException>(() => Entities["Film"].Refactor.SetFunctionalId(null, ApplyAlgorithm.ReapplyAll));
 
                 Entities["Genre"].Refactor.Deprecate();
@@ -307,7 +311,7 @@ namespace Blueprint41.GremlinUnitTest
         public override Type Datastoremodel => typeof(CosmoStore);
 
         [Test]
-        public void CheckGremlinGraphFeatures()
+        public void CheckCosmosGraphFeatures()
         {
             using (Transaction.Begin())
             {
@@ -324,18 +328,13 @@ namespace Blueprint41.GremlinUnitTest
 
             CosmoStore store = new CosmoStore();
             store.Execute(true);
+                      
 
-            //using (Transaction.Begin())
-            //{
-            //    Film film = Film.Load("112");
-            //    Assert.AreEqual(film.Title, film.TagLine);
-            //}
-
-            //using (Transaction.Begin())
-            //{
-            //    Person person = Person.Load("113");
-            //    Assert.AreEqual(person.Address, "DefaultAddress");
-            //}
+            using (Transaction.Begin())
+            {
+                Person person = Person.Load("113");
+                Assert.AreEqual(person.Address, "DefaultAddress");
+            }
         }
     }
 }
