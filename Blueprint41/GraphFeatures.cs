@@ -47,11 +47,13 @@ namespace Blueprint41
             Cypher = false,
             GremlinFlavor = GremlinFlavor.Cosmos,
             FunctionalId = false,
+            CopyProperty = false,
             CreateIndex = false,
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
             ApplyConstraintEntity = false,
             RenameEntity = false,
+            RenameProperty = false,
             RenameRelationship = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
