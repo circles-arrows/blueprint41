@@ -5,11 +5,16 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="Blueprint41" #>
+<#@ import namespace="Blueprint41.Core" #>
 <#
 
     Debug.WriteLine("	executing {0} -> Deprecate entity from {1}", this.GetType().Name, Name);
 #>
-MATCH (n:<#= Name #>) WITH n LIMIT 10000 DETACH DELETE n
+<#    if (PersistenceProvider.TargetFeatures.Cypher == false && PersistenceProvider.TargetFeatures.GremlinFlavor == Gremlin.GremlinFlavor.Cosmos) { #>
+MATCH (n:<#=Name#>) DETACH DELETE n
+<#    } else { #>
+MATCH (n:<#=Name#>) WITH n LIMIT 10000 DETACH DELETE n
+<#    } #>
 <#+
 
 	// Template Parameters

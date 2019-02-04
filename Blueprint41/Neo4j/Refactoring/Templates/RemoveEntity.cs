@@ -14,13 +14,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     using System.Collections.Generic;
     using System.Diagnostics;
     using Blueprint41;
+    using Blueprint41.Core;
     using System;
     
     /// <summary>
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     internal partial class RemoveEntity : TemplateBase
     {
@@ -31,7 +32,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+            #line 9 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
 
 
     Debug.WriteLine("	executing {0} -> Deprecate entity from {1}", this.GetType().Name, Name);
@@ -39,18 +40,44 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
+            
+            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+    if (PersistenceProvider.TargetFeatures.Cypher == false && PersistenceProvider.TargetFeatures.GremlinFlavor == Gremlin.GremlinFlavor.Cosmos) { 
+            
+            #line default
+            #line hidden
             this.Write("MATCH (n:");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
+            
+            #line default
+            #line hidden
+            this.Write(") DETACH DELETE n\r\n");
+            
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+    } else { 
+            
+            #line default
+            #line hidden
+            this.Write("MATCH (n:");
+            
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default
             #line hidden
             this.Write(") WITH n LIMIT 10000 DETACH DELETE n\r\n");
+            
+            #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+    } 
+            
+            #line default
+            #line hidden
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 13 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+        #line 18 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
 
 
 	// Template Parameters
