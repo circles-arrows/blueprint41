@@ -98,6 +98,9 @@ namespace Blueprint41.Neo4j.Refactoring
                     IGraphResponse result = Parser.PrivateExecute<T>(setup);
                     Transaction.Commit();
 
+                    if (result.Result is GremlinResult gremlinResult && gremlinResult.HasError)
+                        throw new InvalidOperationException(gremlinResult.ErrorMessage);
+
                     if (result.Result is IStatementResult statementResult)
                         counters = statementResult.Consume().Counters;
                 }
