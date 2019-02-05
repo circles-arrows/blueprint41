@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using System.Collections.Specialized;
 using System.IO;
-using System.Text;
 
 namespace Blueprint41.Log
 {
@@ -42,10 +39,10 @@ namespace Blueprint41.Log
         {
             ThresholdInSeconds = 100 /*1s*/;
             MaxFileSize = 2 * 1024 * 1024;
-            LogDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TransactionLogs");           
+            LogDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TransactionLogs");
 
             watcher = new Stopwatch();
-        }        
+        }
 
         internal void Start()
         {
@@ -58,10 +55,7 @@ namespace Blueprint41.Log
             watcher.Stop();
             if (watcher.ElapsedMilliseconds >= ThresholdInSeconds)
             {
-                if (parameters != null)
-                    foreach (var par in parameters)
-                        message = message.Replace("{" + par.Key + "}", Serializer.Serialize(par.Value).Replace("\"", "\'"));
-
+                message = message.ToCypherString(parameters);
                 Log(string.Format("{0}\t{1}\t{2}\t{3}\t{4}", callerInfo[0], callerInfo[1], callerInfo[2], TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), message));
             }
         }

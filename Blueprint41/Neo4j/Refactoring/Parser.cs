@@ -83,7 +83,7 @@ namespace Blueprint41.Neo4j.Refactoring
 
             return result;
         }
-                
+
         internal static void ExecuteBatched<T>(Action<T> setup, bool withTransaction = true)
             where T : TemplateBase, new()
         {
@@ -187,7 +187,7 @@ namespace Blueprint41.Neo4j.Refactoring
         }
         public static void CommitScript(DatastoreModel.UpgradeScript script)
         {
-            if (PersistenceProvider.IsGremlin)
+            if (PersistenceProvider.IsGremlin && PersistenceProvider.TargetFeatures.GremlinFlavor == Gremlin.GremlinFlavor.Cosmos)
             {
                 CommitScriptCosmos(script);
                 return;

@@ -18,18 +18,18 @@ namespace Blueprint41.Neo4j.Persistence
         {
             get
             {
-                if(driver == null)
+                if (driver == null)
                 {
                     lock (typeof(Neo4JPersistenceProvider))
                     {
-                        if(driver == null)
+                        if (driver == null)
                             driver = GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password));
                     }
                 }
                 return driver;
             }
         }
-        public TransactionLogger TransactionLogger { get; private set; }
+        public TransactionLogger TransactionLogger { get; }
         private string Uri;
         private string Username;
         private string Password;

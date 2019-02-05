@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.Log;
 using Blueprint41.Response;
 using Gremlin.Net.Driver.Exceptions;
 using Gremlin.Net.Driver.Messages;
@@ -16,10 +17,13 @@ namespace Blueprint41
 {
     public abstract class Transaction : IDisposable
     {
-        protected Transaction()
+        protected TransactionLogger Logger { get; }
+
+        protected Transaction(TransactionLogger logger)
         {
             InTransaction = true;
             DisableForeignKeyChecks = false;
+            Logger = logger;
         }
 
         #region Transaction Logic
@@ -641,15 +645,29 @@ namespace Blueprint41
 
         #region Run
 
-        protected abstract IGraphResponse RunPrivate(string cypher, string memberName, string sourceFilePath, int sourceLineNumber);
-        protected abstract IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters, string memberName, string sourceFilePath, int sourceLineNumber);
+        protected abstract IGraphResponse RunPrivate(string cypher);
+        protected abstract IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters);
 
-        public static IGraphResponse Run(string cypher, 
-            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", 
+        public static IGraphResponse Run(string cypher,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            return RunningTransaction.RunPrivate(cypher, memberName, sourceFilePath, sourceLineNumber);
+
+#if DEBUG
+            RunningTransaction.Logger.Start();
+#endif
+
+            IGraphResponse response = RunningTransaction.RunPrivate(cypher);
+
+#if DEBUG
+            if (response.Result is IStatementResult statementResult)
+                statementResult.Peek();
+
+            RunningTransaction.Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+#endif
+
+            return response;
         }
 
         public static IGraphResponse Run(string cypher, Dictionary<string, object> parameters,
@@ -657,7 +675,21 @@ namespace Blueprint41
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            return RunningTransaction.RunPrivate(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+
+#if DEBUG
+            RunningTransaction.Logger.Start();
+#endif
+
+            IGraphResponse response = RunningTransaction.RunPrivate(cypher, parameters);
+
+#if DEBUG
+            if (response.Result is IStatementResult statementResult)
+                statementResult.Peek();
+
+            RunningTransaction.Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+#endif
+
+            return response;
         }
 
         #endregion

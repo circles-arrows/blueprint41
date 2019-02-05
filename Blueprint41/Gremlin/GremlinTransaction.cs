@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.Log;
 using Blueprint41.Response;
 using Gremlin.Net.Driver;
 using Gremlin.Net.Driver.Exceptions;
@@ -32,7 +33,7 @@ namespace Blueprint41.Gremlin
             }
         }
 
-        internal GremlinTransaction(GremlinServer server)
+        internal GremlinTransaction(GremlinServer server, TransactionLogger logger) : base(logger)
         {
             this.server = server;
         }
@@ -60,7 +61,7 @@ namespace Blueprint41.Gremlin
             base.FlushPrivate();
         }
 
-        protected override IGraphResponse RunPrivate(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
+        protected override IGraphResponse RunPrivate(string cypher)
         {
             if ((RunningTransaction is GremlinTransaction grem && this == grem) == false)
                 throw new InvalidOperationException("The current transaction is not a Gremlin transaction.");
@@ -69,7 +70,7 @@ namespace Blueprint41.Gremlin
             return Client.QueryAsync(gremlinQuery).Result;
         }
 
-        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters, string memberName, string sourceFilePath, int sourceLineNumber)
+        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters)
         {
             if ((RunningTransaction is GremlinTransaction grem && this == grem) == false)
                 throw new InvalidOperationException("The current transaction is not a Gremlin transaction.");

@@ -13,11 +13,10 @@ namespace Blueprint41.Neo4j.Persistence
 
     public class Neo4jTransaction : Transaction
     {
-        internal Neo4jTransaction(IDriver driver, bool withTransaction, TransactionLogger logger)
+        internal Neo4jTransaction(IDriver driver, bool withTransaction, TransactionLogger logger) : base(logger)
         {
             Driver = driver;
             Session = driver.Session();
-            Logger = logger;
             WithTransaction = withTransaction;
             StatementRunner = Session;
             if (withTransaction)
@@ -27,49 +26,27 @@ namespace Blueprint41.Neo4j.Persistence
             }
         }
 
-        protected override IGraphResponse RunPrivate(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
+        protected override IGraphResponse RunPrivate(string cypher)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
-#if DEBUG
-            trans.Logger.Start();
-#endif
-
-            IGraphResponse results = trans.StatementRunner.RunCypher(cypher);
-
-#if DEBUG
-            (results.Result as IStatementResult).Peek();
-            trans.Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
-#endif
-
-            return results;
+            return trans.StatementRunner.RunCypher(cypher);
         }
-        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters, string memberName, string sourceFilePath, int sourceLineNumber)
+        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
-#if DEBUG
-            trans.Logger.Start();
-#endif
-            IGraphResponse results = trans.StatementRunner.RunCypher(cypher, parameters);
-
-#if DEBUG
-            (results.Result as IStatementResult).Peek();
-            trans.Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
-#endif
-
-            return results;
+            return trans.StatementRunner.RunCypher(cypher, parameters);
         }
 
         public IDriver Driver { get; set; }
         public ISession Session { get; set; }
         public ITransaction Transaction { get; set; }
-        public IStatementRunner StatementRunner { get; set; }
-        private TransactionLogger Logger { get; set; }
+        public IStatementRunner StatementRunner { get; set; }       
 
         private bool WithTransaction;
 
@@ -122,7 +99,7 @@ namespace Blueprint41.Neo4j.Persistence
             lock (functionalId)
             {
                 string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
-                IStatementResult result = Transaction.Run(getFidQuery);
+                IGraphResponse result = Run(getFidQuery);
                 long? currentFid = result.FirstOrDefault()?.Values["Sequence"].As<long?>();
                 if (currentFid.HasValue)
                     functionalId.SeenUid(currentFid.Value);

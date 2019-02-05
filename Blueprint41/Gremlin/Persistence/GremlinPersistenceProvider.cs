@@ -1,5 +1,6 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.Gremlin.Persistence;
+using Blueprint41.Log;
 using Blueprint41.Neo4j.Persistence;
 using Gremlin.Net.Driver;
 using System;
@@ -38,6 +39,8 @@ namespace Blueprint41.Gremlin.Persistence
         readonly string collection;
         readonly bool ssl = false;
 
+        public TransactionLogger TransactionLogger { get; }
+
         public GremlinPersistenceProvider(string hostname, int port = 8182, string authKey = null, string database = null, string collection = null)
         {
             this.hostname = hostname;
@@ -46,13 +49,14 @@ namespace Blueprint41.Gremlin.Persistence
             this.database = database;
             this.collection = collection;
             this.ssl = !(port == 8182) && hostname.Contains("localhost") == false;
+            TransactionLogger = new TransactionLogger();
         }
 
         public override IEnumerable<TypeMapping> SupportedTypeMappings => Neo4JPersistenceProvider.supportedTypeMappings;
 
         public override Transaction NewTransaction(bool withTransaction)
         {
-            return new GremlinTransaction(Server);
+            return new GremlinTransaction(Server, TransactionLogger);
         }
 
         internal override NodePersistenceProvider GetNodePersistenceProvider()
