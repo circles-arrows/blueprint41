@@ -1,12 +1,8 @@
-﻿using System;
-using System.CodeDom;
+﻿using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Blueprint41.Core;
 using System.Reflection;
 using System.Collections.ObjectModel;
 using Blueprint41;
@@ -212,7 +208,7 @@ namespace System
             }
         }
 
-        public static string ToCypherString(this string cypher, Dictionary<string, object> parameters)
+        public static string ToCypherString(this string cypher, Dictionary<string, object> parameters = null, bool singleLine = true)
         {
             if (parameters != null)
             {
@@ -230,6 +226,12 @@ namespace System
                     jsonValue = jsonValue.Replace('"', '\'');
                     cypher = cypher.Replace("{" + par.Key + "}", jsonValue);
                 }
+            }
+
+            if (singleLine)
+            {
+                cypher = cypher.Replace("\r\n", " ").Trim();
+                cypher = cypher.Replace("\n", " ").Trim();
             }
 
             return cypher;
