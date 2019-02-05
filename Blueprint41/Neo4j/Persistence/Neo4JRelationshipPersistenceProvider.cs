@@ -345,7 +345,7 @@ namespace Blueprint41.Neo4j.Persistence
                 parameters.Add("MinDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
-                IGraphResponse result = Neo4jTransaction.Run(find, parameters);
+                IGraphResponse result = Transaction.Run(find, parameters);
                 IRecord record = result.FirstOrDefault();
                 int count = record["Count"].As<int>();
                 if (count > 0)

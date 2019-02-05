@@ -651,33 +651,83 @@ foreach (var entity in Entities.Where(x => x.StaticData != null && x.StaticData?
 		{
 			var prop = primitiveRecords.ElementAt(index);
 			string comma = index == primitiveRecords.Count() - 1 ? " " : ",";
+			string value = prop.Value.Replace("\"","\\\"");
+
+			var primitiveType = allProperties.Where(a=>a.Guid == prop.PropertyGuid).FirstOrDefault().Type;
 			var primitive = allProperties.Where(p => p.Guid == prop.PropertyGuid).FirstOrDefault();
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 205 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(primitive.Name));
             
             #line default
             #line hidden
-            this.Write(" = \"");
+            this.Write(" = ");
             
-            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(prop.Value.Replace("\"","\\\"")));
+            #line 205 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+			if(primitiveType == "List<string>")
+			{
+				var values = prop.Value.Substring(1, prop.Value.Length-2).TrimEnd().TrimStart();
+			
+            
+            #line default
+            #line hidden
+            this.Write("new List<string>()");
+            
+            #line 209 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+				if(!string.IsNullOrEmpty(values))
+				{
+					
+            
+            #line default
+            #line hidden
+            this.Write(" { ");
+            
+            #line 212 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(values));
+            
+            #line default
+            #line hidden
+            this.Write(" }");
+            
+            #line 212 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+				}
+			}
+			else
+			{
             
             #line default
             #line hidden
             this.Write("\"");
             
-            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 216 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(value));
+            
+            #line default
+            #line hidden
+            this.Write("\"");
+            
+            #line 216 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+
+			}
+			
+            
+            #line default
+            #line hidden
+            
+            #line 218 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(comma));
             
             #line default
             #line hidden
             
-            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 218 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
 		}
 
@@ -686,7 +736,7 @@ foreach (var entity in Entities.Where(x => x.StaticData != null && x.StaticData?
             #line hidden
             this.Write("});\r\n");
             
-            #line 205 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 221 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
 	}
 
@@ -695,7 +745,7 @@ foreach (var entity in Entities.Where(x => x.StaticData != null && x.StaticData?
             #line hidden
             this.Write("\r\n");
             
-            #line 209 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
+            #line 225 "D:\_CirclesArrows\blueprint41\Blueprint41.Modeller\Generation\DatastoreModel.tt"
 
 } // end foreach entities
 

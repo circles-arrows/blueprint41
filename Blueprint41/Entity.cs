@@ -445,11 +445,11 @@ namespace Blueprint41
             {
                 if (property.IndexType == IndexType.Unique && !IsAbstract)
                 {
-                    Parser.Execute<CreateUniqueConstraint>(delegate (CreateUniqueConstraint template)
-                    {
-                        template.Entity = this;
-                        template.Property = property;
-                    }, false);
+                    //Parser.Execute<CreateUniqueConstraint>(delegate (CreateUniqueConstraint template)
+                    //{
+                    //    template.Entity = this;
+                    //    template.Property = property;
+                    //}, false);
                 }
                 else if (property.IndexType == IndexType.Indexed || (property.IndexType == IndexType.Unique && IsAbstract))
                 {

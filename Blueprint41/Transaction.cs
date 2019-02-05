@@ -641,17 +641,23 @@ namespace Blueprint41
 
         #region Run
 
-        protected abstract IGraphResponse RunPrivate(string cypher);
-        protected abstract IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters);
+        protected abstract IGraphResponse RunPrivate(string cypher, string memberName, string sourceFilePath, int sourceLineNumber);
+        protected abstract IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters, string memberName, string sourceFilePath, int sourceLineNumber);
 
-        public static IGraphResponse Run(string cypher)
+        public static IGraphResponse Run(string cypher, 
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", 
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            return RunningTransaction.RunPrivate(cypher);
+            return RunningTransaction.RunPrivate(cypher, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public static IGraphResponse Run(string cypher, Dictionary<string, object> parameters)
+        public static IGraphResponse Run(string cypher, Dictionary<string, object> parameters,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            return RunningTransaction.RunPrivate(cypher, parameters);
+            return RunningTransaction.RunPrivate(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
         }
 
         #endregion

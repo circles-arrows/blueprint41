@@ -1,20 +1,23 @@
-﻿using Blueprint41.Response;
-using Neo4j.Driver.V1;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Neo4j.Driver.V1;
+using Blueprint41.Log;
+using Blueprint41.Response;
 
 namespace Blueprint41.Neo4j.Persistence
 {
 
     public class Neo4jTransaction : Transaction
     {
-        internal Neo4jTransaction(IDriver driver, bool withTransaction)
+        internal Neo4jTransaction(IDriver driver, bool withTransaction, TransactionLogger logger)
         {
             Driver = driver;
             Session = driver.Session();
+            Logger = logger;
             WithTransaction = withTransaction;
             StatementRunner = Session;
             if (withTransaction)
@@ -24,22 +27,41 @@ namespace Blueprint41.Neo4j.Persistence
             }
         }
 
-        protected override IGraphResponse RunPrivate(string cypher)
+        protected override IGraphResponse RunPrivate(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
+
+#if DEBUG
+            trans.Logger.Start();
+#endif
 
             IGraphResponse results = trans.StatementRunner.RunCypher(cypher);
+
+#if DEBUG
+            (results.Result as IStatementResult).Peek();
+            trans.Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+#endif
+
             return results;
         }
-        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters)
+        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
             if (trans == null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
+#if DEBUG
+            trans.Logger.Start();
+#endif
             IGraphResponse results = trans.StatementRunner.RunCypher(cypher, parameters);
+
+#if DEBUG
+            (results.Result as IStatementResult).Peek();
+            trans.Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+#endif
+
             return results;
         }
 
@@ -47,6 +69,7 @@ namespace Blueprint41.Neo4j.Persistence
         public ISession Session { get; set; }
         public ITransaction Transaction { get; set; }
         public IStatementRunner StatementRunner { get; set; }
+        private TransactionLogger Logger { get; set; }
 
         private bool WithTransaction;
 
@@ -99,16 +122,13 @@ namespace Blueprint41.Neo4j.Persistence
             lock (functionalId)
             {
                 string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
-
-                IGraphResponse response = RunPrivate(getFidQuery);
-                IStatementResult result = (IStatementResult)response.Result;
-
+                IStatementResult result = Transaction.Run(getFidQuery);
                 long? currentFid = result.FirstOrDefault()?.Values["Sequence"].As<long?>();
                 if (currentFid.HasValue)
                     functionalId.SeenUid(currentFid.Value);
 
                 string setFidQuery = $"CALL blueprint41.functionalid.setSequenceNumber('{functionalId.Label}', {functionalId.highestSeenId}, {(functionalId.Format == IdFormat.Numeric).ToString().ToLowerInvariant()})";
-                RunPrivate(setFidQuery);
+                Run(setFidQuery);
                 functionalId.wasApplied = true;
                 functionalId.highestSeenId = -1;
             }

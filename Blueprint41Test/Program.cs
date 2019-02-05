@@ -70,7 +70,7 @@ namespace Blueprint41Test
 
     class Program
     {
-        //[STAThread]
+        [STAThread]
         static void Main(string[] args)
         {
             //int a = 10999;
@@ -85,78 +85,78 @@ namespace Blueprint41Test
 
 
 
-            string hostname = "9caa0e3e-0ee0-4-231-b9ee.gremlin.cosmosdb.azure.com";
-            int port = 443;
-            string authKey = "8NTSGVQfWB5LWhPNutO5040rhZv8kene3pTS1dHHOG9xWWQ0oCYatdYcA6Z6S81RoCYnCjzWSqYye7bGAqvgQQ==";
-            string database = "sample-database";
-            string collection = "sample-graph";
+            //string hostname = "9caa0e3e-0ee0-4-231-b9ee.gremlin.cosmosdb.azure.com";
+            //int port = 443;
+            //string authKey = "8NTSGVQfWB5LWhPNutO5040rhZv8kene3pTS1dHHOG9xWWQ0oCYatdYcA6Z6S81RoCYnCjzWSqYye7bGAqvgQQ==";
+            //string database = "sample-database";
+            //string collection = "sample-graph";
 
-            string uri = "bolt://localhost:7687";
-            string username = "neo4j";
-            string pass = "neo";
-            //"bolt://localhost:7687", "neo4j", "neo"
-
-
-            PersistenceProvider.Initialize(typeof(MovieModel), hostname, port, authKey, database, collection);
-            //PersistenceProvider.Initialize(typeof(MovieModel), uri, username, pass);
-
-            //string projectFolder = Environment.CurrentDirectory + "\\..\\..\\";
-            //GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            //GeneratorResult result = Generator.Execute<MovieModel>(settings);
+            //string uri = "bolt://localhost:7687";
+            //string username = "neo4j";
+            //string pass = "neo";
+            ////"bolt://localhost:7687", "neo4j", "neo"
 
 
-            //MovieModel model = new MovieModel();
-            //model.Execute(true);
+            //PersistenceProvider.Initialize(typeof(MovieModel), hostname, port, authKey, database, collection);
+            ////PersistenceProvider.Initialize(typeof(MovieModel), uri, username, pass);
 
-            //return;
-            using (Transaction.Begin(true))
-            {
-                //for(int i = 0; i < 10; i++)
-                //{
-                //Film matrix = new Film()
-                //{
-                //    Uid = Guid.NewGuid().ToString(),
-                //    title = "The Matrix",
-                //    release = 1999,
-                //    tagline = "Welcome to the Real World"
-                //};
-                //}
+            ////string projectFolder = Environment.CurrentDirectory + "\\..\\..\\";
+            ////GeneratorSettings settings = new GeneratorSettings(projectFolder);
+            ////GeneratorResult result = Generator.Execute<MovieModel>(settings);
 
-                Film f = Film.Load("7c71dfe3-83c6-4527-a1c1-8bf089073fa3");
-                f.ForceDelete();
 
-                // List<Film> films = Film.GetAll();
+            ////MovieModel model = new MovieModel();
+            ////model.Execute(true);
 
-                //Film matrix = new Film
-                //{
-                //    Uid = "matrix",
-                //    title = "The Matrix",
-                //    release = 1999,
-                //    tagline = "Welcome to the Real World"
-                //};
-
-                //Actor keanu = new Actor()
-                //{
-                //    fullname = "Keanu Reeves"
-                //};
-
-                //keanu.ActedFilms.Add(matrix);
-
-                Transaction.Commit();
-            }
-
-            //string cypherText = File.ReadAllText(Environment.CurrentDirectory + "/moviegraph.txt");
-
-            //string[] createcyphers = cypherText.Split(new string[] { "CREATE" }, StringSplitOptions.RemoveEmptyEntries);
-            //string c = "";
-            //foreach (string cy in createcyphers)
+            ////return;
+            //using (Transaction.Begin(true))
             //{
-            //    c += "CREATE " + cy.Trim() + " ";
+            //    //for(int i = 0; i < 10; i++)
+            //    //{
+            //    //Film matrix = new Film()
+            //    //{
+            //    //    Uid = Guid.NewGuid().ToString(),
+            //    //    title = "The Matrix",
+            //    //    release = 1999,
+            //    //    tagline = "Welcome to the Real World"
+            //    //};
+            //    //}
+
+            //    Film f = Film.Load("7c71dfe3-83c6-4527-a1c1-8bf089073fa3");
+            //    f.ForceDelete();
+
+            //    // List<Film> films = Film.GetAll();
+
+            //    //Film matrix = new Film
+            //    //{
+            //    //    Uid = "matrix",
+            //    //    title = "The Matrix",
+            //    //    release = 1999,
+            //    //    tagline = "Welcome to the Real World"
+            //    //};
+
+            //    //Actor keanu = new Actor()
+            //    //{
+            //    //    fullname = "Keanu Reeves"
+            //    //};
+
+            //    //keanu.ActedFilms.Add(matrix);
+
+            //    Transaction.Commit();
             //}
 
-            // Console.ReadLine();
+            ////string cypherText = File.ReadAllText(Environment.CurrentDirectory + "/moviegraph.txt");
 
-            return;
+            ////string[] createcyphers = cypherText.Split(new string[] { "CREATE" }, StringSplitOptions.RemoveEmptyEntries);
+            ////string c = "";
+            ////foreach (string cy in createcyphers)
+            ////{
+            ////    c += "CREATE " + cy.Trim() + " ";
+            ////}
+
+            //// Console.ReadLine();
+
+            //return;
 
             string cypher = null;
             do
@@ -173,67 +173,75 @@ namespace Blueprint41Test
                     continue;
                 }
 
+                //Console.WriteLine("========Cosmos=========");
+                ////Console.WriteLine(Translate.ToCosmos(cypher));
+                //Console.WriteLine("=================");
+
+                Console.WriteLine();
+                Console.WriteLine();
+
+                CypherAst ast;
+                try
+                {
+                    ast = CypherAst.parse(cypher);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    continue;
+                }
+
+
+                Translator groovyTranlator = Translator.builder()
+                            .gremlinGroovy()
+                            .inlineParameters()
+                            .enableCypherExtensions()
+                            .enableMultipleLabels().build();
+                Translator cosmosTranlator = Translator.builder().gremlinGroovy().build(TranslatorFlavor.cosmosDb());
+                Translator neptuneTranlator = Translator.builder()
+                            .gremlinGroovy()
+                            .inlineParameters()
+                            .enableCypherExtensions()
+                            .enableMultipleLabels().build(TranslatorFlavor.neptune());
+
+                string g, c, n;
+
+                Console.WriteLine("========Groovy=========");
+                Console.WriteLine((g = ast.buildTranslation(groovyTranlator).ToString()));
+                Console.WriteLine("=================");
+
+                Console.WriteLine("========Neptune=========");
+                Console.WriteLine((n = ast.buildTranslation(neptuneTranlator).ToString()));
+                Console.WriteLine("=================");
+
                 Console.WriteLine("========Cosmos=========");
-                //Console.WriteLine(Translate.ToCosmos(cypher));
+                Console.WriteLine((c = ast.buildTranslation(cosmosTranlator).ToString()));
                 Console.WriteLine("=================");
 
                 Console.WriteLine();
                 Console.WriteLine();
 
-                //CypherAst ast;
-                //try
-                //{
-                //    ast = CypherAst.parse(cypher);
-                //}
-                //catch (Exception ex)
-                //{
-                //    Console.WriteLine(ex.Message);
-                //    continue;
-                //}
+                Console.WriteLine("Type g (groovy), n (neptune) or c (cosmos) to copy to clipboard. Or antyhing to cancel");
 
+                string toCopy = Console.ReadLine();
 
-                //Translator groovyTranlator = Translator.builder().gremlinGroovy().build();
-                //Translator cosmosTranlator = Translator.builder().gremlinGroovy().build(TranslatorFlavor.cosmosDb());
-                //Translator neptuneTranlator = Translator.builder().gremlinGroovy().build(TranslatorFlavor.neptune());
+                if (toCopy == "g")
+                {
+                    Clipboard.SetText(g);
+                    Console.WriteLine("Copied to clipboard");
+                }
 
-                //string g, c, n;
+                else if (toCopy == "c")
+                {
+                    Clipboard.SetText(c);
+                    Console.WriteLine("Copied to clipboard");
+                }
 
-                //Console.WriteLine("========Groovy=========");
-                //Console.WriteLine((g = ast.buildTranslation(groovyTranlator).ToString()));
-                //Console.WriteLine("=================");
-
-                //Console.WriteLine("========Neptune=========");
-                //Console.WriteLine((n = ast.buildTranslation(neptuneTranlator).ToString()));
-                //Console.WriteLine("=================");
-
-                //Console.WriteLine("========Cosmos=========");
-                //Console.WriteLine((c = ast.buildTranslation(cosmosTranlator).ToString()));
-                //Console.WriteLine("=================");
-
-                //Console.WriteLine();
-                //Console.WriteLine();
-
-                //Console.WriteLine("Type g (groovy), n (neptune) or c (cosmos) to copy to clipboard. Or antyhing to cancel");
-
-                //string toCopy = Console.ReadLine();
-
-                //if (toCopy == "g")
-                //{
-                //    Clipboard.SetText(g);
-                //    Console.WriteLine("Copied to clipboard");
-                //}
-
-                //else if (toCopy == "c")
-                //{
-                //    Clipboard.SetText(c);
-                //    Console.WriteLine("Copied to clipboard");
-                //}
-
-                //else if (toCopy == "n")
-                //{
-                //    Clipboard.SetText(n);
-                //    Console.WriteLine("Copied to clipboard");
-                //}
+                else if (toCopy == "n")
+                {
+                    Clipboard.SetText(n);
+                    Console.WriteLine("Copied to clipboard");
+                }
 
             } while (cypher != "q");
 

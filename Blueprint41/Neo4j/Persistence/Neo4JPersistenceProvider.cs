@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.Log;
 using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace Blueprint41.Neo4j.Persistence
                 return driver;
             }
         }
+        public TransactionLogger TransactionLogger { get; private set; }
         private string Uri;
         private string Username;
         private string Password;
@@ -37,6 +39,7 @@ namespace Blueprint41.Neo4j.Persistence
             Uri = uri;
             Username = username;
             Password = password;
+            TransactionLogger = new TransactionLogger();
             //this.Driver = GraphDatabase.Driver(uri, AuthTokens.Basic(username, password));
         }
 
@@ -52,7 +55,7 @@ namespace Blueprint41.Neo4j.Persistence
 
         public override Transaction NewTransaction(bool withTransaction)
         {
-            return new Neo4jTransaction(Driver, withTransaction);
+            return new Neo4jTransaction(Driver, withTransaction, TransactionLogger);
         }
 
         public override IEnumerable<TypeMapping> SupportedTypeMappings

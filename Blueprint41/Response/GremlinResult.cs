@@ -86,8 +86,6 @@ namespace Blueprint41.Response
         }
     }
 
-
-
     public class GremlinConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)

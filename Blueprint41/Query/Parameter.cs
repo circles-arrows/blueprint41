@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+
 using Blueprint41.Query;
 using Blueprint41.Core;
 
@@ -78,10 +80,77 @@ namespace Blueprint41
         public Parameter(string name, object value, Type type = null)
         {
             Name = name;
-            Value = value;
             IsConstant = name == null;
             Type = type ?? value?.GetType();
+            Value = MaterializeValue(Type, value);
         }
+
+        private static object MaterializeValue(Type type, object value)
+        {
+            if (value == null)
+                return null;
+
+            if (type.IsGenericType)
+            {
+                if (value is IEnumerable)
+                {
+                    Func<object, object> convLogic;
+                    if (!fromEnumeratorCache.TryGetValue(type, out convLogic))
+                    {
+                        lock (fromEnumeratorCache)
+                        {
+                            if (!fromEnumeratorCache.TryGetValue(type, out convLogic))
+                            {
+                                Type genericeType = type.GetGenericTypeDefinition();
+                                if (genericeType != typeof(List<>))
+                                {
+                                    Type iface = null;
+                                    Type search = type;
+                                    while (search != null && iface == null)
+                                    {
+                                        foreach (Type item in search.GetInterfaces())
+                                        {
+                                            if (item.IsGenericType && item.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                                            {
+                                                iface = item;
+                                                break;
+                                            }
+                                        }
+                                        search = search.BaseType;
+                                    }
+
+                                    if (iface != null)
+                                    {
+                                        Type typeT = iface.GenericTypeArguments[0];
+                                        MethodInfo methodInfo = typeof(Parameter).GetMethod(nameof(FromEnumerator), BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(typeT);
+
+                                        convLogic = (Func<object, object>)Delegate.CreateDelegate(typeof(Func<object, object>), methodInfo);
+                                    }
+                                }
+
+                                // we could "return value;" here, but we're going to make sure we don't need to scan interfaces in the future anymore.
+                                if (convLogic == null)
+                                    convLogic = delegate (object v) { return v; };
+
+                                fromEnumeratorCache.Add(type, convLogic);
+                            }
+                        }
+                    }
+                    return convLogic.Invoke(value);
+                }
+                //else if (genericeType == typeof(IDictionary<,>) && genericeType != typeof(Dictionary<,>))
+                //{
+                //    throw new NotImplementedException(); // We think this is not needed because Neo4j doesn't support this, right?
+                //}
+            }
+
+            return value;
+        }
+        private static object FromEnumerator<T>(object value)
+        {
+            return new List<T>((IEnumerable<T>)value);
+        }
+        private static Dictionary<Type, Func<object, object>> fromEnumeratorCache = new Dictionary<Type, Func<object, object>>();
 
         public static Parameter New<T>(string name)
         {
@@ -108,9 +177,9 @@ namespace Blueprint41
             Parameter p = new Parameter();
             p.IsConstant = name == null;
             p.Name = name;
-            p.Value = value;
             p.HasValue = true;
             p.Type = type;
+            p.Value = MaterializeValue(p.Type, value);
             return p;
         }
 

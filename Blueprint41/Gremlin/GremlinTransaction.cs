@@ -60,7 +60,7 @@ namespace Blueprint41.Gremlin
             base.FlushPrivate();
         }
 
-        protected override IGraphResponse RunPrivate(string cypher)
+        protected override IGraphResponse RunPrivate(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if ((RunningTransaction is GremlinTransaction grem && this == grem) == false)
                 throw new InvalidOperationException("The current transaction is not a Gremlin transaction.");
@@ -69,33 +69,13 @@ namespace Blueprint41.Gremlin
             return Client.QueryAsync(gremlinQuery).Result;
         }
 
-        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters)
+        protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if ((RunningTransaction is GremlinTransaction grem && this == grem) == false)
                 throw new InvalidOperationException("The current transaction is not a Gremlin transaction.");
 
             string gremlinQuery = Translate.ToGremlin(cypher.ToCypherString(parameters), PersistenceProvider.TargetFeatures.GremlinFlavor);
             return Client.QueryAsync(gremlinQuery).Result;
-        }
-
-        /// <summary>
-        /// Temp class to mimic IStatementResult from neo4j
-        /// </summary>
-        public class CustomIStatementResult : IStatementResult
-        {
-            private Dictionary<string, IRecord> records = new Dictionary<string, IRecord>();
-
-            public IReadOnlyList<string> Keys => records.Keys.Select(x => x).ToList();
-
-            public IResultSummary Summary => null;
-
-            public IResultSummary Consume() => null;
-
-            public IEnumerator<IRecord> GetEnumerator() => records.Select(x => x.Value).ToList().GetEnumerator();
-
-            public IRecord Peek() => null;
-
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
     }
 }
