@@ -10,7 +10,7 @@
 
     Debug.WriteLine("	executing {0} -> Deprecate entity from {1}", this.GetType().Name, Name);
 #>
-<#    if (PersistenceProvider.TargetFeatures.Cypher == false && PersistenceProvider.TargetFeatures.GremlinFlavor == Gremlin.GremlinFlavor.Cosmos) { #>
+<#    if (PersistenceProvider.IsGremlin) { #>
 MATCH (n:<#=Name#>) DETACH DELETE n
 <#    } else { #>
 MATCH (n:<#=Name#>) WITH n LIMIT 10000 DETACH DELETE n

@@ -36,6 +36,7 @@ namespace Blueprint41
             ApplyConstraintEntity = false,
             RenameEntity = false,
             RenameRelationship = false,
+            ToCompressedString = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
         }
@@ -52,30 +53,32 @@ namespace Blueprint41
             CreateUniqueConstraint = false,
             DropExistConstraints = false,
             ApplyConstraintEntity = false,
+            MergeProperty = false,
             RenameEntity = false,
             RenameProperty = false,
             RenameRelationship = false,
+            ToCompressedString = false,
             PersistenceProviderType = typeof(GremlinPersistenceProvider),
 
         }
         .SetTemplateFeatures()
         .SetSchemaFeatures();
 
-        public static readonly GraphFeatures Neptune = new GraphFeatures()
-        {
-            Cypher = false,
-            GremlinFlavor = GremlinFlavor.Neptune,
-            FunctionalId = false,
-            CreateIndex = false,
-            CreateUniqueConstraint = false,
-            DropExistConstraints = false,
-            ApplyConstraintEntity = false,
-            RenameEntity = false,
-            RenameRelationship = false,
-            PersistenceProviderType = typeof(GremlinPersistenceProvider),
-        }
-        .SetTemplateFeatures()
-        .SetSchemaFeatures();
+        //public static readonly GraphFeatures Neptune = new GraphFeatures()
+        //{
+        //    Cypher = false,
+        //    GremlinFlavor = GremlinFlavor.Neptune,
+        //    FunctionalId = false,
+        //    CreateIndex = false,
+        //    CreateUniqueConstraint = false,
+        //    DropExistConstraints = false,
+        //    ApplyConstraintEntity = false,
+        //    RenameEntity = false,
+        //    RenameRelationship = false,
+        //    PersistenceProviderType = typeof(GremlinPersistenceProvider),
+        //}
+        //.SetTemplateFeatures()
+        //.SetSchemaFeatures();
 
         private Dictionary<Type, bool> templateFeatures;
         GraphFeatures SetTemplateFeatures()
@@ -145,6 +148,7 @@ namespace Blueprint41
         public bool SetDefaultLookupValue { get; private set; } = true;
         public bool SetLabel { get; private set; } = true;
         public bool SetRelationshipPropertyValue { get; private set; } = true;
+        public bool ToCompressedString { get; private set; } = true;
 
 
         // Schema

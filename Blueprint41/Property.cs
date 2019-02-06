@@ -442,6 +442,9 @@ namespace Blueprint41
         {
             Parent.Parent.EnsureSchemaMigration();
 
+            if (Parent.Parent.TargetFeatures.ToCompressedString == false)
+                throw new NotSupportedException("Current persistence provider does not support this functionality");
+
             if (PropertyType != PropertyType.Attribute || SystemReturnType != typeof(string))
                 throw new NotSupportedException("Only string properties can be converted to compressed string.");
 

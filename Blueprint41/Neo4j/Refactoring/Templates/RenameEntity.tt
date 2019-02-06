@@ -5,6 +5,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="Blueprint41" #>
+<#@ import namespace="Blueprint41.Core" #>
 <#
 
     Debug.WriteLine("	executing {0} -> Rename entity from {1} to {2}", this.GetType().Name, OldName, NewName);

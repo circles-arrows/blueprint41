@@ -42,7 +42,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             
             #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
-    if (PersistenceProvider.TargetFeatures.Cypher == false && PersistenceProvider.TargetFeatures.GremlinFlavor == Gremlin.GremlinFlavor.Cosmos) { 
+    if (PersistenceProvider.IsGremlin) { 
             
             #line default
             #line hidden
