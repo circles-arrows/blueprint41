@@ -90,15 +90,17 @@
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CosmosBase.cs" />
+    <Compile Include="Cosmos\CosmosBase.cs" />
+    <Compile Include="Cosmos\TestCosmosDatastore.cs" />
+    <Compile Include="Cosmos\TestCosmosDatastoreCRUD.cs" />
     <Compile Include="Entities\Base.cs" />
     <Compile Include="Entities\Film.cs" />
     <Compile Include="Entities\Genre.cs" />
     <Compile Include="Entities\Person.cs" />
     <Compile Include="Entities\_GraphEvents.cs" />
     <Compile Include="Entities\_Register.cs" />
-    <Compile Include="GremlinBase.cs" />
-    <Compile Include="GremlinStoreCRUD.cs" />
+    <Compile Include="Gremlin\GremlinBase.cs" />
+    <Compile Include="Gremlin\GremlinStoreCRUD.cs" />
     <Compile Include="Misc\ConsoleOutput.cs" />
     <Compile Include="Nodes\BaseNode.cs" />
     <Compile Include="Nodes\FilmNode.cs" />
@@ -109,8 +111,8 @@
     <Compile Include="Relationships\PERSON_DIRECTED_FILM.cs" />
     <Compile Include="Relationships\PERSON_PRODUCED_FILM.cs" />
     <Compile Include="Relationships\PERSON_WROTE_FILM.cs" />
-    <Compile Include="TestGremlinDatastoreCRUD.cs" />
-    <Compile Include="TestGremlinDataStore.cs" />
+    <Compile Include="Gremlin\TestGremlinDatastoreCRUD.cs" />
+    <Compile Include="Gremlin\TestGremlinDataStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
