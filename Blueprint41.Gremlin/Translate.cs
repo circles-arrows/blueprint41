@@ -39,17 +39,15 @@ namespace Blueprint41.Gremlin
                         break;
                     case GremlinFlavor.Neptune:
                         tflavor = TranslatorFlavor.neptune();
-                        builder = (builder as Translator.ParametrizedFlavorBuilder)
-                            .inlineParameters()
-                            .enableCypherExtensions()
-                            .enableMultipleLabels();
                         break;
-                    default:
-                        builder = (builder as Translator.ParametrizedFlavorBuilder)
-                            .inlineParameters()
-                            .enableCypherExtensions()
-                            .enableMultipleLabels();
-                        break;
+                }
+
+                if (flavor != GremlinFlavor.Cosmos)
+                {
+                    builder = (builder as Translator.ParametrizedFlavorBuilder)
+                           .inlineParameters()
+                           .enableCypherExtensions()
+                           .enableMultipleLabels();
                 }
 
                 Translator translator = builder.build(tflavor);
