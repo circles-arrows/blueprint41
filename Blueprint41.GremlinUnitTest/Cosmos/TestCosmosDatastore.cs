@@ -14,6 +14,8 @@ namespace Blueprint41.GremlinUnitTest.Cosmos
     /// - Rename
     /// - Merge
     /// - ToCompressString
+    /// - Convert
+    /// - SetIndexType
     /// </summary>
     [TestFixture]
     internal class TestCosmosDataStore : CosmosBase
@@ -101,10 +103,8 @@ namespace Blueprint41.GremlinUnitTest.Cosmos
                     .Merge(Entities["Genre"].Properties["MergePropertyName"], MergeAlgorithm.PreferSource);
                 });
 
-                Assert.Throws<NotSupportedException>(() =>
-                {
-                    Entities["Genre"].Properties["MergePropertyName"].Refactor.ToCompressedString();
-                });
+                Assert.Throws<NotSupportedException>(() => Entities["Genre"].Properties["MergePropertyName"].Refactor.ToCompressedString());
+                Assert.Throws<NotSupportedException>(() => Entities["Genre"].Properties["MergePropertyName"].Refactor.SetIndexType(IndexType.Unique));
 
                 Entities["Genre"].Properties["DateAdded"].Refactor.MakeMandatory();
                 Assert.IsFalse(Entities["Genre"].Properties["DateAdded"].Nullable);

@@ -601,6 +601,9 @@ namespace Blueprint41
         {
             Parent.Parent.EnsureSchemaMigration();
 
+            if(PersistenceProvider.IsGremlin)
+                throw new NotSupportedException();
+
             if (PropertyType != PropertyType.Attribute)
                 throw new NotImplementedException();
 

@@ -28,16 +28,14 @@ namespace Blueprint41.Neo4j.Persistence
 
         protected override IGraphResponse RunPrivate(string cypher)
         {
-            Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
-            if (trans == null)
+            if (!(RunningTransaction is Neo4jTransaction trans))
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
             return trans.StatementRunner.RunCypher(cypher);
         }
         protected override IGraphResponse RunPrivate(string cypher, Dictionary<string, object> parameters)
         {
-            Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
-            if (trans == null)
+            if (!(RunningTransaction is Neo4jTransaction trans))
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
             return trans.StatementRunner.RunCypher(cypher, parameters);

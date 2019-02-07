@@ -54,7 +54,6 @@ namespace Blueprint41.GremlinUnitTest
                     .HasStaticData()
                     .AddProperty("Name", typeof(string), false)
                     .AddProperty("MergePropertyName", typeof(string))
-                    .AddProperty("Order", typeof(double))
                     .AddProperty("DateAdded", typeof(DateTime));
 
                 Relations.New(Entities["Person"], Entities["Film"], "PERSON_ACTED_IN_FILM", "ACTED_IN")
@@ -77,10 +76,10 @@ namespace Blueprint41.GremlinUnitTest
                     .SetInProperty("SubGenre", PropertyType.Collection)
                     .SetOutProperty("ParentGenre", PropertyType.Collection);
 
-                dynamic action = Entities["Genre"].Refactor.CreateNode(new { Uid = "1", Name = "Action", DateAdded = DateTime.Now, Order = 1 });
-                dynamic horror = Entities["Genre"].Refactor.CreateNode(new { Uid = "2", Name = "Horror", DateAdded = DateTime.Now, Order = 2 });
-                dynamic comedy = Entities["Genre"].Refactor.CreateNode(new { Uid = "3", Name = "Comedy", DateAdded = DateTime.Now, Order = 3 });
-                dynamic doc = Entities["Genre"].Refactor.CreateNode(new { Uid = "4", Name = "Documentary", DateAdded = DateTime.Now, Order = 4 });
+                dynamic action = Entities["Genre"].Refactor.CreateNode(new { Uid = "1", Name = "Action", DateAdded = DateTime.Now });
+                dynamic horror = Entities["Genre"].Refactor.CreateNode(new { Uid = "2", Name = "Horror", DateAdded = DateTime.Now });
+                dynamic comedy = Entities["Genre"].Refactor.CreateNode(new { Uid = "3", Name = "Comedy", DateAdded = DateTime.Now });
+                dynamic doc = Entities["Genre"].Refactor.CreateNode(new { Uid = "4", Name = "Documentary", DateAdded = DateTime.Now });
 
                 Entities["Genre"].Refactor.MatchNode("1").SubGenre.Add(horror);
                 Entities["Genre"].Refactor.MatchNode("1").SubGenre.Add(comedy);
@@ -96,9 +95,8 @@ namespace Blueprint41.GremlinUnitTest
                     .Refactor
                     .Merge(Entities["Genre"].Properties["MergePropertyName"], MergeAlgorithm.PreferSource);
 
-                Assert.Throws<NotSupportedException>(() => { Entities["Genre"].Properties["MergePropertyName"].Refactor.ToCompressedString(); });
-
-                Entities["Genre"].Properties["Order"].Refactor.Convert(typeof(string));
+                Assert.Throws<NotSupportedException>(() => Entities["Genre"].Properties["MergePropertyName"].Refactor.ToCompressedString());
+                Assert.Throws<NotSupportedException>(() => Entities["Genre"].Properties["MergePropertyName"].Refactor.SetIndexType(IndexType.Unique));
 
                 Entities["Genre"].Properties["DateAdded"].Refactor.MakeMandatory();
                 Assert.IsFalse(Entities["Genre"].Properties["DateAdded"].Nullable);
