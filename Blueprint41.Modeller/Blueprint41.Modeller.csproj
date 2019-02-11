@@ -111,6 +111,12 @@
       <DependentUpon>StaticData.tt</DependentUpon>
     </Compile>
     <Compile Include="Keywords.cs" />
+    <Compile Include="Loader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Loader.Designer.cs">
+      <DependentUpon>Loader.cs</DependentUpon>
+    </Compile>
     <Compile Include="ManageEntityStaticDataForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -192,6 +198,9 @@
     <EmbeddedResource Include="HtmlEditor.resx">
       <DependentUpon>HtmlEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Loader.resx">
+      <DependentUpon>Loader.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ManageEntityStaticDataForm.resx">
       <DependentUpon>ManageEntityStaticDataForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -268,6 +277,7 @@
     <Content Include="keywords.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\loader.gif" />
     <Content Include="Resources\ol.bmp" />
     <Content Include="Resources\uol.bmp" />
     <Content Include="Schemas\Wrapper.tt">
