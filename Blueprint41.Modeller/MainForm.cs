@@ -881,6 +881,13 @@ namespace Blueprint41.Modeller
                 return;
             }
 
+            if (DatastoreModelDocumentGenerator.Instance.GraphVizInstalled == false)
+            {
+                MessageBox.Show("Required application GraphViz 2.38 is not insalled. Be sure to install on its default location.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                return;
+            }
+
+
             Form loader = this.ShowLoader();
             await DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(Model.Xml);
             this.HideLoader(loader);

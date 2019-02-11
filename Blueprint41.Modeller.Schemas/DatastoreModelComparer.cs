@@ -44,6 +44,8 @@ namespace Blueprint41.Modeller.Schemas
         }, true);
 
         public abstract Task ShowAndGenerateDocument(modeller model);
+        public abstract bool GraphVizInstalled { get; }
+        public abstract string GraphVizPath { get; set; }
     }
 
     public static class AssemblyLoader
