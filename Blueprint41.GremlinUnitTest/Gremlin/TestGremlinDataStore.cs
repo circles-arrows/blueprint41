@@ -14,6 +14,8 @@ namespace Blueprint41.GremlinUnitTest
     /// 
     /// Refactor Property:
     /// - ToCompressString
+    /// - ConvertToLookup (Not implemented)
+    /// - SetIndexType
     /// </summary>
     [TestFixture]
     internal class TestGremlinDataStore : GremlinBase
@@ -106,7 +108,10 @@ namespace Blueprint41.GremlinUnitTest
 
                 // TODO: Refactor Reroute 
                 // Not sure how to implement this, will check for samples.
-                //Entities["Genre"].Properties["DateAdded"].Refactor.Reroute();
+                // Entities["Genre"].Properties["DateAdded"].Refactor.Reroute();
+
+                Assert.Throws<NotImplementedException>(() => Relations["GENRE_HAS_SUBGENRE"].InProperty.Refactor.ConvertToLookup(ConvertAlgorithm.TakeFirst));
+
                 Entities["Genre"].Properties["DateAdded"].Refactor.Deprecate();
             }
 

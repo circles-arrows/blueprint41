@@ -16,6 +16,7 @@ namespace Blueprint41.GremlinUnitTest.Cosmos
     /// - ToCompressString
     /// - Convert
     /// - SetIndexType
+    /// - ConvertToLookup
     /// </summary>
     [TestFixture]
     internal class TestCosmosDataStore : CosmosBase
@@ -115,6 +116,9 @@ namespace Blueprint41.GremlinUnitTest.Cosmos
                 // TODO: Refactor Reroute 
                 // Not sure how to implement this, will check for samples.
                 //Entities["Genre"].Properties["DateAdded"].Refactor.Reroute();
+
+                Assert.Throws<NotImplementedException>(() => Relations["GENRE_HAS_SUBGENRE"].InProperty.Refactor.ConvertToLookup(ConvertAlgorithm.TakeFirst));                
+
                 Entities["Genre"].Properties["DateAdded"].Refactor.Deprecate();
             }
 
