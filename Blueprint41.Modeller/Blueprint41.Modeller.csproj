@@ -79,6 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addons.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Addons.Designer.cs">
+      <DependentUpon>Addons.cs</DependentUpon>
+    </Compile>
     <Compile Include="CodeGeneration.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,6 +117,12 @@
       <DependentUpon>StaticData.tt</DependentUpon>
     </Compile>
     <Compile Include="Keywords.cs" />
+    <Compile Include="Loader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Loader.Designer.cs">
+      <DependentUpon>Loader.cs</DependentUpon>
+    </Compile>
     <Compile Include="ManageEntityStaticDataForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -186,11 +198,17 @@
     <Compile Include="UpdateFunctionalIdForm.Designer.cs">
       <DependentUpon>UpdateFunctionalIdForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Addons.resx">
+      <DependentUpon>Addons.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CodeGeneration.resx">
       <DependentUpon>CodeGeneration.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HtmlEditor.resx">
       <DependentUpon>HtmlEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Loader.resx">
+      <DependentUpon>Loader.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ManageEntityStaticDataForm.resx">
       <DependentUpon>ManageEntityStaticDataForm.cs</DependentUpon>
@@ -268,6 +286,7 @@
     <Content Include="keywords.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\loader.gif" />
     <Content Include="Resources\ol.bmp" />
     <Content Include="Resources\uol.bmp" />
     <Content Include="Schemas\Wrapper.tt">
@@ -287,14 +306,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\_Projects\Xirqlz\Blueprint41.Modeller.Compare\Blueprint41.Modeller.Compare.csproj">
-      <Project>{ad738fb0-ff73-4e32-ab49-d34c0e9e02e3}</Project>
-      <Name>Blueprint41.Modeller.Compare</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\_Projects\Xirqlz\Blueprint41.Modeller.Document\Blueprint41.Modeller.Document.csproj">
-      <Project>{af87ce1c-53d9-460d-b0d3-30c8152f78e4}</Project>
-      <Name>Blueprint41.Modeller.Document</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Blueprint41.Modeller.Schemas\Blueprint41.Modeller.Schemas.csproj">
       <Project>{ce27c579-0842-46a2-8aba-d21908ac00b6}</Project>
       <Name>Blueprint41.Modeller.Schemas</Name>

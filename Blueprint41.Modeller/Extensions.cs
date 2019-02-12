@@ -105,5 +105,34 @@ namespace Blueprint41.Modeller
             cbo.ValueMember = "Value";
             cbo.DataSource = dataList;
         }
+
+        public static Form ShowLoader(this MainForm parent, bool disableControls = true)
+        {
+            Loader loader = new Loader();
+            parent.Enabled = !disableControls;
+
+            loader.Owner = parent;            
+
+            //Control control = parent.GraphEditorControl;
+
+            loader.Width = parent.Width;
+            loader.Height = parent.Height;
+
+            //int offSet = 30;
+            loader.Left = parent.Bounds.Left;
+            loader.Top = parent.Bounds.Top;
+            loader.Padding = parent.Padding;
+
+            loader.StartPosition = FormStartPosition.Manual;
+
+            loader.Show();
+            return loader;
+        }
+
+        public static void HideLoader(this Form parent, Form loader)
+        {
+            loader.Hide();
+            parent.Enabled = true;
+        }
     }
 }

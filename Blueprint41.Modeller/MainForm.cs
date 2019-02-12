@@ -56,6 +56,8 @@ namespace Blueprint41.Modeller
         internal NodeTypeEntry NewEntity { get; private set; }
         internal Submodel.NodeLocalType SelectedNode { get; private set; }
 
+        internal GraphEditorControl GraphEditorControl => graphEditor;
+
         private string GetDefaultFilePath()
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Blueprint41");
@@ -796,7 +798,7 @@ namespace Blueprint41.Modeller
             fixedToolStripMenuItem.CheckedChanged -= fixedToolStripMenuItem_CheckedChanged;
             fixedToolStripMenuItem.Checked = !draggableToolStripMenuItem.Checked;
             fixedToolStripMenuItem.CheckedChanged += fixedToolStripMenuItem_CheckedChanged;
-            
+
             Model.ViewMode = draggableToolStripMenuItem.Checked ? EditorViewMode.MDS : EditorViewMode.Sugiyama;
             Model.RedoLayout();
         }
@@ -871,7 +873,7 @@ namespace Blueprint41.Modeller
 
         #region Tools Menu
 
-        private void generateDocumentToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void generateDocumentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (DatastoreModelDocumentGenerator.Instance == null)
             {
@@ -879,7 +881,16 @@ namespace Blueprint41.Modeller
                 return;
             }
 
-            DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(Model.Xml);
+            if (DatastoreModelDocumentGenerator.Instance.GraphVizInstalled == false)
+            {
+                MessageBox.Show("Required application GraphViz 2.38 is not insalled. Be sure to install on its default location.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                return;
+            }
+
+
+            Form loader = this.ShowLoader();
+            await DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(Model.Xml);
+            this.HideLoader(loader);
         }
 
         private void generateCodeToolStripMenuItem_Click(object sender, EventArgs e)

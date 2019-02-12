@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Blueprint41.Modeller.Schemas
 {
@@ -42,7 +43,9 @@ namespace Blueprint41.Modeller.Schemas
             return (DatastoreModelDocumentGenerator)Activator.CreateInstance(type);
         }, true);
 
-        public abstract void ShowAndGenerateDocument(modeller model);
+        public abstract Task ShowAndGenerateDocument(modeller model);
+        public abstract bool GraphVizInstalled { get; }
+        public abstract string GraphVizPath { get; set; }
     }
 
     public static class AssemblyLoader
