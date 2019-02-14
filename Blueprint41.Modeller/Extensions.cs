@@ -106,7 +106,7 @@ namespace Blueprint41.Modeller
             cbo.DataSource = dataList;
         }
 
-        public static Form ShowLoader(this MainForm parent, bool disableControls = true)
+        public static Form ShowLoader(this Form parent, bool disableControls = true)
         {
             Loader loader = new Loader();
             parent.Enabled = !disableControls;

@@ -955,5 +955,12 @@ namespace Blueprint41.Modeller
         {
             SelectedNode.RemoveHighlight();
         }
+
+        #region Help Menu
+        private void RegisterProductToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Blueprint41.Licensing.License.Register();
+        }
+        #endregion
     }
 }

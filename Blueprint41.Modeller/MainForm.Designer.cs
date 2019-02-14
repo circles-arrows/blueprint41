@@ -81,6 +81,8 @@
             this.generateDocumentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.functionalIdToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.registerProductToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRight = new System.Windows.Forms.ToolStrip();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -402,7 +404,8 @@
             this.fileToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.toolsToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.settingsToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(0);
@@ -602,6 +605,21 @@
             this.functionalIdToolStripMenuItem1.Text = "&Functional Id";
             this.functionalIdToolStripMenuItem1.Click += new System.EventHandler(this.functionalIdToolStripMenuItem1_Click);
             // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.registerProductToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // registerProductToolStripMenuItem
+            // 
+            this.registerProductToolStripMenuItem.Name = "registerProductToolStripMenuItem";
+            this.registerProductToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.registerProductToolStripMenuItem.Text = "Register Product";
+            this.registerProductToolStripMenuItem.Click += new System.EventHandler(this.RegisterProductToolStripMenuItem_Click);
+            // 
             // toolStripRight
             // 
             this.toolStripRight.Dock = System.Windows.Forms.DockStyle.Right;
@@ -700,6 +718,8 @@
         private System.Windows.Forms.ToolStripMenuItem draggableToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fixedToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem registerProductToolStripMenuItem;
     }
 }
 
