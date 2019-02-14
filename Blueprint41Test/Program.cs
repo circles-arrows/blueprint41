@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Modeller.Schemas;
+using System.Threading.Tasks;
 
 namespace Blueprint41Test
 {
@@ -8,7 +9,7 @@ namespace Blueprint41Test
         {
             string xmlPath = @"modeller.xml";
             modeller model = modeller.Load(xmlPath);
-            DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(model);
+            DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(model).Wait();
         }
     }
 }
