@@ -9,7 +9,7 @@ namespace Blueprint41Test
         {
             string xmlPath = @"modeller.xml";
             modeller model = modeller.Load(xmlPath);
-            DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(model).Wait();
+            ModuleLoader.GetModule("Document").RunModule(model, null).Wait();
         }
     }
 }

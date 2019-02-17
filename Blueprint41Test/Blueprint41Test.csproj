@@ -54,10 +54,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\_Projects\Xirqlz\Blueprint41.Modeller.Document\Blueprint41.Modeller.Document.csproj">
-      <Project>{af87ce1c-53d9-460d-b0d3-30c8152f78e4}</Project>
-      <Name>Blueprint41.Modeller.Document</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Blueprint41.Modeller.Schemas\Blueprint41.Modeller.Schemas.csproj">
       <Project>{ce27c579-0842-46a2-8aba-d21908ac00b6}</Project>
       <Name>Blueprint41.Modeller.Schemas</Name>

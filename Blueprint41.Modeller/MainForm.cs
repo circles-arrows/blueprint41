@@ -78,13 +78,18 @@ namespace Blueprint41.Modeller
 
             InitializeComponent();
 
-            if (DatastoreModelComparer.Instance == null)
-                generateUpdateScriptToolStripMenuItem.Visible = false;
-
-            if (DatastoreModelDocumentGenerator.Instance == null)
-                generateDocumentToolStripMenuItem.Visible = false;
+            SetModuleMenuItemVisibility();
 
             Initialize();
+        }
+
+        private void SetModuleMenuItemVisibility()
+        {
+            generateUpdateScriptToolStripMenuItem.Visible = (ModuleLoader.GetModule("Compare") != null);
+            generateUpdateScriptToolStripMenuItem1.Visible = (ModuleLoader.GetModule("Compare") != null);
+
+            generateDocumentToolStripMenuItem.Visible = (ModuleLoader.GetModule("Document") != null);
+            generateDocumentationToolStripMenuItem.Visible = (ModuleLoader.GetModule("Document") != null);
         }
 
         private void Initialize()
@@ -875,21 +880,23 @@ namespace Blueprint41.Modeller
 
         private async void generateDocumentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (DatastoreModelDocumentGenerator.Instance == null)
+            ModuleLoader module = ModuleLoader.GetModule("Document");
+
+            if (module == null)
             {
                 MessageBox.Show("The document generator is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
                 return;
             }
 
-            if (DatastoreModelDocumentGenerator.Instance.GraphVizInstalled == false)
+            if (module.Installed == false)
             {
-                MessageBox.Show("Required application GraphViz 2.38 is not insalled. Be sure to install on its default location.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                MessageBox.Show("Required application GraphViz 2.38 is not installed. Be sure to install on its default location.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
                 return;
             }
 
 
             Form loader = this.ShowLoader();
-            await DatastoreModelDocumentGenerator.Instance.ShowAndGenerateDocument(Model.Xml);
+            await module.RunModule(Model.Xml, null);
             this.HideLoader(loader);
         }
 
@@ -907,7 +914,9 @@ namespace Blueprint41.Modeller
 
         private void generateUpdateScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (DatastoreModelComparer.Instance == null)
+            ModuleLoader module = ModuleLoader.GetModule("Compare");
+
+            if (module == null)
             {
                 MessageBox.Show("The comparer is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
                 return;
@@ -918,7 +927,7 @@ namespace Blueprint41.Modeller
                 Model.CaptureCoordinates();
                 Model.Save(StoragePath);
 
-                DatastoreModelComparer.Instance.GenerateUpgradeScript(Model.Xml, StoragePath);
+                module.RunModule(Model.Xml, StoragePath);
 
                 // Re initalize model after generating update script
                 // this will reload the xml
@@ -960,6 +969,7 @@ namespace Blueprint41.Modeller
         private void RegisterProductToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Blueprint41.Licensing.License.Register();
+            SetModuleMenuItemVisibility();
         }
         #endregion
     }
