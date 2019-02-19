@@ -50,9 +50,8 @@
     <ApplicationIcon>bp41.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Blueprint41.Licensing.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ef0c57a01ef1affa, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\Blueprint41.Licensing.Client.dll</HintPath>
+    <Reference Include="Blueprint41.Licensing.Connector">
+      <HintPath>..\Dependencies\Blueprint41.Licensing.Connector.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Msagl, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -163,6 +162,7 @@
     </Compile>
     <Compile Include="EventArguments\NodeEventArgs.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="ModellerApplicationContext.cs" />
     <Compile Include="NodeTypeEntry.cs" />
     <Compile Include="PrimitiveRelationshipEditor.cs">
       <SubType>UserControl</SubType>

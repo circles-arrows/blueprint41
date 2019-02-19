@@ -15,6 +15,7 @@ using Blueprint41.Modeller.Generation;
 using System.Xml;
 using System.Reflection;
 using Microsoft.Win32;
+using Blueprint41.Licensing.Connector;
 
 namespace Blueprint41.Modeller
 {
@@ -77,10 +78,6 @@ namespace Blueprint41.Modeller
                 StoragePath = RegistryHandler.LastOpenedFile;
 
             InitializeComponent();
-
-            SetModuleMenuItemVisibility();
-
-            Initialize();
         }
 
         private void SetModuleMenuItemVisibility()
@@ -152,6 +149,11 @@ namespace Blueprint41.Modeller
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            
+
+            SetModuleMenuItemVisibility();
+            Initialize();
+
             ReloadForm();
             AddNewEntitiesToSubModel(Model.Submodels.Submodel[0].Name);
             _splitterDistance = splitContainer.SplitterDistance;
@@ -968,7 +970,7 @@ namespace Blueprint41.Modeller
         #region Help Menu
         private void RegisterProductToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Blueprint41.Licensing.License.Register();
+            ConnectorLoader.GetConnectorClient().RegisterLicense();
             SetModuleMenuItemVisibility();
         }
         #endregion

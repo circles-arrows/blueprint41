@@ -111,7 +111,8 @@ namespace Blueprint41.Modeller
             Loader loader = new Loader();
             parent.Enabled = !disableControls;
 
-            loader.Owner = parent;            
+            loader.Owner = parent;
+            loader.Opacity = .6;
 
             //Control control = parent.GraphEditorControl;
 
