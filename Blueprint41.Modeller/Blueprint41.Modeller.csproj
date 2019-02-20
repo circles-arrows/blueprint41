@@ -89,6 +89,7 @@
       <DependentUpon>CodeGeneration.cs</DependentUpon>
     </Compile>
     <Compile Include="ColorExtension.cs" />
+    <Compile Include="UriConfig.cs" />
     <Compile Include="Generation\EntityTreeNode.cs" />
     <Compile Include="Generation\GenerationEnum.cs" />
     <Compile Include="HtmlEditor.cs">
