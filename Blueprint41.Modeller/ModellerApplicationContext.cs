@@ -24,11 +24,6 @@ namespace Blueprint41.Modeller
             DownloadConnectorClient();
         }
 
-        private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
-        {
-            VerifyLicense();
-        }
-
         private void OnFormClosed(object sender, EventArgs e)
         {
             if (Application.OpenForms.Count == 0)
@@ -77,6 +72,10 @@ namespace Blueprint41.Modeller
                 client.DownloadFileAsync(UriConfig.ConnectorUri, connectorFileName);
                 client.DownloadFileCompleted += Client_DownloadFileCompleted;
             }
+        }
+        private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            VerifyLicense();
         }
     }
 }
