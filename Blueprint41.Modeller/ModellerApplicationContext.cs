@@ -55,7 +55,7 @@ namespace Blueprint41.Modeller
 
         private async void DownloadConnectorClient()
         {
-            // Checking the server first eliminates the connector client dll to be created by the code below 
+            // Checking the server first eliminates the connector client dll to be overriden (if downloaded) by the code below 
             // when the server is offline.
 
             bool isOnline = await UriConfig.CheckServerIsOnline();
