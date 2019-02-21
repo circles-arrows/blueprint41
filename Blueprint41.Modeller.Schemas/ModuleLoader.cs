@@ -73,6 +73,26 @@ namespace Blueprint41.Modeller.Schemas
 
     public static class AssemblyLoader
     {
+        static AssemblyLoader()
+        {
+            ResolveEventHandler eventHandler = delegate (object sender, ResolveEventArgs args)
+            {
+                string filename = args.Name;
+                if (filename.Contains(","))
+                    filename = filename.Split(',')[0] + ".dll";
+
+                foreach (string folder in Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Modules"), "*"))
+                {
+                    string file = Path.Combine(folder, filename);
+                    if (File.Exists(file))
+                        return Assembly.LoadFile(file);
+                }
+                return null;
+            };
+
+            AppDomain.CurrentDomain.AssemblyResolve += eventHandler;
+        }
+
         public static Assembly LoadAssemblyAndPdbByBytes(string assemblyFile, string pdbFile)
         {
             byte[] assemblyBytes = File.ReadAllBytes(assemblyFile);
@@ -81,25 +101,8 @@ namespace Blueprint41.Modeller.Schemas
         }
         public static Type GetType(string moduleName, string assemblyFile, string pdbFile, string typeName)
         {
-            ResolveEventHandler eventHandler = delegate (object sender, ResolveEventArgs args)
-            {
-                string filename = args.Name;
-                if (filename.Contains(","))
-                    filename = filename.Split(',')[0] + ".dll";
-
-                string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Modules", moduleName, filename);
-                if (File.Exists(file))
-                    return Assembly.LoadFile(file);
-
-                return null;
-            };
-
-            AppDomain.CurrentDomain.AssemblyResolve += eventHandler;
-
             Assembly assembly = LoadAssemblyAndPdbByBytes(assemblyFile, pdbFile);
             Type type = GetType(assembly, typeName);
-
-            AppDomain.CurrentDomain.AssemblyResolve -= eventHandler;
 
             return type;
         }
