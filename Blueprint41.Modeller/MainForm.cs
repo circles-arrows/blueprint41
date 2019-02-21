@@ -149,7 +149,7 @@ namespace Blueprint41.Modeller
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            
+
 
             SetModuleMenuItemVisibility();
             Initialize();
@@ -889,13 +889,6 @@ namespace Blueprint41.Modeller
                 MessageBox.Show("The document generator is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
                 return;
             }
-
-            if (module.Installed == false)
-            {
-                MessageBox.Show("Required application GraphViz 2.38 is not installed. Be sure to install on its default location.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
-                return;
-            }
-
 
             Form loader = this.ShowLoader();
             await module.RunModule(Model.Xml, null);
