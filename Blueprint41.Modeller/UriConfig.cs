@@ -21,7 +21,7 @@ namespace Blueprint41.Modeller
                     return response.IsSuccessStatusCode;
                 }
             }
-            catch (HttpRequestException e)
+            catch (Exception e)
             {
                 return false;
             }
