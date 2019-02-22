@@ -92,9 +92,20 @@ namespace Blueprint41.Modeller
         {
             string errorMsg = "An application error occurred. Please contact support@circles-arrows.com " +
                 "with the following information:" + Environment.NewLine + Environment.NewLine;
-            errorMsg = errorMsg + e.Message + Environment.NewLine + Environment.NewLine + "Stack Trace:" + Environment.NewLine + e.StackTrace;
+
+            errorMsg = errorMsg + GetExceptionMessage(e);
 
             return ErrorForm.Show(errorMsg);
+        }
+
+        static string GetExceptionMessage(Exception e)
+        {
+            string innerExceptionMessage = string.Empty;
+
+            if (e.InnerException != null)
+                innerExceptionMessage = GetExceptionMessage(e.InnerException);
+
+            return e.Message + Environment.NewLine + Environment.NewLine + "Stack Trace:" + Environment.NewLine + e.StackTrace + Environment.NewLine + innerExceptionMessage;
         }
     }
 }
