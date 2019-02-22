@@ -89,6 +89,12 @@
       <DependentUpon>CodeGeneration.cs</DependentUpon>
     </Compile>
     <Compile Include="ColorExtension.cs" />
+    <Compile Include="ErrorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ErrorForm.designer.cs">
+      <DependentUpon>ErrorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UriConfig.cs" />
     <Compile Include="Generation\EntityTreeNode.cs" />
     <Compile Include="Generation\GenerationEnum.cs" />
@@ -199,6 +205,9 @@
     </Compile>
     <EmbeddedResource Include="CodeGeneration.resx">
       <DependentUpon>CodeGeneration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ErrorForm.resx">
+      <DependentUpon>ErrorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HtmlEditor.resx">
       <DependentUpon>HtmlEditor.cs</DependentUpon>

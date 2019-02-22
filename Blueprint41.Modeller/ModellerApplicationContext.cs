@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -47,7 +48,10 @@ namespace Blueprint41.Modeller
                 if (connectorClientLoader != null)
                     await connectorClientLoader.VerifyLicense();
             }
-            catch { }
+            catch (SecurityException ex)
+            {
+                MessageBox.Show(ex.Message, "License", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
 
             loader.Close();
             ShowMainForm();
