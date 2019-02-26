@@ -15,7 +15,7 @@ namespace Blueprint41.Modeller.Schemas
         }
         internal static ModuleLoader GetModule(string moduleFolder, string moduleName)
         {
-            string dll = Path.Combine(moduleFolder, $"Blueprint41.Modeller.{moduleName}.dll");
+            string dll = Path.Combine(moduleFolder, moduleName);
             if (!File.Exists(dll))
                 return null;
 
