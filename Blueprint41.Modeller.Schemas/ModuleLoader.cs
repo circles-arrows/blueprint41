@@ -11,11 +11,11 @@ namespace Blueprint41.Modeller.Schemas
     {
         public static ModuleLoader GetModule(string moduleName)
         {
-            return GetModule(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Modules", moduleName), $"Blueprint41.Modeller.{moduleName}.dll");
+            return GetModule(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Modules", moduleName), moduleName);
         }
         internal static ModuleLoader GetModule(string moduleFolder, string moduleName)
         {
-            string dll = Path.Combine(moduleFolder, moduleName);
+            string dll = Path.Combine(moduleFolder, $"Blueprint41.Modeller.{moduleName}.dll");
             if (!File.Exists(dll))
                 return null;
 
