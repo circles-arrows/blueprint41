@@ -958,12 +958,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B176F45D563C40B4B62A6F435DCD1223"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_FF30D5A6BB4F9A0AACF3BE1A8C1DD04B"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1691,6 +1685,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_DC54DFCEC95B24156AEF11269768A575"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B176F45D563C40B4B62A6F435DCD1223"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -5727,15 +5727,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Blueprint41 Modeller"
-        "ProductCode" = "8:{6483DFF3-309C-4D55-8088-CB926E475EE3}"
-        "PackageCode" = "8:{6EF5497D-4C98-44E3-9EF7-239CD6E6BE1C}"
+        "ProductCode" = "8:{60F3BC0A-060C-476C-9842-45FC3A9FC84C}"
+        "PackageCode" = "8:{23711941-C274-4B63-9B2F-BCD83F37234F}"
         "UpgradeCode" = "8:{B2C223A8-2CEF-497A-85C0-AB460E559880}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.1.0"
+        "ProductVersion" = "8:1.2.0"
         "Manufacturer" = "8:CIRCLES ARROWS LIMITED"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:support@circles-arrows.com"

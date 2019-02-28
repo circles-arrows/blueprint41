@@ -40,7 +40,8 @@ namespace Blueprint41.Modeller
 
         private List<IViewerObject> _selectedEntities = null;
 
-        public List<IViewerObject> SelectedEntities {
+        public List<IViewerObject> SelectedEntities
+        {
             get
             {
                 return _selectedEntities;
@@ -130,7 +131,7 @@ namespace Blueprint41.Modeller
             (Viewer as Microsoft.Msagl.Drawing.IViewer).MouseDown += Viewer_MouseDown;
             (Viewer as Microsoft.Msagl.Drawing.IViewer).MouseUp += Viewer_MouseUp;
         }
-        
+
         private void ToolBar_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
         {
             foreach (NodeTypeEntry nodeTypeEntry in NodeTypes)
@@ -166,7 +167,7 @@ namespace Blueprint41.Modeller
 
         public void RemoveEdges(string nodeId)
         {
-            List< Edge> edges = Graph.Edges.Where(edge => edge.Source == nodeId || edge.Target == nodeId).ToList();
+            List<Edge> edges = Graph.Edges.Where(edge => edge.Source == nodeId || edge.Target == nodeId).ToList();
             foreach (var edge in edges)
             {
                 Graph.Edges.Remove(edge);
@@ -216,7 +217,7 @@ namespace Blueprint41.Modeller
                 Graph.AddEdge(edge.Source, newLabel);
             }
 
-            foreach (var edge in n.OutEdges.ToList()) 
+            foreach (var edge in n.OutEdges.ToList())
             {
                 Graph.Edges.Remove(edge);
                 Graph.AddEdge(newLabel, edge.Target);
@@ -272,8 +273,7 @@ namespace Blueprint41.Modeller
 
             SelectedTargetNode = GetNodeAtPosition(x, y);
 
-            if ((SelectedNode != null && SelectedNode.Attr.GeometryNode.LineWidth == 2) &&
-                SelectedTargetNode != null)
+            if (SelectedNode != null && SelectedTargetNode != null)
             {
                 mi = new ToolStripMenuItem("Insert Relationship");
                 cm.Items.Add(mi);
@@ -331,11 +331,11 @@ namespace Blueprint41.Modeller
                     mi.Click += new EventHandler(removeFromStorage_Click);
                     cm.Items.Add(mi);
                 }
-                else if(SelectedEntities.Count > 0)
+                else if (SelectedEntities.Count > 0)
                 {
                     var rightclickObject = SelectedEntities.Where(e => e.DrawingObject == RightClickedObject.DrawingObject).FirstOrDefault();
 
-                    if(rightclickObject != null)
+                    if (rightclickObject != null)
                     {
                         mi = new ToolStripMenuItem();
                         mi.Text = "Remove from Diagram";
@@ -385,7 +385,7 @@ namespace Blueprint41.Modeller
             }
 
             Node node = null;
-            
+
             DNode dnode = obj as DNode;
             DLabel dl = obj as DLabel;
             if (dnode != null)
@@ -544,15 +544,15 @@ namespace Blueprint41.Modeller
             }
             else
             {
-                if(NoSelectionEvent != null)
+                if (NoSelectionEvent != null)
                     NoSelectionEvent(this, new EventArgs());
             }
 
         }
-        
+
         private void Viewer_MouseMove(object sender, MsaglMouseEventArgs e)
         {
-            
+
         }
 
         private void Viewer_MouseWheel(object sender, MouseEventArgs e)
