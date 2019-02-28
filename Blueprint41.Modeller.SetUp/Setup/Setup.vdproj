@@ -627,6 +627,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B176F45D563C40B4B62A6F435DCD1223"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B7A3C4FEC4C104FD1D3E03600272BA59"
         "OwnerKey" = "8:_C5F84CB68D784CDFBFA305ADA91ABC91"
         "MsmSig" = "8:_UNDEFINED"
@@ -933,6 +939,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_FC564D26094F6C7037F00E1925C6BC6A"
+        "OwnerKey" = "8:_B176F45D563C40B4B62A6F435DCD1223"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_FF30D5A6BB4F9A0AACF3BE1A8C1DD04B"
         "OwnerKey" = "8:_C5F84CB68D784CDFBFA305ADA91ABC91"
         "MsmSig" = "8:_UNDEFINED"
@@ -941,6 +953,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C5F84CB68D784CDFBFA305ADA91ABC91"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B176F45D563C40B4B62A6F435DCD1223"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1734,10 +1752,15 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    "Name" = "8:Microsoft .NET Framework 4.7 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.1"
                     }
                 }
             }
@@ -1747,6 +1770,20 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_3A149FD896CF4E0BBAAD1227355AD906"
+            {
+            "Name" = "8:Primary output from Blueprint41.Modeller.Uninstall (Release x86)"
+            "Condition" = "8:"
+            "Object" = "8:_B176F45D563C40B4B62A6F435DCD1223"
+            "FileType" = "3:1"
+            "InstallAction" = "3:4"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_7813A8B6_6645_4E46_8553_1629C06C5936"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -5691,7 +5728,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Blueprint41 Modeller"
         "ProductCode" = "8:{6483DFF3-309C-4D55-8088-CB926E475EE3}"
-        "PackageCode" = "8:{4E89FA7E-1C7C-4C44-A6C8-4F11D592610D}"
+        "PackageCode" = "8:{6EF5497D-4C98-44E3-9EF7-239CD6E6BE1C}"
         "UpgradeCode" = "8:{B2C223A8-2CEF-497A-85C0-AB460E559880}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -6238,6 +6275,34 @@
         }
         "ProjectOutput"
         {
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B176F45D563C40B4B62A6F435DCD1223"
+            {
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller.Uninstall\\obj\\x86\\Release\\Blueprint41.Modeller.Uninstall.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:Release|x86"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{4A7D9D9A-0AB3-49DB-A393-09C8B6CD3B34}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C5F84CB68D784CDFBFA305ADA91ABC91"
             {
             "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\obj\\x86\\Release\\Blueprint41.Modeller.exe"
