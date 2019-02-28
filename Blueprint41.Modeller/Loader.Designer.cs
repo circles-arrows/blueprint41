@@ -56,12 +56,7 @@
             this.ClientSize = new System.Drawing.Size(196, 124);
             this.ControlBox = false;
             this.Controls.Add(this.pictureBox1);
-<<<<<<< HEAD
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-=======
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
->>>>>>> 38849f63bae911093026da0359399eb32c6fa9ed
             this.Name = "Loader";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
