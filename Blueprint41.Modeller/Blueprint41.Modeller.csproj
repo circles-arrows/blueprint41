@@ -295,7 +295,7 @@
     <Content Include="keywords.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\loader.gif" />
+    <Content Include="Resources\Circles-Arrows_Loader.gif" />
     <Content Include="Resources\ol.bmp" />
     <Content Include="Resources\uol.bmp" />
     <Content Include="Schemas\Wrapper.tt">

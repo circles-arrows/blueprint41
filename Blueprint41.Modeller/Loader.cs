@@ -15,7 +15,6 @@ namespace Blueprint41.Modeller
         public Loader()
         {
             InitializeComponent();
-            this.TransparencyKey = BackColor;
         }
     }
 }
