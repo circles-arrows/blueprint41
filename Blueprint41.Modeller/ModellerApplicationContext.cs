@@ -70,12 +70,16 @@ namespace Blueprint41.Modeller
                 return;
             }
 
+#if DEBUG
+            VerifyLicense();
+#else
             using (WebClient client = new WebClient())
             {
                 string connectorFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Blueprint41.Licensing.Client.dll");
                 client.DownloadFileAsync(UriConfig.ConnectorUri, connectorFileName);
                 client.DownloadFileCompleted += Client_DownloadFileCompleted;
             }
+#endif
         }
         private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {

@@ -29,22 +29,25 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Loader));
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.pbLoader = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLoader)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // pbLoader
             // 
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.ErrorImage = global::Blueprint41.Modeller.Properties.Resources.loader;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = global::Blueprint41.Modeller.Properties.Resources.loader;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(196, 124);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.pbLoader.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbLoader.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.pbLoader.ErrorImage = global::Blueprint41.Modeller.Properties.Resources.loader;
+            this.pbLoader.Image = ((System.Drawing.Image)(resources.GetObject("pbLoader.Image")));
+            this.pbLoader.InitialImage = global::Blueprint41.Modeller.Properties.Resources.loader;
+            this.pbLoader.Location = new System.Drawing.Point(0, 0);
+            this.pbLoader.Name = "pbLoader";
+            this.pbLoader.Size = new System.Drawing.Size(253, 182);
+            this.pbLoader.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbLoader.TabIndex = 0;
+            this.pbLoader.TabStop = false;
             // 
             // Loader
             // 
@@ -53,9 +56,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CausesValidation = false;
-            this.ClientSize = new System.Drawing.Size(196, 124);
+            this.ClientSize = new System.Drawing.Size(253, 182);
             this.ControlBox = false;
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.pbLoader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Loader";
             this.ShowIcon = false;
@@ -63,14 +66,13 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = " ";
-            
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLoader)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pbLoader;
     }
 }
