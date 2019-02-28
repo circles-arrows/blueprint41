@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Loader));
             this.pbLoader = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoader)).BeginInit();
             this.SuspendLayout();
@@ -40,11 +39,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbLoader.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.pbLoader.ErrorImage = global::Blueprint41.Modeller.Properties.Resources.loader;
-            this.pbLoader.Image = ((System.Drawing.Image)(resources.GetObject("pbLoader.Image")));
+            this.pbLoader.Image = global::Blueprint41.Modeller.Properties.Resources.Circles_Arrows_Loader;
             this.pbLoader.InitialImage = global::Blueprint41.Modeller.Properties.Resources.loader;
             this.pbLoader.Location = new System.Drawing.Point(0, 0);
             this.pbLoader.Name = "pbLoader";
-            this.pbLoader.Size = new System.Drawing.Size(253, 182);
+            this.pbLoader.Size = new System.Drawing.Size(120, 120);
             this.pbLoader.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbLoader.TabIndex = 0;
             this.pbLoader.TabStop = false;
@@ -56,7 +55,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CausesValidation = false;
-            this.ClientSize = new System.Drawing.Size(253, 182);
+            this.ClientSize = new System.Drawing.Size(120, 120);
             this.ControlBox = false;
             this.Controls.Add(this.pbLoader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
