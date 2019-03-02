@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Blueprint41.Modeller")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Circles-Arrows")]
+[assembly: AssemblyCompany("CIRCLES ARROWS LIMITED")]
 [assembly: AssemblyProduct("Blueprint41.Modeller")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

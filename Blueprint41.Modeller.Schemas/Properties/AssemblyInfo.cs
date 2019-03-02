@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Blueprint41.Modeller.Schema")]
+[assembly: AssemblyTitle("Blueprint41.Modeller.Schemas")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Circles-Arrows")]
-[assembly: AssemblyProduct("Blueprint41.Modeller.Schema")]
+[assembly: AssemblyCompany("CIRCLES ARROWS LIMITED")]
+[assembly: AssemblyProduct("Blueprint41.Modeller.Schemas")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
