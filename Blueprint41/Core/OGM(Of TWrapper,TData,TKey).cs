@@ -49,7 +49,11 @@ namespace Blueprint41.Core
         }
         public static List<TWrapper> GetAll(int page, int pageSize, params Property[] orderBy)
         {
-            return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TWrapper>(Entity, page, pageSize, orderBy);
+            return GetAll(page, pageSize, true, orderBy);
+        }
+        public static List<TWrapper> GetAll(int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TWrapper>(Entity, page, pageSize, ascending, orderBy);
         }
 
         [Obsolete("This method will be made internal in the next release.", false)]
@@ -60,7 +64,12 @@ namespace Blueprint41.Core
         [Obsolete("This method will be made internal in the next release.", false)]
         public static List<TWrapper> LoadWhere(string conditions, Parameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
-            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, conditions, parameters, page, pageSize, orderBy);
+            return LoadWhere(conditions, parameters, page, pageSize, true, orderBy);
+        }
+        [Obsolete("This method will be made internal in the next release.", false)]
+        public static List<TWrapper> LoadWhere(string conditions, Parameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
         }
         public static List<TWrapper> LoadWhere(ICompiled query)
         {
@@ -70,14 +79,25 @@ namespace Blueprint41.Core
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, query, parameters);
         }
-
+        public static List<TWrapper> LoadWhere(ICompiled query, Parameter[] parameters, int page, int pageSize, params Property[] orderBy)
+        {
+            return LoadWhere(query, parameters, page, pageSize, true, orderBy);
+        }
+        public static List<TWrapper> LoadWhere(ICompiled query, Parameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, query, parameters, page, pageSize, ascending, orderBy);
+        }
         public static List<TWrapper> Search(string text, params Property[] properties)
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.Search<TWrapper>(Entity, text, properties);
         }
         public static List<TWrapper> Search(string text, int page = 0, int pageSize = 0, params Property[] properties)
         {
-            return Transaction.RunningTransaction.NodePersistenceProvider.Search<TWrapper>(Entity, text, properties, page, pageSize, Entity.Key);
+            return Search(text, page, pageSize, true, properties);
+        }
+        public static List<TWrapper> Search(string text, int page = 0, int pageSize = 0, bool ascending = true, params Property[] properties)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.Search<TWrapper>(Entity, text, properties, page, pageSize, ascending, Entity.Key);
         }
 
         internal abstract void SetKey(TKey key);
@@ -105,7 +125,7 @@ namespace Blueprint41.Core
                 case PersistenceState.NewAndChanged:
                     break;
                 case PersistenceState.HasUid:
-                    PersistenceProvider.Load(this);
+                    PersistenceProvider.NodePersistenceProvider.Load(this);
                     break;
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
@@ -313,7 +333,7 @@ namespace Blueprint41.Core
 
         #region Stored Queries
 
-        private static Dictionary<string, ICompiled> StoredQueries = null;
+        private static IDictionary<string, ICompiled> StoredQueries = null;
 
         protected virtual void RegisterStoredQueries() { }
         protected abstract void RegisterGeneratedStoredQueries();
@@ -331,6 +351,13 @@ namespace Blueprint41.Core
             ICompiled query = StoredQueries[name];
             return LoadWhere(query, parameters);
         }
+        public static List<TWrapper> FromQuery(string name, Parameter[] parameters, int page, int size, bool ascending = true, params Property[] orderBy)
+        {
+            InitializeStoredQueries();
+
+            ICompiled query = StoredQueries[name];
+            return LoadWhere(query, parameters, page, size, ascending, orderBy);
+        }
 
         private static void InitializeStoredQueries()
         {
@@ -341,7 +368,7 @@ namespace Blueprint41.Core
             {
                 if (StoredQueries == null)
                 {
-                    StoredQueries = new Dictionary<string, ICompiled>();
+                    StoredQueries = new AtomicDictionary<string, ICompiled>();
                     Instance.RegisterGeneratedStoredQueries();
                     Instance.RegisterStoredQueries();
                 }

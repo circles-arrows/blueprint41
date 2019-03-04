@@ -72,7 +72,6 @@ namespace Blueprint41.Core
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty.Relationship.Neo4JRelationshipType, ForeignEntity.Name));
 
             LazyLoad();
-            LazySet();
 
             if (item != null && EagerLoadLogic != null)
                 EagerLoadLogic.Invoke(item);
@@ -98,8 +97,12 @@ namespace Blueprint41.Core
                     actions.AddLast(RemoveAction(current, null));
             });
 
-            Transaction.Register(actions);
-
+            if (actions.Count > 0)
+            {
+                Transaction.Register(actions);
+                LazySet();
+            }
+            
             return (actions.Count > 0);
         }
         internal sealed override void Clear(bool fireEvents)
@@ -108,6 +111,10 @@ namespace Blueprint41.Core
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty.Relationship.Neo4JRelationshipType, ForeignEntity.Name));
 
             LazyLoad();
+
+            if (InnerData.Count == 0)
+                return;
+
             LazySet();
 
             if (fireEvents)
@@ -151,7 +158,6 @@ namespace Blueprint41.Core
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty.Relationship.Neo4JRelationshipType, ForeignEntity.Name));
 
             LazyLoad();
-            LazySet();
 
             LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
             foreach (var item in items)
@@ -179,7 +185,11 @@ namespace Blueprint41.Core
                 });
             }
 
-            Transaction.Register(actions);
+            if (actions.Count > 0)
+            {
+                Transaction.Register(actions);
+                LazySet();
+            }
 
             return (actions.Count > 0);
         }

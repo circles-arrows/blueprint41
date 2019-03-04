@@ -34,6 +34,7 @@ namespace Blueprint41.Neo4j.Persistence
         private string Username;
         private string Password;
 
+        private Neo4JPersistenceProvider() : this(null, null, null) { }
         public Neo4JPersistenceProvider(string uri, string username, string password)
         {
             Uri = uri;
@@ -43,12 +44,12 @@ namespace Blueprint41.Neo4j.Persistence
             //this.Driver = GraphDatabase.Driver(uri, AuthTokens.Basic(username, password));
         }
 
-        internal override NodePersistenceProvider GetNodePersistenceProvider()
+        private protected override NodePersistenceProvider GetNodePersistenceProvider()
         {
             return new Neo4JNodePersistenceProvider(this);
         }
 
-        internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider()
+        private protected override RelationshipPersistenceProvider GetRelationshipPersistenceProvider()
         {
             return new Neo4JRelationshipPersistenceProvider(this);
         }

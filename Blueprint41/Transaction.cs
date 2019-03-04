@@ -45,8 +45,8 @@ namespace Blueprint41
             Transaction trans = factory.NewTransaction(withTransaction);
             trans.TransactionDate = DateTime.UtcNow;
             trans.PersistenceProviderFactory = factory;
-            trans.NodePersistenceProvider = factory.GetNodePersistenceProvider();
-            trans.RelationshipPersistenceProvider = factory.GetRelationshipPersistenceProvider();
+            trans.NodePersistenceProvider = factory.NodePersistenceProvider;
+            trans.RelationshipPersistenceProvider = factory.RelationshipPersistenceProvider;
             trans.Mode = mode;
             trans.FireEvents = EventOptions.AllEvents;
 
@@ -475,116 +475,6 @@ namespace Blueprint41
             get
             {
                 return new Query.Query(PersistenceProvider.CurrentPersistenceProvider);
-            }
-        }
-
-        #endregion
-
-        #region Conversion
-
-        public object ConvertToStoredType<TValue>(TValue value)
-        {
-            return ConvertToStoredTypeCache<TValue>.Convert(PersistenceProviderFactory, value);
-        }
-        public object ConvertToStoredType(Type returnType, object value)
-        {
-            Conversion converter;
-            if (!PersistenceProviderFactory.ConvertToStoredTypeCache.TryGetValue(returnType, out converter))
-                return value;
-
-            if ((object)converter == null)
-                return value;
-
-            return converter.Convert(value);
-        }
-        public TReturnType ConvertFromStoredType<TReturnType>(object value)
-        {
-            return (TReturnType)ConvertFromStoredTypeCache<TReturnType>.Convert(PersistenceProviderFactory, value);
-        }
-        public object ConvertFromStoredType(Type returnType, object value)
-        {
-            Conversion converter;
-            if (!PersistenceProviderFactory.ConvertFromStoredTypeCache.TryGetValue(returnType, out converter))
-                return value;
-
-            if ((object)converter == null)
-                return value;
-
-            return converter.Convert(value);
-        }
-
-        public Type GetStoredType<TReturnType>()
-        {
-            ConvertFromStoredTypeCache<TReturnType>.Initialize(PersistenceProviderFactory);
-            return ConvertFromStoredTypeCache<TReturnType>.Converter?.FromType ?? typeof(TReturnType);
-        }
-        public Type GetStoredType(Type returnType)
-        {
-            Conversion converter;
-            if (!PersistenceProviderFactory.ConvertFromStoredTypeCache.TryGetValue(returnType, out converter))
-                return null;
-
-            return converter?.FromType;
-        }
-
-        private class ConvertToStoredTypeCache<TReturnType>
-        {
-            public static Conversion Converter = null;
-            public static bool IsInitialized = false;
-
-            public static object Convert(PersistenceProvider factory, object value)
-            {
-                Initialize(factory);
-
-                if (Converter == null)
-                    return value;
-
-                return Converter.Convert(value);
-            }
-
-            internal static void Initialize(PersistenceProvider factory)
-            {
-                if (!IsInitialized)
-                {
-                    lock (typeof(ConvertFromStoredTypeCache<TReturnType>))
-                    {
-                        if (!IsInitialized)
-                        {
-                            factory.ConvertToStoredTypeCache.TryGetValue(typeof(TReturnType), out Converter);
-                            IsInitialized = true;
-                        }
-                    }
-                }
-            }
-        }
-        private class ConvertFromStoredTypeCache<TReturnType>
-        {
-            public static Conversion Converter = null;
-            public static bool IsInitialized = false;
-
-            public static object Convert(PersistenceProvider factory, object value)
-            {
-                Initialize(factory);
-
-                if (Converter == null)
-                    return value;
-
-                return Converter.Convert(value);
-            }
-
-            internal static void Initialize(PersistenceProvider factory)
-            {
-                if (!IsInitialized)
-                {
-                    lock (typeof(ConvertFromStoredTypeCache<TReturnType>))
-                    {
-                        if (!IsInitialized)
-                        {
-                            factory.ConvertFromStoredTypeCache.TryGetValue(typeof(TReturnType), out Converter);
-                            IsInitialized = true;
-                        }
-                    }
-                }
             }
         }
 

@@ -20,7 +20,7 @@ namespace Blueprint41
             QueryParameters = new Dictionary<string, object>();
             foreach (var item in query.ConstantValues)
             {
-                QueryParameters.Add(item.Name, transaction.ConvertToStoredType(item.Type, item.Value));
+                QueryParameters.Add(item.Name, transaction.PersistenceProviderFactory.ConvertToStoredType(item.Type, item.Value));
             }
         }
 
@@ -30,7 +30,7 @@ namespace Blueprint41
             if (value == null)
                 QueryParameters.Add(parameterName, null);
             else
-                QueryParameters.Add(parameterName, transaction.ConvertToStoredType(value.GetType(), value));
+                QueryParameters.Add(parameterName, transaction.PersistenceProviderFactory.ConvertToStoredType(value.GetType(), value));
         }
         public List<dynamic> Execute()
         {
@@ -43,7 +43,7 @@ namespace Blueprint41
                 if (queryParameter.Value == null)
                     parameters.Add(queryParameter.Key, null);
                 else
-                    parameters.Add(queryParameter.Key, transaction.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
+                    parameters.Add(queryParameter.Key, transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
             }
 
             var result = Neo4j.Persistence.Neo4jTransaction.Run(CompiledQuery.QueryText, parameters);
@@ -55,7 +55,7 @@ namespace Blueprint41
                     string fieldname = field.GetFieldName();
                     object value;
                     if (row.Values.TryGetValue(fieldname, out value) && value != null)
-                        record.Add(fieldname, transaction.ConvertFromStoredType(field.GetResultType(), value));
+                        record.Add(fieldname, transaction.PersistenceProviderFactory.ConvertFromStoredType(field.GetResultType(), value));
                     else
                         record.Add(fieldname, null);
                 }

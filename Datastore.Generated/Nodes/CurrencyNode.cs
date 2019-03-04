@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Query;
@@ -13,12 +14,9 @@ namespace Domain.Data.Query
 
 	public partial class CurrencyNode : Blueprint41.Query.Node
 	{
-        public override string Neo4jLabel
+        protected override string GetNeo4jLabel()
         {
-            get
-            {
-				return "Currency";
-            }
+			return "Currency";
         }
 
 		internal CurrencyNode() { }
@@ -27,7 +25,7 @@ namespace Domain.Data.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal CurrencyNode(RELATIONSHIP relationship, DirectionEnum direction) : base(relationship, direction) { }
+		internal CurrencyNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
 
 		public CurrencyNode Alias(out CurrencyAlias alias)
 		{
@@ -35,6 +33,12 @@ namespace Domain.Data.Query
             NodeAlias = alias;
 			return this;
 		}
+
+		public CurrencyNode UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
+			return this;
+        }
 
 
 		public CurrencyOut Out { get { return new CurrencyOut(this); } }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Query;
@@ -13,12 +14,9 @@ namespace Domain.Data.Query
 
 	public partial class ContactTypeNode : Blueprint41.Query.Node
 	{
-        public override string Neo4jLabel
+        protected override string GetNeo4jLabel()
         {
-            get
-            {
-				return "ContactType";
-            }
+			return "ContactType";
         }
 
 		internal ContactTypeNode() { }
@@ -27,7 +25,7 @@ namespace Domain.Data.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal ContactTypeNode(RELATIONSHIP relationship, DirectionEnum direction) : base(relationship, direction) { }
+		internal ContactTypeNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
 
 		public ContactTypeNode Alias(out ContactTypeAlias alias)
 		{
@@ -35,6 +33,12 @@ namespace Domain.Data.Query
             NodeAlias = alias;
 			return this;
 		}
+
+		public ContactTypeNode UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
+			return this;
+        }
 
 
 		public ContactTypeOut Out { get { return new ContactTypeOut(this); } }

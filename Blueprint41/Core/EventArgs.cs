@@ -113,7 +113,6 @@ namespace Blueprint41.Core
 
             return args;
         }
-        private static Dictionary<Type, Type> propertyChangeEventArgsType = new Dictionary<Type, Type>();
 
         public virtual PropertyEventArgs<TSender, TReturnType> As<TSender, TReturnType>()
              where TSender : OGMImpl

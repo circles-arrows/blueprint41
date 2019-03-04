@@ -32,7 +32,7 @@ namespace Blueprint41.Core
 
         public OGM Wrapper { get; private set; }
 
-        private static Dictionary<string, Dictionary<string, PropertyDetail>> s_PropertyDetails = new Dictionary<string, Dictionary<string, Data.PropertyDetail>>();
+        private static AtomicDictionary<string, Dictionary<string, PropertyDetail>> s_PropertyDetails = new AtomicDictionary<string, Dictionary<string, Data.PropertyDetail>>();
         protected Dictionary<string, PropertyDetail> PropertyDetails
         {
             get
@@ -41,30 +41,23 @@ namespace Blueprint41.Core
 
                 Entity entity = Wrapper.GetEntity();
                 
-                Dictionary<string, PropertyDetail> propertyDetails;
-                if (!Data.s_PropertyDetails.TryGetValue(entity.Name, out propertyDetails))
+                return s_PropertyDetails.TryGetOrAdd(entity.Name, key =>
                 {
-                    lock (Data.s_PropertyDetails)
+                    Dictionary<string, PropertyDetail> details = new Dictionary<string, PropertyDetail>();
+
+                    PropertyInfo[] infos = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                    foreach (Property property in entity.GetPropertiesOfBaseTypesAndSelf())
                     {
-                        if (!Data.s_PropertyDetails.TryGetValue(entity.Name, out propertyDetails))
-                        {
-                            propertyDetails = new Dictionary<string, PropertyDetail>();
+                        PropertyInfo info = infos.FirstOrDefault(item => item.Name == property.Name);
+                        if (info == null)
+                            throw new MissingFieldException("The field {0} does not exist, please regenerate the data access classes.");
 
-                            PropertyInfo[] infos = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-                            foreach (Property property in entity.GetPropertiesOfBaseTypesAndSelf())
-                            {
-                                PropertyInfo info = infos.FirstOrDefault(item => item.Name == property.Name);
-                                if (info == null)
-                                    throw new MissingFieldException("The field {0} does not exist, please regenerate the data access classes.");
-
-                                if (!typeof(EntityCollectionBase).IsAssignableFrom(info.PropertyType) && !typeof(OGM).IsAssignableFrom(info.PropertyType))
-                                    propertyDetails.Add(info.Name, new PropertyDetail(factory.SupportedTypeMappings, info));
-                            }
-                            Data.s_PropertyDetails.Add(entity.Name, propertyDetails);
-                        }
+                        if (!typeof(EntityCollectionBase).IsAssignableFrom(info.PropertyType) && !typeof(OGM).IsAssignableFrom(info.PropertyType))
+                            details.Add(info.Name, new PropertyDetail(factory.SupportedTypeMappings, info));
                     }
-                }
-                return propertyDetails;
+
+                    return details;
+                });
             }
         }
 

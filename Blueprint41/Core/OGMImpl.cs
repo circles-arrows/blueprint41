@@ -27,7 +27,6 @@ namespace Blueprint41.Core
                 throw new InvalidOperationException("You cannot use entity inside the upgrade script.");
 
             Transaction.RunningTransaction.Register(this);
-            PersistenceProvider = Transaction.Current.NodePersistenceProvider;
         }
 
         public void SetChanged()
@@ -49,21 +48,21 @@ namespace Blueprint41.Core
                 case PersistenceState.Loaded:
                     break;
                 case PersistenceState.NewAndChanged:
-                    PersistenceProvider.Insert(this);
+                    PersistenceProvider.NodePersistenceProvider.Insert(this);
                     PersistenceState = PersistenceState.Persisted;
                     break;
                 case PersistenceState.LoadedAndChanged:
-                    PersistenceProvider.Update(this);
+                    PersistenceProvider.NodePersistenceProvider.Update(this);
                     PersistenceState = PersistenceState.Persisted;
                     break;
                 case PersistenceState.Persisted:
                     break;
                 case PersistenceState.Delete:
-                    PersistenceProvider.Delete(this);
+                    PersistenceProvider.NodePersistenceProvider.Delete(this);
                     PersistenceState = PersistenceState.Deleted;
                     return;
                 case PersistenceState.ForceDelete:
-                    PersistenceProvider.ForceDelete(this);
+                    PersistenceProvider.NodePersistenceProvider.ForceDelete(this);
                     PersistenceState = PersistenceState.Deleted;
                     return;
                 case PersistenceState.OutOfScope:
@@ -88,7 +87,7 @@ namespace Blueprint41.Core
         protected virtual void ValidateDelete() { }
         protected bool RelationshipExists(Property foreignProperty, OGM instance)
         {
-            return PersistenceProvider.RelationshipExists(foreignProperty, instance);
+            return PersistenceProvider.NodePersistenceProvider.RelationshipExists(foreignProperty, instance);
         }
 
         void OGM.Delete(bool force)
@@ -210,9 +209,19 @@ namespace Blueprint41.Core
         public abstract PersistenceState PersistenceState { get; internal set; }
         internal Transaction DbTransaction { get; set; }
 
-        internal NodePersistenceProvider PersistenceProvider { get; set; }
-
         public abstract Entity GetEntity();
+
+        public PersistenceProvider PersistenceProvider
+        {
+            get
+            {
+                if (persistenceProvider == null)
+                    persistenceProvider = GetEntity().Parent.PersistenceProvider;
+
+                return persistenceProvider;
+            }
+        }
+        private PersistenceProvider persistenceProvider = null;
 
         public override int GetHashCode()
         {

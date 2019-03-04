@@ -23,8 +23,10 @@ namespace Blueprint41
 {
     public abstract class DatastoreModel : IRefactorGlobal
     {
-        protected DatastoreModel()
+        protected DatastoreModel(Type targetDatabase)
         {
+            PersistenceProvider = (PersistenceProvider)Activator.CreateInstance(targetDatabase, true);
+
             Entities = new EntityCollection(this);
             Relations = new RelationshipCollection(this);
             FunctionalIds = new FunctionalIdCollection(this);
@@ -34,6 +36,8 @@ namespace Blueprint41
 
             DataMigration = new DataMigrationScope(this);
         }
+
+        public PersistenceProvider PersistenceProvider { get; private set; }
 
         public EntityCollection Entities { get; private set; }
         public RelationshipCollection Relations { get; private set; }
@@ -424,12 +428,10 @@ namespace Blueprint41
             /// <returns>An IStatementResult object</returns>
             public IStatementResult ExecuteCypher(string cypher, Dictionary<string, object> parameters = null)
             {
-                Transaction trans = Transaction.RunningTransaction;
-
                 if (parameters == null)
                     parameters = new Dictionary<string, object>();
 
-                Dictionary<string, object> convertedParams = parameters.ToDictionary(item => item.Key, item => ((object)item.Value == null) ? null : trans.ConvertToStoredType(item.Value.GetType(), item.Value));
+                Dictionary<string, object> convertedParams = parameters.ToDictionary(item => item.Key, item => ((object)item.Value == null) ? null : Model.PersistenceProvider.ConvertToStoredType(item.Value.GetType(), item.Value));
 
                 return Neo4jTransaction.Run(cypher, convertedParams);
             }
@@ -488,6 +490,9 @@ namespace Blueprint41
     public abstract class DatastoreModel<TSelf> : DatastoreModel
         where TSelf : DatastoreModel<TSelf>, new()
     {
+        protected DatastoreModel() : this(typeof(Neo4JPersistenceProvider)) { }
+        protected DatastoreModel(Type targetDatabase) : base(targetDatabase) { }
+
         private static DatastoreModel model = null;
         public static DatastoreModel Model
         {

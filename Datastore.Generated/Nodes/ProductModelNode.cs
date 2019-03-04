@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Query;
@@ -13,12 +14,9 @@ namespace Domain.Data.Query
 
 	public partial class ProductModelNode : Blueprint41.Query.Node
 	{
-        public override string Neo4jLabel
+        protected override string GetNeo4jLabel()
         {
-            get
-            {
-				return "ProductModel";
-            }
+			return "ProductModel";
         }
 
 		internal ProductModelNode() { }
@@ -27,7 +25,7 @@ namespace Domain.Data.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal ProductModelNode(RELATIONSHIP relationship, DirectionEnum direction) : base(relationship, direction) { }
+		internal ProductModelNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
 
 		public ProductModelNode Alias(out ProductModelAlias alias)
 		{
@@ -35,6 +33,12 @@ namespace Domain.Data.Query
             NodeAlias = alias;
 			return this;
 		}
+
+		public ProductModelNode UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
+			return this;
+        }
 
 	
 		public ProductModelIn  In  { get { return new ProductModelIn(this); } }

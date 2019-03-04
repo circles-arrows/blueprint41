@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Query;
@@ -13,12 +14,9 @@ namespace Domain.Data.Query
 
 	public partial class ProductProductPhotoNode : Blueprint41.Query.Node
 	{
-        public override string Neo4jLabel
+        protected override string GetNeo4jLabel()
         {
-            get
-            {
-				return "ProductProductPhoto";
-            }
+			return "ProductProductPhoto";
         }
 
 		internal ProductProductPhotoNode() { }
@@ -27,7 +25,7 @@ namespace Domain.Data.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal ProductProductPhotoNode(RELATIONSHIP relationship, DirectionEnum direction) : base(relationship, direction) { }
+		internal ProductProductPhotoNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
 
 		public ProductProductPhotoNode Alias(out ProductProductPhotoAlias alias)
 		{
@@ -35,6 +33,12 @@ namespace Domain.Data.Query
             NodeAlias = alias;
 			return this;
 		}
+
+		public ProductProductPhotoNode UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
+			return this;
+        }
 
 	
 		public ProductProductPhotoIn  In  { get { return new ProductProductPhotoIn(this); } }

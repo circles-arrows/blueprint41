@@ -36,7 +36,6 @@ namespace Blueprint41.UnitTest.Tests
 
             MockModel model = new MockModel();
             model.Execute(true);
-
         }
 
         [TearDown]

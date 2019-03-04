@@ -39,7 +39,11 @@ namespace Blueprint41.Core
         }
         public static List<TInterface> GetAll(int page, int pageSize, params Property[] orderBy)
         {
-            return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TInterface>(Entity, page, pageSize, orderBy);
+            return GetAll(page, pageSize, true, orderBy);
+        }
+        public static List<TInterface> GetAll(int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TInterface>(Entity, page, pageSize, ascending, orderBy);
         }
 
         [Obsolete("This method will be made internal in the next release.", false)]
@@ -50,7 +54,12 @@ namespace Blueprint41.Core
         [Obsolete("This method will be made internal in the next release.", false)]
         public static List<TInterface> LoadWhere(string conditions, Parameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
-            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, conditions, parameters, page, pageSize, orderBy);
+            return LoadWhere(conditions, parameters, page, pageSize, true, orderBy);
+        }
+        [Obsolete("This method will be made internal in the next release.", false)]
+        public static List<TInterface> LoadWhere(string conditions, Parameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
         }
         public static List<TInterface> LoadWhere(ICompiled query)
         {
@@ -67,7 +76,11 @@ namespace Blueprint41.Core
         }
         public static List<TInterface> Search(string text, int page = 0, int pageSize = 0, params Property[] properties)
         {
-            return Transaction.RunningTransaction.NodePersistenceProvider.Search<TInterface>(Entity, text, properties, page, pageSize, Entity.Key);
+            return Search(text, page, pageSize, true, properties);
+        }
+        public static List<TInterface> Search(string text, int page = 0, int pageSize = 0, bool ascending = true, params Property[] properties)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.Search<TInterface>(Entity, text, properties, page, pageSize, ascending, Entity.Key);
         }
 
         public static void ForceDelete(TKey key)
@@ -94,7 +107,7 @@ namespace Blueprint41.Core
 
         #region Stored Queries
 
-        private static Dictionary<string, ICompiled> StoredQueries = null;
+        private static IDictionary<string, ICompiled> StoredQueries = null;
 
         protected virtual void RegisterStoredQueries() { }
         protected abstract void RegisterGeneratedStoredQueries();
@@ -122,7 +135,7 @@ namespace Blueprint41.Core
             {
                 if (StoredQueries == null)
                 {
-                    StoredQueries = new Dictionary<string, ICompiled>();
+                    StoredQueries = new AtomicDictionary<string, ICompiled>();
                     Instance.RegisterGeneratedStoredQueries();
                     Instance.RegisterStoredQueries();
                 }

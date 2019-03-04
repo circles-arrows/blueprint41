@@ -497,8 +497,8 @@ namespace Blueprint41
 
             if (!skipConvertionLogic)
             {
-                Type fromDb = Transaction.Current.GetStoredType(from);
-                Type toDb = Transaction.Current.GetStoredType(to);
+                Type fromDb = Parent.Parent.PersistenceProvider.GetStoredType(from);
+                Type toDb = Parent.Parent.PersistenceProvider.GetStoredType(to);
 
                 string chkScript, convScript;
                 (_, _, chkScript, convScript) = specificConvertTabel.FirstOrDefault(item => item.fromType == from && (item.toType == null || item.toType == to));
@@ -753,7 +753,7 @@ namespace Blueprint41
                     {
                         template.Entity = entity;
                         template.Property = this;
-                        template.Value = Transaction.Current.ConvertToStoredType(SystemReturnType, defaultValue);
+                        template.Value = Parent.Parent.PersistenceProvider.ConvertToStoredType(SystemReturnType, defaultValue);
                     });
                 }
             }

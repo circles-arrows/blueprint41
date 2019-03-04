@@ -448,7 +448,7 @@ namespace Blueprint41.Dynamic
             if (Transaction == null)
             {
                 Conversion converter;
-                if (!PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredTypeCache.TryGetValue(DynamicEntityType.Key.SystemReturnType, out converter))
+                if (!PersistenceProvider.ConvertToStoredTypeCache.TryGetValue(DynamicEntityType.Key.SystemReturnType, out converter))
                     return key;
 
                 if ((object)converter == null)
@@ -457,12 +457,12 @@ namespace Blueprint41.Dynamic
                 return converter.Convert(key);
             }
 
-            return Transaction.ConvertToStoredType(DynamicEntityType.Key.SystemReturnType, key);
+            return PersistenceProvider.ConvertToStoredType(DynamicEntityType.Key.SystemReturnType, key);
         }
 
         void OGM.SetKey(object key)
         {
-            object convertedKey = Transaction.ConvertFromStoredType(DynamicEntityType.Key.SystemReturnType, key);
+            object convertedKey = PersistenceProvider.ConvertFromStoredType(DynamicEntityType.Key.SystemReturnType, key);
             if (DynamicEntityValues.ContainsKey(DynamicEntityType.Key.Name))
                 DynamicEntityValues[DynamicEntityType.Key.Name] = convertedKey;
             else
@@ -557,17 +557,15 @@ namespace Blueprint41.Dynamic
 
         IDictionary<string, object> OGM.GetData()
         {
-            Transaction current = Transaction.Current;
-            return DynamicEntityValues.ToDictionary(item => item.Key, item => current.ConvertToStoredType(DynamicEntityType.Search(item.Key).SystemReturnType, item.Value));
+            return DynamicEntityValues.ToDictionary(item => item.Key, item => PersistenceProvider.ConvertToStoredType(DynamicEntityType.Search(item.Key).SystemReturnType, item.Value));
         }
 
         void OGM.SetData(IReadOnlyDictionary<string, object> data)
         {
-            Transaction current = Transaction.Current;
             DynamicEntityValues.Clear();
             foreach (KeyValuePair<string, object> item in data)
             {
-                DynamicEntityValues.Add(item.Key, current.ConvertFromStoredType(DynamicEntityType.Search(item.Key).SystemReturnType, item.Value));
+                DynamicEntityValues.Add(item.Key, PersistenceProvider.ConvertFromStoredType(DynamicEntityType.Search(item.Key).SystemReturnType, item.Value));
             }
         }
 
@@ -644,6 +642,14 @@ namespace Blueprint41.Dynamic
         public Entity GetEntity()
         {
             return DynamicEntityType;
+        }
+
+        public PersistenceProvider PersistenceProvider
+        {
+            get
+            {
+                return GetEntity().Parent.PersistenceProvider;
+            }
         }
 
         public PersistenceState PersistenceState

@@ -149,21 +149,14 @@ namespace Blueprint41.Neo4j.Persistence
             if (typeName == null)
                 throw new NotSupportedException("The concrete type of the node could not be determined.");
 
-            Type type;
-            if (!typeCache.TryGetValue(typeName, out type))
+            Type type = typeCache.TryGetOrAdd(typeName, key =>
             {
-                lock (typeCache)
-                {
-                    if (!typeCache.TryGetValue(typeName, out type))
-                    {
-                        type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
-                        if (type == null)
-                            throw new NotSupportedException();
+                type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
+                if (type == null)
+                    throw new NotSupportedException();
 
-                        typeCache.Add(typeName, type);
-                    }
-                }
-            }
+                return type;
+            });
 
             OGM item = null;
             if (keyObject != null)
@@ -193,7 +186,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             return item;
         }
-        private static Dictionary<string, Type> typeCache = new Dictionary<string, Type>();
+        private static AtomicDictionary<string, Type> typeCache = new AtomicDictionary<string, Type>();
 
         public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
         {

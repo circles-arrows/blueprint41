@@ -94,49 +94,43 @@ namespace Blueprint41
             {
                 if (value is IEnumerable)
                 {
-                    Func<object, object> convLogic;
-                    if (!fromEnumeratorCache.TryGetValue(type, out convLogic))
+                    return fromEnumeratorCache.TryGetOrAdd(type, key =>
                     {
-                        lock (fromEnumeratorCache)
+                        Func<object, object> retval = null;
+
+                        Type genericeType = type.GetGenericTypeDefinition();
+                        if (genericeType != typeof(List<>))
                         {
-                            if (!fromEnumeratorCache.TryGetValue(type, out convLogic))
+                            Type iface = null;
+                            Type search = type;
+                            while (search != null && iface == null)
                             {
-                                Type genericeType = type.GetGenericTypeDefinition();
-                                if (genericeType != typeof(List<>))
+                                foreach (Type item in search.GetInterfaces())
                                 {
-                                    Type iface = null;
-                                    Type search = type;
-                                    while (search != null && iface == null)
+                                    if (item.IsGenericType && item.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                                     {
-                                        foreach (Type item in search.GetInterfaces())
-                                        {
-                                            if (item.IsGenericType && item.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                                            {
-                                                iface = item;
-                                                break;
-                                            }
-                                        }
-                                        search = search.BaseType;
-                                    }
-
-                                    if (iface != null)
-                                    {
-                                        Type typeT = iface.GenericTypeArguments[0];
-                                        MethodInfo methodInfo = typeof(Parameter).GetMethod(nameof(FromEnumerator), BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(typeT);
-
-                                        convLogic = (Func<object, object>)Delegate.CreateDelegate(typeof(Func<object, object>), methodInfo);
+                                        iface = item;
+                                        break;
                                     }
                                 }
+                                search = search.BaseType;
+                            }
 
-                                // we could "return value;" here, but we're going to make sure we don't need to scan interfaces in the future anymore.
-                                if (convLogic == null)
-                                    convLogic = delegate (object v) { return v; };
+                            if (iface != null)
+                            {
+                                Type typeT = iface.GenericTypeArguments[0];
+                                MethodInfo methodInfo = typeof(Parameter).GetMethod(nameof(FromEnumerator), BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(typeT);
 
-                                fromEnumeratorCache.Add(type, convLogic);
+                                retval = (Func<object, object>)Delegate.CreateDelegate(typeof(Func<object, object>), methodInfo);
                             }
                         }
-                    }
-                    return convLogic.Invoke(value);
+
+                        // we could "return value;" here, but we're going to make sure we don't need to scan interfaces in the future anymore.
+                        if (retval == null)
+                            retval = delegate (object v) { return v; };
+
+                        return retval;
+                    }).Invoke(value); // Execute conversion logic
                 }
                 //else if (genericeType == typeof(IDictionary<,>) && genericeType != typeof(Dictionary<,>))
                 //{
@@ -150,7 +144,7 @@ namespace Blueprint41
         {
             return new List<T>((IEnumerable<T>)value);
         }
-        private static Dictionary<Type, Func<object, object>> fromEnumeratorCache = new Dictionary<Type, Func<object, object>>();
+        private static AtomicDictionary<Type, Func<object, object>> fromEnumeratorCache = new AtomicDictionary<Type, Func<object, object>>();
 
         public static Parameter New<T>(string name)
         {

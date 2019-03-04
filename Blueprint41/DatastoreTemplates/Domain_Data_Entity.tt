@@ -376,8 +376,8 @@ if (!DALModel.IsAbstract)
 <#
 	}
 #>
-			sealed public override <#= DALModel.Key.SystemReturnType #> GetKey() { return Blueprint41.Transaction.Current.ConvertFromStoredType<<#= DALModel.Key.SystemReturnType #>>(<#= DALModel.Key.Name #>); }
-			sealed protected override void SetKey(<#= DALModel.Key.SystemReturnType #> key) { <#= DALModel.Key.Name #> = (<#= DALModel.Key.InnerReturnType #>)Blueprint41.Transaction.Current.ConvertToStoredType<<#= DALModel.Key.SystemReturnType #>>(key); base.SetKey(<#= DALModel.Key.Name #>); }
+			sealed public override <#= DALModel.Key.SystemReturnType #> GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<<#= DALModel.Key.SystemReturnType #>>(<#= DALModel.Key.Name #>); }
+			sealed protected override void SetKey(<#= DALModel.Key.SystemReturnType #> key) { <#= DALModel.Key.Name #> = (<#= DALModel.Key.InnerReturnType #>)Entity.Parent.PersistenceProvider.ConvertToStoredType<<#= DALModel.Key.SystemReturnType #>>(key); base.SetKey(<#= DALModel.Key.Name #>); }
 
 			#endregion
 <#

@@ -145,18 +145,18 @@ namespace Blueprint41
 
         public IRefactorRelationship Refactor { get { return this; } }
  
-        void IRefactorRelationship.Rename(string newName, string alias)
+        void IRefactorRelationship.Rename(string newName, string newNeo4JRelationshipType)
         {
             if (string.IsNullOrEmpty(newName))
                 throw new ArgumentNullException(nameof(newName));
 
             Parent.EnsureSchemaMigration();
 
-            if (alias == null)
-                alias = newName;
+            if (newNeo4JRelationshipType == null)
+                newNeo4JRelationshipType = newName;
 
             string oldName = Neo4JRelationshipType;
-            Rename(newName, alias);
+            Rename(newName, newNeo4JRelationshipType);
 
             if (oldName != Neo4JRelationshipType)
             {

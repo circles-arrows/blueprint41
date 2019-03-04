@@ -299,7 +299,7 @@ namespace Blueprint41.Query
                 if (queryParameter.Value == null)
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), null);
                 else
-                    parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), transaction.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
+                    parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
             }
 
             foreach (var queryParam in parameterValues)

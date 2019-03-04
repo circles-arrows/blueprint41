@@ -1168,15 +1168,15 @@ namespace Blueprint41
             if (Parent.IsUpgraded)
             {
                 if (namedPropertiesOfBaseTypesAndSelf == null)
-                    namedPropertiesOfBaseTypesAndSelf = GetPropertiesOfBaseTypesAndSelf().ToDictionary(key => key.Name, value => value);
+                    namedPropertiesOfBaseTypesAndSelf = GetPropertiesOfBaseTypesAndSelf().ToDictionary(key => key.Name.ToLower(), value => value);
 
                 Property foundProperty;
-                namedPropertiesOfBaseTypesAndSelf.TryGetValue(name, out foundProperty);
+                namedPropertiesOfBaseTypesAndSelf.TryGetValue(name.ToLower(), out foundProperty);
                 return foundProperty;
             }
             else
             {
-                return GetPropertiesOfBaseTypesAndSelf().FirstOrDefault(item => item.Name == name);
+                return GetPropertiesOfBaseTypesAndSelf().FirstOrDefault(item => item.Name.ToLower() == name.ToLower());
             }
         }
 

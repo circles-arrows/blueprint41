@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace Blueprint41.Log
+namespace Blueprint41
 {
     internal abstract class Serializer
     {
@@ -29,9 +30,9 @@ namespace Blueprint41.Log
         {
             return GetSerializer(value?.GetType()).SerializeInternal(value);
         }
-        public static object Deserialize(string value)
+        public static T Deserialize<T>(string value)
         {
-            return GetSerializer(value?.GetType()).DeserializeInternal(value);
+            return (T)GetSerializer(typeof(T)).DeserializeInternal(value);
         }
 
         private static Serializer GetSerializer(Type type)
@@ -39,22 +40,13 @@ namespace Blueprint41.Log
             if (type == null)
                 type = typeof(object);
 
-            if (!cache.TryGetValue(type, out var serializer))
+            return cache.TryGetOrAdd(type, key =>
             {
-                lock (cache)
-                {
-                    if (!cache.TryGetValue(type, out serializer))
-                    {
-                        Type serializerType = typeof(Serializer<>).MakeGenericType(new[] { type });
-                        serializer = (Serializer)Activator.CreateInstance(serializerType);
-                        cache.Add(type, serializer);
-                    }
-                }
-            }
-
-            return serializer;
+                Type serializerType = typeof(Serializer<>).MakeGenericType(new[] { type });
+                return (Serializer)Activator.CreateInstance(serializerType);
+            });
         }
-        private static Dictionary<Type, Serializer> cache = new Dictionary<Type, Serializer>();
+        private static AtomicDictionary<Type, Serializer> cache = new AtomicDictionary<Type, Serializer>();
     }
     internal class Serializer<T> : Serializer
     {
@@ -81,7 +73,7 @@ namespace Blueprint41.Log
                 }
             }
         }
-        new public T Deserialize(string value)
+        public T Deserialize(string value)
         {
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(value)))
             {

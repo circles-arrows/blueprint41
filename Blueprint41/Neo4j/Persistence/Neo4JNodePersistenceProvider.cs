@@ -19,11 +19,11 @@ namespace Blueprint41.Neo4j.Persistence
 
         public override List<T> GetAll<T>(Entity entity)
         {
-            return LoadWhere<T>(entity, null, null, 0, 0);
+            return LoadWhere<T>(entity, string.Empty, null, 0, 0);
         }
-        public override List<T> GetAll<T>(Entity entity, int page, int pageSize, params Property[] orderBy)
+        public override List<T> GetAll<T>(Entity entity, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
-            return LoadWhere<T>(entity, null, null, page, pageSize, orderBy);
+            return LoadWhere<T>(entity, string.Empty, null, page, pageSize, ascending, orderBy);
         }
 
         public override void Load(OGM item)
@@ -222,7 +222,7 @@ namespace Blueprint41.Neo4j.Persistence
             return result["key"].ToString();
         }
 
-        public override List<T> LoadWhere<T>(Entity entity, string conditions, Parameter[] parameters, int page, int pageSize, params Property[] orderBy)
+        public override List<T> LoadWhere<T>(Entity entity, string conditions, Parameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
             Transaction trans = Transaction.RunningTransaction;
 
@@ -247,6 +247,8 @@ namespace Blueprint41.Neo4j.Persistence
 
                 sb.Append(" ORDER BY ");
                 sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
+                if (ascending == false)
+                    sb.Append(" DESC ");
             }
 
             if (pageSize > 0)
@@ -268,7 +270,7 @@ namespace Blueprint41.Neo4j.Persistence
             var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
             return Load<T>(entity, args, result, trans);
         }
-        public override List<T> LoadWhere<T>(Entity entity, ICompiled query, params Parameter[] parameters)
+        public override List<T> LoadWhere<T>(Entity entity, ICompiled query, Parameter[] parameters, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
         {
             Transaction trans = Transaction.RunningTransaction;
 
@@ -278,11 +280,32 @@ namespace Blueprint41.Neo4j.Persistence
                 if ((object)queryParameter.Value == null)
                     context.SetParameter(queryParameter.Name, null);
                 else
-                    context.SetParameter(queryParameter.Name, trans.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
+                    context.SetParameter(queryParameter.Name, entity.Parent.PersistenceProvider.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
             }
 
+            StringBuilder sb = new StringBuilder();
+            sb.Append(context.CompiledQuery.QueryText);
+            if (orderBy != null && orderBy.Length != 0)
+            {
+                Property odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
+                if (odd != null)
+                    throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2)'.", odd.Name, odd.Parent.Name, entity.Name));
+
+                sb.Append(" ORDER BY ");
+                sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
+                if (ascending == false)
+                    sb.Append(" DESC ");
+            }
+
+            if (pageSize > 0)
+            {
+                sb.Append(" SKIP ");
+                sb.Append(page * pageSize);
+                sb.Append(" LIMIT ");
+                sb.Append(pageSize);
+            }
             Dictionary<string, object> customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, context.CompiledQuery.QueryText, context.QueryParameters, ref customState);
+            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters, ref customState);
 
             var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
 
@@ -348,7 +371,7 @@ namespace Blueprint41.Neo4j.Persistence
             return items;
         }
 
-        internal override List<T> Search<T>(Entity entity, string text, Property[] fullTextProperties, int page = 0, int pageSize = 0, params Property[] orderBy)
+        internal override List<T> Search<T>(Entity entity, string text, Property[] fullTextProperties, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
         {
             Transaction trans = Transaction.RunningTransaction;
             HashSet<string> keys = new HashSet<string>()
@@ -389,6 +412,8 @@ namespace Blueprint41.Neo4j.Persistence
 
                 sb.Append(" ORDER BY ");
                 sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
+                if (ascending == false)
+                    sb.Append(" DESC ");
             }
 
             if (pageSize > 0)
@@ -433,54 +458,39 @@ namespace Blueprint41.Neo4j.Persistence
             if (entity.IsAbstract)
                 throw new NotSupportedException($"You cannot instantiate the abstract entity {entity.Name}.");
 
-            Func<OGM> activator;
-            if (!activators.TryGetValue(entity.Name, out activator))
+            Func<OGM> activator = activators.TryGetOrAdd(entity.Name, key =>
             {
-                lock (typeof(Neo4JNodePersistenceProvider))
-                {
-                    if (!activators.TryGetValue(entity.Name, out activator))
-                    {
-                        foreach (Type type in typeof(T).Assembly.GetTypes())
-                        {
-                            if (type.BaseType != null && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(OGM<,,>))
-                            {
-                                OGM instance = (OGM)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
-                                Entity entityInstance = instance.GetEntity();
-                                if (entityInstance.IsAbstract)
-                                    continue;
+                Dictionary<string, Func<OGM>> retval = new Dictionary<string, Func<OGM>>();
 
-                                activators.Add(entityInstance.Name, delegate()
-                                {
-                                    return System.Activator.CreateInstance(type) as OGM;
-                                });
-                            }
-                        }
-                        activator = activators[entity.Name];
+                foreach (Type type in typeof(T).Assembly.GetTypes())
+                {
+                    if (type.BaseType != null && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(OGM<,,>))
+                    {
+                        OGM instance = (OGM)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
+                        Entity entityInstance = instance.GetEntity();
+                        if (entityInstance.IsAbstract)
+                            continue;
+
+                        retval.Add(entityInstance.Name, delegate ()
+                        {
+                            return System.Activator.CreateInstance(type) as OGM;
+                        });
                     }
                 }
-            }
+                return retval[entity.Name];
+            });
+
             return (T)Transaction.Execute(() => activator.Invoke(), EventOptions.GraphEvents);
         }
-        static private Dictionary<string, Func<OGM>> activators = new Dictionary<string, Func<OGM>>();
+        static private AtomicDictionary<string, Func<OGM>> activators = new AtomicDictionary<string, Func<OGM>>();
 
-        static private Dictionary<string, Entity> entityByLabel = new Dictionary<string, Entity>();
+        static private AtomicDictionary<string, Entity> entityByLabel = new AtomicDictionary<string, Entity>();
         static private Entity GetEntity(DatastoreModel datastore, IEnumerable<string> labels)
         {
             Entity entity = null;
             foreach (string label in labels)
             {
-                if (!entityByLabel.TryGetValue(label, out entity))
-                {
-                    lock (entityByLabel)
-                    {
-                        if (!entityByLabel.TryGetValue(label, out entity))
-                        {
-                            entity = datastore.Entities.FirstOrDefault(item => item.Label.Name == label);
-                            entityByLabel.Add(label, entity);
-                        }
-                    }
-                }
-
+                entity = entityByLabel.TryGetOrAdd(label, key => datastore.Entities.FirstOrDefault(item => item.Label.Name == label));
                 if (!entity.IsAbstract)
                     return entity;
             }

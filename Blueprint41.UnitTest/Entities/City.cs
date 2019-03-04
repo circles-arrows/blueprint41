@@ -131,8 +131,8 @@ namespace Datastore.Manipulation
 				Restraurants = new EntityCollection<Restaurant>(Wrapper, Members.Restraurants, item => { if (Members.Restraurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
 			}
 			public string NodeType { get; private set; }
-			sealed public override System.String GetKey() { return Blueprint41.Transaction.Current.ConvertFromStoredType<System.String>(Uid); }
-			sealed protected override void SetKey(System.String key) { Uid = (string)Blueprint41.Transaction.Current.ConvertToStoredType<System.String>(key); base.SetKey(Uid); }
+			sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
+			sealed protected override void SetKey(System.String key) { Uid = (string)Entity.Parent.PersistenceProvider.ConvertToStoredType<System.String>(key); base.SetKey(Uid); }
 
 			#endregion
 			#region Map Data

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Query;
@@ -13,12 +14,9 @@ namespace Domain.Data.Query
 
 	public partial class TransactionHistoryArchiveNode : Blueprint41.Query.Node
 	{
-        public override string Neo4jLabel
+        protected override string GetNeo4jLabel()
         {
-            get
-            {
-				return "TransactionHistoryArchive";
-            }
+			return "TransactionHistoryArchive";
         }
 
 		internal TransactionHistoryArchiveNode() { }
@@ -27,7 +25,7 @@ namespace Domain.Data.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal TransactionHistoryArchiveNode(RELATIONSHIP relationship, DirectionEnum direction) : base(relationship, direction) { }
+		internal TransactionHistoryArchiveNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
 
 		public TransactionHistoryArchiveNode Alias(out TransactionHistoryArchiveAlias alias)
 		{
@@ -35,6 +33,12 @@ namespace Domain.Data.Query
             NodeAlias = alias;
 			return this;
 		}
+
+		public TransactionHistoryArchiveNode UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
+			return this;
+        }
 
 	
 		public TransactionHistoryArchiveIn  In  { get { return new TransactionHistoryArchiveIn(this); } }

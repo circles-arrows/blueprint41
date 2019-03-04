@@ -18,7 +18,7 @@ namespace Blueprint41.Core
         internal abstract void RegisterConversion();
 
         protected static List<Conversion> registeredConverters = new List<Conversion>();
-        private static Dictionary<Type, Dictionary<Type, Conversion>> cache = new Dictionary<Type, Dictionary<Type, Conversion>>();
+        private static AtomicDictionary<Type, AtomicDictionary<Type, Conversion>> cache = new AtomicDictionary<Type, AtomicDictionary<Type, Conversion>>();
         public static object Convert(Type from, Type to, object value)
         {
             if (value == null && from?.BaseType == typeof(ValueType) && (!from.IsGenericType || from.GetGenericTypeDefinition() != typeof(Nullable<>)))
@@ -39,38 +39,20 @@ namespace Blueprint41.Core
             if (!registrationsLoaded)
                 Conversion<bool, bool?>.Convert(true); // trick it into doing an initialize...
 
-            Dictionary<Type, Conversion> toCache;
-            if (!cache.TryGetValue(fromType, out toCache))
-            {
-                lock (cache)
-                {
-                    if (!cache.TryGetValue(fromType, out toCache))
-                    {
-                        toCache = new Dictionary<Type, Core.Conversion>();
-                        cache.Add(fromType, toCache);
-                    }
-                }
-            }
+            AtomicDictionary<Type, Conversion> toCache = cache.TryGetOrAdd(fromType, key => new AtomicDictionary<Type, Core.Conversion>());
 
-            Conversion converter;
-            if (!toCache.TryGetValue(toType, out converter))
+            Conversion converter = toCache.TryGetOrAdd(toType, key =>
             {
-                lock (toCache)
+                converter = registeredConverters.FirstOrDefault(item => item.FromType == fromType && item.ToType == toType);
+                if (converter == null)
                 {
-                    if (!toCache.TryGetValue(toType, out converter))
-                    {
-                        converter = registeredConverters.FirstOrDefault(item=>item.FromType == fromType && item.ToType == toType);
-                        if (converter == null)
-                        {
-                            Type genericConversionType = typeof(ConversionInstance<,>).MakeGenericType(fromType, toType);
-                            converter = (Conversion)Activator.CreateInstance(genericConversionType, true);
-                            if (!converter.IsValidConversion())
-                                converter = null;
-                        }
-                        toCache.Add(toType, converter);
-                    }
+                    Type genericConversionType = typeof(ConversionInstance<,>).MakeGenericType(fromType, toType);
+                    converter = (Conversion)Activator.CreateInstance(genericConversionType, true);
+                    if (!converter.IsValidConversion())
+                        converter = null;
                 }
-            }
+                return converter;
+            });
 
             return converter;
         }

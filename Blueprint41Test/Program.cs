@@ -1,5 +1,8 @@
-﻿using Blueprint41.Modeller.Schemas;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+
+using Blueprint41.Core;
+using Blueprint41.Modeller.Schemas;
 
 namespace Blueprint41Test
 {
@@ -7,9 +10,6 @@ namespace Blueprint41Test
     {
         static void Main(string[] args)
         {
-            string xmlPath = @"modeller.xml";
-            modeller model = modeller.Load(xmlPath);
-            ModuleLoader.GetModule("Document").RunModule(model, null).Wait();
         }
     }
 }
