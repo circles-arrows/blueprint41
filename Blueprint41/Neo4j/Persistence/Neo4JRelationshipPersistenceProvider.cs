@@ -79,18 +79,24 @@ namespace Blueprint41.Neo4j.Persistence
                     parentDict.Add(parent.GetKey(), parent);
             }
 
-            string pattern = string.Empty;
+            string matchClause = string.Empty;
             if (target.Direction == DirectionEnum.In)
-                pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} in ({{keys}}) RETURN out, rel, node.{1} as ParentKey";
+                matchClause = "MATCH ({0})-[rel:{2}]->({3})";
             else if (target.Direction == DirectionEnum.Out)
-                pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} in ({{keys}}) RETURN out, rel, node.{1} as ParentKey";
+                matchClause = "MATCH ({0})<-[rel:{2}]-({3})";
+
+            string whereClause = " WHERE node.{1} in ({{keys}}) ";
+            string returnClause = " RETURN node.{1} as ParentKey, out.{4} as ItemKey ";
+            if (target.Relationship.IsTimeDependent)
+                returnClause = $" RETURN node.{{1}} as ParentKey, out.{{4}} as ItemKey, rel.{target.Relationship.StartDate} as StartDate, rel.{target.Relationship.EndDate} as EndDate";
 
             Entity targetEntity = target.ForeignEntity;
-            string match = string.Format(pattern,
+            string match = string.Format(string.Concat(matchClause, whereClause, returnClause),
                target.Parent.GetEntity().GetDbName("node"),
                target.ParentEntity.Key.Name,
                target.Relationship.Neo4JRelationshipType,
-               targetEntity.GetDbName("out"));
+               targetEntity.GetDbName("out"),
+               targetEntity.Key.Name);
 
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("keys", parents.Select(item => item.GetKey()).ToArray());
@@ -98,33 +104,56 @@ namespace Blueprint41.Neo4j.Persistence
             if (parents.Any(parent => parent.GetEntity() != target.Parent.GetEntity()))
                 throw new InvalidOperationException("This code should only load collections of the same concrete parent class.");
 
-            List<CollectionItem> items = new List<CollectionItem>();
             var result = Neo4jTransaction.Run(match, parameters);
-
+            List<(object parentKey, object itemKey, DateTime? startDate, DateTime? endDate)> indexCache = new List<(object parentKey, object itemKey, DateTime? startDate, DateTime? endDate)>();
             foreach (var record in result)
             {
-                OGM parent = parentDict[record.Values["ParentKey"].As<object>()];
-                OGM item = ReadNode(parent, targetEntity, record.Values["out"].As<INode>());
-                IRelationship rel = record.Values["rel"].As<IRelationship>();
-
-                DateTime? startDate = null; ;
+                DateTime? startDate = null;
                 DateTime? endDate = null;
 
                 if (target.Relationship.IsTimeDependent)
                 {
-                    object value;
-                    if (rel.Properties.TryGetValue(target.Relationship.StartDate, out value))
-                        startDate = Conversion<long, DateTime>.Convert((long)value);
-                    if (rel.Properties.TryGetValue(target.Relationship.EndDate, out value))
-                        endDate = Conversion<long, DateTime>.Convert((long)value);
+                    startDate = Conversion<long, DateTime>.Convert((long)record.Values["StartDate"].As<long>());
+                    endDate = Conversion<long, DateTime>.Convert((long)record.Values["EndDate"].As<long>());
                 }
 
-                items.Add(target.NewCollectionItem(parent, item, startDate, endDate));
+                indexCache.Add((record.Values["ParentKey"].As<object>(), record.Values["ItemKey"].As<object>(), startDate, endDate));
+            }
+
+            Dictionary<object, INode> itemsCache = Load(targetEntity, indexCache.Select(r => r.itemKey));
+
+            List<CollectionItem> items = new List<CollectionItem>();
+            foreach (var index in indexCache)
+            {
+                OGM parent = parentDict[index.parentKey];
+                OGM item = ReadNode(parent, targetEntity, itemsCache[index.itemKey]);
+
+                items.Add(target.NewCollectionItem(parent, item, index.startDate, index.endDate));
             }
 
             return CollectionItemList.Get(items);
         }
 
+        private Dictionary<object, INode> Load(Entity targetEntity, IEnumerable<object> keys)
+        {
+            string match = string.Format(
+                "MATCH (node:{0}) WHERE node.{1} in ({{keys}}) RETURN node, node.{1} as key",
+                targetEntity.Label.Name,
+                targetEntity.Key.Name
+            );
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("keys", keys);
+            var result = Neo4jTransaction.Run(match, parameters);
+
+            Dictionary<object, INode> retval = new Dictionary<object, INode>();
+            foreach (var record in result)
+            {
+                retval.Add(record.Values["key"].As<object>(), record.Values["node"].As<INode>());
+            }
+
+            return retval;
+        }
         private OGM ReadNode(OGM parent, Entity targetEntity, INode node)
         {
             object keyObject;
