@@ -203,6 +203,9 @@ namespace System
     {
         public static string ToJson<T>(this T self)
         {
+            if ((object)self == null)
+                return null;
+
             using (MemoryStream writer = new MemoryStream())
             {
                 Cache<T>.JsonSerializer.WriteObject(writer, self);
@@ -212,10 +215,21 @@ namespace System
 
         public static T FromJson<T>(this string self)
         {
+            if (self == null)
+                return default(T);
+
             using (MemoryStream reader = new MemoryStream(Encoding.UTF8.GetBytes(self)))
             {
                 return (T)Cache<T>.JsonSerializer.ReadObject(reader);
             }
+        }
+
+        public static T FromJson<T>(this CompressedString self)
+        {
+            if ((object)self == null)
+                return default(T);
+
+            return FromJson<T>(self.Value);
         }
 
         private class Cache<T>

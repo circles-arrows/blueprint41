@@ -724,6 +724,9 @@ namespace Blueprint41.Dynamic
         public static void Delete(Entity entity, object key)
         {
             DynamicEntity item = Load(entity, key);
+            if (Parser.ShouldExecute && entity.ContainsStaticData && item == null)
+                return;
+
             item.Delete();
         }
     }
