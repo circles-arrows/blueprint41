@@ -68,7 +68,7 @@ namespace Blueprint41
         private bool executed = false;
         private bool datamigration = false;
 
-        internal List<UpgradeScript> GetUpgradeScripts()
+        internal List<UpgradeScript> GetUpgradeScripts(MethodInfo unitTestScript)
         {
             List<UpgradeScript> scripts = new List<UpgradeScript>();
 
@@ -92,10 +92,27 @@ namespace Blueprint41
                 prev = item;
             }
 
+
+            if ((object)unitTestScript != null)
+            {
+                UpgradeScript prevScript = scripts.LastOrDefault();
+                long major = prevScript?.Major ?? 0;
+                long minor = prevScript?.Minor ?? 0;
+                long patch = prevScript?.Patch ?? 0;
+
+                Action method = (Action)Delegate.CreateDelegate(typeof(Action), this, unitTestScript);
+                UpgradeScript injectedScript = new UpgradeScript(method, major, minor, patch + 1, "InjectedUnitTestMethod");
+                scripts.Add(injectedScript);
+            }
+
             return scripts;
         }
 
         public void Execute(bool upgradeDatastore)
+        {
+            Execute(upgradeDatastore, null);
+        }
+        internal void Execute(bool upgradeDatastore, MethodInfo unitTestScript)
         {
             if (isExecuting)
                 throw new InvalidOperationException("It is not allowed to call the 'Execute' method from within an upgrade script.");
@@ -104,7 +121,7 @@ namespace Blueprint41
             {
                 isExecuting = true;
 
-                Execute(upgradeDatastore, item => true, true);
+                Execute(upgradeDatastore, unitTestScript, item => true, true);
 
                 lock (RegisteredModels)
                 {
@@ -121,14 +138,14 @@ namespace Blueprint41
         }
         private bool isExecuting = false;
 
-        internal void Execute(bool upgradeDatastore, Predicate<UpgradeScript> predicate, bool standAloneScript)
+        internal void Execute(bool upgradeDatastore, MethodInfo unitTestScript, Predicate<UpgradeScript> predicate, bool standAloneScript)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
 
             if (executed && standAloneScript)
                 throw new InvalidOperationException();
 
-            List<UpgradeScript> scripts = GetUpgradeScripts();
+            List<UpgradeScript> scripts = GetUpgradeScripts(unitTestScript);
 
             bool anyScriptRan = false;
             foreach (UpgradeScript script in scripts.Where(item => predicate.Invoke(item)))

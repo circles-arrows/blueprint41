@@ -19,7 +19,10 @@ namespace Blueprint41
             KnownTypes = new[]
             {
                 typeof(List<object>),
+                typeof(List<string>),
                 typeof(Dictionary<object, object>),
+                typeof(Dictionary<string, object>),
+                typeof(byte[]),
             },
         };
             
