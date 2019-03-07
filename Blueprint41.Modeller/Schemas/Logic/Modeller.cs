@@ -10,6 +10,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using DrawingNode = Microsoft.Msagl.Drawing.Node;
+using DrawingEdge = Microsoft.Msagl.Drawing.Edge;
 
 namespace Blueprint41.Modeller.Schemas
 {
@@ -183,6 +185,79 @@ namespace Blueprint41.Modeller.Schemas
         public IEnumerable<Relationship> GetRelationships(Entity entity, bool includeInherited = false)
         {
             return GetRelationships(entity, RelationshipDirection.Both, includeInherited);
+        }
+
+        public void RemoveRelationship(Relationship relationship)
+        {
+            Model.Relationships.Relationship.Remove(relationship);
+            relationship.DeleteDrawingEdge(false);
+        }
+
+        public void InsertRelationship(string sourceLabel, string targetLabel, Relationship relationship, DrawingEdge edge)
+        {
+            relationship.IsAddedOnViewGraph = true;
+            relationship.Source.Label = sourceLabel;
+            relationship.Target.Label = targetLabel;
+
+            DrawingNode sourceNode = GraphEditor.Graph.FindNode(relationship.InEntity);
+            DrawingNode targetNode = GraphEditor.Graph.FindNode(relationship.OutEntity);
+
+            Submodel.NodeLocalType source = sourceNode.UserData as Submodel.NodeLocalType;
+            Submodel.NodeLocalType target = targetNode.UserData as Submodel.NodeLocalType;
+
+            int count = 0;
+            string relName = relationship.Name;
+            string typeName = relationship.Type;
+            while (Relationships.Relationship.Any(item => item.Name == relName))
+            {
+                relName += count++;
+                typeName += count;
+            }
+
+            relationship.Name = relName;
+            relationship.Type = typeName;
+            relationship.Target.ReferenceGuid = target.Entity.Guid;
+            relationship.Source.ReferenceGuid = source.Entity.Guid;
+
+            Model.Relationships.Relationship.Add(relationship);
+            relationship.SetDrawingEdge(edge);
+        }
+
+        public void ExcludeFromCurrentModel(Submodel.NodeLocalType model)
+        {
+            if (Model.DisplayedSubmodel.Name == "Main Model")
+                throw new NotSupportedException("Could not exclude entity from current model");
+
+            Model.DisplayedSubmodel.Node.Remove(model);
+        }
+
+        public void DeleteEntity(Submodel.NodeLocalType node)
+        {
+            if (node != null)
+            {
+                Model.Entities.Entity.Remove(node.Entity);
+
+                // delete in sub models
+                foreach (Submodel subModel in Model.Submodels.Submodel)
+                {
+                    List<Submodel.NodeLocalType> tempSubModeNodes = new List<Submodel.NodeLocalType>();
+                    tempSubModeNodes.AddRange(subModel.Node);
+                    foreach (Submodel.NodeLocalType subModelNode in tempSubModeNodes)
+                    {
+                        if (subModelNode.Label == node.Label)
+                            subModel.Node.Remove(subModelNode);
+                    }
+                }
+
+                // delete related relationships
+                List<Relationship> tempRelationships = new List<Relationship>();
+                tempRelationships.AddRange(Model.Relationships.Relationship);
+                foreach (Relationship relationship in tempRelationships)
+                {
+                    if (relationship.Target?.Label == node.Label || relationship.Source.Label == node.Label)
+                        Model.Relationships.Relationship.Remove(relationship);
+                }
+            }
         }
 
         public partial class EntitiesLocalType

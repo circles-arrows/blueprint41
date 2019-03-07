@@ -20,8 +20,8 @@ namespace Blueprint41.Modeller.Schemas
                 if (Model == null && Parent.Model == null)
                     return;
 
-                Parent.CreateEdge();
-
+                Parent.RenameEdge();
+                Model.UpdateEdgesPlacement();
                 Model.AutoResize();
             };
         }

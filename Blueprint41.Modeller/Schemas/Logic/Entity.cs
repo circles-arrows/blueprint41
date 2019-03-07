@@ -80,7 +80,7 @@ namespace Blueprint41.Modeller.Schemas
             Dictionary<string, Relationship> relationships = model.Relationships.Where(func).ToDictionary(x => x.Name);
 
             if (includeInherited == false)
-                return relationships.Select(x=> x.Value).ToList();
+                return relationships.Select(x => x.Value).ToList();
 
             Dictionary<RelationshipDirection, List<Relationship>> inheritedPropertyByDirection = this.GetInheritedRelationships(model);
 
@@ -186,6 +186,12 @@ namespace Blueprint41.Modeller.Schemas
                         }
                     }
 
+                    foreach (var sub in Model.Entities.Entity)
+                    {
+                        if (sub.Inherits == this.Guid)
+                            sub.Inherits = newGuid;
+                    }
+
                     foreach (var relationship in Model.Relationships.Relationship)
                     {
                         if (relationship.Source.ReferenceGuid == this.Guid)
@@ -202,7 +208,6 @@ namespace Blueprint41.Modeller.Schemas
                     }
 
                     Guid = newGuid;
-                    Model.UpdateGraph();
                 }
             };
 

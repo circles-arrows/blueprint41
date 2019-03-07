@@ -1,4 +1,4 @@
-﻿using Microsoft.Msagl.Drawing;
+﻿using DrawingEdge = Microsoft.Msagl.Drawing.Edge;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +10,8 @@ namespace Blueprint41.Modeller
 {
     public class EdgeEventArgs : EventArgs
     {
-        public Edge Edge { get; private set; }
-        public EdgeEventArgs(Edge edge)
+        public DrawingEdge Edge { get; private set; }
+        public EdgeEventArgs(DrawingEdge edge)
         {
             Edge = edge;
         }

@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DrawingNode = Microsoft.Msagl.Drawing.Node;
 
 namespace Blueprint41.Modeller
 {
     public class NodeEventArgs : EventArgs
     {
-        public Node Node { get; private set; }
-        public Microsoft.Msagl.Point Center { get; private set; }
-        public NodeEventArgs(Node node, Microsoft.Msagl.Point center)
+        public DrawingNode Node { get; private set; }
+        public Microsoft.Msagl.Core.Geometry.Point Center { get; private set; }
+        public NodeEventArgs(DrawingNode node, Microsoft.Msagl.Core.Geometry.Point center)
         {
             Node = node;
             Center = center;

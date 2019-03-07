@@ -7,13 +7,20 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Node = Microsoft.Msagl.Core.Layout.Node;
+using DrawingEdge = Microsoft.Msagl.Drawing.Edge;
+using DrawingNode = Microsoft.Msagl.Drawing.Node;
+using Edge = Microsoft.Msagl.Core.Layout.Edge;
+using GeometryPoint = Microsoft.Msagl.Core.Geometry.Point;
+using System.Drawing;
+using Microsoft.Msagl.Core.Layout;
 
 namespace Blueprint41.Modeller.Schemas
 {
     public partial class Submodel
     {
         public List<Relationship> CreatedInheritedRelationships = new List<Relationship>();
-       
+
         protected override void InitializeView()
         {
             NodeCollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
@@ -27,7 +34,7 @@ namespace Blueprint41.Modeller.Schemas
                         foreach (NodeLocalType item in e.NewItems)
                             item.CreateNode();
                         break;
-                    case NotifyCollectionChangedAction.Remove:                
+                    case NotifyCollectionChangedAction.Remove:
                         foreach (NodeLocalType item in e.OldItems)
                             item.DeleteNode();
                         break;
@@ -55,7 +62,7 @@ namespace Blueprint41.Modeller.Schemas
         public partial class NodeLocalType
         {
 
-            private IViewerNode viewerNode = null;
+            private DrawingNode drawingNode = null;
             private bool IsNodeSelected = false;
 
             protected override void InitializeView()
@@ -74,29 +81,38 @@ namespace Blueprint41.Modeller.Schemas
 
             internal void Highlight()
             {
-                if (Model == null || viewerNode == null)
+                if (Model == null || drawingNode == null)
                     return;
 
                 double zoom = Model.DisplayedSubmodel.Node.Count / 25d;
-                if(Model.Viewer.ZoomF < zoom)
-                    Model.Viewer.ZoomF = zoom;
-                Model.Viewer.CenterToPoint(viewerNode.DrawingObject.BoundingBox.Center);
-                viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+                if (Model.GraphEditor.Viewer.ZoomF < zoom)
+                    Model.GraphEditor.Viewer.ZoomF = zoom;
+
+                Model.GraphEditor.Viewer.CenterToPoint(drawingNode.BoundingBox.Center);
+
+                if (Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) is DNode dNode)
+                {
+                    dNode.DrawingNode.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+                    Model.GraphEditor.Viewer.Invalidate(dNode);
+                }
             }
 
             internal void RemoveHighlight()
             {
-                if (Model == null || viewerNode == null)
+                if (Model == null || drawingNode == null)
                     return;
 
-                if (Entity.Virtual)
-                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
-                else if (Entity.Abstract)
-                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT.ToMsAgl();
-                else
-                    viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
+                DNode node = Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) as DNode;
+                DrawingNode dNode = node.DrawingNode;
 
-                Model.Viewer.Invalidate();
+                if (Entity.Virtual)
+                    dNode.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
+                else if (Entity.Abstract)
+                    dNode.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT.ToMsAgl();
+                else
+                    dNode.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
+
+                Model.GraphEditor.Viewer.Invalidate(node);
             }
 
             internal void CreateNode()
@@ -105,52 +121,102 @@ namespace Blueprint41.Modeller.Schemas
                 if (Model == null)
                     return;
 
-                if (viewerNode != null)
+                if (drawingNode != null)
                 {
-                    IsNodeSelected = viewerNode.Node.Attr.FillColor == Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+                    IsNodeSelected = drawingNode.Attr.FillColor == Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
                     DeleteNode();
-                }         
+                }
 
-                NodeTypeEntry nte = Model.GraphEditor.NodeTypes.Last();
-                Microsoft.Msagl.Point center = new Microsoft.Msagl.Point(Xcoordinate ?? 0.0, Ycoordinate ?? 0.0);
+                GeometryPoint center = new GeometryPoint(Xcoordinate ?? 0.0, Ycoordinate ?? 0.0);
+                NodeAttr attr = CreateNodeAttr(Label, IsNodeSelected);
 
-                Node node = new Node(Label);
-                node.Label.Text = Entity.Label;
-
-                node.Attr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
-
-
-                if (Entity.Virtual)
-                    node.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
-                else if (Entity.Abstract)
-                    node.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT.ToMsAgl();
+                if (Model.Graph != null)
+                {
+                    drawingNode = Model.Graph.AddNode(Label);
+                    drawingNode.Attr = attr;
+                    drawingNode.Label.Text = Entity.Label;
+                    drawingNode.UserData = this;
+                    CreateNodeGeometry(drawingNode, Model.Graph, Model.GeometryGraph, center);
+                }
                 else
-                    node.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
+                {
+                    drawingNode = new DrawingNode(Label);
+                    drawingNode.Attr = attr;
+                    drawingNode.Label.Text = Entity.Label;
+                    drawingNode.UserData = this;
 
-
-                node.Label.FontColor = nte.FontColor;
-               // node.Label.FontColor = Color.White;
-                node.Label.FontSize = nte.FontSize;
-
-                node.Attr.Shape = nte.Shape;
-
-                node.UserData = this;
-                CreateNodeGeometry(node, center);
-                viewerNode = Model.Viewer.CreateNode(node);
-                Model.Viewer.AddNode(viewerNode, true);
-                if(IsNodeSelected) viewerNode.Node.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+                    CreateNodeGeometry(drawingNode, Model.GraphEditor.Graph, Model.GraphEditor.Graph.GeometryGraph, center, ConnectionToGraph.Disconnected);
+                    IViewerNode viewerNode = Model.GraphEditor.Viewer.CreateIViewerNode(drawingNode, center, null);
+                    Model.GraphEditor.Viewer.AddNode(viewerNode, false);
+                    Model.GraphEditor.Viewer.Invalidate(viewerNode);
+                }
 
                 Model.AutoResize();
             }
 
+            NodeAttr CreateNodeAttr(string id, bool isSelected)
+            {
+                NodeTypeEntry nte = Model.GraphEditor.NodeTypes.Last();
+
+                NodeAttr nodeAttr = new NodeAttr();
+                nodeAttr.Id = id;
+                nodeAttr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
+
+
+                if (Entity.Virtual)
+                    nodeAttr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
+                else if (Entity.Abstract)
+                    nodeAttr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT.ToMsAgl();
+                else
+                    nodeAttr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
+
+                if (isSelected)
+                    nodeAttr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+
+                nodeAttr.Shape = nte.Shape;
+                nodeAttr.LabelMargin = 1;
+                nodeAttr.Padding = 2;
+
+                return nodeAttr;
+            }
+
+            void CreateNodeGeometry(DrawingNode node, Graph graph, GeometryGraph geometryGraph, GeometryPoint center, ConnectionToGraph connectionTo = ConnectionToGraph.Connected)
+            {
+                double width, height;
+                StringMeasure.MeasureWithFont(node.Label.Text, new Font(node.Label.FontName, (float)node.Label.FontSize, (System.Drawing.FontStyle)(int)node.Label.FontStyle), out width,
+                                              out height);
+
+                if (node.Label != null)
+                {
+                    width += 2 * node.Attr.LabelMargin;
+                    height += 2 * node.Attr.LabelMargin;
+                }
+                if (width < graph.Attr.MinNodeWidth)
+                    width = graph.Attr.MinNodeWidth;
+                if (height < graph.Attr.MinNodeHeight)
+                    height = graph.Attr.MinNodeHeight;
+
+                Node geomNode =
+                    node.GeometryNode =
+                    GeometryGraphCreator.CreateGeometryNode(graph, geometryGraph, node, connectionTo);
+
+                geomNode.BoundaryCurve = NodeBoundaryCurves.GetNodeBoundaryCurve(node, width, height);
+                geomNode.BoundaryCurve.Translate(center);
+                geomNode.Center = center;
+
+                node.Label.Width = width;
+                node.Label.Height = height;
+            }
+
             internal void DeleteNode()
             {
-                if (Model == null || viewerNode == null)
+                if (Model == null || drawingNode == null || Model.GraphEditor.Viewer.Graph == null)
                     return;
 
-                Model.GraphEditor.Graph.RemoveNode(viewerNode.Node);
-                Model.Viewer.RemoveNode(viewerNode, false);
+                if (Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) is IViewerNode node)
+                    Model.GraphEditor.Viewer.RemoveNode(node, true);
 
+                drawingNode = null;
                 Model.AutoResize();
             }
 
@@ -159,33 +225,8 @@ namespace Blueprint41.Modeller.Schemas
                 if (Model == null)
                     return;
 
-                Xcoordinate = viewerNode?.DrawingObject?.BoundingBox.Center.X ?? 0.0;
-                Ycoordinate = viewerNode?.DrawingObject?.BoundingBox.Center.Y ?? 0.0;
-            }
-
-            private void CreateNodeGeometry(Node node, Microsoft.Msagl.Point center)
-            {
-                if (Model == null)
-                    return;
-
-                double width, height;
-                Microsoft.Msagl.GraphViewerGdi.StringMeasure.MeasureWithFont(node.Label.Text, new System.Drawing.Font(node.Label.FontName, node.Label.FontSize), out width, out height);
-
-                if (node.Label != null)
-                {
-                    width += 2 * node.Attr.LabelMargin;
-                    height += 2 * node.Attr.LabelMargin;
-                }
-                if (width < Model.Viewer.Graph.Attr.MinNodeWidth)
-                    width = Model.Viewer.Graph.Attr.MinNodeWidth;
-                if (height < Model.Viewer.Graph.Attr.MinNodeHeight)
-                    height = Model.Viewer.Graph.Attr.MinNodeHeight;
-
-
-                Microsoft.Msagl.Node geomNode =
-                    node.Attr.GeometryNode = CreateLayoutGraph.CreateGeometryNode(Model.GraphEditor.Graph.GeometryGraph, node, Connection.Disconnected);
-                geomNode.BoundaryCurve = NodeBoundaryCurves.GetNodeBoundaryCurve(node, width, height).Translate(center);
-                geomNode.Center = center;
+                Xcoordinate = drawingNode?.BoundingBox.Center.X ?? 0.0;
+                Ycoordinate = drawingNode?.BoundingBox.Center.Y ?? 0.0;
             }
 
             public override string ToString()

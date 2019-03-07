@@ -51,7 +51,6 @@ namespace Blueprint41.Modeller
             this.bindingSourceFunctionalIds = new System.Windows.Forms.BindingSource(this.components);
             this.btnNew = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.editorPanel = new System.Windows.Forms.Panel();
             this.chkDefault = new System.Windows.Forms.CheckBox();
             this.lblDefault = new System.Windows.Forms.Label();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -61,14 +60,15 @@ namespace Blueprint41.Modeller
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.gbPropertiesPanel = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewFunctionalIds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFunctionalIds)).BeginInit();
-            this.editorPanel.SuspendLayout();
+            this.gbPropertiesPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtPrefix
             // 
-            this.txtPrefix.Location = new System.Drawing.Point(97, 73);
+            this.txtPrefix.Location = new System.Drawing.Point(97, 80);
             this.txtPrefix.Margin = new System.Windows.Forms.Padding(2);
             this.txtPrefix.Name = "txtPrefix";
             this.txtPrefix.Size = new System.Drawing.Size(156, 20);
@@ -77,7 +77,7 @@ namespace Blueprint41.Modeller
             // lblPrefix
             // 
             this.lblPrefix.AutoSize = true;
-            this.lblPrefix.Location = new System.Drawing.Point(9, 76);
+            this.lblPrefix.Location = new System.Drawing.Point(9, 83);
             this.lblPrefix.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblPrefix.Name = "lblPrefix";
             this.lblPrefix.Size = new System.Drawing.Size(33, 13);
@@ -87,7 +87,7 @@ namespace Blueprint41.Modeller
             // lblType
             // 
             this.lblType.AutoSize = true;
-            this.lblType.Location = new System.Drawing.Point(9, 15);
+            this.lblType.Location = new System.Drawing.Point(9, 22);
             this.lblType.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblType.Name = "lblType";
             this.lblType.Size = new System.Drawing.Size(31, 13);
@@ -98,7 +98,7 @@ namespace Blueprint41.Modeller
             // 
             this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbType.FormattingEnabled = true;
-            this.cmbType.Location = new System.Drawing.Point(97, 12);
+            this.cmbType.Location = new System.Drawing.Point(97, 19);
             this.cmbType.Margin = new System.Windows.Forms.Padding(2);
             this.cmbType.Name = "cmbType";
             this.cmbType.Size = new System.Drawing.Size(156, 21);
@@ -107,7 +107,7 @@ namespace Blueprint41.Modeller
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(97, 130);
+            this.btnSave.Location = new System.Drawing.Point(97, 137);
             this.btnSave.Margin = new System.Windows.Forms.Padding(2);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 29);
@@ -119,7 +119,7 @@ namespace Blueprint41.Modeller
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(9, 45);
+            this.lblName.Location = new System.Drawing.Point(9, 52);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(35, 13);
             this.lblName.TabIndex = 7;
@@ -127,15 +127,16 @@ namespace Blueprint41.Modeller
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(97, 42);
+            this.txtName.Location = new System.Drawing.Point(97, 49);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(156, 20);
             this.txtName.TabIndex = 8;
             // 
             // btnUpdate
             // 
+            this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdate.Enabled = false;
-            this.btnUpdate.Location = new System.Drawing.Point(132, 373);
+            this.btnUpdate.Location = new System.Drawing.Point(207, 382);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(75, 29);
             this.btnUpdate.TabIndex = 10;
@@ -145,10 +146,10 @@ namespace Blueprint41.Modeller
             // 
             // btnDelete
             // 
-            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDelete.Enabled = false;
-            this.btnDelete.ForeColor = System.Drawing.Color.Black;
-            this.btnDelete.Location = new System.Drawing.Point(213, 373);
+            this.btnDelete.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnDelete.Location = new System.Drawing.Point(288, 382);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 29);
             this.btnDelete.TabIndex = 11;
@@ -160,7 +161,8 @@ namespace Blueprint41.Modeller
             // 
             this.dataGridViewFunctionalIds.AllowUserToAddRows = false;
             this.dataGridViewFunctionalIds.AllowUserToDeleteRows = false;
-            this.dataGridViewFunctionalIds.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridViewFunctionalIds.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewFunctionalIds.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewFunctionalIds.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -178,7 +180,7 @@ namespace Blueprint41.Modeller
             this.dataGridViewFunctionalIds.Name = "dataGridViewFunctionalIds";
             this.dataGridViewFunctionalIds.ReadOnly = true;
             this.dataGridViewFunctionalIds.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewFunctionalIds.Size = new System.Drawing.Size(286, 355);
+            this.dataGridViewFunctionalIds.Size = new System.Drawing.Size(351, 364);
             this.dataGridViewFunctionalIds.TabIndex = 12;
             this.dataGridViewFunctionalIds.SelectionChanged += new System.EventHandler(this.dataGridViewFunctionalIds_SelectionChanged);
             // 
@@ -244,8 +246,9 @@ namespace Blueprint41.Modeller
             // 
             // btnNew
             // 
+            this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnNew.Enabled = false;
-            this.btnNew.Location = new System.Drawing.Point(51, 373);
+            this.btnNew.Location = new System.Drawing.Point(126, 382);
             this.btnNew.Name = "btnNew";
             this.btnNew.Size = new System.Drawing.Size(75, 29);
             this.btnNew.TabIndex = 13;
@@ -255,7 +258,7 @@ namespace Blueprint41.Modeller
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(178, 130);
+            this.btnCancel.Location = new System.Drawing.Point(178, 137);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 29);
             this.btnCancel.TabIndex = 14;
@@ -263,29 +266,10 @@ namespace Blueprint41.Modeller
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // editorPanel
-            // 
-            this.editorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.editorPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.editorPanel.Controls.Add(this.chkDefault);
-            this.editorPanel.Controls.Add(this.lblDefault);
-            this.editorPanel.Controls.Add(this.btnCancel);
-            this.editorPanel.Controls.Add(this.txtPrefix);
-            this.editorPanel.Controls.Add(this.lblPrefix);
-            this.editorPanel.Controls.Add(this.lblType);
-            this.editorPanel.Controls.Add(this.cmbType);
-            this.editorPanel.Controls.Add(this.btnSave);
-            this.editorPanel.Controls.Add(this.txtName);
-            this.editorPanel.Controls.Add(this.lblName);
-            this.editorPanel.Location = new System.Drawing.Point(312, 12);
-            this.editorPanel.Name = "editorPanel";
-            this.editorPanel.Size = new System.Drawing.Size(266, 171);
-            this.editorPanel.TabIndex = 15;
-            // 
             // chkDefault
             // 
             this.chkDefault.AutoSize = true;
-            this.chkDefault.Location = new System.Drawing.Point(97, 104);
+            this.chkDefault.Location = new System.Drawing.Point(97, 111);
             this.chkDefault.Name = "chkDefault";
             this.chkDefault.Size = new System.Drawing.Size(15, 14);
             this.chkDefault.TabIndex = 16;
@@ -294,7 +278,7 @@ namespace Blueprint41.Modeller
             // lblDefault
             // 
             this.lblDefault.AutoSize = true;
-            this.lblDefault.Location = new System.Drawing.Point(9, 103);
+            this.lblDefault.Location = new System.Drawing.Point(9, 110);
             this.lblDefault.Name = "lblDefault";
             this.lblDefault.Size = new System.Drawing.Size(74, 13);
             this.lblDefault.TabIndex = 15;
@@ -360,12 +344,32 @@ namespace Blueprint41.Modeller
             this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
             this.dataGridViewTextBoxColumn7.ReadOnly = true;
             // 
+            // gbPropertiesPanel
+            // 
+            this.gbPropertiesPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbPropertiesPanel.Controls.Add(this.chkDefault);
+            this.gbPropertiesPanel.Controls.Add(this.cmbType);
+            this.gbPropertiesPanel.Controls.Add(this.lblDefault);
+            this.gbPropertiesPanel.Controls.Add(this.lblName);
+            this.gbPropertiesPanel.Controls.Add(this.btnCancel);
+            this.gbPropertiesPanel.Controls.Add(this.txtName);
+            this.gbPropertiesPanel.Controls.Add(this.txtPrefix);
+            this.gbPropertiesPanel.Controls.Add(this.btnSave);
+            this.gbPropertiesPanel.Controls.Add(this.lblPrefix);
+            this.gbPropertiesPanel.Controls.Add(this.lblType);
+            this.gbPropertiesPanel.Location = new System.Drawing.Point(369, 12);
+            this.gbPropertiesPanel.Name = "gbPropertiesPanel";
+            this.gbPropertiesPanel.Size = new System.Drawing.Size(262, 174);
+            this.gbPropertiesPanel.TabIndex = 16;
+            this.gbPropertiesPanel.TabStop = false;
+            this.gbPropertiesPanel.Text = "Properties";
+            // 
             // ManageFunctionalId
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(590, 419);
-            this.Controls.Add(this.editorPanel);
+            this.ClientSize = new System.Drawing.Size(637, 423);
+            this.Controls.Add(this.gbPropertiesPanel);
             this.Controls.Add(this.btnNew);
             this.Controls.Add(this.dataGridViewFunctionalIds);
             this.Controls.Add(this.btnDelete);
@@ -378,11 +382,11 @@ namespace Blueprint41.Modeller
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Manage Functional Id";
+            this.Text = "Functional Id\'s";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewFunctionalIds)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFunctionalIds)).EndInit();
-            this.editorPanel.ResumeLayout(false);
-            this.editorPanel.PerformLayout();
+            this.gbPropertiesPanel.ResumeLayout(false);
+            this.gbPropertiesPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -408,7 +412,6 @@ namespace Blueprint41.Modeller
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
-        private System.Windows.Forms.Panel editorPanel;
         private System.Windows.Forms.CheckBox chkDefault;
         private System.Windows.Forms.Label lblDefault;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
@@ -419,5 +422,6 @@ namespace Blueprint41.Modeller
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvTextBoxColumnPrefix;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvTextBoxColumnType;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dgvcbcDefault;
+        private System.Windows.Forms.GroupBox gbPropertiesPanel;
     }
 }

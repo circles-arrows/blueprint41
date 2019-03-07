@@ -38,9 +38,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbLoader.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pbLoader.ErrorImage = global::Blueprint41.Modeller.Properties.Resources.loader;
+            this.pbLoader.ErrorImage = global::Blueprint41.Modeller.Properties.Resources.Circles_Arrows_Loader;
             this.pbLoader.Image = global::Blueprint41.Modeller.Properties.Resources.Circles_Arrows_Loader;
-            this.pbLoader.InitialImage = global::Blueprint41.Modeller.Properties.Resources.loader;
+            this.pbLoader.InitialImage = global::Blueprint41.Modeller.Properties.Resources.Circles_Arrows_Loader;
             this.pbLoader.Location = new System.Drawing.Point(0, 0);
             this.pbLoader.Name = "pbLoader";
             this.pbLoader.Size = new System.Drawing.Size(120, 120);

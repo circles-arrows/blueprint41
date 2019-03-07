@@ -1,14 +1,8 @@
 ﻿using Blueprint41.Licensing.Connector;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Blueprint41.Modeller

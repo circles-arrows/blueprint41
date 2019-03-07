@@ -106,13 +106,56 @@ namespace Blueprint41.Modeller
             cbo.DataSource = dataList;
         }
 
-        public static Form ShowLoader(this Form parent, bool disableControls = true)
+        public static string ToPlural(this string Singular)
+        {
+            if (MatchAndReplace(ref Singular, "people", "", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "craft", "", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "tooth", "eeth", 4) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "goose", "eese", 4) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "trix", "ces", 1) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "mouse", "ice", 4) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "louse", "ice", 4) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "foot", "eet", 3) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "zoon", "a", 2) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "info", "s", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "eau", "x", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "ieu", "x", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "man", "en", 2) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "cis", "es", 2) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "sis", "es", 2) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "xis", "es", 2) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "ies", "", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "ch", "es", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "fe", "ves", 2) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "sh", "es", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "o", "es", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "f", "ves", 1) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "s", "es", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "x", "es", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "y", "ies", 1) == true) return Singular;
+            MatchAndReplace(ref Singular, "", "s", 0);
+            return Singular;
+        }
+
+        private static bool MatchAndReplace(ref string Text, string Match, string Replace, int Amount)
+        {
+            if (Text.EndsWith(Match, System.StringComparison.CurrentCultureIgnoreCase) == true)
+            {
+                if (Text.Length > 0 && Text.Substring(Text.Length - 1) == Text.Substring(Text.Length - 1).ToUpper())
+                    Replace = Replace.ToUpper();
+
+                Text = Text.Substring(0, Text.Length - Amount) + Replace;
+                return true;
+            }
+            return false;
+        }
+
+        public static Form ShowLoader(this MainForm parent, bool disableControls = true)
         {
             Loader loader = new Loader();
             parent.Enabled = !disableControls;
 
             loader.Owner = parent;
-            loader.Opacity = .6;
 
             //Control control = parent.GraphEditorControl;
 

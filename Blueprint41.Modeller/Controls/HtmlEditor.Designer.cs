@@ -35,8 +35,18 @@ namespace Blueprint41.Modeller
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.fontColorComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.boldButton = new System.Windows.Forms.ToolStripButton();
+            this.italicButton = new System.Windows.Forms.ToolStripButton();
+            this.underlineButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.justifyLeftButton = new System.Windows.Forms.ToolStripButton();
+            this.justifyCenterButton = new System.Windows.Forms.ToolStripButton();
+            this.justifyRightButton = new System.Windows.Forms.ToolStripButton();
+            this.justifyFullButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.orderedListButton = new System.Windows.Forms.ToolStripButton();
+            this.unorderedListButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
@@ -54,16 +64,6 @@ namespace Blueprint41.Modeller
             this.backgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cSSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.boldButton = new System.Windows.Forms.ToolStripButton();
-            this.italicButton = new System.Windows.Forms.ToolStripButton();
-            this.underlineButton = new System.Windows.Forms.ToolStripButton();
-            this.justifyLeftButton = new System.Windows.Forms.ToolStripButton();
-            this.justifyCenterButton = new System.Windows.Forms.ToolStripButton();
-            this.justifyRightButton = new System.Windows.Forms.ToolStripButton();
-            this.justifyFullButton = new System.Windows.Forms.ToolStripButton();
-            this.orderedListButton = new System.Windows.Forms.ToolStripButton();
-            this.unorderedListButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -126,15 +126,117 @@ namespace Blueprint41.Modeller
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
+            // boldButton
+            // 
+            this.boldButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.boldButton.Image = global::Blueprint41.Modeller.Properties.Resources.bold;
+            this.boldButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.boldButton.Name = "boldButton";
+            this.boldButton.Size = new System.Drawing.Size(23, 22);
+            this.boldButton.Text = "toolStripButton1";
+            this.boldButton.ToolTipText = "Bold";
+            this.boldButton.Click += new System.EventHandler(this.boldButton_Click);
+            // 
+            // italicButton
+            // 
+            this.italicButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.italicButton.Image = global::Blueprint41.Modeller.Properties.Resources.italic;
+            this.italicButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.italicButton.Name = "italicButton";
+            this.italicButton.Size = new System.Drawing.Size(23, 22);
+            this.italicButton.Text = "toolStripButton2";
+            this.italicButton.ToolTipText = "Italic";
+            this.italicButton.Click += new System.EventHandler(this.italicButton_Click);
+            // 
+            // underlineButton
+            // 
+            this.underlineButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.underlineButton.Image = global::Blueprint41.Modeller.Properties.Resources.underscore;
+            this.underlineButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.underlineButton.Name = "underlineButton";
+            this.underlineButton.Size = new System.Drawing.Size(23, 22);
+            this.underlineButton.Text = "toolStripButton3";
+            this.underlineButton.ToolTipText = "Underline";
+            this.underlineButton.Click += new System.EventHandler(this.underlineButton_Click);
+            // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
+            // justifyLeftButton
+            // 
+            this.justifyLeftButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.justifyLeftButton.Image = global::Blueprint41.Modeller.Properties.Resources.lj;
+            this.justifyLeftButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.justifyLeftButton.Name = "justifyLeftButton";
+            this.justifyLeftButton.Size = new System.Drawing.Size(23, 22);
+            this.justifyLeftButton.Text = "toolStripButton3";
+            this.justifyLeftButton.ToolTipText = "Justify Left";
+            this.justifyLeftButton.Click += new System.EventHandler(this.justifyLeftButton_Click);
+            // 
+            // justifyCenterButton
+            // 
+            this.justifyCenterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.justifyCenterButton.Image = global::Blueprint41.Modeller.Properties.Resources.cj;
+            this.justifyCenterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.justifyCenterButton.Name = "justifyCenterButton";
+            this.justifyCenterButton.Size = new System.Drawing.Size(23, 22);
+            this.justifyCenterButton.Text = "toolStripButton4";
+            this.justifyCenterButton.ToolTipText = "Justify Center";
+            this.justifyCenterButton.Click += new System.EventHandler(this.justifyCenterButton_Click);
+            // 
+            // justifyRightButton
+            // 
+            this.justifyRightButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.justifyRightButton.Image = global::Blueprint41.Modeller.Properties.Resources.rj;
+            this.justifyRightButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.justifyRightButton.Name = "justifyRightButton";
+            this.justifyRightButton.Size = new System.Drawing.Size(23, 22);
+            this.justifyRightButton.Text = "toolStripButton5";
+            this.justifyRightButton.ToolTipText = "Justify Right";
+            this.justifyRightButton.Click += new System.EventHandler(this.justifyRightButton_Click);
+            // 
+            // justifyFullButton
+            // 
+            this.justifyFullButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.justifyFullButton.Image = global::Blueprint41.Modeller.Properties.Resources.fj;
+            this.justifyFullButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.justifyFullButton.Name = "justifyFullButton";
+            this.justifyFullButton.Size = new System.Drawing.Size(23, 22);
+            this.justifyFullButton.Text = "toolStripButton6";
+            this.justifyFullButton.ToolTipText = "Justify Full";
+            this.justifyFullButton.Click += new System.EventHandler(this.justifyFullButton_Click);
+            // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            // 
+            // orderedListButton
+            // 
+            this.orderedListButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.orderedListButton.Image = global::Blueprint41.Modeller.Properties.Resources.ol;
+            this.orderedListButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.orderedListButton.Name = "orderedListButton";
+            this.orderedListButton.Size = new System.Drawing.Size(23, 22);
+            this.orderedListButton.Text = "toolStripButton3";
+            this.orderedListButton.Click += new System.EventHandler(this.orderedListButton_Click);
+            // 
+            // unorderedListButton
+            // 
+            this.unorderedListButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.unorderedListButton.Image = global::Blueprint41.Modeller.Properties.Resources.uol;
+            this.unorderedListButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.unorderedListButton.Name = "unorderedListButton";
+            this.unorderedListButton.Size = new System.Drawing.Size(23, 22);
+            this.unorderedListButton.Text = "toolStripButton4";
+            this.unorderedListButton.Click += new System.EventHandler(this.unorderedListButton_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButton2
             // 
@@ -237,108 +339,6 @@ namespace Blueprint41.Modeller
             // 
             this.cSSToolStripMenuItem.Name = "cSSToolStripMenuItem";
             this.cSSToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            // 
-            // boldButton
-            // 
-            this.boldButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.boldButton.Image = global::Blueprint41.Modeller.Properties.Resources.bold;
-            this.boldButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.boldButton.Name = "boldButton";
-            this.boldButton.Size = new System.Drawing.Size(23, 22);
-            this.boldButton.Text = "toolStripButton1";
-            this.boldButton.ToolTipText = "Bold";
-            this.boldButton.Click += new System.EventHandler(this.boldButton_Click);
-            // 
-            // italicButton
-            // 
-            this.italicButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.italicButton.Image = global::Blueprint41.Modeller.Properties.Resources.italic;
-            this.italicButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.italicButton.Name = "italicButton";
-            this.italicButton.Size = new System.Drawing.Size(23, 22);
-            this.italicButton.Text = "toolStripButton2";
-            this.italicButton.ToolTipText = "Italic";
-            this.italicButton.Click += new System.EventHandler(this.italicButton_Click);
-            // 
-            // underlineButton
-            // 
-            this.underlineButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.underlineButton.Image = global::Blueprint41.Modeller.Properties.Resources.underscore;
-            this.underlineButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.underlineButton.Name = "underlineButton";
-            this.underlineButton.Size = new System.Drawing.Size(23, 22);
-            this.underlineButton.Text = "toolStripButton3";
-            this.underlineButton.ToolTipText = "Underline";
-            this.underlineButton.Click += new System.EventHandler(this.underlineButton_Click);
-            // 
-            // justifyLeftButton
-            // 
-            this.justifyLeftButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.justifyLeftButton.Image = global::Blueprint41.Modeller.Properties.Resources.lj;
-            this.justifyLeftButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.justifyLeftButton.Name = "justifyLeftButton";
-            this.justifyLeftButton.Size = new System.Drawing.Size(23, 22);
-            this.justifyLeftButton.Text = "toolStripButton3";
-            this.justifyLeftButton.ToolTipText = "Justify Left";
-            this.justifyLeftButton.Click += new System.EventHandler(this.justifyLeftButton_Click);
-            // 
-            // justifyCenterButton
-            // 
-            this.justifyCenterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.justifyCenterButton.Image = global::Blueprint41.Modeller.Properties.Resources.cj;
-            this.justifyCenterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.justifyCenterButton.Name = "justifyCenterButton";
-            this.justifyCenterButton.Size = new System.Drawing.Size(23, 22);
-            this.justifyCenterButton.Text = "toolStripButton4";
-            this.justifyCenterButton.ToolTipText = "Justify Center";
-            this.justifyCenterButton.Click += new System.EventHandler(this.justifyCenterButton_Click);
-            // 
-            // justifyRightButton
-            // 
-            this.justifyRightButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.justifyRightButton.Image = global::Blueprint41.Modeller.Properties.Resources.rj;
-            this.justifyRightButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.justifyRightButton.Name = "justifyRightButton";
-            this.justifyRightButton.Size = new System.Drawing.Size(23, 22);
-            this.justifyRightButton.Text = "toolStripButton5";
-            this.justifyRightButton.ToolTipText = "Justify Right";
-            this.justifyRightButton.Click += new System.EventHandler(this.justifyRightButton_Click);
-            // 
-            // justifyFullButton
-            // 
-            this.justifyFullButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.justifyFullButton.Image = global::Blueprint41.Modeller.Properties.Resources.fj;
-            this.justifyFullButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.justifyFullButton.Name = "justifyFullButton";
-            this.justifyFullButton.Size = new System.Drawing.Size(23, 22);
-            this.justifyFullButton.Text = "toolStripButton6";
-            this.justifyFullButton.ToolTipText = "Justify Full";
-            this.justifyFullButton.Click += new System.EventHandler(this.justifyFullButton_Click);
-            // 
-            // orderedListButton
-            // 
-            this.orderedListButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.orderedListButton.Image = global::Blueprint41.Modeller.Properties.Resources.ol;
-            this.orderedListButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.orderedListButton.Name = "orderedListButton";
-            this.orderedListButton.Size = new System.Drawing.Size(23, 22);
-            this.orderedListButton.Text = "toolStripButton3";
-            this.orderedListButton.Click += new System.EventHandler(this.orderedListButton_Click);
-            // 
-            // unorderedListButton
-            // 
-            this.unorderedListButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.unorderedListButton.Image = global::Blueprint41.Modeller.Properties.Resources.uol;
-            this.unorderedListButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.unorderedListButton.Name = "unorderedListButton";
-            this.unorderedListButton.Size = new System.Drawing.Size(23, 22);
-            this.unorderedListButton.Text = "toolStripButton4";
-            this.unorderedListButton.Click += new System.EventHandler(this.unorderedListButton_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // HtmlEditor
             // 
