@@ -100,8 +100,8 @@ namespace Blueprint41
                 long minor = prevScript?.Minor ?? 0;
                 long patch = prevScript?.Patch ?? 0;
 
-                Action method = (Action)Delegate.CreateDelegate(typeof(Action), this, unitTestScript);
-                UpgradeScript injectedScript = new UpgradeScript(method, major, minor, patch + 1, "InjectedUnitTestMethod");
+                Action<DatastoreModel> method = (Action<DatastoreModel>)Delegate.CreateDelegate(typeof(Action<DatastoreModel>), null, unitTestScript);
+                UpgradeScript injectedScript = new UpgradeScript(new Action(() => method(this)), major, minor, patch + 1, "InjectedUnitTestMethod");
                 scripts.Add(injectedScript);
             }
 
@@ -252,7 +252,6 @@ namespace Blueprint41
                 throw new InvalidOperationException($"Error in script version {script.Major}.{script.Minor}.{script.Patch}, line {line} -> {e.Message}", e);
             }
         }
-
         protected abstract void SubscribeEventHandlers();
 
         [DebuggerDisplay("UpgradeScript: {Major}.{Minor}.{Patch} ({Name})")]

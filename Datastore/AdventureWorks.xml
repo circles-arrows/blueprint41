@@ -1,0 +1,736 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modeller xmlns="http://xirqlz.com/2016/Blueprint/Modeller">
+  <entities>
+    <entity label="Address" name="Address" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="c2f3561d-0551-bc18-1d56-f3c2510518bc" isStaticData="false">
+      <primitive name="AddressLine1" type="string" index="None" nullable="false" isKey="false" guid="64862d20-5527-3302-202d-866427550233" />
+      <primitive name="AddressLine2" type="string" index="None" nullable="true" isKey="false" guid="fd8f7c9a-e1d0-7e65-9a7c-8ffdd0e1657e" />
+      <primitive name="City" type="string" index="None" nullable="false" isKey="false" guid="5a2fd1ea-c790-665d-ead1-2f5a90c75d66" />
+      <primitive name="PostalCode" type="string" index="None" nullable="false" isKey="false" guid="966af611-795b-5e58-11f6-6a965b79585e" />
+      <primitive name="SpatialLocation" type="string" index="None" nullable="true" isKey="false" guid="5140c537-8d68-3d55-37c5-4051688d553d" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="eb378daa-52a7-bda2-aa8d-37eba752a2bd" />
+    </entity>
+    <entity label="AddressType" name="AddressType" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="ac5534b5-b5fb-b7d3-b534-55acfbb5d3b7" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="fe2b00f0-1e3a-3873-f000-2bfe3a1e7338" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="9f736596-05eb-fe5a-9665-739feb055afe" />
+    </entity>
+    <entity label="BillOfMaterials" name="BillOfMaterials" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="4892e2e8-db57-20b4-e8e2-924857dbb420" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="StartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="2c60a2ee-a212-e179-eea2-602c12a279e1" />
+      <primitive name="EndDate" type="DateTime" index="None" nullable="true" isKey="false" guid="46778318-86c5-1b4c-1883-7746c5864c1b" />
+      <primitive name="UnitMeasureCode" type="string" index="None" nullable="false" isKey="false" guid="c1a38745-85ac-a184-4587-a3c1ac8584a1" />
+      <primitive name="BOMLevel" type="string" index="None" nullable="false" isKey="false" guid="7a164a1c-c2ee-fe7a-1c4a-167aeec27afe" />
+      <primitive name="PerAssemblyQty" type="int" index="None" nullable="false" isKey="false" guid="9e38a2bc-4221-f4ac-bca2-389e2142acf4" />
+    </entity>
+    <entity label="ContactType" name="ContactType" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="1a210f02-ee90-71cc-020f-211a90eecc71" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="82aa24f3-6abb-9fa5-f324-aa82bb6aa59f" />
+    </entity>
+    <entity label="CountryRegion" name="CountryRegion" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="966846c3-e539-5745-c346-689639e54557" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Code" type="int" index="Unique" nullable="false" isKey="false" guid="e8c8ab77-f572-1853-77ab-c8e872f55318" />
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="c1fee5e9-bf91-a81a-e9e5-fec191bf1aa8" />
+    </entity>
+    <entity label="CreditCard" name="CreditCard" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="1b6b09c3-d068-2457-c309-6b1b68d05724" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="CardType" type="string" index="None" nullable="false" isKey="false" guid="733b3eb4-f555-285a-b43e-3b7355f55a28" />
+      <primitive name="CardNumber" type="string" index="None" nullable="false" isKey="false" guid="6611cd1a-2732-6809-1acd-116632270968" />
+      <primitive name="ExpMonth" type="string" index="None" nullable="false" isKey="false" guid="e29571bc-ed54-7903-bc71-95e254ed0379" />
+      <primitive name="ExpYear" type="string" index="None" nullable="false" isKey="false" guid="9e762463-864e-1756-6324-769e4e865617" />
+    </entity>
+    <entity label="Culture" name="Culture" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="7914a577-5cca-04ff-77a5-1479ca5cff04" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="536ad299-c095-bcd9-99d2-6a5395c0d9bc" />
+    </entity>
+    <entity label="Currency" name="Currency" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="9020ea69-1f21-1ea4-69ea-2090211fa41e" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="CurrencyCode" type="string" index="None" nullable="false" isKey="false" guid="2895b21b-e25f-c71c-1bb2-95285fe21cc7" />
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="4d4c516a-54a4-202f-6a51-4c4da4542f20" />
+    </entity>
+    <entity label="CurrencyRate" name="CurrencyRate" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="f80eca1e-5ea9-7928-1eca-0ef8a95e2879" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="CurrencyRateDate" type="DateTime" index="None" nullable="false" isKey="false" guid="6d0bea48-b1ab-d58a-48ea-0b6dabb18ad5" />
+      <primitive name="FromCurrencyCode" type="string" index="None" nullable="false" isKey="false" guid="e1862bcf-f8ee-24d5-cf2b-86e1eef8d524" />
+      <primitive name="ToCurrencyCode" type="string" index="None" nullable="false" isKey="false" guid="10d7ee0e-18f6-6171-0eee-d710f6187161" />
+      <primitive name="AverageRate" type="string" index="None" nullable="false" isKey="false" guid="ff0c15aa-f044-a579-aa15-0cff44f079a5" />
+      <primitive name="EndOfDayRate" type="string" index="None" nullable="false" isKey="false" guid="8c130d2c-0e19-b788-2c0d-138c190e88b7" />
+    </entity>
+    <entity label="Customer" name="Customer" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="784fec5f-9fcc-12c0-5fec-4f78cc9fc012" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="AccountNumber" type="string" index="None" nullable="false" isKey="false" guid="733607fd-83ef-2cac-fd07-3673ef83ac2c" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="56018e48-5e5d-0882-488e-01565d5e8208" />
+    </entity>
+    <entity label="Department" name="Department" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="8240e25a-93f1-e396-5ae2-4082f19396e3" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="520f5a82-f818-7596-825a-0f5218f89675" />
+      <primitive name="GroupName" type="string" index="None" nullable="false" isKey="false" guid="c63cfe08-187f-64dd-08fe-3cc67f18dd64" />
+    </entity>
+    <entity label="Document" name="Document" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="211fe820-19ad-bb10-20e8-1f21ad1910bb" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="DocumentNode" type="string" index="None" nullable="false" isKey="false" guid="5f65695d-71bf-c127-5d69-655fbf7127c1" />
+      <primitive name="DocumentLevel" type="string" index="None" nullable="false" isKey="false" guid="895c4ec4-e240-2130-c44e-5c8940e23021" />
+      <primitive name="Title" type="string" index="None" nullable="false" isKey="false" guid="230cb3c4-27c0-4395-c4b3-0c23c0279543" />
+      <primitive name="Owner" type="string" index="None" nullable="false" isKey="false" guid="c75a2dd3-7c5d-696a-d32d-5ac75d7c6a69" />
+      <primitive name="FolderFlag" type="string" index="None" nullable="false" isKey="false" guid="7da3b2c6-f61b-99c4-c6b2-a37d1bf6c499" />
+      <primitive name="FileName" type="string" index="None" nullable="false" isKey="false" guid="a01f8b39-446d-d508-398b-1fa06d4408d5" />
+      <primitive name="FileExtension" type="string" index="None" nullable="false" isKey="false" guid="aa302472-0769-44d2-7224-30aa6907d244" />
+      <primitive name="Revision" type="string" index="None" nullable="false" isKey="false" guid="5145d8ae-ad6d-c9ca-aed8-45516dadcac9" />
+      <primitive name="ChangeNumber" type="string" index="None" nullable="false" isKey="false" guid="a33d8e8b-8106-2f38-8b8e-3da30681382f" />
+      <primitive name="Status" type="string" index="None" nullable="false" isKey="false" guid="3d61e1ae-057b-66c7-aee1-613d7b05c766" />
+      <primitive name="DocumentSummary" type="string" index="None" nullable="true" isKey="false" guid="03e7c401-5865-a263-01c4-e703655863a2" />
+      <primitive name="Doc" type="string" index="None" nullable="true" isKey="false" guid="18769510-47fc-d4a5-1095-7618fc47a5d4" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="b474053a-bd34-cb8a-3a05-74b434bd8acb" />
+    </entity>
+    <entity label="EmailAddress" name="EmailAddress" abstract="false" virtual="false" inherits="1807fafc-d198-9e7c-fcfa-071898d17c9e" guid="5e6bb996-9712-aa84-96b9-6b5e129784aa" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="EmailAddr" type="string" index="None" nullable="true" isKey="false" guid="6005ace7-e1aa-675c-e7ac-0560aae15c67" />
+    </entity>
+    <entity label="Employee" name="Employee" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="a4e917f7-534c-6f68-f717-e9a44c53686f" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="NationalIDNumber" type="string" index="None" nullable="false" isKey="false" guid="262d9e09-aa46-4579-099e-2d2646aa7945" />
+      <primitive name="LoginID" type="int" index="None" nullable="false" isKey="false" guid="f9182515-431b-2c47-1525-18f91b43472c" />
+      <primitive name="JobTitle" type="string" index="None" nullable="false" isKey="false" guid="a1d48247-e9f1-20ff-4782-d4a1f1e9ff20" />
+      <primitive name="BirthDate" type="DateTime" index="None" nullable="false" isKey="false" guid="8c4c29de-18c2-eea8-de29-4c8cc218a8ee" />
+      <primitive name="MaritalStatus" type="string" index="None" nullable="false" isKey="false" guid="0d07c0bc-e63d-e69f-bcc0-070d3de69fe6" />
+      <primitive name="Gender" type="string" index="None" nullable="false" isKey="false" guid="a9c80eaa-c1a6-b2ce-aa0e-c8a9a6c1ceb2" />
+      <primitive name="HireDate" type="DateTime" index="None" nullable="false" isKey="false" guid="d518ad8c-715d-9028-8cad-18d55d712890" />
+      <primitive name="SalariedFlag" type="bool" index="None" nullable="false" isKey="false" guid="552e99e5-6a6c-be55-e599-2e556c6a55be" />
+      <primitive name="VacationHours" type="int" index="None" nullable="false" isKey="false" guid="b2024925-ac35-cf45-2549-02b235ac45cf" />
+      <primitive name="SickLeaveHours" type="int" index="None" nullable="false" isKey="false" guid="5b3f7801-b29e-880b-0178-3f5b9eb20b88" />
+      <primitive name="Currentflag" type="bool" index="None" nullable="false" isKey="false" guid="13b20c8b-0a02-bce0-8b0c-b213020ae0bc" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="3fe25350-7238-d121-5053-e23f387221d1" />
+    </entity>
+    <entity label="EmployeeDepartmentHistory" name="EmployeeDepartmentHistory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="e3896673-f7ac-86ac-7366-89e3acf7ac86" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="StartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="30e521d7-41ec-bbc8-d721-e530ec41c8bb" />
+      <primitive name="EndDate" type="string" index="None" nullable="true" isKey="false" guid="c789e71e-653b-41fd-1ee7-89c73b65fd41" />
+    </entity>
+    <entity label="EmployeePayHistory" name="EmployeePayHistory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="c2b816a4-5c8b-db0a-a416-b8c28b5c0adb" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="RateChangeDate" type="DateTime" index="None" nullable="false" isKey="false" guid="9eb2824d-50be-f61e-4d82-b29ebe501ef6" />
+      <primitive name="Rate" type="string" index="None" nullable="false" isKey="false" guid="5141fb67-c5cd-f19a-67fb-4151cdc59af1" />
+      <primitive name="PayFrequency" type="string" index="None" nullable="false" isKey="false" guid="55b4d880-3772-0d22-80d8-b4557237220d" />
+    </entity>
+    <entity label="Illustration" name="Illustration" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="ce4a41ba-4b40-7a9e-ba41-4ace404b9e7a" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Diagram" type="string" index="None" nullable="false" isKey="false" guid="a655266d-8621-4659-6d26-55a621865946" />
+    </entity>
+    <entity label="JobCandidate" name="JobCandidate" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="1bf53704-5e88-c23c-0437-f51b885e3cc2" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="JobCandidateID" type="int" index="None" nullable="false" isKey="false" guid="6281b588-c4fe-36ba-88b5-8162fec4ba36" />
+      <primitive name="Resume" type="string" index="None" nullable="true" isKey="false" guid="58d2b3a1-71ba-2da8-a1b3-d258ba71a82d" />
+    </entity>
+    <entity label="Location" name="Location" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="a7e8eb9d-30c2-3f1e-9deb-e8a7c2301e3f" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="a5d710ce-17ba-5e59-ce10-d7a5ba17595e" />
+      <primitive name="CostRate" type="string" index="None" nullable="false" isKey="false" guid="32c91da8-e315-3b1f-a81d-c93215e31f3b" />
+      <primitive name="Availability" type="string" index="None" nullable="false" isKey="false" guid="fc9af3c6-fec3-1623-c6f3-9afcc3fe2316" />
+    </entity>
+    <entity label="Neo4jBase" name="Neo4jBase" abstract="true" virtual="true" guid="1807fafc-d198-9e7c-fcfa-071898d17c9e" isStaticData="false">
+      <primitive name="Uid" type="string" index="Unique" nullable="false" isKey="true" guid="e81ac129-d64d-cc06-29c1-1ae84dd606cc" />
+    </entity>
+    <entity label="Password" name="Password" abstract="false" virtual="false" inherits="1807fafc-d198-9e7c-fcfa-071898d17c9e" guid="ccb42483-72f9-5ee5-8324-b4ccf972e55e" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="PasswordHash" type="string" index="None" nullable="false" isKey="false" guid="c125d574-107d-891a-74d5-25c17d101a89" />
+      <primitive name="PasswordSalt" type="string" index="None" nullable="false" isKey="false" guid="9f66573b-a135-56e7-3b57-669f35a1e756" />
+    </entity>
+    <entity label="Person" name="Person" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="3370d440-4537-f6f5-40d4-70333745f5f6" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="PersonType" type="int" index="None" nullable="true" isKey="false" guid="ee57ba20-1eee-c5da-20ba-57eeee1edac5" />
+      <primitive name="NameStyle" type="string" index="None" nullable="false" isKey="false" guid="c368d3c9-ac08-8863-c9d3-68c308ac6388" />
+      <primitive name="Title" type="string" index="None" nullable="true" isKey="false" guid="91bf69f7-5363-2f21-f769-bf916353212f" />
+      <primitive name="FirstName" type="string" index="None" nullable="false" isKey="false" guid="08154f9d-5d07-b87d-9d4f-1508075d7db8" />
+      <primitive name="MiddleName" type="string" index="None" nullable="true" isKey="false" guid="e127b310-0c9d-ab9c-10b3-27e19d0c9cab" />
+      <primitive name="LastName" type="string" index="None" nullable="false" isKey="false" guid="a2a24332-2646-24f4-3243-a2a24626f424" />
+      <primitive name="Suffix" type="string" index="None" nullable="true" isKey="false" guid="4cb3d1a0-de4a-8247-a0d1-b34c4ade4782" />
+      <primitive name="EmailPromotion" type="string" index="None" nullable="false" isKey="false" guid="5c25baf6-a812-1de1-f6ba-255c12a8e11d" />
+      <primitive name="AdditionalContactInfo" type="string" index="None" nullable="true" isKey="false" guid="7b804452-9dfa-790d-5244-807bfa9d0d79" />
+      <primitive name="Demographics" type="string" index="None" nullable="true" isKey="false" guid="5df1b88d-bb5b-4289-8db8-f15d5bbb8942" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="2619e973-c997-a73e-73e9-192697c93ea7" />
+    </entity>
+    <entity label="PhoneNumberType" name="PhoneNumberType" abstract="false" virtual="false" inherits="1807fafc-d198-9e7c-fcfa-071898d17c9e" guid="94aeafaf-61b5-5bc8-afaf-ae94b561c85b" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="true" isKey="false" guid="35a453cc-416e-5d93-cc53-a4356e41935d" />
+    </entity>
+    <entity label="Product" name="Product" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="dca04f88-d9d7-690d-884f-a0dcd7d90d69" />
+      <primitive name="ProductNumber" type="string" index="None" nullable="false" isKey="false" guid="b72e4020-f8c2-0f16-2040-2eb7c2f8160f" />
+      <primitive name="MakeFlag" type="bool" index="None" nullable="false" isKey="false" guid="5b59d665-4247-fd9c-65d6-595b47429cfd" />
+      <primitive name="FinishedGoodsFlag" type="bool" index="None" nullable="false" isKey="false" guid="ce8d5e81-8fd4-ea1b-815e-8dced48f1bea" />
+      <primitive name="Color" type="string" index="None" nullable="true" isKey="false" guid="6cd465ff-fdfc-02d6-ff65-d46cfcfdd602" />
+      <primitive name="SafetyStockLevel" type="int" index="None" nullable="false" isKey="false" guid="b270bb1d-f2e9-4702-1dbb-70b2e9f20247" />
+      <primitive name="ReorderPoint" type="int" index="None" nullable="false" isKey="false" guid="0cbaa1ae-b101-cc8b-aea1-ba0c01b18bcc" />
+      <primitive name="StandardCost" type="double" index="None" nullable="false" isKey="false" guid="1db14d61-e020-39e3-614d-b11d20e0e339" />
+      <primitive name="ListPrice" type="double" index="None" nullable="false" isKey="false" guid="bf656c08-9547-cafc-086c-65bf4795fcca" />
+      <primitive name="Size" type="string" index="None" nullable="true" isKey="false" guid="754315e4-099f-e005-e415-43759f0905e0" />
+      <primitive name="SizeUnitMeasureCode" type="string" index="None" nullable="true" isKey="false" guid="470513f8-cea3-20fd-f813-0547a3cefd20" />
+      <primitive name="WeightUnitMeasureCode" type="string" index="None" nullable="true" isKey="false" guid="f8bbf4ea-555f-6433-eaf4-bbf85f553364" />
+      <primitive name="Weight" type="decimal" index="None" nullable="true" isKey="false" guid="f313623d-676f-e0a4-3d62-13f36f67a4e0" />
+      <primitive name="DaysToManufacture" type="int" index="None" nullable="false" isKey="false" guid="c20ff4cd-f50a-f592-cdf4-0fc20af592f5" />
+      <primitive name="ProductLine" type="string" index="None" nullable="true" isKey="false" guid="7a7ba778-2925-a9fa-78a7-7b7a2529faa9" />
+      <primitive name="Class" type="string" index="None" nullable="true" isKey="false" guid="e7c93489-b608-483a-8934-c9e708b63a48" />
+      <primitive name="Style" type="string" index="None" nullable="true" isKey="false" guid="393f957c-888c-1bc6-7c95-3f398c88c61b" />
+      <primitive name="SellStartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="0b8c6846-81bb-ed0c-4668-8c0bbb810ced" />
+      <primitive name="SellEndDate" type="DateTime" index="None" nullable="true" isKey="false" guid="c314de1a-edff-1e1e-1ade-14c3ffed1e1e" />
+      <primitive name="DiscontinuedDate" type="DateTime" index="None" nullable="true" isKey="false" guid="0667535d-9337-892d-5d53-670637932d89" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="c81a553e-c206-af24-3e55-1ac806c224af" />
+    </entity>
+    <entity label="ProductCategory" name="ProductCategory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="d26ebfc4-4003-6085-c4bf-6ed203408560" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="dda474f6-17ee-68cb-f674-a4ddee17cb68" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="adaa3b44-0c3f-aee2-443b-aaad3f0ce2ae" />
+    </entity>
+    <entity label="ProductCostHistory" name="ProductCostHistory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="3df4704f-b9c8-7428-4f70-f43dc8b92874" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="StartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="4d31a990-7897-9e28-90a9-314d9778289e" />
+      <primitive name="EndDate" type="DateTime" index="None" nullable="false" isKey="false" guid="078b9379-5c40-641d-7993-8b07405c1d64" />
+      <primitive name="StandardCost" type="string" index="None" nullable="false" isKey="false" guid="f789f418-67c3-ab9e-18f4-89f7c3679eab" />
+    </entity>
+    <entity label="ProductDescription" name="ProductDescription" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="4612d892-cc63-979a-92d8-124663cc9a97" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Description" type="string" index="None" nullable="false" isKey="false" guid="3d70ecce-b44b-06a7-ceec-703d4bb4a706" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="198405f3-0d6a-9152-f305-84196a0d5291" />
+    </entity>
+    <entity label="ProductInventory" name="ProductInventory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="c1939c1f-ebfb-5813-1f9c-93c1fbeb1358" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Shelf" type="string" index="None" nullable="false" isKey="false" guid="3eceeb0f-b903-166e-0feb-ce3e03b96e16" />
+      <primitive name="Bin" type="string" index="None" nullable="false" isKey="false" guid="60f8ba6d-9ae8-5bdd-6dba-f860e89add5b" />
+      <primitive name="Quantity" type="int" index="None" nullable="false" isKey="false" guid="4faaaa55-5987-dafc-55aa-aa4f8759fcda" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="a8f722fb-94ff-5ca6-fb22-f7a8ff94a65c" />
+    </entity>
+    <entity label="ProductListPriceHistory" name="ProductListPriceHistory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="cf14491d-c818-91c3-1d49-14cf18c8c391" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="StartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="4640b184-9e7e-5007-84b1-40467e9e0750" />
+      <primitive name="EndDate" type="DateTime" index="None" nullable="false" isKey="false" guid="caf20317-baa9-aa32-1703-f2caa9ba32aa" />
+      <primitive name="ListPrice" type="string" index="None" nullable="false" isKey="false" guid="1e0e8db3-f44d-96ae-b38d-0e1e4df4ae96" />
+    </entity>
+    <entity label="ProductModel" name="ProductModel" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="dea8d49f-e198-5565-9fd4-a8de98e16555" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="1e1fbfcc-a62d-3359-ccbf-1f1e2da65933" />
+      <primitive name="CatalogDescription" type="string" index="None" nullable="true" isKey="false" guid="2afe0089-da48-5eb9-8900-fe2a48dab95e" />
+      <primitive name="Instructions" type="string" index="None" nullable="true" isKey="false" guid="333ad174-1f74-88b3-74d1-3a33741fb388" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="f0eb3f40-bdfc-f570-403f-ebf0fcbd70f5" />
+    </entity>
+    <entity label="ProductPhoto" name="ProductPhoto" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="1d8a225e-fa4e-bbd6-5e22-8a1d4efad6bb" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="ThumbNailPhoto" type="string" index="None" nullable="true" isKey="false" guid="37f36062-b005-4fe0-6260-f33705b0e04f" />
+      <primitive name="ThumbNailPhotoFileName" type="string" index="None" nullable="true" isKey="false" guid="fc30c00f-64f9-df93-0fc0-30fcf96493df" />
+      <primitive name="LargePhoto" type="string" index="None" nullable="true" isKey="false" guid="656ffcf2-f444-088b-f2fc-6f6544f48b08" />
+      <primitive name="LargePhotoFileName" type="string" index="None" nullable="true" isKey="false" guid="d3af2225-57f6-d48e-2522-afd3f6578ed4" />
+    </entity>
+    <entity label="ProductProductPhoto" name="ProductProductPhoto" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="c99c78ab-70b6-b681-ab78-9cc9b67081b6" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Primary" type="string" index="None" nullable="false" isKey="false" guid="188e55d4-9ac6-9edb-d455-8e18c69adb9e" />
+    </entity>
+    <entity label="ProductReview" name="ProductReview" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="e6f558c5-2983-6b34-c558-f5e68329346b" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="ReviewerName" type="string" index="None" nullable="false" isKey="false" guid="8d1e0cf8-6c89-d2ab-f80c-1e8d896cabd2" />
+      <primitive name="ReviewDate" type="DateTime" index="None" nullable="false" isKey="false" guid="2c0b92cf-3029-dbe1-cf92-0b2c2930e1db" />
+      <primitive name="EmailAddress" type="string" index="None" nullable="false" isKey="false" guid="e74e2cd0-2e09-82bf-d02c-4ee7092ebf82" />
+      <primitive name="Rating" type="string" index="None" nullable="false" isKey="false" guid="4193f029-8e98-5676-29f0-9341988e7656" />
+      <primitive name="Comments" type="string" index="None" nullable="false" isKey="false" guid="d3daa11a-c761-3e82-1aa1-dad361c7823e" />
+    </entity>
+    <entity label="ProductVendor" name="ProductVendor" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="6a94eaf5-90f7-f30d-f5ea-946af7900df3" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="AverageLeadTime" type="string" index="None" nullable="false" isKey="false" guid="e97ea831-a7ab-4865-31a8-7ee9aba76548" />
+      <primitive name="StandardPrice" type="string" index="None" nullable="false" isKey="false" guid="15a623e0-40c6-bf89-e023-a615c64089bf" />
+      <primitive name="LastReceiptCost" type="string" index="None" nullable="true" isKey="false" guid="d5f64dd0-4ed1-ed40-d04d-f6d5d14e40ed" />
+      <primitive name="LastReceiptDate" type="DateTime" index="None" nullable="true" isKey="false" guid="674eee56-f204-805b-56ee-4e6704f25b80" />
+      <primitive name="MinOrderQty" type="int" index="None" nullable="false" isKey="false" guid="ca4e030d-1a16-09ae-0d03-4eca161aae09" />
+      <primitive name="MaxOrderQty" type="int" index="None" nullable="false" isKey="false" guid="06437802-bc02-2dd5-0278-430602bcd52d" />
+      <primitive name="OnOrderQty" type="int" index="None" nullable="false" isKey="false" guid="ee3f1ff3-3afc-4fcd-f31f-3feefc3acd4f" />
+      <primitive name="UnitMeasureCode" type="string" index="None" nullable="true" isKey="false" guid="4903dc3a-340e-78b1-3adc-03490e34b178" />
+    </entity>
+    <entity label="PurchaseOrderDetail" name="PurchaseOrderDetail" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="ef6cbcb5-0f55-a919-b5bc-6cef550f19a9" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="DueDate" type="DateTime" index="None" nullable="false" isKey="false" guid="95859457-4b61-3c20-5794-8595614b203c" />
+      <primitive name="OrderQty" type="int" index="None" nullable="false" isKey="false" guid="8e82cf75-deee-4db8-75cf-828eeedeb84d" />
+      <primitive name="UnitPrice" type="double" index="None" nullable="false" isKey="false" guid="d9c9971f-2ca7-cd74-1f97-c9d9a72c74cd" />
+      <primitive name="LineTotal" type="string" index="None" nullable="false" isKey="false" guid="d6a5461b-7ed3-b4d3-1b46-a5d6d37ed3b4" />
+      <primitive name="ReceivedQty" type="int" index="None" nullable="false" isKey="false" guid="a9a9d919-794f-dbab-19d9-a9a94f79abdb" />
+      <primitive name="RejectedQty" type="int" index="None" nullable="false" isKey="false" guid="ecb29107-dd4f-b022-0791-b2ec4fdd22b0" />
+      <primitive name="StockedQty" type="int" index="None" nullable="false" isKey="false" guid="1ccd87d7-92b8-f71d-d787-cd1cb8921df7" />
+    </entity>
+    <entity label="PurchaseOrderHeader" name="PurchaseOrderHeader" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="af186be7-3945-e798-e76b-18af453998e7" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="RevisionNumber" type="string" index="None" nullable="false" isKey="false" guid="00ef3162-dff3-3c1e-6231-ef00f3df1e3c" />
+      <primitive name="Status" type="string" index="None" nullable="false" isKey="false" guid="d3f33e46-8cd7-23b0-463e-f3d3d78cb023" />
+      <primitive name="OrderDate" type="DateTime" index="None" nullable="false" isKey="false" guid="184c4229-bcf7-c709-2942-4c18f7bc09c7" />
+      <primitive name="ShipDate" type="DateTime" index="None" nullable="false" isKey="false" guid="be8827cc-9173-89d1-cc27-88be7391d189" />
+      <primitive name="SubTotal" type="double" index="None" nullable="false" isKey="false" guid="c5b0b4d1-a7d9-9cd2-d1b4-b0c5d9a7d29c" />
+      <primitive name="TaxAmt" type="double" index="None" nullable="false" isKey="false" guid="75382498-7878-6869-9824-387578786968" />
+      <primitive name="Freight" type="string" index="None" nullable="false" isKey="false" guid="18de8841-c1c5-2b2d-4188-de18c5c12d2b" />
+      <primitive name="TotalDue" type="double" index="None" nullable="false" isKey="false" guid="d1398db7-eea7-2b2b-b78d-39d1a7ee2b2b" />
+    </entity>
+    <entity label="SalesOrderDetail" name="SalesOrderDetail" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="ddd8517a-09a1-1be2-7a51-d8dda109e21b" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="CarrierTrackingNumber" type="string" index="None" nullable="true" isKey="false" guid="e8368a2b-2fa1-0ed9-2b8a-36e8a12fd90e" />
+      <primitive name="OrderQty" type="int" index="None" nullable="false" isKey="false" guid="76266062-1569-9c20-6260-26766915209c" />
+      <primitive name="UnitPrice" type="double" index="None" nullable="false" isKey="false" guid="5ae2b677-e720-1cec-77b6-e25a20e7ec1c" />
+      <primitive name="UnitPriceDiscount" type="string" index="None" nullable="false" isKey="false" guid="d48959a8-f892-1777-a859-89d492f87717" />
+      <primitive name="LineTotal" type="string" index="None" nullable="false" isKey="false" guid="558e6773-b554-654b-7367-8e5554b54b65" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="0199c80b-a8c9-4d95-0bc8-9901c9a8954d" />
+    </entity>
+    <entity label="SalesOrderHeader" name="SalesOrderHeader" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="9dac8628-db06-011f-2886-ac9d06db1f01" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="RevisionNumber" type="string" index="None" nullable="false" isKey="false" guid="3bd24d44-13c0-8793-444d-d23bc0139387" />
+      <primitive name="OrderDate" type="DateTime" index="None" nullable="false" isKey="false" guid="c21023b2-70c4-7c84-b223-10c2c470847c" />
+      <primitive name="DueDate" type="DateTime" index="None" nullable="false" isKey="false" guid="92f9650a-d084-955d-0a65-f99284d05d95" />
+      <primitive name="ShipDate" type="DateTime" index="None" nullable="true" isKey="false" guid="82516ca7-5d40-325c-a76c-5182405d5c32" />
+      <primitive name="Status" type="string" index="None" nullable="false" isKey="false" guid="1cf1ca2d-40e4-983d-2dca-f11ce4403d98" />
+      <primitive name="OnlineOrderFlag" type="string" index="None" nullable="false" isKey="false" guid="142cb30b-5a1d-42d4-0bb3-2c141d5ad442" />
+      <primitive name="SalesOrderNumber" type="string" index="None" nullable="false" isKey="false" guid="b38d8844-0305-598a-4488-8db305038a59" />
+      <primitive name="PurchaseOrderNumber" type="string" index="None" nullable="true" isKey="false" guid="da851200-bfda-76f6-0012-85dadabff676" />
+      <primitive name="AccountNumber" type="string" index="None" nullable="true" isKey="false" guid="18709405-2519-115e-0594-701819255e11" />
+      <primitive name="CreditCardID" type="int" index="None" nullable="true" isKey="false" guid="defaefa8-c687-e1a5-a8ef-fade87c6a5e1" />
+      <primitive name="CreditCardApprovalCode" type="string" index="None" nullable="true" isKey="false" guid="70046d57-ce52-093d-576d-047052ce3d09" />
+      <primitive name="CurrencyRateID" type="int" index="None" nullable="true" isKey="false" guid="7e1f6618-22fe-c234-1866-1f7efe2234c2" />
+      <primitive name="SubTotal" type="string" index="None" nullable="false" isKey="false" guid="f969ffba-6bea-275f-baff-69f9ea6b5f27" />
+      <primitive name="TaxAmt" type="string" index="None" nullable="false" isKey="false" guid="ba3ad0f3-b44b-d3e4-f3d0-3aba4bb4e4d3" />
+      <primitive name="Freight" type="string" index="None" nullable="false" isKey="false" guid="c2713265-0df6-90a0-6532-71c2f60da090" />
+      <primitive name="TotalDue" type="string" index="None" nullable="false" isKey="false" guid="ede0c6dc-2294-90a6-dcc6-e0ed9422a690" />
+      <primitive name="Comment" type="string" index="None" nullable="true" isKey="false" guid="c5cda3f9-24da-e264-f9a3-cdc5da2464e2" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="c0e4478b-f8ab-3570-8b47-e4c0abf87035" />
+    </entity>
+    <entity label="SalesPerson" name="SalesPerson" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="c99006bd-fbc8-dfc8-bd06-90c9c8fbc8df" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="SalesQuota" type="string" index="None" nullable="true" isKey="false" guid="060c0bca-45d6-4f1d-ca0b-0c06d6451d4f" />
+      <primitive name="Bonus" type="string" index="None" nullable="false" isKey="false" guid="adff2360-2654-fd42-6023-ffad542642fd" />
+      <primitive name="CommissionPct" type="string" index="None" nullable="false" isKey="false" guid="0b37db45-f39a-1640-45db-370b9af34016" />
+      <primitive name="SalesYTD" type="string" index="None" nullable="false" isKey="false" guid="2530fef4-524b-ca2b-f4fe-30254b522bca" />
+      <primitive name="SalesLastYear" type="string" index="None" nullable="false" isKey="false" guid="306e92d6-e2e3-85fa-d692-6e30e3e2fa85" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="43ad637d-2f86-4a60-7d63-ad43862f604a" />
+    </entity>
+    <entity label="SalesPersonQuotaHistory" name="SalesPersonQuotaHistory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="60cc7aa6-cb2b-0eb5-a67a-cc602bcbb50e" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="QuotaDate" type="DateTime" index="None" nullable="false" isKey="false" guid="83cf094d-766c-de34-4d09-cf836c7634de" />
+      <primitive name="SalesQuota" type="string" index="None" nullable="false" isKey="false" guid="20690b95-32b9-498b-950b-6920b9328b49" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="8043f148-58e9-4cf6-48f1-4380e958f64c" />
+    </entity>
+    <entity label="SalesReason" name="SalesReason" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="c6f45fc7-d5d6-5b76-c75f-f4c6d6d5765b" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="633614ca-786c-6137-ca14-36636c783761" />
+      <primitive name="ReasonType" type="string" index="None" nullable="false" isKey="false" guid="ead7a04e-f505-c076-4ea0-d7ea05f576c0" />
+    </entity>
+    <entity label="SalesTaxRate" name="SalesTaxRate" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="dd904443-0fd7-0912-4344-90ddd70f1209" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="TaxType" type="string" index="None" nullable="false" isKey="false" guid="7e4b9e7b-f86b-d028-7b9e-4b7e6bf828d0" />
+      <primitive name="TaxRate" type="string" index="None" nullable="false" isKey="false" guid="2d79f66b-96f6-847b-6bf6-792df6967b84" />
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="4696c652-3a79-d8df-52c6-9646793adfd8" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="6dff53d9-21a8-1ef6-d953-ff6da821f61e" />
+    </entity>
+    <entity label="SalesTerritory" name="SalesTerritory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="c59d1e59-ad52-4de4-591e-9dc552ade44d" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="c61376c8-e337-6a95-c876-13c637e3956a" />
+      <primitive name="CountryRegionCode" type="string" index="None" nullable="false" isKey="false" guid="463887eb-fdf7-c94f-eb87-3846f7fd4fc9" />
+      <primitive name="Group" type="string" index="None" nullable="false" isKey="false" guid="11849b7a-cc8a-3ab5-7a9b-84118accb53a" />
+      <primitive name="SalesYTD" type="string" index="None" nullable="false" isKey="false" guid="484adbcb-852b-2cf7-cbdb-4a482b85f72c" />
+      <primitive name="SalesLastYear" type="string" index="None" nullable="false" isKey="false" guid="0dc61ae1-3583-6326-e11a-c60d83352663" />
+      <primitive name="CostYTD" type="string" index="None" nullable="false" isKey="false" guid="3d8590cd-9399-b09c-cd90-853d99939cb0" />
+      <primitive name="CostLastYear" type="string" index="None" nullable="false" isKey="false" guid="06286cb3-0677-293b-b36c-280677063b29" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="e46cb768-f8e6-acbc-68b7-6ce4e6f8bcac" />
+    </entity>
+    <entity label="SalesTerritoryHistory" name="SalesTerritoryHistory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="0f937bcd-130a-cd95-cd7b-930f0a1395cd" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="StartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="c7f43af5-bc04-c96f-f53a-f4c704bc6fc9" />
+      <primitive name="EndDate" type="DateTime" index="None" nullable="true" isKey="false" guid="57e0f099-98d3-335a-99f0-e057d3985a33" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="f7fb0244-8176-6a1e-4402-fbf776811e6a" />
+    </entity>
+    <entity label="SchemaBase" name="SchemaBase" abstract="true" virtual="true" inherits="1807fafc-d198-9e7c-fcfa-071898d17c9e" guid="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" isStaticData="false">
+      <primitive name="ModifiedDate" type="DateTime" index="None" nullable="false" isKey="false" guid="113916db-8be8-dc0c-db16-3911e88b0cdc" />
+    </entity>
+    <entity label="ScrapReason" name="ScrapReason" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="13a1027e-d167-d660-7e02-a11367d160d6" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="776ac1c3-a01e-50c3-c3c1-6a771ea0c350" />
+    </entity>
+    <entity label="Shift" name="Shift" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="64ca1441-375e-5ae6-4114-ca645e37e65a" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="68141d2e-0291-a65f-2e1d-146891025fa6" />
+      <primitive name="StartTime" type="DateTime" index="None" nullable="false" isKey="false" guid="febc6f6f-01ac-21c9-6f6f-bcfeac01c921" />
+      <primitive name="EndTime" type="DateTime" index="None" nullable="false" isKey="false" guid="347f61f9-d39d-19cc-f961-7f349dd3cc19" />
+    </entity>
+    <entity label="ShipMethod" name="ShipMethod" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="9de983cf-9a5d-01ee-cf83-e99d5d9aee01" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="5a0e9021-3734-6f39-2190-0e5a3437396f" />
+      <primitive name="ShipBase" type="string" index="None" nullable="false" isKey="false" guid="d1918f5d-f9c0-a94e-5d8f-91d1c0f94ea9" />
+      <primitive name="ShipRate" type="string" index="None" nullable="false" isKey="false" guid="cec94e05-edd3-868b-054e-c9ced3ed8b86" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="297d6468-2ce5-a910-6864-7d29e52c10a9" />
+    </entity>
+    <entity label="ShoppingCartItem" name="ShoppingCartItem" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="46d935bd-870f-fa9e-bd35-d9460f879efa" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Quantity" type="int" index="None" nullable="false" isKey="false" guid="3005d756-1179-86b5-56d7-05307911b586" />
+      <primitive name="DateCreated" type="DateTime" index="None" nullable="false" isKey="false" guid="aeef2ced-461b-f70c-ed2c-efae1b460cf7" />
+    </entity>
+    <entity label="SpecialOffer" name="SpecialOffer" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="2f5402f2-2dac-d1ae-f202-542fac2daed1" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Description" type="string" index="None" nullable="false" isKey="false" guid="79dea1d4-6887-1a1c-d4a1-de7987681c1a" />
+      <primitive name="DiscountPct" type="string" index="None" nullable="false" isKey="false" guid="b4423f3e-2472-986f-3e3f-42b472246f98" />
+      <primitive name="Type" type="string" index="None" nullable="false" isKey="false" guid="407404f1-35f5-45b7-f104-7440f535b745" />
+      <primitive name="Category" type="string" index="None" nullable="false" isKey="false" guid="4d6cc2a6-9d75-4ec6-a6c2-6c4d759dc64e" />
+      <primitive name="StartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="98314a38-ecd4-2e98-384a-3198d4ec982e" />
+      <primitive name="EndDate" type="DateTime" index="None" nullable="false" isKey="false" guid="154964e6-c803-d4ad-e664-491503c8add4" />
+      <primitive name="MinQty" type="int" index="None" nullable="false" isKey="false" guid="fe049a35-5e2c-a159-359a-04fe2c5e59a1" />
+      <primitive name="MaxQty" type="string" index="None" nullable="false" isKey="false" guid="bb06d9b7-f838-8522-b7d9-06bb38f82285" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="b552963b-d1a6-8de9-3b96-52b5a6d1e98d" />
+    </entity>
+    <entity label="StateProvince" name="StateProvince" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="32fa6673-91ec-ca85-7366-fa32ec9185ca" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="StateProvinceCode" type="string" index="None" nullable="false" isKey="false" guid="4a7ff1a4-7441-4982-a4f1-7f4a41748249" />
+      <primitive name="CountryRegionCode" type="string" index="None" nullable="false" isKey="false" guid="fd8c76b7-cff0-001a-b776-8cfdf0cf1a00" />
+      <primitive name="IsOnlyStateProvinceFlag" type="bool" index="None" nullable="false" isKey="false" guid="524df613-6c18-9b93-13f6-4d52186c939b" />
+      <primitive name="Name" type="string" index="None" nullable="true" isKey="false" guid="d50359e8-d130-a3c0-e859-03d530d1c0a3" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="d38ad992-cae1-65e9-92d9-8ad3e1cae965" />
+    </entity>
+    <entity label="Store" name="Store" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="3e967773-1c1d-4279-7377-963e1d1c7942" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="ed95c49d-ec49-f678-9dc4-95ed49ec78f6" />
+      <primitive name="Demographics" type="string" index="None" nullable="true" isKey="false" guid="1e313303-8554-d5e6-0333-311e5485e6d5" />
+      <primitive name="rowguid" type="string" index="None" nullable="false" isKey="false" guid="5c33b137-f798-3051-37b1-335c98f75130" />
+    </entity>
+    <entity label="TransactionHistory" name="TransactionHistory" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="3a0f6424-555e-abf6-2464-0f3a5e55f6ab" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="ReferenceOrderID" type="int" index="None" nullable="false" isKey="false" guid="cddaf6fb-de60-3f64-fbf6-dacd60de643f" />
+      <primitive name="TransactionDate" type="DateTime" index="None" nullable="false" isKey="false" guid="c60f8106-3096-8fdb-0681-0fc69630db8f" />
+      <primitive name="TransactionType" type="string" index="None" nullable="false" isKey="false" guid="e04fe155-4143-1165-55e1-4fe043416511" />
+      <primitive name="Quantity" type="int" index="None" nullable="false" isKey="false" guid="90018b99-7aee-5b3b-998b-0190ee7a3b5b" />
+      <primitive name="ActualCost" type="string" index="None" nullable="false" isKey="false" guid="8f1038ff-c1b3-0bd9-ff38-108fb3c1d90b" />
+      <primitive name="ReferenceOrderLineID" type="int" index="None" nullable="false" isKey="false" guid="f31b5078-36f5-a25a-7850-1bf3f5365aa2" />
+    </entity>
+    <entity label="TransactionHistoryArchive" name="TransactionHistoryArchive" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="af10bbd7-0e30-5e5a-d7bb-10af300e5a5e" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="ReferenceOrderID" type="int" index="None" nullable="false" isKey="false" guid="cc8e0c56-e3a7-2b1a-560c-8ecca7e31a2b" />
+      <primitive name="TransactionDate" type="DateTime" index="None" nullable="false" isKey="false" guid="49842a47-0d51-9ba5-472a-8449510da59b" />
+      <primitive name="TransactionType" type="string" index="None" nullable="false" isKey="false" guid="6fc44a14-7c84-051b-144a-c46f847c1b05" />
+      <primitive name="Quantity" type="int" index="None" nullable="false" isKey="false" guid="8714a74a-4729-4f45-4aa7-14872947454f" />
+      <primitive name="ActualCost" type="decimal" index="None" nullable="false" isKey="false" guid="17ddd5d5-fc74-1fa7-d5d5-dd1774fca71f" />
+      <primitive name="ReferenceOrderLineID" type="int" index="None" nullable="false" isKey="false" guid="5d99cf60-0b32-b624-60cf-995d320b24b6" />
+    </entity>
+    <entity label="UnitMeasure" name="UnitMeasure" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="a74ca31b-67f6-248f-1ba3-4ca7f6678f24" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="UnitMeasureCorde" type="string" index="None" nullable="false" isKey="false" guid="7b3b4d4f-e7e0-28da-4f4d-3b7be0e7da28" />
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="b391cd0c-ef77-2f5c-0ccd-91b377ef5c2f" />
+    </entity>
+    <entity label="Vendor" name="Vendor" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="f28e36c0-532b-e4e2-c036-8ef22b53e2e4" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="AccountNumber" type="string" index="None" nullable="false" isKey="false" guid="93d97b6f-a39b-99a0-6f7b-d9939ba3a099" />
+      <primitive name="Name" type="string" index="None" nullable="false" isKey="false" guid="76073d6c-65f8-7ba7-6c3d-0776f865a77b" />
+      <primitive name="CreditRating" type="string" index="None" nullable="false" isKey="false" guid="5436b154-5c06-837c-54b1-3654065c7c83" />
+      <primitive name="PreferredVendorStatus" type="string" index="None" nullable="false" isKey="false" guid="5eda82cd-93fa-c726-cd82-da5efa9326c7" />
+      <primitive name="ActiveFlag" type="string" index="None" nullable="false" isKey="false" guid="fd6c80c8-c369-de36-c880-6cfd69c336de" />
+      <primitive name="PurchasingWebServiceURL" type="string" index="None" nullable="true" isKey="false" guid="91b53242-77d8-ceb8-4232-b591d877b8ce" />
+    </entity>
+    <entity label="WorkOrder" name="WorkOrder" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="12ffff1c-f903-5cb4-1cff-ff1203f9b45c" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="OrderQty" type="int" index="None" nullable="false" isKey="false" guid="13822eac-3fa5-cd7f-ac2e-8213a53f7fcd" />
+      <primitive name="StockedQty" type="int" index="None" nullable="false" isKey="false" guid="9b3ab66f-73f3-77da-6fb6-3a9bf373da77" />
+      <primitive name="ScrappedQty" type="int" index="None" nullable="false" isKey="false" guid="bbead8d9-16c9-16f9-d9d8-eabbc916f916" />
+      <primitive name="StartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="b71dff0a-bf77-bfbb-0aff-1db777bfbbbf" />
+      <primitive name="EndDate" type="DateTime" index="None" nullable="true" isKey="false" guid="b515328e-9ba0-458e-8e32-15b5a09b8e45" />
+      <primitive name="DueDate" type="DateTime" index="None" nullable="false" isKey="false" guid="4713e2d2-aa2a-bce7-d2e2-13472aaae7bc" />
+    </entity>
+    <entity label="WorkOrderRouting" name="WorkOrderRouting" abstract="false" virtual="false" inherits="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" guid="1e8b8588-731c-f6ed-8885-8b1e1c73edf6" isStaticData="false" functionalId="1420f18d-f784-6c9f-8df1-201484f79f6c">
+      <primitive name="OperationSequence" type="string" index="None" nullable="false" isKey="false" guid="b2063460-350d-5ab6-6034-06b20d35b65a" />
+      <primitive name="ScheduledStartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="3ee1bbb1-135d-93a6-b1bb-e13e5d13a693" />
+      <primitive name="ScheduledEndDate" type="DateTime" index="None" nullable="false" isKey="false" guid="b5322cb2-775a-fae7-b22c-32b55a77e7fa" />
+      <primitive name="ActualStartDate" type="DateTime" index="None" nullable="false" isKey="false" guid="6a1b6d69-9312-1147-696d-1b6a12934711" />
+      <primitive name="ActualEndDate" type="DateTime" index="None" nullable="false" isKey="false" guid="80607c41-9b6a-8c5f-417c-60806a9b5f8c" />
+      <primitive name="ActualResourceHrs" type="string" index="None" nullable="false" isKey="false" guid="a82eac2b-fc6f-244b-2bac-2ea86ffc4b24" />
+      <primitive name="PlannedCost" type="string" index="None" nullable="false" isKey="false" guid="a9fa1051-bf78-f934-5110-faa978bf34f9" />
+      <primitive name="ActualCost" type="string" index="None" nullable="false" isKey="false" guid="8764909b-3ad7-5ed5-9b90-6487d73ad55e" />
+    </entity>
+  </entities>
+  <relationships>
+    <relationship guid="9e1ec3ae-369d-e5ee-aec3-1e9e9d36eee5" name="ADDRESS_HAS_ADDRESSTYPE" type="HAS_ADDRESSTYPE">
+      <source label="Address" name="AddressType" type="Lookup" referenceGuid="c2f3561d-0551-bc18-1d56-f3c2510518bc" nullable="true" />
+      <target label="AddressType" referenceGuid="ac5534b5-b5fb-b7d3-b534-55acfbb5d3b7" />
+    </relationship>
+    <relationship guid="e8259b17-241d-9dc2-179b-25e81d24c29d" name="ADDRESS_HAS_STATEPROVINCE" type="HAS_STATEPROVINCE">
+      <source label="Address" name="StateProvince" type="Lookup" referenceGuid="c2f3561d-0551-bc18-1d56-f3c2510518bc" nullable="true" />
+      <target label="StateProvince" referenceGuid="32fa6673-91ec-ca85-7366-fa32ec9185ca" />
+    </relationship>
+    <relationship guid="e868f042-f1e9-cae4-42f0-68e8e9f1e4ca" name="BILLOFMATERIALS_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="BillOfMaterials" name="Product" type="Lookup" referenceGuid="4892e2e8-db57-20b4-e8e2-924857dbb420" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="f290dd82-7992-3ff4-82dd-90f29279f43f" name="BILLOFMATERIALS_HAS_UNITMEASURE" type="HAS_UNITMEASURE">
+      <source label="BillOfMaterials" name="UnitMeasure" type="Lookup" referenceGuid="4892e2e8-db57-20b4-e8e2-924857dbb420" nullable="true" />
+      <target label="UnitMeasure" referenceGuid="a74ca31b-67f6-248f-1ba3-4ca7f6678f24" />
+    </relationship>
+    <relationship guid="40f3408c-721e-e56a-8c40-f3401e726ae5" name="CURRENCYRATE_HAS_CURRENCY" type="HAS_CURRENCY">
+      <source label="CurrencyRate" name="Currency" type="Lookup" referenceGuid="f80eca1e-5ea9-7928-1eca-0ef8a95e2879" nullable="true" />
+      <target label="Currency" referenceGuid="9020ea69-1f21-1ea4-69ea-2090211fa41e" />
+    </relationship>
+    <relationship guid="8da5b724-bc15-d1c5-24b7-a58d15bcc5d1" name="CUSTOMER_HAS_PERSON" type="HAS_PERSON">
+      <source label="Customer" name="Person" type="Lookup" referenceGuid="784fec5f-9fcc-12c0-5fec-4f78cc9fc012" nullable="true" />
+      <target label="Person" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" />
+    </relationship>
+    <relationship guid="82a4c366-e03d-8582-66c3-a4823de08285" name="CUSTOMER_HAS_SALESTERRITORY" type="HAS_SALESTERRITORY">
+      <source label="Customer" name="SalesTerritory" type="Lookup" referenceGuid="784fec5f-9fcc-12c0-5fec-4f78cc9fc012" nullable="true" />
+      <target label="SalesTerritory" referenceGuid="c59d1e59-ad52-4de4-591e-9dc552ade44d" />
+    </relationship>
+    <relationship guid="e0e50321-084f-40b8-2103-e5e04f08b840" name="CUSTOMER_HAS_STORE" type="HAS_STORE">
+      <source label="Customer" name="Store" type="Lookup" referenceGuid="784fec5f-9fcc-12c0-5fec-4f78cc9fc012" nullable="true" />
+      <target label="Store" referenceGuid="3e967773-1c1d-4279-7377-963e1d1c7942" />
+    </relationship>
+    <relationship guid="f50b248a-0e06-7ef8-8a24-0bf5060ef87e" name="DEPARTMENT_CONTAINS_EMPLOYEE" type="CONTAINS_EMPLOYEE">
+      <source label="Department" name="Employees" type="Collection" referenceGuid="8240e25a-93f1-e396-5ae2-4082f19396e3" nullable="true" />
+      <target label="Employee" referenceGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" />
+    </relationship>
+    <relationship guid="e26a1d1f-1b71-af87-1f1d-6ae2711b87af" name="EMPLOYEE_BECOMES_SALESPERSON" type="BECOMES_SALESPERSON">
+      <source label="Employee" name="SalesPerson" type="Lookup" referenceGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" nullable="true" />
+      <target label="SalesPerson" referenceGuid="c99006bd-fbc8-dfc8-bd06-90c9c8fbc8df" />
+    </relationship>
+    <relationship guid="2502914c-e050-01ad-4c91-022550e0ad01" name="EMPLOYEE_HAS_EMPLOYEEDEPARTMENTHISTORY" type="HAS_EMPLOYEEDEPARTMENTHISTORY">
+      <source label="Employee" name="EmployeeDepartmentHistory" type="Lookup" referenceGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" nullable="true" />
+      <target label="EmployeeDepartmentHistory" referenceGuid="e3896673-f7ac-86ac-7366-89e3acf7ac86" />
+    </relationship>
+    <relationship guid="1f111ae9-a229-4623-e91a-111f29a22346" name="EMPLOYEE_HAS_EMPLOYEEPAYHISTORY" type="HAS_EMPLOYEEPAYHISTORY">
+      <source label="Employee" name="EmployeePayHistory" type="Lookup" referenceGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" nullable="true" />
+      <target label="EmployeePayHistory" referenceGuid="c2b816a4-5c8b-db0a-a416-b8c28b5c0adb" />
+    </relationship>
+    <relationship guid="14d4f04b-5d22-b864-4bf0-d414225d64b8" name="EMPLOYEE_HAS_SHIFT" type="HAS_SHIFT">
+      <source label="Employee" name="Shift" type="Lookup" referenceGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" nullable="true" />
+      <target label="Shift" referenceGuid="64ca1441-375e-5ae6-4114-ca645e37e65a" />
+    </relationship>
+    <relationship guid="8db8df5f-3f97-2b08-5fdf-b88d973f082b" name="EMPLOYEE_IS_JOBCANDIDATE" type="IS_JOBCANDIDATE">
+      <source label="Employee" name="JobCandidate" type="Lookup" referenceGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" nullable="true" />
+      <target name="Employee" type="Lookup" nullable="true" referenceGuid="1bf53704-5e88-c23c-0437-f51b885e3cc2" label="JobCandidate" />
+    </relationship>
+    <relationship guid="c1954694-7de2-9dd1-9446-95c1e27dd19d" name="EMPLOYEEDEPARTMENTHISTORY_HAS_SHIFT" type="HAS_SHIFT">
+      <source label="EmployeeDepartmentHistory" name="Shift" type="Lookup" referenceGuid="e3896673-f7ac-86ac-7366-89e3acf7ac86" nullable="true" />
+      <target label="Shift" referenceGuid="64ca1441-375e-5ae6-4114-ca645e37e65a" />
+    </relationship>
+    <relationship guid="02abc223-c219-85dc-23c2-ab0219c2dc85" name="EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT" type="VALID_FOR_DEPARTMENT">
+      <source label="EmployeeDepartmentHistory" name="Department" type="Lookup" referenceGuid="e3896673-f7ac-86ac-7366-89e3acf7ac86" nullable="true" />
+      <target name="EmployeeDepartmentHistories" type="Collection" nullable="true" referenceGuid="8240e25a-93f1-e396-5ae2-4082f19396e3" label="Department" />
+    </relationship>
+    <relationship guid="0839a6f5-e555-768d-f5a6-390855e58d76" name="PERSON_BECOMES_EMPLOYEE" type="BECOMES_EMPLOYEE">
+      <source label="Person" name="Employee" type="Lookup" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" nullable="true" />
+      <target label="Employee" referenceGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" />
+    </relationship>
+    <relationship guid="e1245468-35a0-a4f5-6854-24e1a035f5a4" name="PERSON_HAS_ADDRESS" type="HAS_ADDRESS">
+      <source label="Person" name="Address" type="Lookup" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" nullable="true" />
+      <target label="Address" referenceGuid="c2f3561d-0551-bc18-1d56-f3c2510518bc" />
+    </relationship>
+    <relationship guid="bffdebe2-6971-cb07-e2eb-fdbf716907cb" name="PERSON_HAS_CONTACTTYPE" type="HAS_CONTACTTYPE">
+      <source label="Person" name="ContactType" type="Lookup" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" nullable="true" />
+      <target label="ContactType" referenceGuid="1a210f02-ee90-71cc-020f-211a90eecc71" />
+    </relationship>
+    <relationship guid="cbd6b15a-51fd-4ace-5ab1-d6cbfd51ce4a" name="PERSON_HAS_EMAILADDRESS" type="HAS_EMAILADDRESS">
+      <source label="Person" name="EmailAddress" type="Lookup" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" nullable="true" />
+      <target name="EmailAddresses" type="Collection" nullable="true" referenceGuid="5e6bb996-9712-aa84-96b9-6b5e129784aa" label="EmailAddress" />
+    </relationship>
+    <relationship guid="d79656fa-0587-2a97-fa56-96d78705972a" name="PERSON_HAS_PASSWORD" type="HAS_PASSWORD">
+      <source label="Person" name="Password" type="Lookup" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" nullable="true" />
+      <target label="Password" referenceGuid="ccb42483-72f9-5ee5-8324-b4ccf972e55e" />
+    </relationship>
+    <relationship guid="47876893-1812-356e-9368-874712186e35" name="PERSON_HAS_PHONENUMBERTYPE" type="HAS_PHONENUMBERTYPE">
+      <source label="Person" name="PhoneNumberType" type="Lookup" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" nullable="true" />
+      <target label="PhoneNumberType" referenceGuid="94aeafaf-61b5-5bc8-afaf-ae94b561c85b" />
+    </relationship>
+    <relationship guid="6991b4f4-3b00-dd2d-f4b4-9169003b2ddd" name="PERSON_VALID_FOR_CREDITCARD" type="VALID_FOR_CREDITCARD">
+      <source label="Person" name="CreditCard" type="Lookup" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" nullable="true" />
+      <target name="Persons" type="Collection" nullable="true" referenceGuid="1b6b09c3-d068-2457-c309-6b1b68d05724" label="CreditCard" />
+    </relationship>
+    <relationship guid="0cd050b8-1f8f-8c29-b850-d00c8f1f298c" name="PERSON_VALID_FOR_DOCUMENT" type="VALID_FOR_DOCUMENT">
+      <source label="Person" name="Document" type="Lookup" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" nullable="true" />
+      <target name="Persons" type="Collection" nullable="true" referenceGuid="211fe820-19ad-bb10-20e8-1f21ad1910bb" label="Document" />
+    </relationship>
+    <relationship guid="4e6b0874-671c-8323-7408-6b4e1c672383" name="PRODUCT_HAS_DOCUMENT" type="HAS_DOCUMENT">
+      <source label="Product" name="Document" type="Lookup" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" nullable="true" />
+      <target label="Document" referenceGuid="211fe820-19ad-bb10-20e8-1f21ad1910bb" />
+    </relationship>
+    <relationship guid="522f9e41-e24c-a695-419e-2f524ce295a6" name="PRODUCT_HAS_PRODUCTMODEL" type="HAS_PRODUCTMODEL">
+      <source label="Product" name="ProductModel" type="Lookup" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" nullable="true" />
+      <target label="ProductModel" referenceGuid="dea8d49f-e198-5565-9fd4-a8de98e16555" />
+    </relationship>
+    <relationship guid="c66e9da6-d787-1e54-a69d-6ec687d7541e" name="PRODUCT_HAS_PRODUCTPRODUCTPHOTO" type="HAS_PRODUCTPRODUCTPHOTO">
+      <source label="Product" name="ProductProductPhoto" type="Lookup" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" nullable="true" />
+      <target label="ProductProductPhoto" referenceGuid="c99c78ab-70b6-b681-ab78-9cc9b67081b6" />
+    </relationship>
+    <relationship guid="21004438-cdf9-792e-3844-0021f9cd2e79" name="PRODUCT_HAS_TRANSACTIONHISTORY" type="HAS_TRANSACTIONHISTORY">
+      <source label="Product" name="TransactionHistory" type="Lookup" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" nullable="true" />
+      <target label="TransactionHistory" referenceGuid="3a0f6424-555e-abf6-2464-0f3a5e55f6ab" />
+    </relationship>
+    <relationship guid="346023e7-d0d0-125a-e723-6034d0d05a12" name="PRODUCT_VALID_FOR_PRODUCTREVIEW" type="VALID_FOR_PRODUCTREVIEW">
+      <source label="Product" name="ProductReview" type="Lookup" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" nullable="true" />
+      <target name="Products" type="Collection" nullable="true" referenceGuid="e6f558c5-2983-6b34-c558-f5e68329346b" label="ProductReview" />
+    </relationship>
+    <relationship guid="ee4aad60-2cd8-76c8-60ad-4aeed82cc876" name="PRODUCTCOSTHISTORY_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="ProductCostHistory" name="Product" type="Lookup" referenceGuid="3df4704f-b9c8-7428-4f70-f43dc8b92874" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="ec1fd9ee-239d-81b0-eed9-1fec9d23b081" name="PRODUCTINVENTORY_HAS_LOCATION" type="HAS_LOCATION">
+      <source label="ProductInventory" name="Location" type="Lookup" referenceGuid="c1939c1f-ebfb-5813-1f9c-93c1fbeb1358" nullable="true" />
+      <target label="Location" referenceGuid="a7e8eb9d-30c2-3f1e-9deb-e8a7c2301e3f" />
+    </relationship>
+    <relationship guid="ef110934-83b0-bceb-3409-11efb083ebbc" name="PRODUCTINVENTORY_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="ProductInventory" name="Product" type="Lookup" referenceGuid="c1939c1f-ebfb-5813-1f9c-93c1fbeb1358" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="36cd530a-9dee-1268-0a53-cd36ee9d6812" name="PRODUCTLISTPRICEHISTORY_VALID_FOR_PRODUCT" type="VALID_FOR_PRODUCT">
+      <source label="ProductListPriceHistory" name="Product" type="Lookup" referenceGuid="cf14491d-c818-91c3-1d49-14cf18c8c391" nullable="true" />
+      <target name="ProductListPriceHistories" type="Collection" nullable="true" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" label="Product" />
+    </relationship>
+    <relationship guid="a17bb3c8-09e6-879d-c8b3-7ba1e6099d87" name="PRODUCTMODEL_HAS_CULTURE" type="HAS_CULTURE">
+      <source label="ProductModel" name="Culture" type="Lookup" referenceGuid="dea8d49f-e198-5565-9fd4-a8de98e16555" nullable="true" />
+      <target label="Culture" referenceGuid="7914a577-5cca-04ff-77a5-1479ca5cff04" />
+    </relationship>
+    <relationship guid="d491d786-0722-aa96-86d7-91d4220796aa" name="PRODUCTMODEL_HAS_ILLUSTRATION" type="HAS_ILLUSTRATION">
+      <source label="ProductModel" name="Illustration" type="Lookup" referenceGuid="dea8d49f-e198-5565-9fd4-a8de98e16555" nullable="true" />
+      <target label="Illustration" referenceGuid="ce4a41ba-4b40-7a9e-ba41-4ace404b9e7a" />
+    </relationship>
+    <relationship guid="fd6c9d9b-ce2a-f7bf-9b9d-6cfd2acebff7" name="PRODUCTMODEL_HAS_PRODUCTDESCRIPTION" type="HAS_PRODUCTDESCRIPTION">
+      <source label="ProductModel" name="ProductDescription" type="Lookup" referenceGuid="dea8d49f-e198-5565-9fd4-a8de98e16555" nullable="true" />
+      <target label="ProductDescription" referenceGuid="4612d892-cc63-979a-92d8-124663cc9a97" />
+    </relationship>
+    <relationship guid="45b70333-a067-dca6-3303-b74567a0a6dc" name="PRODUCTPRODUCTPHOTO_HAS_PRODUCTPHOTO" type="HAS_PRODUCTPHOTO">
+      <source label="ProductProductPhoto" name="ProductPhoto" type="Lookup" referenceGuid="c99c78ab-70b6-b681-ab78-9cc9b67081b6" nullable="true" />
+      <target label="ProductPhoto" referenceGuid="1d8a225e-fa4e-bbd6-5e22-8a1d4efad6bb" />
+    </relationship>
+    <relationship guid="9695486a-3c08-7373-6a48-9596083c7373" name="PRODUCTVENDOR_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="ProductVendor" name="Product" type="Lookup" referenceGuid="6a94eaf5-90f7-f30d-f5ea-946af7900df3" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="4af43630-137b-35ec-3036-f44a7b13ec35" name="PRODUCTVENDOR_HAS_UNITMEASURE" type="HAS_UNITMEASURE">
+      <source label="ProductVendor" name="UnitMeasure" type="Lookup" referenceGuid="6a94eaf5-90f7-f30d-f5ea-946af7900df3" nullable="true" />
+      <target label="UnitMeasure" referenceGuid="a74ca31b-67f6-248f-1ba3-4ca7f6678f24" />
+    </relationship>
+    <relationship guid="99d40220-0381-64b1-2002-d4998103b164" name="PURCHASEORDERDETAIL_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="PurchaseOrderDetail" name="Product" type="Lookup" referenceGuid="ef6cbcb5-0f55-a919-b5bc-6cef550f19a9" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="1f9d4b8c-69e8-b2c1-8c4b-9d1fe869c1b2" name="PURCHASEORDERDETAIL_HAS_PURCHASEORDERHEADER" type="HAS_PURCHASEORDERHEADER">
+      <source label="PurchaseOrderDetail" name="PurchaseOrderHeader" type="Lookup" referenceGuid="ef6cbcb5-0f55-a919-b5bc-6cef550f19a9" nullable="true" />
+      <target label="PurchaseOrderHeader" referenceGuid="af186be7-3945-e798-e76b-18af453998e7" />
+    </relationship>
+    <relationship guid="463b2c01-357c-a2ee-012c-3b467c35eea2" name="PURCHASEORDERHEADER_HAS_SHIPMETHOD" type="HAS_SHIPMETHOD">
+      <source label="PurchaseOrderHeader" name="ShipMethod" type="Lookup" referenceGuid="af186be7-3945-e798-e76b-18af453998e7" nullable="true" />
+      <target label="ShipMethod" referenceGuid="9de983cf-9a5d-01ee-cf83-e99d5d9aee01" />
+    </relationship>
+    <relationship guid="ad4c5f53-05e9-0a3c-535f-4cade9053c0a" name="PURCHASEORDERHEADER_HAS_VENDOR" type="HAS_VENDOR">
+      <source label="PurchaseOrderHeader" name="Vendor" type="Lookup" referenceGuid="af186be7-3945-e798-e76b-18af453998e7" nullable="true" />
+      <target label="Vendor" referenceGuid="f28e36c0-532b-e4e2-c036-8ef22b53e2e4" />
+    </relationship>
+    <relationship guid="d118af19-682c-cccf-19af-18d12c68cfcc" name="SALESORDERDETAIL_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="SalesOrderDetail" name="Product" type="Lookup" referenceGuid="ddd8517a-09a1-1be2-7a51-d8dda109e21b" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="544c5a85-4125-f6b8-855a-4c542541b8f6" name="SALESORDERDETAIL_HAS_SALESORDERHEADER" type="HAS_SALESORDERHEADER">
+      <source label="SalesOrderDetail" name="SalesOrderHeader" type="Lookup" referenceGuid="ddd8517a-09a1-1be2-7a51-d8dda109e21b" nullable="true" />
+      <target label="SalesOrderHeader" referenceGuid="9dac8628-db06-011f-2886-ac9d06db1f01" />
+    </relationship>
+    <relationship guid="23d39c32-336f-2d6d-329c-d3236f336d2d" name="SALESORDERDETAIL_HAS_SPECIALOFFER" type="HAS_SPECIALOFFER">
+      <source label="SalesOrderDetail" name="SpecialOffer" type="Lookup" referenceGuid="ddd8517a-09a1-1be2-7a51-d8dda109e21b" nullable="true" />
+      <target label="SpecialOffer" referenceGuid="2f5402f2-2dac-d1ae-f202-542fac2daed1" />
+    </relationship>
+    <relationship guid="c1e11fb8-e147-cf8a-b81f-e1c147e18acf" name="SALESORDERHEADER_CONTAINS_SALESTERRITORY" type="CONTAINS_SALESTERRITORY">
+      <source label="SalesOrderHeader" name="SalesTerritories" type="Collection" referenceGuid="9dac8628-db06-011f-2886-ac9d06db1f01" nullable="true" />
+      <target label="SalesTerritory" referenceGuid="c59d1e59-ad52-4de4-591e-9dc552ade44d" />
+    </relationship>
+    <relationship guid="d808db7b-629e-6373-7bdb-08d89e627363" name="SALESORDERHEADER_HAS_ADDRESS" type="HAS_ADDRESS">
+      <source label="SalesOrderHeader" name="Address" type="Lookup" referenceGuid="9dac8628-db06-011f-2886-ac9d06db1f01" nullable="true" />
+      <target label="Address" referenceGuid="c2f3561d-0551-bc18-1d56-f3c2510518bc" />
+    </relationship>
+    <relationship guid="c5e69e6d-81cb-c890-6d9e-e6c5cb8190c8" name="SALESORDERHEADER_HAS_CREDITCARD" type="HAS_CREDITCARD">
+      <source label="SalesOrderHeader" name="CreditCard" type="Lookup" referenceGuid="9dac8628-db06-011f-2886-ac9d06db1f01" nullable="true" />
+      <target label="CreditCard" referenceGuid="1b6b09c3-d068-2457-c309-6b1b68d05724" />
+    </relationship>
+    <relationship guid="af952d71-1d80-3dc1-712d-95af801dc13d" name="SALESORDERHEADER_HAS_CURRENCYRATE" type="HAS_CURRENCYRATE">
+      <source label="SalesOrderHeader" name="CurrencyRate" type="Lookup" referenceGuid="9dac8628-db06-011f-2886-ac9d06db1f01" nullable="true" />
+      <target label="CurrencyRate" referenceGuid="f80eca1e-5ea9-7928-1eca-0ef8a95e2879" />
+    </relationship>
+    <relationship guid="0a475645-8d60-8d93-4556-470a608d938d" name="SALESORDERHEADER_HAS_SALESREASON" type="HAS_SALESREASON">
+      <source label="SalesOrderHeader" name="SalesReason" type="Lookup" referenceGuid="9dac8628-db06-011f-2886-ac9d06db1f01" nullable="true" />
+      <target label="SalesReason" referenceGuid="c6f45fc7-d5d6-5b76-c75f-f4c6d6d5765b" />
+    </relationship>
+    <relationship guid="e4fabe69-6551-fa7d-69be-fae451657dfa" name="SALESORDERHEADER_HAS_SHIPMETHOD" type="HAS_SHIPMETHOD">
+      <source label="SalesOrderHeader" name="ShipMethod" type="Lookup" referenceGuid="9dac8628-db06-011f-2886-ac9d06db1f01" nullable="true" />
+      <target label="ShipMethod" referenceGuid="9de983cf-9a5d-01ee-cf83-e99d5d9aee01" />
+    </relationship>
+    <relationship guid="dacb2fa7-45a5-6223-a72f-cbdaa5452362" name="SALESPERSON_HAS_SALESPERSONQUOTAHISTORY" type="HAS_SALESPERSONQUOTAHISTORY">
+      <source label="SalesPerson" name="SalesPersonQuotaHistory" type="Lookup" referenceGuid="c99006bd-fbc8-dfc8-bd06-90c9c8fbc8df" nullable="true" />
+      <target label="SalesPersonQuotaHistory" referenceGuid="60cc7aa6-cb2b-0eb5-a67a-cc602bcbb50e" />
+    </relationship>
+    <relationship guid="85a4f60a-b104-9353-0af6-a48504b15393" name="SALESPERSON_HAS_SALESTERRITORY" type="HAS_SALESTERRITORY">
+      <source label="SalesPerson" name="SalesTerritory" type="Lookup" referenceGuid="c99006bd-fbc8-dfc8-bd06-90c9c8fbc8df" nullable="true" />
+      <target label="SalesTerritory" referenceGuid="c59d1e59-ad52-4de4-591e-9dc552ade44d" />
+    </relationship>
+    <relationship guid="fb8e3824-a770-d4f4-2438-8efb70a7f4d4" name="SALESPERSON_IS_PERSON" type="IS_PERSON">
+      <source label="SalesPerson" name="Person" type="Lookup" referenceGuid="c99006bd-fbc8-dfc8-bd06-90c9c8fbc8df" nullable="true" />
+      <target name="SalesPerson" type="Lookup" nullable="true" referenceGuid="3370d440-4537-f6f5-40d4-70333745f5f6" label="Person" />
+    </relationship>
+    <relationship guid="fdd402c8-6db2-8ea3-c802-d4fdb26da38e" name="SALESTAXRATE_HAS_STATEPROVINCE" type="HAS_STATEPROVINCE">
+      <source label="SalesTaxRate" name="StateProvince" type="Lookup" referenceGuid="dd904443-0fd7-0912-4344-90ddd70f1209" nullable="true" />
+      <target label="StateProvince" referenceGuid="32fa6673-91ec-ca85-7366-fa32ec9185ca" />
+    </relationship>
+    <relationship guid="ebaa1e2c-b583-b308-2c1e-aaeb83b508b3" name="SALESTERRITORY_HAS_SALESTERRITORYHISTORY" type="HAS_SALESTERRITORYHISTORY">
+      <source label="SalesTerritory" name="SalesTerritoryHistory" type="Lookup" referenceGuid="c59d1e59-ad52-4de4-591e-9dc552ade44d" nullable="true" />
+      <target label="SalesTerritoryHistory" referenceGuid="0f937bcd-130a-cd95-cd7b-930f0a1395cd" />
+    </relationship>
+    <relationship guid="e04b533f-97e5-ff5f-3f53-4be0e5975fff" name="SHOPPINGCARTITEM_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="ShoppingCartItem" name="Product" type="Lookup" referenceGuid="46d935bd-870f-fa9e-bd35-d9460f879efa" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="ed9956c9-6220-cf6c-c956-99ed20626ccf" name="STATEPROVINCE_HAS_COUNTRYREGION" type="HAS_COUNTRYREGION">
+      <source label="StateProvince" name="CountryRegion" type="Collection" referenceGuid="32fa6673-91ec-ca85-7366-fa32ec9185ca" nullable="true" />
+      <target label="CountryRegion" referenceGuid="966846c3-e539-5745-c346-689639e54557" />
+    </relationship>
+    <relationship guid="53119da0-1d68-216d-a09d-1153681d6d21" name="STATEPROVINCE_HAS_SALESTERRITORY" type="HAS_SALESTERRITORY">
+      <source label="StateProvince" name="SalesTerritory" type="Lookup" referenceGuid="32fa6673-91ec-ca85-7366-fa32ec9185ca" nullable="true" />
+      <target label="SalesTerritory" referenceGuid="c59d1e59-ad52-4de4-591e-9dc552ade44d" />
+    </relationship>
+    <relationship guid="0f1cc44e-4d80-495a-4ec4-1c0f804d5a49" name="STORE_HAS_ADDRESS" type="HAS_ADDRESS">
+      <source label="Store" name="Address" type="Lookup" referenceGuid="3e967773-1c1d-4279-7377-963e1d1c7942" nullable="true" />
+      <target label="Address" referenceGuid="c2f3561d-0551-bc18-1d56-f3c2510518bc" />
+    </relationship>
+    <relationship guid="013df7de-ffed-2da3-def7-3d01edffa32d" name="STORE_VALID_FOR_SALESPERSON" type="VALID_FOR_SALESPERSON">
+      <source label="Store" name="SalesPerson" type="Lookup" referenceGuid="3e967773-1c1d-4279-7377-963e1d1c7942" nullable="true" />
+      <target name="Stores" type="Collection" nullable="true" referenceGuid="c99006bd-fbc8-dfc8-bd06-90c9c8fbc8df" label="SalesPerson" />
+    </relationship>
+    <relationship guid="28214897-331d-a24f-9748-21281d334fa2" name="TRANSACTIONHISTORYARCHIVE_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="TransactionHistoryArchive" name="Product" type="Lookup" referenceGuid="af10bbd7-0e30-5e5a-d7bb-10af300e5a5e" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="8ddac052-e5ea-29f4-52c0-da8deae5f429" name="VENDOR_BECOMES_PRODUCTVENDOR" type="BECOMES_PRODUCTVENDOR">
+      <source label="Vendor" name="ProductVendor" type="Lookup" referenceGuid="f28e36c0-532b-e4e2-c036-8ef22b53e2e4" nullable="true" />
+      <target label="ProductVendor" referenceGuid="6a94eaf5-90f7-f30d-f5ea-946af7900df3" />
+    </relationship>
+    <relationship guid="1cb445ff-75a2-33da-ff45-b41ca275da33" name="VENDOR_VALID_FOR_EMPLOYEE" type="VALID_FOR_EMPLOYEE">
+      <source label="Vendor" name="Employee" type="Lookup" referenceGuid="f28e36c0-532b-e4e2-c036-8ef22b53e2e4" nullable="true" />
+      <target name="Vendors" type="Collection" nullable="true" referenceGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" label="Employee" />
+    </relationship>
+    <relationship guid="6ef548e3-3ec8-26ee-e348-f56ec83eee26" name="WORKORDER_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="WorkOrder" name="Product" type="Lookup" referenceGuid="12ffff1c-f903-5cb4-1cff-ff1203f9b45c" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="70c243c7-dc74-6b11-c743-c27074dc116b" name="WORKORDER_HAS_SCRAPREASON" type="HAS_SCRAPREASON">
+      <source label="WorkOrder" name="ScrapReason" type="Lookup" referenceGuid="12ffff1c-f903-5cb4-1cff-ff1203f9b45c" nullable="true" />
+      <target label="ScrapReason" referenceGuid="13a1027e-d167-d660-7e02-a11367d160d6" />
+    </relationship>
+    <relationship guid="8cd2f648-b17d-2761-48f6-d28c7db16127" name="WORKORDERROUTING_HAS_LOCATION" type="HAS_LOCATION">
+      <source label="WorkOrderRouting" name="Location" type="Lookup" referenceGuid="1e8b8588-731c-f6ed-8885-8b1e1c73edf6" nullable="true" />
+      <target label="Location" referenceGuid="a7e8eb9d-30c2-3f1e-9deb-e8a7c2301e3f" />
+    </relationship>
+    <relationship guid="92b07aab-1150-1a3a-ab7a-b09250113a1a" name="WORKORDERROUTING_HAS_PRODUCT" type="HAS_PRODUCT">
+      <source label="WorkOrderRouting" name="Product" type="Lookup" referenceGuid="1e8b8588-731c-f6ed-8885-8b1e1c73edf6" nullable="true" />
+      <target label="Product" referenceGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+    </relationship>
+    <relationship guid="1ec2ec96-5067-3bc5-96ec-c21e6750c53b" name="WORKORDERROUTING_HAS_WORKORDER" type="HAS_WORKORDER">
+      <source label="WorkOrderRouting" name="WorkOrder" type="Lookup" referenceGuid="1e8b8588-731c-f6ed-8885-8b1e1c73edf6" nullable="true" />
+      <target label="WorkOrder" referenceGuid="12ffff1c-f903-5cb4-1cff-ff1203f9b45c" />
+    </relationship>
+  </relationships>
+  <submodels>
+    <submodel name="Main Model">
+      <node label="Address" xcoordinate="1231" ycoordinate="1011.9517707824707" entityGuid="c2f3561d-0551-bc18-1d56-f3c2510518bc" />
+      <node label="AddressType" xcoordinate="1231" ycoordinate="852.49215316772461" entityGuid="ac5534b5-b5fb-b7d3-b534-55acfbb5d3b7" />
+      <node label="BillOfMaterials" xcoordinate="895" ycoordinate="1393.5565414428711" entityGuid="4892e2e8-db57-20b4-e8e2-924857dbb420" />
+      <node label="ContactType" xcoordinate="1305" ycoordinate="1011.9517707824707" entityGuid="1a210f02-ee90-71cc-020f-211a90eecc71" />
+      <node label="CountryRegion" xcoordinate="1523" ycoordinate="711.89646530151367" entityGuid="966846c3-e539-5745-c346-689639e54557" />
+      <node label="CreditCard" xcoordinate="820" ycoordinate="1011.9517707824707" entityGuid="1b6b09c3-d068-2457-c309-6b1b68d05724" />
+      <node label="Culture" xcoordinate="646" ycoordinate="852.49215316772461" entityGuid="7914a577-5cca-04ff-77a5-1479ca5cff04" />
+      <node label="Currency" xcoordinate="104" ycoordinate="852.49215316772461" entityGuid="9020ea69-1f21-1ea4-69ea-2090211fa41e" />
+      <node label="CurrencyRate" xcoordinate="104" ycoordinate="1011.9517707824707" entityGuid="f80eca1e-5ea9-7928-1eca-0ef8a95e2879" />
+      <node label="Customer" xcoordinate="1635" ycoordinate="1698.3481788635254" entityGuid="784fec5f-9fcc-12c0-5fec-4f78cc9fc012" />
+      <node label="Department" xcoordinate="1371" ycoordinate="1191.7922439575195" entityGuid="8240e25a-93f1-e396-5ae2-4082f19396e3" />
+      <node label="Document" xcoordinate="894" ycoordinate="1011.9517707824707" entityGuid="211fe820-19ad-bb10-20e8-1f21ad1910bb" />
+      <node label="EmailAddress" xcoordinate="1154" ycoordinate="1011.9517707824707" entityGuid="5e6bb996-9712-aa84-96b9-6b5e129784aa" />
+      <node label="Employee" xcoordinate="1402" ycoordinate="1574.1522254943848" entityGuid="a4e917f7-534c-6f68-f717-e9a44c53686f" />
+      <node label="EmployeeDepartmentHistory" xcoordinate="1402" ycoordinate="1393.5565414428711" entityGuid="e3896673-f7ac-86ac-7366-89e3acf7ac86" />
+      <node label="EmployeePayHistory" xcoordinate="1149" ycoordinate="1393.5565414428711" entityGuid="c2b816a4-5c8b-db0a-a416-b8c28b5c0adb" />
+      <node label="Illustration" xcoordinate="833" ycoordinate="852.49215316772461" entityGuid="ce4a41ba-4b40-7a9e-ba41-4ace404b9e7a" />
+      <node label="JobCandidate" xcoordinate="1264" ycoordinate="1393.5565414428711" entityGuid="1bf53704-5e88-c23c-0437-f51b885e3cc2" />
+      <node label="Location" xcoordinate="790" ycoordinate="1191.7922439575195" entityGuid="a7e8eb9d-30c2-3f1e-9deb-e8a7c2301e3f" />
+      <node label="Neo4jBase" xcoordinate="1426" ycoordinate="565.35025405883789" entityGuid="1807fafc-d198-9e7c-fcfa-071898d17c9e" />
+      <node label="Password" xcoordinate="1606" ycoordinate="1011.9517707824707" entityGuid="ccb42483-72f9-5ee5-8324-b4ccf972e55e" />
+      <node label="Person" xcoordinate="1438" ycoordinate="1191.7922439575195" entityGuid="3370d440-4537-f6f5-40d4-70333745f5f6" />
+      <node label="PhoneNumberType" xcoordinate="1412" ycoordinate="1011.9517707824707" entityGuid="94aeafaf-61b5-5bc8-afaf-ae94b561c85b" />
+      <node label="Product" xcoordinate="583" ycoordinate="1191.7922439575195" entityGuid="1cf73d31-5d13-a5b2-313d-f71c135db2a5" />
+      <node label="ProductCategory" xcoordinate="1520" ycoordinate="565.35025405883789" entityGuid="d26ebfc4-4003-6085-c4bf-6ed203408560" />
+      <node label="ProductCostHistory" xcoordinate="130" ycoordinate="1393.5565414428711" entityGuid="3df4704f-b9c8-7428-4f70-f43dc8b92874" />
+      <node label="ProductDescription" xcoordinate="735" ycoordinate="852.49215316772461" entityGuid="4612d892-cc63-979a-92d8-124663cc9a97" />
+      <node label="ProductInventory" xcoordinate="790" ycoordinate="1393.5565414428711" entityGuid="c1939c1f-ebfb-5813-1f9c-93c1fbeb1358" />
+      <node label="ProductListPriceHistory" xcoordinate="583" ycoordinate="1393.5565414428711" entityGuid="cf14491d-c818-91c3-1d49-14cf18c8c391" />
+      <node label="ProductModel" xcoordinate="735" ycoordinate="1011.9517707824707" entityGuid="dea8d49f-e198-5565-9fd4-a8de98e16555" />
+      <node label="ProductPhoto" xcoordinate="517" ycoordinate="852.49215316772461" entityGuid="1d8a225e-fa4e-bbd6-5e22-8a1d4efad6bb" />
+      <node label="ProductProductPhoto" xcoordinate="517" ycoordinate="1011.9517707824707" entityGuid="c99c78ab-70b6-b681-ab78-9cc9b67081b6" />
+      <node label="ProductReview" xcoordinate="637" ycoordinate="1011.9517707824707" entityGuid="e6f558c5-2983-6b34-c558-f5e68329346b" />
+      <node label="ProductVendor" xcoordinate="1013" ycoordinate="1393.5565414428711" entityGuid="6a94eaf5-90f7-f30d-f5ea-946af7900df3" />
+      <node label="PurchaseOrderDetail" xcoordinate="198" ycoordinate="2003.0877342224121" entityGuid="ef6cbcb5-0f55-a919-b5bc-6cef550f19a9" />
+      <node label="PurchaseOrderHeader" xcoordinate="276" ycoordinate="1834.0024642944336" entityGuid="af186be7-3945-e798-e76b-18af453998e7" />
+      <node label="SalesOrderDetail" xcoordinate="0" ycoordinate="1393.5565414428711" entityGuid="ddd8517a-09a1-1be2-7a51-d8dda109e21b" />
+      <node label="SalesOrderHeader" xcoordinate="104" ycoordinate="1191.7922439575195" entityGuid="9dac8628-db06-011f-2886-ac9d06db1f01" />
+      <node label="SalesPerson" xcoordinate="1586" ycoordinate="1393.5565414428711" entityGuid="c99006bd-fbc8-dfc8-bd06-90c9c8fbc8df" />
+      <node label="SalesPersonQuotaHistory" xcoordinate="1547" ycoordinate="1191.7922439575195" entityGuid="60cc7aa6-cb2b-0eb5-a67a-cc602bcbb50e" />
+      <node label="SalesReason" xcoordinate="196" ycoordinate="1011.9517707824707" entityGuid="c6f45fc7-d5d6-5b76-c75f-f4c6d6d5765b" />
+      <node label="SalesTaxRate" xcoordinate="1523" ycoordinate="1011.9517707824707" entityGuid="dd904443-0fd7-0912-4344-90ddd70f1209" />
+      <node label="SalesTerritory" xcoordinate="1644" ycoordinate="711.89646530151367" entityGuid="c59d1e59-ad52-4de4-591e-9dc552ade44d" />
+      <node label="SalesTerritoryHistory" xcoordinate="1644" ycoordinate="565.35025405883789" entityGuid="0f937bcd-130a-cd95-cd7b-930f0a1395cd" />
+      <node label="SchemaBase" xcoordinate="1758" ycoordinate="565.35025405883789" entityGuid="5f3dfc2a-8f2d-ec02-2afc-3d5f2d8f02ec" />
+      <node label="ScrapReason" xcoordinate="696" ycoordinate="1191.7922439575195" entityGuid="13a1027e-d167-d660-7e02-a11367d160d6" />
+      <node label="Shift" xcoordinate="1096" ycoordinate="1191.7922439575195" entityGuid="64ca1441-375e-5ae6-4114-ca645e37e65a" />
+      <node label="ShipMethod" xcoordinate="283" ycoordinate="1011.9517707824707" entityGuid="9de983cf-9a5d-01ee-cf83-e99d5d9aee01" />
+      <node label="ShoppingCartItem" xcoordinate="263" ycoordinate="1393.5565414428711" entityGuid="46d935bd-870f-fa9e-bd35-d9460f879efa" />
+      <node label="SpecialOffer" xcoordinate="0" ycoordinate="1191.7922439575195" entityGuid="2f5402f2-2dac-d1ae-f202-542fac2daed1" />
+      <node label="StateProvince" xcoordinate="1523" ycoordinate="852.49215316772461" entityGuid="32fa6673-91ec-ca85-7366-fa32ec9185ca" />
+      <node label="Store" xcoordinate="1635" ycoordinate="1574.1522254943848" entityGuid="3e967773-1c1d-4279-7377-963e1d1c7942" />
+      <node label="TransactionHistory" xcoordinate="386" ycoordinate="1011.9517707824707" entityGuid="3a0f6424-555e-abf6-2464-0f3a5e55f6ab" />
+      <node label="TransactionHistoryArchive" xcoordinate="406" ycoordinate="1393.5565414428711" entityGuid="af10bbd7-0e30-5e5a-d7bb-10af300e5a5e" />
+      <node label="UnitMeasure" xcoordinate="895" ycoordinate="1191.7922439575195" entityGuid="a74ca31b-67f6-248f-1ba3-4ca7f6678f24" />
+      <node label="Vendor" xcoordinate="1013" ycoordinate="1698.3481788635254" entityGuid="f28e36c0-532b-e4e2-c036-8ef22b53e2e4" />
+      <node label="WorkOrder" xcoordinate="696" ycoordinate="1393.5565414428711" entityGuid="12ffff1c-f903-5cb4-1cff-ff1203f9b45c" />
+      <node label="WorkOrderRouting" xcoordinate="696" ycoordinate="1574.1522254943848" entityGuid="1e8b8588-731c-f6ed-8885-8b1e1c73edf6" />
+    </submodel>
+  </submodels>
+  <functionalIds>
+    <functionalId name="Shared" type="Numeric" value="0" guid="1420f18d-f784-6c9f-8df1-201484f79f6c" />
+  </functionalIds>
+</modeller>
