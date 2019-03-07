@@ -48,8 +48,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.hteExplaination = new Blueprint41.Modeller.HtmlEditor();
             this.btnDelete = new System.Windows.Forms.Button();
+            this.hteExplaination = new Blueprint41.Modeller.HtmlEditor();
             ((System.ComponentModel.ISupportInitialize)(this.numericChapter)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -253,6 +253,18 @@
             this.panel1.Size = new System.Drawing.Size(37, 357);
             this.panel1.TabIndex = 22;
             // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDelete.ForeColor = System.Drawing.Color.Red;
+            this.btnDelete.Location = new System.Drawing.Point(15, 670);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnDelete.TabIndex = 22;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
             // hteExplaination
             // 
             this.hteExplaination.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -270,18 +282,6 @@
             this.hteExplaination.Name = "hteExplaination";
             this.hteExplaination.Size = new System.Drawing.Size(547, 175);
             this.hteExplaination.TabIndex = 18;
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDelete.ForeColor = System.Drawing.Color.Red;
-            this.btnDelete.Location = new System.Drawing.Point(15, 670);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(75, 23);
-            this.btnDelete.TabIndex = 22;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // ManageSubmodelForm
             // 
@@ -306,7 +306,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "ManageSubmodelForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Manage sub model";
+            this.Text = "Submodel - Editor";
             ((System.ComponentModel.ISupportInitialize)(this.numericChapter)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
@@ -331,11 +331,11 @@
         private System.Windows.Forms.Button buttonAddAll;
         private System.Windows.Forms.Button buttonRemoveAll;
         private System.Windows.Forms.Label label4;
-        private HtmlEditor hteExplaination;
         private System.Windows.Forms.CheckBox chkIsLaboratory;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnDelete;
+        private HtmlEditor hteExplaination;
     }
 }

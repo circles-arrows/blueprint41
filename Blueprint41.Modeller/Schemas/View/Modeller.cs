@@ -1,7 +1,12 @@
 ﻿using Blueprint41.Modeller.Schemas;
+using Blueprint41.Modeller.Controls;
 using Microsoft.Msagl;
+using Microsoft.Msagl.Core.Geometry.Curves;
+using Microsoft.Msagl.Core.Layout;
+using Microsoft.Msagl.Core.Routing;
 using Microsoft.Msagl.Drawing;
 using Microsoft.Msagl.GraphViewerGdi;
+using Microsoft.Msagl.Layout.Layered;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -10,15 +15,20 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using DrawingNode = Microsoft.Msagl.Drawing.Node;
 
 namespace Blueprint41.Modeller.Schemas
 {
     public partial class Modeller
     {
-        public EditorViewMode ViewMode { get; set; }
+        public LayoutMethod ViewMode
+        {
+            get { return GraphEditor.Viewer.CurrentLayoutMethod; }
+            set { GraphEditor.Viewer.CurrentLayoutMethod = value; }
+        }
 
-        private GraphEditorControl m_GraphEditor = null;
-        public GraphEditorControl GraphEditor
+        private GraphEditor m_GraphEditor = null;
+        public GraphEditor GraphEditor
         {
             get
             {
@@ -26,37 +36,33 @@ namespace Blueprint41.Modeller.Schemas
             }
             set
             {
-                if (m_GraphEditor != null)
-                {
-                    GraphEditor.RedoLayout -= RedoLayout;
-                    ((IViewer)m_GraphEditor.Viewer).MouseUp -= MouseUp;
-                    m_GraphEditor.SelectedNodeChanged -= NodeMouseUp;
-                }
+                UnRegisterEvents();
 
                 m_GraphEditor = value;
 
                 if (m_GraphEditor != null)
                 {
-                    //GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.UseSettingsOfTheGraph;
-
                     RebindControl();
-                    ((IViewer)m_GraphEditor.Viewer).MouseUp += MouseUp;
-                    m_GraphEditor.SelectedNodeChanged += NodeMouseUp;
-                    m_GraphEditor.RedoLayout += RedoLayout;
+                    RegisterEvents();
                 }
             }
         }
-        internal GViewer Viewer
-        {
-            get
-            {
-                if (GraphEditor != null)
-                    return GraphEditor.Viewer;
 
-                return null;
-            }
-        }
+        public delegate void BeforeReBindControl();
+        public delegate void AfterReBindControl();
 
+        public BeforeReBindControl BeforeReBind { get; set; }
+        public AfterReBindControl AfterReBind { get; set; }
+
+        /// <summary>
+        /// A new graph, it will be null after assigning to the viewer
+        /// </summary>
+        internal Graph Graph { get; private set; }
+
+        /// <summary>
+        /// Graph's Geometry graph, it will be null after assigning to the viewer
+        /// </summary>
+        internal GeometryGraph GeometryGraph { get; private set; }
 
         private void MouseUp(object sender, MsaglMouseEventArgs e)
         {
@@ -72,41 +78,41 @@ namespace Blueprint41.Modeller.Schemas
 
         private void RedoLayout(object sender, EventArgs e)
         {
-            if (ViewMode == EditorViewMode.MDS)
-                MDSLayout();
-            else
-                SugiyamaLayout();
-        }
+            if (Model.GraphEditor.Viewer.Graph == null)
+                return;
 
-        internal void RedoLayout()
-        {
-            RedoLayout(this, EventArgs.Empty);
-        }
+            if (ViewMode == LayoutMethod.UseSettingsOfTheGraph)
+            {
+                RebindControl();
+                return;
+            }
 
-        private void SugiyamaLayout()
-        {
-            GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.SugiyamaScheme;
+            GraphEditor.Viewer.CurrentLayoutMethod = ViewMode;
             GraphEditor.Viewer.NeedToCalculateLayout = true;
-            GraphEditor.Viewer.Graph = Viewer.Graph;
+            GraphEditor.Viewer.Graph = Model.GraphEditor.Viewer.Graph;
             GraphEditor.Viewer.NeedToCalculateLayout = false;
-            GraphEditor.Viewer.Graph = Viewer.Graph;
-
-            CaptureCoordinates();
+            GraphEditor.Viewer.Graph = Model.GraphEditor.Viewer.Graph;
         }
 
-        private void MDSLayout()
+        internal void UnRegisterEvents()
         {
-            // MDS does not work well, after redoing the layout it crashes when you drag a node...
-            GraphEditor.Viewer.CurrentLayoutMethod = LayoutMethod.MDS;
-            GraphEditor.Viewer.NeedToCalculateLayout = true;
-            GraphEditor.Viewer.Graph = Viewer.Graph;
-            GraphEditor.Viewer.NeedToCalculateLayout = false;
-            GraphEditor.Viewer.Graph = Viewer.Graph;
-            CaptureCoordinates();
-
-            GraphEditor = m_GraphEditor; // <--- MDS has bugs in the layout engine, rebind the control with captured coordinates & Sugiyama...
+            if (m_GraphEditor != null)
+            {
+                GraphEditor.RedoLayout -= RedoLayout;
+                ((IViewer)m_GraphEditor.Viewer).MouseUp -= MouseUp;
+                m_GraphEditor.NodeSelected -= NodeMouseUp;
+            }
         }
 
+        internal void RegisterEvents()
+        {
+            if (m_GraphEditor != null)
+            {
+                ((IViewer)m_GraphEditor.Viewer).MouseUp += MouseUp;
+                m_GraphEditor.NodeSelected += NodeMouseUp;
+                m_GraphEditor.RedoLayout += RedoLayout;
+            }
+        }
 
         public bool ShowRelationshipLabels
         {
@@ -155,7 +161,12 @@ namespace Blueprint41.Modeller.Schemas
             if (GraphEditor == null || DisplayedSubmodel == null)
                 return;
 
-            GraphEditor.ClearAll();
+            BeforeReBind.Invoke();
+
+            GraphEditor.Graph = null;
+
+            Graph = new Graph("graph");
+            GeometryGraph = new Microsoft.Msagl.Core.Layout.GeometryGraph();
 
             foreach (var node in DisplayedSubmodel.Node)
             {
@@ -163,47 +174,47 @@ namespace Blueprint41.Modeller.Schemas
                 node.Parent = DisplayedSubmodel;
             }
 
-            foreach (Relationship relationship in DisplayedSubmodel.GetRelationships(ShowInheritedRelationships))
-            {
+            List<Relationship> relationships = DisplayedSubmodel.GetRelationships(ShowInheritedRelationships);
+
+            foreach (Relationship relationship in relationships)
                 relationship.CreateEdge();
-            }
 
-            AutoResize();
+            UpdateEdgesPlacement();
+            Graph.GeometryGraph = GeometryGraph;
+
+            GraphEditor.Viewer.NeedToCalculateLayout = GraphEditor.Viewer.CurrentLayoutMethod != LayoutMethod.UseSettingsOfTheGraph;
+            GraphEditor.Graph = Graph;
+            GraphEditor.Viewer.NeedToCalculateLayout = true;
+
+            GeometryGraph.UpdateBoundingBox();
+
+            if (GeometryGraph.BoundingBox.IsEmpty || GeometryGraph.BoundingBox.Width <= 0)
+                GeometryGraph.BoundingBox = new Microsoft.Msagl.Core.Geometry.Rectangle(0, 0, new Microsoft.Msagl.Core.Geometry.Point(100, 100));
+
+            GraphReset();
+
+            Graph = null;
+            GeometryGraph = null;
+
+            AfterReBind.Invoke();
         }
 
-        public void UpdateGraph()
+        internal void UpdateEdgesPlacement()
         {
-            GraphEditor.Viewer.NeedToCalculateLayout = false;
+            if (DisplayedSubmodel.Node.Count <= 0)
+                return;
 
-            // We must get the zoom factor and the scroll values of the viewer
-            // and setting it after re assigning the graph object
-            var zoom = Viewer.ZoomF;
-            var hScroll = GetPropertyValue(typeof(GViewer), Viewer, "HVal");
-            var vScroll = GetPropertyValue(typeof(GViewer), Viewer, "VVal");
+            GeometryGraph geomGraph = GeometryGraph ?? GraphEditor.Viewer.Graph.GeometryGraph;
 
-            // MSAGL have this issue wherein it does not reflect directly after updating some nodes
-            // Re assigning it will redraw the graph
-            GraphEditor.Viewer.Graph = Viewer.Graph;
-            GraphEditor.Viewer.ZoomF = zoom;
-            BindProperty(GraphEditor.Viewer, "HVal", (int)hScroll);
-            BindProperty(GraphEditor.Viewer, "VVal", (int)vScroll);
-            CaptureCoordinates();
+            geomGraph.BoundingBox = geomGraph.PumpTheBoxToTheGraphWithMargins();
+            EdgeLabelPlacement placement = new EdgeLabelPlacement(geomGraph);
+            placement.Run();
         }
 
-        internal object GetPropertyValue(Type type, object instance, string fieldName)
+        internal void GraphReset()
         {
-            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            PropertyInfo field = type.GetProperty(fieldName, bindFlags);
-            return field.GetValue(instance);
-        }
-
-        internal void BindProperty(object obj, string propertyName, object propertyValue)
-        {
-            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            PropertyInfo propertyInfo = obj.GetType().GetProperty(propertyName, bindFlags);
-
-            if (propertyInfo != null && propertyInfo.CanWrite)
-                propertyInfo.SetValue(obj, propertyValue, null);
+            GraphEditor.Viewer.Transform = null;
+            GraphEditor.Viewer.DrawingPanel.Invalidate();
         }
 
         internal void CaptureCoordinates()
@@ -216,19 +227,63 @@ namespace Blueprint41.Modeller.Schemas
 
         internal void AutoResize()
         {
-            if (GraphEditor != null)
+            if (GraphEditor != null && DisplayedSubmodel.Node.Count > 0)
             {
-                GraphEditor.Viewer.FitGraphBoundingBox();
+                //GraphEditor.Viewer.FitGraphBoundingBox();
+                AutoResizeWithoutUndoRedo();
+                Invalidate();
             }
+        }
+
+        void AutoResizeWithoutUndoRedo()
+        {
+            if (GraphEditor.Viewer.Graph == null)
+                return;
+
+            GeometryGraph geometryGraph = GraphEditor.Viewer.Graph.GeometryGraph;
+
+            if (GraphEditor.Viewer.Graph.GeometryGraph != null)
+            {
+                var r = new Microsoft.Msagl.Core.Geometry.Rectangle();
+                foreach (var n in geometryGraph.Nodes)
+                {
+                    r = n.BoundingBox;
+                    break;
+                }
+                foreach (var n in geometryGraph.Nodes)
+                {
+                    r.Add(n.BoundingBox);
+                }
+                foreach (var e in geometryGraph.Edges)
+                {
+                    r.Add(e.BoundingBox);
+                    if (e.Label != null)
+                        r.Add(e.Label.BoundingBox);
+                }
+
+                r.Left -= geometryGraph.Margins;
+                r.Top += geometryGraph.Margins;
+                r.Bottom -= geometryGraph.Margins;
+                r.Right += geometryGraph.Margins;
+                geometryGraph.BoundingBox = r;
+            }
+        }
+
+        internal void Invalidate()
+        {
+            GraphEditor.Viewer.Invalidate();
+        }
+
+        internal void RedoLayout()
+        {
+            RedoLayout(this, EventArgs.Empty);
         }
 
         public void RemoveAllEdges(Entity entity)
         {
             List<Relationship> relationships = entity.GetCurrentRelationshipsInGraph(DisplayedSubmodel);
             foreach (Relationship relationship in relationships)
-            {
-                relationship.DeleteEdge();
-            }
+                relationship.DeleteDrawingEdge(false);
 
             AutoResize();
         }
@@ -300,11 +355,12 @@ namespace Blueprint41.Modeller.Schemas
                             break;
                         case NotifyCollectionChangedAction.Remove:
                             foreach (Relationship item in e.OldItems)
-                                item.DeleteEdge();
+                                item.DeleteDrawingEdge(false);
+
                             break;
                         case NotifyCollectionChangedAction.Reset:
                             foreach (Relationship item in e.OldItems)
-                                item.DeleteEdge();
+                                item.DeleteDrawingEdge(false);
                             break;
                     }
                 };

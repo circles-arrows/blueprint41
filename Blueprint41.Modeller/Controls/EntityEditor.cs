@@ -84,6 +84,8 @@ namespace Blueprint41.Modeller
             CreateGridColumnsForRelationships();
             CreateToolTipForShowAllRelationshipsCheckbox();
 
+            pre.DataGridViewPrimitive.MultiSelect = false;
+            pre.DataGridViewRelationship.MultiSelect = false;
             pre.DataGridViewPrimitive.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
             pre.DataGridViewRelationship.DefaultCellStyle.SelectionBackColor = Styles.FORMS_SKY_BLUE;
 
@@ -93,11 +95,14 @@ namespace Blueprint41.Modeller
             pre.DataGridViewPrimitive.CellValueChanged += dataGridViewPrimitiveProperties_CellValueChanged;
             pre.DataGridViewPrimitive.DefaultValuesNeeded += dataGridViewPrimitiveProperties_DefaultValuesNeeded;
             pre.DataGridViewPrimitive.KeyDown += dataGridViewPrimitiveProperties_KeyDown;
+            pre.DataGridViewPrimitive.DataError += DataGridViewPrimitive_DataError;
+            pre.DataGridViewPrimitive.CancelRowEdit += DataGridViewPrimitive_CancelRowEdit;
 
             pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
             pre.DataGridViewRelationship.DataSourceChanged += DataGridViewRelationship_DataSourceChanged;
             pre.DataGridViewRelationship.UserDeletingRow += DataGridViewRelationship_UserDeletingRow;
             pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
+            pre.DataGridViewRelationship.DataError += DataGridViewRelationship_DataError;
 
             pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
             pre.CheckBoxShowFromCurrentModel.CheckedChanged += checkBoxShowFromCurrentModel_CheckedChanged;
@@ -106,11 +111,20 @@ namespace Blueprint41.Modeller
             gbProperties.Enabled = false;
         }
 
+
         #region Primitive Event Handlers
+        private void DataGridViewPrimitive_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+
+        }
         private void DataGridViewPrimitive_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             if (e.Row.DataBoundItem is GridPrimitiveItem myPrim && primitiveLookUp.ContainsKey(myPrim.Item.Name) == false)
                 e.Cancel = true;
+        }
+        private void DataGridViewPrimitive_CancelRowEdit(object sender, QuestionEventArgs e)
+        {
+
         }
 
         private void DataGridViewPrimitive_DataSourceChanged(object sender, EventArgs e)
@@ -180,6 +194,7 @@ namespace Blueprint41.Modeller
         }
         #endregion
 
+        #region Relationship Event Handlers
         private void DataGridViewRelationship_DataSourceChanged(object sender, EventArgs e)
         {
             DataGridView dataGrid = (DataGridView)sender;
@@ -202,7 +217,7 @@ namespace Blueprint41.Modeller
 
         private void DataGridViewRelationship_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (e.Row.DataBoundItem is Relationship rel && relationshipLookUp.ContainsKey(rel.Name) == false)
+            if (e.Row.DataBoundItem is Relationship rel && rel.Name != null && relationshipLookUp.ContainsKey(rel.Name) == false)
                 e.Cancel = true;
         }
 
@@ -227,9 +242,10 @@ namespace Blueprint41.Modeller
                 textBox.Value = newName;
 
                 if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
-                    relationshipsObservable[e.RowIndex].RecreateEdge();
+                    relationshipsObservable[e.RowIndex].RenameEdge();
             }
         }
+        #endregion
 
         private void CreateToolTipForShowAllRelationshipsCheckbox()
         {
@@ -682,89 +698,10 @@ namespace Blueprint41.Modeller
             cmbInherits.DataBindings.Clear();
 
             // Primitive
-            bindingSourcePrimitiveProperties.DataSource = null;
-            pre.DataGridViewPrimitive.DataSource = null;
-
-            primitiveObservable = new ObservableCollection<GridPrimitiveItem>(GetPrimitivesOfSelfAndBaseTypes(Entity));
-            primitiveObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
-            {
-                switch (e.Action)
-                {
-                    case NotifyCollectionChangedAction.Remove:
-                    case NotifyCollectionChangedAction.Reset:
-                        {
-                            foreach (GridPrimitiveItem item in e.OldItems)
-                            {
-                                RemoveRecordPropertyAndFromChildEntity(item.Item);
-                                Entity.Primitive.Remove(item.Item);
-                            }
-
-                        }
-                        break;
-                    case NotifyCollectionChangedAction.Add:
-                        {
-                            foreach (GridPrimitiveItem item in e.NewItems)
-                            {
-                                item.EntityName = Entity.Name;
-                                Entity.Primitive.Add(item.Item);
-                            }
-
-                        }
-                        break;
-                    case NotifyCollectionChangedAction.Replace:
-                    case NotifyCollectionChangedAction.Move:
-                        throw new NotSupportedException();
-                }
-            };
-
-            bindingSourcePrimitiveProperties.DataSource = primitiveObservable;
-            pre.DataGridViewPrimitive.DataSource = bindingSourcePrimitiveProperties;
+            UpdatePrimitiveGridView();
 
             // Relationships
-            bindingSourceCollectionProperties.DataSource = null;
-            pre.DataGridViewRelationship.DataSource = null;
-
-            Collection<Relationship> relationships = GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity, showAllRelationships);
-            relationshipsObservable = new ObservableCollection<Schemas.Relationship>(relationships);
-            relationshipsObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
-            {
-                switch (e.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        {
-                            int index = e.NewStartingIndex;
-                            foreach (Relationship item in e.NewItems)
-                            {
-                                item.Model = StorageModel;
-                                StorageModel.Relationships.Relationship.Add(item);
-                            }
-                        }
-                        break;
-                    case NotifyCollectionChangedAction.Remove:
-                        {
-                            int oldItemIndex = 0;
-                            foreach (int index in Enumerable.Range(e.OldStartingIndex, e.OldItems.Count).Reverse())
-                            {
-                                Relationship item = (Relationship)e.OldItems[oldItemIndex++];
-                                if (StorageModel.Relationships.Relationship.Contains(item))
-                                    StorageModel.Relationships.Relationship.Remove(item);
-                            }
-                        }
-                        break;
-                    case NotifyCollectionChangedAction.Reset:
-                        {
-                            foreach (Relationship item in e.OldItems)
-                                StorageModel.Relationships.Relationship.Remove(item);
-                        }
-                        break;
-                    case NotifyCollectionChangedAction.Replace:
-                    case NotifyCollectionChangedAction.Move:
-                        throw new NotSupportedException();
-                }
-            };
-
-            bindingSourceCollectionProperties.DataSource = relationshipsObservable;
-            pre.DataGridViewRelationship.DataSource = bindingSourceCollectionProperties;
+            UpdateRelationshipGridView();
 
             bindingSourceEntities.DataSource = null;
             bindingSourceEntities.DataSource = StorageModel.Entities.Entity.OrderBy(x => x.Label);
@@ -814,6 +751,42 @@ namespace Blueprint41.Modeller
             Entity.OnNameChangeCancelled += Entity_OnNameChangeCancelled;
         }
 
+        void RemoveRelationships(Relationship item)
+        {
+            DialogResult dialogResult;
+
+            if (item.InEntity == null && item.OutEntity == null)
+                dialogResult = DialogResult.Yes;
+            else
+                dialogResult = MessageBox.Show($"Are you sure you want to delete the relationship '{item.Source.Label}->[{item.Name}]->{item.Target.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                if (StorageModel.Relationships.Relationship.Contains(item))
+                    StorageModel.RemoveRelationship(item);
+            }
+            else
+                UpdateRelationshipGridView();
+        }
+
+        void RemovePrimitive(Primitive item)
+        {
+            DialogResult dialogResult;
+
+            if (string.IsNullOrEmpty(item.Name))
+                dialogResult = DialogResult.Yes;
+            else
+                dialogResult = MessageBox.Show($"Are you sure you want to delete '{item.Name}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                RemoveRecordPropertyAndFromChildEntity(item);
+                Entity.Primitive.Remove(item);
+            }
+            else
+                UpdatePrimitiveGridView();
+        }
+
         private void RemoveRecordPropertyAndFromChildEntity(Primitive item)
         {
             RemoveRecordProperties(Entity, item);
@@ -850,7 +823,8 @@ namespace Blueprint41.Modeller
             if (cmbInherits.SelectedItem is EntityComboBoxItem item && item.Value is Entity entity && entity.Guid == Entity.Inherits)
                 return;
 
-            StorageModel.RemoveAllEdges(Entity);
+            // why remove all the edges?
+            //StorageModel.RemoveAllEdges(Entity);
 
             this.isFromCmbInherits = true;
             if (cmbInherits.SelectedItem is EntityComboBoxItem cmbitem)
@@ -894,7 +868,6 @@ namespace Blueprint41.Modeller
             Entity = null;
             bindingSource.DataSource = typeof(Entity);
             cmbInherits.DataSource = null;
-            FunctionalIdComboBox.SelectedItem = null;
             cmbInherits.SelectedIndex = -1;
             cmbFunctionalId.DataSource = null;
             cmbFunctionalId.SelectedIndex = -1;
@@ -925,55 +898,60 @@ namespace Blueprint41.Modeller
             Assign();
         }
 
-        private void btnApply_Click(object sender, EventArgs e)
+        //private void btnApply_Click(object sender, EventArgs e)
+        //{
+
+        //    //Entity.Complex.Clear();
+        //    //foreach (Complex item in (IEnumerable<Complex>)bindingSourceCollectionProperties.DataSource)
+        //    //{
+        //    //    Entity relatedEntity = StorageModel.Entities.Entity.First(search => search.Name == item.Entity);
+        //    //    //if (!relatedEntity.complex.Any(search => search.entity == relatedEntity.name))
+        //    //    //    relatedEntity.complex.Add(new complex() {
+        //    //    //        name = Entity.name,
+        //    //    //        entity = Entity.name,
+        //    //    //        type = "Lookup",
+        //    //    //        role = "None"
+        //    //    //    });
+
+        //    //    Entity.Complex.Add(item);
+
+        //    //    StorageModel.Relationships.Relationship.Add(new Relationship()
+        //    //    {
+        //    //        Name = Entity.Name.ToUpper() + "_" + relatedEntity.Name.ToUpper(),
+        //    //        Type = Entity.Name.ToUpper() + "_" + relatedEntity.Name.ToUpper(),
+        //    //        Source = new NodeReference()
+        //    //        {
+        //    //            Name = Entity.Name,
+        //    //            Label = Entity.Label,
+        //    //            Complex = item.Name
+        //    //        },
+        //    //        Target = new NodeReference()
+        //    //        {
+        //    //            Name = relatedEntity.Name,
+        //    //            Label = relatedEntity.Label
+        //    //        }
+        //    //    });
+        //    //}
+
+        //    //if (ApplyChangesButtonClicked != null)
+        //    //    ApplyChangesButtonClicked(this, new EventArgs());
+
+        //    //CloseEditor();
+        //}
+
+        //private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        //{
+
+        //}
+
+        //private void dataGridViewCollectionProperties_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        //{
+
+        //}
+
+        private void DataGridViewRelationship_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-
-            //Entity.Complex.Clear();
-            //foreach (Complex item in (IEnumerable<Complex>)bindingSourceCollectionProperties.DataSource)
-            //{
-            //    Entity relatedEntity = StorageModel.Entities.Entity.First(search => search.Name == item.Entity);
-            //    //if (!relatedEntity.complex.Any(search => search.entity == relatedEntity.name))
-            //    //    relatedEntity.complex.Add(new complex() {
-            //    //        name = Entity.name,
-            //    //        entity = Entity.name,
-            //    //        type = "Lookup",
-            //    //        role = "None"
-            //    //    });
-
-            //    Entity.Complex.Add(item);
-
-            //    StorageModel.Relationships.Relationship.Add(new Relationship()
-            //    {
-            //        Name = Entity.Name.ToUpper() + "_" + relatedEntity.Name.ToUpper(),
-            //        Type = Entity.Name.ToUpper() + "_" + relatedEntity.Name.ToUpper(),
-            //        Source = new NodeReference()
-            //        {
-            //            Name = Entity.Name,
-            //            Label = Entity.Label,
-            //            Complex = item.Name
-            //        },
-            //        Target = new NodeReference()
-            //        {
-            //            Name = relatedEntity.Name,
-            //            Label = relatedEntity.Label
-            //        }
-            //    });
-            //}
-
-            //if (ApplyChangesButtonClicked != null)
-            //    ApplyChangesButtonClicked(this, new EventArgs());
-
-            //CloseEditor();
-        }
-
-        private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-
-        }
-
-        private void dataGridViewCollectionProperties_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-
+            //throw new NotImplementedException();
         }
 
         private void ShowMessageAndResetTextBoxValue(string message, DataGridViewTextBoxCell textBox)
@@ -1077,9 +1055,86 @@ namespace Blueprint41.Modeller
             return Keywords.Instance.Contains(propertyName);
         }
 
+        private void UpdatePrimitiveGridView()
+        {
+            bindingSourcePrimitiveProperties.DataSource = null;
+            pre.DataGridViewPrimitive.DataSource = null;
+
+            primitiveObservable = new ObservableCollection<GridPrimitiveItem>(GetPrimitivesOfSelfAndBaseTypes(Entity));
+            primitiveObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Remove:
+                    case NotifyCollectionChangedAction.Reset:
+                        {
+                            foreach (GridPrimitiveItem item in e.OldItems)
+                                RemovePrimitive(item.Item);
+
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Add:
+                        {
+                            foreach (GridPrimitiveItem item in e.NewItems)
+                            {
+                                item.EntityName = Entity.Name;
+                                Entity.Primitive.Add(item.Item);
+                            }
+
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                    case NotifyCollectionChangedAction.Move:
+                        throw new NotSupportedException();
+                }
+            };
+
+            bindingSourcePrimitiveProperties.DataSource = primitiveObservable;
+            pre.DataGridViewPrimitive.DataSource = bindingSourcePrimitiveProperties;
+        }
+
         public void UpdateRelationshipGridView()
         {
-            relationshipsObservable = new ObservableCollection<Schemas.Relationship>(Entity.GetRelationships(StorageModel.DisplayedSubmodel));
+            bindingSourceCollectionProperties.DataSource = null;
+            pre.DataGridViewRelationship.DataSource = null;
+
+            relationshipsObservable = new ObservableCollection<Relationship>(GetRelationShipsOfSelfAndBaseWithinSubmodel(Entity, showAllRelationships));
+            relationshipsObservable.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        {
+                            int index = e.NewStartingIndex;
+                            foreach (Relationship item in e.NewItems)
+                            {
+                                item.Model = StorageModel;
+                                StorageModel.Relationships.Relationship.Add(item);
+                            }
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        {
+                            int oldItemIndex = 0;
+                            foreach (int index in Enumerable.Range(e.OldStartingIndex, e.OldItems.Count).Reverse())
+                            {
+                                Relationship item = (Relationship)e.OldItems[oldItemIndex++];
+                                RemoveRelationships(item);
+                            }
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Reset:
+                        {
+                            foreach (Relationship item in e.OldItems)
+                                RemoveRelationships(item);
+                        }
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                    case NotifyCollectionChangedAction.Move:
+                        throw new NotSupportedException();
+                }
+            };
+
             bindingSourceCollectionProperties.DataSource = relationshipsObservable;
             pre.DataGridViewRelationship.DataSource = bindingSourceCollectionProperties;
         }

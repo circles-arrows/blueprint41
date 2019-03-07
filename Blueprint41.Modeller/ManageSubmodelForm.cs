@@ -17,6 +17,7 @@ namespace Blueprint41.Modeller
     {
         public Submodel Submodel { get; private set; }
         public Model Model { get; private set; }
+        private bool IsMainModel { get; set; }
 
         public ManageSubmodelForm(Model modeller) : this(modeller, new Submodel(modeller))
         {
@@ -28,6 +29,7 @@ namespace Blueprint41.Modeller
             InitializeComponent();
             Model = modeller;
             Submodel = submodel;
+            IsMainModel = submodel.Name == "Main Model";
             AssignToUi();
             Text = "Edit Submodel";
         }
@@ -35,16 +37,27 @@ namespace Blueprint41.Modeller
         private void AssignToUi()
         {
             txtName.Text = Submodel.Name;
-            txtName.Enabled = Submodel.Name != "Main Model";
-            numericChapter.Value = Submodel.Chapter ?? 0;
-            chkIsDraft.Checked = Submodel.IsDraft;
-            chkIsLaboratory.Checked = Submodel.IsLaboratory;
+
+            if (IsMainModel)
+            {
+                numericChapter.Value = 0;
+                chkIsDraft.Checked = true;
+                chkIsLaboratory.Checked = true;
+
+                buttonAddAll.Enabled = false;
+                buttonRemoveAll.Enabled = false;
+            }
+            else
+            {
+                numericChapter.Value = Submodel.Chapter ?? 0;
+                chkIsDraft.Checked = Submodel.IsDraft;
+                chkIsLaboratory.Checked = Submodel.IsLaboratory;
+            }
+
+            btnRemove.Enabled = btnAdd.Enabled = false;
 
             if (!string.IsNullOrEmpty(Submodel.Explaination))
                 hteExplaination.BodyHtml = ToNormalString(Submodel.Explaination);
-
-            btnRemove.Enabled = btnAdd.Enabled = false;
-            btnDelete.Enabled = Submodel.Name != "Main Model";
 
             lbAvailable.Items.Clear();
 
@@ -59,6 +72,12 @@ namespace Blueprint41.Modeller
             {
                 lbExisting.Items.Add(entity.Label);
             }
+
+            txtName.Enabled = !IsMainModel;            
+            numericChapter.Enabled = !IsMainModel;
+            chkIsDraft.Enabled = !IsMainModel;
+            chkIsLaboratory.Enabled = !IsMainModel;
+            btnDelete.Enabled = !IsMainModel;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -110,12 +129,14 @@ namespace Blueprint41.Modeller
 
         private void lbExisting_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnRemove.Enabled = lbExisting.SelectedItems.Count > 0;
+            if (!IsMainModel)
+                btnRemove.Enabled = lbExisting.SelectedItems.Count > 0;
         }
 
         private void lbAvailable_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnAdd.Enabled = lbAvailable.SelectedItems.Count > 0;
+            if (!IsMainModel)
+                btnAdd.Enabled = lbAvailable.SelectedItems.Count > 0;
         }
 
         private void btnRemove_Click(object sender, EventArgs e)

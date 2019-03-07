@@ -226,7 +226,7 @@ namespace Blueprint41.Modeller
 
         private void SetupForEdit()
         {
-            editorPanel.Enabled = true;
+            gbPropertiesPanel.Enabled = true;
 
             cmbType.SelectedItem = IdFormat.Hash.ToString();
             txtPrefix.Clear();
@@ -243,7 +243,7 @@ namespace Blueprint41.Modeller
 
         private void SetupForSelection()
         {
-            editorPanel.Enabled = false;
+            gbPropertiesPanel.Enabled = false;
 
             cmbType.SelectedItem = null;
             txtPrefix.Clear();

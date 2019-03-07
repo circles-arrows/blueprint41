@@ -36,10 +36,4 @@ namespace Blueprint41.Modeller
         Out,
         Both
     }
-
-    public enum EditorViewMode
-    {
-        MDS,
-        Sugiyama,
-    }
 }

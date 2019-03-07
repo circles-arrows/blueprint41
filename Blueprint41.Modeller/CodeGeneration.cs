@@ -2,14 +2,11 @@
 using Blueprint41.Modeller.Schemas;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model = Blueprint41.Modeller.Schemas.Modeller;
 
@@ -181,7 +178,7 @@ namespace Blueprint41.Modeller
             {
                 checkedParentEntities.AddRange(node.InheritNode.Nodes.Cast<InheritedEntityTreeNode>().ToList().Where(entity => entity.Checked == true && checkedParentEntities.Any(added => added.Guid == entity.Entity.Guid) == false).Select(x => x.Entity));
                 relationships.AddRange(node.RelationshipNode.Nodes.Cast<RelationshipTreeNode>().ToList().Where(rel => rel.Checked == true && relationships.Any(added => added.Name == rel.Relationship.Name) == false).Select(x => x.Relationship));
-            });
+            });           
 
             var result = SortDependencyEntities(checkedEntities.Select(x => x.Entity).ToList(), checkedParentEntities);
             GenerateEntitiesCode(result, relationships);
@@ -393,8 +390,8 @@ namespace Blueprint41.Modeller
 
         private void btnCopyClipboard_Click(object sender, EventArgs e)
         {
-                Clipboard.SetText(richTextBox.Text);
-                MessageBox.Show("Contents copied to clipboard", "Code Generation", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Clipboard.SetText(richTextBox.Text);
+            MessageBox.Show("Contents copied to clipboard", "Code Generation", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnSelectAll_Click(object sender, EventArgs e)
