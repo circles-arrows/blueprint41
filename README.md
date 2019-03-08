@@ -16,13 +16,13 @@ To learn more, please visit [Blueprint41 wiki](https://github.com/circles-arrows
 PersistenceProvider.CurrentPersistenceProvider = new Neo4JPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"password");
 ```
 
-### Database Upgrade
+### Auto Sync Database Schema
 
 ```csharp
-// Datastore defines the current model
+// Datastore defines the latest schema definition
 Datastore model = new Datastore();
 
-// Updates database model based on the Datastore model
+// Sync database schema with the latest definition
 model.Execute(true);
 ```
 
