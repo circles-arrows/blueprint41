@@ -123,6 +123,18 @@ if (DALModel.IsAbstract)
 			}
 		}
 	}
+
+	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
+	{
+#>
+        
+		#region Member for UnidentifiedProperties
+
+        IDictionary<string, object> <#= DALModel.UnidentifiedProperties #> { get; }
+
+        #endregion
+<#
+	}
 #>
 
 		<#= DALModel.Inherits == null ? "" : "new " #>I<#= DALModel.Name #>OriginalData OriginalVersion { get; }

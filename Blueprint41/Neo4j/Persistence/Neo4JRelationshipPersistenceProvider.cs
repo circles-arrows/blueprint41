@@ -105,7 +105,7 @@ namespace Blueprint41.Neo4j.Persistence
                 throw new InvalidOperationException("This code should only load collections of the same concrete parent class.");
 
             var result = Neo4jTransaction.Run(match, parameters);
-            List<(object parentKey, object itemKey, DateTime? startDate, DateTime? endDate)> indexCache = new List<(object parentKey, object itemKey, DateTime? startDate, DateTime? endDate)>();
+            List<RelationshipIndex> indexCache = new List<RelationshipIndex>();
             foreach (var record in result)
             {
                 DateTime? startDate = null;
@@ -113,43 +113,51 @@ namespace Blueprint41.Neo4j.Persistence
 
                 if (target.Relationship.IsTimeDependent)
                 {
-                    startDate = Conversion<long, DateTime>.Convert((long)record.Values["StartDate"].As<long>());
-                    endDate = Conversion<long, DateTime>.Convert((long)record.Values["EndDate"].As<long>());
+                    startDate = (record.Values["StartDate"] != null) ? Conversion<long, DateTime>.Convert((long)record.Values["StartDate"].As<long>()) : (DateTime?)null;
+                    endDate = (record.Values["EndDate"] != null) ? Conversion<long, DateTime>.Convert((long)record.Values["EndDate"].As<long>()) : (DateTime?)null;
                 }
 
-                indexCache.Add((record.Values["ParentKey"].As<object>(), record.Values["ItemKey"].As<object>(), startDate, endDate));
+                indexCache.Add(new RelationshipIndex(record.Values["ParentKey"].As<object>(), record.Values["ItemKey"].As<object>(), startDate, endDate));
             }
 
-            Dictionary<object, INode> itemsCache = Load(targetEntity, indexCache.Select(r => r.itemKey));
+            Dictionary<object, List<INode>> itemsCache = Load(targetEntity, indexCache.Select(r => r.TargetEntityKey));
 
             List<CollectionItem> items = new List<CollectionItem>();
             foreach (var index in indexCache)
             {
-                OGM parent = parentDict[index.parentKey];
-                OGM item = ReadNode(parent, targetEntity, itemsCache[index.itemKey]);
-
-                items.Add(target.NewCollectionItem(parent, item, index.startDate, index.endDate));
+                OGM parent = parentDict[index.SourceEntityKey];
+                foreach (var item in itemsCache[index.TargetEntityKey])
+                {
+                    OGM child = ReadNode(parent, targetEntity, item);
+                    items.Add(target.NewCollectionItem(parent, child, index.StartDate, index.EndDate));
+                }
             }
 
             return CollectionItemList.Get(items);
         }
 
-        private Dictionary<object, INode> Load(Entity targetEntity, IEnumerable<object> keys)
+        private Dictionary<object, List<INode>> Load(Entity targetEntity, IEnumerable<object> keys)
         {
             string match = string.Format(
-                "MATCH (node:{0}) WHERE node.{1} in ({{keys}}) RETURN node, node.{1} as key",
+                "MATCH (node:{0}) WHERE node.{1} in ({{keys}}) RETURN DISTINCT node, node.{1} as key",
                 targetEntity.Label.Name,
                 targetEntity.Key.Name
             );
 
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("keys", keys);
+            parameters.Add("keys", keys.Distinct().ToList());
             var result = Neo4jTransaction.Run(match, parameters);
 
-            Dictionary<object, INode> retval = new Dictionary<object, INode>();
+            Dictionary<object, List<INode>> retval = new Dictionary<object, List<INode>>();
             foreach (var record in result)
             {
-                retval.Add(record.Values["key"].As<object>(), record.Values["node"].As<INode>());
+                List<INode> items;
+                if (!retval.TryGetValue(record.Values["key"].As<object>(), out items))
+                {
+                    items = new List<INode>();
+                    retval.Add(record.Values["key"].As<object>(), items);
+                }
+                items.Add(record.Values["node"].As<INode>());
             }
 
             return retval;
