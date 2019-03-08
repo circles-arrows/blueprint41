@@ -4,8 +4,6 @@
 
 Simplify database operations through generated data access objects. 
 
-Fully Type-Safe.
-
 
 ### Documentation
 
@@ -16,17 +14,17 @@ To learn more, please visit [Blueprint41 wiki](https://github.com/circles-arrows
 PersistenceProvider.CurrentPersistenceProvider = new Neo4JPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"password");
 ```
 
-### Auto Sync Database Schema
+### Automated Deployment of Schema Upgrades
 
 ```csharp
 // Datastore defines the latest schema definition
 Datastore model = new Datastore();
 
-// Sync database schema with the latest definition
+// Sync database schema with the latest upgrade scripts
 model.Execute(true);
 ```
 
-### Creating Nodes and Relationships
+### Type Safe Creation of Nodes and Relationships
 
 ```csharp
 using (Transaction.Begin())
@@ -44,12 +42,6 @@ using (Transaction.Begin())
         Born = new DateTime(1964, 9, 2)
     };
 
-    Person laurence = new Person()
-    {
-        Name = "Laurence Fishburne",
-        Born = new DateTime(1961, 7, 30)
-    };
-
     Person lana = new Person()
     {
         Name = "Lana Wachowski",
@@ -61,22 +53,13 @@ using (Transaction.Begin())
         Name = "Lilly Wachowski",
         Born = new DateTime(1967, 12, 29)
     };
-
-    Person joel = new Person()
-    {
-        Name = "Joel Silver",
-        Born = new DateTime(1952, 7, 14)
-    };
     
     // Creates relationship via Type-safe generated objects
     movie.Actors.Add(keanu);
-    movie.Actors.Add(laurence);
     movie.Directors.Add(lana);
     movie.Directors.Add(lilly);
-    movie.ScreenWriters.Add(lana);
-    movie.ScreenWriters.Add(lilly);
-    movie.Producers.Add(joel);
-    movie.Genre.Add(Genre.Lookup(Genre.StaticData.Name.Action));
+    movie.Genre.Add(Genre.Load(Genre.StaticData.Name.Action));
+    movie.Genre.Add(Genre.Load(Genre.StaticData.Name.Sci_Fi));
 
     // Commits detected changes to database
     Transaction.Commit(); 
@@ -84,7 +67,7 @@ using (Transaction.Begin())
 ```
 
 
-### TypeSafe Query 
+### Type Safe Querying of the Graph
 
 ```csharp
 using (Transaction.Begin())
@@ -110,3 +93,8 @@ using (Transaction.Begin())
     List<Person> directors = Person.LoadWhere(query);
 }
 ```
+
+
+### Frictionless Development with Intellisense 
+
+![Intellisense](https://raw.githubusercontent.com/circles-arrows/blueprint41/master/Documentation/Blueprint41_Intellisense.gif)
