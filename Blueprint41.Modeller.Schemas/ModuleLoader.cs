@@ -85,7 +85,12 @@ namespace Blueprint41.Modeller.Schemas
                 if (filename.Contains(","))
                     filename = filename.Split(',')[0] + ".dll";
 
-                foreach (string folder in Directory.GetDirectories(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Modules"), "*"))
+                string moduleDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Modules");
+
+                if (!Directory.Exists(moduleDirectory))
+                    return null;
+
+                foreach (string folder in Directory.GetDirectories(moduleDirectory, "*"))
                 {
                     string file = Path.Combine(folder, filename);
                     if (File.Exists(file))
