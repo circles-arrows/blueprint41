@@ -858,7 +858,7 @@ namespace Blueprint41.Modeller
 
             if (loader == null)
             {
-                MessageBox.Show("Unable to communicate to the server at this time. Please check your internet connection and restart the application. If error persists, contact support@circlesarrows.com", "Register", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Unable to communicate to the server at this time. Please check your internet connection and restart the application. If error persists, contact support@circles-arrows.com", "Register", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
