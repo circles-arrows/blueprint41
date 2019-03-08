@@ -16,10 +16,13 @@ To learn more, please visit [Blueprint41 wiki](https://github.com/circles-arrows
 PersistenceProvider.CurrentPersistenceProvider = new Neo4JPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"password");
 ```
 
-### Your DataStore Model
+### Database Upgrade
 
 ```csharp
+// Datastore defines the current model
 Datastore model = new Datastore();
+
+// Updates database model based on the Datastore model
 model.Execute(true);
 ```
 
@@ -65,7 +68,7 @@ using (Transaction.Begin())
         Born = new DateTime(1952, 7, 14)
     };
     
-    // Create relationship via Type-safe generated objects
+    // Creates relationship via Type-safe generated objects
     movie.Actors.Add(keanu);
     movie.Actors.Add(laurence);
     movie.Directors.Add(lana);
