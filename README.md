@@ -4,6 +4,9 @@
 
 Simplify database operations through generated data access objects. 
 
+Fully Type-Safe.
+
+
 ### Documentation
 
 To learn more, please visit [Blueprint41 wiki](https://github.com/circles-arrows/blueprint41/wiki).
