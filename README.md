@@ -1,8 +1,8 @@
 # Blueprint41
 
-An Object Graph Mapper for CSharp and Neo4j. 
+### .NET ORM for Neo4j Graph Database
 
-Simplify database operations through generated data access objects.
+Simplify database operations through generated data access objects. 
 
 ### Documentation
 
@@ -72,7 +72,7 @@ using (Transaction.Begin())
     movie.Producers.Add(joel);
     movie.Genre.Add(Genre.Lookup(Genre.StaticData.Name.Action));
 
-    // This commits detected changes to database
+    // Commits detected changes to database
     Transaction.Commit(); 
 }
 ```
@@ -104,5 +104,3 @@ using (Transaction.Begin())
     List<Person> directors = Person.LoadWhere(query);
 }
 ```
-
-
