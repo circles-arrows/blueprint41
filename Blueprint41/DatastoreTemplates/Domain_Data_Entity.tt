@@ -381,7 +381,8 @@ if (!DALModel.IsAbstract)
 
 			#endregion
 <#
-	if (string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
+	Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
+	if (inheritedUnidentifiedProp == null)
 	{
 #>
 			#region Map Data
@@ -653,12 +654,12 @@ if (!DALModel.IsAbstract)
 <#
 	}
 
-	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
+	if (inheritedUnidentifiedProp != null)
 	{
 #>
         #region Member for UnidentifiedProperties
 
-        public IDictionary<string, object> <#= DALModel.UnidentifiedProperties #> { get { return InnerData.UnidentifiedProperties; } }
+        public IDictionary<string, object> <#= inheritedUnidentifiedProp.UnidentifiedProperties #> { get { return InnerData.UnidentifiedProperties; } }
 
         #endregion
 <#
@@ -1085,14 +1086,14 @@ if (!DALModel.IsAbstract)
 	}
 #>
 		#endregion
-<#		
-	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
+<#
+	if (inheritedUnidentifiedProp != null)
 	{
 #>
         
 		#region Member for UnidentifiedProperties
 
-        IDictionary<string, object> I<#= DALModel.Name #>OriginalData.<#= DALModel.UnidentifiedProperties #> { get { return OriginalData.UnidentifiedProperties; } }
+        IDictionary<string, object> I<#= inheritedUnidentifiedProp.Name #>OriginalData.<#= inheritedUnidentifiedProp.UnidentifiedProperties #> { get { return OriginalData.UnidentifiedProperties; } }
 
         #endregion
 <#

@@ -214,6 +214,14 @@ namespace Blueprint41
         public PropertyCollection Properties { get; private set; }
         public string UnidentifiedProperties { get; private set; }
 
+        public Entity InheritedUnidentifiedProperties()
+        {
+            if (!string.IsNullOrEmpty(UnidentifiedProperties))
+                return this;
+
+            return Inherits?.InheritedUnidentifiedProperties();
+        }
+
 
         private Lazy<Property> key;
         public Property Key
