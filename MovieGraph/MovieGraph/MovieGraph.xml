@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modeller xmlns="http://xirqlz.com/2016/Blueprint/Modeller">
+  <entities>
+    <entity guid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" label="Person" name="Person" isStaticData="false" functionalId="a96e15a6-6fd6-24ef-e87e-841fbabf7cca">
+      <primitive guid="f7750f70-9652-468e-a9df-66ea34158cc0" type="string" index="None" name="name" />
+      <primitive guid="be5eb5e6-5893-444c-8342-a4a4480eb968" type="int" index="None" name="born" />
+      <primitive guid="1f28248e-8c88-4797-8993-fde45f1d5b21" type="string" index="Unique" name="Uid" isKey="true" nullable="false" />
+    </entity>
+    <entity guid="ace02615-0c85-1e24-e163-1d9ad5664475" label="Movie" name="Movie" isStaticData="false" functionalId="a96e15a6-6fd6-24ef-e87e-841fbabf7cca">
+      <primitive guid="2898b7d2-19b8-426d-88e1-3d59a8481b76" type="string" index="None" name="title" />
+      <primitive guid="1c553cd4-a8c2-40d6-af8d-4be52ffbe9cc" type="string" index="None" name="tagline" />
+      <primitive guid="83365abc-adb3-4d9a-8348-fe17bafd19f0" type="int" index="None" name="released" />
+      <primitive guid="9b534208-164e-46d3-8ba6-ed7205bd1589" type="string" index="Unique" name="Uid" isKey="true" nullable="false" />
+    </entity>
+    <entity guid="1f19cf46-6a3c-e558-3f79-9379a7bb1246" label="MovieRole" name="MovieRole" isStaticData="false">
+      <primitive guid="d4aa80cc-5fef-4328-8259-88b7df56f325" type="string" index="Unique" name="Uid" isKey="true" nullable="false" />
+      <primitive guid="e78660c1-0430-4fcf-b8fe-7508da9f68d3" type="List&lt;string&gt;" index="None" name="Role" />
+    </entity>
+    <entity guid="d5136ad4-79ef-bba1-b575-09d0226d08e8" label="MovieReview" name="MovieReview" isStaticData="false">
+      <primitive guid="e2ca1c73-cfc0-4425-9663-992379267685" type="string" index="Unique" name="Uid" isKey="true" nullable="false" />
+      <primitive guid="08da1b8e-a5b7-47dd-9760-ba4ade488e70" type="string" index="None" name="Review" />
+      <primitive guid="d9ae7a68-69d6-44c5-82f1-adb112dc1b50" type="decimal" index="None" name="Rating" />
+    </entity>
+  </entities>
+  <relationships>
+    <relationship guid="c8596e83-323c-7a34-5ec4-ae87f8990d96" name="ACTED_IN" type="ACTED_IN">
+      <source name="ActedMovies" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <target name="Actors" type="Collection" label="Movie" referenceGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+    </relationship>
+    <relationship guid="f86eacfb-3c47-c8c2-7208-7fcf347bfb2f" name="DIRECTED" type="DIRECTED">
+      <source name="DirectedMovies" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <target name="Directors" type="Collection" label="Movie" referenceGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+    </relationship>
+    <relationship guid="c8a887ff-586b-88b0-88f1-cd1c40372069" name="FOLLOWS" type="FOLLOWS">
+      <source name="FollowedPersons" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <target name="Followers" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+    </relationship>
+    <relationship guid="055674ac-934a-387f-80f6-59582247f705" name="PRODUCED" type="PRODUCED">
+      <source name="ProducedMovies" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <target name="Producers" type="Collection" label="Movie" referenceGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+    </relationship>
+    <relationship guid="e8a38ecd-4c07-0a1a-b721-398228b02373" name="WROTE" type="WROTE">
+      <source name="WritedMovies" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <target name="Writers" type="Collection" label="Movie" referenceGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+    </relationship>
+    <relationship guid="97bcd69a-269c-c389-6303-50e1ed58ba4c" name="MOVIE_ROLES" type="MOVIE_ROLES">
+      <source name="MovieRoles" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <target label="MovieRole" referenceGuid="1f19cf46-6a3c-e558-3f79-9379a7bb1246" />
+    </relationship>
+    <relationship guid="fe5a2808-a5bd-4a1a-7e5d-3422d71b1790" name="MOVIEROLE_HAS_MOVIE" type="HAS_MOVIE">
+      <source name="Movie" type="Lookup" label="MovieRole" referenceGuid="1f19cf46-6a3c-e558-3f79-9379a7bb1246" />
+      <target label="Movie" referenceGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+    </relationship>
+    <relationship guid="23d6b4f7-df13-6c97-d63c-02e241ce2ddc" name="MOVIEREVIEW_HAS_MOVIE" type="HAS_REVIEWED_MOVIE">
+      <source name="Movie" type="Lookup" label="MovieReview" referenceGuid="d5136ad4-79ef-bba1-b575-09d0226d08e8" />
+      <target label="Movie" referenceGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+    </relationship>
+    <relationship guid="fdeb076a-f084-0de9-ad3b-640c0278ab96" name="MOVIE_REVIEWS" type="MOVIE_REVIEWS">
+      <source name="MovieReviews" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <target label="MovieReview" referenceGuid="d5136ad4-79ef-bba1-b575-09d0226d08e8" />
+    </relationship>
+  </relationships>
+  <submodels>
+    <submodel name="Main Model">
+      <node label="Person" xcoordinate="-4.4415312896171564" ycoordinate="99.202852053095256" entityGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <node label="Movie" xcoordinate="-4.3480710536773621" ycoordinate="-94.321593908344" entityGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+      <node label="MovieRole" xcoordinate="176.47525252617521" ycoordinate="2.5065342973186233" entityGuid="1f19cf46-6a3c-e558-3f79-9379a7bb1246" />
+      <node label="MovieReview" xcoordinate="-184.49260942708517" ycoordinate="4.1296231480560408" entityGuid="d5136ad4-79ef-bba1-b575-09d0226d08e8" />
+    </submodel>
+  </submodels>
+  <functionalIds>
+    <functionalId type="Numeric" value="SH_" name="Shared" guid="a96e15a6-6fd6-24ef-e87e-841fbabf7cca" isDefault="true" />
+  </functionalIds>
+</modeller>
