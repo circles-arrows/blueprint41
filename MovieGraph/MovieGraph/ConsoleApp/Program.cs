@@ -4,6 +4,7 @@ using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Query;
 using Domain.Data.Manipulation;
 using MovieGraph.Model;
+using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,8 +29,10 @@ namespace ConsoleApp
             ListAllTomHanksMovies();
             DirectedCloutAtlas();
             TomHanksCoActors();
-            CoActorsWhoHaveNotWorkedWithTomHanks();
             SomeoneToIntroduceToTomHanks();
+
+            Console.WriteLine("Done. Press any key to exit.");
+            Console.ReadLine();
         }
 
         private static void SomeoneToIntroduceToTomHanks()
@@ -37,8 +40,11 @@ namespace ConsoleApp
             //Find someone to introduce Tom Hanks to Tom Cruise
 
             //MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors),
-            //      (coActors) -[:ACTED_IN]->(m2) < -[:ACTED_IN] - (cruise: Person { name: "Tom Cruise"})
+            //      (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cruise: Person { name: "Tom Cruise"})
             //RETURN tom, m, coActors, m2, cruise
+
+            List<string> coActorsWithCruise = new List<string>() { "Bonnie Hunt", "Meg Ryan", "Kevin Bacon" };
+
             using (Transaction.Begin())
             {
                 ICompiled query = Transaction.CompiledQuery
@@ -66,47 +72,20 @@ namespace ConsoleApp
                     .Where(tomHAlias.name == "Tom Hanks", tomCAlias.name == "Tom Cruise")
                     .Return(tomHAlias, m, coActorsAlias, m2, tomCAlias)
                     .Compile();
-                
-            }
-        }
 
-        private static void CoActorsWhoHaveNotWorkedWithTomHanks()
-        {
-            /*
-             * MATCH (tom:Person {name:"Tom Hanks"})-[:ACTED_IN]->(m)<-[:ACTED_IN]-(coActors), (coActors)-[:ACTED_IN]->(m2)<-[:ACTED_IN]-(cocoActors)
-             * WHERE NOT (tom)-[:ACTED_IN]->()<-[:ACTED_IN]-(cocoActors) AND tom <> cocoActors
-             * RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC
-             */
+                IStatementResult records = Neo4jTransaction.Run(query.ToString());
 
-            using (Transaction.Begin())
-            {
-                ICompiled query = Transaction.CompiledQuery
-                    .Match
-                    (
-                        Domain.Data.Query.Node.Person.Alias(out var actorAlias)
-                        .In
-                        .ACTED_IN
-                        .Out
-                        .Movie.Alias(out var m)
-                        .Out
-                        .ACTED_IN
-                        .In
-                        .Person.Alias(out var coActorAlias),
-                        Domain.Data.Query.Node.Person.UseExistingAlias(coActorAlias)
-                        .In
-                        .ACTED_IN
-                        .Out
-                        .Movie.Alias(out var m2)
-                        .Out
-                        .ACTED_IN
-                        .In
-                        .Person.Alias(out var cocoActors)
-                    )
-                    .Where(actorAlias.name == "Tom Hanks", actorAlias != cocoActors)
-                    .Return(cocoActors)
-                    .Compile();
+                foreach (IRecord record in records)
+                {
+                    var tomH = record[0].As<INode>();
+                    var movieWithTom = record[1].As<INode>();
+                    var coActor = record[2].As<INode>();
+                    var movieWithCoActorAndTom = record[3].As<INode>();
+                    var cruise = record[4].As<INode>();
 
-                List<Person> coActors = Person.LoadWhere(query);
+                    Debug.Assert(coActorsWithCruise.Contains(coActor.Properties["name"].ToString()));
+                    Console.WriteLine($"{tomH.Properties["name"].ToString()} -> {movieWithTom.Properties["title"].ToString()} -> {coActor.Properties["name"].ToString()} <- {movieWithCoActorAndTom.Properties["title"].ToString()} <- {cruise.Properties["name"].ToString()}");
+                }
             }
         }
 
