@@ -21,6 +21,74 @@
       <primitive guid="08da1b8e-a5b7-47dd-9760-ba4ade488e70" type="string" index="None" name="Review" />
       <primitive guid="d9ae7a68-69d6-44c5-82f1-adb112dc1b50" type="decimal" index="None" name="Rating" />
     </entity>
+    <entity guid="043b5691-3949-33df-670b-d362715e334e" label="Genre" name="Genre" isStaticData="true">
+      <primitive guid="1d072e35-0df9-40db-b942-2184c175cbfa" type="string" index="Unique" name="Uid" isKey="true" nullable="false" />
+      <primitive guid="79b363ae-9a80-48ea-b198-abc9e4531ec4" type="string" index="None" name="Name" nullable="false" />
+      <staticData>
+        <records>
+          <record guid="b6fbe93d-7e01-42b2-a2e5-51340300771b">
+            <property value="1" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Action" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="bea7892b-3ddb-4b35-ad0c-a17d62365cab">
+            <property value="2" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Animation" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="e95b012c-0d8e-4736-b980-b7f8d93d2002">
+            <property value="3" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Biography" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="b88bb42f-628f-4be6-b935-766e499ed292">
+            <property value="4" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Comedy" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="801a984e-da56-4f30-9a20-633e151fb7cd">
+            <property value="5" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Documentary" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="4697a833-2e55-4ed0-84c2-5b1431eb730b">
+            <property value="6" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Drama" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="2555217d-0cb8-4b8f-ab6a-61a359a28430">
+            <property value="7" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Fantasy" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="486032da-6a0b-435f-919e-83d68b9368e6">
+            <property value="8" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Horror" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="2070c16c-20fe-402a-b8b5-48447ca62213">
+            <property value="9" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Musical" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="7db8baec-a11f-4a35-bad4-26785c46ec01">
+            <property value="10" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Reality-Tv" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="65c07da9-2be2-47c4-bc63-e3637b344b9c">
+            <property value="11" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Romance" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="07b7af53-9dd6-4497-a0e4-9a20656c890f">
+            <property value="12" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Sci-Fi" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="8e919261-85e3-4b97-910f-fd66229a6b5d">
+            <property value="13" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Short" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="ddfb022d-5f41-45b5-8999-5ff3fd06dda2">
+            <property value="14" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Talk-Show" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+          <record guid="3269031f-e602-4393-b5d4-c72a6e3e4546">
+            <property value="15" propertyGuid="1d072e35-0df9-40db-b942-2184c175cbfa" />
+            <property value="Thriller" propertyGuid="79b363ae-9a80-48ea-b198-abc9e4531ec4" />
+          </record>
+        </records>
+      </staticData>
+    </entity>
   </entities>
   <relationships>
     <relationship guid="c8596e83-323c-7a34-5ec4-ae87f8990d96" name="ACTED_IN" type="ACTED_IN">
@@ -59,13 +127,18 @@
       <source name="MovieReviews" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
       <target label="MovieReview" referenceGuid="d5136ad4-79ef-bba1-b575-09d0226d08e8" />
     </relationship>
+    <relationship guid="369eb449-e2ee-88f9-b023-e1e4c315cb38" name="CONTAINS_GENRE" type="CONTAINS_GENRE">
+      <source name="Genres" type="Collection" label="Movie" referenceGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+      <target name="Movies" type="Collection" label="Genre" referenceGuid="043b5691-3949-33df-670b-d362715e334e" />
+    </relationship>
   </relationships>
   <submodels>
     <submodel name="Main Model">
       <node label="Person" xcoordinate="-4.4415312896171564" ycoordinate="99.202852053095256" entityGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
-      <node label="Movie" xcoordinate="-4.3480710536773621" ycoordinate="-94.321593908344" entityGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
-      <node label="MovieRole" xcoordinate="176.47525252617521" ycoordinate="2.5065342973186233" entityGuid="1f19cf46-6a3c-e558-3f79-9379a7bb1246" />
-      <node label="MovieReview" xcoordinate="-184.49260942708517" ycoordinate="4.1296231480560408" entityGuid="d5136ad4-79ef-bba1-b575-09d0226d08e8" />
+      <node label="Movie" xcoordinate="-5.0307476074035584" ycoordinate="-10.352346090350835" entityGuid="ace02615-0c85-1e24-e163-1d9ad5664475" />
+      <node label="MovieRole" xcoordinate="175.79257430351896" ycoordinate="-10.122987072615459" entityGuid="1f19cf46-6a3c-e558-3f79-9379a7bb1246" />
+      <node label="MovieReview" xcoordinate="-188.93000261556173" ycoordinate="-7.47588255682372" entityGuid="d5136ad4-79ef-bba1-b575-09d0226d08e8" />
+      <node label="Genre" xcoordinate="-6.57417356967926" ycoordinate="-123.15915679931641" entityGuid="043b5691-3949-33df-670b-d362715e334e" />
     </submodel>
   </submodels>
   <functionalIds>

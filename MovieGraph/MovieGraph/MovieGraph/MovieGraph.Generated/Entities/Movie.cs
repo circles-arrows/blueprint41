@@ -16,6 +16,7 @@ namespace Domain.Data.Manipulation
 		string tagline { get; }
 		int? released { get; }
 		string Uid { get; }
+		IEnumerable<Genre> Genres { get; }
 		IEnumerable<Person> Actors { get; }
 		IEnumerable<Person> Directors { get; }
 		IEnumerable<Person> Producers { get; }
@@ -125,6 +126,7 @@ namespace Domain.Data.Manipulation
 				tagline = data.tagline;
 				released = data.released;
 				Uid = data.Uid;
+				Genres = data.Genres;
 				Actors = data.Actors;
 				Directors = data.Directors;
 				Producers = data.Producers;
@@ -138,6 +140,7 @@ namespace Domain.Data.Manipulation
 			{
 				NodeType = "Movie";
 
+				Genres = new EntityCollection<Genre>(Wrapper, Members.Genres, item => { if (Members.Genres.Events.HasRegisteredChangeHandlers) { int loadHack = item.Movies.Count; } });
 				Actors = new EntityCollection<Person>(Wrapper, Members.Actors, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedMovies.Count; } });
 				Directors = new EntityCollection<Person>(Wrapper, Members.Directors, item => { if (Members.Directors.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedMovies.Count; } });
 				Producers = new EntityCollection<Person>(Wrapper, Members.Producers, item => { if (Members.Producers.Events.HasRegisteredChangeHandlers) { int loadHack = item.ProducedMovies.Count; } });
@@ -181,6 +184,7 @@ namespace Domain.Data.Manipulation
 			public string tagline { get; set; }
 			public int? released { get; set; }
 			public string Uid { get; set; }
+			public EntityCollection<Genre> Genres { get; private set; }
 			public EntityCollection<Person> Actors { get; private set; }
 			public EntityCollection<Person> Directors { get; private set; }
 			public EntityCollection<Person> Producers { get; private set; }
@@ -199,6 +203,11 @@ namespace Domain.Data.Manipulation
 		public string tagline { get { LazyGet(); return InnerData.tagline; } set { if (LazySet(Members.tagline, InnerData.tagline, value)) InnerData.tagline = value; } }
 		public int? released { get { LazyGet(); return InnerData.released; } set { if (LazySet(Members.released, InnerData.released, value)) InnerData.released = value; } }
 		public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
+		public EntityCollection<Genre> Genres { get { return InnerData.Genres; } }
+		private void ClearGenres(DateTime? moment)
+		{
+			((ILookupHelper<Genre>)InnerData.Genres).ClearLookup(moment);
+		}
 		public EntityCollection<Person> Actors { get { return InnerData.Actors; } }
 		private void ClearActors(DateTime? moment)
 		{
@@ -258,6 +267,7 @@ namespace Domain.Data.Manipulation
             public Property tagline { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["tagline"];
             public Property released { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["released"];
             public Property Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Uid"];
+            public Property Genres { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Genres"];
             public Property Actors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Actors"];
             public Property Directors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Directors"];
             public Property Producers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Producers"];
@@ -627,6 +637,49 @@ namespace Domain.Data.Manipulation
 
 				#endregion
 
+				#region OnGenres
+
+				private static bool onGenresIsRegistered = false;
+
+				private static EventHandler<Movie, PropertyEventArgs> onGenres;
+				public static event EventHandler<Movie, PropertyEventArgs> OnGenres
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onGenresIsRegistered)
+							{
+								Members.Genres.Events.OnChange -= onGenresProxy;
+								Members.Genres.Events.OnChange += onGenresProxy;
+								onGenresIsRegistered = true;
+							}
+							onGenres += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onGenres -= value;
+							if (onGenres == null && onGenresIsRegistered)
+							{
+								Members.Genres.Events.OnChange -= onGenresProxy;
+								onGenresIsRegistered = false;
+							}
+						}
+					}
+				}
+            
+				private static void onGenresProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Movie, PropertyEventArgs> handler = onGenres;
+					if ((object)handler != null)
+						handler.Invoke((Movie)sender, args);
+				}
+
+				#endregion
+
 				#region OnActors
 
 				private static bool onActorsIsRegistered = false;
@@ -816,6 +869,7 @@ namespace Domain.Data.Manipulation
 		string IMovieOriginalData.tagline { get { return OriginalData.tagline; } }
 		int? IMovieOriginalData.released { get { return OriginalData.released; } }
 		string IMovieOriginalData.Uid { get { return OriginalData.Uid; } }
+		IEnumerable<Genre> IMovieOriginalData.Genres { get { return OriginalData.Genres.OriginalData; } }
 		IEnumerable<Person> IMovieOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
 		IEnumerable<Person> IMovieOriginalData.Directors { get { return OriginalData.Directors.OriginalData; } }
 		IEnumerable<Person> IMovieOriginalData.Producers { get { return OriginalData.Producers.OriginalData; } }

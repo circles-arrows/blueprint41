@@ -40,6 +40,18 @@ namespace Domain.Data.Query
 			return this;
         }
 
+	
+		public MovieIn  In  { get { return new MovieIn(this); } }
+		public class MovieIn
+		{
+			private MovieNode Parent;
+			internal MovieIn(MovieNode parent)
+			{
+                Parent = parent;
+			}
+			public IFromIn_CONTAINS_GENRE_REL CONTAINS_GENRE { get { return new CONTAINS_GENRE_REL(Parent, DirectionEnum.In); } }
+
+		}
 
 		public MovieOut Out { get { return new MovieOut(this); } }
 		public class MovieOut
@@ -84,6 +96,7 @@ namespace Domain.Data.Query
 		}
         private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
+        public MovieNode.MovieIn In { get { return new MovieNode.MovieIn(new MovieNode(this, true)); } }
         public MovieNode.MovieOut Out { get { return new MovieNode.MovieOut(new MovieNode(this, true)); } }
 
         public StringResult title
