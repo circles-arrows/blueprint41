@@ -20,6 +20,7 @@ namespace Domain.Data.Manipulation
 
 				isInitialized = true;
 
+                ((ISetRuntimeType)MovieGraph.Model.Datastore.Model.Entities["Genre"]).SetRuntimeTypes(typeof(Genre), typeof(Genre));
                 ((ISetRuntimeType)MovieGraph.Model.Datastore.Model.Entities["Movie"]).SetRuntimeTypes(typeof(Movie), typeof(Movie));
                 ((ISetRuntimeType)MovieGraph.Model.Datastore.Model.Entities["MovieReview"]).SetRuntimeTypes(typeof(MovieReview), typeof(MovieReview));
                 ((ISetRuntimeType)MovieGraph.Model.Datastore.Model.Entities["MovieRole"]).SetRuntimeTypes(typeof(MovieRole), typeof(MovieRole));
