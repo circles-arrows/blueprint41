@@ -290,19 +290,23 @@ namespace Blueprint41
 
             if (Parser.ShouldExecute && (Nullable == false || IndexType != IndexType.None))
             {
-                Nullable = true;
-                IndexType = IndexType.None;
-
-                foreach (var entity in Parent.GetSubclassesOrSelf())
+                using (Transaction.Begin(true))
                 {
-                    ApplyConstraintEntity applyConstraint = new ApplyConstraintEntity(Parent.Parent.GetSchema(), entity);
-                    foreach (var action in applyConstraint.Actions.Where(c => c.Property == Name))
+                    Nullable = true;
+                    IndexType = IndexType.None;
+
+                    foreach (var entity in Parent.GetSubclassesOrSelf())
                     {
-                        foreach (string query in action.ToCypher())
+                        ApplyConstraintEntity applyConstraint = new ApplyConstraintEntity(Parent.Parent.GetSchema(), entity);
+                        foreach (var action in applyConstraint.Actions.Where(c => c.Property == Name))
                         {
-                            Parser.Execute(query, null);
+                            foreach (string query in action.ToCypher())
+                            {
+                                Parser.Execute(query, null);
+                            }
                         }
                     }
+                    Transaction.Commit();
                 }
             }
         }

@@ -24,8 +24,7 @@ namespace Blueprint41.Core
             Wrapper = parent;
             InitializeCollections();
 
-            bool hasUnidentifiedProperties = !string.IsNullOrEmpty(Wrapper.GetEntity().UnidentifiedProperties);
-            if (hasUnidentifiedProperties)
+            if (Wrapper.GetEntity().InheritedUnidentifiedProperties() != null)
                 UnidentifiedProperties = new UnidentifiedPropertyCollection(Wrapper);
         }
         protected abstract void InitializeCollections();
@@ -63,7 +62,7 @@ namespace Blueprint41.Core
 
         public virtual void MapFrom(IReadOnlyDictionary<string, object> properties)
         {
-            bool hasUnidentifiedProperties = !string.IsNullOrEmpty(Wrapper.GetEntity().UnidentifiedProperties);
+            bool hasUnidentifiedProperties = (Wrapper.GetEntity().InheritedUnidentifiedProperties() != null);
             if (hasUnidentifiedProperties)
             {
                 if (UnidentifiedProperties == null)
@@ -77,7 +76,7 @@ namespace Blueprint41.Core
                 if (PropertyDetails.TryGetValue(property.Key, out info))
                     info.SetValue(this, property.Value);
                 else
-                    if (hasUnidentifiedProperties)
+                    if (UnidentifiedProperties != null)
                         UnidentifiedProperties.AddInternal(property.Key, property.Value);
             }
         }
@@ -95,7 +94,7 @@ namespace Blueprint41.Core
                 }
             }
 
-            if (!string.IsNullOrEmpty(Wrapper.GetEntity().UnidentifiedProperties))
+            if (UnidentifiedProperties != null)
                 UnidentifiedProperties.ForEachInternal(item => dictionary.Add(item));
 
             return dictionary;
@@ -111,7 +110,7 @@ namespace Blueprint41.Core
             }
             else
             {
-                if (!string.IsNullOrEmpty(Wrapper.GetEntity().UnidentifiedProperties))
+                if (UnidentifiedProperties != null)
                 {
                     object value;
                     if (UnidentifiedProperties.TryGetValue(propertyName, out value))

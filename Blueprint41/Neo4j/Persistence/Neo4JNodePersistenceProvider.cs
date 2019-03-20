@@ -10,6 +10,7 @@ using Blueprint41.Core;
 using System.Diagnostics;
 using Blueprint41.Query;
 using System.Data;
+using System.Linq.Expressions;
 
 namespace Blueprint41.Neo4j.Persistence
 {
@@ -471,10 +472,7 @@ namespace Blueprint41.Neo4j.Persistence
                         if (entityInstance.IsAbstract)
                             continue;
 
-                        retval.Add(entityInstance.Name, delegate ()
-                        {
-                            return System.Activator.CreateInstance(type) as OGM;
-                        });
+                        retval.Add(entityInstance.Name, Expression.Lambda<Func<OGM>>(Expression.New(type)).Compile());
                     }
                 }
                 return retval[entity.Name];

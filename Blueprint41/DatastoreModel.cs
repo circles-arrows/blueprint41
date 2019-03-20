@@ -198,18 +198,19 @@ namespace Blueprint41
             {
                 using (Transaction.Begin(true))
                 {
-                    if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds())
+                    Parser.ForceScript(delegate ()
                     {
                         Refactor.ApplyConstraints();
+                    });
+                    Transaction.Commit();
+                }
+
+                using (Transaction.Begin(true))
+                {
+                    if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds())
+                    {
                         Refactor.ApplyFunctionalIds();
                         Parser.SetLastRun();
-                    }
-                    if (anyScriptRan)
-                    {
-                        Parser.ForceScript(delegate ()
-                        {
-                            Refactor.ApplyConstraints();
-                        });
                     }
 
                     Transaction.Commit();

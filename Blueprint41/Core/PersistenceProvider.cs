@@ -46,7 +46,7 @@ namespace Blueprint41.Core
         internal Dictionary<Type, Conversion> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
 
 
-        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4JPersistenceProvider(null, null, null);
+        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4JPersistenceProvider(null, null, null, false);
 
         public static bool IsNeo4j
         {

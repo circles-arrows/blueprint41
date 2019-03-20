@@ -34,13 +34,13 @@ namespace Blueprint41.Neo4j.Persistence
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
 #if DEBUG
-            trans.Logger.Start();
+            trans.Logger?.Start();
 #endif
             IStatementResult results = trans.StatementRunner.Run(cypher);
 #if DEBUG
             results.Peek();
 
-            trans.Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+            trans.Logger?.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
 #endif
 
             return results;
@@ -52,14 +52,14 @@ namespace Blueprint41.Neo4j.Persistence
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
 
 #if DEBUG
-            trans.Logger.Start();
+            trans.Logger?.Start();
 #endif
             IStatementResult results = trans.StatementRunner.Run(cypher, parameters);
 
 #if DEBUG
             results.Peek();
 
-            trans.Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+            trans.Logger?.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
 #endif
 
             return results;
