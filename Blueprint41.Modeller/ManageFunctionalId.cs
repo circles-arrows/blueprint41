@@ -110,7 +110,7 @@ namespace Blueprint41.Modeller
                     return;
                 }
 
-                FunctionalId funcId = new FunctionalId();
+                FunctionalId funcId = new FunctionalId(Model);
                 funcId.Type = type;
                 funcId.Value = prefix;
                 funcId.Name = name;

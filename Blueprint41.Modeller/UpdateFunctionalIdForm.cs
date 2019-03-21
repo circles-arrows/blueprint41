@@ -71,7 +71,7 @@ namespace Blueprint41.Modeller
                 return;
             }
 
-            FunctionalId funcId = new FunctionalId();
+            FunctionalId funcId = new FunctionalId(Model);
             funcId.Type = type;
             funcId.Value = prefix;
             funcId.Name = name;
@@ -79,7 +79,7 @@ namespace Blueprint41.Modeller
 
             this.Model.FunctionalIds.FunctionalId.Add(funcId);
             string displayName = string.Concat(string.Concat(name, " - "), prefix);
-            ParentControl.FunctionalIdComboBox.InsertNonDataBoundItems(displayName, funcId.Guid);
+            ParentControl.RefreshEntity();
             ParentControl.FunctionalIdComboBox.SelectedIndex = ParentControl.FunctionalIdComboBox.FindStringExact(displayName);
             this.Close();
 

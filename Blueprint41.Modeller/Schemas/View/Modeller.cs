@@ -16,11 +16,14 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using DrawingNode = Microsoft.Msagl.Drawing.Node;
+using System.Diagnostics;
 
 namespace Blueprint41.Modeller.Schemas
 {
     public partial class Modeller
     {
+        public bool HasChanges { get; internal set; }
+
         public LayoutMethod ViewMode
         {
             get { return GraphEditor.Viewer.CurrentLayoutMethod; }
@@ -303,15 +306,26 @@ namespace Blueprint41.Modeller.Schemas
             OnEntitiesChanged += delegate (object sender, PropertyChangedEventArgs<EntitiesLocalType> e)
             {
                 RebindControl();
+
+                Model.HasChanges = true;
             };
             OnRelationshipsChanged += delegate (object sender, PropertyChangedEventArgs<RelationshipsLocalType> e)
             {
                 RebindControl();
+
+                Model.HasChanges = true;
             };
             OnSubmodelsChanged += delegate (object sender, PropertyChangedEventArgs<SubmodelsLocalType> e)
             {
                 if (Model.DisplayedSubmodel != null)
                     RebindControl();
+
+                Model.HasChanges = true;
+            };
+
+            OnFunctionalIdsChanged += delegate (object sender, PropertyChangedEventArgs<FunctionalIdsLocalType> e)
+            {
+                Model.HasChanges = true;
             };
         }
 
@@ -337,6 +351,8 @@ namespace Blueprint41.Modeller.Schemas
                         case NotifyCollectionChangedAction.Reset:
                             break;
                     }
+
+                    Model.HasChanges = true;
                 };
             }
         }
@@ -363,6 +379,8 @@ namespace Blueprint41.Modeller.Schemas
                                 item.DeleteDrawingEdge(false);
                             break;
                     }
+
+                    Model.HasChanges = true;
                 };
             }
         }
@@ -387,6 +405,8 @@ namespace Blueprint41.Modeller.Schemas
                                 Model.RebindControl();
                             break;
                     }
+
+                    Model.HasChanges = true;
                 };
             }
         }

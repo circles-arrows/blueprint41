@@ -861,6 +861,11 @@ namespace Blueprint41.Modeller
             Assign();
         }
 
+        public void RefreshEntity()
+        {
+            Show(Entity, StorageModel);
+        }
+
         public void CloseEditor()
         {
             gbProperties.Enabled = false;

@@ -58,6 +58,18 @@ namespace Blueprint41.Modeller
                 StoragePath = RegistryHandler.LastOpenedFile;
 
             InitializeComponent();
+            FormClosing += MainForm_FormClosing;
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Model.HasChanges)
+            {
+                DialogResult result = MessageBox.Show("Do you want to save changes?", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
+
+                if (result == DialogResult.Yes)
+                    BtnSave_Click(this, EventArgs.Empty);
+            }
         }
 
         private void SetModuleMenuItemVisibility()

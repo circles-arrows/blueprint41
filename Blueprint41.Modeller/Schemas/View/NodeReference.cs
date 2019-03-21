@@ -23,6 +23,28 @@ namespace Blueprint41.Modeller.Schemas
                 Parent.RenameEdge();
                 Model.UpdateEdgesPlacement();
                 Model.AutoResize();
+
+                Model.HasChanges = true;
+            };
+
+            OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnNullableChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnReferenceGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnTypeChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
             };
         }
     }

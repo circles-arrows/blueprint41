@@ -118,6 +118,11 @@
     <Compile Include="ErrorForm.designer.cs">
       <DependentUpon>ErrorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Schemas\View\FunctionalId.cs" />
+    <Compile Include="Schemas\View\Primitive.cs" />
+    <Compile Include="Schemas\View\Property.cs" />
+    <Compile Include="Schemas\View\Record.cs" />
+    <Compile Include="Schemas\View\StaticData.cs" />
     <Compile Include="Utils\UriConfig.cs" />
     <Compile Include="Generation\EntityTreeNode.cs" />
     <Compile Include="Generation\GenerationEnum.cs" />

@@ -16,6 +16,65 @@ namespace Blueprint41.Modeller.Schemas
 
         protected override void InitializeView()
         {
+            OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnLabelChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnAbstractChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnVirtualChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnSummaryChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnExampleChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnInheritsChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnPrefixChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnIsStaticDataChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnFunctionalIdChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnMappingGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
         }
     }
 }

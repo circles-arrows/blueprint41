@@ -54,7 +54,7 @@ namespace Blueprint41.Modeller
                     if (string.IsNullOrEmpty(value))
                         continue;
 
-                    record.Property.Add(new Property()
+                    record.Property.Add(new Property(Model)
                     {
                         Value = value,
                         PropertyGuid = clm.ColumnName,

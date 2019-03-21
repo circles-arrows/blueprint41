@@ -43,6 +43,33 @@ namespace Blueprint41.Modeller.Schemas
                             item.DeleteNode();
                         break;
                 }
+
+                Model.HasChanges = true;
+            };
+
+            OnExplainationChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnChapterChanged += delegate (object sender, PropertyChangedEventArgs<Int32?> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnIsDraftChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
+            {
+                Model.HasChanges = true;
+            };
+
+            OnIsLaboratoryChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
+            {
+                Model.HasChanges = true;
             };
         }
 
@@ -76,6 +103,23 @@ namespace Blueprint41.Modeller.Schemas
                         return;
 
                     CreateNode();
+
+                    Model.HasChanges = true;
+                };
+
+                OnEntityGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+                {
+                    Model.HasChanges = true;
+                };
+
+                OnXcoordinateChanged += delegate (object sender, PropertyChangedEventArgs<double?> e)
+                {
+                    Model.HasChanges = true;
+                };
+
+                OnYcoordinateChanged += delegate (object sender, PropertyChangedEventArgs<double?> e)
+                {
+                    Model.HasChanges = true;
                 };
             }
 
