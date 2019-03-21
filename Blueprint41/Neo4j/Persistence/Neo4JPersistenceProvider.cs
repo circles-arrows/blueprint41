@@ -34,13 +34,13 @@ namespace Blueprint41.Neo4j.Persistence
         private string Username;
         private string Password;
 
-        private Neo4JPersistenceProvider() : this(null, null, null) { }
-        public Neo4JPersistenceProvider(string uri, string username, string password)
+        private Neo4JPersistenceProvider() : this(null, null, null, false) { }
+        public Neo4JPersistenceProvider(string uri, string username, string password, bool withLogging = false)
         {
             Uri = uri;
             Username = username;
             Password = password;
-            TransactionLogger = new TransactionLogger();
+            TransactionLogger = (withLogging) ? new TransactionLogger() : null;
             //this.Driver = GraphDatabase.Driver(uri, AuthTokens.Basic(username, password));
         }
 

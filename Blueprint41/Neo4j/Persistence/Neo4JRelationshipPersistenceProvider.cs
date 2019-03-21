@@ -144,6 +144,18 @@ namespace Blueprint41.Neo4j.Persistence
                 targetEntity.Key.Name
             );
 
+            if (targetEntity.IsVirtual)
+            {
+                string subclasses = string.Join(" OR ", targetEntity.GetNearestNonVirtualSubclass().Select(sc => string.Concat("node:", sc.Label.Name)));
+
+                match = string.Format(
+                    "MATCH ({0}) WHERE node.{1} in ({{keys}}) AND ({2}) RETURN DISTINCT node, node.{1} as key",
+                    targetEntity.GetDbName("node"),
+                    targetEntity.Key.Name,
+                    subclasses
+                );
+            }
+
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("keys", keys.Distinct().ToList());
             var result = Neo4jTransaction.Run(match, parameters);

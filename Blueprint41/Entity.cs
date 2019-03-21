@@ -1118,6 +1118,42 @@ namespace Blueprint41
             });
         }
 
+        private List<Entity> directSubclasses = null;
+        public List<Entity> GetDirectSubclasses()
+        {
+            return InitSubList(ref directSubclasses, delegate (List<Entity> classes)
+            {
+                foreach (Entity item in Parent.Entities)
+                {
+                    if (item.Inherits == this)
+                    {
+                        if (!classes.Contains(item))
+                        {
+                            classes.Add(item);
+                        }
+                    }
+                }
+            });
+        }
+
+        private List<Entity> nearestNonVirtualSubclasses = null;
+        public List<Entity> GetNearestNonVirtualSubclass()
+        {
+            return InitSubList(ref nearestNonVirtualSubclasses, delegate (List<Entity> classes)
+            {
+                foreach (Entity item in GetDirectSubclasses())
+                {
+                    if (!classes.Contains(item))
+                    {
+                        if (item.IsVirtual)
+                            classes.AddRange(item.GetNearestNonVirtualSubclass());
+                        else
+                            classes.Add(item);
+                    }
+                }
+            });
+        }
+
         private List<Property> propertiesOfBaseTypesAndSelf = null;
         public List<Property> GetPropertiesOfBaseTypesAndSelf()
         {
