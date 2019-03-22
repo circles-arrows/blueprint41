@@ -93,6 +93,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Recovery.cs" />
     <Compile Include="CodeGeneration.cs">
       <SubType>Form</SubType>
     </Compile>

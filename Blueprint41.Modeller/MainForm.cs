@@ -63,13 +63,15 @@ namespace Blueprint41.Modeller
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (Model.HasChanges)
+            if (Model.HasChanges || !File.Exists(StoragePath))
             {
-                DialogResult result = MessageBox.Show("Do you want to save changes?", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
+                DialogResult result = MessageBox.Show("Do you want to save changes?", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                     BtnSave_Click(this, EventArgs.Empty);
             }
+
+            Recovery.Instance.Stop(true);
         }
 
         private void SetModuleMenuItemVisibility()
@@ -86,6 +88,7 @@ namespace Blueprint41.Modeller
             InitializeModel();
             InitializeSubmodel();
             ReloadGraph();
+            Recovery.Instance.Start(this, () => Console.WriteLine("Auto saved modeller"));
         }
 
         void InitializeModel()
@@ -369,8 +372,20 @@ namespace Blueprint41.Modeller
         #region Main Form Events
         private void MainForm_Load(object sender, EventArgs e)
         {
+            bool recoveryFileExists = File.Exists(Recovery.Instance.RecoveryFile);
+            string storagePath = StoragePath;
+
+            if (recoveryFileExists)
+            {
+                DialogResult result = MessageBox.Show("Do you want to recover unsaved changes?", "Recover File", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                    StoragePath = Recovery.Instance.RecoveryFile;
+            }
+
             SetModuleMenuItemVisibility();
             InitializeXmlModeller();
+
+            StoragePath = storagePath;
 
             AddNewEntitiesToSubModel(Model.Submodels.Submodel[0].Name);
             _splitterDistance = splitContainer.SplitterDistance;
