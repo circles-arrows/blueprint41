@@ -334,6 +334,7 @@ namespace Blueprint41.Core
         #region Stored Queries
 
         private static IDictionary<string, ICompiled> StoredQueries = null;
+        private static bool IsInitialized = false;
 
         protected virtual void RegisterStoredQueries() { }
         protected abstract void RegisterGeneratedStoredQueries();
@@ -361,7 +362,7 @@ namespace Blueprint41.Core
 
         private static void InitializeStoredQueries()
         {
-            if (StoredQueries != null)
+            if (StoredQueries != null && IsInitialized)
                 return;
 
             lock (typeof(TWrapper))
@@ -371,6 +372,7 @@ namespace Blueprint41.Core
                     StoredQueries = new AtomicDictionary<string, ICompiled>();
                     Instance.RegisterGeneratedStoredQueries();
                     Instance.RegisterStoredQueries();
+                    IsInitialized = true;
                 }
             }
         }

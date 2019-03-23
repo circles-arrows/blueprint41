@@ -38,9 +38,11 @@ namespace Blueprint41.Neo4j.Persistence
 #endif
             IStatementResult results = trans.StatementRunner.Run(cypher);
 #if DEBUG
-            results.Peek();
-
-            trans.Logger?.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+            if (trans.Logger != null)
+            {
+                results.Peek();
+                trans.Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+            }
 #endif
 
             return results;
@@ -57,9 +59,11 @@ namespace Blueprint41.Neo4j.Persistence
             IStatementResult results = trans.StatementRunner.Run(cypher, parameters);
 
 #if DEBUG
-            results.Peek();
-
-            trans.Logger?.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+            if (trans.Logger != null)
+            {
+                results.Peek();
+                trans.Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+            }
 #endif
 
             return results;
