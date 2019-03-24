@@ -278,6 +278,11 @@ namespace System
             if ((object)x == null) return null;
             return x.Value;
         }
+        public static implicit operator Lazy<string>(CompressedString x)
+        {
+            if ((object)x == null) return new Lazy<string>(() => null);
+            return new Lazy<string>(() => x.Value);
+        }
         public static explicit operator Nullable<bool>(CompressedString x)
         {
             if ((object)x == null) return null;
