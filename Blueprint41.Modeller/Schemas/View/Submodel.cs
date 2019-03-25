@@ -180,7 +180,7 @@ namespace Blueprint41.Modeller.Schemas
                     drawingNode.Attr = attr;
                     drawingNode.Label.Text = Entity.Label;
                     drawingNode.UserData = this;
-                    CreateNodeGeometry(drawingNode, Model.Graph, Model.GeometryGraph, center);
+                    CreateNodeGeometry(drawingNode, Model.Graph, Model.GeometryGraph, center, ConnectionToGraph.Connected);
                 }
                 else
                 {
@@ -218,8 +218,7 @@ namespace Blueprint41.Modeller.Schemas
                     nodeAttr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
 
                 nodeAttr.Shape = nte.Shape;
-                nodeAttr.LabelMargin = 1;
-                nodeAttr.Padding = 2;
+                nodeAttr.LabelMargin = 4;
 
                 return nodeAttr;
             }
@@ -229,6 +228,9 @@ namespace Blueprint41.Modeller.Schemas
                 double width, height;
                 StringMeasure.MeasureWithFont(node.Label.Text, new Font(node.Label.FontName, (float)node.Label.FontSize, (System.Drawing.FontStyle)(int)node.Label.FontStyle), out width,
                                               out height);
+
+                node.Label.Width = width;
+                node.Label.Height = height;
 
                 if (node.Label != null)
                 {
@@ -247,9 +249,6 @@ namespace Blueprint41.Modeller.Schemas
                 geomNode.BoundaryCurve = NodeBoundaryCurves.GetNodeBoundaryCurve(node, width, height);
                 geomNode.BoundaryCurve.Translate(center);
                 geomNode.Center = center;
-
-                node.Label.Width = width;
-                node.Label.Height = height;
             }
 
             internal void DeleteNode()

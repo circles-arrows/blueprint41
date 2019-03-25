@@ -63,7 +63,8 @@ namespace Blueprint41.Modeller
                 if (File.Exists(BackupFile))
                     File.Delete(BackupFile);
 
-                File.Move(RecoveryFile, BackupFile);
+                if (File.Exists(RecoveryFile))
+                    File.Move(RecoveryFile, BackupFile);
             }
 
             timer.Enabled = false;

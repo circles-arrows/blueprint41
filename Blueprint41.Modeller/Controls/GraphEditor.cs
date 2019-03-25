@@ -134,7 +134,7 @@ namespace Blueprint41.Modeller.Controls
             if (obj is DNode dNode)
             {
                 draggedObjectOriginalColors[dNode] = dNode.DrawingNode.Attr.Color;
-                dNode.DrawingNode.Attr.Color = DrawingColor.LightGreen;
+                dNode.DrawingNode.Attr.Color = DrawingColor.Green;
                 gViewer.Invalidate(obj);
             }
         }
