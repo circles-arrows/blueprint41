@@ -37,10 +37,14 @@ namespace Blueprint41.Modeller
             {
                 if (form.Model != null)
                 {
-                    Model newModel = new Model(null, form.Model.Xml);
-                    newModel.Save(RecoveryFile);
-                    newModel = null;
-                    Console.WriteLine($"Saved to {RecoveryFile}");
+                    try
+                    {
+                        Model newModel = new Model(null, form.Model.Xml);
+                        newModel.Save(RecoveryFile);
+                        newModel = null;
+                        Console.WriteLine($"Saved to {RecoveryFile}");
+                    }
+                    catch { }
                 }
             });
 

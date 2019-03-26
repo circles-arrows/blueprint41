@@ -218,7 +218,8 @@ namespace Blueprint41.Modeller.Schemas
                     nodeAttr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
 
                 nodeAttr.Shape = nte.Shape;
-                nodeAttr.LabelMargin = 4;
+                nodeAttr.LabelMargin = 8;
+                nodeAttr.LineWidth = 4;
 
                 return nodeAttr;
             }

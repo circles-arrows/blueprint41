@@ -656,8 +656,6 @@ namespace Blueprint41.Modeller
 
             AddOrClearViewModeCheckEvents(true);
             SetGraphViewModel(originalSettingsToolStripMenuItem.Checked ? LayoutMethod.UseSettingsOfTheGraph : LayoutMethod.MDS);
-
-
         }
 
         private void SugiyamaToolStripMenuItem_CheckedChanged(object sender, EventArgs e)

@@ -133,7 +133,6 @@ namespace Blueprint41.Modeller.Controls
         {
             if (obj is DNode dNode)
             {
-                draggedObjectOriginalColors[dNode] = dNode.DrawingNode.Attr.Color;
                 dNode.DrawingNode.Attr.Color = DrawingColor.Green;
                 gViewer.Invalidate(obj);
             }
@@ -141,10 +140,9 @@ namespace Blueprint41.Modeller.Controls
 
         void RemoveDragDecorator(IViewerObject obj)
         {
-            if (obj is DNode dNode && draggedObjectOriginalColors.ContainsKey(dNode))
+            if (obj is DNode dNode)
             {
-                dNode.DrawingNode.Attr.Color = draggedObjectOriginalColors[dNode];
-                draggedObjectOriginalColors.Remove(obj);
+                dNode.DrawingNode.Attr.Color = DrawingColor.LightGray;
                 gViewer.Invalidate(obj);
             }
         }
