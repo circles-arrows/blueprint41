@@ -169,8 +169,7 @@ namespace Blueprint41.Modeller.Schemas
             GraphEditor.Graph = null;
 
             Graph = new Graph("graph");
-            GeometryGraph = new Microsoft.Msagl.Core.Layout.GeometryGraph();
-            GeometryGraph.Margins = 4;
+            GeometryGraph = new GeometryGraph() { Margins = 4 };
 
             foreach (var node in DisplayedSubmodel.Node)
             {
