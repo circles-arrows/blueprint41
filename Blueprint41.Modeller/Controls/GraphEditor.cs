@@ -103,7 +103,9 @@ namespace Blueprint41.Modeller.Controls
                 {
                     selectedObjectAttr = edge.Attr.Clone();
                     edge.Attr.Color = DrawingColor.Blue;
-                    gViewer.Invalidate(e.NewObject);
+
+                    if (e.NewObject != null)
+                        gViewer.Invalidate(e.NewObject);
 
                     if (edge.UserData is Relationship relationship)
                         gViewer.SetToolTip(toolTip, relationship.Type);
@@ -111,7 +113,9 @@ namespace Blueprint41.Modeller.Controls
                 else if (selectedObject is DrawingNode)
                 {
                     gViewer.SetToolTip(toolTip, "Drag me");
-                    gViewer.Invalidate(e.NewObject);
+
+                    if (e.NewObject != null)
+                        gViewer.Invalidate(e.NewObject);
                 }
             }
         }

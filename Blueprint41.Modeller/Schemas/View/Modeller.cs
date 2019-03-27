@@ -84,17 +84,18 @@ namespace Blueprint41.Modeller.Schemas
             if (Model.GraphEditor.Viewer.Graph == null)
                 return;
 
+            var currentViewMode = ViewMode;
+
             if (ViewMode == LayoutMethod.UseSettingsOfTheGraph)
-            {
-                RebindControl();
-                return;
-            }
+                ViewMode = LayoutMethod.MDS;
 
             GraphEditor.Viewer.CurrentLayoutMethod = ViewMode;
             GraphEditor.Viewer.NeedToCalculateLayout = true;
             GraphEditor.Viewer.Graph = Model.GraphEditor.Viewer.Graph;
             GraphEditor.Viewer.NeedToCalculateLayout = false;
             GraphEditor.Viewer.Graph = Model.GraphEditor.Viewer.Graph;
+
+            ViewMode = currentViewMode;
         }
 
         internal void UnRegisterEvents()
