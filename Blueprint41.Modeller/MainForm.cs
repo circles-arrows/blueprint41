@@ -607,6 +607,7 @@ namespace Blueprint41.Modeller
             if (File.Exists(StoragePath) == false && SaveAs() == DialogResult.Cancel)
                 return;
 
+            Model.HasChanges = false;
             Model.CaptureCoordinates();
             Model.Save(StoragePath);
             MessageBox.Show("Diagram saved successfully.", "Confirmation", System.Windows.Forms.MessageBoxButtons.OK, MessageBoxIcon.Information);

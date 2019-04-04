@@ -153,6 +153,16 @@ namespace Blueprint41.Modeller.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap thumbtack_solid {
+            get {
+                object obj = ResourceManager.GetObject("thumbtack-solid", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap underscore {
             get {
                 object obj = ResourceManager.GetObject("underscore", resourceCulture);

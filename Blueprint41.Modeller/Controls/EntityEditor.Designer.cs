@@ -29,10 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EntityEditor));
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
-            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.txtLabel = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.chkIsAbstract = new System.Windows.Forms.CheckBox();
@@ -56,17 +54,17 @@
             this.bindingSourceInheritedPrimitiveProperties = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourceInheritedRelationships = new System.Windows.Forms.BindingSource(this.components);
             this.button1 = new System.Windows.Forms.Button();
-            this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.btnPin = new System.Windows.Forms.Button();
             this.gbProperties = new System.Windows.Forms.GroupBox();
+            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.pre = new Blueprint41.Modeller.PrimitiveRelationshipEditor();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceCollectionProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceEntities)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedPrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedRelationships)).BeginInit();
             this.gbProperties.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -90,10 +88,6 @@
             this.txtName.Size = new System.Drawing.Size(338, 20);
             this.txtName.TabIndex = 2;
             this.txtName.Leave += new System.EventHandler(this.txtName_Leave);
-            // 
-            // bindingSource
-            // 
-            this.bindingSource.DataSource = typeof(Blueprint41.Modeller.Schemas.entity);
             // 
             // txtLabel
             // 
@@ -299,20 +293,13 @@
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.btnAddFunctionalId_Click);
             // 
-            // imageList
-            // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "thumbtack");
-            // 
             // btnPin
             // 
             this.btnPin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPin.BackColor = System.Drawing.Color.Transparent;
             this.btnPin.FlatAppearance.BorderSize = 0;
             this.btnPin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPin.ImageIndex = 0;
-            this.btnPin.ImageList = this.imageList;
+            this.btnPin.Image = global::Blueprint41.Modeller.Properties.Resources.thumbtack_solid;
             this.btnPin.Location = new System.Drawing.Point(422, 5);
             this.btnPin.Name = "btnPin";
             this.btnPin.Size = new System.Drawing.Size(18, 14);
@@ -352,6 +339,10 @@
             this.gbProperties.TabStop = false;
             this.gbProperties.Text = "Properties";
             // 
+            // bindingSource
+            // 
+            this.bindingSource.DataSource = typeof(Blueprint41.Modeller.Schemas.entity);
+            // 
             // pre
             // 
             this.pre.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -373,7 +364,6 @@
             this.MinimumSize = new System.Drawing.Size(449, 0);
             this.Name = "EntityEditor";
             this.Size = new System.Drawing.Size(449, 819);
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceCollectionProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceEntities)).EndInit();
@@ -381,6 +371,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedRelationships)).EndInit();
             this.gbProperties.ResumeLayout(false);
             this.gbProperties.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -414,7 +405,6 @@
         private System.Windows.Forms.BindingSource bindingSourceInheritedRelationships;
         private System.Windows.Forms.Button button1;
         private PrimitiveRelationshipEditor pre;
-        private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.Button btnPin;
         private System.Windows.Forms.GroupBox gbProperties;
     }

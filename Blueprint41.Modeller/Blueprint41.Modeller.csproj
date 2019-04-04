@@ -319,6 +319,7 @@
     </Content>
     <Content Include="Resources\Circles-Arrows_Loader.gif" />
     <Content Include="Resources\ol.bmp" />
+    <None Include="Resources\thumbtack-solid.png" />
     <Content Include="Resources\uol.bmp" />
     <Content Include="Schemas\Wrapper.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
