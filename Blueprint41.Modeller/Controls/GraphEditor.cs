@@ -56,7 +56,6 @@ namespace Blueprint41.Modeller.Controls
         /// </summary>
         protected GeometryPoint m_MouseRightButtonDownPoint;
         private object selectedObject;
-        private bool panViaControl;
         AttributeBase selectedObjectAttr;
 
         public GraphEditor()
@@ -71,8 +70,6 @@ namespace Blueprint41.Modeller.Controls
         {
             (gViewer as IViewer).MouseUp += GraphEditor_MouseUp;
             (gViewer as IViewer).MouseDown += GraphEditor_MouseDown;
-            (gViewer as IViewer).MouseMove += GraphEditor_MouseMove;
-
             gViewer.ToolBarIsVisible = false;
             gViewer.EdgeRemoved += GViewer_EdgeRemoved;
             gViewer.EdgeAdded += GViewer_EdgeAdded;
@@ -81,25 +78,6 @@ namespace Blueprint41.Modeller.Controls
             gViewer.LayoutEditor.RemoveObjDraggingDecorations = RemoveDragDecorator;
             gViewer.MouseWheel += GViewerMouseWheel;
             gViewer.ObjectUnderMouseCursorChanged += GViewer_ObjectUnderMouseCursorChanged;
-            gViewer.KeyUp += GViewer_KeyUp;
-        }
-
-        private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
-        {
-            if ((gViewer as IViewer).ModifierKeys == Microsoft.Msagl.Drawing.ModifierKeys.Control)
-            {
-                panViaControl = true;
-                gViewer.PanButtonPressed = true;
-            }
-        }
-
-        private void GViewer_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (panViaControl)
-            {
-                panViaControl = false;
-                gViewer.PanButtonPressed = false;
-            }
         }
 
         readonly ToolTip toolTip = new ToolTip();
@@ -197,9 +175,6 @@ namespace Blueprint41.Modeller.Controls
 
         void GraphEditor_MouseUp(object sender, MsaglMouseEventArgs e)
         {
-            if (gViewer.PanButtonPressed)
-                return;
-
             object obj = gViewer.GetObjectAt(e.X, e.Y);
             DrawingNode node = null;
             Edge edge = null;
