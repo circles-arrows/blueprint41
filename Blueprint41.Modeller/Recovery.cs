@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Modeller.Schemas;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,14 +33,14 @@ namespace Blueprint41.Modeller
 
         private async void Timer_ElapsedAsync(object sender, ElapsedEventArgs e)
         {
-            // Run on background
+            //Run on background
             await Task.Run(() =>
             {
                 if (form.Model != null)
                 {
                     try
                     {
-                        Model newModel = new Model(null, form.Model.Xml);
+                        Model newModel = new Model(null, (modeller)form.Model.Xml.Clone());
                         newModel.Save(RecoveryFile);
                         newModel = null;
                         Console.WriteLine($"Saved to {RecoveryFile}");

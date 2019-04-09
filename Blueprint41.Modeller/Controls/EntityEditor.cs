@@ -177,6 +177,11 @@ namespace Blueprint41.Modeller
                     ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
                     return;
                 }
+                else if (CheckIfPropertyExists(Entity, newName, out string toName))
+                {
+                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" already exists in base entity.", newName), textBox, toName);
+                    return;
+                }
                 else if (CheckInheritedPropertyExists(Entity, newName))
                 {
                     ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" already exists in base entity.", newName), textBox);
@@ -959,10 +964,10 @@ namespace Blueprint41.Modeller
             //throw new NotImplementedException();
         }
 
-        private void ShowMessageAndResetTextBoxValue(string message, DataGridViewTextBoxCell textBox)
+        private void ShowMessageAndResetTextBoxValue(string message, DataGridViewTextBoxCell textBox, string propName = "PropertyName")
         {
             MessageBox.Show(message);
-            textBox.Value = "PropertyName";
+            textBox.Value = propName;
         }
 
         private void btnEditStaticData_Click(object sender, EventArgs e)
@@ -1053,6 +1058,20 @@ namespace Blueprint41.Modeller
                 return true;
 
             return CheckInheritedPropertyExists(parentEntity, propertyName);
+        }
+
+        private bool CheckIfPropertyExists(Entity entity, string propName, out string newName)
+        {
+            newName = propName;
+            int count = Entity.Primitive.Where(x => x.Name.ToLower() == propName.ToLower()).Count();
+
+            if (count > 1)
+            {
+                newName = propName + count;
+                return true;
+            }
+
+            return false;
         }
 
         private bool CheckIfReservedKeyword(string propertyName)
