@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <PackageVersion>1.0.13</PackageVersion>
+    <PackageVersion>1.0.14</PackageVersion>
     <PackageId>Blueprint41</PackageId>
     <Title>Blueprint41</Title>
     <Authors>Circles Arrows Limited</Authors>
@@ -27,7 +27,7 @@
     <PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
     <PackageTags>Neo4j Graph Object Mapper</PackageTags>
     <IncludeSymbols>false</IncludeSymbols>
-    <RepositoryUrl>https://github.com/circles-arrows/blueprint41.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/circles-arrows/blueprint41</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
   </PropertyGroup>
 
@@ -60,7 +60,7 @@
   <ItemGroup>
     <PackageReference Include="Crc32.NET" Version="1.2.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="Neo4j.Driver" Version="1.7.0" />
+    <PackageReference Include="Neo4j.Driver" Version="1.7.1" />
     <PackageReference Include="System.CodeDom" Version="4.5.0" />
   </ItemGroup>
 
