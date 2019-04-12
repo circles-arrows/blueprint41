@@ -80,8 +80,9 @@ namespace Blueprint41.Modeller
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dataGridView);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "ManageEntityStaticDataForm";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Manage Static Data";
             this.Load += new System.EventHandler(this.GridViewLab_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
