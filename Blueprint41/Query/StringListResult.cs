@@ -22,6 +22,11 @@ namespace Blueprint41.Query
             }
         }
 
+        public StringResult Head()
+        {
+            return new StringResult(this, "HEAD({base})");
+        }
+
         public StringResult Reduce(string init, Func<StringResult, StringResult, StringResult> logic)
         {
             StringResult valueField = new StringResult("value", new object[0], typeof(string));

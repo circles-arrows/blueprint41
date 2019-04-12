@@ -353,7 +353,7 @@ namespace Blueprint41
                 return;
 
             string cypher = "MATCH ()-[r]->() WHERE NOT EXISTS(r.CreationDate)  WITH r LIMIT 10000 SET r.CreationDate = ID(r)";
-            Parser.ExecuteBatched(cypher, new Dictionary<string, object>(), true);
+            Parser.ExecuteBatched(cypher, null);
         }
 
         void IRefactorGlobal.ApplyFullTextSearchIndexes()
