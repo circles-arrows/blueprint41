@@ -31,6 +31,17 @@ namespace Blueprint41.Modeller
             Entity = entity;
         }
 
+        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                PerformPaste();
+                e.Handled = true;
+            }
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             Entity.StaticData.Records.Record.Clear();
@@ -83,6 +94,8 @@ namespace Blueprint41.Modeller
         }
         private void GridViewLab_Load(object sender, EventArgs e)
         {
+            dataGridView.KeyDown += DataGridView_KeyDown;
+
             dataGridView.AutoGenerateColumns = false;
             dataGridView.AutoSize = true;
             dataGridView.Columns.Clear();
@@ -160,6 +173,67 @@ namespace Blueprint41.Modeller
                 DataRow dataRow = RecordPropertiesDataTable.Rows.Add(fields.Values.ToArray());
             }
 
+            RefreshDatasource();
+        }
+        private void ResetFields(IDictionary<string, object> fields)
+        {
+            foreach (string key in fields.Keys.ToList())
+                fields[key] = "";
+        }
+
+        private void PerformPaste()
+        {
+            System.Windows.Forms.IDataObject dtObj = System.Windows.Forms.Clipboard.GetDataObject();
+            // get unicode text instead of text
+            if (dtObj.GetDataPresent(DataFormats.UnicodeText, true))
+            {
+                string buffer = (string)dtObj.GetData(DataFormats.UnicodeText, true);
+
+                StringDataToArray(buffer, out int totalRows, out int totalColumns, out string[,] values);
+
+                if (totalRows == 0 || totalColumns == 0)
+                    return;
+
+                int currentSelectedRow = dataGridView.SelectedCells[0].RowIndex;
+                int currentSelectedColumn = dataGridView.SelectedCells[0].ColumnIndex;
+
+                if (dataGridView.Rows.Count < (currentSelectedRow + totalRows))
+                {
+                    int rowCount = currentSelectedRow + totalRows - dataGridView.Rows.Count;
+
+                    while (rowCount > 0)
+                    {
+                        AddRow(RecordPropertiesDataTable);
+                        rowCount--;
+                    }
+
+                    RefreshDatasource();
+                }
+
+                for (int i = 0; i < totalRows; i++)
+                {
+                    int currentRow = currentSelectedRow + i;
+                    for (int j = 0; j < totalColumns; j++)
+                    {
+                        int currentColumn = currentSelectedColumn + j;
+
+                        if (dataGridView.Columns.Count - 1 >= currentColumn)
+                        {
+                            dataGridView.Rows[currentRow].Cells[currentColumn].Value = values[i, j];
+                        }
+                    }
+                }
+            }
+        }
+
+        private void AddRow(DataTable table)
+        {
+            DataRow newRow = table.NewRow();
+            table.Rows.Add(newRow);
+        }
+
+        private void RefreshDatasource()
+        {
             bindingSource.DataSource = null;
             dataGridView.DataSource = null;
 
@@ -167,10 +241,43 @@ namespace Blueprint41.Modeller
             dataGridView.DataSource = bindingSource;
         }
 
-        private void ResetFields(IDictionary<string, object> fields)
+        private void StringDataToArray(string buffer, out int rows, out int columns, out string[,] values)
         {
-            foreach (string key in fields.Keys.ToList())
-                fields[key] = "";
+            buffer = buffer.Replace("\x0D\x0A", "\x0A");
+            string[] rowsData = buffer.Split('\x0A', '\x0D');
+
+            rows = rowsData.Length;
+
+            //Check if the last row is not null (some application put a last \n character at the end of the cells, for example excel)
+            if (rows > 0 && (rowsData[rows - 1] == null || rowsData[rows - 1].Length == 0))
+                rows--;
+
+            if (rows == 0)
+            {
+                columns = 0;
+                values = null;
+                return;
+            }
+
+            //Calculate the columns based on the first rows! Note: probably is better to calculate the maximum columns.
+            string[] firstColumnsData = rowsData[0].Split('\t');
+            columns = firstColumnsData.Length;
+
+            values = new string[rows, columns];
+
+            for (int r = 0; r < rows; r++)
+            {
+                string rowData = rowsData[r];
+                string[] colsData = rowData.Split('\t');
+
+                for (int c = 0; c < columns; c++)
+                {
+                    if (c < colsData.Length)
+                        values[r, c] = colsData[c];
+                    else
+                        values[r, c] = "";
+                }
+            }
         }
     }
 }
