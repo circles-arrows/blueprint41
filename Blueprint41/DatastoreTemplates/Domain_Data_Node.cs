@@ -983,6 +983,7 @@ namespace Blueprint41.DatastoreTemplates
 			case "Int16":
 			case "Int32":
 			case "Int64":
+			case "Decimal":
 				return "NumericResult";
 			case "Single":
 			case "Double":

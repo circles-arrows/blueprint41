@@ -295,7 +295,7 @@ namespace Blueprint41
             }
         }
 
-        internal void Register(string type, OGM item)
+        internal void Register(string type, OGM item, bool noError = false)
         {
             object key = item.GetKey();
             if (key == null)
@@ -311,7 +311,7 @@ namespace Blueprint41
             if (values.ContainsKey(key))
             {
                 OGM similarItem = values[key];
-                if (similarItem.PersistenceState != PersistenceState.HasUid && similarItem.PersistenceState != PersistenceState.DoesntExist)
+                if (!noError && similarItem.PersistenceState != PersistenceState.HasUid && similarItem.PersistenceState != PersistenceState.DoesntExist)
                     throw new InvalidOperationException("You cannot register an already loaded object.");
                 else
                     values[key] = item;

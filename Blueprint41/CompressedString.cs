@@ -9,22 +9,31 @@ namespace System
 {
     public sealed class CompressedString : IComparable, ICloneable, IConvertible, IEquatable<string>
     {
-        public string Value { get; set; } = default;
+        private Lazy<string> m_Value;
+        public string Value { get { return m_Value.Value; } }
         public int Length => Value.Length;
 
         public CompressedString() : base() { }
         public CompressedString(string x)
         {
-            Value = x ?? "";
+            m_Value = new Lazy<string>(
+                delegate()
+                {
+                    return x ?? "";
+                }, true);
         }
         public CompressedString(byte[] bytes)
         {
-            Value = Decompress(bytes);
+            m_Value = new Lazy<string>(
+                delegate () 
+                {
+                    return Decompress(bytes);
+                }, true);
         }
 
         public CompressedString(CompressedString compressed)
         {
-            Value = compressed.Value;
+            m_Value = compressed.m_Value;
         }
 
         #region To CompressedString

@@ -45,12 +45,14 @@ namespace System.Linq
         private static class HashSetDelegateHolder<T>
         {
             private const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic;
-            public static MethodInfo InitializeMethod { get; } = typeof(HashSet<T>).GetMethod("Initialize", Flags);
+            private static MethodInfo InitializeMethodInfo = typeof(HashSet<T>).GetMethod("Initialize", Flags);
+            public static Action<HashSet<T>, int> InitializeMethod { get; } = (Action<HashSet<T>, int>)Delegate.CreateDelegate(typeof(Action<HashSet<T>, int>), InitializeMethodInfo);
+
         }
 
         public static void SetCapacity<T>(this HashSet<T> hs, int capacity)
         {
-            HashSetDelegateHolder<T>.InitializeMethod.Invoke(hs, new object[] { capacity });
+            HashSetDelegateHolder<T>.InitializeMethod.Invoke(hs, capacity);
         }
 
         public static HashSet<T> GetHashSet<T>(int capacity)

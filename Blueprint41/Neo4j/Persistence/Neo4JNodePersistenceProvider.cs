@@ -173,6 +173,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             item.SetData(args.Properties);
             item.PersistenceState = PersistenceState.Persisted;
+            Transaction.Current.Register(entity.Name, item, true);
         }
 
         public override void Update(OGM item)
