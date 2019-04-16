@@ -295,6 +295,7 @@ namespace Blueprint41.Modeller
             ManageSubmodelForm form = new Modeller.ManageSubmodelForm(Model, Model.DisplayedSubmodel);
             if (form.ShowDialog() == DialogResult.OK)
             {
+                Model.CaptureCoordinates();
                 Model.RebindControl();
                 RefreshNodeCombobox();
                 FillSubmodelComboBox(form.Submodel);
@@ -323,7 +324,6 @@ namespace Blueprint41.Modeller
                 Model.DisplayedSubmodel.Node.Add(model);
                 RefreshNodeCombobox();
             }
-
             // Auto select newly created entity
             SelectedNode = model;
             entityEditor.Show(model.Entity, Model);

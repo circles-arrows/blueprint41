@@ -171,6 +171,8 @@ namespace Blueprint41.Modeller.Schemas
 
             Graph = new Graph("graph");
             GeometryGraph = new GeometryGraph() { Margins = 4 };
+            GeometryGraph.MinimalWidth = 200;
+            GeometryGraph.MinimalHeight = 200;
 
             foreach (var node in DisplayedSubmodel.Node)
             {
@@ -191,9 +193,6 @@ namespace Blueprint41.Modeller.Schemas
             GraphEditor.Viewer.NeedToCalculateLayout = true;
 
             GeometryGraph.UpdateBoundingBox();
-
-            if (GeometryGraph.BoundingBox.IsEmpty || GeometryGraph.BoundingBox.Width <= 0)
-                GeometryGraph.BoundingBox = new Microsoft.Msagl.Core.Geometry.Rectangle(0, 0, new Microsoft.Msagl.Core.Geometry.Point(100, 100));
 
             GraphReset();
 
@@ -233,7 +232,6 @@ namespace Blueprint41.Modeller.Schemas
         {
             if (GraphEditor != null && DisplayedSubmodel.Node.Count > 0)
             {
-                //GraphEditor.Viewer.FitGraphBoundingBox();
                 AutoResizeWithoutUndoRedo();
                 Invalidate();
             }
@@ -249,6 +247,7 @@ namespace Blueprint41.Modeller.Schemas
             if (GraphEditor.Viewer.Graph.GeometryGraph != null)
             {
                 var r = new Microsoft.Msagl.Core.Geometry.Rectangle();
+
                 foreach (var n in geometryGraph.Nodes)
                 {
                     r = n.BoundingBox;
@@ -269,7 +268,11 @@ namespace Blueprint41.Modeller.Schemas
                 r.Top += geometryGraph.Margins;
                 r.Bottom -= geometryGraph.Margins;
                 r.Right += geometryGraph.Margins;
-                geometryGraph.BoundingBox = r;
+
+                r.Add(geometryGraph.BoundingBox);
+
+                if (geometryGraph.BoundingBox.Contains(r) == false)
+                    geometryGraph.BoundingBox = r;
             }
         }
 

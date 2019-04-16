@@ -346,6 +346,8 @@ namespace Blueprint41.Modeller.Controls
 
         void InsertNode_Click(object sender, EventArgs e)
         {
+            RemoveDraggedEntities();
+
             NodeTypeEntry selectedNTE = null;
             foreach (NodeTypeEntry nte in NodeTypes)
                 if (nte.MenuItem == sender)
@@ -356,6 +358,7 @@ namespace Blueprint41.Modeller.Controls
 
         void RedoLayout_Click(object sender, EventArgs e)
         {
+            RemoveDraggedEntities();
             RedoLayout?.Invoke(this, EventArgs.Empty);
         }
 
@@ -382,6 +385,14 @@ namespace Blueprint41.Modeller.Controls
         internal void AddNodeType(NodeTypeEntry nte)
         {
             NodeTypes.Add(nte);
+        }
+
+        private void RemoveDraggedEntities()
+        {
+            foreach (IViewerObject obj in SelectedEntities)
+            {
+                RemoveDragDecorator(obj);
+            }
         }
     }
 }
