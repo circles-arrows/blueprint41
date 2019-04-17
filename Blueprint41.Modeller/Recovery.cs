@@ -61,16 +61,13 @@ namespace Blueprint41.Modeller
             timer.Start();
         }
 
-        public void Stop(bool saved)
+        public void Stop()
         {
-            if (saved)
-            {
-                if (File.Exists(BackupFile))
-                    File.Delete(BackupFile);
+            if (File.Exists(BackupFile))
+                File.Delete(BackupFile);
 
-                if (File.Exists(RecoveryFile))
-                    File.Move(RecoveryFile, BackupFile);
-            }
+            if (File.Exists(RecoveryFile))
+                File.Move(RecoveryFile, BackupFile);
 
             timer.Enabled = false;
             timer.Stop();

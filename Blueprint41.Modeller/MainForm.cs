@@ -63,15 +63,20 @@ namespace Blueprint41.Modeller
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            DialogResult result = DialogResult.Cancel;
+
             if (Model.HasChanges || !File.Exists(StoragePath))
             {
-                DialogResult result = MessageBox.Show("Do you want to save changes?", "Save Changes?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                result = MessageBox.Show("Do you want to save changes?", "Save Changes?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                     BtnSave_Click(this, EventArgs.Empty);
             }
 
-            Recovery.Instance.Stop(true);
+            if (result != DialogResult.Cancel)
+                Recovery.Instance.Stop();
+            else
+                e.Cancel = true;
         }
 
         private void SetModuleMenuItemVisibility()
