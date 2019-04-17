@@ -2,8 +2,6 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Blueprint41.Core" #>
-<#@ includeForIntellisenseOnly processor="tangibleT4Editor" file="$(ProjectDir)DatastoreTemplates\Generator.ttinclude" #>
-
 using System;
 using Blueprint41.Core;
 

@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     internal partial class CreateUniqueConstraint : TemplateBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
 
 
     Debug.WriteLine("	executing {0} -> Create unique constraint for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
@@ -41,14 +41,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("CREATE CONSTRAINT ON (node:");
             
-            #line 12 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(") ASSERT node.");
             
-            #line 12 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
@@ -57,7 +57,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 13 "E:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+        #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
 
 
 	// Template Parameters

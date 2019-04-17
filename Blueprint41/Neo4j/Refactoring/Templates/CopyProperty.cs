@@ -21,7 +21,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     internal partial class CopyProperty : TemplateBase
     {
@@ -32,7 +32,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 9 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 9 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
 
 
     Debug.WriteLine("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Entity.Label.Name);
@@ -42,42 +42,42 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 13 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")\r\nWHERE NOT EXISTS(node.");
             
-            #line 14 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To));
             
             #line default
             #line hidden
             this.Write(") OR node.");
             
-            #line 14 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From));
             
             #line default
             #line hidden
             this.Write(" <> node.");
             
-            #line 14 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To));
             
             #line default
             #line hidden
             this.Write("\r\nWITH node limit 10000 \r\nSET node.");
             
-            #line 16 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To));
             
             #line default
             #line hidden
             this.Write(" = node.");
             
-            #line 16 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From));
             
             #line default
@@ -86,7 +86,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 17 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+        #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
 
 
 	// Template Parameters

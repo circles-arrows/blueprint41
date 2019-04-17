@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     internal partial class MergeProperty : TemplateBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
 
 
     Debug.WriteLine("	executing {0} -> Merge property from {0} to {1}", this.GetType().Name, From.Name, To.Name);
@@ -41,35 +41,35 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ConcreteParent.Label.Name));
             
             #line default
             #line hidden
             this.Write(") WHERE EXISTS(node.");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
             #line hidden
             this.Write(") \r\nWITH node LIMIT 10000 \r\nSET node.");
             
-            #line 14 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To.Name));
             
             #line default
             #line hidden
             this.Write(" = node.");
             
-            #line 14 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
             #line hidden
             this.Write("\r\nSET node.");
             
-            #line 15 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
@@ -78,7 +78,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 16 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+        #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
 
 
 	// Template Parameters

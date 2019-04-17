@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     internal partial class SetRelationshipPropertyValue : TemplateBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
 
 
     string relationship = string.IsNullOrWhiteSpace(RelationshipType) ? "All Relationships" : RelationshipType;
@@ -45,28 +45,28 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH ()-[");
             
-            #line 16 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(type));
             
             #line default
             #line hidden
             this.Write("]->() WHERE NOT EXISTS(r.");
             
-            #line 16 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default
             #line hidden
             this.Write(")  WITH r LIMIT 10000 SET r.");
             
-            #line 16 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default
             #line hidden
             this.Write(" = {");
             
-            #line 16 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default
@@ -75,7 +75,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 17 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+        #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
 
     public string	RelationshipType { get; set; }
     public string	Property { get; set; }

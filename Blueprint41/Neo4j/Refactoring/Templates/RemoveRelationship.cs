@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     internal partial class RemoveRelationship : TemplateBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
 
 
     Debug.WriteLine("	executing {0} -> Rename relationship from {0} to {1}", this.GetType().Name, Relation);
@@ -41,21 +41,21 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH (in:");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(InEntity));
             
             #line default
             #line hidden
             this.Write(")-[rel:");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relation));
             
             #line default
             #line hidden
             this.Write("]->(out:");
             
-            #line 12 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OutEntity));
             
             #line default
@@ -64,7 +64,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 15 "C:\_Xirqlz\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+        #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
 
 	public string InEntity { get; set; }
     public string Relation { get; set; }

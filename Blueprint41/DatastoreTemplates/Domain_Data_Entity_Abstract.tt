@@ -8,7 +8,6 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #> 
-<#@ includeForIntellisenseOnly processor="tangibleT4Editor" file="$(ProjectDir)DatastoreTemplates\Generator.ttinclude" #>
 using System;
 using System.Linq;
 using System.Collections.Generic;
