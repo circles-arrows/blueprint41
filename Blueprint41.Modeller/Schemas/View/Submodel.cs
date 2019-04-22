@@ -180,7 +180,7 @@ namespace Blueprint41.Modeller.Schemas
                     drawingNode.Attr = attr;
                     drawingNode.Label.Text = Entity.Label;
                     drawingNode.UserData = this;
-                    CreateNodeGeometry(drawingNode, Model.Graph, Model.GeometryGraph, center, ConnectionToGraph.Connected);
+                    CreateNodeGeometry(drawingNode, Model.Graph, Model.GeometryGraph, center, ConnectionToGraph.Connected);                    
                 }
                 else
                 {
@@ -188,8 +188,7 @@ namespace Blueprint41.Modeller.Schemas
                     drawingNode.Attr = attr;
                     drawingNode.Label.Text = Entity.Label;
                     drawingNode.UserData = this;
-
-                    CreateNodeGeometry(drawingNode, Model.GraphEditor.Graph, Model.GraphEditor.Graph.GeometryGraph, center, ConnectionToGraph.Disconnected);
+                                       
                     IViewerNode viewerNode = Model.GraphEditor.Viewer.CreateIViewerNode(drawingNode, center, null);
                     Model.GraphEditor.Viewer.AddNode(viewerNode, false);
                     Model.GraphEditor.Viewer.Invalidate(viewerNode);

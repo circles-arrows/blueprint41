@@ -346,7 +346,7 @@ namespace Blueprint41.Modeller.Controls
 
         void InsertNode_Click(object sender, EventArgs e)
         {
-            RemoveDraggedEntities();
+            RemoveDraggableEntities();
 
             NodeTypeEntry selectedNTE = null;
             foreach (NodeTypeEntry nte in NodeTypes)
@@ -358,7 +358,7 @@ namespace Blueprint41.Modeller.Controls
 
         void RedoLayout_Click(object sender, EventArgs e)
         {
-            RemoveDraggedEntities();
+            RemoveDraggableEntities();
             RedoLayout?.Invoke(this, EventArgs.Empty);
         }
 
@@ -387,10 +387,13 @@ namespace Blueprint41.Modeller.Controls
             NodeTypes.Add(nte);
         }
 
-        private void RemoveDraggedEntities()
+        private void RemoveDraggableEntities()
         {
             foreach (IViewerObject obj in SelectedEntities)
             {
+                if (obj.MarkedForDragging)
+                    obj.MarkedForDragging = false;
+
                 RemoveDragDecorator(obj);
             }
         }
