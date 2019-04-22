@@ -791,47 +791,47 @@ if (!DALModel.IsAbstract)
 	events.Add("OnDelete");
 	events.Add("OnSave");
 
-    foreach (string @event in events)
+    foreach (string evnt in events)
     {
 #>
 
-            #region <#= @event #>
+            #region <#= evnt #>
 
-            private bool <#= @event.ToCamelCase() #>IsRegistered = false;
+            private bool <#= evnt.ToCamelCase() #>IsRegistered = false;
 
-            private EventHandler<<#= DALModel.ClassName #>, EntityEventArgs> <#= @event.ToCamelCase() #>;
-            public event EventHandler<<#= DALModel.ClassName #>, EntityEventArgs> <#= @event #>
+            private EventHandler<<#= DALModel.ClassName #>, EntityEventArgs> <#= evnt.ToCamelCase() #>;
+            public event EventHandler<<#= DALModel.ClassName #>, EntityEventArgs> <#= evnt #>
             {
                 add
                 {
                     lock (this)
                     {
-                        if (!<#= @event.ToCamelCase() #>IsRegistered)
+                        if (!<#= evnt.ToCamelCase() #>IsRegistered)
                         {
-                            Entity.Events.<#= @event #> -= <#= @event.ToCamelCase() #>Proxy;
-                            Entity.Events.<#= @event #> += <#= @event.ToCamelCase() #>Proxy;
-                            <#= @event.ToCamelCase() #>IsRegistered = true;
+                            Entity.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
+                            Entity.Events.<#= evnt #> += <#= evnt.ToCamelCase() #>Proxy;
+                            <#= evnt.ToCamelCase() #>IsRegistered = true;
                         }
-                        <#= @event.ToCamelCase() #> += value;
+                        <#= evnt.ToCamelCase() #> += value;
                     }
                 }
                 remove
                 {
                     lock (this)
                     {
-                        <#= @event.ToCamelCase() #> -= value;
-                        if (<#= @event.ToCamelCase() #> == null && <#= @event.ToCamelCase() #>IsRegistered)
+                        <#= evnt.ToCamelCase() #> -= value;
+                        if (<#= evnt.ToCamelCase() #> == null && <#= evnt.ToCamelCase() #>IsRegistered)
                         {
-                            Entity.Events.<#= @event #> -= <#= @event.ToCamelCase() #>Proxy;
-                            <#= @event.ToCamelCase() #>IsRegistered = false;
+                            Entity.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
+                            <#= evnt.ToCamelCase() #>IsRegistered = false;
                         }
                     }
                 }
             }
             
-			private void <#= @event.ToCamelCase() #>Proxy(object sender, EntityEventArgs args)
+			private void <#= evnt.ToCamelCase() #>Proxy(object sender, EntityEventArgs args)
             {
-                EventHandler<<#= DALModel.ClassName #>, EntityEventArgs> handler = <#= @event.ToCamelCase() #>;
+                EventHandler<<#= DALModel.ClassName #>, EntityEventArgs> handler = <#= evnt.ToCamelCase() #>;
                 if ((object)handler != null)
                     handler.Invoke((<#= DALModel.ClassName #>)sender, args);
             }
@@ -851,45 +851,45 @@ if (!DALModel.IsAbstract)
 	{
 		foreach (Property attr in inherited.Properties)
 		{		
-			string @event = "On" + attr.Name;
+			string evnt = "On" + attr.Name;
 #>
-				#region <#= @event #>
+				#region <#= evnt #>
 
-				private static bool <#= @event.ToCamelCase() #>IsRegistered = false;
+				private static bool <#= evnt.ToCamelCase() #>IsRegistered = false;
 
-				private static EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> <#= @event.ToCamelCase() #>;
-				public static event EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> <#= @event #>
+				private static EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> <#= evnt.ToCamelCase() #>;
+				public static event EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> <#= evnt #>
 				{
 					add
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							if (!<#= @event.ToCamelCase() #>IsRegistered)
+							if (!<#= evnt.ToCamelCase() #>IsRegistered)
 							{
-								Members.<#= attr.Name #>.Events.OnChange -= <#= @event.ToCamelCase() #>Proxy;
-								Members.<#= attr.Name #>.Events.OnChange += <#= @event.ToCamelCase() #>Proxy;
-								<#= @event.ToCamelCase() #>IsRegistered = true;
+								Members.<#= attr.Name #>.Events.OnChange -= <#= evnt.ToCamelCase() #>Proxy;
+								Members.<#= attr.Name #>.Events.OnChange += <#= evnt.ToCamelCase() #>Proxy;
+								<#= evnt.ToCamelCase() #>IsRegistered = true;
 							}
-							<#= @event.ToCamelCase() #> += value;
+							<#= evnt.ToCamelCase() #> += value;
 						}
 					}
 					remove
 					{
 						lock (typeof(OnPropertyChange))
 						{
-							<#= @event.ToCamelCase() #> -= value;
-							if (<#= @event.ToCamelCase() #> == null && <#= @event.ToCamelCase() #>IsRegistered)
+							<#= evnt.ToCamelCase() #> -= value;
+							if (<#= evnt.ToCamelCase() #> == null && <#= evnt.ToCamelCase() #>IsRegistered)
 							{
-								Members.<#= attr.Name #>.Events.OnChange -= <#= @event.ToCamelCase() #>Proxy;
-								<#= @event.ToCamelCase() #>IsRegistered = false;
+								Members.<#= attr.Name #>.Events.OnChange -= <#= evnt.ToCamelCase() #>Proxy;
+								<#= evnt.ToCamelCase() #>IsRegistered = false;
 							}
 						}
 					}
 				}
             
-				private static void <#= @event.ToCamelCase() #>Proxy(object sender, PropertyEventArgs args)
+				private static void <#= evnt.ToCamelCase() #>Proxy(object sender, PropertyEventArgs args)
 				{
-					EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> handler = <#= @event.ToCamelCase() #>;
+					EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> handler = <#= evnt.ToCamelCase() #>;
 					if ((object)handler != null)
 						handler.Invoke((<#= DALModel.ClassName #>)sender, args);
 				}
