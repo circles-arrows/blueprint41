@@ -84,7 +84,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             
             #line 37 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
-	foreach (var @event in nodeEvents)
+	foreach (var evnt in nodeEvents)
 	{
 		string eventargs = "NodeEventArgs";
 
@@ -94,14 +94,14 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("\t\t\t\t#region ");
             
             #line 42 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n\t\t\t\tprivate static bool ");
             
             #line 44 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -115,7 +115,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("> ");
             
             #line 46 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -129,42 +129,42 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("> ");
             
             #line 47 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t\t\t{\r\n\t\t\t\t\tadd\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tlock (Entity)\r\n\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\tif (!");
             
             #line 53 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered)\r\n\t\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\tEntity.Events.");
             
             #line 55 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" += ");
             
             #line 55 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n\t\t\t\t\t\t\t\t");
             
             #line 56 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered = true;\r\n\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t");
             
             #line 58 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -172,42 +172,42 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
                     "\t\t\t\t\t\t");
             
             #line 65 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" -= value;\r\n\t\t\t\t\t\t\tif (");
             
             #line 66 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" == null && ");
             
             #line 66 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered)\r\n\t\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\tEntity.Events.");
             
             #line 68 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" -= ");
             
             #line 68 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n\t\t\t\t\t\t\t\t");
             
             #line 69 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -215,7 +215,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
                     "d ");
             
             #line 75 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -236,7 +236,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("> handler = ");
             
             #line 77 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -300,7 +300,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             
             #line 107 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
-	foreach (var @event in relationEvents)
+	foreach (var evnt in relationEvents)
 	{
 		string eventargs = "RelationshipEventArgs";
 
@@ -310,14 +310,14 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("\t\t\t\t#region ");
             
             #line 112 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n\t\t\t\tprivate static bool ");
             
             #line 114 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -331,7 +331,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("> ");
             
             #line 116 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -345,42 +345,42 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("> ");
             
             #line 117 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\t\t\t\t{\r\n\t\t\t\t\tadd\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tlock (Relationship)\r\n\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\tif (!");
             
             #line 123 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered)\r\n\t\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\tRelationship.Events.");
             
             #line 125 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" += ");
             
             #line 125 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n\t\t\t\t\t\t\t\t");
             
             #line 126 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered = true;\r\n\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t");
             
             #line 128 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -388,42 +388,42 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
                     "\t\t{\r\n\t\t\t\t\t\t\t");
             
             #line 135 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" -= value;\r\n\t\t\t\t\t\t\tif (");
             
             #line 136 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" == null && ");
             
             #line 136 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered)\r\n\t\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t\tRelationship.Events.");
             
             #line 138 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" -= ");
             
             #line 138 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n\t\t\t\t\t\t\t\t");
             
             #line 139 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -431,7 +431,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
                     "d ");
             
             #line 145 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -452,7 +452,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("> handler = ");
             
             #line 147 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden

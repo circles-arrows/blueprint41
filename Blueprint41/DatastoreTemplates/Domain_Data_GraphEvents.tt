@@ -35,46 +35,46 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
                 private static readonly Entity Entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
 
 <#
-	foreach (var @event in nodeEvents)
+	foreach (var evnt in nodeEvents)
 	{
 		string eventargs = "NodeEventArgs";
 #>
-				#region <#= @event #>
+				#region <#= evnt #>
 
-				private static bool <#= @event.ToCamelCase() #>IsRegistered = false;
+				private static bool <#= evnt.ToCamelCase() #>IsRegistered = false;
 
-				private static event EventHandler<Entity, <#= eventargs #>> <#= @event.ToCamelCase() #>;
-				public static event EventHandler<Entity, <#= eventargs #>> <#= @event #>
+				private static event EventHandler<Entity, <#= eventargs #>> <#= evnt.ToCamelCase() #>;
+				public static event EventHandler<Entity, <#= eventargs #>> <#= evnt #>
 				{
 					add
 					{
 						lock (Entity)
 						{
-							if (!<#= @event.ToCamelCase() #>IsRegistered)
+							if (!<#= evnt.ToCamelCase() #>IsRegistered)
 							{
-								Entity.Events.<#= @event #> += <#= @event.ToCamelCase() #>Proxy;
-								<#= @event.ToCamelCase() #>IsRegistered = true;
+								Entity.Events.<#= evnt #> += <#= evnt.ToCamelCase() #>Proxy;
+								<#= evnt.ToCamelCase() #>IsRegistered = true;
 							}
-							<#= @event.ToCamelCase() #> += value;
+							<#= evnt.ToCamelCase() #> += value;
 						}
 					}
 					remove
 					{
 						lock (Entity)
 						{
-							<#= @event.ToCamelCase() #> -= value;
-							if (<#= @event.ToCamelCase() #> == null && <#= @event.ToCamelCase() #>IsRegistered)
+							<#= evnt.ToCamelCase() #> -= value;
+							if (<#= evnt.ToCamelCase() #> == null && <#= evnt.ToCamelCase() #>IsRegistered)
 							{
-								Entity.Events.<#= @event #> -= <#= @event.ToCamelCase() #>Proxy;
-								<#= @event.ToCamelCase() #>IsRegistered = false;
+								Entity.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
+								<#= evnt.ToCamelCase() #>IsRegistered = false;
 							}
 						}
 					}
 				}
 
-				private static void <#= @event.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
+				private static void <#= evnt.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
 				{
-					EventHandler<Entity, <#= eventargs #>> handler = <#= @event.ToCamelCase() #>;
+					EventHandler<Entity, <#= eventargs #>> handler = <#= evnt.ToCamelCase() #>;
 					if ((object)handler != null)
 						handler.Invoke((Entity)sender, args);
 				}
@@ -105,46 +105,46 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
 				private static readonly Relationship Relationship = <#= Datastore.GetType().FullName #>.Model.Relations["<#= DALModel.Name #>"];
 
 <#
-	foreach (var @event in relationEvents)
+	foreach (var evnt in relationEvents)
 	{
 		string eventargs = "RelationshipEventArgs";
 #>
-				#region <#= @event #>
+				#region <#= evnt #>
 
-				private static bool <#= @event.ToCamelCase() #>IsRegistered = false;
+				private static bool <#= evnt.ToCamelCase() #>IsRegistered = false;
 
-				private static event EventHandler<Relationship, <#= eventargs #>> <#= @event.ToCamelCase() #>;
-				public static event EventHandler<Relationship, <#= eventargs #>> <#= @event #>
+				private static event EventHandler<Relationship, <#= eventargs #>> <#= evnt.ToCamelCase() #>;
+				public static event EventHandler<Relationship, <#= eventargs #>> <#= evnt #>
 				{
 					add
 					{
 						lock (Relationship)
 						{
-							if (!<#= @event.ToCamelCase() #>IsRegistered)
+							if (!<#= evnt.ToCamelCase() #>IsRegistered)
 							{
-								Relationship.Events.<#= @event #> += <#= @event.ToCamelCase() #>Proxy;
-								<#= @event.ToCamelCase() #>IsRegistered = true;
+								Relationship.Events.<#= evnt #> += <#= evnt.ToCamelCase() #>Proxy;
+								<#= evnt.ToCamelCase() #>IsRegistered = true;
 							}
-							<#= @event.ToCamelCase() #> += value;
+							<#= evnt.ToCamelCase() #> += value;
 						}
 					}
 					remove
 					{
 						lock (Relationship)
 						{
-							<#= @event.ToCamelCase() #> -= value;
-							if (<#= @event.ToCamelCase() #> == null && <#= @event.ToCamelCase() #>IsRegistered)
+							<#= evnt.ToCamelCase() #> -= value;
+							if (<#= evnt.ToCamelCase() #> == null && <#= evnt.ToCamelCase() #>IsRegistered)
 							{
-								Relationship.Events.<#= @event #> -= <#= @event.ToCamelCase() #>Proxy;
-								<#= @event.ToCamelCase() #>IsRegistered = false;
+								Relationship.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
+								<#= evnt.ToCamelCase() #>IsRegistered = false;
 							}
 						}
 					}
 				}
 
-				private static void <#= @event.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
+				private static void <#= evnt.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
 				{
-					EventHandler<Relationship, <#= eventargs #>> handler = <#= @event.ToCamelCase() #>;
+					EventHandler<Relationship, <#= eventargs #>> handler = <#= evnt.ToCamelCase() #>;
 					if ((object)handler != null)
 						handler.Invoke((Relationship)sender, args);
 				}

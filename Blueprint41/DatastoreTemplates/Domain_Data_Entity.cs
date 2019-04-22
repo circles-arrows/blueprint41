@@ -2643,7 +2643,7 @@ if (!DALModel.IsAbstract)
 	events.Add("OnDelete");
 	events.Add("OnSave");
 
-    foreach (string @event in events)
+    foreach (string evnt in events)
     {
 
             
@@ -2652,14 +2652,14 @@ if (!DALModel.IsAbstract)
             this.Write("\r\n            #region ");
             
             #line 798 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n            private bool ");
             
             #line 800 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2673,7 +2673,7 @@ if (!DALModel.IsAbstract)
             this.Write(", EntityEventArgs> ");
             
             #line 802 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2687,7 +2687,7 @@ if (!DALModel.IsAbstract)
             this.Write(", EntityEventArgs> ");
             
             #line 803 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
@@ -2695,7 +2695,7 @@ if (!DALModel.IsAbstract)
                     " (this)\r\n                    {\r\n                        if (!");
             
             #line 809 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2703,42 +2703,42 @@ if (!DALModel.IsAbstract)
                     "ts.");
             
             #line 811 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" -= ");
             
             #line 811 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                            Entity.Events.");
             
             #line 812 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" += ");
             
             #line 812 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                            ");
             
             #line 813 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered = true;\r\n                        }\r\n                        ");
             
             #line 815 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2747,21 +2747,21 @@ if (!DALModel.IsAbstract)
                     "                ");
             
             #line 822 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" -= value;\r\n                        if (");
             
             #line 823 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" == null && ");
             
             #line 823 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2769,21 +2769,21 @@ if (!DALModel.IsAbstract)
                     "ts.");
             
             #line 825 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write(" -= ");
             
             #line 825 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n                            ");
             
             #line 826 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2791,7 +2791,7 @@ if (!DALModel.IsAbstract)
                     "        }\r\n            }\r\n            \r\n\t\t\tprivate void ");
             
             #line 832 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2806,7 +2806,7 @@ if (!DALModel.IsAbstract)
             this.Write(", EntityEventArgs> handler = ");
             
             #line 834 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2836,7 +2836,7 @@ if (!DALModel.IsAbstract)
 	{
 		foreach (Property attr in inherited.Properties)
 		{		
-			string @event = "On" + attr.Name;
+			string evnt = "On" + attr.Name;
 
             
             #line default
@@ -2844,14 +2844,14 @@ if (!DALModel.IsAbstract)
             this.Write("\t\t\t\t#region ");
             
             #line 856 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n\t\t\t\tprivate static bool ");
             
             #line 858 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2865,7 +2865,7 @@ if (!DALModel.IsAbstract)
             this.Write(", PropertyEventArgs> ");
             
             #line 860 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2879,7 +2879,7 @@ if (!DALModel.IsAbstract)
             this.Write(", PropertyEventArgs> ");
             
             #line 861 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt));
             
             #line default
             #line hidden
@@ -2887,7 +2887,7 @@ if (!DALModel.IsAbstract)
                     "\tif (!");
             
             #line 867 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2901,7 +2901,7 @@ if (!DALModel.IsAbstract)
             this.Write(".Events.OnChange -= ");
             
             #line 869 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2915,21 +2915,21 @@ if (!DALModel.IsAbstract)
             this.Write(".Events.OnChange += ");
             
             #line 870 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n\t\t\t\t\t\t\t\t");
             
             #line 871 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("IsRegistered = true;\r\n\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t");
             
             #line 873 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2937,21 +2937,21 @@ if (!DALModel.IsAbstract)
                     "ange))\r\n\t\t\t\t\t\t{\r\n\t\t\t\t\t\t\t");
             
             #line 880 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" -= value;\r\n\t\t\t\t\t\t\tif (");
             
             #line 881 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" == null && ");
             
             #line 881 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2965,14 +2965,14 @@ if (!DALModel.IsAbstract)
             this.Write(".Events.OnChange -= ");
             
             #line 883 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write("Proxy;\r\n\t\t\t\t\t\t\t\t");
             
             #line 884 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2980,7 +2980,7 @@ if (!DALModel.IsAbstract)
                     "e static void ");
             
             #line 890 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
@@ -2994,7 +2994,7 @@ if (!DALModel.IsAbstract)
             this.Write(", PropertyEventArgs> handler = ");
             
             #line 892 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(@event.ToCamelCase()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
             
             #line default
             #line hidden
