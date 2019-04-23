@@ -39,12 +39,13 @@ namespace Blueprint41.Modeller
         public static List<Relationship> GetRelationships(this Submodel model, bool includeInherited = false)
         {
             // Gets all the relationships from the matching entities of submodel
-            Dictionary<string, Relationship> relationships = model.Model.Relationships.Relationship
-                .Where(item => model.Node.Any(entity => entity.Label == item.Source.Label) && model.Node.Any(entity => entity.Label == item.Target.Label))
-                .ToDictionary(x => x.Name);
+            Dictionary<string, Submodel.NodeLocalType> nodeLookup = model.Node.ToDictionary(x => x.Label);
+
+            var relationships = model.Model.Relationships.Relationship
+                 .Where(item => nodeLookup.ContainsKey(item.Source.Label) && nodeLookup.ContainsKey(item.Target.Label)).ToList();
 
             if (includeInherited == false)
-                return relationships.Select(x => x.Value).ToList();
+                return relationships;
 
             List<Relationship> inheritedRelationships = new List<Relationship>();
 
@@ -68,10 +69,8 @@ namespace Blueprint41.Modeller
                 }
             }
 
-            List<Relationship> withInheritedRel = relationships.Select(x => x.Value).ToList();
-            withInheritedRel.AddRange(inheritedRelationships);
-
-            return withInheritedRel;
+            relationships.AddRange(inheritedRelationships);
+            return relationships;
         }
 
         public static List<Entity> GetChildStaticEntities(this Entity entity)

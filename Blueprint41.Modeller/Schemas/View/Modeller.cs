@@ -174,7 +174,7 @@ namespace Blueprint41.Modeller.Schemas
             GeometryGraph.MinimalWidth = 200;
             GeometryGraph.MinimalHeight = 200;
 
-            foreach (var node in DisplayedSubmodel.Node)
+            foreach (Submodel.NodeLocalType node in DisplayedSubmodel.Node)
             {
                 node.CreateNode();
                 node.Parent = DisplayedSubmodel;

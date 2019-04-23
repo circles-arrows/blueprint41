@@ -82,7 +82,7 @@ namespace Blueprint41.Modeller.Schemas
             if (includeInherited == false)
                 return relationships.Select(x => x.Value).ToList();
 
-            Dictionary<RelationshipDirection, List<Relationship>> inheritedPropertyByDirection = this.GetInheritedRelationships(model);
+            Dictionary<RelationshipDirection, List<Relationship>> inheritedPropertyByDirection = GetInheritedRelationships(model);
 
             foreach (Relationship item in inheritedPropertyByDirection[RelationshipDirection.In])
             {

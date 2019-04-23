@@ -52,7 +52,9 @@ namespace Blueprint41.Modeller.Schemas
             if (this.Source.Label == null || this.Target.Label == null)
                 return;
 
-            if (!Model.DisplayedSubmodel.Entities.Any(item => item.Label == this.Source.Label) || !Model.DisplayedSubmodel.Entities.Any(item => item.Label == this.Target.Label))
+            Dictionary<string, Entity> entitiesLookup = Model.DisplayedSubmodel.Entities.ToDictionary(x => x.Label, y => y);           
+
+            if ((entitiesLookup.ContainsKey(Source.Label) || entitiesLookup.ContainsKey(Target.Label)) == false)
                 return;
 
             if (drawingEdge != null)
