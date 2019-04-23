@@ -75,8 +75,8 @@ namespace Blueprint41.Modeller
 
             txtName.Enabled = !IsMainModel;            
             numericChapter.Enabled = !IsMainModel;
-            chkIsDraft.Enabled = !IsMainModel;
-            chkIsLaboratory.Enabled = !IsMainModel;
+            //chkIsDraft.Enabled = !IsMainModel;
+            //chkIsLaboratory.Enabled = !IsMainModel;
             btnDelete.Enabled = !IsMainModel;
         }
 
