@@ -22,7 +22,8 @@ namespace Blueprint41.Query
         Match,
         HasLabel,
         Not,
-        In
+        In,
+        Boolean
     }
 
     public static partial class ExtensionMethods

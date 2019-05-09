@@ -165,7 +165,12 @@ namespace <#= Settings.FullQueryNamespace #>
     {
         internal <#= DALModel.Name #>Alias(<#= DALModel.Name #>Node parent)
         {
-			Node = parent;
+            Node = parent;
+        }
+
+        private <#= DALModel.Name #>Alias(AliasResult parent, string function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
+        {
+            Node = parent.Node;
         }
 
         public override IReadOnlyDictionary<string, FieldResult> AliasFields
@@ -274,6 +279,25 @@ namespace <#= Settings.FullQueryNamespace #>
 <#
     }
 #>
+        new public <#= DALModel.Name #>AliasList Collect()
+        {
+            return new <#= DALModel.Name #>AliasList(this, "collect({base})");
+        }
+        public AsResult As(string aliasName, out <#= DALModel.Name #>Alias alias)
+        {
+            alias = new <#= DALModel.Name #>Alias((<#= DALModel.Name #>Node)Node)
+            {
+                AliasName = aliasName
+            };
+            return this.As(aliasName);
+        }
+    }
+
+    public class <#= DALModel.Name #>AliasList : ListResult<<#= DALModel.Name #>AliasList, <#= DALModel.Name #>Alias>
+    {
+        public <#= DALModel.Name #>AliasList(AliasResult parent, string function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
+        {
+        }
     }
 }
 <#+

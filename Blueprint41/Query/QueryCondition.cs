@@ -26,6 +26,13 @@ namespace Blueprint41.Query
             Right = right;
         }
 
+        public QueryCondition(BooleanResult booleanResult)
+        {
+            Left = booleanResult;
+            Operator = Operator.Boolean;
+            Right = null;
+        }
+
         private object Left;
         private Operator Operator;
         private object Right;
@@ -34,6 +41,14 @@ namespace Blueprint41.Query
         {
             Left = Substitute(state, Left);
             Right = Substitute(state, Right);
+
+            if (Operator == Operator.Boolean)
+            {
+                state.Text.Append("(");
+                ((BooleanResult)Left).Compile(state);
+                state.Text.Append(")");
+                return;
+            }
 
             Type leftType = GetOperandType(Left);
             Type rightType = GetOperandType(Right);
@@ -82,6 +97,8 @@ namespace Blueprint41.Query
 
             if (Operator == Operator.Not)
                 state.Text.Append(")");
+
+
 
             state.Text.Append(")");
         }
@@ -174,7 +191,7 @@ namespace Blueprint41.Query
         {
             TypeMapping mapping = mappings.FirstOrDefault(item => item.ReturnType == type);
             if (mapping == null)
-                throw new InvalidOperationException($"An unexpected technical mapping failure while trying to find the conversion for type {type.Name}. Please contact the developer."); 
+                throw new InvalidOperationException($"An unexpected technical mapping failure while trying to find the conversion for type {type.Name}. Please contact the developer.");
 
             return mapping.ComparisonGroup;
         }

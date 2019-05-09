@@ -133,6 +133,10 @@ namespace Blueprint41.Query
             return new QueryCondition(this, Operator.In, Parameter.Constant(enumerable.ToArray(), typeof(double)));
         }
 
+        public FloatListResult Collect()
+        {
+            return new FloatListResult(this, "collect({base})");
+        }
         public NumericResult Sign()
         {
             return new NumericResult(this, "sign({base})", null, typeof(long));

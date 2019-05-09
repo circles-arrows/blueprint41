@@ -8,6 +8,24 @@ namespace Blueprint41.Query
 {
     public class AliasResult : Result
     {
+        private object[] emptyArguments = new object[0];
+        protected internal AliasResult()
+        {
+        }
+        protected AliasResult(AliasResult parent, string function, object[] arguments = null, Type type = null)
+        {
+            Alias = parent;
+            Node = parent.Node;
+            FunctionText = function;
+            FunctionArgs = arguments ?? emptyArguments;
+            OverridenReturnType = type;
+        }
+        public AliasResult Alias { get; private set; }
+        private string FunctionText { get; set; }
+        private object[] FunctionArgs { get; set; }
+        private Type OverridenReturnType { get; set; }
+
+
         public static QueryCondition operator ==(AliasResult a, AliasResult b)
         {
             return new QueryCondition(a, Operator.Equals, b);
@@ -34,12 +52,78 @@ namespace Blueprint41.Query
             return base.GetHashCode();
         }
 
-        public string AliasName { get; internal set; }
+        public string AliasName { get; protected internal set; }
         public Node Node { get; protected set; }
 
         protected internal override void Compile(CompileState state)
         {
-            state.Text.Append(AliasName);
+            if (FunctionText == null)
+            {
+                state.Text.Append(AliasName);
+            }
+            else
+            {
+                string[] compiledArgs = FunctionArgs.Select(arg => state.Preview(GetCompile(arg), state)).ToArray();
+                string compiledText = string.Format(FunctionText.Replace("{base}", "{{base}}"), compiledArgs);
+
+                if ((object)Alias == null)
+                {
+                    state.Text.Append(compiledText);
+                }
+                else
+                {
+                    string[] split = compiledText.Split(new string[] { "{base}" }, StringSplitOptions.None);
+                    if (split.Length == 0)
+                        throw new NotSupportedException("Functions have to include compilation of the base they are derived from.");
+
+                    string baseText = state.Preview(Alias.Compile, state);
+                    state.Text.Append(string.Join(baseText, split));
+
+                    //state.Text.Append(split[0]);
+                    //Field.Compile(state);
+                    //state.Text.Append(split[1]);
+                }
+            }
+        }
+
+        private Action<CompileState> GetCompile(object arg)
+        {
+            if (arg == null)
+            {
+                return delegate (CompileState state)
+                {
+                    state.Text.Append("NULL");
+                };
+            }
+            else if (arg is Litheral)
+            {
+                Litheral param = (Litheral)arg;
+                return param.Compile;
+            }
+            else if (arg is Parameter)
+            {
+                Parameter param = (Parameter)arg;
+                return param.Compile;
+            }
+            else if (arg.GetType().IsSubclassOfOrSelf(typeof(FieldResult)))
+            {
+                FieldResult field = (FieldResult)arg;
+                return field.Compile;
+            }
+            else if (arg is QueryCondition)
+            {
+                QueryCondition param = (QueryCondition)arg;
+                return param.Compile;
+            }
+            else if (arg is AliasResult)
+            {
+                AliasResult param = (AliasResult)arg;
+                return param.Compile;
+            }
+            else
+            {
+                throw new NotSupportedException($"Function arguments of type '{arg.GetType().Name}' are not supported.");
+            }
         }
 
         public QueryCondition HasLabel(string label)
@@ -52,9 +136,17 @@ namespace Blueprint41.Query
             return new QueryCondition(string.Empty, Operator.Not, condition);
         }
 
-        public AsResult As(string alias)
+        public AsResult As(string aliasName)
         {
-            return new AsResult(this, alias);
+            return new AsResult(this, aliasName);
+        }
+        public AsResult As(string aliasName, out AliasResult alias)
+        {
+            alias = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            return new AsResult(this, aliasName);
         }
 
         public AsResult Properties(string alias, out PropertiesAliasResult propertiesAlias)
@@ -73,7 +165,10 @@ namespace Blueprint41.Query
 
         public override Type GetResultType()
         {
-            return null;
+            if (OverridenReturnType == null && (object)Alias != null)
+                return Alias.GetResultType();
+
+            return OverridenReturnType;
         }
 
         new public StringResult ToString()
@@ -82,5 +177,15 @@ namespace Blueprint41.Query
         }
 
         public virtual IReadOnlyDictionary<string, FieldResult> AliasFields { get { return null; }  }
+
+        public StringListResult Labels()
+        {
+            return new StringListResult(null, "LABELS({0})", new object[] { AliasName }, typeof(string));
+        }
+        public AliasListResult Collect()
+        {
+            return new AliasListResult(this, "collect({base})");
+        }
+
     }
 }

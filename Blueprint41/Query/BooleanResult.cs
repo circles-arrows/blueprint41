@@ -51,6 +51,10 @@ namespace Blueprint41.Query
         public BooleanResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
         public BooleanResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
 
+        public BooleanListResult Collect()
+        {
+            return new BooleanListResult(this, "collect({base})");
+        }
         public BooleanResult Coalesce(bool value)
         {
             return new BooleanResult(this, "coalesce({base}, {0})", new object[] { Parameter.Constant(value) });
@@ -64,7 +68,7 @@ namespace Blueprint41.Query
             return new BooleanResult(this, "coalesce({base}, {0})", new object[] { value });
         }
 
-        public override NumericResult ToInt()
+        public override NumericResult ToInteger()
         {
             string caseWhen = @"CASE WHEN {0} IS NULL THEN NULL WHEN {0} THEN 1 ELSE 0 END";
             return new NumericResult(caseWhen, new object[] { this }, typeof(long));

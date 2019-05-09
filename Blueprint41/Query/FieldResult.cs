@@ -83,9 +83,19 @@ namespace Blueprint41.Query
         {
             return new BooleanResult(this, "exists({base})", null, typeof(bool));
         }
+        public virtual BooleanResult ToBoolean()
+        {
+            return new BooleanResult(this, "toBoolean({base})", null, typeof(bool));
+        }
+
+        [Obsolete("Please use the 'ToInteger' method instead.")]
         public virtual NumericResult ToInt()
         {
-            return new NumericResult(this, "toInt({base})", null, typeof(long));
+            return ToInteger();
+        }
+        public virtual NumericResult ToInteger()
+        {
+            return new NumericResult(this, "toInteger({base})", null, typeof(long));
         }
         public virtual FloatResult ToFloat()
         {
@@ -95,6 +105,23 @@ namespace Blueprint41.Query
         {
             return new StringResult(this, "toString({base})", null, typeof(string));
         }
+        public virtual BooleanListResult ToBooleanList()
+        {
+            return new BooleanListResult(this, "{base}", null, typeof(bool));
+        }
+        public virtual NumericListResult ToIntegerList()
+        {
+            return new NumericListResult(this, "{base}", null, typeof(long));
+        }
+        public virtual FloatListResult ToFloatList()
+        {
+            return new FloatListResult(this, "{base}", null, typeof(Double));
+        }
+        public virtual StringListResult ToStringList()
+        {
+            return new StringListResult(this, "{base}", null, typeof(string));
+        }
+
 
 
         protected internal override void Compile(CompileState state)

@@ -137,6 +137,10 @@ namespace Blueprint41.Query
         public NumericResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
         public NumericResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
 
+        public NumericListResult Collect()
+        {
+            return new NumericListResult(this, "collect({base})");
+        }
         public QueryCondition In(IEnumerable<long> enumerable)
         {
             return new QueryCondition(this, Operator.In, Parameter.Constant(enumerable.ToArray(), typeof(long)));
