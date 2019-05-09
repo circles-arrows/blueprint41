@@ -72,13 +72,13 @@ namespace Blueprint41.Query
 
         protected internal TResult NewResult(string function, object[] arguments = null, Type type = null)
         {
-            return newResultCtor.Value.Invoke(this, function, arguments, typeof(bool));
+            return newResultCtor.Value.Invoke(this, function, arguments, type);
         }
         private  static Lazy<Func<AliasResult, string, object[], Type, TResult>> newResultCtor = null;
 
         protected internal TList NewList(string function, object[] arguments = null, Type type = null)
         {
-            return newListCtor.Value.Invoke(this, function, arguments, typeof(bool));
+            return newListCtor.Value.Invoke(this, function, arguments, type);
         }
         private static Lazy<Func<AliasResult, string, object[], Type, TList>> newListCtor = null;
     }
@@ -167,13 +167,13 @@ namespace Blueprint41.Query
 
         protected internal TResult NewResult(string function, object[] arguments = null, Type type = null)
         {
-            return newResultCtor.Value.Invoke(this, function, arguments, typeof(bool));
+            return newResultCtor.Value.Invoke(this, function, arguments, type);
         }
         private static Lazy<Func<FieldResult, string, object[], Type, TResult>> newResultCtor = null;
 
         protected internal TList NewList(string function, object[] arguments = null, Type type = null)
         {
-            return newListCtor.Value.Invoke(this, function, arguments, typeof(bool));
+            return newListCtor.Value.Invoke(this, function, arguments, type);
         }
         private static Lazy<Func<FieldResult, string, object[], Type, TList>> newListCtor = null;
     }
