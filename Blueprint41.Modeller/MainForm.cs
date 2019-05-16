@@ -63,7 +63,7 @@ namespace Blueprint41.Modeller
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DialogResult result = DialogResult.Cancel;
+            DialogResult result = DialogResult.Yes; // if there is no message box, act as if the user pressed "Yes" to save.
 
             if (Model.HasChanges || !File.Exists(StoragePath))
             {
