@@ -125,14 +125,15 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("_REL Repeat(int maxHops)\r\n\t\t{\r\n\t\t\treturn Repeat(1, maxHops);\r\n\t\t}\r\n\t\tpublic ");
+            this.Write("_REL Repeat(int maxHops)\r\n\t\t{\r\n\t\t\treturn Repeat(1, maxHops);\r\n\t\t}\r\n\t\tpublic new ");
             
             #line 38 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
-            this.Write("_REL Repeat(int minHops, int maxHops)\r\n\t\t{\r\n\t\t\treturn this;\r\n\t\t}\r\n\r\n\t\tIFromIn_");
+            this.Write("_REL Repeat(int minHops, int maxHops)\r\n\t\t{\r\n\t\t\tbase.Repeat(minHops, maxHops);\r\n\t\t" +
+                    "\treturn this;\r\n\t\t}\r\n\r\n\t\tIFromIn_");
             
             #line 43 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));

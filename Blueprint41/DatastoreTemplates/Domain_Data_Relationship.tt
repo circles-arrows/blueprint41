@@ -35,8 +35,9 @@ public partial class <#= DALRelation.Name #>_REL : RELATIONSHIP, IFromIn_<#= DAL
 		{
 			return Repeat(1, maxHops);
 		}
-		public <#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops)
+		public new <#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops)
 		{
+			base.Repeat(minHops, maxHops);
 			return this;
 		}
 

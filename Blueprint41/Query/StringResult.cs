@@ -309,7 +309,7 @@ namespace Blueprint41.Query
                 index++;
             }
 
-            return new StringResult(this, sb.ToString(), parameters, typeof(string));
+            return new StringResult(this, $"({sb.ToString()})", parameters, typeof(string));
         }
 
         public StringResult Min()

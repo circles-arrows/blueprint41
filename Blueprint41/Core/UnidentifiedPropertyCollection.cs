@@ -38,6 +38,20 @@ namespace Blueprint41.Core
             UnidentifiedBacking.Clear();
         }
 
+        private object RepairList(object value)
+        {
+            if (value is IList list)
+            {
+                for (int index = list.Count - 1; index >= 0; index--)
+                {
+                    if (list[index] == null)
+                        list.RemoveAt(index);
+                }
+            }
+
+            return value;
+        }
+
         #region IDictionary<string, object>
 
         public object this[string key]
@@ -51,7 +65,7 @@ namespace Blueprint41.Core
             set
             {
                 Parent.LazySet();
-                UnidentifiedBacking[key] = value;
+                UnidentifiedBacking[key] = RepairList(value);
             }
         }
 
@@ -93,13 +107,13 @@ namespace Blueprint41.Core
         public void Add(KeyValuePair<string, object> item)
         {
             Parent.LazySet();
-            UnidentifiedBacking.Add(item.Key, item.Value);
+            UnidentifiedBacking.Add(item.Key, RepairList(item.Value));
         }
 
         public void Add(string key, object value)
         {
             Parent.LazySet();
-            UnidentifiedBacking.Add(key, value);
+            UnidentifiedBacking.Add(key, RepairList(value));
         }
 
         public void Clear()

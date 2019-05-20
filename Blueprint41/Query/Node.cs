@@ -64,39 +64,13 @@ namespace Blueprint41.Query
 
                 if (current.ToRelationship != null)
                 {
-                    GetDirection(current.ToRelationship, state.Text);
-                    if ((object)current.ToRelationship.RelationshipAlias != null)
-                    {
-                        current.ToRelationship.RelationshipAlias.AliasName = string.Format("r{0}", state.patternSeq++);
-                        state.Text.AppendFormat("[{0}:{1}]", current.ToRelationship.RelationshipAlias.AliasName, current.ToRelationship.NEO4J_TYPE);
-                    }
-                    else
-                        state.Text.AppendFormat("[:{0}]", current.ToRelationship.NEO4J_TYPE);
-
+                    current.ToRelationship.Compile(state);
                     current = current.ToRelationship.ToNode;
                 }
                 else
                     break;
                 
             } while (true);
-        }
-
-        private void GetDirection(RELATIONSHIP relationship, StringBuilder sb)
-        {
-            switch (relationship.Direction)
-            {
-                case DirectionEnum.In:
-                    sb.Append("-");
-                    break;
-                case DirectionEnum.Out:
-                    sb.Append("<-");
-                    break;
-                case DirectionEnum.None:
-                    sb.Append("-");
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
         }
 
         private void GetDirection(Node node, StringBuilder sb)
