@@ -103,6 +103,8 @@ namespace Blueprint41.Modeller
             pre.DataGridViewRelationship.UserDeletingRow += DataGridViewRelationship_UserDeletingRow;
             pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
             pre.DataGridViewRelationship.DataError += DataGridViewRelationship_DataError;
+            pre.DataGridViewRelationship.Leave += DataGridViewRelationship_Leave;
+
 
             pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
             pre.CheckBoxShowFromCurrentModel.CheckedChanged += checkBoxShowFromCurrentModel_CheckedChanged;
@@ -110,7 +112,6 @@ namespace Blueprint41.Modeller
             pre.Enabled = false;
             gbProperties.Enabled = false;
         }
-
 
         #region Primitive Event Handlers
         private void DataGridViewPrimitive_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -250,6 +251,26 @@ namespace Blueprint41.Modeller
                     relationshipsObservable[e.RowIndex].RenameEdge();
             }
         }
+        
+        private void DataGridViewRelationship_Leave(object sender, EventArgs e)
+        {
+            var relationshipDataGridView = sender as DataGridView;
+            
+            int lastRowIndex = relationshipDataGridView.NewRowIndex - 1;
+
+            int columnIndex = 0;
+            while(columnIndex < 7)
+            {
+                if (pre.DataGridViewRelationship.Rows[lastRowIndex].Cells[columnIndex].Value == null)
+                {
+                    pre.DataGridViewRelationship.Rows.RemoveAt(lastRowIndex);
+                    break;
+                }
+
+                columnIndex++;
+            }
+        }
+
         #endregion
 
         private void CreateToolTipForShowAllRelationshipsCheckbox()
@@ -760,7 +781,9 @@ namespace Blueprint41.Modeller
         {
             DialogResult dialogResult;
 
-            if (item.InEntity == null && item.OutEntity == null)
+            if (item.InEntity == null || item.OutEntity == null ||
+                string.IsNullOrEmpty(item.Name) || string.IsNullOrEmpty(item.Type) ||
+                string.IsNullOrEmpty(item.InProperty))
                 dialogResult = DialogResult.Yes;
             else
                 dialogResult = MessageBox.Show($"Are you sure you want to delete the relationship '{item.Source.Label}->[{item.Name}]->{item.Target.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
@@ -861,6 +884,8 @@ namespace Blueprint41.Modeller
             ClearDataSourceAndHandlers();
             gbProperties.Enabled = true;
             pre.Enabled = true;
+            pre.SetToReadOnly(false);
+
             Entity = model;
             StorageModel = modeller;
             Assign();
@@ -881,6 +906,8 @@ namespace Blueprint41.Modeller
             cmbInherits.SelectedIndex = -1;
             cmbFunctionalId.DataSource = null;
             cmbFunctionalId.SelectedIndex = -1;
+
+            pre.SetToReadOnly();
         }
 
         public void ClearDataSourceAndHandlers()

@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace Blueprint41.Modeller
 {
@@ -32,6 +33,12 @@ namespace Blueprint41.Modeller
         public PrimitiveRelationshipEditor()
         {
             InitializeComponent();
+        }
+
+        internal void SetToReadOnly(bool isReadOnly = true)
+        {
+            DataGridViewPrimitive.Enabled = !isReadOnly;
+            DataGridViewRelationship.Enabled = !isReadOnly;
         }
     }
 }
