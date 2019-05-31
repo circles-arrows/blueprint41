@@ -96,15 +96,15 @@ namespace Blueprint41.Modeller
             pre.DataGridViewPrimitive.DefaultValuesNeeded += dataGridViewPrimitiveProperties_DefaultValuesNeeded;
             pre.DataGridViewPrimitive.KeyDown += dataGridViewPrimitiveProperties_KeyDown;
             pre.DataGridViewPrimitive.DataError += DataGridViewPrimitive_DataError;
-            pre.DataGridViewPrimitive.CancelRowEdit += DataGridViewPrimitive_CancelRowEdit;
+            //pre.DataGridViewPrimitive.CancelRowEdit += DataGridViewPrimitive_CancelRowEdit;
 
             pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
             pre.DataGridViewRelationship.DataSourceChanged += DataGridViewRelationship_DataSourceChanged;
             pre.DataGridViewRelationship.UserDeletingRow += DataGridViewRelationship_UserDeletingRow;
-            pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
             pre.DataGridViewRelationship.DataError += DataGridViewRelationship_DataError;
-            pre.DataGridViewRelationship.Leave += DataGridViewRelationship_Leave;
 
+            pre.DataGridViewRelationship.Leave += DataGridViewRelationship_Leave;
+            pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
 
             pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
             pre.CheckBoxShowFromCurrentModel.CheckedChanged += checkBoxShowFromCurrentModel_CheckedChanged;
@@ -228,11 +228,52 @@ namespace Blueprint41.Modeller
         }
 
         private void DataGridViewRelationships_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
+        {         
+            bool hasErrors = false;
+
+            int columnIndex = 0;
+            while (columnIndex < 7)
+            {
+                DataGridViewCell cell = pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[columnIndex];
+
+                if (string.IsNullOrEmpty(cell.Value?.ToString()))
+                {
+                    cell.ErrorText = "Required";
+                    hasErrors = true;
+                }
+                else
+                    cell.ErrorText = null;
+
+                columnIndex++;
+            }
+
+            if (hasErrors)
+                return;
+
             if (e.ColumnIndex == 0)
             {
                 DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[0];
                 relationshipsObservable[e.RowIndex].Source.ReferenceGuid = StorageModel.Entities.Entity.Where(x => x.Label == (string)cb.Value).SingleOrDefault()?.Guid;
+            }
+
+            if (e.ColumnIndex == 1 || e.ColumnIndex == 7)
+            {
+                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+                if (textBox.Value == null)
+                {
+                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
+                    return;
+                }
+
+                string newName = ((string)textBox.Value).Replace(" ", string.Empty);
+
+                if (string.IsNullOrEmpty(newName))
+                {
+                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
+                    return;
+                }
+                textBox.Value = newName;
             }
 
             if (e.ColumnIndex == 6)
@@ -254,20 +295,50 @@ namespace Blueprint41.Modeller
         
         private void DataGridViewRelationship_Leave(object sender, EventArgs e)
         {
-            var relationshipDataGridView = sender as DataGridView;
-            
-            int lastRowIndex = relationshipDataGridView.NewRowIndex - 1;
+            ValidateRelationships();
+        }
 
-            int columnIndex = 0;
-            while(columnIndex < 7)
+        private void ValidateRelationships()
+        {
+            List<DataGridViewRow> rows = new List<DataGridViewRow>();
+
+            foreach (DataGridViewRow row in pre.DataGridViewRelationship.Rows)
             {
-                if (pre.DataGridViewRelationship.Rows[lastRowIndex].Cells[columnIndex].Value == null)
+                int columnIndex = 0;
+                while (columnIndex < 7)
                 {
-                    pre.DataGridViewRelationship.Rows.RemoveAt(lastRowIndex);
-                    break;
-                }
+                    DataGridViewCell cell = row.Cells[columnIndex];
 
-                columnIndex++;
+                    if (string.IsNullOrEmpty(cell.Value?.ToString()))
+                    {
+                        if (!row.IsNewRow)
+                        {
+                            if (!rows.Contains(row))
+                                rows.Add(row);
+
+                            cell.ErrorText = "Required";
+                        }
+                    }
+                    else
+                        cell.ErrorText = null;
+
+                    columnIndex++;
+                }
+            }
+
+            if (rows.Count > 0)
+            {
+                if (MessageBox.Show("Are you sure you want to cancel editing relationships?", "Entity Relationships", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    rows.ForEach(row =>
+                    {
+                        if (!row.IsNewRow)
+                            pre.DataGridViewRelationship.Rows.Remove(row);
+                    });
+
+                    pre.DataGridViewRelationship.CancelEdit();
+                    return;
+                }
             }
         }
 
@@ -835,7 +906,7 @@ namespace Blueprint41.Modeller
                         record.Property.Remove(prop);
         }
 
-        private void DataGridViewRelationships_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        private void DataGridViewRelationship_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
             if (pre.DataGridViewRelationship.IsCurrentCellDirty)
             {
