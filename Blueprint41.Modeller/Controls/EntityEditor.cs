@@ -97,6 +97,7 @@ namespace Blueprint41.Modeller
             pre.DataGridViewPrimitive.KeyDown += dataGridViewPrimitiveProperties_KeyDown;
             pre.DataGridViewPrimitive.DataError += DataGridViewPrimitive_DataError;
             //pre.DataGridViewPrimitive.CancelRowEdit += DataGridViewPrimitive_CancelRowEdit;
+            pre.DataGridViewPrimitive.RowLeave += DataGridViewPrimitive_RowLeave;
 
             pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
             pre.DataGridViewRelationship.DataSourceChanged += DataGridViewRelationship_DataSourceChanged;
@@ -111,6 +112,11 @@ namespace Blueprint41.Modeller
 
             pre.Enabled = false;
             gbProperties.Enabled = false;
+        }
+
+        private void DataGridViewPrimitive_RowLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            ValidatePrimitiveProperties(e.RowIndex, e.ColumnIndex);
         }
 
         #region Primitive Event Handlers
@@ -161,13 +167,34 @@ namespace Blueprint41.Modeller
 
         private void dataGridViewPrimitiveProperties_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 1)
+            ValidatePrimitiveProperties(e.RowIndex, e.ColumnIndex);
+        }
+
+        private void ValidatePrimitiveProperties(int rowIndex, int columnIndex)
+        {
+            if (columnIndex == 1)
             {
-                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewPrimitive.Rows[e.RowIndex].Cells[1];
+                DataGridViewRow currentRow = pre.DataGridViewPrimitive.Rows[rowIndex];
+
+                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewPrimitive.Rows[rowIndex].Cells[1];
+
+                if (!textBox.IsInEditMode)
+                    return;
+
+                if (currentRow.IsNewRow && textBox.IsInEditMode && string.IsNullOrEmpty(textBox.EditedFormattedValue?.ToString()))
+                    return;
+
+                if(textBox.IsInEditMode && string.IsNullOrEmpty(textBox.EditedFormattedValue?.ToString()) == false && textBox.Value == null)
+                {
+                    textBox.Value = textBox.EditedFormattedValue?.ToString();
+                    return;
+                }                    
 
                 if (textBox.Value == null)
                 {
-                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
+                    string defaultPrimitiveName = "PropertyName";
+                    CheckIfPropertyExists(Entity, defaultPrimitiveName, out string toDefaultName);
+                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox, toDefaultName);
                     return;
                 }
 
@@ -180,7 +207,7 @@ namespace Blueprint41.Modeller
                 }
                 else if (CheckIfPropertyExists(Entity, newName, out string toName))
                 {
-                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" already exists in base entity.", newName), textBox, toName);
+                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" already exists in entity.", newName), textBox, toName);
                     return;
                 }
                 else if (CheckInheritedPropertyExists(Entity, newName))
@@ -198,6 +225,7 @@ namespace Blueprint41.Modeller
                 textBox.Value = newName;
             }
         }
+
         #endregion
 
         #region Relationship Event Handlers
@@ -1152,7 +1180,7 @@ namespace Blueprint41.Modeller
             if (parentEntity == null)
                 return false;
 
-            if (parentEntity.Primitive.Where(x => x.Name == propertyName).Count() > 0)
+            if (parentEntity.Primitive.Where(x => x.Name?.ToLower() == propertyName.ToLower()).Count() > 0)
                 return true;
 
             return CheckInheritedPropertyExists(parentEntity, propertyName);
@@ -1161,7 +1189,7 @@ namespace Blueprint41.Modeller
         private bool CheckIfPropertyExists(Entity entity, string propName, out string newName)
         {
             newName = propName;
-            int count = Entity.Primitive.Where(x => x.Name.ToLower() == propName.ToLower()).Count();
+            int count = Entity.Primitive.Where(x => x.Name?.ToLower() == propName.ToLower()).Count();
 
             if (count > 1)
             {
