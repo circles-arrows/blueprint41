@@ -86,10 +86,15 @@ namespace Blueprint41.Modeller.Controls
 
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
         {
-            if ((gViewer as IViewer).ModifierKeys == Microsoft.Msagl.Drawing.ModifierKeys.Control)
+            if ((gViewer as IViewer).ModifierKeys == Microsoft.Msagl.Drawing.ModifierKeys.Alt)
             {
                 panViaControl = true;
                 gViewer.PanButtonPressed = true;
+            }
+            else
+            {
+                panViaControl = false;
+                gViewer.PanButtonPressed = false;
             }
         }
 
