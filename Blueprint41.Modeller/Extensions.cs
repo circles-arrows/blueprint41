@@ -41,8 +41,12 @@ namespace Blueprint41.Modeller
             // Gets all the relationships from the matching entities of submodel
             Dictionary<string, Submodel.NodeLocalType> nodeLookup = model.Node.ToDictionary(x => x.Label);
 
+            model.Model.Relationships.Relationship
+                .Where(item => string.IsNullOrEmpty(item.Source.Label) || string.IsNullOrEmpty(item.Target.Label)).ToList()
+                .ForEach(item => model.Model.Relationships.Relationship.Remove(item));
+            
             var relationships = model.Model.Relationships.Relationship
-                 .Where(item => nodeLookup.ContainsKey(item.Source.Label) && nodeLookup.ContainsKey(item.Target.Label)).ToList();
+                    .Where(item => nodeLookup.ContainsKey(item.Source.Label) && nodeLookup.ContainsKey(item.Target.Label)).ToList();
 
             if (includeInherited == false)
                 return relationships;
