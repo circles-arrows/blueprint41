@@ -259,10 +259,12 @@ namespace Blueprint41.Modeller
         {         
             bool hasErrors = false;
 
+            DataGridViewRow row = pre.DataGridViewRelationship.Rows[e.RowIndex];
+
             int columnIndex = 0;
             while (columnIndex < 7)
             {
-                DataGridViewCell cell = pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[columnIndex];
+                DataGridViewCell cell = row.Cells[columnIndex];
 
                 if (string.IsNullOrEmpty(cell.Value?.ToString()))
                 {
@@ -323,11 +325,6 @@ namespace Blueprint41.Modeller
         
         private void DataGridViewRelationship_Leave(object sender, EventArgs e)
         {
-            ValidateRelationships();
-        }
-
-        private void ValidateRelationships()
-        {
             List<DataGridViewRow> rows = new List<DataGridViewRow>();
 
             foreach (DataGridViewRow row in pre.DataGridViewRelationship.Rows)
@@ -356,17 +353,13 @@ namespace Blueprint41.Modeller
 
             if (rows.Count > 0)
             {
-                if (MessageBox.Show("Are you sure you want to cancel editing relationships?", "Entity Relationships", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                rows.ForEach(row =>
                 {
-                    rows.ForEach(row =>
-                    {
-                        if (!row.IsNewRow)
-                            pre.DataGridViewRelationship.Rows.Remove(row);
-                    });
+                    if (!row.IsNewRow)
+                        pre.DataGridViewRelationship.Rows.Remove(row);
+                });
 
-                    pre.DataGridViewRelationship.CancelEdit();
-                    return;
-                }
+                pre.DataGridViewRelationship.CancelEdit();
             }
         }
 
