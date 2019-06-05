@@ -184,45 +184,18 @@ namespace Blueprint41.Modeller
                 if (currentRow.IsNewRow && textBox.IsInEditMode && string.IsNullOrEmpty(textBox.EditedFormattedValue?.ToString()))
                     return;
 
-                if(textBox.IsInEditMode && string.IsNullOrEmpty(textBox.EditedFormattedValue?.ToString()) == false && textBox.Value == null)
-                {
-                    textBox.Value = textBox.EditedFormattedValue?.ToString();
-                    return;
-                }                    
+                string propertyNameValue = textBox.Value?.ToString() ?? textBox.EditedFormattedValue?.ToString();
+                
+                string newName = propertyNameValue?.Replace(" ", string.Empty);
+                ValidatePrimitivePropertyName(Entity, newName, out string validateName, 1, true);
 
-                if (textBox.Value == null)
-                {
-                    string defaultPrimitiveName = "PropertyName";
-                    CheckIfPropertyExists(Entity, defaultPrimitiveName, out string toDefaultName);
-                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox, toDefaultName);
-                    return;
-                }
+                pre.DataGridViewPrimitive.CellValueChanged -= dataGridViewPrimitiveProperties_CellValueChanged;
+                pre.DataGridViewPrimitive.RowLeave -= DataGridViewPrimitive_RowLeave;
 
-                string newName = ((string)textBox.Value).Replace(" ", string.Empty);
+                textBox.Value = validateName;
 
-                if (string.IsNullOrEmpty(newName))
-                {
-                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
-                    return;
-                }
-                else if (CheckIfPropertyExists(Entity, newName, out string toName))
-                {
-                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" already exists in entity.", newName), textBox, toName);
-                    return;
-                }
-                else if (CheckInheritedPropertyExists(Entity, newName))
-                {
-                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" already exists in base entity.", newName), textBox);
-                    return;
-                }
-
-                if (CheckIfReservedKeyword(newName))
-                {
-                    ShowMessageAndResetTextBoxValue(string.Format("Property \"{0}\" is a reserved keyword.", newName), textBox);
-                    return;
-                }
-
-                textBox.Value = newName;
+                pre.DataGridViewPrimitive.CellValueChanged += dataGridViewPrimitiveProperties_CellValueChanged;
+                pre.DataGridViewPrimitive.RowLeave += DataGridViewPrimitive_RowLeave;
             }
         }
 
@@ -256,7 +229,7 @@ namespace Blueprint41.Modeller
         }
 
         private void DataGridViewRelationships_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {         
+        {
             bool hasErrors = false;
 
             DataGridViewRow row = pre.DataGridViewRelationship.Rows[e.RowIndex];
@@ -322,7 +295,7 @@ namespace Blueprint41.Modeller
                     relationshipsObservable[e.RowIndex].RenameEdge();
             }
         }
-        
+
         private void DataGridViewRelationship_Leave(object sender, EventArgs e)
         {
             List<DataGridViewRow> rows = new List<DataGridViewRow>();
@@ -1149,7 +1122,8 @@ namespace Blueprint41.Modeller
             foreach (string name in names)
             {
                 Primitive prim = new Primitive(Entity.Model);
-                prim.Name = name;
+                ValidatePrimitivePropertyName(Entity, name, out string propName, 1, true);
+                prim.Name = propName;
                 prim.IsKey = false;
                 prim.Nullable = true;
                 prim.Type = "string";
@@ -1179,23 +1153,65 @@ namespace Blueprint41.Modeller
             return CheckInheritedPropertyExists(parentEntity, propertyName);
         }
 
-        private bool CheckIfPropertyExists(Entity entity, string propName, out string newName)
+        private bool CheckIfPropertyExists(Entity entity, string propName)
         {
-            newName = propName;
             int count = Entity.Primitive.Where(x => x.Name?.ToLower() == propName.ToLower()).Count();
-
-            if (count > 1)
-            {
-                newName = propName + count;
-                return true;
-            }
-
-            return false;
+            return count > 0;
         }
 
         private bool CheckIfReservedKeyword(string propertyName)
         {
             return Keywords.Instance.Contains(propertyName);
+        }
+
+        private void ValidatePrimitivePropertyName(Entity entity, string propertyName, out string newPropertyName, int count = 1, bool showMessage = false)
+        {
+            string tempName = propertyName;
+            bool reValidate = false;
+
+            if (string.IsNullOrEmpty(tempName))
+            {
+                if (showMessage)
+                    MessageBox.Show($"Property name cannot be empty.", "Property Name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                tempName = "PropertyName";
+                reValidate = true;
+            }
+
+            if (CheckIfReservedKeyword(tempName))
+            {
+                if (showMessage)
+                    MessageBox.Show($"Property \"{tempName}\" is a reserved keyword.", "Property Name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                tempName = $"{tempName}{count}";
+                reValidate = true;
+                count++;
+            }
+
+            if (CheckInheritedPropertyExists(entity, tempName))
+            {
+                if (showMessage)
+                    MessageBox.Show($"Property \"{tempName}\" already exists in base entity.", "Property Name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                tempName = $"{tempName}{count}";
+                reValidate = true;
+                count++;
+            }
+
+            if (CheckIfPropertyExists(entity, tempName))
+            {
+                if (showMessage)
+                    MessageBox.Show($"Property \"{tempName}\" already exists in entity.", "Property Name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                tempName = $"{tempName}{count}";
+                reValidate = true;
+                count++;
+            }
+
+            newPropertyName = tempName;
+
+            if (reValidate == true)
+                ValidatePrimitivePropertyName(entity, tempName, out newPropertyName, count, false);
         }
 
         private void UpdatePrimitiveGridView()
