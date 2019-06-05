@@ -105,6 +105,12 @@ namespace Blueprint41.Modeller.Controls
                 panViaControl = false;
                 gViewer.PanButtonPressed = false;
             }
+
+            if(e.KeyCode == Keys.Delete)
+            {
+                AnalyzeObjectsToRemove();
+                e.Handled = true;
+            }
         }
 
         readonly ToolTip toolTip = new ToolTip();
@@ -400,6 +406,21 @@ namespace Blueprint41.Modeller.Controls
                     obj.MarkedForDragging = false;
 
                 RemoveDragDecorator(obj);
+            }
+        }
+
+        void AnalyzeObjectsToRemove()
+        {
+            if(gViewer.LayoutEditor.SelectedEdge != null)
+            {
+                gViewer.RemoveEdge(gViewer.LayoutEditor.SelectedEdge, true);
+                return;
+            }
+
+            foreach (IViewerObject ob in SelectedEntities)
+            {
+                if (ob is IViewerNode node)
+                    EntityDeleted?.Invoke(this, new NodeEventArgs(node.Node, m_MouseRightButtonDownPoint));
             }
         }
     }
