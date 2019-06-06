@@ -94,6 +94,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BugReportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BugReportForm.Designer.cs">
+      <DependentUpon>BugReportForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Recovery.cs" />
     <Compile Include="CodeGeneration.cs">
       <SubType>Form</SubType>
@@ -229,6 +235,9 @@
       <DependentUpon>UpdateFunctionalIdForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\Util.cs" />
+    <EmbeddedResource Include="BugReportForm.resx">
+      <DependentUpon>BugReportForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CodeGeneration.resx">
       <DependentUpon>CodeGeneration.cs</DependentUpon>
     </EmbeddedResource>

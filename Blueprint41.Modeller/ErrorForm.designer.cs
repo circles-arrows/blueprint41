@@ -29,7 +29,6 @@ namespace Blueprint41.Modeller
         private void InitializeComponent()
         {
             this.textBoxError = new System.Windows.Forms.TextBox();
-            this.buttonAbort = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxError
@@ -42,29 +41,19 @@ namespace Blueprint41.Modeller
             this.textBoxError.Name = "textBoxError";
             this.textBoxError.ReadOnly = true;
             this.textBoxError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxError.Size = new System.Drawing.Size(662, 344);
+            this.textBoxError.Size = new System.Drawing.Size(662, 379);
             this.textBoxError.TabIndex = 0;
-            // 
-            // buttonAbort
-            // 
-            this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAbort.Location = new System.Drawing.Point(599, 368);
-            this.buttonAbort.Name = "buttonAbort";
-            this.buttonAbort.Size = new System.Drawing.Size(75, 23);
-            this.buttonAbort.TabIndex = 1;
-            this.buttonAbort.Text = "Abort";
-            this.buttonAbort.UseVisualStyleBackColor = true;
             // 
             // ErrorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(686, 403);
-            this.Controls.Add(this.buttonAbort);
             this.Controls.Add(this.textBoxError);
             this.Name = "ErrorForm";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Error";
+            this.Text = "StackTrace";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -73,6 +62,5 @@ namespace Blueprint41.Modeller
         #endregion
 
         private System.Windows.Forms.TextBox textBoxError;
-        private System.Windows.Forms.Button buttonAbort;
     }
 }

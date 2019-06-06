@@ -13,7 +13,7 @@ namespace Blueprint41.Modeller
         static void Main()
         {
             // Add the event handler for handling UI thread exceptions to the event.
-            Application.ThreadException += Application_ThreadException;
+            Application.ThreadException += Application_ThreadException;           
 
             // Set the unhandled exception mode to force all Windows Forms errors to go through
             // our handler.
@@ -64,7 +64,7 @@ namespace Blueprint41.Modeller
                 // Since we can't prevent the app from terminating, log this to the event log.
                 if (!EventLog.SourceExists("ThreadException"))
                 {
-                    EventLog.CreateEventSource("ThreadException", "Pricesheet");
+                    EventLog.CreateEventSource("ThreadException", "Blueprint41 Modeller");
                 }
 
                 // Create an EventLog instance and assign its source.
@@ -90,22 +90,7 @@ namespace Blueprint41.Modeller
 
         static DialogResult ShowThreadExceptionDialog(string title, Exception e)
         {
-            string errorMsg = "An application error occurred. Please contact support@circles-arrows.com " +
-                "with the following information:" + Environment.NewLine + Environment.NewLine;
-
-            errorMsg = errorMsg + GetExceptionMessage(e);
-
-            return ErrorForm.Show(errorMsg);
-        }
-
-        static string GetExceptionMessage(Exception e)
-        {
-            string innerExceptionMessage = string.Empty;
-
-            if (e.InnerException != null)
-                innerExceptionMessage = GetExceptionMessage(e.InnerException);
-
-            return e.Message + Environment.NewLine + Environment.NewLine + "Stack Trace:" + Environment.NewLine + e.StackTrace + Environment.NewLine + innerExceptionMessage;
+            return BugReportForm.Show(e);
         }
     }
 }
