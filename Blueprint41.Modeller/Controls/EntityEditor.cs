@@ -184,6 +184,9 @@ namespace Blueprint41.Modeller
                 if (currentRow.IsNewRow && textBox.IsInEditMode && string.IsNullOrEmpty(textBox.EditedFormattedValue?.ToString()))
                     return;
 
+                if (currentRow.IsNewRow == false && textBox.IsInEditMode && textBox.Value?.ToString() == textBox.EditedFormattedValue?.ToString().Trim())
+                    return;
+
                 string propertyNameValue = textBox.Value?.ToString() ?? textBox.EditedFormattedValue?.ToString();
                 
                 string newName = propertyNameValue?.Replace(" ", string.Empty);
