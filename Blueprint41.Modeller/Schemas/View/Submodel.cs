@@ -14,6 +14,7 @@ using Edge = Microsoft.Msagl.Core.Layout.Edge;
 using GeometryPoint = Microsoft.Msagl.Core.Geometry.Point;
 using System.Drawing;
 using Microsoft.Msagl.Core.Layout;
+using Blueprint41.Modeller.Utils;
 
 namespace Blueprint41.Modeller.Schemas
 {
@@ -54,7 +55,8 @@ namespace Blueprint41.Modeller.Schemas
 
             OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (e.NewValue != Constants.MainModel)
+                    Model.HasChanges = true;
             };
 
             OnChapterChanged += delegate (object sender, PropertyChangedEventArgs<Int32?> e)
@@ -180,7 +182,7 @@ namespace Blueprint41.Modeller.Schemas
                     drawingNode.Attr = attr;
                     drawingNode.Label.Text = Entity.Label;
                     drawingNode.UserData = this;
-                    CreateNodeGeometry(drawingNode, Model.Graph, Model.GeometryGraph, center, ConnectionToGraph.Connected);                    
+                    CreateNodeGeometry(drawingNode, Model.Graph, Model.GeometryGraph, center, ConnectionToGraph.Connected);
                 }
                 else
                 {
@@ -188,7 +190,7 @@ namespace Blueprint41.Modeller.Schemas
                     drawingNode.Attr = attr;
                     drawingNode.Label.Text = Entity.Label;
                     drawingNode.UserData = this;
-                                       
+
                     IViewerNode viewerNode = Model.GraphEditor.Viewer.CreateIViewerNode(drawingNode, center, null);
                     Model.GraphEditor.Viewer.AddNode(viewerNode, false);
                     Model.GraphEditor.Viewer.Invalidate(viewerNode);

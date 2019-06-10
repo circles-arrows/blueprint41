@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Modeller.Schemas;
+using Blueprint41.Modeller.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,7 +30,7 @@ namespace Blueprint41.Modeller
             InitializeComponent();
             Model = modeller;
             Submodel = submodel;
-            IsMainModel = submodel.Name == "Main Model";
+            IsMainModel = submodel.Name == Constants.MainModel;
             AssignToUi();
             Text = "Edit Submodel";
         }

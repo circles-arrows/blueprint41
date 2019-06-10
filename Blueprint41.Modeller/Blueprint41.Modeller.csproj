@@ -132,6 +132,7 @@
     <Compile Include="Schemas\View\Property.cs" />
     <Compile Include="Schemas\View\Record.cs" />
     <Compile Include="Schemas\View\StaticData.cs" />
+    <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\UriConfig.cs" />
     <Compile Include="Generation\EntityTreeNode.cs" />
     <Compile Include="Generation\GenerationEnum.cs" />

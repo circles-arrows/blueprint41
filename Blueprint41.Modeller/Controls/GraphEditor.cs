@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Collections;
 using Blueprint41.Modeller.Schemas;
 using System.Linq;
+using Blueprint41.Modeller.Utils;
 
 namespace Blueprint41.Modeller.Controls
 {
@@ -273,7 +274,7 @@ namespace Blueprint41.Modeller.Controls
                 if (this.Viewer.Tag != null && this.Viewer.Tag is Submodel)
                     displayedModel = this.Viewer.Tag as Submodel;
 
-                if (displayedModel != null && displayedModel.Name != "Main Model")
+                if (displayedModel != null && displayedModel.Name != Constants.MainModel)
                 {
                     mi = new ToolStripMenuItem();
                     mi.Text = "Exclude from Model";

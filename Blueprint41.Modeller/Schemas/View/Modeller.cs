@@ -410,7 +410,8 @@ namespace Blueprint41.Modeller.Schemas
                             break;
                     }
 
-                    Model.HasChanges = true;
+                    if (Model.Entities.Entity.Count != 0)
+                        Model.HasChanges = true;
                 };
             }
         }

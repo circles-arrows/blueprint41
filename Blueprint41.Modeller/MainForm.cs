@@ -12,6 +12,7 @@ using Blueprint41.Modeller.Editors;
 using Microsoft.Msagl.GraphViewerGdi;
 using System.Threading.Tasks;
 using Blueprint41.Licensing.Connector;
+using Blueprint41.Modeller.Utils;
 
 namespace Blueprint41.Modeller
 {
@@ -65,7 +66,7 @@ namespace Blueprint41.Modeller
         {
             DialogResult result = DialogResult.Yes; // if there is no message box, act as if the user pressed "Yes" to save.
 
-            if (Model.HasChanges || !File.Exists(StoragePath))
+            if (Model.HasChanges)
             {
                 result = MessageBox.Show("Do you want to save changes?", "Save Changes?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
@@ -133,7 +134,7 @@ namespace Blueprint41.Modeller
                 if (Model.Submodels.Submodel.Count == 0)
                 {
                     Submodel main = new Submodel(Model);
-                    main.Name = "Main Model";
+                    main.Name = Constants.MainModel;
                     Model.Submodels.Submodel.Add(main);
                 }
 

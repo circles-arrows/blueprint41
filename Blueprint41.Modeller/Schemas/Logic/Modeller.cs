@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DrawingNode = Microsoft.Msagl.Drawing.Node;
 using DrawingEdge = Microsoft.Msagl.Drawing.Edge;
+using Blueprint41.Modeller.Utils;
 
 namespace Blueprint41.Modeller.Schemas
 {
@@ -225,7 +226,7 @@ namespace Blueprint41.Modeller.Schemas
 
         public void ExcludeFromCurrentModel(Submodel.NodeLocalType model)
         {
-            if (Model.DisplayedSubmodel.Name == "Main Model")
+            if (Model.DisplayedSubmodel.Name == Constants.MainModel)
                 throw new NotSupportedException("Could not exclude entity from current model");
 
             Model.DisplayedSubmodel.Node.Remove(model);
