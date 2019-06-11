@@ -92,11 +92,6 @@ namespace Blueprint41.Modeller.Controls
                 panViaControl = true;
                 gViewer.PanButtonPressed = true;
             }
-            else
-            {
-                panViaControl = false;
-                gViewer.PanButtonPressed = false;
-            }
         }
 
         private void GViewer_KeyUp(object sender, KeyEventArgs e)
