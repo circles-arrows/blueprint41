@@ -73,6 +73,16 @@ namespace Blueprint41.Modeller.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap bp41Logo {
+            get {
+                object obj = ResourceManager.GetObject("bp41Logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Circles_Arrows_Loader {
             get {
                 object obj = ResourceManager.GetObject("Circles-Arrows_Loader", resourceCulture);
