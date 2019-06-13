@@ -85,6 +85,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.registerProductToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.aboutBlueprint41ModellerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRight = new System.Windows.Forms.ToolStrip();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -622,7 +623,8 @@
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.registerProductToolStripMenuItem,
-            this.toolStripSeparator5});
+            this.toolStripSeparator5,
+            this.aboutBlueprint41ModellerToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.helpToolStripMenuItem.Text = "Help";
@@ -630,14 +632,21 @@
             // registerProductToolStripMenuItem
             // 
             this.registerProductToolStripMenuItem.Name = "registerProductToolStripMenuItem";
-            this.registerProductToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.registerProductToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.registerProductToolStripMenuItem.Text = "Register Product";
             this.registerProductToolStripMenuItem.Click += new System.EventHandler(this.registerProductToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(217, 6);
+            // 
+            // aboutBlueprint41ModellerToolStripMenuItem
+            // 
+            this.aboutBlueprint41ModellerToolStripMenuItem.Name = "aboutBlueprint41ModellerToolStripMenuItem";
+            this.aboutBlueprint41ModellerToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.aboutBlueprint41ModellerToolStripMenuItem.Text = "About Blueprint41 Modeller";
+            this.aboutBlueprint41ModellerToolStripMenuItem.Click += new System.EventHandler(this.aboutBlueprint41ModellerToolStripMenuItem_Click);
             // 
             // toolStripRight
             // 
@@ -743,6 +752,7 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem registerProductToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem aboutBlueprint41ModellerToolStripMenuItem;
     }
 }
 

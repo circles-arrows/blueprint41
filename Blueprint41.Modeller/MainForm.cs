@@ -595,7 +595,7 @@ namespace Blueprint41.Modeller
 
         void CheckForChangesAndSaveIfPossible()
         {
-            if (Model == null || Model.GraphEditor.Viewer.CanUndo() == false)
+            if (Model == null || Model.HasChanges == false)
                 return;
 
             string fileName = Path.GetFileName(StoragePath);
@@ -603,6 +603,7 @@ namespace Blueprint41.Modeller
             DialogResult result = MessageBox.Show($"Do you want to save changes to {fileName}?", "Save Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
+                Model.HasChanges = false;
                 Model.CaptureCoordinates();
                 Model.Save(StoragePath);
             }
@@ -896,6 +897,14 @@ namespace Blueprint41.Modeller
 
             loader.RegisterLicense();
             SetModuleMenuItemVisibility();
+        }
+
+        private void aboutBlueprint41ModellerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (AboutForm form = new AboutForm())
+            {
+                form.ShowDialog();
+            }
         }
     }
 }
