@@ -34,6 +34,7 @@ namespace Blueprint41.Modeller
             ShowHideControls(false);
 
             progressBar.Style = ProgressBarStyle.Marquee;
+            progressBar.MarqueeAnimationSpeed = 30;
             progressBar.ProgressBar.Show();
 
             version = await Util.CheckForUpdates();
