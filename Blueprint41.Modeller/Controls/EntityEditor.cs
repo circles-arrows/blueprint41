@@ -98,6 +98,7 @@ namespace Blueprint41.Modeller
             pre.DataGridViewPrimitive.DataError += DataGridViewPrimitive_DataError;
             //pre.DataGridViewPrimitive.CancelRowEdit += DataGridViewPrimitive_CancelRowEdit;
             pre.DataGridViewPrimitive.RowLeave += DataGridViewPrimitive_RowLeave;
+            pre.DataGridViewPrimitive.CellLeave += DataGridViewPrimitive_CellLeave;
 
             pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
             pre.DataGridViewRelationship.DataSourceChanged += DataGridViewRelationship_DataSourceChanged;
@@ -112,6 +113,11 @@ namespace Blueprint41.Modeller
 
             pre.Enabled = false;
             gbProperties.Enabled = false;
+        }
+
+        private void DataGridViewPrimitive_CellLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            ValidatePrimitiveProperties(e.RowIndex, e.ColumnIndex);
         }
 
         private void DataGridViewPrimitive_RowLeave(object sender, DataGridViewCellEventArgs e)
@@ -187,18 +193,20 @@ namespace Blueprint41.Modeller
                 if (currentRow.IsNewRow == false && textBox.IsInEditMode && textBox.Value?.ToString() == textBox.EditedFormattedValue?.ToString().Trim())
                     return;
 
-                string propertyNameValue = textBox.Value?.ToString() ?? textBox.EditedFormattedValue?.ToString();
+                //string propertyNameValue = textBox.Value?.ToString() ?? textBox.EditedFormattedValue?.ToString();
+                string propertyNameValue = textBox.EditedFormattedValue?.ToString();
                 
                 string newName = propertyNameValue?.Replace(" ", string.Empty);
                 ValidatePrimitivePropertyName(Entity, newName, out string validateName, 1, true);
 
                 pre.DataGridViewPrimitive.CellValueChanged -= dataGridViewPrimitiveProperties_CellValueChanged;
                 pre.DataGridViewPrimitive.RowLeave -= DataGridViewPrimitive_RowLeave;
-
+                pre.DataGridViewPrimitive.CellLeave -= DataGridViewPrimitive_CellLeave;
                 textBox.Value = validateName;
 
                 pre.DataGridViewPrimitive.CellValueChanged += dataGridViewPrimitiveProperties_CellValueChanged;
                 pre.DataGridViewPrimitive.RowLeave += DataGridViewPrimitive_RowLeave;
+                pre.DataGridViewPrimitive.CellLeave += DataGridViewPrimitive_CellLeave;
             }
         }
 
