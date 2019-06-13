@@ -138,6 +138,12 @@
     <Compile Include="Schemas\View\Property.cs" />
     <Compile Include="Schemas\View\Record.cs" />
     <Compile Include="Schemas\View\StaticData.cs" />
+    <Compile Include="UpdaterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdaterForm.Designer.cs">
+      <DependentUpon>UpdaterForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\UriConfig.cs" />
     <Compile Include="Generation\EntityTreeNode.cs" />
@@ -242,6 +248,7 @@
       <DependentUpon>UpdateFunctionalIdForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\Util.cs" />
+    <Compile Include="Utils\ModellerVersion.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -293,6 +300,9 @@
     </Compile>
     <EmbeddedResource Include="UpdateFunctionalIdForm.resx">
       <DependentUpon>UpdateFunctionalIdForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdaterForm.resx">
+      <DependentUpon>UpdaterForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="Properties\DataSources\Blueprint41.Modeller.Schemas.Entity.datasource" />

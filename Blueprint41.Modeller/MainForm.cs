@@ -906,5 +906,13 @@ namespace Blueprint41.Modeller
                 form.ShowDialog();
             }
         }
+
+        private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (UpdaterForm form = new UpdaterForm())
+            {
+                form.ShowDialog();
+            }
+        }
     }
 }

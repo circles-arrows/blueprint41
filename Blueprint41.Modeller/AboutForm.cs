@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Modeller.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,27 +22,19 @@ namespace Blueprint41.Modeller
 
         private void llSite_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Goto("https://www.blueprint41.com");
+            Util.Goto("https://www.blueprint41.com");
             llSite.LinkVisited = true;
         }
 
         private void llLicense_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Goto("https://mit-license.org/");
+            Util.Goto("https://mit-license.org/");
             llLicense.LinkVisited = true;
-        }
-
-        void Goto(string url)
-        {
-            Process.Start(new ProcessStartInfo(url));
         }
 
         void GetApplicationVersion()
         {
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            string version = fvi.FileVersion;
-            lblVersion.Text = version;
+            lblVersion.Text = ModellerVersion.CurrentVersion().ToString();
         }
     }
 }
