@@ -47,7 +47,7 @@ namespace Blueprint41.Modeller
 
                     return updatedVersion;
                 }
-                catch (XmlException ex)
+                catch (Exception ex)
                 {
                     return ModellerVersion.Empty;
                 }

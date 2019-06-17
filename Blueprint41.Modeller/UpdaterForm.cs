@@ -25,16 +25,22 @@ namespace Blueprint41.Modeller
 
         private void UpdaterForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (CancelUpdate() == DialogResult.Yes)
+            if (webClient != null)
             {
-                try
-                {                    
-                    webClient?.CancelAsync();
+                if (CancelUpdate() == DialogResult.Yes)
+                {
+                    try
+                    {
+                        if (string.IsNullOrEmpty(installerPath) == false && File.Exists(installerPath))
+                            File.Delete(installerPath);
+
+                        webClient?.CancelAsync();
+                    }
+                    catch (System.ObjectDisposedException) { }
                 }
-                catch (System.ObjectDisposedException) { }
-            }                
-            else
-                e.Cancel = true;
+                else
+                    e.Cancel = true;
+            }
         }
 
         private async void UpdaterForm_Load(object sender, EventArgs e)
@@ -54,14 +60,15 @@ namespace Blueprint41.Modeller
 
             version = await Util.CheckForUpdates();
 
-            progressBar.Style = ProgressBarStyle.Continuous;
-            progressBar.MarqueeAnimationSpeed = 0;
-            progressBar.ProgressBar.Hide();
+            if (progressBar.ProgressBar != null)
+            {
+                progressBar.Style = ProgressBarStyle.Continuous;
+                progressBar.MarqueeAnimationSpeed = 0;
+                progressBar.ProgressBar.Hide();
+            }
 
             bool hasUpdates = version.IsUpdatedVersion();
             tslblStatus.Text = hasUpdates ? "Update available" : "No update available";
-
-            progressBar.ProgressBar.Hide();
 
             if (hasUpdates)
             {
