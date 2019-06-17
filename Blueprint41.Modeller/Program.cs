@@ -13,7 +13,7 @@ namespace Blueprint41.Modeller
         static void Main()
         {
             // Add the event handler for handling UI thread exceptions to the event.
-            Application.ThreadException += Application_ThreadException;           
+            Application.ThreadException += Application_ThreadException;
 
             // Set the unhandled exception mode to force all Windows Forms errors to go through
             // our handler.
@@ -21,7 +21,7 @@ namespace Blueprint41.Modeller
 
             // Add the event handler for handling non-UI thread exceptions to the event. 
             AppDomain.CurrentDomain.UnhandledException +=
-                new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+                new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);            
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -49,8 +49,8 @@ namespace Blueprint41.Modeller
             }
 
             // Exits the program when the user clicks Abort.
-            if (result == DialogResult.Abort)
-                Application.Exit();
+            //if (result == DialogResult.Abort)
+            //    Application.Exit();
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -60,6 +60,8 @@ namespace Blueprint41.Modeller
                 Exception ex = (Exception)e.ExceptionObject;
                 string errorMsg = "An application error occurred. Please contact support@circles-arrows.com  " +
                     "with the following information:\n\n";
+
+                ShowThreadExceptionDialog("Blueprint41 Modeller Error", ex);
 
                 // Since we can't prevent the app from terminating, log this to the event log.
                 if (!EventLog.SourceExists("ThreadException"))

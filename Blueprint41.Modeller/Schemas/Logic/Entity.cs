@@ -206,7 +206,7 @@ namespace Blueprint41.Modeller.Schemas
                             relationship.Target.ReferenceGuid = newGuid;
                         }
                     }
-
+                    
                     Guid = newGuid;
                 }
             };
@@ -253,7 +253,7 @@ namespace Blueprint41.Modeller.Schemas
                     ClearStaticData();
             };
         }
-
+                
         private void CreateStaticData()
         {
             if (Xml.@staticData == null)

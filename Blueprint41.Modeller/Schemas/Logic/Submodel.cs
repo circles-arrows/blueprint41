@@ -97,12 +97,9 @@ namespace Blueprint41.Modeller.Schemas
             {
                 OnLabelChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
                 {
-                    entitiesLookUp?.Clear();
                 };
             }
 
-
-            private Dictionary<string, Entity> entitiesLookUp = new Dictionary<string, Entity>();
             public Entity Entity
             {
                 get
@@ -110,20 +107,7 @@ namespace Blueprint41.Modeller.Schemas
                     if (Model == null)
                         return null;
 
-                    Entity entity;
-                    try
-                    {
-                        if (entitiesLookUp.Count == 0)
-                            entitiesLookUp = Model.Entities.Entity.ToDictionary(x => x.Label, y => y);
-
-                        entity = entitiesLookUp[Label];
-                    }
-                    catch (Exception)
-                    {
-                        throw new Exception(string.Format("'{0}' exists in <submodels> but does not exist in <entities>. Remove all '{1}' references from all <submodels>", Label, Label));
-                    }
-
-                    return entity;
+                    return Model.Entities.Entity.First(item => item.Label == Label);
                 }
                 set
                 {
