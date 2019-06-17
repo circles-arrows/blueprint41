@@ -58,7 +58,7 @@ namespace Blueprint41.Modeller
             progressBar.MarqueeAnimationSpeed = 0;
             progressBar.ProgressBar.Hide();
 
-            bool hasUpdates = true;// version.IsUpdatedVersion();
+            bool hasUpdates = version.IsUpdatedVersion();
             tslblStatus.Text = hasUpdates ? "Update available" : "No update available";
 
             progressBar.ProgressBar.Hide();
