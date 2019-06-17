@@ -31,9 +31,6 @@ namespace Blueprint41.Modeller
                 {
                     try
                     {
-                        if (string.IsNullOrEmpty(installerPath) == false && File.Exists(installerPath))
-                            File.Delete(installerPath);
-
                         webClient?.CancelAsync();
                     }
                     catch (System.ObjectDisposedException) { }
@@ -70,7 +67,7 @@ namespace Blueprint41.Modeller
             bool hasUpdates = version.IsUpdatedVersion();
             tslblStatus.Text = hasUpdates ? "Update available" : "No update available";
 
-            if (hasUpdates)
+            if (hasUpdates && string.IsNullOrEmpty(version.DownloadUrl) == false)
             {
                 await CheckFileSize(version.DownloadUrl);
             }
@@ -167,6 +164,9 @@ namespace Blueprint41.Modeller
 
         async Task CheckFileSize(string url)
         {
+            if (string.IsNullOrEmpty(url))
+                throw new ArgumentNullException("Url cannot be empty");
+
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             req.Method = "HEAD";
             // HttpWebRequest.GetResponse(): From MSDN: The actual instance returned
