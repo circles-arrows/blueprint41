@@ -84,11 +84,8 @@ namespace Blueprint41.Modeller
             builder.AppendLine(Application.ProductVersion);
             builder.AppendLine();
 
-            if (string.IsNullOrEmpty(txtEmail.Text?.Trim()) == false)
-                builder.AppendLine();
-
             if (string.IsNullOrEmpty(txtDetails.Text?.Trim()) == false)
-                builder.AppendLine($"Bug Details: \n{txtDetails.Text}");
+                builder.AppendLine($"Bug Details: \n{txtDetails.Text}\n\n");
 
             if (cbIncludeException.Checked)
             {
@@ -100,6 +97,7 @@ namespace Blueprint41.Modeller
 
             HttpUtility.UrlEncode(builder.ToString());
             string body = HttpUtility.UrlEncode(builder.ToString());
+            body = body.Replace('+', ' ');
 
             // Solution 1
             string mailer = $"mailto:support@circles-arrows.com?subject={mail.Subject}&body={body}";

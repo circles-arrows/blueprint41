@@ -32,8 +32,6 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txtEmail = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbIncludeException = new System.Windows.Forms.CheckBox();
@@ -43,10 +41,10 @@
             // 
             // txtDetails
             // 
-            this.txtDetails.Location = new System.Drawing.Point(16, 94);
+            this.txtDetails.Location = new System.Drawing.Point(16, 69);
             this.txtDetails.Multiline = true;
             this.txtDetails.Name = "txtDetails";
-            this.txtDetails.Size = new System.Drawing.Size(513, 161);
+            this.txtDetails.Size = new System.Drawing.Size(513, 186);
             this.txtDetails.TabIndex = 0;
             // 
             // btnSend
@@ -81,22 +79,6 @@
             this.label1.Text = "We\'ve encountered an error on the system. Please take a minute to tell us what ha" +
     "ppened in as much detail as possible. This makes it possible for us to fix the p" +
     "roblem.";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 59);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Email (Optional):";
-            // 
-            // txtEmail
-            // 
-            this.txtEmail.Location = new System.Drawing.Point(102, 56);
-            this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(427, 20);
-            this.txtEmail.TabIndex = 5;
             // 
             // button1
             // 
@@ -133,7 +115,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 78);
+            this.label3.Location = new System.Drawing.Point(13, 53);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 13);
             this.label3.TabIndex = 9;
@@ -148,8 +130,6 @@
             this.Controls.Add(this.cbIncludeException);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.txtEmail);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.txtDetails);
@@ -169,8 +149,6 @@
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtEmail;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox cbIncludeException;

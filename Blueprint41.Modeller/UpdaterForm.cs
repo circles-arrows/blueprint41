@@ -20,6 +20,21 @@ namespace Blueprint41.Modeller
         {
             InitializeComponent();
             Load += UpdaterForm_Load;
+            FormClosing += UpdaterForm_FormClosing;
+        }
+
+        private void UpdaterForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (CancelUpdate() == DialogResult.Yes)
+            {
+                try
+                {                    
+                    webClient?.CancelAsync();
+                }
+                catch (System.ObjectDisposedException) { }
+            }                
+            else
+                e.Cancel = true;
         }
 
         private async void UpdaterForm_Load(object sender, EventArgs e)
@@ -43,7 +58,7 @@ namespace Blueprint41.Modeller
             progressBar.MarqueeAnimationSpeed = 0;
             progressBar.ProgressBar.Hide();
 
-            bool hasUpdates = version.IsUpdatedVersion();
+            bool hasUpdates = true;// version.IsUpdatedVersion();
             tslblStatus.Text = hasUpdates ? "Update available" : "No update available";
 
             progressBar.ProgressBar.Hide();
@@ -88,6 +103,7 @@ namespace Blueprint41.Modeller
         }
 
         string installerPath = null;
+        WebClient webClient;
         private void DownloadAndInstallUpdate()
         {
             progressBar.ProgressBar.Show();
@@ -96,19 +112,28 @@ namespace Blueprint41.Modeller
 
             installerPath = Path.Combine(Path.GetTempPath(), "Blueprint41ModellerSetup.exe");
 
-            using (WebClient client = new WebClient())
-            {
-                client.DownloadProgressChanged += Client_DownloadProgressChanged;
-                client.DownloadFileAsync(new Uri(version.DownloadUrl), installerPath);
-                client.DownloadFileCompleted += Client_DownloadFileCompleted;
-            }
+            webClient = new WebClient();
+
+            webClient.DownloadProgressChanged += Client_DownloadProgressChanged;
+            webClient.DownloadFileAsync(new Uri(version.DownloadUrl), installerPath);
+            webClient.DownloadFileCompleted += Client_DownloadFileCompleted;
+
         }
 
         private void Client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
+            if (e.Cancelled)
+                return;
+
+            if (e.Error != null)
+            {
+                MessageBox.Show("There was an error on downloading the Blueprint41 Modeller. Please try again", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             DialogResult result = MessageBox.Show("Update the Blueprint41 Modeller now?", "Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if(result == DialogResult.Yes)
+            if (result == DialogResult.Yes)
             {
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = installerPath;
@@ -122,12 +147,15 @@ namespace Blueprint41.Modeller
 
         private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
+            if (progressBar.ProgressBar == null)
+                return;
+
             progressBar.Value = e.ProgressPercentage;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         async Task CheckFileSize(string url)
@@ -145,6 +173,11 @@ namespace Blueprint41.Modeller
         private void linkLblReleaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Util.Goto("https://github.com/circles-arrows/blueprint41/releases");
+        }
+
+        DialogResult CancelUpdate()
+        {
+            return MessageBox.Show("Are you sure to cancel the update?", "Cancel Update", MessageBoxButtons.YesNo, MessageBoxIcon.Hand);
         }
     }
 }

@@ -163,7 +163,9 @@
             this.Controls.Add(this.linkLblReleaseNotes);
             this.Controls.Add(this.pbLogo);
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(435, 182);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(435, 182);
             this.Name = "UpdaterForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
