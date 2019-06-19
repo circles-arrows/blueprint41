@@ -580,6 +580,7 @@ namespace Blueprint41.Modeller
             }
 
             this.graphEditor.Viewer.Tag = Model.DisplayedSubmodel;
+            this.entityEditor.CloseEditor();
             RefreshNodeCombobox();
         }
 
