@@ -7,9 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Blueprint41.Query;
+using System.Diagnostics;
 
 namespace Blueprint41
 {
+    [DebuggerDisplay("{DebuggerDisplay}")]
     public class QueryExecutionContext
     {
         internal QueryExecutionContext(CompiledQuery query)
@@ -67,5 +69,30 @@ namespace Blueprint41
         public CompiledQuery CompiledQuery { get; set; }
         public IReadOnlyList<string> Errors { get; private set; }
         internal Dictionary<string, object> QueryParameters { get; private set; }
+        public override string ToString()
+        {
+            if (this == null)
+                return null;
+
+            Transaction transaction = Transaction.RunningTransaction;
+            string cypherQuery = CompiledQuery.QueryText;
+            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
+
+            foreach (var queryParameter in QueryParameters)
+            {
+                if (queryParameter.Value == null)
+                    parameterValues.Add(string.Format("{{{0}}}", queryParameter.Key), null);
+                else
+                    parameterValues.Add(string.Format("{{{0}}}", queryParameter.Key), transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
+            }
+
+            foreach (var queryParam in parameterValues)
+            {
+                object paramValue = queryParam.Value.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value.ToString();
+                cypherQuery = cypherQuery.Replace(queryParam.Key, paramValue.ToString());
+            }
+            return cypherQuery;
+        }
+        private string DebuggerDisplay { get => ToString(); }
     }
 }

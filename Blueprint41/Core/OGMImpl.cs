@@ -106,7 +106,7 @@ namespace Blueprint41.Core
             {
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
-                    PersistenceState = PersistenceState.Persisted;
+                    PersistenceState = PersistenceState.Deleted;
                     DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
@@ -121,7 +121,9 @@ namespace Blueprint41.Core
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
                 case PersistenceState.Persisted:
-                    throw new InvalidOperationException("This object was already flushed to the data store.");
+                    if (DbTransaction != Transaction.RunningTransaction)
+                        throw new InvalidOperationException("This object was already flushed to the data store.");
+                    break;
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
@@ -137,7 +139,7 @@ namespace Blueprint41.Core
             {
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
-                    PersistenceState = PersistenceState.Persisted;
+                    PersistenceState = PersistenceState.Deleted;
                     DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
@@ -152,7 +154,9 @@ namespace Blueprint41.Core
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
                 case PersistenceState.Persisted:
-                    throw new InvalidOperationException("This object was already flushed to the data store.");
+                    if (DbTransaction != Transaction.RunningTransaction)
+                        throw new InvalidOperationException("This object was already flushed to the data store.");
+                    break;
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:

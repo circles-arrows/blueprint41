@@ -198,15 +198,6 @@ namespace Blueprint41.Neo4j.Persistence
             if (typeName == null)
                 throw new NotSupportedException("The concrete type of the node could not be determined.");
 
-            Type type = typeCache.TryGetOrAdd(typeName, key =>
-            {
-                type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
-                if (type == null)
-                    throw new NotSupportedException();
-
-                return type;
-            });
-
             OGM item = null;
             if (keyObject != null)
             {
@@ -223,8 +214,18 @@ namespace Blueprint41.Neo4j.Persistence
 
             if (item == null)
             {
-                if(targetEntity.Parent.IsUpgraded)
+                if (targetEntity.Parent.IsUpgraded)
+                {
+                    Type type = typeCache.TryGetOrAdd(typeName, key =>
+                    {
+                        type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
+                        if (type == null)
+                            throw new NotSupportedException();
+
+                        return type;
+                    });
                     item = (OGM)Activator.CreateInstance(type);
+                }
                 else
                     item = new DynamicEntity(targetEntity, Parser.ShouldExecute);
 

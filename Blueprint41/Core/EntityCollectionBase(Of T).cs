@@ -48,7 +48,7 @@ namespace Blueprint41.Core
         }
         protected virtual void LazySet()
         {
-            if (Parent.PersistenceState == PersistenceState.Persisted)
+            if (Parent.PersistenceState == PersistenceState.Persisted && Transaction != Transaction.RunningTransaction)
                 throw new InvalidOperationException("This object was already flushed to the data store.");
             else if (Parent.PersistenceState == PersistenceState.OutOfScope)
                 throw new InvalidOperationException("The transaction for this object has already ended.");
@@ -95,7 +95,7 @@ namespace Blueprint41.Core
             LazySet();
 
             item.Delete(force);
-            ForeignProperty.ClearLookup(item);
+            ForeignProperty?.ClearLookup(item);
         }
         public void DeleteDeep(bool force = false)
         {
@@ -107,7 +107,7 @@ namespace Blueprint41.Core
             ForEach(delegate (int index, CollectionItem item)
             {
                 item.Item.Delete(force);
-                ForeignProperty.ClearLookup(item.Item);
+                ForeignProperty?.ClearLookup(item.Item);
             });
         }
 

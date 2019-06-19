@@ -91,6 +91,7 @@ namespace Blueprint41.Neo4j.Persistence
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeDeleted(trans, args);
+            item.PersistenceState = PersistenceState.Deleted;
         }
 
         public override void ForceDelete(OGM item)
@@ -120,6 +121,7 @@ namespace Blueprint41.Neo4j.Persistence
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeDeleted(trans, args);
+            item.PersistenceState = PersistenceState.Deleted;
         }
 
         public override void Insert(OGM item)
