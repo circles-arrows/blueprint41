@@ -80,13 +80,17 @@ namespace Blueprint41.Modeller.Schemas
                     IsAddedOnViewGraph = false;
                     return;
                 }
-
+                
                 DrawingNode source = Model.GraphEditor.Graph.FindNode(Source.Label);
                 DrawingNode target = Model.GraphEditor.Graph.FindNode(Target.Label);
-                drawingEdge = Model.GraphEditor.Viewer.AddEdge(source, target, false);
 
-                drawingEdge.Attr = CreateEdgeAttr();
-                drawingEdge.UserData = this;
+                if (target != null)
+                {
+                    drawingEdge = Model.GraphEditor.Viewer.AddEdge(source, target, false);
+
+                    drawingEdge.Attr = CreateEdgeAttr();
+                    drawingEdge.UserData = this;
+                }
                 RenameEdge();
             }
         }
