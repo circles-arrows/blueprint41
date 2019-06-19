@@ -146,8 +146,8 @@ namespace Blueprint41.Core
         }
         internal protected override void LazySet()
         {
-            if (PersistenceState == PersistenceState.Persisted)
-                throw new InvalidOperationException("This object was already flushed to the data store.");
+            if (PersistenceState == PersistenceState.Persisted && DbTransaction != Transaction.RunningTransaction)
+                    throw new InvalidOperationException("This object was already flushed to the data store.");
             else if (PersistenceState == PersistenceState.OutOfScope)
                 throw new InvalidOperationException("The transaction for this object has already ended.");
 
