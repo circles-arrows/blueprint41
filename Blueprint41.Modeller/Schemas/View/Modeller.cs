@@ -307,6 +307,11 @@ namespace Blueprint41.Modeller.Schemas
 
         protected override void InitializeView()
         {
+            OnTypeChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
+            {
+                Model.HasChanges = true;
+            };
+
             OnEntitiesChanged += delegate (object sender, PropertyChangedEventArgs<EntitiesLocalType> e)
             {
                 RebindControl();

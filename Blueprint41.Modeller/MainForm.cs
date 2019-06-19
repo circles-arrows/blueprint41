@@ -24,6 +24,10 @@ namespace Blueprint41.Modeller
         private bool removingEdge = false;
 
         private const string NEWSUBMODEL = "New...";
+        private const string FORMNAME = @"Blueprint41:\> Graph Modeller";
+        private const string NEO4J_EDITOR = "Neo4j Model";
+        private const string B41_EDITOR = "Blueprint41 Model";
+
         public Model Model { get; private set; }
         private string m_StoragePath = null;
 
@@ -52,6 +56,17 @@ namespace Blueprint41.Modeller
 
         internal NodeTypeEntry NewEntity { get; private set; }
         internal Submodel.NodeLocalType SelectedNode { get; private set; }
+
+        public ModellerType CurrentModellerType
+        {
+            get
+            {
+                if (Model == null || Model.Type == null)
+                    return ModellerType.Blueprint41;
+
+                return (ModellerType)Enum.Parse(typeof(ModellerType), Model.Type);
+            }
+        }
 
         public MainForm()
         {
@@ -89,15 +104,26 @@ namespace Blueprint41.Modeller
             generateDocumentationToolStripMenuItem.Visible = (ModuleLoader.GetModule("Document") != null);
         }
 
-        void InitializeXmlModeller()
+        private void SetModellerTypeMenuItemVisibility()
         {
-            InitializeModel();
+            generateCodeToolStripMenuItem.Visible = CurrentModellerType == ModellerType.Blueprint41;
+            generateCodeToolStripMenuItem1.Visible = CurrentModellerType == ModellerType.Blueprint41;
+
+            functionalIdToolStripMenuItem.Visible = CurrentModellerType == ModellerType.Blueprint41;
+            functionalIdToolStripMenuItem1.Visible = CurrentModellerType == ModellerType.Blueprint41;
+        }
+
+        void InitializeXmlModeller(ModellerType type = ModellerType.Blueprint41)
+        {
+            InitializeModel(type);
             InitializeSubmodel();
             ReloadGraph();
             Recovery.Instance.Start(this, () => Console.WriteLine("Auto saved modeller"));
+
+            SetModellerTypeMenuItemVisibility();
         }
 
-        void InitializeModel()
+        void InitializeModel(ModellerType modellerType)
         {
             if ((object)Model != null)
                 Model.UnRegisterEvents();
@@ -118,11 +144,17 @@ namespace Blueprint41.Modeller
                     Model = new Model();
             }
 
+
+            Model.Type = Model.Type ?? modellerType.ToString();
+            Model.HasChanges = false;
             Model.BeforeReBind = ClearEvents;
             Model.AfterReBind = AddEvents;
 
             Model.ShowRelationshipLabels = showLabels;
             Model.ShowInheritedRelationships = showInherited;
+
+            string editorName = CurrentModellerType == ModellerType.Blueprint41 ? B41_EDITOR : NEO4J_EDITOR;
+            this.Text = $"{FORMNAME} - ({editorName})";
 
             //CheckGuidDiscrepancies();
         }
@@ -146,16 +178,26 @@ namespace Blueprint41.Modeller
             }
 
             FillSubmodelComboBox(Model.DisplayedSubmodel);
-
-            if (graphEditor.NodeTypes.SingleOrDefault(x => x.Name == "New Entity") == null)
-            {
-                NewEntity = new NodeTypeEntry("New Entity", Microsoft.Msagl.Drawing.Shape.Circle, Microsoft.Msagl.Drawing.Color.Transparent, Microsoft.Msagl.Drawing.Color.Black, 10, null, "Entity");
-                graphEditor.AddNodeType(NewEntity);
-            }
+            InitializeGraphNodeTypes();
+            entityEditor.EnableDisableControlsForType(CurrentModellerType);
 
             btnShowLabels.Checked = Model.ShowRelationshipLabels;
             btnShowInheritedRelationships.Checked = Model.ShowInheritedRelationships;
             idcounter = 0;
+        }
+
+        void InitializeGraphNodeTypes()
+        {
+            graphEditor.NodeTypes.Clear();
+            string contextMenuString = CurrentModellerType == ModellerType.Blueprint41 ? "New Entity" : "New Node";
+            string label = CurrentModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
+
+
+            if (graphEditor.NodeTypes.SingleOrDefault(x => x.Name == contextMenuString) == null)
+            {
+                NewEntity = new NodeTypeEntry(contextMenuString, Microsoft.Msagl.Drawing.Shape.Circle, Microsoft.Msagl.Drawing.Color.Transparent, Microsoft.Msagl.Drawing.Color.Black, 10, null, label);
+                graphEditor.AddNodeType(NewEntity);
+            }
         }
 
         void ClearEvents()
@@ -341,28 +383,28 @@ namespace Blueprint41.Modeller
             Model.GraphEditor = graphEditor;
         }
 
-        void CheckGuidDiscrepancies()
-        {
-            Dictionary<string, Entity> entitiesLookUp = Model.Entities.Entity.ToDictionary(x => x.Guid);
-            Dictionary<string, Entity> entitiesLabelLookUp = Model.Entities.Entity.ToDictionary(x => x.Label);
+        //void CheckGuidDiscrepancies()
+        //{
+        //    Dictionary<string, Entity> entitiesLookUp = Model.Entities.Entity.ToDictionary(x => x.Guid);
+        //    Dictionary<string, Entity> entitiesLabelLookUp = Model.Entities.Entity.ToDictionary(x => x.Label);
 
-            IEnumerable<Relationship> relationshipDiscripancies = Model.Relationships.Relationship
-                .Where(x => (x.Source != null && x.Source.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Source?.ReferenceGuid) == false) ||
-                            (x.Target != null && x.Target.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Target.ReferenceGuid) == false))
-                .OrderBy(x => x.Name);
+        //    IEnumerable<Relationship> relationshipDiscripancies = Model.Relationships.Relationship
+        //        .Where(x => (x.Source != null && x.Source.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Source?.ReferenceGuid) == false) ||
+        //                    (x.Target != null && x.Target.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Target.ReferenceGuid) == false))
+        //        .OrderBy(x => x.Name);
 
-            if (relationshipDiscripancies.Count() == 0)
-                return;
+        //    if (relationshipDiscripancies.Count() == 0)
+        //        return;
 
-            foreach (Relationship item in relationshipDiscripancies)
-            {
-                if (item.Source != null && item.Source.Label != null && entitiesLabelLookUp.ContainsKey(item.Source.Label))
-                    item.Source.ReferenceGuid = entitiesLabelLookUp[item.Source.Label].Guid;
+        //    foreach (Relationship item in relationshipDiscripancies)
+        //    {
+        //        if (item.Source != null && item.Source.Label != null && entitiesLabelLookUp.ContainsKey(item.Source.Label))
+        //            item.Source.ReferenceGuid = entitiesLabelLookUp[item.Source.Label].Guid;
 
-                if (item.Target != null && item.Target.Label != null && entitiesLabelLookUp.ContainsKey(item.Target.Label))
-                    item.Target.ReferenceGuid = entitiesLabelLookUp[item.Target.Label].Guid;
-            }
-        }
+        //        if (item.Target != null && item.Target.Label != null && entitiesLabelLookUp.ContainsKey(item.Target.Label))
+        //            item.Target.ReferenceGuid = entitiesLabelLookUp[item.Target.Label].Guid;
+        //    }
+        //}
 
         int idcounter = 0;
         private int _splitterDistance;
@@ -585,12 +627,22 @@ namespace Blueprint41.Modeller
             }
         }
 
-        private void MenuFileNew_Click(object sender, EventArgs e)
+        private void neo4jModellerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NewFile(ModellerType.Neo4j);
+        }
+
+        private void blueprint41ModellerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NewFile(ModellerType.Blueprint41);
+        }
+
+        void NewFile(ModellerType type = ModellerType.Blueprint41)
         {
             CheckForChangesAndSaveIfPossible();
 
             StoragePath = null;
-            InitializeXmlModeller();
+            InitializeXmlModeller(type);
         }
 
         void CheckForChangesAndSaveIfPossible()
@@ -914,5 +966,7 @@ namespace Blueprint41.Modeller
                 form.ShowDialog();
             }
         }
+
+
     }
 }

@@ -30,7 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripButtonNew = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonNew = new System.Windows.Forms.ToolStripDropDownButton();
+            this.neo4jModellerToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.blueprint41ModellerToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
             this.btnSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -59,6 +61,8 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.neo4jModellerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.blueprint41ModellerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -134,16 +138,29 @@
             // toolStripButtonNew
             // 
             this.toolStripButtonNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonNew.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.toolStripButtonNew.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.neo4jModellerToolStripMenuItem1,
+            this.blueprint41ModellerToolStripMenuItem1});
             this.toolStripButtonNew.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonNew.Image")));
             this.toolStripButtonNew.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonNew.Margin = new System.Windows.Forms.Padding(2);
             this.toolStripButtonNew.Name = "toolStripButtonNew";
-            this.toolStripButtonNew.Padding = new System.Windows.Forms.Padding(6, 2, 0, 2);
-            this.toolStripButtonNew.Size = new System.Drawing.Size(34, 30);
+            this.toolStripButtonNew.Size = new System.Drawing.Size(37, 31);
             this.toolStripButtonNew.Text = "NEW";
             this.toolStripButtonNew.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toolStripButtonNew.Click += new System.EventHandler(this.MenuFileNew_Click);
+            // 
+            // neo4jModellerToolStripMenuItem1
+            // 
+            this.neo4jModellerToolStripMenuItem1.Name = "neo4jModellerToolStripMenuItem1";
+            this.neo4jModellerToolStripMenuItem1.Size = new System.Drawing.Size(207, 24);
+            this.neo4jModellerToolStripMenuItem1.Text = "Neo4j Modeller";
+            this.neo4jModellerToolStripMenuItem1.Click += new System.EventHandler(this.neo4jModellerToolStripMenuItem_Click);
+            // 
+            // blueprint41ModellerToolStripMenuItem1
+            // 
+            this.blueprint41ModellerToolStripMenuItem1.Name = "blueprint41ModellerToolStripMenuItem1";
+            this.blueprint41ModellerToolStripMenuItem1.Size = new System.Drawing.Size(207, 24);
+            this.blueprint41ModellerToolStripMenuItem1.Text = "Blueprint41 Modeller";
+            this.blueprint41ModellerToolStripMenuItem1.Click += new System.EventHandler(this.blueprint41ModellerToolStripMenuItem_Click);
             // 
             // toolStripButtonOpen
             // 
@@ -429,11 +446,30 @@
             // 
             // newToolStripMenuItem
             // 
+            this.newToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.neo4jModellerToolStripMenuItem,
+            this.blueprint41ModellerToolStripMenuItem});
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.newToolStripMenuItem.Text = "&New";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.MenuFileNew_Click);
+            // 
+            // neo4jModellerToolStripMenuItem
+            // 
+            this.neo4jModellerToolStripMenuItem.Name = "neo4jModellerToolStripMenuItem";
+            this.neo4jModellerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.N)));
+            this.neo4jModellerToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
+            this.neo4jModellerToolStripMenuItem.Text = "&Neo4j Modeller";
+            this.neo4jModellerToolStripMenuItem.Click += new System.EventHandler(this.neo4jModellerToolStripMenuItem_Click);
+            // 
+            // blueprint41ModellerToolStripMenuItem
+            // 
+            this.blueprint41ModellerToolStripMenuItem.Name = "blueprint41ModellerToolStripMenuItem";
+            this.blueprint41ModellerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.B)));
+            this.blueprint41ModellerToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
+            this.blueprint41ModellerToolStripMenuItem.Text = "&Blueprint41 Modeller";
+            this.blueprint41ModellerToolStripMenuItem.Click += new System.EventHandler(this.blueprint41ModellerToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
@@ -710,7 +746,6 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripComboBox cmbNodes;
         private System.Windows.Forms.ToolStripButton btnShowInheritedRelationships;
-        private System.Windows.Forms.ToolStripButton toolStripButtonNew;
         private System.Windows.Forms.ToolStripButton toolStripButtonOpen;
         private System.Windows.Forms.SplitContainer splitContainer;
         private EntityEditor entityEditor;
@@ -763,6 +798,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem aboutBlueprint41ModellerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem neo4jModellerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem blueprint41ModellerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripButtonNew;
+        private System.Windows.Forms.ToolStripMenuItem neo4jModellerToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem blueprint41ModellerToolStripMenuItem1;
     }
 }
 

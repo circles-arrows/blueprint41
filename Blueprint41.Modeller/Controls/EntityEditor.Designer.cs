@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblEntityName = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
+            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.txtLabel = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.chkIsAbstract = new System.Windows.Forms.CheckBox();
@@ -38,44 +39,43 @@
             this.bindingSourcePrimitiveProperties = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourceCollectionProperties = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourceEntities = new System.Windows.Forms.BindingSource(this.components);
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lblAbstract = new System.Windows.Forms.Label();
+            this.lblVirtual = new System.Windows.Forms.Label();
+            this.lblBaseEntity = new System.Windows.Forms.Label();
             this.cmbInherits = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txtSummary = new System.Windows.Forms.TextBox();
             this.btnEditStaticData = new System.Windows.Forms.Button();
             this.cmbFunctionalId = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblFunctionaId = new System.Windows.Forms.Label();
             this.txtExample = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
+            this.lblStaticData = new System.Windows.Forms.Label();
             this.chkIsStaticData = new System.Windows.Forms.CheckBox();
             this.bindingSourceInheritedPrimitiveProperties = new System.Windows.Forms.BindingSource(this.components);
             this.bindingSourceInheritedRelationships = new System.Windows.Forms.BindingSource(this.components);
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnAddFunctionalId = new System.Windows.Forms.Button();
             this.btnPin = new System.Windows.Forms.Button();
             this.gbProperties = new System.Windows.Forms.GroupBox();
-            this.bindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.pre = new Blueprint41.Modeller.PrimitiveRelationshipEditor();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceCollectionProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceEntities)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedPrimitiveProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedRelationships)).BeginInit();
             this.gbProperties.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // lblEntityName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.label1.Location = new System.Drawing.Point(6, 63);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Entity Name:";
+            this.lblEntityName.AutoSize = true;
+            this.lblEntityName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblEntityName.Location = new System.Drawing.Point(6, 63);
+            this.lblEntityName.Name = "lblEntityName";
+            this.lblEntityName.Size = new System.Drawing.Size(67, 13);
+            this.lblEntityName.TabIndex = 0;
+            this.lblEntityName.Text = "Entity Name:";
             // 
             // txtName
             // 
@@ -88,6 +88,10 @@
             this.txtName.Size = new System.Drawing.Size(338, 20);
             this.txtName.TabIndex = 2;
             this.txtName.Leave += new System.EventHandler(this.txtName_Leave);
+            // 
+            // bindingSource
+            // 
+            this.bindingSource.DataSource = typeof(Blueprint41.Modeller.Schemas.entity);
             // 
             // txtLabel
             // 
@@ -133,35 +137,35 @@
             this.chkIsVirtual.UseVisualStyleBackColor = true;
             this.chkIsVirtual.CheckedChanged += new System.EventHandler(this.chkIsVirtual_CheckedChanged);
             // 
-            // label5
+            // lblAbstract
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.label5.Location = new System.Drawing.Point(111, 223);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(46, 13);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "Abstract";
+            this.lblAbstract.AutoSize = true;
+            this.lblAbstract.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblAbstract.Location = new System.Drawing.Point(111, 223);
+            this.lblAbstract.Name = "lblAbstract";
+            this.lblAbstract.Size = new System.Drawing.Size(46, 13);
+            this.lblAbstract.TabIndex = 12;
+            this.lblAbstract.Text = "Abstract";
             // 
-            // label6
+            // lblVirtual
             // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.label6.Location = new System.Drawing.Point(195, 223);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(36, 13);
-            this.label6.TabIndex = 13;
-            this.label6.Text = "Virtual";
+            this.lblVirtual.AutoSize = true;
+            this.lblVirtual.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblVirtual.Location = new System.Drawing.Point(195, 223);
+            this.lblVirtual.Name = "lblVirtual";
+            this.lblVirtual.Size = new System.Drawing.Size(36, 13);
+            this.lblVirtual.TabIndex = 13;
+            this.lblVirtual.Text = "Virtual";
             // 
-            // label7
+            // lblBaseEntity
             // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.label7.Location = new System.Drawing.Point(6, 92);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(63, 13);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "Base Entity:";
+            this.lblBaseEntity.AutoSize = true;
+            this.lblBaseEntity.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblBaseEntity.Location = new System.Drawing.Point(6, 160);
+            this.lblBaseEntity.Name = "lblBaseEntity";
+            this.lblBaseEntity.Size = new System.Drawing.Size(63, 13);
+            this.lblBaseEntity.TabIndex = 14;
+            this.lblBaseEntity.Text = "Base Entity:";
             // 
             // cmbInherits
             // 
@@ -171,7 +175,7 @@
             this.cmbInherits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbInherits.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.cmbInherits.FormattingEnabled = true;
-            this.cmbInherits.Location = new System.Drawing.Point(90, 84);
+            this.cmbInherits.Location = new System.Drawing.Point(89, 160);
             this.cmbInherits.Name = "cmbInherits";
             this.cmbInherits.Size = new System.Drawing.Size(338, 21);
             this.cmbInherits.TabIndex = 3;
@@ -181,7 +185,7 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.label8.Location = new System.Drawing.Point(6, 145);
+            this.label8.Location = new System.Drawing.Point(6, 86);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 13);
             this.label8.TabIndex = 16;
@@ -193,7 +197,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSummary.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource, "summary", true));
             this.txtSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtSummary.Location = new System.Drawing.Point(90, 142);
+            this.txtSummary.Location = new System.Drawing.Point(89, 83);
             this.txtSummary.Multiline = true;
             this.txtSummary.Name = "txtSummary";
             this.txtSummary.Size = new System.Drawing.Size(338, 45);
@@ -221,20 +225,20 @@
             this.cmbFunctionalId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbFunctionalId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.cmbFunctionalId.FormattingEnabled = true;
-            this.cmbFunctionalId.Location = new System.Drawing.Point(90, 113);
+            this.cmbFunctionalId.Location = new System.Drawing.Point(90, 187);
             this.cmbFunctionalId.Name = "cmbFunctionalId";
             this.cmbFunctionalId.Size = new System.Drawing.Size(204, 21);
             this.cmbFunctionalId.TabIndex = 4;
             // 
-            // label3
+            // lblFunctionaId
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.label3.Location = new System.Drawing.Point(6, 116);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(76, 13);
-            this.label3.TabIndex = 22;
-            this.label3.Text = "Functional ID: ";
+            this.lblFunctionaId.AutoSize = true;
+            this.lblFunctionaId.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblFunctionaId.Location = new System.Drawing.Point(6, 191);
+            this.lblFunctionaId.Name = "lblFunctionaId";
+            this.lblFunctionaId.Size = new System.Drawing.Size(76, 13);
+            this.lblFunctionaId.TabIndex = 22;
+            this.lblFunctionaId.Text = "Functional ID: ";
             // 
             // txtExample
             // 
@@ -242,7 +246,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtExample.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource, "example", true));
             this.txtExample.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.txtExample.Location = new System.Drawing.Point(90, 194);
+            this.txtExample.Location = new System.Drawing.Point(90, 134);
             this.txtExample.Name = "txtExample";
             this.txtExample.Size = new System.Drawing.Size(338, 20);
             this.txtExample.TabIndex = 7;
@@ -251,21 +255,21 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.label4.Location = new System.Drawing.Point(6, 197);
+            this.label4.Location = new System.Drawing.Point(6, 137);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(50, 13);
             this.label4.TabIndex = 26;
             this.label4.Text = "Example:";
             // 
-            // label9
+            // lblStaticData
             // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.label9.Location = new System.Drawing.Point(258, 224);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(57, 13);
-            this.label9.TabIndex = 27;
-            this.label9.Text = "StaticData";
+            this.lblStaticData.AutoSize = true;
+            this.lblStaticData.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblStaticData.Location = new System.Drawing.Point(258, 224);
+            this.lblStaticData.Name = "lblStaticData";
+            this.lblStaticData.Size = new System.Drawing.Size(57, 13);
+            this.lblStaticData.TabIndex = 27;
+            this.lblStaticData.Text = "StaticData";
             // 
             // chkIsStaticData
             // 
@@ -278,20 +282,20 @@
             this.chkIsStaticData.UseVisualStyleBackColor = true;
             this.chkIsStaticData.CheckedChanged += new System.EventHandler(this.chkIsStaticData_CheckedChanged);
             // 
-            // button1
+            // btnAddFunctionalId
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.BackColor = System.Drawing.Color.Transparent;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(184)))), ((int)(((byte)(235)))));
-            this.button1.Location = new System.Drawing.Point(300, 111);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(128, 23);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "ADD FUNCTIONAL ID";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.btnAddFunctionalId_Click);
+            this.btnAddFunctionalId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddFunctionalId.BackColor = System.Drawing.Color.Transparent;
+            this.btnAddFunctionalId.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAddFunctionalId.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddFunctionalId.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(184)))), ((int)(((byte)(235)))));
+            this.btnAddFunctionalId.Location = new System.Drawing.Point(300, 187);
+            this.btnAddFunctionalId.Name = "btnAddFunctionalId";
+            this.btnAddFunctionalId.Size = new System.Drawing.Size(128, 23);
+            this.btnAddFunctionalId.TabIndex = 5;
+            this.btnAddFunctionalId.Text = "ADD FUNCTIONAL ID";
+            this.btnAddFunctionalId.UseVisualStyleBackColor = false;
+            this.btnAddFunctionalId.Click += new System.EventHandler(this.btnAddFunctionalId_Click);
             // 
             // btnPin
             // 
@@ -312,22 +316,22 @@
             this.gbProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbProperties.Controls.Add(this.label2);
-            this.gbProperties.Controls.Add(this.label1);
+            this.gbProperties.Controls.Add(this.lblEntityName);
             this.gbProperties.Controls.Add(this.txtName);
-            this.gbProperties.Controls.Add(this.button1);
+            this.gbProperties.Controls.Add(this.btnAddFunctionalId);
             this.gbProperties.Controls.Add(this.txtLabel);
             this.gbProperties.Controls.Add(this.chkIsAbstract);
             this.gbProperties.Controls.Add(this.chkIsStaticData);
             this.gbProperties.Controls.Add(this.chkIsVirtual);
-            this.gbProperties.Controls.Add(this.label9);
-            this.gbProperties.Controls.Add(this.label5);
+            this.gbProperties.Controls.Add(this.lblStaticData);
+            this.gbProperties.Controls.Add(this.lblAbstract);
             this.gbProperties.Controls.Add(this.label4);
-            this.gbProperties.Controls.Add(this.label6);
+            this.gbProperties.Controls.Add(this.lblVirtual);
             this.gbProperties.Controls.Add(this.txtExample);
-            this.gbProperties.Controls.Add(this.label7);
+            this.gbProperties.Controls.Add(this.lblBaseEntity);
             this.gbProperties.Controls.Add(this.cmbFunctionalId);
             this.gbProperties.Controls.Add(this.cmbInherits);
-            this.gbProperties.Controls.Add(this.label3);
+            this.gbProperties.Controls.Add(this.lblFunctionaId);
             this.gbProperties.Controls.Add(this.label8);
             this.gbProperties.Controls.Add(this.btnEditStaticData);
             this.gbProperties.Controls.Add(this.txtSummary);
@@ -338,10 +342,6 @@
             this.gbProperties.TabIndex = 33;
             this.gbProperties.TabStop = false;
             this.gbProperties.Text = "Properties";
-            // 
-            // bindingSource
-            // 
-            this.bindingSource.DataSource = typeof(Blueprint41.Modeller.Schemas.entity);
             // 
             // pre
             // 
@@ -364,6 +364,7 @@
             this.MinimumSize = new System.Drawing.Size(449, 0);
             this.Name = "EntityEditor";
             this.Size = new System.Drawing.Size(449, 819);
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourcePrimitiveProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceCollectionProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceEntities)).EndInit();
@@ -371,14 +372,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceInheritedRelationships)).EndInit();
             this.gbProperties.ResumeLayout(false);
             this.gbProperties.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblEntityName;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.TextBox txtLabel;
         private System.Windows.Forms.Label label2;
@@ -388,22 +388,22 @@
         private System.Windows.Forms.BindingSource bindingSourceCollectionProperties;
         private System.Windows.Forms.BindingSource bindingSourceEntities;
         private System.Windows.Forms.BindingSource bindingSource;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lblAbstract;
+        private System.Windows.Forms.Label lblVirtual;
+        private System.Windows.Forms.Label lblBaseEntity;
         private System.Windows.Forms.ComboBox cmbInherits;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtSummary;
         private System.Windows.Forms.Button btnEditStaticData;
         private System.Windows.Forms.ComboBox cmbFunctionalId;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblFunctionaId;
         private System.Windows.Forms.TextBox txtExample;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lblStaticData;
         private System.Windows.Forms.CheckBox chkIsStaticData;
         private System.Windows.Forms.BindingSource bindingSourceInheritedPrimitiveProperties;
         private System.Windows.Forms.BindingSource bindingSourceInheritedRelationships;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnAddFunctionalId;
         private PrimitiveRelationshipEditor pre;
         private System.Windows.Forms.Button btnPin;
         private System.Windows.Forms.GroupBox gbProperties;

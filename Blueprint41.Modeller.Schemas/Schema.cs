@@ -120,6 +120,21 @@ namespace Blueprint41.Modeller.Schemas {
             }
         }
         
+        /// <summary>
+        /// <para>
+        /// Occurrence: optional
+        /// </para>
+        /// </summary>
+        public string type {
+            get {
+                XAttribute x = this.Attribute(XName.Get("type", ""));
+                return XTypedServices.ParseValue<string>(x, XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype);
+            }
+            set {
+                this.SetAttribute(XName.Get("type", ""), value, XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype);
+            }
+        }
+        
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         Dictionary<XName, System.Type> IXMetaData.LocalElementsDictionary {
             get {

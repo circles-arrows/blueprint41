@@ -1,6 +1,7 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ assembly name="$(SolutionDir)\Blueprint41.Modeller.Schemas\bin\Debug\Blueprint41.Modeller.Schemas.dll" #>
+<#@ assembly name="$(SolutionDir)\Blueprint41.Modeller\bin\Debug\Xml.Schema.Linq.dll"#>
+<#@ assembly name="$(SolutionDir)\Blueprint41.Modeller.Schemas\bin\Debug\netstandard2.0\Blueprint41.Modeller.Schemas.dll" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Reflection" #>

@@ -15,7 +15,7 @@ namespace Blueprint41.Modeller
         {
             get
             {
-                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Blueprint41");
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "untitled.xml");
 
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);

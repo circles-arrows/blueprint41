@@ -191,6 +191,14 @@
           </xs:complexType>
         </xs:element>
       </xs:sequence>
+      <xs:attribute name="type">
+        <xs:simpleType>
+          <xs:restriction base="xs:string" >
+            <xs:enumeration value="Neo4j" />
+            <xs:enumeration value="Blueprint41" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 </xs:schema>

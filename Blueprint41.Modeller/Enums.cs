@@ -36,4 +36,10 @@ namespace Blueprint41.Modeller
         Out,
         Both
     }
+
+    public enum ModellerType
+    {
+        Neo4j,
+        Blueprint41
+    }
 }

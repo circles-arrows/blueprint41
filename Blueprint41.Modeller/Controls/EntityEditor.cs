@@ -80,8 +80,8 @@ namespace Blueprint41.Modeller
         public EntityEditor()
         {
             InitializeComponent();
-            CreateGridColumnsForPrimitiveProperties(pre.DataGridViewPrimitive);
-            CreateGridColumnsForRelationships();
+            //CreateGridColumnsForPrimitiveProperties(pre.DataGridViewPrimitive);
+            //CreateGridColumnsForRelationships();
             CreateToolTipForShowAllRelationshipsCheckbox();
 
             pre.DataGridViewPrimitive.MultiSelect = false;
@@ -195,7 +195,7 @@ namespace Blueprint41.Modeller
 
                 //string propertyNameValue = textBox.Value?.ToString() ?? textBox.EditedFormattedValue?.ToString();
                 string propertyNameValue = textBox.EditedFormattedValue?.ToString();
-                
+
                 string newName = propertyNameValue?.Replace(" ", string.Empty);
                 ValidatePrimitivePropertyName(Entity, newName, out string validateName, 1, true);
 
@@ -363,7 +363,7 @@ namespace Blueprint41.Modeller
             toolTip1.SetToolTip(pre.CheckBoxShowAllRelationship, "Also shows relationships to entities outside the current submodel.");
         }
 
-        private void CreateGridColumnsForPrimitiveProperties(DataGridView dataGridView, bool readOnly = false)
+        private void CreateGridColumnsForPrimitiveProperties(DataGridView dataGridView, ModellerType modellerType, bool readOnly = false)
         {
             // Initialize the DataGridView.
             dataGridView.AutoGenerateColumns = false;
@@ -412,214 +412,225 @@ namespace Blueprint41.Modeller
             {
                 typeColumn = new DataGridViewComboBoxColumn();
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("string");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("DateTime");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("bool");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("long");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("short");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("int");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("decimal");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("float");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("double");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("char");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("sbyte");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Guid");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("object");
+
+                if (modellerType == ModellerType.Blueprint41)
+                {
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("short");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("DateTime");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("decimal");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("double");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("char");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Guid");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("object");
+                }
 
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<DateTime>");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<bool>");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<short>");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<decimal>");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<char>");
                 ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,object>");
+                if (modellerType == ModellerType.Blueprint41)
+                {
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("List<object>");
+                }
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,object>");
+                if (modellerType == ModellerType.Blueprint41)
+                {
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<string,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<DateTime,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<bool,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<long,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<short,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<int,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<decimal,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<float,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<double,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<char,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<sbyte,object>");
 
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,string>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,DateTime>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,bool>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,long>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,short>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,int>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,decimal>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,float>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,double>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,char>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,sbyte>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,Guid>");
-                ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,object>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<Guid,object>");
+
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,string>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,DateTime>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,bool>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,long>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,short>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,int>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,decimal>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,float>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,double>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,char>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,sbyte>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,Guid>");
+                    ((DataGridViewComboBoxColumn)typeColumn).Items.Add("Dictionary<object,object>");
+                }
             }
             typeColumn.DataPropertyName = "Type";
             typeColumn.Name = "Type";
@@ -643,7 +654,7 @@ namespace Blueprint41.Modeller
             dataGridView.Columns.Add(indexTypeColumn);
         }
 
-        private void CreateGridColumnsForRelationships()
+        private void CreateGridColumnsForRelationships(ModellerType type)
         {
             // Initialize the DataGridView.
             pre.DataGridViewRelationship.AutoGenerateColumns = false;
@@ -709,6 +720,18 @@ namespace Blueprint41.Modeller
             targetNullableColumn.Name = "Optional";
             targetNullableColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             pre.DataGridViewRelationship.Columns.Add(targetNullableColumn);
+        }
+
+        private void InitializeGridColumnsForType()
+        {
+            bool success = Enum.TryParse<ModellerType>(StorageModel.Type, out ModellerType modellerType);
+            modellerType = success ? modellerType : ModellerType.Blueprint41;
+
+            pre.DataGridViewPrimitive.Columns.Clear();
+            pre.DataGridViewRelationship.Columns.Clear();
+
+            CreateGridColumnsForPrimitiveProperties(pre.DataGridViewPrimitive, modellerType, false);
+            CreateGridColumnsForRelationships(modellerType);
         }
 
         private class GridPrimitiveItem
@@ -957,14 +980,58 @@ namespace Blueprint41.Modeller
 
         public void Show(Entity model, Model modeller)
         {
+            Entity = model;
+            StorageModel = modeller;
+
+            InitializeGridColumnsForType();
+
             ClearDataSourceAndHandlers();
             gbProperties.Enabled = true;
             pre.Enabled = true;
             pre.SetToReadOnly(false);
 
-            Entity = model;
-            StorageModel = modeller;
             Assign();
+
+            bool success = Enum.TryParse<ModellerType>(StorageModel.Type, out ModellerType modellerType);
+            modellerType = success ? modellerType : ModellerType.Blueprint41;
+
+            EnableDisableControlsForType(modellerType);
+        }
+
+        public void EnableDisableControlsForType(ModellerType modellerType)
+        {
+            if (modellerType == ModellerType.Blueprint41)
+            {
+                lblEntityName.Text = "Entity Name:";
+                cmbInherits.Visible = true;
+                cmbFunctionalId.Visible = true;
+                btnAddFunctionalId.Visible = true;
+                chkIsAbstract.Visible = true;
+                chkIsVirtual.Visible = true;
+                chkIsStaticData.Visible = true;
+
+                lblBaseEntity.Visible = true;
+                lblFunctionaId.Visible = true;
+                lblAbstract.Visible = true;
+                lblVirtual.Visible = true;
+                lblStaticData.Visible = true;
+            }
+            else
+            {
+                lblEntityName.Text = "Node Name:";
+                cmbInherits.Visible = false;
+                cmbFunctionalId.Visible = false;
+                btnAddFunctionalId.Visible = false;
+                chkIsAbstract.Visible = false;
+                chkIsVirtual.Visible = false;
+                chkIsStaticData.Visible = false;
+
+                lblBaseEntity.Visible = false;
+                lblFunctionaId.Visible = false;
+                lblAbstract.Visible = false;
+                lblVirtual.Visible = false;
+                lblStaticData.Visible = false;
+            }
         }
 
         public void RefreshEntity()
