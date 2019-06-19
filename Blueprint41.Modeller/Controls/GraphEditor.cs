@@ -11,6 +11,8 @@ using System.Collections;
 using Blueprint41.Modeller.Schemas;
 using System.Linq;
 using Blueprint41.Modeller.Utils;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Blueprint41.Modeller.Controls
 {
@@ -121,13 +123,14 @@ namespace Blueprint41.Modeller.Controls
                 selectedObject = null;
             }
 
-            if (gViewer.ObjectUnderMouseCursor == null)
+            IViewerObject objectUnderMouseCursor = gViewer.ObjectUnderMouseCursor;
+            if (objectUnderMouseCursor == null)
             {
                 gViewer.SetToolTip(toolTip, "");
             }
             else
             {
-                selectedObject = gViewer.ObjectUnderMouseCursor.DrawingObject;
+                selectedObject = objectUnderMouseCursor.DrawingObject;
                 if (selectedObject is Edge edge)
                 {
                     selectedObjectAttr = edge.Attr.Clone();
