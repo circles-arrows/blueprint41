@@ -563,8 +563,6 @@ namespace Blueprint41.Modeller
 
         private void CmbSubmodels_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedNode = null;
-
             if (cmbSubmodels.Text == NEWSUBMODEL)
             {
                 ManageSubmodelForm form = new Modeller.ManageSubmodelForm(Model);
@@ -576,11 +574,12 @@ namespace Blueprint41.Modeller
                 }
             }
             else
+            {
+                SelectedNode = null;
                 Model.DisplayedSubmodel = cmbSubmodels.SelectedItem as Submodel;
-
+            }
 
             this.graphEditor.Viewer.Tag = Model.DisplayedSubmodel;
-
             RefreshNodeCombobox();
         }
 
