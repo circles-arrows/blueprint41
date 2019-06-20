@@ -230,6 +230,7 @@ namespace Blueprint41.Modeller.Controls
 
             if (node != null)
             {
+                SetDragDecorator(obj as IViewerObject);
                 NodeSelected?.Invoke(this, new NodeEventArgs(node, new GeometryPoint(e.X, e.Y)));
             }
             else if (edge != null)
@@ -238,6 +239,7 @@ namespace Blueprint41.Modeller.Controls
             }
             else
             {
+                RemoveHighlights();
                 NoneSelected?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -286,6 +288,10 @@ namespace Blueprint41.Modeller.Controls
                 mi.Click += RemoveEntityClick;
                 cm.Items.Add(mi);
             }
+            else
+            {
+                RemoveHighlights();
+            }
 
             mi = new ToolStripMenuItem();
             mi.Text = "Redo layout";
@@ -293,6 +299,15 @@ namespace Blueprint41.Modeller.Controls
             cm.Items.Add(mi);
 
             return cm;
+        }
+
+        private void RemoveHighlights()
+        {
+            foreach (IViewerObject item in gViewer.Entities)
+            {
+                if (item is DNode)
+                    RemoveDragDecorator(item);
+            }
         }
 
         void BuildSelectionModeContextMenu(ContextMenuStrip cm)
