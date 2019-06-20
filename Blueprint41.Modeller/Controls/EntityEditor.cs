@@ -1049,7 +1049,7 @@ namespace Blueprint41.Modeller
             cmbInherits.SelectedIndex = -1;
             cmbFunctionalId.DataSource = null;
             cmbFunctionalId.SelectedIndex = -1;
-
+            btnEditStaticData.Visible = false;
             pre.SetToReadOnly();
         }
 
