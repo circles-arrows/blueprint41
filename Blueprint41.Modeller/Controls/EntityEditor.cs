@@ -372,7 +372,7 @@ namespace Blueprint41.Modeller
             DataGridViewColumn entityNameColumn = new DataGridViewTextBoxColumn();
             entityNameColumn.DataPropertyName = "EntityName";
             entityNameColumn.Name = "Entity Name";
-            entityNameColumn.ReadOnly = readOnly;
+            entityNameColumn.ReadOnly = true;
             entityNameColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
             entityNameColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             entityNameColumn.DefaultCellStyle.Font = new Font(dataGridView.Font, FontStyle.Bold);
@@ -1049,7 +1049,7 @@ namespace Blueprint41.Modeller
             cmbInherits.SelectedIndex = -1;
             cmbFunctionalId.DataSource = null;
             cmbFunctionalId.SelectedIndex = -1;
-
+            btnEditStaticData.Visible = false;
             pre.SetToReadOnly();
         }
 
