@@ -68,6 +68,8 @@ namespace Blueprint41.Modeller
             }
         }
 
+        public string EntityNodeName => CurrentModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
+
         public MainForm()
         {
             if (!string.IsNullOrEmpty(RegistryHandler.LastOpenedFile))
@@ -155,6 +157,7 @@ namespace Blueprint41.Modeller
 
             string editorName = CurrentModellerType == ModellerType.Blueprint41 ? B41_EDITOR : NEO4J_EDITOR;
             this.Text = $"{FORMNAME} - ({editorName})";
+            graphEditor.ModellerType = CurrentModellerType;
 
             //CheckGuidDiscrepancies();
         }
@@ -293,7 +296,7 @@ namespace Blueprint41.Modeller
         {
             if (e.Node.UserData is Submodel.NodeLocalType node)
             {
-                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the entity '{node.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
+                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the {EntityNodeName.ToLower()} '{node.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
 
                 if (dialogResult == DialogResult.Yes)
                 {

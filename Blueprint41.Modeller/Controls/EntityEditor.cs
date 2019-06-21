@@ -28,6 +28,18 @@ namespace Blueprint41.Modeller
 
         public Model StorageModel { get; private set; }
 
+        public string EntityNodeName
+        {
+            get
+            {
+                if (StorageModel == null || string.IsNullOrEmpty(StorageModel.Type))
+                    return "Entity";
+
+                ModellerType currentModeller = (ModellerType)Enum.Parse(typeof(ModellerType), StorageModel.Type);
+                return currentModeller == ModellerType.Blueprint41 ? "Entity" : "Node";
+            }
+        }
+
         public DataGridViewComboBoxColumn SourceEntitiesColumn { get; private set; }
         public DataGridViewComboBoxColumn TargetEntitiesColumn { get; private set; }
 
@@ -371,7 +383,7 @@ namespace Blueprint41.Modeller
 
             DataGridViewColumn entityNameColumn = new DataGridViewTextBoxColumn();
             entityNameColumn.DataPropertyName = "EntityName";
-            entityNameColumn.Name = "Entity Name";
+            entityNameColumn.Name = $"{EntityNodeName} Name";
             entityNameColumn.ReadOnly = true;
             entityNameColumn.DefaultCellStyle.BackColor = readOnly ? Color.LightGray : Color.White;
             entityNameColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -1000,9 +1012,10 @@ namespace Blueprint41.Modeller
 
         public void EnableDisableControlsForType(ModellerType modellerType)
         {
+            lblEntityName.Text = $"{EntityNodeName} Name:";
+
             if (modellerType == ModellerType.Blueprint41)
             {
-                lblEntityName.Text = "Entity Name:";
                 cmbInherits.Visible = true;
                 cmbFunctionalId.Visible = true;
                 btnAddFunctionalId.Visible = true;
@@ -1018,7 +1031,6 @@ namespace Blueprint41.Modeller
             }
             else
             {
-                lblEntityName.Text = "Node Name:";
                 cmbInherits.Visible = false;
                 cmbFunctionalId.Visible = false;
                 btnAddFunctionalId.Visible = false;

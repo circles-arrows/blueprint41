@@ -49,6 +49,9 @@ namespace Blueprint41.Modeller.Controls
             set { gViewer.Graph = value; }
         }
 
+        public ModellerType ModellerType { get; set; }
+        public string EntityNodeName =>  ModellerType == ModellerType.Blueprint41? "Entity" : "Node";
+
         /// <summary>
         /// An List containing all the node type entries (custom node types for insetion).
         /// </summary>
@@ -303,7 +306,7 @@ namespace Blueprint41.Modeller.Controls
                 }
 
                 mi = new ToolStripMenuItem();
-                mi.Text = "Delete Entity";
+                mi.Text = $"Delete {EntityNodeName}";
                 mi.ForeColor = Styles.FORMS_WARNING;
                 mi.Click += RemoveEntityClick;
                 cm.Items.Add(mi);
