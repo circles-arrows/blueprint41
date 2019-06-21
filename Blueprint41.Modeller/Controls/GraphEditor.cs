@@ -88,8 +88,6 @@ namespace Blueprint41.Modeller.Controls
             gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };
         }
 
-
-
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
         {
             bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
@@ -207,11 +205,20 @@ namespace Blueprint41.Modeller.Controls
 
             if (altPressed && leftButtonPressed)
                 gViewer.PanButtonPressed = true;
+
+            // This is a hack: need to find a better solution
+            objAtMouseDown = gViewer.GetObjectAt(e.X, e.Y);
         }
+
+        object objAtMouseDown = null;
 
         void GraphEditor_MouseUp(object sender, MsaglMouseEventArgs e)
         {
             if (gViewer.PanButtonPressed)
+                return;
+
+            // This is a hack: need to find a better solution
+            if (objAtMouseDown == null)
                 return;
 
             object obj = gViewer.GetObjectAt(e.X, e.Y);
