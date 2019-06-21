@@ -59,7 +59,6 @@ namespace Blueprint41.Modeller.Controls
         /// </summary>
         protected GeometryPoint m_MouseRightButtonDownPoint;
         private object selectedObject;
-        private bool panViaControl;
         AttributeBase selectedObjectAttr;
 
         public GraphEditor()
@@ -89,24 +88,21 @@ namespace Blueprint41.Modeller.Controls
             gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };
         }
 
+
+
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
         {
-            if ((gViewer as IViewer).ModifierKeys == Microsoft.Msagl.Drawing.ModifierKeys.Alt)
-            {
-                panViaControl = true;
-                gViewer.PanButtonPressed = true;
-            }
+            bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
+
+            if (altPressed && gViewer.PanButtonPressed)
+                return;
+
+            gViewer.PanButtonPressed = false;
         }
 
         private void GViewer_KeyUp(object sender, KeyEventArgs e)
         {
-            if (panViaControl)
-            {
-                panViaControl = false;
-                gViewer.PanButtonPressed = false;
-            }
-
-            if(e.KeyCode == Keys.Delete)
+            if (e.KeyCode == Keys.Delete)
             {
                 AnalyzeObjectsToRemove();
                 e.Handled = true;
@@ -205,6 +201,12 @@ namespace Blueprint41.Modeller.Controls
                 contextMenuStrip = BuildContextMenu(new GeometryPoint(e.X, e.Y));
                 contextMenuStrip.Show(this, new Point(e.X, e.Y));
             }
+
+            bool leftButtonPressed = e.LeftButtonIsPressed;
+            bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
+
+            if (altPressed && leftButtonPressed)
+                gViewer.PanButtonPressed = true;
         }
 
         void GraphEditor_MouseUp(object sender, MsaglMouseEventArgs e)
@@ -427,7 +429,7 @@ namespace Blueprint41.Modeller.Controls
 
         void AnalyzeObjectsToRemove()
         {
-            if(gViewer.LayoutEditor.SelectedEdge != null)
+            if (gViewer.LayoutEditor.SelectedEdge != null)
             {
                 gViewer.RemoveEdge(gViewer.LayoutEditor.SelectedEdge, true);
                 return;
