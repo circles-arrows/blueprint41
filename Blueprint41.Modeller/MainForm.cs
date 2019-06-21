@@ -230,8 +230,8 @@ namespace Blueprint41.Modeller
 
         void SetCheckedModeMenuControls()
         {
-            tsbPan.Checked = graphEditor.Viewer.PanButtonPressed;
-            panToolStripMenuItem.Checked = graphEditor.Viewer.PanButtonPressed;
+            tsbPan.Checked = graphEditor.PanButtonPressedOnMenu;
+            panToolStripMenuItem.Checked = graphEditor.PanButtonPressedOnMenu;
             tsbEdgeInsertion.Checked = graphEditor.Viewer.InsertingEdge;
         }
 
@@ -804,7 +804,7 @@ namespace Blueprint41.Modeller
 
         private void TsbPan_Click(object sender, EventArgs e)
         {
-            graphEditor.Viewer.PanButtonPressed = !graphEditor.Viewer.PanButtonPressed;
+            graphEditor.PanButtonPressedOnMenu = !graphEditor.PanButtonPressedOnMenu;
             graphEditor.Viewer.InsertingEdge = false;
 
             SetCheckedModeMenuControls();
@@ -828,7 +828,7 @@ namespace Blueprint41.Modeller
         private void TsbEdgeInsertion_Click(object sender, EventArgs e)
         {
             graphEditor.Viewer.InsertingEdge = !graphEditor.Viewer.InsertingEdge;
-            graphEditor.Viewer.PanButtonPressed = false;
+            graphEditor.PanButtonPressedOnMenu = false;
 
             SetCheckedModeMenuControls();
         }

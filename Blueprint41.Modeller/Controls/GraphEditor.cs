@@ -67,6 +67,13 @@ namespace Blueprint41.Modeller.Controls
             Load += GraphEditor_Load;
         }
 
+        bool panButtonPressedOnMenu;
+        public bool PanButtonPressedOnMenu
+        {
+            get { return panButtonPressedOnMenu; }
+            set { panButtonPressedOnMenu = value; }
+        }
+
         readonly Dictionary<object, DrawingColor> draggedObjectOriginalColors = new Dictionary<object, DrawingColor>();
 
         void GraphEditor_Load(object sender, EventArgs e)
@@ -92,12 +99,21 @@ namespace Blueprint41.Modeller.Controls
 
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
         {
+            if (PanButtonPressedOnMenu)
+            {
+                gViewer.PanButtonPressed = true;
+                return;
+            }                
+
             bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
 
             if (altPressed && gViewer.PanButtonPressed)
                 return;
 
-            gViewer.PanButtonPressed = false;
+            if (PanButtonPressedOnMenu == false)
+                gViewer.PanButtonPressed = false;
+
+            
         }
 
         private void GViewer_KeyUp(object sender, KeyEventArgs e)
@@ -205,7 +221,7 @@ namespace Blueprint41.Modeller.Controls
             bool leftButtonPressed = e.LeftButtonIsPressed;
             bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
 
-            if (altPressed && leftButtonPressed)
+            if (altPressed && leftButtonPressed && !PanButtonPressedOnMenu)
                 gViewer.PanButtonPressed = true;
         }
 
@@ -405,7 +421,7 @@ namespace Blueprint41.Modeller.Controls
 
         void PanMode_Click(object sender, EventArgs e)
         {
-            gViewer.PanButtonPressed = !gViewer.PanButtonPressed;
+            PanButtonPressedOnMenu = !PanButtonPressedOnMenu;
             gViewer.InsertingEdge = false;
 
             PanModeClicked?.Invoke(sender, EventArgs.Empty);
