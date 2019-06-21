@@ -119,7 +119,7 @@ namespace Blueprint41.Modeller
 
             pre.DataGridViewRelationship.Leave += DataGridViewRelationship_Leave;
             pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
-
+            
             pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
             pre.CheckBoxShowFromCurrentModel.CheckedChanged += checkBoxShowFromCurrentModel_CheckedChanged;
 
@@ -284,6 +284,14 @@ namespace Blueprint41.Modeller
 
             if (e.ColumnIndex == 1 || e.ColumnIndex == 7)
             {
+                if (e.ColumnIndex == 7)
+                {
+                    DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[8];
+
+                    if(cb.Value == null)
+                        return;
+                }
+
                 DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
 
                 if (textBox.Value == null)
@@ -306,6 +314,16 @@ namespace Blueprint41.Modeller
             {
                 DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[6];
                 relationshipsObservable[e.RowIndex].Target.ReferenceGuid = StorageModel.Entities.Entity.Where(x => x.Label == (string)cb.Value).SingleOrDefault()?.Guid;
+            }
+
+            if (e.ColumnIndex == 8)
+            {   
+                DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if(cb.Value == null)
+                {
+                    DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[7];
+                    textBox.Value = string.Empty;
+                }
             }
 
             if (e.ColumnIndex == 1 || e.ColumnIndex == 4 || e.ColumnIndex == 5 || e.ColumnIndex == 7)

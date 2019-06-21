@@ -113,8 +113,6 @@ namespace Blueprint41.Modeller.Controls
 
             if (PanButtonPressedOnMenu == false)
                 gViewer.PanButtonPressed = false;
-
-            
         }
 
         private void GViewer_KeyUp(object sender, KeyEventArgs e)
