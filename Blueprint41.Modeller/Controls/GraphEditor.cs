@@ -49,6 +49,9 @@ namespace Blueprint41.Modeller.Controls
             set { gViewer.Graph = value; }
         }
 
+        public ModellerType ModellerType { get; set; }
+        public string EntityNodeName =>  ModellerType == ModellerType.Blueprint41? "Entity" : "Node";
+
         /// <summary>
         /// An List containing all the node type entries (custom node types for insetion).
         /// </summary>
@@ -65,6 +68,13 @@ namespace Blueprint41.Modeller.Controls
         {
             InitializeComponent();
             Load += GraphEditor_Load;
+        }
+
+        bool panButtonPressedOnMenu;
+        public bool PanButtonPressedOnMenu
+        {
+            get { return panButtonPressedOnMenu; }
+            set { panButtonPressedOnMenu = value; }
         }
 
         readonly Dictionary<object, DrawingColor> draggedObjectOriginalColors = new Dictionary<object, DrawingColor>();
@@ -90,12 +100,21 @@ namespace Blueprint41.Modeller.Controls
 
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
         {
+            if (PanButtonPressedOnMenu)
+            {
+                gViewer.PanButtonPressed = true;
+                return;
+            }                
+
             bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
 
             if (altPressed && gViewer.PanButtonPressed)
                 return;
 
-            gViewer.PanButtonPressed = false;
+            if (PanButtonPressedOnMenu == false)
+                gViewer.PanButtonPressed = false;
+
+            
         }
 
         private void GViewer_KeyUp(object sender, KeyEventArgs e)
@@ -203,7 +222,7 @@ namespace Blueprint41.Modeller.Controls
             bool leftButtonPressed = e.LeftButtonIsPressed;
             bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
 
-            if (altPressed && leftButtonPressed)
+            if (altPressed && leftButtonPressed && !PanButtonPressedOnMenu)
                 gViewer.PanButtonPressed = true;
 
             // This is a hack: need to find a better solution
@@ -294,7 +313,7 @@ namespace Blueprint41.Modeller.Controls
                 }
 
                 mi = new ToolStripMenuItem();
-                mi.Text = "Delete Entity";
+                mi.Text = $"Delete {EntityNodeName}";
                 mi.ForeColor = Styles.FORMS_WARNING;
                 mi.Click += RemoveEntityClick;
                 cm.Items.Add(mi);
@@ -412,7 +431,7 @@ namespace Blueprint41.Modeller.Controls
 
         void PanMode_Click(object sender, EventArgs e)
         {
-            gViewer.PanButtonPressed = !gViewer.PanButtonPressed;
+            PanButtonPressedOnMenu = !PanButtonPressedOnMenu;
             gViewer.InsertingEdge = false;
 
             PanModeClicked?.Invoke(sender, EventArgs.Empty);

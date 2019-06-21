@@ -399,6 +399,7 @@
             this.graphEditor.Graph = null;
             this.graphEditor.Location = new System.Drawing.Point(0, 0);
             this.graphEditor.Name = "graphEditor";
+            this.graphEditor.PanButtonPressedOnMenu = false;
             this.graphEditor.Size = new System.Drawing.Size(832, 644);
             this.graphEditor.TabIndex = 0;
             // 

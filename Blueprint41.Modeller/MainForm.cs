@@ -68,6 +68,8 @@ namespace Blueprint41.Modeller
             }
         }
 
+        public string EntityNodeName => CurrentModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
+
         public MainForm()
         {
             if (!string.IsNullOrEmpty(RegistryHandler.LastOpenedFile))
@@ -155,6 +157,7 @@ namespace Blueprint41.Modeller
 
             string editorName = CurrentModellerType == ModellerType.Blueprint41 ? B41_EDITOR : NEO4J_EDITOR;
             this.Text = $"{FORMNAME} - ({editorName})";
+            graphEditor.ModellerType = CurrentModellerType;
 
             //CheckGuidDiscrepancies();
         }
@@ -230,8 +233,8 @@ namespace Blueprint41.Modeller
 
         void SetCheckedModeMenuControls()
         {
-            tsbPan.Checked = graphEditor.Viewer.PanButtonPressed;
-            panToolStripMenuItem.Checked = graphEditor.Viewer.PanButtonPressed;
+            tsbPan.Checked = graphEditor.PanButtonPressedOnMenu;
+            panToolStripMenuItem.Checked = graphEditor.PanButtonPressedOnMenu;
             tsbEdgeInsertion.Checked = graphEditor.Viewer.InsertingEdge;
         }
 
@@ -293,7 +296,7 @@ namespace Blueprint41.Modeller
         {
             if (e.Node.UserData is Submodel.NodeLocalType node)
             {
-                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the entity '{node.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
+                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the {EntityNodeName.ToLower()} '{node.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
 
                 if (dialogResult == DialogResult.Yes)
                 {
@@ -804,7 +807,7 @@ namespace Blueprint41.Modeller
 
         private void TsbPan_Click(object sender, EventArgs e)
         {
-            graphEditor.Viewer.PanButtonPressed = !graphEditor.Viewer.PanButtonPressed;
+            graphEditor.PanButtonPressedOnMenu = !graphEditor.PanButtonPressedOnMenu;
             graphEditor.Viewer.InsertingEdge = false;
 
             SetCheckedModeMenuControls();
@@ -828,7 +831,7 @@ namespace Blueprint41.Modeller
         private void TsbEdgeInsertion_Click(object sender, EventArgs e)
         {
             graphEditor.Viewer.InsertingEdge = !graphEditor.Viewer.InsertingEdge;
-            graphEditor.Viewer.PanButtonPressed = false;
+            graphEditor.PanButtonPressedOnMenu = false;
 
             SetCheckedModeMenuControls();
         }
