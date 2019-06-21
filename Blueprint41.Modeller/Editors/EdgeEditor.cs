@@ -183,5 +183,15 @@ namespace Blueprint41.Modeller.Editors
             txtRelationshipName.Text = relationshipName;
             txtNeo4jName.Text = neo4jType;
         }
+
+        private void TxtRelationshipName_KeyDown(object sender, KeyEventArgs e)
+        {
+            cbAutoLabel.Checked = false;
+        }
+
+        private void txtNeo4jName_KeyDown(object sender, EventArgs e)
+        {
+            cbAutoLabel.Checked = false;
+        }
     }
 }
