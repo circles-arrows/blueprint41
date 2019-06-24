@@ -96,7 +96,7 @@ namespace Blueprint41.Modeller.Controls
             gViewer.KeyUp += GViewer_KeyUp;
             // disable the multiple selection highlight
             gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };
-            gViewer.LayoutEditor.MouseMoveThreshold = 0;
+            gViewer.LayoutEditor.MouseMoveThreshold = 2;
         }
 
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
@@ -216,8 +216,7 @@ namespace Blueprint41.Modeller.Controls
         {
             EdgeRemoved?.Invoke(this, new EdgeEventArgs(sender as Edge));
         }
-
-
+        
         private ContextMenuStrip contextMenuStrip;
         void GraphEditor_MouseDown(object sender, MsaglMouseEventArgs e)
         {
@@ -304,10 +303,6 @@ namespace Blueprint41.Modeller.Controls
                 mi.Click += RemoveEntityClick;
                 cm.Items.Add(mi);
             }
-            else
-            {
-                RemoveHighlights();
-            }
 
             mi = new ToolStripMenuItem();
             mi.Text = "Redo layout";
@@ -315,15 +310,6 @@ namespace Blueprint41.Modeller.Controls
             cm.Items.Add(mi);
 
             return cm;
-        }
-
-        private void RemoveHighlights()
-        {
-            foreach (IViewerObject item in gViewer.Entities)
-            {
-                if (item is DNode)
-                    RemoveDragDecorator(item);
-            }
         }
 
         void BuildSelectionModeContextMenu(ContextMenuStrip cm)
