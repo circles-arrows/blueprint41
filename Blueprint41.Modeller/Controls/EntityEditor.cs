@@ -119,7 +119,7 @@ namespace Blueprint41.Modeller
 
             pre.DataGridViewRelationship.Leave += DataGridViewRelationship_Leave;
             pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
-            
+
             pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
             pre.CheckBoxShowFromCurrentModel.CheckedChanged += checkBoxShowFromCurrentModel_CheckedChanged;
 
@@ -284,30 +284,28 @@ namespace Blueprint41.Modeller
 
             if (e.ColumnIndex == 1 || e.ColumnIndex == 7)
             {
+                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                string textBoxValue = textBox.Value?.ToString();
+                textBoxValue = textBoxValue?.Replace(" ", string.Empty);
+
                 if (e.ColumnIndex == 7)
                 {
                     DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[8];
 
-                    if(cb.Value == null)
+                    if (cb.Value == null)
+                    {
+                        textBox.Value = null;
                         return;
+                    }
                 }
 
-                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-                if (textBox.Value == null)
+                if (string.IsNullOrEmpty(textBoxValue))
                 {
                     ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
                     return;
                 }
 
-                string newName = ((string)textBox.Value).Replace(" ", string.Empty);
-
-                if (string.IsNullOrEmpty(newName))
-                {
-                    ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
-                    return;
-                }
-                textBox.Value = newName;
+                textBox.Value = textBoxValue;
             }
 
             if (e.ColumnIndex == 6)
@@ -317,9 +315,9 @@ namespace Blueprint41.Modeller
             }
 
             if (e.ColumnIndex == 8)
-            {   
+            {
                 DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                if(cb.Value == null)
+                if (cb.Value == null)
                 {
                     DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[7];
                     textBox.Value = string.Empty;
