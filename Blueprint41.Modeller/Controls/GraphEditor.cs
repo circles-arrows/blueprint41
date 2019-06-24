@@ -50,7 +50,7 @@ namespace Blueprint41.Modeller.Controls
         }
 
         public ModellerType ModellerType { get; set; }
-        public string EntityNodeName =>  ModellerType == ModellerType.Blueprint41? "Entity" : "Node";
+        public string EntityNodeName => ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
 
         /// <summary>
         /// An List containing all the node type entries (custom node types for insetion).
@@ -104,7 +104,7 @@ namespace Blueprint41.Modeller.Controls
             {
                 gViewer.PanButtonPressed = true;
                 return;
-            }                
+            }
 
             bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
 
@@ -210,6 +210,8 @@ namespace Blueprint41.Modeller.Controls
         private ContextMenuStrip contextMenuStrip;
         void GraphEditor_MouseDown(object sender, MsaglMouseEventArgs e)
         {
+            MouseDownScreenPoint = new Point(e.X, e.Y);
+
             if (e.RightButtonIsPressed && !e.Handled)
             {
                 m_MouseRightButtonDownPoint = (gViewer).ScreenToSource(e);
@@ -222,23 +224,37 @@ namespace Blueprint41.Modeller.Controls
 
             if (altPressed && leftButtonPressed && !PanButtonPressedOnMenu)
                 gViewer.PanButtonPressed = true;
-
-            // This is a hack: need to find a better solution
-            objAtMouseDown = gViewer.GetObjectAt(e.X, e.Y);
         }
 
-        object objAtMouseDown = null;
+        readonly double mouseMoveThreshold = 0;
+        Point MouseDownScreenPoint { get; set; }
+
+        bool MouseDownPointAndMouseUpPointsAreFarEnoughOnScreen(MsaglMouseEventArgs e)
+        {
+            int x = e.X;
+            int y = e.Y;
+            double dx = (MouseDownScreenPoint.X - x) / gViewer.DpiX;
+            double dy = (MouseDownScreenPoint.Y - y) / gViewer.DpiY;
+            return Math.Sqrt(dx * dx + dy * dy) > mouseMoveThreshold / 3;
+        }
 
         void GraphEditor_MouseUp(object sender, MsaglMouseEventArgs e)
         {
             if (gViewer.PanButtonPressed)
                 return;
 
-            // This is a hack: need to find a better solution
-            if (objAtMouseDown == null)
-                return;
+            bool click = !MouseDownPointAndMouseUpPointsAreFarEnoughOnScreen(e);
 
-            object obj = gViewer.GetObjectAt(e.X, e.Y);
+            if (click && e.LeftButtonIsPressed)
+            {
+                AnaylyzeLeftButtonClick(e);
+                e.Handled = true;
+            }
+        }
+
+        void AnaylyzeLeftButtonClick(MsaglMouseEventArgs e)
+        {
+            object obj = gViewer.ObjectUnderMouseCursor;
             DrawingNode node = null;
             Edge edge = null;
             var dnode = obj as DNode;

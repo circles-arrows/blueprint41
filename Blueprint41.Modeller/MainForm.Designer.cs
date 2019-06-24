@@ -398,6 +398,7 @@
             this.graphEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.graphEditor.Graph = null;
             this.graphEditor.Location = new System.Drawing.Point(0, 0);
+            this.graphEditor.ModellerType = Blueprint41.Modeller.ModellerType.Neo4j;
             this.graphEditor.Name = "graphEditor";
             this.graphEditor.PanButtonPressedOnMenu = false;
             this.graphEditor.Size = new System.Drawing.Size(832, 644);
