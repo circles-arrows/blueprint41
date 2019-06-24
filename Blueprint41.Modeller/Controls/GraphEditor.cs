@@ -80,8 +80,7 @@ namespace Blueprint41.Modeller.Controls
         readonly Dictionary<object, DrawingColor> draggedObjectOriginalColors = new Dictionary<object, DrawingColor>();
 
         void GraphEditor_Load(object sender, EventArgs e)
-        {
-            (gViewer as IViewer).MouseUp += GraphEditor_MouseUp;
+        {            
             (gViewer as IViewer).MouseDown += GraphEditor_MouseDown;
             (gViewer as IViewer).MouseMove += GraphEditor_MouseMove;
 
@@ -91,11 +90,13 @@ namespace Blueprint41.Modeller.Controls
 
             gViewer.LayoutEditor.DecorateObjectForDragging = SetDragDecorator;
             gViewer.LayoutEditor.RemoveObjDraggingDecorations = RemoveDragDecorator;
+            gViewer.LayoutEditor.DecorateEdgeForDragging = SetEdgeDragDecorator;
             gViewer.MouseWheel += GViewerMouseWheel;
             gViewer.ObjectUnderMouseCursorChanged += GViewer_ObjectUnderMouseCursorChanged;
             gViewer.KeyUp += GViewer_KeyUp;
             // disable the multiple selection highlight
             gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };
+            gViewer.LayoutEditor.MouseMoveThreshold = 0;
         }
 
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
@@ -185,6 +186,8 @@ namespace Blueprint41.Modeller.Controls
                 dNode.DrawingNode.Attr.Color = DrawingColor.Green;
                 gViewer.Invalidate(obj);
             }
+
+            AnaylyzeLeftButtonClick(obj);
         }
 
         void RemoveDragDecorator(IViewerObject obj)
@@ -194,6 +197,14 @@ namespace Blueprint41.Modeller.Controls
                 dNode.DrawingNode.Attr.Color = DrawingColor.LightGray;
                 gViewer.Invalidate(obj);
             }
+
+            NoneSelected?.Invoke(this, EventArgs.Empty);
+        }
+
+        void SetEdgeDragDecorator(IViewerEdge viewerEdge)
+        {
+            if (viewerEdge is DEdge dEdge)
+                EdgeSelected?.Invoke(this, new EdgeEventArgs(dEdge.DrawingEdge));
         }
 
         private void GViewer_EdgeAdded(object sender, EventArgs e)
@@ -210,8 +221,6 @@ namespace Blueprint41.Modeller.Controls
         private ContextMenuStrip contextMenuStrip;
         void GraphEditor_MouseDown(object sender, MsaglMouseEventArgs e)
         {
-            MouseDownScreenPoint = new Point(e.X, e.Y);
-
             if (e.RightButtonIsPressed && !e.Handled)
             {
                 m_MouseRightButtonDownPoint = (gViewer).ScreenToSource(e);
@@ -226,35 +235,8 @@ namespace Blueprint41.Modeller.Controls
                 gViewer.PanButtonPressed = true;
         }
 
-        readonly double mouseMoveThreshold = 0;
-        Point MouseDownScreenPoint { get; set; }
-
-        bool MouseDownPointAndMouseUpPointsAreFarEnoughOnScreen(MsaglMouseEventArgs e)
-        {
-            int x = e.X;
-            int y = e.Y;
-            double dx = (MouseDownScreenPoint.X - x) / gViewer.DpiX;
-            double dy = (MouseDownScreenPoint.Y - y) / gViewer.DpiY;
-            return Math.Sqrt(dx * dx + dy * dy) > mouseMoveThreshold / 3;
-        }
-
-        void GraphEditor_MouseUp(object sender, MsaglMouseEventArgs e)
-        {
-            if (gViewer.PanButtonPressed)
-                return;
-
-            bool click = !MouseDownPointAndMouseUpPointsAreFarEnoughOnScreen(e);
-
-            if (click && e.LeftButtonIsPressed)
-            {
-                AnaylyzeLeftButtonClick(e);
-                e.Handled = true;
-            }
-        }
-
-        void AnaylyzeLeftButtonClick(MsaglMouseEventArgs e)
-        {
-            object obj = gViewer.ObjectUnderMouseCursor;
+        void AnaylyzeLeftButtonClick(IViewerObject obj)
+        {            
             DrawingNode node = null;
             Edge edge = null;
             var dnode = obj as DNode;
@@ -274,17 +256,7 @@ namespace Blueprint41.Modeller.Controls
 
             if (node != null)
             {
-                SetDragDecorator(obj as IViewerObject);
-                NodeSelected?.Invoke(this, new NodeEventArgs(node, new GeometryPoint(e.X, e.Y)));
-            }
-            else if (edge != null)
-            {
-                EdgeSelected?.Invoke(this, new EdgeEventArgs(edge));
-            }
-            else
-            {
-                RemoveHighlights();
-                NoneSelected?.Invoke(this, EventArgs.Empty);
+                NodeSelected?.Invoke(this, new NodeEventArgs(node, new GeometryPoint(0, 0)));
             }
         }
 

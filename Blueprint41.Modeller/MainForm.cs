@@ -229,12 +229,6 @@ namespace Blueprint41.Modeller
             graphEditor.EdgeRemoved += GraphEditor_EdgeRemoved;
             graphEditor.EdgeModeClicked += GraphEditor_EdgeModeClicked;
             graphEditor.PanModeClicked += GraphEditor_PanModeClicked;
-            graphEditor.EdgeSelected += GraphEditor_EdgeSelected;
-        }
-
-        private void GraphEditor_EdgeSelected(object sender, EdgeEventArgs e)
-        {
-            CloseNodeEditor();
         }
 
         void SetCheckedModeMenuControls()
