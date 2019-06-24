@@ -80,7 +80,7 @@ namespace Blueprint41.Modeller.Controls
         readonly Dictionary<object, DrawingColor> draggedObjectOriginalColors = new Dictionary<object, DrawingColor>();
 
         void GraphEditor_Load(object sender, EventArgs e)
-        {            
+        {
             (gViewer as IViewer).MouseDown += GraphEditor_MouseDown;
             (gViewer as IViewer).MouseMove += GraphEditor_MouseMove;
 
@@ -216,7 +216,7 @@ namespace Blueprint41.Modeller.Controls
         {
             EdgeRemoved?.Invoke(this, new EdgeEventArgs(sender as Edge));
         }
-        
+
         private ContextMenuStrip contextMenuStrip;
         void GraphEditor_MouseDown(object sender, MsaglMouseEventArgs e)
         {
@@ -235,27 +235,10 @@ namespace Blueprint41.Modeller.Controls
         }
 
         void AnaylyzeLeftButtonClick(IViewerObject obj)
-        {            
-            DrawingNode node = null;
-            Edge edge = null;
-            var dnode = obj as DNode;
-            var dedge = obj as DEdge;
-            var dl = obj as DLabel;
-            if (dnode != null)
-                node = dnode.DrawingNode;
-            else if (dedge != null)
-                edge = dedge.DrawingEdge;
-            else if (dl != null)
+        {
+            if (obj is DNode dNode)
             {
-                if (dl.Parent is DNode)
-                    node = (dl.Parent as DNode).DrawingNode;
-                else if (dl.Parent is DEdge)
-                    edge = (dl.Parent as DEdge).DrawingEdge;
-            }
-
-            if (node != null)
-            {
-                NodeSelected?.Invoke(this, new NodeEventArgs(node, new GeometryPoint(0, 0)));
+                NodeSelected?.Invoke(this, new NodeEventArgs(dNode.DrawingNode, new GeometryPoint(0, 0)));
             }
         }
 
