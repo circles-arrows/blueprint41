@@ -236,7 +236,11 @@ namespace Blueprint41.Modeller.Controls
 
             // This is a hack: need to find a better solution
             if (objAtMouseDown == null)
+            {
+                RemoveHighlights();
+                NoneSelected?.Invoke(this, EventArgs.Empty);
                 return;
+            }
 
             object obj = gViewer.GetObjectAt(e.X, e.Y);
             DrawingNode node = null;
@@ -267,7 +271,6 @@ namespace Blueprint41.Modeller.Controls
             }
             else
             {
-                RemoveHighlights();
                 NoneSelected?.Invoke(this, EventArgs.Empty);
             }
         }
