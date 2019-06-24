@@ -318,7 +318,7 @@ namespace Blueprint41.Modeller.Controls
             cm.Items.Add(separator);
         }
 
-        ArrayList SelectedEntities
+        public ArrayList SelectedEntities
         {
             get
             {

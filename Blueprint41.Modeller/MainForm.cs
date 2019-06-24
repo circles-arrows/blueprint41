@@ -333,9 +333,14 @@ namespace Blueprint41.Modeller
         {
             if (!(e.Node.UserData is Submodel.NodeLocalType))
                 throw new NotSupportedException();
-
+            
             SelectedNode = e.Node.UserData as Submodel.NodeLocalType;
-            entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
+
+            if (graphEditor.SelectedEntities.Count > 1)
+                CloseNodeEditor();
+            else
+                entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
+
             DefaultOrExpandPropertiesWidth(false);
 
             performNoSelection = false;
