@@ -158,6 +158,8 @@ namespace Blueprint41.Modeller.Schemas
                 else
                     dNode.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
 
+                dNode.Attr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
+
                 Model.GraphEditor.Viewer.Invalidate(node);
             }
 

@@ -20,7 +20,6 @@ namespace Blueprint41.Modeller
     {
         private bool showLabels = false;
         private bool showInherited = false;
-        private bool performNoSelection = false;
         private bool removingEdge = false;
 
         private const string NEWSUBMODEL = "New...";
@@ -318,15 +317,10 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_NoSelection(object sender, EventArgs e)
         {
-            //if (performNoSelection)
-            //{
             CloseNodeEditor();
             CloseEdgeEditor();
             RefreshNodeCombobox();
             DefaultOrExpandPropertiesWidth(false);
-            //}
-
-            //performNoSelection = true;
         }
 
         void GraphEditor_NodeSelected(object sender, NodeEventArgs e)
@@ -342,8 +336,6 @@ namespace Blueprint41.Modeller
                 entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
 
             DefaultOrExpandPropertiesWidth(false);
-
-            performNoSelection = false;
         }
 
         void GraphEditor_EditSubmodelClick(object sender, EventArgs e)
