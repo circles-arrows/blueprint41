@@ -301,7 +301,6 @@ namespace Blueprint41.Modeller
 
             ReloadGraph();
             Model.Invalidate();
-
         }
 
         void GraphEditor_NoSelection(object sender, EventArgs e)
@@ -483,7 +482,6 @@ namespace Blueprint41.Modeller
                 cmbSubmodels.SelectedItem = selectedSub;
         }
 
-
         //private void StaticDataToolStripMenuItem_Click(object sender, EventArgs e)
         //{
         //    CodeGeneration codeGeneration = new CodeGeneration();
@@ -513,6 +511,7 @@ namespace Blueprint41.Modeller
             foreach (var item in Model.DisplayedSubmodel.Node.OrderBy(item => item.Label))
             {
                 item.RemoveHighlight();
+                item.Deselect();
                 cmbNodes.Items.Add(item);
             }
         }
@@ -955,7 +954,5 @@ namespace Blueprint41.Modeller
                 form.ShowDialog();
             }
         }
-
-
     }
 }

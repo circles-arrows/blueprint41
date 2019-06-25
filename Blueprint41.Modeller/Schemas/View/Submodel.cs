@@ -90,7 +90,6 @@ namespace Blueprint41.Modeller.Schemas
 
         public partial class NodeLocalType
         {
-
             private DrawingNode drawingNode = null;
             private bool IsNodeSelected = false;
 
@@ -158,6 +157,17 @@ namespace Blueprint41.Modeller.Schemas
                 else
                     dNode.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
 
+                Model.GraphEditor.Viewer.Invalidate(node);
+            }
+
+            internal void Deselect()
+            {
+                if (Model == null || drawingNode == null)
+                    return;
+
+                DNode node = Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) as DNode;
+                DrawingNode dNode = node.DrawingNode;
+
                 dNode.Attr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
 
                 Model.GraphEditor.Viewer.Invalidate(node);
@@ -208,7 +218,6 @@ namespace Blueprint41.Modeller.Schemas
                 NodeAttr nodeAttr = new NodeAttr();
                 nodeAttr.Id = id;
                 nodeAttr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
-
 
                 if (Entity.Virtual)
                     nodeAttr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
