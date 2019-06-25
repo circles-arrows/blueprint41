@@ -96,7 +96,6 @@ namespace Blueprint41.Modeller.Controls
             gViewer.KeyUp += GViewer_KeyUp;
             // disable the multiple selection highlight
             gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };
-            gViewer.LayoutEditor.MouseMoveThreshold = 2;
         }
 
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
