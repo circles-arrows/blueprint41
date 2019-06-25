@@ -19,11 +19,17 @@ namespace Blueprint41.Modeller.Schemas
             OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
                 Model.HasChanges = true;
+
+                if (Model.ModellerType == ModellerType.Neo4j && e.NewValue != Label)
+                    Label = e.NewValue;
             };
 
             OnLabelChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
                 Model.HasChanges = true;
+
+                if (Model.ModellerType == ModellerType.Neo4j && e.NewValue != Name)
+                    Name = e.NewValue;
             };
 
             OnAbstractChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)

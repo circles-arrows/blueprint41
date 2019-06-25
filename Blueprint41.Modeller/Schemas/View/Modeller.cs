@@ -22,6 +22,17 @@ namespace Blueprint41.Modeller.Schemas
 {
     public partial class Modeller
     {
+        public ModellerType ModellerType
+        {
+            get
+            {
+                if (Model == null || Model.Type == null)
+                    return ModellerType.Blueprint41;
+
+                return (ModellerType)Enum.Parse(typeof(ModellerType), Model.Type);
+            }
+        }
+
         public bool HasChanges { get; internal set; }
 
         public LayoutMethod ViewMode
