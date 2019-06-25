@@ -63,6 +63,8 @@ namespace Blueprint41.Modeller.Controls
         protected GeometryPoint m_MouseRightButtonDownPoint;
         private object selectedObject;
         AttributeBase selectedObjectAttr;
+        AttributeBase selectedNodeAttr;
+
 
         public GraphEditor()
         {
@@ -132,6 +134,7 @@ namespace Blueprint41.Modeller.Controls
             if (selectedObject != null)
             {
                 RestoreSelectedObjAttr();
+
                 gViewer.Invalidate(e.OldObject);
                 selectedObject = null;
             }
@@ -155,8 +158,11 @@ namespace Blueprint41.Modeller.Controls
                     if (edge.UserData is Relationship relationship)
                         gViewer.SetToolTip(toolTip, relationship.Type);
                 }
-                else if (selectedObject is DrawingNode)
+                else if (selectedObject is DrawingNode dNode)
                 {
+                    selectedNodeAttr = dNode.Attr.Clone();
+                    dNode.Attr.Color = DrawingColor.LightGreen;
+
                     gViewer.SetToolTip(toolTip, "Drag me");
 
                     if (e.NewObject != null)
@@ -169,6 +175,12 @@ namespace Blueprint41.Modeller.Controls
         {
             if (selectedObject is Edge edge)
                 edge.Attr = (EdgeAttr)selectedObjectAttr;
+
+            if (selectedObject is DrawingNode dNode)
+            {
+                if(dNode.Attr.Color != DrawingColor.Green)
+                    dNode.Attr = (NodeAttr)selectedNodeAttr;
+            }
         }
 
         void GViewerMouseWheel(object sender, MouseEventArgs e)
