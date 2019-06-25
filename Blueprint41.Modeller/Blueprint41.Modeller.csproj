@@ -145,6 +145,7 @@
       <DependentUpon>UpdaterForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\Constants.cs" />
+    <Compile Include="Utils\PerformanceLogger.cs" />
     <Compile Include="Utils\UriConfig.cs" />
     <Compile Include="Generation\EntityTreeNode.cs" />
     <Compile Include="Generation\GenerationEnum.cs" />

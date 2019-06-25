@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Modeller.Schemas;
+using Blueprint41.Modeller.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,6 +98,14 @@ namespace Blueprint41.Modeller
         public static void SetDataSource<T>(this ComboBox cbo, ref List<T> dataList, bool hasNone)
             where T : IComboBoxItem, new()
         {
+            PerformanceLogger.Instance.Start();
+
+            cbo.BeginUpdate();
+
+            cbo.DataSource = null;
+            cbo.DisplayMember = "Display";
+            cbo.ValueMember = "Value";
+            
             if (hasNone)
             {
                 List<T> newList = new List<T>();
@@ -106,9 +115,11 @@ namespace Blueprint41.Modeller
                 dataList = newList;
             }
 
-            cbo.DisplayMember = "Display";
-            cbo.ValueMember = "Value";
             cbo.DataSource = dataList;
+
+            cbo.EndUpdate();
+
+            PerformanceLogger.Instance.Stop();
         }
 
         public static string ToPlural(this string Singular)
