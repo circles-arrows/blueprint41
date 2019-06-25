@@ -57,18 +57,7 @@ namespace Blueprint41.Modeller
         internal NodeTypeEntry NewEntity { get; private set; }
         internal Submodel.NodeLocalType SelectedNode { get; private set; }
 
-        public ModellerType CurrentModellerType
-        {
-            get
-            {
-                if (Model == null || Model.Type == null)
-                    return ModellerType.Blueprint41;
-
-                return (ModellerType)Enum.Parse(typeof(ModellerType), Model.Type);
-            }
-        }
-
-        public string EntityNodeName => CurrentModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
+        public string EntityNodeName => Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
 
         public MainForm()
         {
@@ -108,11 +97,11 @@ namespace Blueprint41.Modeller
 
         private void SetModellerTypeMenuItemVisibility()
         {
-            generateCodeToolStripMenuItem.Visible = CurrentModellerType == ModellerType.Blueprint41;
-            generateCodeToolStripMenuItem1.Visible = CurrentModellerType == ModellerType.Blueprint41;
+            generateCodeToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
+            generateCodeToolStripMenuItem1.Visible = Model.ModellerType == ModellerType.Blueprint41;
 
-            functionalIdToolStripMenuItem.Visible = CurrentModellerType == ModellerType.Blueprint41;
-            functionalIdToolStripMenuItem1.Visible = CurrentModellerType == ModellerType.Blueprint41;
+            functionalIdToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
+            functionalIdToolStripMenuItem1.Visible = Model.ModellerType == ModellerType.Blueprint41;
         }
 
         void InitializeXmlModeller(ModellerType type = ModellerType.Blueprint41)
@@ -155,9 +144,9 @@ namespace Blueprint41.Modeller
             Model.ShowRelationshipLabels = showLabels;
             Model.ShowInheritedRelationships = showInherited;
 
-            string editorName = CurrentModellerType == ModellerType.Blueprint41 ? B41_EDITOR : NEO4J_EDITOR;
+            string editorName = Model.ModellerType == ModellerType.Blueprint41 ? B41_EDITOR : NEO4J_EDITOR;
             this.Text = $"{FORMNAME} - ({editorName})";
-            graphEditor.ModellerType = CurrentModellerType;
+            graphEditor.ModellerType = Model.ModellerType;
 
             //CheckGuidDiscrepancies();
         }
@@ -182,7 +171,7 @@ namespace Blueprint41.Modeller
 
             FillSubmodelComboBox(Model.DisplayedSubmodel);
             InitializeGraphNodeTypes();
-            entityEditor.EnableDisableControlsForType(CurrentModellerType);
+            entityEditor.EnableDisableControlsForType(Model.ModellerType);
 
             btnShowLabels.Checked = Model.ShowRelationshipLabels;
             btnShowInheritedRelationships.Checked = Model.ShowInheritedRelationships;
@@ -192,8 +181,8 @@ namespace Blueprint41.Modeller
         void InitializeGraphNodeTypes()
         {
             graphEditor.NodeTypes.Clear();
-            string contextMenuString = CurrentModellerType == ModellerType.Blueprint41 ? "New Entity" : "New Node";
-            string label = CurrentModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
+            string contextMenuString = Model.ModellerType == ModellerType.Blueprint41 ? "New Entity" : "New Node";
+            string label = Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
 
 
             if (graphEditor.NodeTypes.SingleOrDefault(x => x.Name == contextMenuString) == null)
