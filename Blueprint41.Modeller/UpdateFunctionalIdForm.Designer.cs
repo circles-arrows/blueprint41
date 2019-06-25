@@ -42,7 +42,7 @@
             this.lblType.AutoSize = true;
             this.lblType.Location = new System.Drawing.Point(12, 18);
             this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(31, 13);
+            this.lblType.Size = new System.Drawing.Size(34, 13);
             this.lblType.TabIndex = 0;
             this.lblType.Text = "Type:";
             // 
@@ -60,7 +60,7 @@
             this.lblPrefix.AutoSize = true;
             this.lblPrefix.Location = new System.Drawing.Point(12, 71);
             this.lblPrefix.Name = "lblPrefix";
-            this.lblPrefix.Size = new System.Drawing.Size(33, 13);
+            this.lblPrefix.Size = new System.Drawing.Size(36, 13);
             this.lblPrefix.TabIndex = 0;
             this.lblPrefix.Text = "Prefix:";
             // 
@@ -89,13 +89,13 @@
             this.lblName.AutoSize = true;
             this.lblName.Location = new System.Drawing.Point(12, 45);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(35, 13);
+            this.lblName.Size = new System.Drawing.Size(38, 13);
             this.lblName.TabIndex = 0;
             this.lblName.Text = "Name:";
             // 
             // btnSave
             // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));            
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.Location = new System.Drawing.Point(143, 94);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 26);
@@ -119,6 +119,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "UpdateFunctionalIdForm";
+            this.ShowIcon = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Update Functional Id";

@@ -20,7 +20,6 @@ namespace Blueprint41.Modeller
     {
         private bool showLabels = false;
         private bool showInherited = false;
-        private bool performNoSelection = false;
         private bool removingEdge = false;
 
         private const string NEWSUBMODEL = "New...";
@@ -302,20 +301,14 @@ namespace Blueprint41.Modeller
 
             ReloadGraph();
             Model.Invalidate();
-
         }
 
         void GraphEditor_NoSelection(object sender, EventArgs e)
         {
-            //if (performNoSelection)
-            //{
             CloseNodeEditor();
             CloseEdgeEditor();
             RefreshNodeCombobox();
             DefaultOrExpandPropertiesWidth(false);
-            //}
-
-            //performNoSelection = true;
         }
 
         void GraphEditor_NodeSelected(object sender, NodeEventArgs e)
@@ -331,8 +324,6 @@ namespace Blueprint41.Modeller
                 entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
 
             DefaultOrExpandPropertiesWidth(false);
-
-            performNoSelection = false;
         }
 
         void GraphEditor_EditSubmodelClick(object sender, EventArgs e)
@@ -491,7 +482,6 @@ namespace Blueprint41.Modeller
                 cmbSubmodels.SelectedItem = selectedSub;
         }
 
-
         //private void StaticDataToolStripMenuItem_Click(object sender, EventArgs e)
         //{
         //    CodeGeneration codeGeneration = new CodeGeneration();
@@ -521,6 +511,7 @@ namespace Blueprint41.Modeller
             foreach (var item in Model.DisplayedSubmodel.Node.OrderBy(item => item.Label))
             {
                 item.RemoveHighlight();
+                item.Deselect();
                 cmbNodes.Items.Add(item);
             }
         }
@@ -548,6 +539,7 @@ namespace Blueprint41.Modeller
         }
 
         #region Editor Events
+
         private void CloseNodeEditor()
         {
             entityEditor.CloseEditor();
@@ -589,7 +581,11 @@ namespace Blueprint41.Modeller
             RemoveHighlightNodes();
 
             if (cmbNodes.SelectedIndex == 0)
+            {
+                entityEditor.CloseEditor();
+                Model.GraphReset();
                 return;
+            }
 
             SelectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
             entityEditor.Show(SelectedNode.Entity, Model);
@@ -599,8 +595,12 @@ namespace Blueprint41.Modeller
         private void RemoveHighlightNodes()
         {
             foreach (var item in Model.DisplayedSubmodel.Node.OrderBy(item => item.Label))
+            {
                 item.RemoveHighlight();
+                item.Deselect();
+            }
         }
+
         private void EntityEditor_EntityTypeChanged(object sender, EventArgs e)
         {
             SelectedNode.RemoveHighlight();
@@ -963,7 +963,5 @@ namespace Blueprint41.Modeller
                 form.ShowDialog();
             }
         }
-
-
     }
 }

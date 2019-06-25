@@ -90,7 +90,6 @@ namespace Blueprint41.Modeller.Schemas
 
         public partial class NodeLocalType
         {
-
             private DrawingNode drawingNode = null;
             private bool IsNodeSelected = false;
 
@@ -127,7 +126,7 @@ namespace Blueprint41.Modeller.Schemas
 
             internal void Highlight()
             {
-                if (Model == null || drawingNode == null)
+                if (IsModelAndDrawingNodeNull())
                     return;
 
                 double zoom = Model.DisplayedSubmodel.Node.Count / 25d;
@@ -139,26 +138,61 @@ namespace Blueprint41.Modeller.Schemas
                 if (Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) is DNode dNode)
                 {
                     dNode.DrawingNode.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+                    dNode.DrawingNode.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+
                     Model.GraphEditor.Viewer.Invalidate(dNode);
                 }
             }
 
             internal void RemoveHighlight()
             {
-                if (Model == null || drawingNode == null)
+                if (IsModelAndDrawingNodeNull())
                     return;
 
-                DNode node = Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) as DNode;
-                DrawingNode dNode = node.DrawingNode;
+                DNode node = GetNode();
 
                 if (Entity.Virtual)
-                    dNode.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
+                    node.DrawingNode.Attr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
                 else if (Entity.Abstract)
-                    dNode.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT.ToMsAgl();
+                    node.DrawingNode.Attr.FillColor = Styles.NODE_BGCOLOR_ABSTRACT.ToMsAgl();
                 else
-                    dNode.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
+                    node.DrawingNode.Attr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
 
                 Model.GraphEditor.Viewer.Invalidate(node);
+            }
+
+            private bool IsModelAndDrawingNodeNull()
+            {
+                return Model == null || drawingNode == null;
+            }
+
+            //internal void Select()
+            //{
+            //    if (IsModelAndDrawingNodeNull())
+            //        return;
+
+            //    DNode node = GetNode();
+
+            //    node.DrawingNode.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+
+            //    Model.GraphEditor.Viewer.Invalidate(node);
+            //}
+
+            internal void Deselect()
+            {
+                if (IsModelAndDrawingNodeNull())
+                    return;
+
+                DNode node = GetNode();
+
+                node.DrawingNode.Attr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
+
+                Model.GraphEditor.Viewer.Invalidate(node);
+            }
+
+            private DNode GetNode()
+            {
+                return Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) as DNode;
             }
 
             internal void CreateNode()
@@ -206,7 +240,6 @@ namespace Blueprint41.Modeller.Schemas
                 NodeAttr nodeAttr = new NodeAttr();
                 nodeAttr.Id = id;
                 nodeAttr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
-
 
                 if (Entity.Virtual)
                     nodeAttr.FillColor = Styles.NODE_BGCOLOR_VIRTUAL.ToMsAgl();
