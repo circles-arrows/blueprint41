@@ -539,6 +539,7 @@ namespace Blueprint41.Modeller
         }
 
         #region Editor Events
+
         private void CloseNodeEditor()
         {
             entityEditor.CloseEditor();
@@ -580,7 +581,11 @@ namespace Blueprint41.Modeller
             RemoveHighlightNodes();
 
             if (cmbNodes.SelectedIndex == 0)
+            {
+                entityEditor.CloseEditor();
+                Model.GraphReset();
                 return;
+            }
 
             SelectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
             entityEditor.Show(SelectedNode.Entity, Model);
@@ -590,8 +595,12 @@ namespace Blueprint41.Modeller
         private void RemoveHighlightNodes()
         {
             foreach (var item in Model.DisplayedSubmodel.Node.OrderBy(item => item.Label))
+            {
                 item.RemoveHighlight();
+                item.Deselect();
+            }
         }
+
         private void EntityEditor_EntityTypeChanged(object sender, EventArgs e)
         {
             SelectedNode.RemoveHighlight();
