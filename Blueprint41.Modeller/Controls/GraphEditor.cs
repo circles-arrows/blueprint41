@@ -97,7 +97,7 @@ namespace Blueprint41.Modeller.Controls
             gViewer.ObjectUnderMouseCursorChanged += GViewer_ObjectUnderMouseCursorChanged;
             gViewer.KeyUp += GViewer_KeyUp;
             // disable the multiple selection highlight
-            gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };
+            gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };            
         }
 
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
@@ -210,6 +210,12 @@ namespace Blueprint41.Modeller.Controls
             }
 
             NoneSelected?.Invoke(this, EventArgs.Empty);
+        }
+
+        // Unselect all selected entities
+        public void Clear()
+        {
+            gViewer.LayoutEditor.Clear();
         }
 
         void SetEdgeDragDecorator(IViewerEdge viewerEdge)

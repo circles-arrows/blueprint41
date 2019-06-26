@@ -29,46 +29,141 @@
         private void InitializeComponent()
         {
             this.gbSource = new System.Windows.Forms.GroupBox();
+            this.lblCardinality = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbTargetCollection = new System.Windows.Forms.RadioButton();
+            this.rbTargetLookupRequired = new System.Windows.Forms.RadioButton();
+            this.rbTargetNone = new System.Windows.Forms.RadioButton();
+            this.rbTargetLookupOptional = new System.Windows.Forms.RadioButton();
+            this.lblTargetName = new System.Windows.Forms.Label();
             this.lblSourceName = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.cmbSourcePropertyType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.gbTarget = new System.Windows.Forms.GroupBox();
-            this.lblTargetName = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.cmbTargetPropertyType = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.rbSourceCollection = new System.Windows.Forms.RadioButton();
+            this.rbSourceLookupRequired = new System.Windows.Forms.RadioButton();
+            this.rbSourceLookupOptional = new System.Windows.Forms.RadioButton();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.txtRelationshipName = new System.Windows.Forms.TextBox();
             this.txtNeo4jName = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblNeo4jName = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.cbAutoLabel = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.gbSource.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.gbTarget.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbSource
             // 
+            this.gbSource.Controls.Add(this.lblCardinality);
+            this.gbSource.Controls.Add(this.label4);
+            this.gbSource.Controls.Add(this.groupBox2);
+            this.gbSource.Controls.Add(this.lblTargetName);
             this.gbSource.Controls.Add(this.lblSourceName);
             this.gbSource.Controls.Add(this.label2);
-            this.gbSource.Controls.Add(this.cmbSourcePropertyType);
             this.gbSource.Controls.Add(this.label1);
+            this.gbSource.Controls.Add(this.gbTarget);
             this.gbSource.Location = new System.Drawing.Point(12, 152);
             this.gbSource.Name = "gbSource";
-            this.gbSource.Size = new System.Drawing.Size(388, 82);
+            this.gbSource.Size = new System.Drawing.Size(388, 189);
             this.gbSource.TabIndex = 1;
             this.gbSource.TabStop = false;
-            this.gbSource.Text = "Source";
+            this.gbSource.Text = "Cardinality";
+            // 
+            // lblCardinality
+            // 
+            this.lblCardinality.AutoSize = true;
+            this.lblCardinality.Location = new System.Drawing.Point(7, 164);
+            this.lblCardinality.Name = "lblCardinality";
+            this.lblCardinality.Size = new System.Drawing.Size(0, 13);
+            this.lblCardinality.TabIndex = 14;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(160, 68);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(52, 39);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "→";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.rbTargetCollection);
+            this.groupBox2.Controls.Add(this.rbTargetLookupRequired);
+            this.groupBox2.Controls.Add(this.rbTargetNone);
+            this.groupBox2.Controls.Add(this.rbTargetLookupOptional);
+            this.groupBox2.Location = new System.Drawing.Point(239, 45);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(75, 105);
+            this.groupBox2.TabIndex = 12;
+            this.groupBox2.TabStop = false;
+            // 
+            // rbTargetCollection
+            // 
+            this.rbTargetCollection.AutoSize = true;
+            this.rbTargetCollection.Location = new System.Drawing.Point(6, 81);
+            this.rbTargetCollection.Name = "rbTargetCollection";
+            this.rbTargetCollection.Size = new System.Drawing.Size(33, 17);
+            this.rbTargetCollection.TabIndex = 3;
+            this.rbTargetCollection.TabStop = true;
+            this.rbTargetCollection.Text = "N";
+            this.rbTargetCollection.UseVisualStyleBackColor = true;
+            // 
+            // rbTargetLookupRequired
+            // 
+            this.rbTargetLookupRequired.AutoSize = true;
+            this.rbTargetLookupRequired.Location = new System.Drawing.Point(6, 58);
+            this.rbTargetLookupRequired.Name = "rbTargetLookupRequired";
+            this.rbTargetLookupRequired.Size = new System.Drawing.Size(31, 17);
+            this.rbTargetLookupRequired.TabIndex = 2;
+            this.rbTargetLookupRequired.TabStop = true;
+            this.rbTargetLookupRequired.Text = "1";
+            this.rbTargetLookupRequired.UseVisualStyleBackColor = true;
+            // 
+            // rbTargetNone
+            // 
+            this.rbTargetNone.AutoSize = true;
+            this.rbTargetNone.Location = new System.Drawing.Point(6, 14);
+            this.rbTargetNone.Name = "rbTargetNone";
+            this.rbTargetNone.Size = new System.Drawing.Size(31, 17);
+            this.rbTargetNone.TabIndex = 0;
+            this.rbTargetNone.TabStop = true;
+            this.rbTargetNone.Text = "0";
+            this.rbTargetNone.UseVisualStyleBackColor = true;
+            // 
+            // rbTargetLookupOptional
+            // 
+            this.rbTargetLookupOptional.AutoSize = true;
+            this.rbTargetLookupOptional.Location = new System.Drawing.Point(6, 35);
+            this.rbTargetLookupOptional.Name = "rbTargetLookupOptional";
+            this.rbTargetLookupOptional.Size = new System.Drawing.Size(46, 17);
+            this.rbTargetLookupOptional.TabIndex = 1;
+            this.rbTargetLookupOptional.TabStop = true;
+            this.rbTargetLookupOptional.Text = "0...1";
+            this.rbTargetLookupOptional.UseVisualStyleBackColor = true;
+            // 
+            // lblTargetName
+            // 
+            this.lblTargetName.AutoSize = true;
+            this.lblTargetName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTargetName.Location = new System.Drawing.Point(236, 29);
+            this.lblTargetName.Name = "lblTargetName";
+            this.lblTargetName.Size = new System.Drawing.Size(78, 13);
+            this.lblTargetName.TabIndex = 7;
+            this.lblTargetName.Text = "Target name";
             // 
             // lblSourceName
             // 
             this.lblSourceName.AutoSize = true;
             this.lblSourceName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSourceName.Location = new System.Drawing.Point(51, 29);
+            this.lblSourceName.Location = new System.Drawing.Point(67, 29);
             this.lblSourceName.Name = "lblSourceName";
             this.lblSourceName.Size = new System.Drawing.Size(81, 13);
             this.lblSourceName.TabIndex = 3;
@@ -77,23 +172,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 48);
+            this.label2.Location = new System.Drawing.Point(6, 64);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(34, 13);
+            this.label2.Size = new System.Drawing.Size(58, 13);
             this.label2.TabIndex = 2;
-            this.label2.Text = "Type:";
-            // 
-            // cmbSourcePropertyType
-            // 
-            this.cmbSourcePropertyType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmbSourcePropertyType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSourcePropertyType.FormattingEnabled = true;
-            this.cmbSourcePropertyType.ItemHeight = 13;
-            this.cmbSourcePropertyType.Location = new System.Drawing.Point(54, 45);
-            this.cmbSourcePropertyType.Name = "cmbSourcePropertyType";
-            this.cmbSourcePropertyType.Size = new System.Drawing.Size(328, 21);
-            this.cmbSourcePropertyType.TabIndex = 3;
+            this.label2.Text = "Multiplicity:";
             // 
             // label1
             // 
@@ -106,60 +189,52 @@
             // 
             // gbTarget
             // 
-            this.gbTarget.Controls.Add(this.lblTargetName);
-            this.gbTarget.Controls.Add(this.label4);
-            this.gbTarget.Controls.Add(this.cmbTargetPropertyType);
-            this.gbTarget.Controls.Add(this.label5);
-            this.gbTarget.Location = new System.Drawing.Point(12, 240);
+            this.gbTarget.Controls.Add(this.rbSourceCollection);
+            this.gbTarget.Controls.Add(this.rbSourceLookupRequired);
+            this.gbTarget.Controls.Add(this.rbSourceLookupOptional);
+            this.gbTarget.Location = new System.Drawing.Point(70, 45);
             this.gbTarget.Name = "gbTarget";
-            this.gbTarget.Size = new System.Drawing.Size(388, 82);
+            this.gbTarget.Size = new System.Drawing.Size(55, 105);
             this.gbTarget.TabIndex = 2;
             this.gbTarget.TabStop = false;
-            this.gbTarget.Text = "Target";
             // 
-            // lblTargetName
+            // rbSourceCollection
             // 
-            this.lblTargetName.AutoSize = true;
-            this.lblTargetName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTargetName.Location = new System.Drawing.Point(51, 27);
-            this.lblTargetName.Name = "lblTargetName";
-            this.lblTargetName.Size = new System.Drawing.Size(78, 13);
-            this.lblTargetName.TabIndex = 7;
-            this.lblTargetName.Text = "Target name";
+            this.rbSourceCollection.AutoSize = true;
+            this.rbSourceCollection.Location = new System.Drawing.Point(6, 61);
+            this.rbSourceCollection.Name = "rbSourceCollection";
+            this.rbSourceCollection.Size = new System.Drawing.Size(33, 17);
+            this.rbSourceCollection.TabIndex = 9;
+            this.rbSourceCollection.TabStop = true;
+            this.rbSourceCollection.Text = "N";
+            this.rbSourceCollection.UseVisualStyleBackColor = true;
             // 
-            // label4
+            // rbSourceLookupRequired
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 46);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(34, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Type:";
+            this.rbSourceLookupRequired.AutoSize = true;
+            this.rbSourceLookupRequired.Location = new System.Drawing.Point(6, 38);
+            this.rbSourceLookupRequired.Name = "rbSourceLookupRequired";
+            this.rbSourceLookupRequired.Size = new System.Drawing.Size(31, 17);
+            this.rbSourceLookupRequired.TabIndex = 8;
+            this.rbSourceLookupRequired.TabStop = true;
+            this.rbSourceLookupRequired.Text = "1";
+            this.rbSourceLookupRequired.UseVisualStyleBackColor = true;
             // 
-            // cmbTargetPropertyType
+            // rbSourceLookupOptional
             // 
-            this.cmbTargetPropertyType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmbTargetPropertyType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTargetPropertyType.FormattingEnabled = true;
-            this.cmbTargetPropertyType.Location = new System.Drawing.Point(54, 43);
-            this.cmbTargetPropertyType.Name = "cmbTargetPropertyType";
-            this.cmbTargetPropertyType.Size = new System.Drawing.Size(328, 21);
-            this.cmbTargetPropertyType.TabIndex = 4;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 27);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(38, 13);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Name:";
+            this.rbSourceLookupOptional.AutoSize = true;
+            this.rbSourceLookupOptional.Location = new System.Drawing.Point(6, 15);
+            this.rbSourceLookupOptional.Name = "rbSourceLookupOptional";
+            this.rbSourceLookupOptional.Size = new System.Drawing.Size(46, 17);
+            this.rbSourceLookupOptional.TabIndex = 7;
+            this.rbSourceLookupOptional.TabStop = true;
+            this.rbSourceLookupOptional.Text = "0...1";
+            this.rbSourceLookupOptional.UseVisualStyleBackColor = true;
             // 
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(244, 328);
+            this.btnOk.Location = new System.Drawing.Point(239, 347);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 5;
@@ -169,7 +244,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(325, 328);
+            this.btnCancel.Location = new System.Drawing.Point(320, 347);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 6;
@@ -196,14 +271,14 @@
             this.txtNeo4jName.TabIndex = 2;
             this.txtNeo4jName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtNeo4jName_KeyDown);
             // 
-            // label3
+            // lblNeo4jName
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Neo4j name:";
+            this.lblNeo4jName.AutoSize = true;
+            this.lblNeo4jName.Location = new System.Drawing.Point(6, 68);
+            this.lblNeo4jName.Name = "lblNeo4jName";
+            this.lblNeo4jName.Size = new System.Drawing.Size(67, 13);
+            this.lblNeo4jName.TabIndex = 7;
+            this.lblNeo4jName.Text = "Neo4j name:";
             // 
             // label6
             // 
@@ -231,7 +306,7 @@
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.txtRelationshipName);
             this.groupBox1.Controls.Add(this.txtNeo4jName);
-            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.lblNeo4jName);
             this.groupBox1.Location = new System.Drawing.Point(12, 35);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(388, 111);
@@ -243,12 +318,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(413, 359);
+            this.ClientSize = new System.Drawing.Size(408, 378);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.cbAutoLabel);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
-            this.Controls.Add(this.gbTarget);
             this.Controls.Add(this.gbSource);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -260,6 +334,8 @@
             this.Text = "Edge Editor";
             this.gbSource.ResumeLayout(false);
             this.gbSource.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.gbTarget.ResumeLayout(false);
             this.gbTarget.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -273,21 +349,27 @@
 
         private System.Windows.Forms.GroupBox gbSource;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cmbSourcePropertyType;
         private System.Windows.Forms.GroupBox gbTarget;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblSourceName;
         private System.Windows.Forms.Label lblTargetName;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox cmbTargetPropertyType;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox txtRelationshipName;
         private System.Windows.Forms.TextBox txtNeo4jName;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblNeo4jName;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox cbAutoLabel;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton rbSourceCollection;
+        private System.Windows.Forms.RadioButton rbSourceLookupRequired;
+        private System.Windows.Forms.RadioButton rbSourceLookupOptional;
+        private System.Windows.Forms.RadioButton rbTargetLookupRequired;
+        private System.Windows.Forms.RadioButton rbTargetLookupOptional;
+        private System.Windows.Forms.RadioButton rbTargetNone;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton rbTargetCollection;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblCardinality;
     }
 }

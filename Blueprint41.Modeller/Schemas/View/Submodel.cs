@@ -166,17 +166,15 @@ namespace Blueprint41.Modeller.Schemas
                 return Model == null || drawingNode == null;
             }
 
-            //internal void Select()
-            //{
-            //    if (IsModelAndDrawingNodeNull())
-            //        return;
+            internal void Select()
+            {
+                if (IsModelAndDrawingNodeNull())
+                    return;
 
-            //    DNode node = GetNode();
-
-            //    node.DrawingNode.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
-
-            //    Model.GraphEditor.Viewer.Invalidate(node);
-            //}
+                DNode node = GetNode();
+                node.DrawingNode.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+                Model.GraphEditor.Viewer.Invalidate(node);
+            }
 
             internal void Deselect()
             {

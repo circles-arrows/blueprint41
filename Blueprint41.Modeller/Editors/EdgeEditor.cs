@@ -27,8 +27,11 @@ namespace Blueprint41.Modeller.Editors
 
         public Model Model { get; set; }
 
-        public PropertyType SourceType => (PropertyType)cmbSourcePropertyType.SelectedItem;
-        public PropertyType TargetType => (PropertyType)cmbTargetPropertyType.SelectedItem;
+        public PropertyType SourceType => GetSourceMutliplicity();
+        public bool SourceNullable => rbSourceLookupOptional.Checked || rbSourceCollection.Checked;
+
+        public PropertyType TargetType => GetTargetMutliplicity();
+        public bool TargetNullable => rbTargetLookupOptional.Checked || rbTargetCollection.Checked;
 
         public string TargetName
         {
@@ -40,29 +43,77 @@ namespace Blueprint41.Modeller.Editors
         {
             btnOk.Click += BtnOk_Click;
             btnCancel.Click += BtnCancel_Click;
-
-            foreach (PropertyType item in Enum.GetValues(typeof(PropertyType)))
-            {
-                // skip the property type none on source
-                if (item != PropertyType.None)
-                    cmbSourcePropertyType.Items.Add(item);
-
-                cmbTargetPropertyType.Items.Add(item);
-            }
-
-            cmbSourcePropertyType.SelectedIndex = 0;
-            cmbTargetPropertyType.SelectedIndex = 0;
+            rbSourceLookupOptional.Checked = true;
+            rbTargetNone.Checked = true;
 
             cbAutoLabel.CheckStateChanged += CbAutoLabel_CheckStateChanged;
-            cmbSourcePropertyType.SelectedIndexChanged += CmbSourcePropertyType_SelectedIndexChanged;
-            cmbTargetPropertyType.SelectedIndexChanged += CmbSourcePropertyType_SelectedIndexChanged;
 
+            rbSourceLookupOptional.CheckedChanged += UpdateCardinalityMessage;
+            rbSourceLookupRequired.CheckedChanged += UpdateCardinalityMessage;
+            rbSourceCollection.CheckedChanged += UpdateCardinalityMessage;
+
+            rbTargetNone.CheckedChanged += UpdateCardinalityMessage;
+            rbTargetLookupOptional.CheckedChanged += UpdateCardinalityMessage;
+            rbTargetLookupRequired.CheckedChanged += UpdateCardinalityMessage;
+            rbTargetCollection.CheckedChanged += UpdateCardinalityMessage;
+
+            Apply();
+            ShowHideControls();
+        }
+
+        void ShowHideControls()
+        {
+            bool visible = Model.ModellerType == ModellerType.Blueprint41;
+
+            txtNeo4jName.Visible = visible;
+            lblNeo4jName.Visible = visible;
+        }
+
+        private void UpdateCardinalityMessage(object sender, EventArgs e)
+        {
             Apply();
         }
 
-        private void CmbSourcePropertyType_SelectedIndexChanged(object sender, EventArgs e)
+        public string GetRelationshipCardinality()
         {
-            Apply();
+            string cardinality = "must have only one relationship";
+
+            if (SourceNullable)
+            {
+                if (SourceType == PropertyType.Collection)
+                    cardinality = "can have zero or more relationships";
+                else
+                    cardinality = "can have zero or one relationship";
+            }
+            else
+            {
+                if (SourceType == PropertyType.Collection)
+                    cardinality = "must have at least one or more relationships";
+            }
+
+            return string.Format("■ {0} {1} to {2}.", SourceName, cardinality, TargetName);
+        }
+
+        PropertyType GetSourceMutliplicity()
+        {
+            if (rbSourceCollection.Checked)
+                return PropertyType.Collection;
+
+            if (rbSourceLookupOptional.Checked || rbSourceLookupRequired.Checked)
+                return PropertyType.Lookup;
+
+            return PropertyType.Lookup;
+        }
+
+        PropertyType GetTargetMutliplicity()
+        {
+            if (rbTargetCollection.Checked)
+                return PropertyType.Collection;
+
+            if (rbTargetLookupOptional.Checked || rbTargetLookupRequired.Checked)
+                return PropertyType.Lookup;
+
+            return PropertyType.None;
         }
 
         private void CbAutoLabel_CheckStateChanged(object sender, EventArgs e)
@@ -73,7 +124,10 @@ namespace Blueprint41.Modeller.Editors
         private void BtnOk_Click(object sender, EventArgs e)
         {
             Relationship.Name = txtRelationshipName.Text;
-            Relationship.Type = txtNeo4jName.Text;
+            Relationship.Type = Model.ModellerType == ModellerType.Neo4j ? txtRelationshipName.Text : txtNeo4jName.Text;           
+
+            Relationship.Source.Nullable = SourceNullable;
+            Relationship.Target.Nullable = TargetNullable;
 
             DialogResult = DialogResult.OK;
             Close();
@@ -94,7 +148,6 @@ namespace Blueprint41.Modeller.Editors
         void Apply()
         {
             relationship = new Schemas.Relationship(Model);
-
 
             string neo4jType;
             string relationshipName;
@@ -176,6 +229,7 @@ namespace Blueprint41.Modeller.Editors
                     throw new NotSupportedException(string.Format("Source Property Type {0} is currently not supported", SourceType));
             }
 
+            lblCardinality.Text = GetRelationshipCardinality();
 
             if (cbAutoLabel.Checked == false)
                 return;

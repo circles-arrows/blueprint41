@@ -269,9 +269,20 @@ namespace Blueprint41.Modeller
                 editor.SourceName = e.Edge.Source;
                 editor.TargetName = e.Edge.Target;
 
+
+
                 if (editor.ShowDialog() == DialogResult.OK)
                 {
                     Model.InsertRelationship(editor.SourceName, editor.TargetName, editor.Relationship, e.Edge);
+                    entityEditor.CloseEditor();
+                    graphEditor.Clear();
+
+                    if (e.Edge.SourceNode.UserData is Submodel.NodeLocalType subNode)
+                    {
+                        entityEditor.Show(subNode.Entity, Model);
+                        subNode.Select();
+                    }
+
                 }
                 else
                     Model.GraphEditor.Viewer.Undo();
@@ -308,14 +319,14 @@ namespace Blueprint41.Modeller
             CloseNodeEditor();
             CloseEdgeEditor();
             RefreshNodeCombobox();
-            DefaultOrExpandPropertiesWidth(false);
+            DefaultOrExpandPropertiesWidth(false);            
         }
 
         void GraphEditor_NodeSelected(object sender, NodeEventArgs e)
         {
             if (!(e.Node.UserData is Submodel.NodeLocalType))
                 throw new NotSupportedException();
-            
+
             SelectedNode = e.Node.UserData as Submodel.NodeLocalType;
 
             if (graphEditor.SelectedEntities.Count > 1)
