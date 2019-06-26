@@ -85,6 +85,7 @@ namespace Blueprint41.Modeller.Controls
         {
             (gViewer as IViewer).MouseDown += GraphEditor_MouseDown;
             (gViewer as IViewer).MouseMove += GraphEditor_MouseMove;
+            (gViewer as IViewer).MouseUp += GraphEditor_MouseUp;
 
             gViewer.ToolBarIsVisible = false;
             gViewer.EdgeRemoved += GViewer_EdgeRemoved;
@@ -98,6 +99,26 @@ namespace Blueprint41.Modeller.Controls
             gViewer.KeyUp += GViewer_KeyUp;
             // disable the multiple selection highlight
             gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };
+        }
+
+        private void GraphEditor_MouseUp(object sender, MsaglMouseEventArgs e)
+        {
+            if(e.RightButtonIsPressed)
+                return;
+
+            var point = new GeometryPoint(e.X, e.Y);
+            object obj = gViewer.GetObjectAt((int)point.X, (int)point.Y);
+
+            if (obj is DNode && SelectedEntities.Count > 0)
+            {
+                Submodel displayedModel = null;
+
+                if (this.Viewer.Tag != null && this.Viewer.Tag is Submodel)
+                    displayedModel = this.Viewer.Tag as Submodel;
+
+                if (displayedModel != null)
+                    displayedModel.Model.CaptureCoordinates();
+            }
         }
 
         private void GraphEditor_MouseMove(object sender, MsaglMouseEventArgs e)
