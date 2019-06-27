@@ -18,6 +18,7 @@ namespace Blueprint41.Modeller.Controls
 {
     public partial class GraphEditor : UserControl
     {
+        #region Events
         public event EventHandler<NodeEventArgs> InsertNode;
         public event EventHandler<NodeEventArgs> NodeSelected;
         public event EventHandler<NodeEventArgs> EntityDeleted;
@@ -28,10 +29,11 @@ namespace Blueprint41.Modeller.Controls
         public event EventHandler NoneSelected;
         public event EventHandler EditSubmodelClicked;
         public event EventHandler RedoLayout;
-
         public event EventHandler EdgeModeClicked;
         public event EventHandler PanModeClicked;
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Returns the GViewer contained in the control.
         /// </summary>
@@ -52,6 +54,30 @@ namespace Blueprint41.Modeller.Controls
         public ModellerType ModellerType { get; set; }
         public string EntityNodeName => ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
 
+        bool panButtonPressedOnMenu;
+        public bool PanButtonPressedOnMenu
+        {
+            get { return panButtonPressedOnMenu; }
+            set { panButtonPressedOnMenu = value; }
+        }
+
+        /// <summary>
+        /// Current draggable entities
+        /// </summary>
+        public ArrayList SelectedEntities
+        {
+            get
+            {
+                ArrayList al = new ArrayList();
+                foreach (IViewerObject ob in gViewer.Entities)
+                    if (ob.MarkedForDragging)
+                        al.Add(ob);
+
+                return al;
+            }
+        } 
+        #endregion
+
         /// <summary>
         /// An List containing all the node type entries (custom node types for insetion).
         /// </summary>
@@ -61,25 +87,18 @@ namespace Blueprint41.Modeller.Controls
         /// The point where the user called up the context menu.
         /// </summary>
         protected GeometryPoint m_MouseRightButtonDownPoint;
-        private object selectedObject;
+
+        object selectedObject;
         AttributeBase selectedObjectAttr;
         AttributeBase selectedNodeAttr;
-
+        readonly ToolTip toolTip = new ToolTip();
+        ContextMenuStrip contextMenuStrip;
 
         public GraphEditor()
         {
             InitializeComponent();
             Load += GraphEditor_Load;
         }
-
-        bool panButtonPressedOnMenu;
-        public bool PanButtonPressedOnMenu
-        {
-            get { return panButtonPressedOnMenu; }
-            set { panButtonPressedOnMenu = value; }
-        }
-
-        readonly Dictionary<object, DrawingColor> draggedObjectOriginalColors = new Dictionary<object, DrawingColor>();
 
         void GraphEditor_Load(object sender, EventArgs e)
         {
@@ -98,12 +117,13 @@ namespace Blueprint41.Modeller.Controls
             gViewer.ObjectUnderMouseCursorChanged += GViewer_ObjectUnderMouseCursorChanged;
             gViewer.KeyUp += GViewer_KeyUp;
             // disable the multiple selection highlight
-            gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };            
+            gViewer.LayoutEditor.ToggleEntityPredicate = (mk, mb, d) => { return false; };
         }
 
+        #region IViewer Event Handler
         private void GraphEditor_MouseUp(object sender, MsaglMouseEventArgs e)
         {
-            if(e.RightButtonIsPressed)
+            if (e.RightButtonIsPressed)
                 return;
 
             var point = new GeometryPoint(e.X, e.Y);
@@ -138,6 +158,24 @@ namespace Blueprint41.Modeller.Controls
                 gViewer.PanButtonPressed = false;
         }
 
+        private void GraphEditor_MouseDown(object sender, MsaglMouseEventArgs e)
+        {
+            if (e.RightButtonIsPressed && !e.Handled)
+            {
+                m_MouseRightButtonDownPoint = (gViewer).ScreenToSource(e);
+                contextMenuStrip = BuildContextMenu(new GeometryPoint(e.X, e.Y));
+                contextMenuStrip.Show(this, new Point(e.X, e.Y));
+            }
+
+            bool leftButtonPressed = e.LeftButtonIsPressed;
+            bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
+
+            if (altPressed && leftButtonPressed && !PanButtonPressedOnMenu)
+                gViewer.PanButtonPressed = true;
+        }
+        #endregion
+
+        #region GViewer Event Handler
         private void GViewer_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
@@ -147,8 +185,7 @@ namespace Blueprint41.Modeller.Controls
             }
         }
 
-        readonly ToolTip toolTip = new ToolTip();
-        void GViewer_ObjectUnderMouseCursorChanged(object sender, ObjectUnderMouseCursorChangedEventArgs e)
+        private void GViewer_ObjectUnderMouseCursorChanged(object sender, ObjectUnderMouseCursorChangedEventArgs e)
         {
             selectedObject = e.OldObject?.DrawingObject;
 
@@ -192,24 +229,22 @@ namespace Blueprint41.Modeller.Controls
             }
         }
 
-        void RestoreSelectedObjAttr()
-        {
-            if (selectedObject is Edge edge)
-                edge.Attr = (EdgeAttr)selectedObjectAttr;
-
-            if (selectedObject is DrawingNode dNode)
-            {
-                if(dNode.Attr.Color != DrawingColor.Green)
-                    dNode.Attr = (NodeAttr)selectedNodeAttr;
-            }
-        }
-
         void GViewerMouseWheel(object sender, MouseEventArgs e)
         {
             int delta = e.Delta;
             if (delta != 0)
                 gViewer.ZoomF *= delta < 0 ? 0.9 : 1.1;
         }
+        private void GViewer_EdgeAdded(object sender, EventArgs e)
+        {
+            EdgeAdded?.Invoke(this, new EdgeEventArgs(sender as Edge));
+        }
+
+        void GViewer_EdgeRemoved(object sender, EventArgs e)
+        {
+            EdgeRemoved?.Invoke(this, new EdgeEventArgs(sender as Edge));
+        }
+        #endregion
 
         void SetDragDecorator(IViewerObject obj)
         {
@@ -233,43 +268,48 @@ namespace Blueprint41.Modeller.Controls
             NoneSelected?.Invoke(this, EventArgs.Empty);
         }
 
-        // Unselect all selected entities
-        public void Clear()
-        {
-            gViewer.LayoutEditor.Clear();
-        }
-
         void SetEdgeDragDecorator(IViewerEdge viewerEdge)
         {
             if (viewerEdge is DEdge dEdge)
                 EdgeSelected?.Invoke(this, new EdgeEventArgs(dEdge.DrawingEdge));
         }
 
-        private void GViewer_EdgeAdded(object sender, EventArgs e)
+        void RestoreSelectedObjAttr()
         {
-            EdgeAdded?.Invoke(this, new EdgeEventArgs(sender as Edge));
-        }
+            if (selectedObject is Edge edge)
+                edge.Attr = (EdgeAttr)selectedObjectAttr;
 
-        void GViewer_EdgeRemoved(object sender, EventArgs e)
-        {
-            EdgeRemoved?.Invoke(this, new EdgeEventArgs(sender as Edge));
-        }
-
-        private ContextMenuStrip contextMenuStrip;
-        void GraphEditor_MouseDown(object sender, MsaglMouseEventArgs e)
-        {
-            if (e.RightButtonIsPressed && !e.Handled)
+            if (selectedObject is DrawingNode dNode)
             {
-                m_MouseRightButtonDownPoint = (gViewer).ScreenToSource(e);
-                contextMenuStrip = BuildContextMenu(new GeometryPoint(e.X, e.Y));
-                contextMenuStrip.Show(this, new Point(e.X, e.Y));
+                if (dNode.Attr.Color != DrawingColor.Green)
+                    dNode.Attr = (NodeAttr)selectedNodeAttr;
+            }
+        }
+
+        void RemoveDraggableEntities()
+        {
+            foreach (IViewerObject obj in SelectedEntities)
+            {
+                if (obj.MarkedForDragging)
+                    obj.MarkedForDragging = false;
+
+                RemoveDragDecorator(obj);
+            }
+        }
+
+        void AnalyzeObjectsToRemove()
+        {
+            if (gViewer.LayoutEditor.SelectedEdge != null)
+            {
+                gViewer.RemoveEdge(gViewer.LayoutEditor.SelectedEdge, true);
+                return;
             }
 
-            bool leftButtonPressed = e.LeftButtonIsPressed;
-            bool altPressed = (ModifierKeys & Keys.Alt) == Keys.Alt;
-
-            if (altPressed && leftButtonPressed && !PanButtonPressedOnMenu)
-                gViewer.PanButtonPressed = true;
+            foreach (IViewerObject ob in SelectedEntities)
+            {
+                if (ob is IViewerNode node)
+                    EntityDeleted?.Invoke(this, new NodeEventArgs(node.Node, m_MouseRightButtonDownPoint));
+            }
         }
 
         void AnaylyzeLeftButtonClick(IViewerObject obj)
@@ -278,6 +318,31 @@ namespace Blueprint41.Modeller.Controls
             {
                 NodeSelected?.Invoke(this, new NodeEventArgs(dNode.DrawingNode, new GeometryPoint(0, 0)));
             }
+        }
+
+        #region Context Menu
+
+        void BuildSelectionModeContextMenu(ContextMenuStrip cm)
+        {
+            ToolStripSeparator separator = new ToolStripSeparator();
+            cm.Items.Add(separator);
+
+            ToolStripMenuItem edgeMode = new ToolStripMenuItem("Edge mode");
+            edgeMode.Name = "edgeModeMenuItem";
+            edgeMode.Checked = gViewer.InsertingEdge;
+            edgeMode.CheckOnClick = true;
+            edgeMode.Click += EdgeMode_Click;
+            cm.Items.Add(edgeMode);
+
+            ToolStripMenuItem panMode = new ToolStripMenuItem("Pan mode");
+            panMode.Name = "panModeMenuItem";
+            panMode.Checked = gViewer.PanButtonPressed;
+            panMode.CheckOnClick = true;
+            panMode.Click += PanMode_Click;
+            cm.Items.Add(panMode);
+
+            separator = new ToolStripSeparator();
+            cm.Items.Add(separator);
         }
 
         protected virtual ContextMenuStrip BuildContextMenu(GeometryPoint point)
@@ -332,43 +397,9 @@ namespace Blueprint41.Modeller.Controls
 
             return cm;
         }
+        #endregion
 
-        void BuildSelectionModeContextMenu(ContextMenuStrip cm)
-        {
-            ToolStripSeparator separator = new ToolStripSeparator();
-            cm.Items.Add(separator);
-
-            ToolStripMenuItem edgeMode = new ToolStripMenuItem("Edge mode");
-            edgeMode.Name = "edgeModeMenuItem";
-            edgeMode.Checked = gViewer.InsertingEdge;
-            edgeMode.CheckOnClick = true;
-            edgeMode.Click += EdgeMode_Click;
-            cm.Items.Add(edgeMode);
-
-            ToolStripMenuItem panMode = new ToolStripMenuItem("Pan mode");
-            panMode.Name = "panModeMenuItem";
-            panMode.Checked = gViewer.PanButtonPressed;
-            panMode.CheckOnClick = true;
-            panMode.Click += PanMode_Click;
-            cm.Items.Add(panMode);
-
-            separator = new ToolStripSeparator();
-            cm.Items.Add(separator);
-        }
-
-        public ArrayList SelectedEntities
-        {
-            get
-            {
-                ArrayList al = new ArrayList();
-                foreach (IViewerObject ob in gViewer.Entities)
-                    if (ob.MarkedForDragging)
-                        al.Add(ob);
-
-                return al;
-            }
-        }
-
+        #region ContextMenu Event Hanlder
         void ExcludeEntityClick(object sender, EventArgs e)
         {
             foreach (IViewerObject ob in SelectedEntities)
@@ -429,36 +460,19 @@ namespace Blueprint41.Modeller.Controls
 
             PanModeClicked?.Invoke(sender, EventArgs.Empty);
         }
+        #endregion
 
         internal void AddNodeType(NodeTypeEntry nte)
         {
             NodeTypes.Add(nte);
         }
 
-        private void RemoveDraggableEntities()
+        /// <summary>
+        /// Unselect all draggable / selected entities
+        /// </summary>
+        public void Clear()
         {
-            foreach (IViewerObject obj in SelectedEntities)
-            {
-                if (obj.MarkedForDragging)
-                    obj.MarkedForDragging = false;
-
-                RemoveDragDecorator(obj);
-            }
-        }
-
-        void AnalyzeObjectsToRemove()
-        {
-            if (gViewer.LayoutEditor.SelectedEdge != null)
-            {
-                gViewer.RemoveEdge(gViewer.LayoutEditor.SelectedEdge, true);
-                return;
-            }
-
-            foreach (IViewerObject ob in SelectedEntities)
-            {
-                if (ob is IViewerNode node)
-                    EntityDeleted?.Invoke(this, new NodeEventArgs(node.Node, m_MouseRightButtonDownPoint));
-            }
+            gViewer.LayoutEditor.Clear();
         }
     }
 }
