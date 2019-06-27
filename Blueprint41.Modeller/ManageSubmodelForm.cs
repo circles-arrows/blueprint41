@@ -19,6 +19,7 @@ namespace Blueprint41.Modeller
         public Submodel Submodel { get; private set; }
         public Model Model { get; private set; }
         private bool IsMainModel { get; set; }
+        private bool IsNewModel { get; set; }
 
         public ManageSubmodelForm(Model modeller) : this(modeller, new Submodel(modeller))
         {
@@ -31,6 +32,7 @@ namespace Blueprint41.Modeller
             Model = modeller;
             Submodel = submodel;
             IsMainModel = submodel.Name == Constants.MainModel;
+            IsNewModel = submodel.Name == null;
             AssignToUi();
             Text = "Edit Submodel";
         }
@@ -79,6 +81,7 @@ namespace Blueprint41.Modeller
             //chkIsDraft.Enabled = !IsMainModel;
             //chkIsLaboratory.Enabled = !IsMainModel;
             btnDelete.Enabled = !IsMainModel;
+            btnDelete.Enabled = !IsNewModel;
         }
 
         private void btnOK_Click(object sender, EventArgs e)

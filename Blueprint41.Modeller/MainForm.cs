@@ -161,9 +161,7 @@ namespace Blueprint41.Modeller
                 editor.Model = Model;
                 editor.SourceName = e.Edge.Source;
                 editor.TargetName = e.Edge.Target;
-
-
-
+                
                 if (editor.ShowDialog() == DialogResult.OK)
                 {
                     Model.InsertRelationship(editor.SourceName, editor.TargetName, editor.Relationship, e.Edge);
@@ -296,7 +294,6 @@ namespace Blueprint41.Modeller
                     Model = new Model();
             }
 
-
             Model.Type = Model.Type ?? modellerType.ToString();
             Model.HasChanges = false;
             Model.BeforeReBind = ClearEvents;
@@ -344,7 +341,6 @@ namespace Blueprint41.Modeller
             graphEditor.NodeTypes.Clear();
             string contextMenuString = Model.ModellerType == ModellerType.Blueprint41 ? "New Entity" : "New Node";
             string label = Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
-
 
             if (graphEditor.NodeTypes.SingleOrDefault(x => x.Name == contextMenuString) == null)
             {
@@ -691,7 +687,6 @@ namespace Blueprint41.Modeller
             sugiyamaToolStripMenuItem.Checked = false;
 
             AddOrClearViewModeCheckEvents(true);
-
 
             Model.ViewMode = LayoutMethod.UseSettingsOfTheGraph;
             Model.RebindControl();
