@@ -18,24 +18,29 @@ namespace Blueprint41.Modeller
 {
     public partial class MainForm : Form
     {
-        private bool showLabels = false;
-        private bool showInherited = false;
-        private bool removingEdge = false;
+        #region Private Properties
+        bool showLabels = false;
+        bool showInherited = false;
+        bool removingEdge = false;
+        int idcounter = 0;
+        int splitterDistance;
 
-        private const string NEWSUBMODEL = "New...";
-        private const string FORMNAME = @"Blueprint41:\> Graph Modeller";
-        private const string NEO4J_EDITOR = "Neo4j Model";
-        private const string B41_EDITOR = "Blueprint41 Model";
+        const string NEWSUBMODEL = "New...";
+        const string FORMNAME = @"Blueprint41:\> Graph Modeller";
+        const string NEO4J_EDITOR = "Neo4j Model";
+        const string B41_EDITOR = "Blueprint41 Model";
 
+        Submodel mainSubmodel => Model.Submodels.Submodel[0];
+        NodeTypeEntry newNodeTypeEntity { get; set; }
+        Submodel.NodeLocalType selectedNode { get; set; } 
+        #endregion
+
+        #region Properties
         public Model Model { get; private set; }
         private string m_StoragePath = null;
-
         public string StoragePath
         {
-            set
-            {
-                this.m_StoragePath = value;
-            }
+            set { this.m_StoragePath = value; }
             get
             {
                 if (this.m_StoragePath == null)
@@ -44,19 +49,8 @@ namespace Blueprint41.Modeller
                 return this.m_StoragePath;
             }
         }
-
-        private Submodel MainSubmodel
-        {
-            get
-            {
-                return Model.Submodels.Submodel[0];
-            }
-        }
-
-        internal NodeTypeEntry NewEntity { get; private set; }
-        internal Submodel.NodeLocalType SelectedNode { get; private set; }
-
-        public string EntityNodeName => Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
+        public string EntityNodeName => Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node"; 
+        #endregion
 
         public MainForm()
         {
@@ -65,6 +59,45 @@ namespace Blueprint41.Modeller
 
             InitializeComponent();
             FormClosing += MainForm_FormClosing;
+        }
+
+        #region Main Form Events
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            bool recoveryFileExists = File.Exists(Recovery.Instance.RecoveryFile);
+            string storagePath = StoragePath;
+
+            if (recoveryFileExists)
+            {
+                DialogResult result = MessageBox.Show("Do you want to recover unsaved changes?", "Recover File", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                    StoragePath = Recovery.Instance.RecoveryFile;
+            }
+
+            SetModuleMenuItemVisibility();
+            InitializeXmlModeller();
+
+            StoragePath = storagePath;
+
+            AddNewEntitiesToSubModel(Model.Submodels.Submodel[0].Name);
+            splitterDistance = splitContainer.SplitterDistance;
+            SizeChanged += MainForm_SizeChanged;
+        }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e)
+        {
+            splitterDistance = splitContainer.SplitterDistance;
+        }
+
+        private void SplitContainer1_SizeChanged(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(string.Format("Width:{0}", splitContainer.Panel2.Width));
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            RegistryHandler.LastOpenedSubmodel = Model.DisplayedSubmodel.Name;
+            RegistryHandler.LastOpenedFile = string.IsNullOrEmpty(StoragePath) ? string.Empty : Path.GetFullPath(this.StoragePath);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -84,147 +117,7 @@ namespace Blueprint41.Modeller
             else
                 e.Cancel = true;
         }
-
-        private void SetModuleMenuItemVisibility()
-        {
-            generateUpdateScriptToolStripMenuItem.Visible = (ModuleLoader.GetModule("Compare") != null);
-            generateUpdateScriptToolStripMenuItem1.Visible = (ModuleLoader.GetModule("Compare") != null);
-
-            generateDocumentToolStripMenuItem.Visible = (ModuleLoader.GetModule("Document") != null);
-            generateDocumentationToolStripMenuItem.Visible = (ModuleLoader.GetModule("Document") != null);
-        }
-
-        private void SetModellerTypeMenuItemVisibility()
-        {
-            generateCodeToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
-            generateCodeToolStripMenuItem1.Visible = Model.ModellerType == ModellerType.Blueprint41;
-
-            functionalIdToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
-            functionalIdToolStripMenuItem1.Visible = Model.ModellerType == ModellerType.Blueprint41;
-        }
-
-        void InitializeXmlModeller(ModellerType type = ModellerType.Blueprint41)
-        {
-            InitializeModel(type);
-            InitializeSubmodel();
-            ReloadGraph();
-            Recovery.Instance.Start(this, () => Console.WriteLine("Auto saved modeller"));
-
-            SetModellerTypeMenuItemVisibility();
-        }
-
-        void InitializeModel(ModellerType modellerType)
-        {
-            if ((object)Model != null)
-                Model.UnRegisterEvents();
-
-            Model = new Model();
-
-            try
-            {
-                if (File.Exists(StoragePath))
-                    Model = new Model(StoragePath);
-            }
-            catch (XmlException)
-            {
-                MessageBox.Show($"The path {StoragePath} is an invalid xml file", "Invalid Xml File", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                RegistryHandler.LastOpenedFile = string.Empty;
-
-                if (Model == null)
-                    Model = new Model();
-            }
-
-
-            Model.Type = Model.Type ?? modellerType.ToString();
-            Model.HasChanges = false;
-            Model.BeforeReBind = ClearEvents;
-            Model.AfterReBind = AddEvents;
-
-            Model.ShowRelationshipLabels = showLabels;
-            Model.ShowInheritedRelationships = showInherited;
-
-            string editorName = Model.ModellerType == ModellerType.Blueprint41 ? B41_EDITOR : NEO4J_EDITOR;
-            this.Text = $"{FORMNAME} - ({editorName})";
-            graphEditor.ModellerType = Model.ModellerType;
-
-            //CheckGuidDiscrepancies();
-        }
-
-        void InitializeSubmodel()
-        {
-            if (Model.DisplayedSubmodel == null)
-            {
-                if (Model.Submodels.Submodel.Count == 0)
-                {
-                    Submodel main = new Submodel(Model);
-                    main.Name = Constants.MainModel;
-                    Model.Submodels.Submodel.Add(main);
-                }
-
-                Model.DisplayedSubmodel = Model.Submodels.Submodel.Where(m => m.Name == RegistryHandler.LastOpenedSubmodel).FirstOrDefault();
-                Model.MainSubmodel = MainSubmodel;
-
-                if (Model.DisplayedSubmodel == null)
-                    Model.DisplayedSubmodel = MainSubmodel;
-            }
-
-            FillSubmodelComboBox(Model.DisplayedSubmodel);
-            InitializeGraphNodeTypes();
-            entityEditor.EnableDisableControlsForType(Model.ModellerType);
-
-            btnShowLabels.Checked = Model.ShowRelationshipLabels;
-            btnShowInheritedRelationships.Checked = Model.ShowInheritedRelationships;
-            idcounter = 0;
-        }
-
-        void InitializeGraphNodeTypes()
-        {
-            graphEditor.NodeTypes.Clear();
-            string contextMenuString = Model.ModellerType == ModellerType.Blueprint41 ? "New Entity" : "New Node";
-            string label = Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
-
-
-            if (graphEditor.NodeTypes.SingleOrDefault(x => x.Name == contextMenuString) == null)
-            {
-                NewEntity = new NodeTypeEntry(contextMenuString, Microsoft.Msagl.Drawing.Shape.Circle, Microsoft.Msagl.Drawing.Color.Transparent, Microsoft.Msagl.Drawing.Color.Black, 10, null, label);
-                graphEditor.AddNodeType(NewEntity);
-            }
-        }
-
-        void ClearEvents()
-        {
-            graphEditor.InsertNode -= GraphEditor_InsertNode;
-            graphEditor.EditSubmodelClicked -= GraphEditor_EditSubmodelClick;
-            graphEditor.NodeSelected -= GraphEditor_NodeSelected;
-            graphEditor.NoneSelected -= GraphEditor_NoSelection;
-            graphEditor.EntityExcluded -= GraphEditor_ExcludeEntity;
-            graphEditor.EntityDeleted -= GraphEditor_DeleteEntity;
-            graphEditor.EdgeAdded -= GraphEditor_EdgeAdded;
-            graphEditor.EdgeRemoved -= GraphEditor_EdgeRemoved;
-            graphEditor.EdgeModeClicked -= GraphEditor_EdgeModeClicked;
-            graphEditor.PanModeClicked -= GraphEditor_PanModeClicked;
-        }
-
-        void AddEvents()
-        {
-            graphEditor.InsertNode += GraphEditor_InsertNode;
-            graphEditor.EditSubmodelClicked += GraphEditor_EditSubmodelClick;
-            graphEditor.NodeSelected += GraphEditor_NodeSelected;
-            graphEditor.NoneSelected += GraphEditor_NoSelection;
-            graphEditor.EntityExcluded += GraphEditor_ExcludeEntity;
-            graphEditor.EntityDeleted += GraphEditor_DeleteEntity;
-            graphEditor.EdgeAdded += GraphEditor_EdgeAdded;
-            graphEditor.EdgeRemoved += GraphEditor_EdgeRemoved;
-            graphEditor.EdgeModeClicked += GraphEditor_EdgeModeClicked;
-            graphEditor.PanModeClicked += GraphEditor_PanModeClicked;
-        }
-
-        void SetCheckedModeMenuControls()
-        {
-            tsbPan.Checked = graphEditor.PanButtonPressedOnMenu;
-            panToolStripMenuItem.Checked = graphEditor.PanButtonPressedOnMenu;
-            tsbEdgeInsertion.Checked = graphEditor.Viewer.InsertingEdge;
-        }
+        #endregion
 
         #region Graph Editor Events
         private void GraphEditor_PanModeClicked(object sender, EventArgs e)
@@ -319,7 +212,7 @@ namespace Blueprint41.Modeller
             CloseNodeEditor();
             CloseEdgeEditor();
             RefreshNodeCombobox();
-            DefaultOrExpandPropertiesWidth(false);            
+            DefaultOrExpandPropertiesWidth(false);
         }
 
         void GraphEditor_NodeSelected(object sender, NodeEventArgs e)
@@ -327,7 +220,7 @@ namespace Blueprint41.Modeller
             if (!(e.Node.UserData is Submodel.NodeLocalType))
                 throw new NotSupportedException();
 
-            SelectedNode = e.Node.UserData as Submodel.NodeLocalType;
+            selectedNode = e.Node.UserData as Submodel.NodeLocalType;
 
             if (graphEditor.SelectedEntities.Count > 1)
                 CloseNodeEditor();
@@ -355,7 +248,7 @@ namespace Blueprint41.Modeller
             if (model == null)
             {
                 Entity entity = new Schemas.Entity(Model);
-                entity.Label = GetNewId(NewEntity);
+                entity.Label = GetNewId(newNodeTypeEntity);
                 entity.Name = entity.Label;
                 Model.Entities.Entity.Add(entity);
 
@@ -365,96 +258,163 @@ namespace Blueprint41.Modeller
                 model.Ycoordinate = e.Center.Y;
                 model.EntityGuid = entity.Guid;
 
-                if (Model.DisplayedSubmodel != MainSubmodel)
-                    MainSubmodel.Node.Add(model.Clone());
+                if (Model.DisplayedSubmodel != mainSubmodel)
+                    mainSubmodel.Node.Add(model.Clone());
 
                 Model.DisplayedSubmodel.Node.Add(model);
                 RefreshNodeCombobox();
             }
             // Auto select newly created entity
-            SelectedNode = model;
+            selectedNode = model;
             entityEditor.Show(model.Entity, Model);
         }
         #endregion
+
+        void InitializeXmlModeller(ModellerType type = ModellerType.Blueprint41)
+        {
+            InitializeModel(type);
+            InitializeSubmodel();
+            ReloadGraph();
+            Recovery.Instance.Start(this, () => Console.WriteLine("Auto saved modeller"));
+
+            SetModellerTypeMenuItemVisibility();
+        }
+
+        void InitializeModel(ModellerType modellerType)
+        {
+            if ((object)Model != null)
+                Model.UnRegisterEvents();
+
+            Model = new Model();
+
+            try
+            {
+                if (File.Exists(StoragePath))
+                    Model = new Model(StoragePath);
+            }
+            catch (XmlException)
+            {
+                MessageBox.Show($"The path {StoragePath} is an invalid xml file", "Invalid Xml File", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                RegistryHandler.LastOpenedFile = string.Empty;
+
+                if (Model == null)
+                    Model = new Model();
+            }
+
+
+            Model.Type = Model.Type ?? modellerType.ToString();
+            Model.HasChanges = false;
+            Model.BeforeReBind = ClearEvents;
+            Model.AfterReBind = AddEvents;
+
+            Model.ShowRelationshipLabels = showLabels;
+            Model.ShowInheritedRelationships = showInherited;
+
+            string editorName = Model.ModellerType == ModellerType.Blueprint41 ? B41_EDITOR : NEO4J_EDITOR;
+            this.Text = $"{FORMNAME} - ({editorName})";
+            graphEditor.ModellerType = Model.ModellerType;
+
+            //CheckGuidDiscrepancies();
+        }
+
+        void InitializeSubmodel()
+        {
+            if (Model.DisplayedSubmodel == null)
+            {
+                if (Model.Submodels.Submodel.Count == 0)
+                {
+                    Submodel main = new Submodel(Model);
+                    main.Name = Constants.MainModel;
+                    Model.Submodels.Submodel.Add(main);
+                }
+
+                Model.DisplayedSubmodel = Model.Submodels.Submodel.Where(m => m.Name == RegistryHandler.LastOpenedSubmodel).FirstOrDefault();
+                Model.MainSubmodel = mainSubmodel;
+
+                if (Model.DisplayedSubmodel == null)
+                    Model.DisplayedSubmodel = mainSubmodel;
+            }
+
+            FillSubmodelComboBox(Model.DisplayedSubmodel);
+            InitializeGraphNodeTypes();
+            entityEditor.EnableDisableControlsForType(Model.ModellerType);
+
+            btnShowLabels.Checked = Model.ShowRelationshipLabels;
+            btnShowInheritedRelationships.Checked = Model.ShowInheritedRelationships;
+            idcounter = 0;
+        }
+
+        void InitializeGraphNodeTypes()
+        {
+            graphEditor.NodeTypes.Clear();
+            string contextMenuString = Model.ModellerType == ModellerType.Blueprint41 ? "New Entity" : "New Node";
+            string label = Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
+
+
+            if (graphEditor.NodeTypes.SingleOrDefault(x => x.Name == contextMenuString) == null)
+            {
+                newNodeTypeEntity = new NodeTypeEntry(contextMenuString, Microsoft.Msagl.Drawing.Shape.Circle, Microsoft.Msagl.Drawing.Color.Transparent, Microsoft.Msagl.Drawing.Color.Black, 10, null, label);
+                graphEditor.AddNodeType(newNodeTypeEntity);
+            }
+        }
+
+        void ClearEvents()
+        {
+            graphEditor.InsertNode -= GraphEditor_InsertNode;
+            graphEditor.EditSubmodelClicked -= GraphEditor_EditSubmodelClick;
+            graphEditor.NodeSelected -= GraphEditor_NodeSelected;
+            graphEditor.NoneSelected -= GraphEditor_NoSelection;
+            graphEditor.EntityExcluded -= GraphEditor_ExcludeEntity;
+            graphEditor.EntityDeleted -= GraphEditor_DeleteEntity;
+            graphEditor.EdgeAdded -= GraphEditor_EdgeAdded;
+            graphEditor.EdgeRemoved -= GraphEditor_EdgeRemoved;
+            graphEditor.EdgeModeClicked -= GraphEditor_EdgeModeClicked;
+            graphEditor.PanModeClicked -= GraphEditor_PanModeClicked;
+        }
+
+        void AddEvents()
+        {
+            graphEditor.InsertNode += GraphEditor_InsertNode;
+            graphEditor.EditSubmodelClicked += GraphEditor_EditSubmodelClick;
+            graphEditor.NodeSelected += GraphEditor_NodeSelected;
+            graphEditor.NoneSelected += GraphEditor_NoSelection;
+            graphEditor.EntityExcluded += GraphEditor_ExcludeEntity;
+            graphEditor.EntityDeleted += GraphEditor_DeleteEntity;
+            graphEditor.EdgeAdded += GraphEditor_EdgeAdded;
+            graphEditor.EdgeRemoved += GraphEditor_EdgeRemoved;
+            graphEditor.EdgeModeClicked += GraphEditor_EdgeModeClicked;
+            graphEditor.PanModeClicked += GraphEditor_PanModeClicked;
+        }
+
+        void SetCheckedModeMenuControls()
+        {
+            tsbPan.Checked = graphEditor.PanButtonPressedOnMenu;
+            panToolStripMenuItem.Checked = graphEditor.PanButtonPressedOnMenu;
+            tsbEdgeInsertion.Checked = graphEditor.Viewer.InsertingEdge;
+        }
+
+        void SetModuleMenuItemVisibility()
+        {
+            generateUpdateScriptToolStripMenuItem.Visible = (ModuleLoader.GetModule("Compare") != null);
+            generateUpdateScriptToolStripMenuItem1.Visible = (ModuleLoader.GetModule("Compare") != null);
+
+            generateDocumentToolStripMenuItem.Visible = (ModuleLoader.GetModule("Document") != null);
+            generateDocumentationToolStripMenuItem.Visible = (ModuleLoader.GetModule("Document") != null);
+        }
+
+        void SetModellerTypeMenuItemVisibility()
+        {
+            generateCodeToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
+            generateCodeToolStripMenuItem1.Visible = Model.ModellerType == ModellerType.Blueprint41;
+
+            functionalIdToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
+            functionalIdToolStripMenuItem1.Visible = Model.ModellerType == ModellerType.Blueprint41;
+        }        
 
         void ReloadGraph()
         {
             Model.GraphEditor = graphEditor;
         }
-
-        //void CheckGuidDiscrepancies()
-        //{
-        //    Dictionary<string, Entity> entitiesLookUp = Model.Entities.Entity.ToDictionary(x => x.Guid);
-        //    Dictionary<string, Entity> entitiesLabelLookUp = Model.Entities.Entity.ToDictionary(x => x.Label);
-
-        //    IEnumerable<Relationship> relationshipDiscripancies = Model.Relationships.Relationship
-        //        .Where(x => (x.Source != null && x.Source.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Source?.ReferenceGuid) == false) ||
-        //                    (x.Target != null && x.Target.ReferenceGuid != null && entitiesLookUp.ContainsKey(x.Target.ReferenceGuid) == false))
-        //        .OrderBy(x => x.Name);
-
-        //    if (relationshipDiscripancies.Count() == 0)
-        //        return;
-
-        //    foreach (Relationship item in relationshipDiscripancies)
-        //    {
-        //        if (item.Source != null && item.Source.Label != null && entitiesLabelLookUp.ContainsKey(item.Source.Label))
-        //            item.Source.ReferenceGuid = entitiesLabelLookUp[item.Source.Label].Guid;
-
-        //        if (item.Target != null && item.Target.Label != null && entitiesLabelLookUp.ContainsKey(item.Target.Label))
-        //            item.Target.ReferenceGuid = entitiesLabelLookUp[item.Target.Label].Guid;
-        //    }
-        //}
-
-        int idcounter = 0;
-        private int _splitterDistance;
-
-        internal string GetNewId(NodeTypeEntry nte)
-        {
-            string ret = nte.DefaultLabel + idcounter++;
-            if (Model.Entities.Entity.Any(item => item.Label == ret))
-                return GetNewId(nte);
-            return ret;
-        }
-
-        #region Main Form Events
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            bool recoveryFileExists = File.Exists(Recovery.Instance.RecoveryFile);
-            string storagePath = StoragePath;
-
-            if (recoveryFileExists)
-            {
-                DialogResult result = MessageBox.Show("Do you want to recover unsaved changes?", "Recover File", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
-                    StoragePath = Recovery.Instance.RecoveryFile;
-            }
-
-            SetModuleMenuItemVisibility();
-            InitializeXmlModeller();
-
-            StoragePath = storagePath;
-
-            AddNewEntitiesToSubModel(Model.Submodels.Submodel[0].Name);
-            _splitterDistance = splitContainer.SplitterDistance;
-            SizeChanged += MainForm_SizeChanged;
-        }
-
-        private void MainForm_SizeChanged(object sender, EventArgs e)
-        {
-            _splitterDistance = splitContainer.SplitterDistance;
-        }
-
-        private void SplitContainer1_SizeChanged(object sender, EventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine(string.Format("Width:{0}", splitContainer.Panel2.Width));
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            RegistryHandler.LastOpenedSubmodel = Model.DisplayedSubmodel.Name;
-            RegistryHandler.LastOpenedFile = string.IsNullOrEmpty(StoragePath) ? string.Empty : Path.GetFullPath(this.StoragePath);
-        }
-        #endregion
 
         void AddNewEntitiesToSubModel(string submodelName)
         {
@@ -493,6 +453,27 @@ namespace Blueprint41.Modeller
                 cmbSubmodels.SelectedItem = selectedSub;
         }
 
+        string GetNewId(NodeTypeEntry nte)
+        {
+            string ret = nte.DefaultLabel + idcounter++;
+            if (Model.Entities.Entity.Any(item => item.Label == ret))
+                return GetNewId(nte);
+            return ret;
+        }
+
+        void RefreshNodeCombobox()
+        {
+            cmbNodes.Items.Clear();
+            cmbNodes.Items.Add("No Selection");
+            foreach (var item in Model.DisplayedSubmodel.Node.OrderBy(item => item.Label))
+            {
+                item.RemoveHighlight();
+                item.Deselect();
+                cmbNodes.Items.Add(item);
+            }
+        }
+
+        #region Code Generation Commented
         //private void StaticDataToolStripMenuItem_Click(object sender, EventArgs e)
         //{
         //    CodeGeneration codeGeneration = new CodeGeneration();
@@ -513,41 +494,8 @@ namespace Blueprint41.Modeller
         //    codeGeneration.Model = Model;
         //    codeGeneration.T4Template.Modeller = Model;
         //    codeGeneration.ShowDialog();
-        //}
-
-        void RefreshNodeCombobox()
-        {
-            cmbNodes.Items.Clear();
-            cmbNodes.Items.Add("No Selection");
-            foreach (var item in Model.DisplayedSubmodel.Node.OrderBy(item => item.Label))
-            {
-                item.RemoveHighlight();
-                item.Deselect();
-                cmbNodes.Items.Add(item);
-            }
-        }
-
-        public void ShowHideToolStripMenu(bool panel2Collapsed)
-        {
-            propertiesToolStripMenuItem.Checked = !panel2Collapsed;
-            splitContainer.Panel2Collapsed = panel2Collapsed;
-            toolStripRight.Visible = panel2Collapsed;
-
-            if (panel2Collapsed)
-            {
-                ToolStripMenuItem propertiesItem = new ToolStripMenuItem("Properties");
-                propertiesItem.Font = new Font(FontFamily.GenericSansSerif, 8.25f);
-                propertiesItem.Click += PropertiesItem_Click;
-                toolStripRight.Items.Add(propertiesItem);
-            }
-            else
-            {
-                if (toolStripRight.Items[0] is ToolStripMenuItem menuItem)
-                    menuItem.Click -= PropertiesItem_Click;
-
-                toolStripRight.Items.Clear();
-            }
-        }
+        //} 
+        #endregion
 
         #region Editor Events
 
@@ -575,7 +523,7 @@ namespace Blueprint41.Modeller
             }
             else
             {
-                SelectedNode = null;
+                selectedNode = null;
                 Model.DisplayedSubmodel = cmbSubmodels.SelectedItem as Submodel;
             }
 
@@ -598,9 +546,9 @@ namespace Blueprint41.Modeller
                 return;
             }
 
-            SelectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
-            entityEditor.Show(SelectedNode.Entity, Model);
-            SelectedNode.Highlight();
+            selectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
+            entityEditor.Show(selectedNode.Entity, Model);
+            selectedNode.Highlight();
         }
 
         private void RemoveHighlightNodes()
@@ -614,7 +562,7 @@ namespace Blueprint41.Modeller
 
         private void EntityEditor_EntityTypeChanged(object sender, EventArgs e)
         {
-            SelectedNode.RemoveHighlight();
+            selectedNode.RemoveHighlight();
         }
 
         #endregion
@@ -797,7 +745,7 @@ namespace Blueprint41.Modeller
                     splitContainer.SplitterDistance = width;
             }
             else if (expand == false && expandPropertiesWidthToolStripMenuItem.Checked)
-                splitContainer.SplitterDistance = _splitterDistance;
+                splitContainer.SplitterDistance = splitterDistance;
         }
 
         private void TsbZoomOut_Click(object sender, EventArgs e)
@@ -945,6 +893,7 @@ namespace Blueprint41.Modeller
 
         #endregion
 
+        #region Help Menu
         private void registerProductToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ConnectorLoader loader = ConnectorLoader.GetConnectorClient();
@@ -972,6 +921,29 @@ namespace Blueprint41.Modeller
             using (UpdaterForm form = new UpdaterForm())
             {
                 form.ShowDialog();
+            }
+        } 
+        #endregion
+
+        public void ShowHideToolStripMenu(bool panel2Collapsed)
+        {
+            propertiesToolStripMenuItem.Checked = !panel2Collapsed;
+            splitContainer.Panel2Collapsed = panel2Collapsed;
+            toolStripRight.Visible = panel2Collapsed;
+
+            if (panel2Collapsed)
+            {
+                ToolStripMenuItem propertiesItem = new ToolStripMenuItem("Properties");
+                propertiesItem.Font = new Font(FontFamily.GenericSansSerif, 8.25f);
+                propertiesItem.Click += PropertiesItem_Click;
+                toolStripRight.Items.Add(propertiesItem);
+            }
+            else
+            {
+                if (toolStripRight.Items[0] is ToolStripMenuItem menuItem)
+                    menuItem.Click -= PropertiesItem_Click;
+
+                toolStripRight.Items.Clear();
             }
         }
     }
