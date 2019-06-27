@@ -106,7 +106,7 @@ namespace Blueprint41.Modeller
 
             if (Model.HasChanges)
             {
-                result = MessageBox.Show("Do you want to save changes?", "Save Changes?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                result = MessageBox.Show("Do you want to save changes?", "Save Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                     BtnSave_Click(this, EventArgs.Empty);
@@ -136,7 +136,7 @@ namespace Blueprint41.Modeller
 
             if (e?.Edge?.UserData is Relationship rel && rel.ContainsDrawingEdge && rel.DeleteIncludeRelationshipModel)
             {
-                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the relationship '{rel.Source.Label}->[{rel.Name}]->{rel.Target.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
+                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the relationship '{rel.Source.Label}->[{rel.Name}]->{rel.Target.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (dialogResult == DialogResult.Yes)
                     Model.RemoveRelationship(rel);
@@ -181,12 +181,14 @@ namespace Blueprint41.Modeller
         {
             if (e.Node.UserData is Submodel.NodeLocalType node)
             {
-                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the {EntityNodeName.ToLower()} '{node.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo);
+                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the {EntityNodeName.ToLower()} '{node.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (dialogResult == DialogResult.Yes)
                 {
                     Model.DeleteEntity(node);
                     Model.Invalidate();
+                    RefreshNodeCombobox();
+                    CloseNodeEditor();
                 }
             }
         }
