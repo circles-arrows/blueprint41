@@ -32,7 +32,7 @@ namespace Blueprint41.Modeller
 
         Submodel mainSubmodel => Model.Submodels.Submodel[0];
         NodeTypeEntry newNodeTypeEntity { get; set; }
-        Submodel.NodeLocalType selectedNode { get; set; } 
+        Submodel.NodeLocalType selectedNode { get; set; }
         #endregion
 
         #region Properties
@@ -49,7 +49,7 @@ namespace Blueprint41.Modeller
                 return this.m_StoragePath;
             }
         }
-        public string EntityNodeName => Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node"; 
+        public string EntityNodeName => Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
         #endregion
 
         public MainForm()
@@ -168,7 +168,7 @@ namespace Blueprint41.Modeller
                 {
                     Model.InsertRelationship(editor.SourceName, editor.TargetName, editor.Relationship, e.Edge);
                     entityEditor.CloseEditor();
-                    graphEditor.Clear();
+                    graphEditor.ClearSelection();
                 }
                 else
                     Model.GraphEditor.Viewer.Undo();
@@ -402,7 +402,7 @@ namespace Blueprint41.Modeller
 
             functionalIdToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
             functionalIdToolStripMenuItem1.Visible = Model.ModellerType == ModellerType.Blueprint41;
-        }        
+        }
 
         void ReloadGraph()
         {
@@ -531,14 +531,15 @@ namespace Blueprint41.Modeller
                 return;
 
             RemoveHighlightNodes();
+            graphEditor.ClearSelection();
 
             if (cmbNodes.SelectedIndex == 0)
             {
                 entityEditor.CloseEditor();
-                Model.GraphReset();
+                Model.GraphReset();                
                 return;
             }
-
+            
             selectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
             entityEditor.Show(selectedNode.Entity, Model);
             selectedNode.Highlight();
@@ -915,7 +916,7 @@ namespace Blueprint41.Modeller
             {
                 form.ShowDialog();
             }
-        } 
+        }
         #endregion
 
         public void ShowHideToolStripMenu(bool panel2Collapsed)
