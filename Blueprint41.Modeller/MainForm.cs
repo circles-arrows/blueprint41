@@ -169,13 +169,6 @@ namespace Blueprint41.Modeller
                     Model.InsertRelationship(editor.SourceName, editor.TargetName, editor.Relationship, e.Edge);
                     entityEditor.CloseEditor();
                     graphEditor.Clear();
-
-                    if (e.Edge.SourceNode.UserData is Submodel.NodeLocalType subNode)
-                    {
-                        entityEditor.Show(subNode.Entity, Model);
-                        subNode.Select();
-                    }
-
                 }
                 else
                     Model.GraphEditor.Viewer.Undo();
