@@ -470,7 +470,7 @@ namespace Blueprint41.Modeller.Controls
         /// <summary>
         /// Unselect all draggable / selected entities
         /// </summary>
-        public void Clear()
+        public void ClearSelection()
         {
             gViewer.LayoutEditor.Clear();
         }
