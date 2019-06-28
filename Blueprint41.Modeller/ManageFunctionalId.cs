@@ -138,7 +138,7 @@ namespace Blueprint41.Modeller
             {
                 if (this.Model.FunctionalIds.FunctionalId.Where(fi => fi.Name == name && fi.Guid != this.SelectedFunctionalIdGuid).Count() > 0)
                 {
-                    MessageBox.Show($"Name \"{name}\" already exists.");
+                    MessageBox.Show($"Name \"{name}\" already exists.", "Functional ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
                 }
 
@@ -164,7 +164,7 @@ namespace Blueprint41.Modeller
                 {
                     if (defaultFunctionalId == null || (defaultFunctionalId?.Guid == selectedFunctionalId.Guid))
                     {
-                        MessageBox.Show($"Model must have a default functional id.");
+                        MessageBox.Show($"Model must have a default functional id.", "Functional ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         return;
                     }
                 }
@@ -209,7 +209,7 @@ namespace Blueprint41.Modeller
 
             if (this.Model.Entities.Entity.Where(ent => ent.FunctionalId == selectedFunctionalId.Guid).Count() > 0)
             {
-                MessageBox.Show($"Cannot delete functionalId \"{selectedFunctionalId.Name}\" because 1 or more entities are using it.");
+                MessageBox.Show($"Cannot delete functionalId \"{selectedFunctionalId.Name}\" because 1 or more entities are using it.", "Functional ID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 

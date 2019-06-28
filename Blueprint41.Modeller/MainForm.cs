@@ -664,6 +664,7 @@ namespace Blueprint41.Modeller
 
             AddOrClearViewModeCheckEvents(true);
             SetGraphViewModel(originalSettingsToolStripMenuItem.Checked ? LayoutMethod.UseSettingsOfTheGraph : LayoutMethod.MDS);
+            Model.RebindControl();
         }
 
         private void SugiyamaToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
@@ -676,6 +677,7 @@ namespace Blueprint41.Modeller
 
             AddOrClearViewModeCheckEvents(true);
             SetGraphViewModel(originalSettingsToolStripMenuItem.Checked ? LayoutMethod.UseSettingsOfTheGraph : LayoutMethod.SugiyamaScheme);
+            Model.RebindControl();
         }
 
         private void OriginalSettingsToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
