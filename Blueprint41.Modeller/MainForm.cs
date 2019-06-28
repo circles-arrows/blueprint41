@@ -797,6 +797,7 @@ namespace Blueprint41.Modeller
             showLabels = btnShowLabels.Checked;
             showLabelsToolStripMenuItem.Checked = btnShowLabels.Checked;
             Model.ShowRelationshipLabels = btnShowLabels.Checked;
+            CloseNodeEditor();
         }
 
         #endregion
