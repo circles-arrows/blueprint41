@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Blueprint41.Modeller.Schemas
 {
@@ -23,7 +24,6 @@ namespace Blueprint41.Modeller.Schemas
                 return Model.Entities.Entity.FirstOrDefault(entity => entity.Guid == Inherits);
             }
         }
-
 
         /// <summary>
         /// Gets all the relationships for this submodel
@@ -146,7 +146,6 @@ namespace Blueprint41.Modeller.Schemas
             return result;
         }
 
-
         public void CleanPrimitive()
         {
             Schemas.Primitive[] copy = new Schemas.Primitive[Primitive.Count];
@@ -216,14 +215,14 @@ namespace Blueprint41.Modeller.Schemas
                 if (string.IsNullOrEmpty(e.NewValue))
                 {
                     e.Cancel = true;
-                    System.Windows.Forms.MessageBox.Show($"Entity label cannot be empty.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                    MessageBox.Show($"Entity label cannot be empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
                 }
 
                 if (Model.Entities.Entity.Any(item => item.Label == e.NewValue))
                 {
                     e.Cancel = true;
-                    System.Windows.Forms.MessageBox.Show($"Entity with label {e.NewValue} already exist.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                    MessageBox.Show($@"Entity with label ""{e.NewValue}"" already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
                 }
             };
@@ -233,14 +232,14 @@ namespace Blueprint41.Modeller.Schemas
                 if (string.IsNullOrEmpty(e.NewValue))
                 {
                     e.Cancel = true;
-                    System.Windows.Forms.MessageBox.Show($"Entity name cannot be empty.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                    MessageBox.Show($"Entity name cannot be empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
                 }
 
                 if (Model.Entities.Entity.Any(item => item.Name == e.NewValue))
                 {
                     e.Cancel = true;
-                    System.Windows.Forms.MessageBox.Show($"Entity with name {e.NewValue} already exist.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                    MessageBox.Show($@"Entity with name ""{e.NewValue}"" already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
                 }
             };
