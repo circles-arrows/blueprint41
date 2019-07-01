@@ -107,16 +107,12 @@ namespace Blueprint41.Modeller
             pre.DataGridViewPrimitive.CellValueChanged += dataGridViewPrimitiveProperties_CellValueChanged;
             pre.DataGridViewPrimitive.DefaultValuesNeeded += dataGridViewPrimitiveProperties_DefaultValuesNeeded;
             pre.DataGridViewPrimitive.KeyDown += dataGridViewPrimitiveProperties_KeyDown;
-            pre.DataGridViewPrimitive.DataError += DataGridViewPrimitive_DataError;
-            //pre.DataGridViewPrimitive.CancelRowEdit += DataGridViewPrimitive_CancelRowEdit;
             pre.DataGridViewPrimitive.RowLeave += DataGridViewPrimitive_RowLeave;
             pre.DataGridViewPrimitive.CellLeave += DataGridViewPrimitive_CellLeave;
 
             pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
             pre.DataGridViewRelationship.DataSourceChanged += DataGridViewRelationship_DataSourceChanged;
             pre.DataGridViewRelationship.UserDeletingRow += DataGridViewRelationship_UserDeletingRow;
-            pre.DataGridViewRelationship.DataError += DataGridViewRelationship_DataError;
-
             pre.DataGridViewRelationship.Leave += DataGridViewRelationship_Leave;
             pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
 
@@ -139,20 +135,10 @@ namespace Blueprint41.Modeller
 
         #region Primitive Event Handlers
 
-        private void DataGridViewPrimitive_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-
-        }
-
         private void DataGridViewPrimitive_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             if (e.Row.DataBoundItem is GridPrimitiveItem myPrim && primitiveLookUp.ContainsKey(myPrim.Item.Name) == false)
                 e.Cancel = true;
-        }
-
-        private void DataGridViewPrimitive_CancelRowEdit(object sender, QuestionEventArgs e)
-        {
-
         }
 
         private void DataGridViewPrimitive_DataSourceChanged(object sender, EventArgs e)
@@ -1151,21 +1137,6 @@ namespace Blueprint41.Modeller
         //    //CloseEditor();
         //}
 
-        //private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        //{
-
-        //}
-
-        //private void dataGridViewCollectionProperties_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        //{
-
-        //}
-
-        private void DataGridViewRelationship_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
-
         private void ShowMessageAndResetTextBoxValue(string message, DataGridViewTextBoxCell textBox, string propName = "PropertyName")
         {
             MessageBox.Show(message);
@@ -1245,9 +1216,6 @@ namespace Blueprint41.Modeller
             Entity.CleanPrimitive();
 
             Reload();
-
-            //bindingSourcePrimitiveProperties.DataSource = null;
-            //bindingSourcePrimitiveProperties.DataSource = Entity.Primitive;
         }
 
         private bool CheckInheritedPropertyExists(Entity entity, string propertyName)

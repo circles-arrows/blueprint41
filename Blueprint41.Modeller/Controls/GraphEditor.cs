@@ -198,6 +198,7 @@ namespace Blueprint41.Modeller.Controls
             }
 
             IViewerObject objectUnderMouseCursor = gViewer.ObjectUnderMouseCursor;
+            
             if (objectUnderMouseCursor == null)
             {
                 gViewer.SetToolTip(toolTip, "");
@@ -219,8 +220,7 @@ namespace Blueprint41.Modeller.Controls
                 else if (selectedObject is DrawingNode dNode)
                 {
                     selectedNodeAttr = dNode.Attr.Clone();
-                    dNode.Attr.Color = DrawingColor.LightGreen;
-
+                    dNode.Attr.Color = DrawingColor.LimeGreen;                    
                     gViewer.SetToolTip(toolTip, "Drag me");
 
                     if (e.NewObject != null)
@@ -235,6 +235,7 @@ namespace Blueprint41.Modeller.Controls
             if (delta != 0)
                 gViewer.ZoomF *= delta < 0 ? 0.9 : 1.1;
         }
+
         private void GViewer_EdgeAdded(object sender, EventArgs e)
         {
             EdgeAdded?.Invoke(this, new EdgeEventArgs(sender as Edge));

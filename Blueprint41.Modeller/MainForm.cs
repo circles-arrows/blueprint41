@@ -529,7 +529,6 @@ namespace Blueprint41.Modeller
                 return;
 
             RemoveHighlightNodes();
-            graphEditor.ClearSelection();
 
             if (cmbNodes.SelectedIndex == 0)
             {
@@ -539,6 +538,7 @@ namespace Blueprint41.Modeller
             }
             
             selectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
+
             entityEditor.Show(selectedNode.Entity, Model);
             selectedNode.Highlight();
         }
@@ -617,7 +617,7 @@ namespace Blueprint41.Modeller
             Model.HasChanges = false;
             Model.CaptureCoordinates();
             Model.Save(StoragePath);
-            MessageBox.Show("Diagram saved successfully.", "Confirmation", System.Windows.Forms.MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Diagram saved successfully.", "Confirmation", MessageBoxButtons.OK, MessageBoxIcon.Information);
             if (this.entityEditor.IsEditable)
                 entityEditor.Reload();
         }

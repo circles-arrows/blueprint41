@@ -136,8 +136,7 @@ namespace Blueprint41.Modeller.Schemas
                 Model.GraphEditor.Viewer.CenterToPoint(drawingNode.BoundingBox.Center);
 
                 if (Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) is DNode dNode)
-                {
-                    dNode.DrawingNode.Attr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+                {                    
                     dNode.DrawingNode.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
 
                     Model.GraphEditor.Viewer.Invalidate(dNode);
