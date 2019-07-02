@@ -13,6 +13,7 @@ using Blueprint41.Modeller.Schemas;
 using Model = Blueprint41.Modeller.Schemas.Modeller;
 using System.Collections.Specialized;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Blueprint41.Modeller
 {
@@ -196,8 +197,8 @@ namespace Blueprint41.Modeller
 
                 //string propertyNameValue = textBox.Value?.ToString() ?? textBox.EditedFormattedValue?.ToString();
                 string propertyNameValue = textBox.EditedFormattedValue?.ToString();
-
                 string newName = propertyNameValue?.Replace(" ", string.Empty);
+
                 ValidatePrimitivePropertyName(Entity, newName, out string validateName, 1, true);
 
                 pre.DataGridViewPrimitive.CellValueChanged -= dataGridViewPrimitiveProperties_CellValueChanged;
@@ -293,6 +294,19 @@ namespace Blueprint41.Modeller
                 {
                     ShowMessageAndResetTextBoxValue("Property name cannot be empty.", textBox);
                     return;
+                }
+
+                Regex rx = new Regex(@"^[A-Za-z][A-Z0-9_]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                if (!string.IsNullOrEmpty(textBoxValue) && !rx.IsMatch(textBoxValue))
+                {
+                    rx = new Regex(@"([A-Za-z]\w)+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var match = rx.Match(textBoxValue);
+
+                    MessageBox.Show("Space and special characters are not allowed.", "Property Name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                    if (match != null)
+                        textBoxValue = match.Value;
                 }
 
                 textBox.Value = textBoxValue;
@@ -1247,6 +1261,21 @@ namespace Blueprint41.Modeller
             string tempName = propertyName;
             bool reValidate = false;
 
+            Regex rx = new Regex(@"^[A-Za-z][A-Z0-9_]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            if (!string.IsNullOrEmpty(tempName) && !rx.IsMatch(tempName))
+            {
+                rx = new Regex(@"([A-Za-z]\w)+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var match = rx.Match(tempName);
+
+                MessageBox.Show("Space and special characters are not allowed.", "Primitive Name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                if (match != null)
+                    tempName = match.Value;
+
+                reValidate = true;
+            }
+
             if (string.IsNullOrEmpty(tempName))
             {
                 if (showMessage)
@@ -1441,7 +1470,7 @@ namespace Blueprint41.Modeller
             if (!chkIsStaticData.Checked && Entity.IsStaticData && Entity.StaticData.Records.Record.Count != 0)
             {
                 DialogResult result = MessageBox.Show($"This will delete all the existing '{Entity.Label}' static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
-                if (result != System.Windows.Forms.DialogResult.Yes)
+                if (result != DialogResult.Yes)
                 {
                     chkIsStaticData.Checked = !chkIsStaticData.Checked;
                     return;
@@ -1449,7 +1478,6 @@ namespace Blueprint41.Modeller
             }
             Entity.IsStaticData = chkIsStaticData.Checked;
             btnEditStaticData.Visible = Entity.IsStaticData;
-
         }
 
         private void UncheckVirtual()
@@ -1501,6 +1529,16 @@ namespace Blueprint41.Modeller
         {
             if (ParentForm is MainForm parentForm)
                 parentForm.ShowHideToolStripMenu(true);
+        }
+
+        private void TxtLabel_TextChanged(object sender, EventArgs e)
+        {
+            txtLabel.ValidateText("Neo4j Label");
+        }
+
+        private void TxtName_TextChanged(object sender, EventArgs e)
+        {
+            txtName.ValidateText("Entity Name");
         }
     }
 

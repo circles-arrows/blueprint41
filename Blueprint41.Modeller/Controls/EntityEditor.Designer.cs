@@ -87,6 +87,7 @@
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(338, 20);
             this.txtName.TabIndex = 2;
+            this.txtName.TextChanged += new System.EventHandler(this.TxtName_TextChanged);
             this.txtName.Leave += new System.EventHandler(this.txtName_Leave);
             // 
             // bindingSource
@@ -103,6 +104,7 @@
             this.txtLabel.Name = "txtLabel";
             this.txtLabel.Size = new System.Drawing.Size(338, 20);
             this.txtLabel.TabIndex = 1;
+            this.txtLabel.TextChanged += new System.EventHandler(this.TxtLabel_TextChanged);
             this.txtLabel.Leave += new System.EventHandler(this.txtLabel_Leave);
             // 
             // label2

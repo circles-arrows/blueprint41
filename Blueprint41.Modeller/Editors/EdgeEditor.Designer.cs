@@ -260,6 +260,7 @@
             this.txtRelationshipName.Name = "txtRelationshipName";
             this.txtRelationshipName.Size = new System.Drawing.Size(373, 20);
             this.txtRelationshipName.TabIndex = 1;
+            this.txtRelationshipName.TextChanged += new System.EventHandler(this.TxtRelationshipName_TextChanged);
             this.txtRelationshipName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtRelationshipName_KeyDown);
             // 
             // txtNeo4jName
@@ -270,6 +271,7 @@
             this.txtNeo4jName.Name = "txtNeo4jName";
             this.txtNeo4jName.Size = new System.Drawing.Size(373, 20);
             this.txtNeo4jName.TabIndex = 2;
+            this.txtNeo4jName.TextChanged += new System.EventHandler(this.TxtNeo4jName_TextChanged);
             this.txtNeo4jName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtNeo4jName_KeyDown);
             // 
             // lblNeo4jName

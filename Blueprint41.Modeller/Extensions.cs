@@ -2,8 +2,10 @@
 using Blueprint41.Modeller.Utils;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model = Blueprint41.Modeller.Schemas.Modeller;
@@ -195,6 +197,24 @@ namespace Blueprint41.Modeller
             parent.Enabled = true;
         }
 
+        public static void ValidateText(this TextBox textBox, string messageBoxCaption, string expression = @"^[A-Za-z][A-Z0-9_]+$")
+        {
+            Regex rx = new Regex(expression, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            string newText = textBox.Text?.Trim();
+
+            if (!string.IsNullOrEmpty(newText) && !rx.IsMatch(newText))
+            {
+                MessageBox.Show("Space and special characters are not allowed.", messageBoxCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (!string.IsNullOrEmpty(newText))
+                {
+                    textBox.Text = newText.Remove(textBox.SelectionStart - 1, 1);
+                    textBox.SelectionStart = textBox.TextLength;
+                    textBox.ScrollToCaret();
+                }
+            }
+        }
 
         public enum SizeUnits
         {

@@ -247,5 +247,15 @@ namespace Blueprint41.Modeller.Editors
         {
             cbAutoLabel.Checked = false;
         }
+
+        private void TxtRelationshipName_TextChanged(object sender, EventArgs e)
+        {
+            txtRelationshipName.ValidateText("Relationship Name");
+        }
+
+        private void TxtNeo4jName_TextChanged(object sender, EventArgs e)
+        {
+            txtNeo4jName.ValidateText("Neo4j Name");
+        }
     }
 }
