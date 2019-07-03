@@ -163,6 +163,8 @@ namespace Blueprint41.Modeller
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            txtName.ValidateText("Model Name", @"^[A-Za-z ][A-Z0-9_ ]+$");
+
             btnOK.Enabled = !string.IsNullOrEmpty(txtName.Text) && !Submodel.Model.Submodels.Submodel.Where(item => item.Name != Submodel.Name).Any(item => item.Name == txtName.Text);
         }
 

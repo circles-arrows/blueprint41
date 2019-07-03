@@ -73,6 +73,7 @@ namespace Blueprint41.Modeller
             this.txtPrefix.Name = "txtPrefix";
             this.txtPrefix.Size = new System.Drawing.Size(156, 20);
             this.txtPrefix.TabIndex = 0;
+            this.txtPrefix.TextChanged += new System.EventHandler(this.TxtPrefix_TextChanged);
             // 
             // lblPrefix
             // 
@@ -131,6 +132,7 @@ namespace Blueprint41.Modeller
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(156, 20);
             this.txtName.TabIndex = 8;
+            this.txtName.TextChanged += new System.EventHandler(this.TxtName_TextChanged);
             // 
             // btnUpdate
             // 

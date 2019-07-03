@@ -1261,7 +1261,12 @@ namespace Blueprint41.Modeller
             string tempName = propertyName;
             bool reValidate = false;
 
-            Regex rx = new Regex(@"^[A-Za-z][A-Z0-9_]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            string expression = @"^[A-Za-z][A-Z0-9_]+$";
+
+            if (tempName.Length == 1)
+                expression = "^[a-zA-Z]";
+
+            Regex rx = new Regex(expression, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             if (!string.IsNullOrEmpty(tempName) && !rx.IsMatch(tempName))
             {
@@ -1271,7 +1276,7 @@ namespace Blueprint41.Modeller
                 MessageBox.Show("Space and special characters are not allowed.", "Primitive Name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 if (match != null)
-                    tempName = match.Value;
+                    tempName = string.IsNullOrEmpty(match.Value) ? "PropertyName" : match.Value;
 
                 reValidate = true;
             }

@@ -87,6 +87,21 @@ namespace Blueprint41.Modeller
         }
 
         #endregion
+
+        private void TxtName_TextChanged(object sender, EventArgs e)
+        {
+            txtName.ValidateText("Functional ID - Name");
+        }
+
+        private void TxtPrefix_TextChanged(object sender, EventArgs e)
+        {
+            txtPrefix.ValidateText("Functional ID - Prefix");
+        }
+
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 
     public enum IdFormat

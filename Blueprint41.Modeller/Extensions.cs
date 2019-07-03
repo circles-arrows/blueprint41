@@ -199,9 +199,12 @@ namespace Blueprint41.Modeller
 
         public static void ValidateText(this TextBox textBox, string messageBoxCaption, string expression = @"^[A-Za-z][A-Z0-9_]+$")
         {
-            Regex rx = new Regex(expression, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
             string newText = textBox.Text?.Trim();
+
+            if (newText.Length == 1)
+                expression = "^[a-zA-Z]";
+
+            Regex rx = new Regex(expression, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             if (!string.IsNullOrEmpty(newText) && !rx.IsMatch(newText))
             {
@@ -209,7 +212,7 @@ namespace Blueprint41.Modeller
 
                 if (!string.IsNullOrEmpty(newText))
                 {
-                    textBox.Text = newText.Remove(textBox.SelectionStart - 1, 1);
+                    textBox.Text = textBox.Text?.Remove(textBox.SelectionStart - 1, 1).Trim();
                     textBox.SelectionStart = textBox.TextLength;
                     textBox.ScrollToCaret();
                 }

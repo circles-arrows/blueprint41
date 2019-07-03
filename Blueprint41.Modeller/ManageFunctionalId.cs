@@ -281,5 +281,15 @@ namespace Blueprint41.Modeller
         {
             return this.Model.FunctionalIds.FunctionalId.Where(x => x.IsDefault).SingleOrDefault();
         }
+
+        private void TxtName_TextChanged(object sender, EventArgs e)
+        {
+            txtName.ValidateText("Functional ID Name");
+        }
+
+        private void TxtPrefix_TextChanged(object sender, EventArgs e)
+        {
+            txtPrefix.ValidateText("Prefix");
+        }
     }
 }
