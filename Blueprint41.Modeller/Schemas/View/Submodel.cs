@@ -137,7 +137,7 @@ namespace Blueprint41.Modeller.Schemas
 
                 if (Model.GraphEditor.Viewer.Entities.SingleOrDefault(x => x.DrawingObject == drawingNode) is DNode dNode)
                 {                    
-                    dNode.DrawingNode.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+                    dNode.DrawingNode.Attr.Color = Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl();
 
                     Model.GraphEditor.Viewer.Invalidate(dNode);
                 }
@@ -171,7 +171,7 @@ namespace Blueprint41.Modeller.Schemas
                     return;
 
                 DNode node = GetNode();
-                node.DrawingNode.Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
+                node.DrawingNode.Attr.Color = Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl();
                 Model.GraphEditor.Viewer.Invalidate(node);
             }
 
@@ -200,7 +200,7 @@ namespace Blueprint41.Modeller.Schemas
 
                 if (drawingNode != null)
                 {
-                    IsNodeSelected = drawingNode.Attr.FillColor == Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+                    IsNodeSelected = drawingNode.Attr.Color == Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl();
                     DeleteNode();
                 }
 
@@ -246,7 +246,7 @@ namespace Blueprint41.Modeller.Schemas
                     nodeAttr.FillColor = Styles.NODE_BGCOLOR_NORMAL.ToMsAgl();
 
                 if (isSelected)
-                    nodeAttr.FillColor = Styles.NODE_BGCOLOR_SELECTED.ToMsAgl();
+                    nodeAttr.Color = Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl();
 
                 nodeAttr.Shape = nte.Shape;
                 nodeAttr.LabelMargin = 8;

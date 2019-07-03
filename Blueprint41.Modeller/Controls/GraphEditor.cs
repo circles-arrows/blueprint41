@@ -251,7 +251,7 @@ namespace Blueprint41.Modeller.Controls
         {
             if (obj is DNode dNode)
             {
-                dNode.DrawingNode.Attr.Color = DrawingColor.Green;
+                dNode.DrawingNode.Attr.Color = Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl();
                 gViewer.Invalidate(obj);
             }
 
@@ -282,7 +282,7 @@ namespace Blueprint41.Modeller.Controls
 
             if (selectedObject is DrawingNode dNode)
             {
-                if (dNode.Attr.Color != DrawingColor.Green)
+                if (dNode.Attr.Color != Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl())
                     dNode.Attr = (NodeAttr)selectedNodeAttr;
             }
         }
