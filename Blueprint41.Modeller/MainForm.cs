@@ -791,6 +791,7 @@ namespace Blueprint41.Modeller
         {
             showInherited = btnShowInheritedRelationships.Checked;
             showInheritedRelationshipsToolStripMenuItem.Checked = btnShowInheritedRelationships.Checked;
+            graphEditor.ClearSelection();
             Model.ShowInheritedRelationships = btnShowInheritedRelationships.Checked;
         }
 
@@ -798,8 +799,8 @@ namespace Blueprint41.Modeller
         {
             showLabels = btnShowLabels.Checked;
             showLabelsToolStripMenuItem.Checked = btnShowLabels.Checked;
-            Model.ShowRelationshipLabels = btnShowLabels.Checked;
-            CloseNodeEditor();
+            graphEditor.ClearSelection();
+            Model.ShowRelationshipLabels = btnShowLabels.Checked;           
         }
 
         #endregion
