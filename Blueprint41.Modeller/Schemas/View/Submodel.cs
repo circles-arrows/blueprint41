@@ -181,9 +181,7 @@ namespace Blueprint41.Modeller.Schemas
                     return;
 
                 DNode node = GetNode();
-
                 node.DrawingNode.Attr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
-
                 Model.GraphEditor.Viewer.Invalidate(node);
             }
 

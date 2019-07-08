@@ -256,9 +256,11 @@ namespace Blueprint41.Modeller
 
                 Model.DisplayedSubmodel.Node.Add(model);
                 RefreshNodeCombobox();
+                ResetLayout();
             }
             // Auto select newly created entity
             selectedNode = model;
+            selectedNode.Select();
             entityEditor.Show(model.Entity, Model);
         }
         #endregion
@@ -520,7 +522,7 @@ namespace Blueprint41.Modeller
 
             this.graphEditor.Viewer.Tag = Model.DisplayedSubmodel;
             this.entityEditor.CloseEditor();
-            RefreshNodeCombobox();
+            RefreshNodeCombobox();         
         }
 
         private void CmbNodes_SelectedIndexChanged(object sender, EventArgs e)
@@ -591,6 +593,12 @@ namespace Blueprint41.Modeller
 
             StoragePath = null;
             InitializeXmlModeller(type);
+        }
+
+        private void ResetLayout()
+        {
+            graphEditor.Viewer.Transform = null;
+            graphEditor.Viewer.DrawingPanel.Invalidate();
         }
 
         void CheckForChangesAndSaveIfPossible()
@@ -683,7 +691,7 @@ namespace Blueprint41.Modeller
         private void OriginalSettingsToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
             AddOrClearViewModeCheckEvents(false);
-            originalSettingsToolStripMenuItem.Checked = true; // originalSettingsToolStripMenuItem.Checked;
+            originalSettingsToolStripMenuItem.Checked = true;
 
             mdsToolStripMenuItem.Checked = false;
             sugiyamaToolStripMenuItem.Checked = false;
