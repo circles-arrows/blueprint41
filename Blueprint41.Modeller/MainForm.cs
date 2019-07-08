@@ -790,8 +790,7 @@ namespace Blueprint41.Modeller
         private void BtnShowInheritedRelationships_Click(object sender, EventArgs e)
         {
             showInherited = btnShowInheritedRelationships.Checked;
-            showInheritedRelationshipsToolStripMenuItem.Checked = btnShowInheritedRelationships.Checked;
-            graphEditor.ClearSelection();
+            showInheritedRelationshipsToolStripMenuItem.Checked = btnShowInheritedRelationships.Checked;            
             Model.ShowInheritedRelationships = btnShowInheritedRelationships.Checked;
         }
 
@@ -799,7 +798,6 @@ namespace Blueprint41.Modeller
         {
             showLabels = btnShowLabels.Checked;
             showLabelsToolStripMenuItem.Checked = btnShowLabels.Checked;
-            graphEditor.ClearSelection();
             Model.ShowRelationshipLabels = btnShowLabels.Checked;           
         }
 

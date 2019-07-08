@@ -249,6 +249,8 @@ namespace Blueprint41.Modeller.Controls
 
         void SetDragDecorator(IViewerObject obj)
         {
+            ResetNodeStyles(obj);
+
             if (obj is DNode dNode)
             {
                 dNode.DrawingNode.Attr.Color = Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl();
@@ -258,11 +260,42 @@ namespace Blueprint41.Modeller.Controls
             AnaylyzeLeftButtonClick(obj);
         }
 
+        private void ResetNodeStyles(IViewerObject obj)
+        {
+            bool ctrlPressed = ModifierKeys == Keys.Control;
+
+            foreach (IViewerObject viewerObj in gViewer.Entities)
+            {
+                if (viewerObj is DNode dNod)
+                {
+                    if (viewerObj != obj)
+                    {
+                        if (!ctrlPressed)
+                        {
+                            viewerObj.MarkedForDragging = false;
+                            dNod.DrawingNode.Attr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
+                            gViewer.Invalidate(obj);
+                        }
+                    }
+                    else
+                    {
+                        viewerObj.MarkedForDragging = true;
+                        dNod.DrawingNode.Attr.Color = Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl();
+                        gViewer.Invalidate(viewerObj);
+                    }
+
+                    if (dNod.DrawingNode.Attr.Color == Styles.SELECTED_NODE_LINE_COLOR.ToMsAgl())
+                        viewerObj.MarkedForDragging = true;
+                }
+            }
+        }
+
         void RemoveDragDecorator(IViewerObject obj)
         {
             if (obj is DNode dNode)
             {
-                dNode.DrawingNode.Attr.Color = DrawingColor.LightGray;
+                dNode.DrawingNode.Attr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
+                selectedNodeAttr.Color = Styles.NODE_LINE_COLOR.ToMsAgl();
                 gViewer.Invalidate(obj);
             }
 
