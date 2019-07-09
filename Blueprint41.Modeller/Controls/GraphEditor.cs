@@ -136,8 +136,8 @@ namespace Blueprint41.Modeller.Controls
                 if (this.Viewer.Tag != null && this.Viewer.Tag is Submodel)
                     displayedModel = this.Viewer.Tag as Submodel;
 
-                if (displayedModel != null)
-                    displayedModel.Model.CaptureCoordinates();
+                if (displayedModel != null && displayedModel.Model != null)
+                        displayedModel.Model.CaptureCoordinates();
             }
         }
 

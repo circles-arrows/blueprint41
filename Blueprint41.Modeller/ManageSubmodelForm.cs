@@ -49,12 +49,14 @@ namespace Blueprint41.Modeller
 
                 buttonAddAll.Enabled = false;
                 buttonRemoveAll.Enabled = false;
+                btnDelete.Enabled = false;
             }
             else
             {
                 numericChapter.Value = Submodel.Chapter ?? 0;
                 chkIsDraft.Checked = Submodel.IsDraft;
                 chkIsLaboratory.Checked = Submodel.IsLaboratory;
+                btnDelete.Enabled = !IsNewModel;
             }
 
             btnRemove.Enabled = btnAdd.Enabled = false;
@@ -78,10 +80,6 @@ namespace Blueprint41.Modeller
 
             txtName.Enabled = !IsMainModel;            
             numericChapter.Enabled = !IsMainModel;
-            //chkIsDraft.Enabled = !IsMainModel;
-            //chkIsLaboratory.Enabled = !IsMainModel;
-            btnDelete.Enabled = !IsMainModel;
-            btnDelete.Enabled = !IsNewModel;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -188,7 +186,7 @@ namespace Blueprint41.Modeller
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show($"Are you sure to delete {Submodel.Name}?", "Delete submodel", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
+            DialogResult result = MessageBox.Show($@"Are you sure to delete ""{Submodel.Name}""?", "Delete submodel", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {

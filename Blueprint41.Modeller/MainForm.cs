@@ -136,7 +136,7 @@ namespace Blueprint41.Modeller
 
             if (e?.Edge?.UserData is Relationship rel && rel.ContainsDrawingEdge && rel.DeleteIncludeRelationshipModel)
             {
-                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the relationship '{rel.Source.Label}->[{rel.Name}]->{rel.Target.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult dialogResult = MessageBox.Show($@"Are you sure you want to delete the relationship ""{rel.Source.Label}->[{rel.Name}]->{rel.Target.Label}"" from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (dialogResult == DialogResult.Yes)
                     Model.RemoveRelationship(rel);
@@ -179,7 +179,7 @@ namespace Blueprint41.Modeller
         {
             if (e.Node.UserData is Submodel.NodeLocalType node)
             {
-                DialogResult dialogResult = MessageBox.Show($"Are you sure you want to delete the {EntityNodeName.ToLower()} '{node.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult dialogResult = MessageBox.Show($@"Are you sure you want to delete the {EntityNodeName.ToLower()} ""{node.Label}"" from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (dialogResult == DialogResult.Yes)
                 {
@@ -218,7 +218,11 @@ namespace Blueprint41.Modeller
             if (graphEditor.SelectedEntities.Count > 1)
                 CloseNodeEditor();
             else
-                entityEditor.Show((e.Node.UserData as Submodel.NodeLocalType).Entity, Model);
+            {
+                Entity entity = (e.Node.UserData as Submodel.NodeLocalType).Entity;
+                if (entity != null)
+                    entityEditor.Show(entity, Model);
+            }
 
             DefaultOrExpandPropertiesWidth(false);
         }
