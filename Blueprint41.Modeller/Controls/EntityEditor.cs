@@ -110,18 +110,34 @@ namespace Blueprint41.Modeller
             pre.DataGridViewPrimitive.KeyDown += dataGridViewPrimitiveProperties_KeyDown;
             pre.DataGridViewPrimitive.RowLeave += DataGridViewPrimitive_RowLeave;
             pre.DataGridViewPrimitive.CellLeave += DataGridViewPrimitive_CellLeave;
+            pre.DataGridViewPrimitive.DataError += DataGridViewPrimitive_DataError;
+            pre.DataGridViewPrimitive.CancelRowEdit += DataGridViewPrimitive_CancelRowEdit;
 
             pre.DataGridViewRelationship.CellMouseClick += DataGridViewPrimitive_CellMouseClick;
             pre.DataGridViewRelationship.DataSourceChanged += DataGridViewRelationship_DataSourceChanged;
             pre.DataGridViewRelationship.UserDeletingRow += DataGridViewRelationship_UserDeletingRow;
             pre.DataGridViewRelationship.Leave += DataGridViewRelationship_Leave;
             pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
+            pre.DataGridViewRelationship.DataError += DataGridViewRelationship_DataError;
+            pre.DataGridViewRelationship.CancelRowEdit += DataGridViewRelationship_CancelRowEdit;
 
             pre.CheckBoxShowAllRelationship.CheckedChanged += checkBoxShowAllRelationships_CheckedChanged;
             pre.CheckBoxShowFromCurrentModel.CheckedChanged += checkBoxShowFromCurrentModel_CheckedChanged;
 
             pre.Enabled = false;
             gbProperties.Enabled = false;
+        }
+
+        #region Primitive Event Handlers
+
+        private void DataGridViewPrimitive_CancelRowEdit(object sender, QuestionEventArgs e)
+        {
+
+        }
+
+        private void DataGridViewPrimitive_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+
         }
 
         private void DataGridViewPrimitive_CellLeave(object sender, DataGridViewCellEventArgs e)
@@ -133,8 +149,6 @@ namespace Blueprint41.Modeller
         {
             ValidatePrimitiveProperties(e.RowIndex, e.ColumnIndex);
         }
-
-        #region Primitive Event Handlers
 
         private void DataGridViewPrimitive_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
@@ -215,6 +229,16 @@ namespace Blueprint41.Modeller
         #endregion
 
         #region Relationship Event Handlers
+
+        private void DataGridViewRelationship_CancelRowEdit(object sender, QuestionEventArgs e)
+        {
+
+        }
+
+        private void DataGridViewRelationship_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+
+        }
 
         private void DataGridViewRelationship_DataSourceChanged(object sender, EventArgs e)
         {
