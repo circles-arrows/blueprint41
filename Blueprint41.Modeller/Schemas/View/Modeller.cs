@@ -362,7 +362,7 @@ namespace Blueprint41.Modeller.Schemas
                             {
                                 if (Model.Entities.Entity.Any(item => item.Label == entity.Label && (object)item != entity))
                                 {
-                                    System.Windows.Forms.MessageBox.Show($"Entity with label {entity.Label} already exist.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
+                                    System.Windows.Forms.MessageBox.Show($@"Entity with label ""{entity.Label}"" already exist.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
                                     return;
                                 }
                             }

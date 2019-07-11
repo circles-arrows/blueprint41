@@ -946,7 +946,7 @@ namespace Blueprint41.Modeller
                 string.IsNullOrEmpty(item.InProperty))
                 dialogResult = DialogResult.Yes;
             else
-                dialogResult = MessageBox.Show($"Are you sure you want to delete the relationship '{item.Source.Label}->[{item.Name}]->{item.Target.Label}' from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                dialogResult = MessageBox.Show($@"Are you sure you want to delete the relationship ""{item.Source.Label}->[{item.Name}]->{item.Target.Label}"" from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (dialogResult == DialogResult.Yes)
             {
@@ -964,7 +964,7 @@ namespace Blueprint41.Modeller
             if (string.IsNullOrEmpty(item.Name))
                 dialogResult = DialogResult.Yes;
             else
-                dialogResult = MessageBox.Show($"Are you sure you want to delete '{item.Name}' from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                dialogResult = MessageBox.Show($@"Are you sure you want to delete ""{item.Name}"" from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (dialogResult == DialogResult.Yes)
             {
@@ -1452,7 +1452,7 @@ namespace Blueprint41.Modeller
 
             if (!chkIsStaticData.Checked && Entity.IsStaticData && Entity.StaticData.Records.Record.Count != 0)
             {
-                DialogResult result = MessageBox.Show($"This will delete all the existing '{Entity.Label}' static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show($@"This will delete all the existing ""{Entity.Label}"" static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
                 if (result != DialogResult.Yes)
                 {
                     chkIsStaticData.Checked = !chkIsStaticData.Checked;
@@ -1503,7 +1503,7 @@ namespace Blueprint41.Modeller
 
             if (!chkIsStaticData.Checked && Entity.IsStaticData && Entity.StaticData.Records.Record.Count != 0)
             {
-                DialogResult result = MessageBox.Show($"This will delete all the existing '{Entity.Label}' static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show($@"This will delete all the existing ""{Entity.Label}"" static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
                 if (result != DialogResult.Yes)
                 {
                     chkIsStaticData.Checked = !chkIsStaticData.Checked;

@@ -83,7 +83,7 @@ namespace Blueprint41.Modeller
             ParentControl.FunctionalIdComboBox.SelectedIndex = ParentControl.FunctionalIdComboBox.FindStringExact(displayName);
             this.Close();
 
-            MessageBox.Show("Functional Id saved in memory.", "Saved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Functional Id saved in memory.", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #endregion

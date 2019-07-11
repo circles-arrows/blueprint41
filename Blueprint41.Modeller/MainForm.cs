@@ -568,16 +568,21 @@ namespace Blueprint41.Modeller
         #region File Menu
         private void MenuFileOpen_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openDialog = new OpenFileDialog();
+            DialogResult result = CheckForChangesAndSaveIfPossible();
 
-            openDialog.Filter = "XML Document (*.xml) | *.xml";
-            DialogResult result = openDialog.ShowDialog(this);
-
-            if (result == DialogResult.OK)
+            if (result != DialogResult.Cancel)
             {
-                StoragePath = openDialog.FileName;
-                RegistryHandler.LastOpenedFile = StoragePath;
-                InitializeXmlModeller();
+                OpenFileDialog openDialog = new OpenFileDialog();
+
+                openDialog.Filter = "XML Document (*.xml) | *.xml";
+                DialogResult openDialogResult = openDialog.ShowDialog(this);
+
+                if (openDialogResult == DialogResult.OK)
+                {
+                    StoragePath = openDialog.FileName;
+                    RegistryHandler.LastOpenedFile = StoragePath;
+                    InitializeXmlModeller();
+                }
             }
         }
 
@@ -593,10 +598,13 @@ namespace Blueprint41.Modeller
 
         void NewFile(ModellerType type = ModellerType.Blueprint41)
         {
-            CheckForChangesAndSaveIfPossible();
+            DialogResult result = CheckForChangesAndSaveIfPossible();
 
-            StoragePath = null;
-            InitializeXmlModeller(type);
+            if (result != DialogResult.Cancel)
+            {
+                StoragePath = null;
+                InitializeXmlModeller(type);
+            }
         }
 
         private void ResetLayout()
@@ -605,20 +613,22 @@ namespace Blueprint41.Modeller
             graphEditor.Viewer.DrawingPanel.Invalidate();
         }
 
-        void CheckForChangesAndSaveIfPossible()
+        DialogResult CheckForChangesAndSaveIfPossible()
         {
             if (Model == null || Model.HasChanges == false)
-                return;
+                return DialogResult.No;
 
             string fileName = Path.GetFileName(StoragePath);
 
-            DialogResult result = MessageBox.Show($"Do you want to save changes to {fileName}?", "Save Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show($@"Do you want to save changes to ""{fileName}"" ?", "Save Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 Model.HasChanges = false;
                 Model.CaptureCoordinates();
                 Model.Save(StoragePath);
             }
+
+            return result;
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
