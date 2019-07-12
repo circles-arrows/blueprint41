@@ -206,6 +206,7 @@ namespace Blueprint41.Modeller
             CloseEdgeEditor();
             RefreshNodeCombobox();
             DefaultOrExpandPropertiesWidth(false);
+            selectedNode = null;
         }
 
         void GraphEditor_NodeSelected(object sender, NodeEventArgs e)
@@ -215,14 +216,7 @@ namespace Blueprint41.Modeller
 
             selectedNode = e.Node.UserData as Submodel.NodeLocalType;
 
-            if (graphEditor.SelectedEntities.Count > 1)
-                CloseNodeEditor();
-            else
-            {
-                Entity entity = (e.Node.UserData as Submodel.NodeLocalType).Entity;
-                if (entity != null)
-                    entityEditor.Show(entity, Model);
-            }
+            ShowEntityEditor();
 
             DefaultOrExpandPropertiesWidth(false);
         }
@@ -904,6 +898,22 @@ namespace Blueprint41.Modeller
         {
             ManageFunctionalId functionalIdForm = new ManageFunctionalId(Model);
             functionalIdForm.ShowDialog(this);
+            ShowEntityEditor();
+        }
+
+        private void ShowEntityEditor()
+        {
+            if (graphEditor.SelectedEntities.Count > 1)
+            {
+                CloseNodeEditor();
+                selectedNode = null;
+            }
+            else
+            {
+                Entity entity = selectedNode?.Entity;
+                if (entity != null)
+                    entityEditor.Show(entity, Model);
+            }
         }
 
         #endregion

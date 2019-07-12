@@ -212,7 +212,9 @@ namespace Blueprint41.Modeller
 
                 if (!string.IsNullOrEmpty(newText))
                 {
-                    textBox.Text = textBox.Text?.Remove(textBox.SelectionStart - 1, 1).Trim();
+                    int selectionIndex = textBox.SelectionStart == 0 ? 1: textBox.SelectionStart;
+                    
+                    textBox.Text = textBox.Text?.Remove(selectionIndex - 1, 1).Trim();
                     textBox.SelectionStart = textBox.TextLength;
                     textBox.ScrollToCaret();
                 }
