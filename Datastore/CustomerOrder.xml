@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modeller type="Blueprint41" xmlns="http://xirqlz.com/2016/Blueprint/Modeller">
+  <entities>
+    <entity guid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" label="Person" name="Person" abstract="true" virtual="false" isStaticData="false">
+      <primitive guid="9e2f7cad-d9c7-4e12-aba3-226b413a3f34" type="string" index="None" name="Name" />
+      <primitive guid="a363a545-59d8-41bc-a547-2b597d86d965" type="string" index="None" name="Address" />
+    </entity>
+    <entity guid="1d6026ce-0dac-13ea-8b72-95f02b7620a7" label="Customer" name="Customer" inherits="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" isStaticData="false" functionalId="23754cd9-f2fb-d34e-d8e1-afa036bb2e33" />
+    <entity guid="27fa40a2-5a92-5b63-08dc-28c9e4f9216d" label="Order" name="Order" inherits="aefa0f1b-7339-1f40-71cd-000ab9f7856e" isStaticData="false" abstract="false" virtual="false">
+      <primitive guid="6b626f27-5d53-4d36-812a-e22347ebf9c0" type="string" index="None" name="Status" nullable="false" />
+    </entity>
+    <entity guid="aefa0f1b-7339-1f40-71cd-000ab9f7856e" label="Transaction" name="Transaction" abstract="true" isStaticData="false">
+      <primitive guid="b12ca9db-3b10-4c5d-b307-1c65168c1646" type="DateTime" index="None" name="Date" nullable="false" />
+    </entity>
+    <entity guid="0d396e47-3303-cb0d-5def-ddaed216daf4" label="Payment" name="Payment" abstract="true" isStaticData="false">
+      <primitive guid="e2ff5efc-0919-4373-863f-b36ec744e848" type="decimal" index="None" name="Amount" nullable="false" />
+    </entity>
+    <entity guid="db309b06-d006-a347-98f9-eb0940d3279c" label="Cash" name="Cash" inherits="0d396e47-3303-cb0d-5def-ddaed216daf4" isStaticData="false">
+      <primitive guid="50e3351f-cec9-4cc1-aabb-bf310f105afa" type="string" index="None" name="CashTendered" nullable="false" />
+    </entity>
+    <entity guid="bcb1900a-7840-4bf7-6f0d-117ec7df65af" label="Credit" name="Credit" inherits="0d396e47-3303-cb0d-5def-ddaed216daf4" isStaticData="false">
+      <primitive guid="3f6bb454-0cf2-4eb5-a030-a0f3ce576b47" type="string" index="None" name="Number" nullable="false" />
+      <primitive guid="bcf8a3ea-3f60-49c7-bb87-d09d91a40c3d" type="string" index="None" name="Type" nullable="false" />
+      <primitive guid="7113b9da-0917-42e4-aee2-4135dd81c2b3" type="DateTime" index="None" name="ExpirationDate" nullable="false" />
+    </entity>
+    <entity guid="d5f20b06-9987-8f1d-090a-1309b285291c" label="Check" name="Check" inherits="0d396e47-3303-cb0d-5def-ddaed216daf4" isStaticData="false">
+      <primitive guid="7fef32a3-f30c-4aaa-a064-1adf47b9423f" type="string" index="None" name="Name" nullable="false" />
+      <primitive guid="d9274b5c-30c3-4916-a994-e3c09d6da591" type="string" index="None" name="BankID" nullable="false" />
+    </entity>
+    <entity guid="a3010fee-478d-cabd-426b-bde7546413de" label="OrderDetail" name="OrderDetail" isStaticData="false">
+      <primitive guid="1ad0730e-4622-402e-904c-72f5de82174b" type="int" index="None" name="Quantity" nullable="false" />
+      <primitive guid="6b2f9f36-5bde-4294-98da-29ac2e3b986e" type="string" index="None" name="TaxStatus" nullable="false" />
+    </entity>
+    <entity guid="b9f3747d-192b-5eda-606d-737d339a9679" label="Item" name="Item" isStaticData="false" virtual="false" abstract="true">
+      <primitive guid="e68500ed-d328-47df-bad7-5c91486005d8" type="decimal" index="None" name="ShippingWeight" nullable="false" />
+      <primitive guid="4528f41f-2a5c-49bb-97e1-8747fcfb9855" type="string" index="None" name="Description" />
+    </entity>
+  </entities>
+  <relationships>
+    <relationship guid="78f91a62-46fe-60b9-a9c0-5465bbd22b8f" name="PERSON_CONTAINS_TRANSACTION" type="CONTAINS_TRANSACTION">
+      <source name="Transactions" type="Collection" label="Person" referenceGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <target name="Persons" type="Collection" label="Transaction" referenceGuid="aefa0f1b-7339-1f40-71cd-000ab9f7856e" />
+    </relationship>
+    <relationship guid="9e047afe-0f21-7d8d-bee9-e44022aae203" name="ORDERDETAIL_CONTAINS_ITEM" type="CONTAINS_ITEM">
+      <source name="Items" type="Collection" label="OrderDetail" referenceGuid="a3010fee-478d-cabd-426b-bde7546413de" />
+      <target name="OrderDetail" type="Lookup" label="Item" referenceGuid="b9f3747d-192b-5eda-606d-737d339a9679" />
+    </relationship>
+    <relationship guid="70059bec-713b-154f-00e6-75fd9b606a9a" name="ORDER_HAS_PAYMENT" type="HAS_PAYMENT">
+      <source name="Payment" type="Lookup" nullable="false" label="Order" referenceGuid="27fa40a2-5a92-5b63-08dc-28c9e4f9216d" />
+      <target nullable="false" label="Payment" referenceGuid="0d396e47-3303-cb0d-5def-ddaed216daf4" />
+    </relationship>
+    <relationship guid="f473381f-e477-1a44-9551-051c1f39563e" name="ORDER_CONTAINS_ORDERDETAIL" type="CONTAINS_ORDERDETAIL">
+      <source name="OrderDetails" type="Collection" label="Order" referenceGuid="27fa40a2-5a92-5b63-08dc-28c9e4f9216d" />
+      <target nullable="false" label="OrderDetail" referenceGuid="a3010fee-478d-cabd-426b-bde7546413de" />
+    </relationship>
+  </relationships>
+  <submodels>
+    <submodel name="Main Model">
+      <node label="Person" xcoordinate="87" ycoordinate="905.58200788497925" entityGuid="cfd7be40-3d9b-b34b-a3d7-a7e3eb18c5eb" />
+      <node label="Customer" xcoordinate="0" ycoordinate="905.58200788497925" entityGuid="1d6026ce-0dac-13ea-8b72-95f02b7620a7" />
+      <node label="Order" xcoordinate="174" ycoordinate="777.026026725769" entityGuid="27fa40a2-5a92-5b63-08dc-28c9e4f9216d" />
+      <node label="Transaction" xcoordinate="85" ycoordinate="777.026026725769" entityGuid="aefa0f1b-7339-1f40-71cd-000ab9f7856e" />
+      <node label="Payment" xcoordinate="359" ycoordinate="642.14973306655884" entityGuid="0d396e47-3303-cb0d-5def-ddaed216daf4" />
+      <node label="Cash" xcoordinate="174" ycoordinate="642.14973306655884" entityGuid="db309b06-d006-a347-98f9-eb0940d3279c" />
+      <node label="Credit" xcoordinate="107" ycoordinate="642.14973306655884" entityGuid="bcb1900a-7840-4bf7-6f0d-117ec7df65af" />
+      <node label="Check" xcoordinate="36" ycoordinate="642.14973306655884" entityGuid="d5f20b06-9987-8f1d-090a-1309b285291c" />
+      <node label="OrderDetail" xcoordinate="260" ycoordinate="642.14973306655884" entityGuid="a3010fee-478d-cabd-426b-bde7546413de" />
+      <node label="Item" xcoordinate="260" ycoordinate="533.55859279632568" entityGuid="b9f3747d-192b-5eda-606d-737d339a9679" />
+    </submodel>
+  </submodels>
+  <functionalIds>
+    <functionalId type="Hash" value="S_" name="Shared" guid="23754cd9-f2fb-d34e-d8e1-afa036bb2e33" isDefault="true" />
+  </functionalIds>
+</modeller>

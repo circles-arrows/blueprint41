@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<modeller type="Blueprint41" xmlns="http://xirqlz.com/2016/Blueprint/Modeller">
+  <entities>
+    <entity guid="8e0caa19-52d2-b95e-7533-25dedccd7a28" label="Entity0" name="Entity0" isStaticData="false" />
+    <entity guid="79a6ed96-2c85-f3aa-7f73-afb4a5d6e370" label="Entity1" name="Entity1" isStaticData="false" />
+    <entity guid="28b020e3-ba4a-d4cb-58cc-ebdc773b71f6" label="Entity2" name="Entity2" isStaticData="false" />
+    <entity guid="b6995cde-64e4-7451-c0ef-015bfda3db26" label="Entity3" name="Entity3" isStaticData="false" />
+    <entity guid="dec5e404-4e2d-8d32-8222-140d6bc3cca8" label="Entity4" name="Entity4" isStaticData="false" />
+  </entities>
+  <relationships>
+    <relationship guid="2d093631-2b8a-b70b-8333-b4d72889c56a" name="ENTITY1_HAS_ENTITY2" type="HAS_ENTITY2">
+      <source name="Entity2" type="Lookup" label="Entity1" referenceGuid="79a6ed96-2c85-f3aa-7f73-afb4a5d6e370" />
+      <target nullable="false" label="Entity2" referenceGuid="28b020e3-ba4a-d4cb-58cc-ebdc773b71f6" />
+    </relationship>
+    <relationship guid="d5fc80b8-3c7a-e453-3483-61527ea360d6" name="ENTITY0_HAS_ENTITY2" type="HAS_ENTITY2">
+      <source name="Entity2" type="Lookup" label="Entity0" referenceGuid="8e0caa19-52d2-b95e-7533-25dedccd7a28" />
+      <target nullable="false" label="Entity2" referenceGuid="28b020e3-ba4a-d4cb-58cc-ebdc773b71f6" />
+    </relationship>
+    <relationship guid="eeefbaaf-6617-6e7c-e5ef-f4372820f736" name="ENTITY3_IS_ENTITY0" type="IS_ENTITY0">
+      <source name="Entity0" type="Lookup" label="Entity3" referenceGuid="b6995cde-64e4-7451-c0ef-015bfda3db26" />
+      <target name="Entity3" type="Lookup" nullable="false" label="Entity0" referenceGuid="8e0caa19-52d2-b95e-7533-25dedccd7a28" />
+    </relationship>
+    <relationship guid="562023c7-0e45-88b1-e626-ca1261a2fba1" name="ENTITY3_HAS_ENTITY4" type="HAS_ENTITY4">
+      <source name="Entity4" type="Lookup" label="Entity3" referenceGuid="b6995cde-64e4-7451-c0ef-015bfda3db26" />
+      <target nullable="false" label="Entity4" referenceGuid="dec5e404-4e2d-8d32-8222-140d6bc3cca8" />
+    </relationship>
+    <relationship guid="814bea4c-ad70-774c-e43c-0edcca0045a8" name="ENTITY3_IS_ENTITY2" type="IS_ENTITY2">
+      <source name="Entity2" type="Lookup" label="Entity3" referenceGuid="b6995cde-64e4-7451-c0ef-015bfda3db26" />
+      <target name="Entity3" type="Lookup" nullable="false" label="Entity2" referenceGuid="28b020e3-ba4a-d4cb-58cc-ebdc773b71f6" />
+    </relationship>
+    <relationship guid="57986bb6-38ea-a94b-1d55-dff5669f9346" name="ENTITY3_IS_ENTITY1" type="IS_ENTITY1">
+      <source name="Entity1" type="Lookup" label="Entity3" referenceGuid="b6995cde-64e4-7451-c0ef-015bfda3db26" />
+      <target name="Entity3" type="Lookup" label="Entity1" referenceGuid="79a6ed96-2c85-f3aa-7f73-afb4a5d6e370" />
+    </relationship>
+  </relationships>
+  <submodels>
+    <submodel name="Main Model">
+      <node label="Entity0" xcoordinate="-182.00852817745894" ycoordinate="-117.97610112438122" entityGuid="8e0caa19-52d2-b95e-7533-25dedccd7a28" />
+      <node label="Entity1" xcoordinate="186.98476769408242" ycoordinate="-100.29195802657543" entityGuid="79a6ed96-2c85-f3aa-7f73-afb4a5d6e370" />
+      <node label="Entity2" xcoordinate="-2.4307294357607692" ycoordinate="-1.6188059970401394" entityGuid="28b020e3-ba4a-d4cb-58cc-ebdc773b71f6" />
+      <node label="Entity3" xcoordinate="-12.268399550807175" ycoordinate="211.75898118480654" entityGuid="b6995cde-64e4-7451-c0ef-015bfda3db26" />
+      <node label="Entity4" xcoordinate="155.96688079833984" ycoordinate="119.07752227783203" entityGuid="dec5e404-4e2d-8d32-8222-140d6bc3cca8" />
+    </submodel>
+  </submodels>
+  <functionalIds />
+</modeller>

@@ -298,8 +298,9 @@ namespace Blueprint41.Modeller
             }
 
             if (e.ColumnIndex == 1 || e.ColumnIndex == 7)
-            {
+            {                
                 DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
                 string textBoxValue = textBox.Value?.ToString();
                 textBoxValue = textBoxValue?.Replace(" ", string.Empty);
 
@@ -310,7 +311,12 @@ namespace Blueprint41.Modeller
                     if (cb.Value == null)
                     {
                         textBox.Value = null;
+                        textBox.ErrorText = "Please select property type.";
                         return;
+                    }
+                    else
+                    {
+                        textBox.ErrorText = null;
                     }
                 }
 
@@ -362,7 +368,7 @@ namespace Blueprint41.Modeller
                 DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
                 string newName = ((string)textBox.Value)?.Replace(" ", string.Empty);
                 textBox.Value = newName;
-
+                
                 if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
                     relationshipsObservable[e.RowIndex].RenameEdge();
             }
