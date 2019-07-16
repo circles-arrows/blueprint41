@@ -341,8 +341,10 @@ namespace Blueprint41.Modeller.Controls
 
             foreach (IViewerObject ob in SelectedEntities)
             {
+                //if (ob is IViewerNode node)
+                //    EntityDeleted?.Invoke(this, new NodeEventArgs(node.Node, m_MouseRightButtonDownPoint));
                 if (ob is IViewerNode node)
-                    EntityDeleted?.Invoke(this, new NodeEventArgs(node.Node, m_MouseRightButtonDownPoint));
+                    EntityDeleted?.Invoke(this, new NodeEventArgs(node, m_MouseRightButtonDownPoint));
             }
         }
 
@@ -350,7 +352,7 @@ namespace Blueprint41.Modeller.Controls
         {
             if (obj is DNode dNode)
             {
-                NodeSelected?.Invoke(this, new NodeEventArgs(dNode.DrawingNode, new GeometryPoint(0, 0)));
+                NodeSelected?.Invoke(this, new NodeEventArgs(dNode, new GeometryPoint(0, 0)));
             }
         }
 
@@ -439,7 +441,7 @@ namespace Blueprint41.Modeller.Controls
             foreach (IViewerObject ob in SelectedEntities)
             {
                 if (ob is IViewerNode node)
-                    EntityExcluded?.Invoke(this, new NodeEventArgs(node.Node, m_MouseRightButtonDownPoint));
+                    EntityExcluded?.Invoke(this, new NodeEventArgs(node, m_MouseRightButtonDownPoint));
             }
         }
 
@@ -448,7 +450,7 @@ namespace Blueprint41.Modeller.Controls
             foreach (IViewerObject ob in SelectedEntities)
             {
                 if (ob is IViewerNode node)
-                    EntityDeleted?.Invoke(this, new NodeEventArgs(node.Node, m_MouseRightButtonDownPoint));
+                    EntityDeleted?.Invoke(this, new NodeEventArgs(node, m_MouseRightButtonDownPoint));
             }
         }
 
