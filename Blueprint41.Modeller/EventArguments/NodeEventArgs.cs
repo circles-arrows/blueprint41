@@ -10,9 +10,15 @@ namespace Blueprint41.Modeller
 {
     public class NodeEventArgs : EventArgs
     {
-        public DrawingNode Node { get; private set; }
+        public IViewerNode Node { get; private set; }
         public Microsoft.Msagl.Core.Geometry.Point Center { get; private set; }
-        public NodeEventArgs(DrawingNode node, Microsoft.Msagl.Core.Geometry.Point center)
+        //public NodeEventArgs(DrawingNode node, Microsoft.Msagl.Core.Geometry.Point center)
+        //{
+        //    Node = node;
+        //    Center = center;
+        //}
+
+        public NodeEventArgs(IViewerNode node, Microsoft.Msagl.Core.Geometry.Point center)
         {
             Node = node;
             Center = center;
