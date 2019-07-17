@@ -82,10 +82,8 @@ namespace Blueprint41.Modeller
             AddNewEntitiesToSubModel(Model.Submodels.Submodel[0].Name);
             splitterDistance = splitContainer.SplitterDistance;
             SizeChanged += MainForm_SizeChanged;
-
-            EnableDisableInsertEdgeButton();
         }
-       
+
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
             splitterDistance = splitContainer.SplitterDistance;
@@ -179,26 +177,23 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_DeleteEntity(object sender, NodeEventArgs e)
         {
-            if (e.Node.Node.UserData is Submodel.NodeLocalType node)
+            if (e.Node.UserData is Submodel.NodeLocalType node)
             {
                 DialogResult dialogResult = MessageBox.Show($@"Are you sure you want to delete the {EntityNodeName.ToLower()} ""{node.Label}"" from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (dialogResult == DialogResult.Yes)
                 {
                     Model.DeleteEntity(node);
-                    Model.GraphEditor.Viewer.RemoveNode(e.Node, true);                    
                     Model.Invalidate();
                     RefreshNodeCombobox();
                     CloseNodeEditor();
-
-                    EnableDisableInsertEdgeButton();
                 }
             }
         }
 
         void GraphEditor_ExcludeEntity(object sender, NodeEventArgs e)
         {
-            if (e.Node.Node.UserData is Submodel.NodeLocalType model)
+            if (e.Node.UserData is Submodel.NodeLocalType model)
                 Model.ExcludeFromCurrentModel(model);
 
             ReloadGraph();
@@ -216,10 +211,10 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_NodeSelected(object sender, NodeEventArgs e)
         {
-            if (!(e.Node.Node.UserData is Submodel.NodeLocalType))
+            if (!(e.Node.UserData is Submodel.NodeLocalType))
                 throw new NotSupportedException();
 
-            selectedNode = e.Node.Node.UserData as Submodel.NodeLocalType;
+            selectedNode = e.Node.UserData as Submodel.NodeLocalType;
 
             ShowEntityEditor();
 
@@ -240,7 +235,7 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_InsertNode(object sender, NodeEventArgs e)
         {
-            Submodel.NodeLocalType model = e.Node?.Node?.UserData as Submodel.NodeLocalType;
+            Submodel.NodeLocalType model = e.Node?.UserData as Submodel.NodeLocalType;
             if (model == null)
             {
                 Entity entity = new Schemas.Entity(Model);
@@ -259,18 +254,12 @@ namespace Blueprint41.Modeller
 
                 Model.DisplayedSubmodel.Node.Add(model);
                 RefreshNodeCombobox();
-                //ResetLayout();
-                Model.RebindControl();
-
-                //Model.GraphEditor.Viewer.NeedToCalculateLayout = true;                
+                ResetLayout();
             }
-
             // Auto select newly created entity
             selectedNode = model;
             selectedNode.Select();
             entityEditor.Show(model.Entity, Model);
-
-            EnableDisableInsertEdgeButton();
         }
         #endregion
 
@@ -386,18 +375,6 @@ namespace Blueprint41.Modeller
             graphEditor.EdgeRemoved += GraphEditor_EdgeRemoved;
             graphEditor.EdgeModeClicked += GraphEditor_EdgeModeClicked;
             graphEditor.PanModeClicked += GraphEditor_PanModeClicked;
-        }
-
-        private void EnableDisableInsertEdgeButton()
-        {
-            bool canInsertEdge = Model?.GraphEditor?.Viewer?.Entities.Count() > 0;
-
-            tsbEdgeInsertion.Enabled = canInsertEdge;
-
-            if (!canInsertEdge)
-                graphEditor.Viewer.InsertingEdge = false;
-
-            SetCheckedModeMenuControls();
         }
 
         void SetCheckedModeMenuControls()
@@ -543,8 +520,7 @@ namespace Blueprint41.Modeller
 
             this.graphEditor.Viewer.Tag = Model.DisplayedSubmodel;
             this.entityEditor.CloseEditor();
-            EnableDisableInsertEdgeButton();
-            RefreshNodeCombobox();
+            RefreshNodeCombobox();         
         }
 
         private void CmbNodes_SelectedIndexChanged(object sender, EventArgs e)
@@ -838,7 +814,7 @@ namespace Blueprint41.Modeller
         {
             showLabels = btnShowLabels.Checked;
             showLabelsToolStripMenuItem.Checked = btnShowLabels.Checked;
-            Model.ShowRelationshipLabels = btnShowLabels.Checked;
+            Model.ShowRelationshipLabels = btnShowLabels.Checked;           
         }
 
         #endregion
