@@ -179,14 +179,14 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_DeleteEntity(object sender, NodeEventArgs e)
         {
-            if (e.Node.Node.UserData is Submodel.NodeLocalType node)
+            if (e.Node.UserData is Submodel.NodeLocalType node)
             {
                 DialogResult dialogResult = MessageBox.Show($@"Are you sure you want to delete the {EntityNodeName.ToLower()} ""{node.Label}"" from storage?", "WARNING!", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (dialogResult == DialogResult.Yes)
                 {
                     Model.DeleteEntity(node);
-                    Model.GraphEditor.Viewer.RemoveNode(e.Node, true);                    
+                    //Model.GraphEditor.Viewer.RemoveNode(e.Node, true);                    
                     Model.Invalidate();
                     RefreshNodeCombobox();
                     CloseNodeEditor();
@@ -198,7 +198,7 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_ExcludeEntity(object sender, NodeEventArgs e)
         {
-            if (e.Node.Node.UserData is Submodel.NodeLocalType model)
+            if (e.Node.UserData is Submodel.NodeLocalType model)
                 Model.ExcludeFromCurrentModel(model);
 
             ReloadGraph();
@@ -215,11 +215,14 @@ namespace Blueprint41.Modeller
         }
 
         void GraphEditor_NodeSelected(object sender, NodeEventArgs e)
-        {
-            if (!(e.Node.Node.UserData is Submodel.NodeLocalType))
+        {          
+            if (!(e.Node.UserData is Submodel.NodeLocalType))
                 throw new NotSupportedException();
 
-            selectedNode = e.Node.Node.UserData as Submodel.NodeLocalType;
+            selectedNode = e.Node.UserData as Submodel.NodeLocalType;
+
+            if (tsbEdgeInsertion.Checked)
+                return;
 
             ShowEntityEditor();
 
@@ -240,7 +243,7 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_InsertNode(object sender, NodeEventArgs e)
         {
-            Submodel.NodeLocalType model = e.Node?.Node?.UserData as Submodel.NodeLocalType;
+            Submodel.NodeLocalType model = e.Node?.UserData as Submodel.NodeLocalType;
             if (model == null)
             {
                 Entity entity = new Schemas.Entity(Model);
@@ -820,6 +823,11 @@ namespace Blueprint41.Modeller
             graphEditor.PanButtonPressedOnMenu = false;
 
             SetCheckedModeMenuControls();
+
+            if (graphEditor.Viewer.InsertingEdge)
+                CloseNodeEditor();
+            else
+                ShowEntityEditor();
         }
 
         private void TsbHome_Click(object sender, EventArgs e)

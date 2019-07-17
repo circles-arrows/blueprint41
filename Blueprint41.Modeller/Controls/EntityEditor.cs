@@ -19,7 +19,7 @@ namespace Blueprint41.Modeller
 {
     public partial class EntityEditor : UserControl
     {
-        public event EventHandler<EventArgs> EntityTypeChanged;
+        public event EventHandler<EventArgs> EntityTypeChanged;        
 
         private bool isFromCmbInherits = false;
 

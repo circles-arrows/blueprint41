@@ -85,7 +85,7 @@ namespace Blueprint41.Modeller.Schemas
 
         private void NodeMouseUp(object sender, NodeEventArgs e)
         {
-            Submodel.NodeLocalType entity = e?.Node?.Node?.UserData as Submodel.NodeLocalType;
+            Submodel.NodeLocalType entity = e?.Node?.UserData as Submodel.NodeLocalType;
             if (entity != null)
                 entity.CaptureCoordinates();
         }
