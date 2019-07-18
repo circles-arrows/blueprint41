@@ -44,11 +44,11 @@
             this.btnShowLabels = new System.Windows.Forms.ToolStripButton();
             this.btnShowInheritedRelationships = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripDropDownButtonTools = new System.Windows.Forms.ToolStripDropDownButton();
             this.generateCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateUpdateScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateDocumentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripDropDownButtonSettings = new System.Windows.Forms.ToolStripDropDownButton();
             this.functionalIdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmbNodes = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
@@ -120,8 +120,8 @@
             this.btnShowLabels,
             this.btnShowInheritedRelationships,
             this.toolStripSeparator4,
-            this.toolStripDropDownButton1,
-            this.toolStripDropDownButton2,
+            this.toolStripDropDownButtonTools,
+            this.toolStripDropDownButtonSettings,
             this.cmbNodes,
             this.toolStripLabel2,
             this.toolStripSeparator2,
@@ -284,16 +284,16 @@
             // 
             // toolStripDropDownButton1
             // 
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripDropDownButtonTools.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButtonTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.generateCodeToolStripMenuItem,
             this.generateUpdateScriptToolStripMenuItem,
             this.generateDocumentToolStripMenuItem});
-            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
-            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(37, 31);
-            this.toolStripDropDownButton1.Text = "TOOLS";
+            this.toolStripDropDownButtonTools.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButtonTools.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButtonTools.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButtonTools.Size = new System.Drawing.Size(37, 31);
+            this.toolStripDropDownButtonTools.Text = "TOOLS";
             // 
             // generateCodeToolStripMenuItem
             // 
@@ -318,14 +318,14 @@
             // 
             // toolStripDropDownButton2
             // 
-            this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripDropDownButtonSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButtonSettings.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.functionalIdToolStripMenuItem});
-            this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
-            this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
-            this.toolStripDropDownButton2.Size = new System.Drawing.Size(37, 31);
-            this.toolStripDropDownButton2.Text = "SETTINGS";
+            this.toolStripDropDownButtonSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
+            this.toolStripDropDownButtonSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButtonSettings.Name = "toolStripDropDownButton2";
+            this.toolStripDropDownButtonSettings.Size = new System.Drawing.Size(37, 31);
+            this.toolStripDropDownButtonSettings.Text = "SETTINGS";
             // 
             // functionalIdToolStripMenuItem
             // 
@@ -772,12 +772,12 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton tsbZoomOut;
         private System.Windows.Forms.ToolStripButton tsbPan;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonSettings;
         private System.Windows.Forms.ToolStripMenuItem functionalIdToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zoomOutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zoomInToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem panToolStripMenuItem;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonTools;
         private System.Windows.Forms.ToolStripMenuItem generateCodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateUpdateScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateDocumentToolStripMenuItem;

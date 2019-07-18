@@ -10,7 +10,6 @@ using Blueprint41.Modeller.Generation;
 using System.Xml;
 using Blueprint41.Modeller.Editors;
 using Microsoft.Msagl.GraphViewerGdi;
-using System.Threading.Tasks;
 using Blueprint41.Licensing.Connector;
 using Blueprint41.Modeller.Utils;
 
@@ -83,7 +82,7 @@ namespace Blueprint41.Modeller
             splitterDistance = splitContainer.SplitterDistance;
             SizeChanged += MainForm_SizeChanged;
 
-            EnableDisableInsertEdgeButton();
+            EnableDisableButtons();
         }
        
         private void MainForm_SizeChanged(object sender, EventArgs e)
@@ -186,12 +185,14 @@ namespace Blueprint41.Modeller
                 if (dialogResult == DialogResult.Yes)
                 {
                     Model.DeleteEntity(node);
-                    //Model.GraphEditor.Viewer.RemoveNode(e.Node, true);                    
+
+                    if (Model?.GraphEditor?.Viewer?.Entities.Count() == 0)                    
+                        ReloadGraph();
+
                     Model.Invalidate();
                     RefreshNodeCombobox();
                     CloseNodeEditor();
-
-                    EnableDisableInsertEdgeButton();
+                    EnableDisableButtons();
                 }
             }
         }
@@ -263,9 +264,7 @@ namespace Blueprint41.Modeller
                 Model.DisplayedSubmodel.Node.Add(model);
                 RefreshNodeCombobox();
                 //ResetLayout();
-                Model.RebindControl();
-
-                //Model.GraphEditor.Viewer.NeedToCalculateLayout = true;                
+                Model.RebindControl();     
             }
 
             // Auto select newly created entity
@@ -273,7 +272,7 @@ namespace Blueprint41.Modeller
             selectedNode.Select();
             entityEditor.Show(model.Entity, Model);
 
-            EnableDisableInsertEdgeButton();
+            EnableDisableButtons();
         }
         #endregion
 
@@ -285,6 +284,7 @@ namespace Blueprint41.Modeller
             Recovery.Instance.Start(this, () => Console.WriteLine("Auto saved modeller"));
 
             SetModellerTypeMenuItemVisibility();
+            EnableDisableButtons();
         }
 
         void InitializeModel(ModellerType modellerType)
@@ -391,14 +391,22 @@ namespace Blueprint41.Modeller
             graphEditor.PanModeClicked += GraphEditor_PanModeClicked;
         }
 
-        private void EnableDisableInsertEdgeButton()
+        private void EnableDisableButtons()
         {
-            bool canInsertEdge = Model?.GraphEditor?.Viewer?.Entities.Count() > 0;
+            bool hasEntities = Model?.GraphEditor?.Viewer?.Entities.Count() > 0;
+                        
+            tsbEdgeInsertion.Enabled = hasEntities;
+            showLabelsToolStripMenuItem.Enabled = hasEntities;
+            btnShowLabels.Enabled = hasEntities;
+            btnShowInheritedRelationships.Enabled = hasEntities;
+            showInheritedRelationshipsToolStripMenuItem.Enabled = hasEntities;
 
-            tsbEdgeInsertion.Enabled = canInsertEdge;
-
-            if (!canInsertEdge)
+            if (!hasEntities)
+            {
                 graphEditor.Viewer.InsertingEdge = false;
+                btnShowLabels.Checked = false;
+                showLabelsToolStripMenuItem.Checked = false;
+            }
 
             SetCheckedModeMenuControls();
         }
@@ -426,6 +434,12 @@ namespace Blueprint41.Modeller
 
             functionalIdToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
             functionalIdToolStripMenuItem1.Visible = Model.ModellerType == ModellerType.Blueprint41;
+
+            settingsToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
+            toolsToolStripMenuItem.Visible = Model.ModellerType == ModellerType.Blueprint41;
+
+            toolStripDropDownButtonTools.Visible = Model.ModellerType == ModellerType.Blueprint41;
+            toolStripDropDownButtonSettings.Visible = Model.ModellerType == ModellerType.Blueprint41;
         }
 
         void ReloadGraph()
@@ -546,7 +560,7 @@ namespace Blueprint41.Modeller
 
             this.graphEditor.Viewer.Tag = Model.DisplayedSubmodel;
             this.entityEditor.CloseEditor();
-            EnableDisableInsertEdgeButton();
+            EnableDisableButtons();
             RefreshNodeCombobox();
         }
 
@@ -628,12 +642,6 @@ namespace Blueprint41.Modeller
             }
         }
 
-        private void ResetLayout()
-        {
-            graphEditor.Viewer.Transform = null;
-            graphEditor.Viewer.DrawingPanel.Invalidate();
-        }
-
         DialogResult CheckForChangesAndSaveIfPossible()
         {
             if (Model == null || Model.HasChanges == false)
@@ -692,6 +700,7 @@ namespace Blueprint41.Modeller
             propertiesToolStripMenuItem.Checked = !propertiesToolStripMenuItem.Checked;
             PropertiesToolStripMenuItem_Click(sender, e);
         }
+
         private void PropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowHideToolStripMenu(!propertiesToolStripMenuItem.Checked);
@@ -782,6 +791,28 @@ namespace Blueprint41.Modeller
             }
             else if (expand == false && expandPropertiesWidthToolStripMenuItem.Checked)
                 splitContainer.SplitterDistance = splitterDistance;
+        }
+
+        public void ShowHideToolStripMenu(bool panel2Collapsed)
+        {
+            propertiesToolStripMenuItem.Checked = !panel2Collapsed;
+            splitContainer.Panel2Collapsed = panel2Collapsed;
+            toolStripRight.Visible = panel2Collapsed;
+
+            if (panel2Collapsed)
+            {
+                ToolStripMenuItem propertiesItem = new ToolStripMenuItem("Properties");
+                propertiesItem.Font = new Font(FontFamily.GenericSansSerif, 8.25f);
+                propertiesItem.Click += PropertiesItem_Click;
+                toolStripRight.Items.Add(propertiesItem);
+            }
+            else
+            {
+                if (toolStripRight.Items[0] is ToolStripMenuItem menuItem)
+                    menuItem.Click -= PropertiesItem_Click;
+
+                toolStripRight.Items.Clear();
+            }
         }
 
         private void TsbZoomOut_Click(object sender, EventArgs e)
@@ -921,6 +952,7 @@ namespace Blueprint41.Modeller
         #endregion
 
         #region Settings Menu
+
         private void FunctionalIdToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             FunctionalIdToolStripMenuItem_Click(sender, EventArgs.Empty);
@@ -982,26 +1014,5 @@ namespace Blueprint41.Modeller
         }
         #endregion
 
-        public void ShowHideToolStripMenu(bool panel2Collapsed)
-        {
-            propertiesToolStripMenuItem.Checked = !panel2Collapsed;
-            splitContainer.Panel2Collapsed = panel2Collapsed;
-            toolStripRight.Visible = panel2Collapsed;
-
-            if (panel2Collapsed)
-            {
-                ToolStripMenuItem propertiesItem = new ToolStripMenuItem("Properties");
-                propertiesItem.Font = new Font(FontFamily.GenericSansSerif, 8.25f);
-                propertiesItem.Click += PropertiesItem_Click;
-                toolStripRight.Items.Add(propertiesItem);
-            }
-            else
-            {
-                if (toolStripRight.Items[0] is ToolStripMenuItem menuItem)
-                    menuItem.Click -= PropertiesItem_Click;
-
-                toolStripRight.Items.Clear();
-            }
-        }
     }
 }
