@@ -28,8 +28,6 @@ namespace Blueprint41.Modeller.Schemas
             }
         }
 
-        
-
         protected override void InitializeLogic()
         {
             // Set Guid Id
@@ -72,6 +70,7 @@ namespace Blueprint41.Modeller.Schemas
                 }
             };
         }
+
         public override bool Equals(object obj)
         {
             if (obj is Relationship)

@@ -123,11 +123,17 @@ namespace Blueprint41.Modeller
         #region Graph Editor Events
         private void GraphEditor_PanModeClicked(object sender, EventArgs e)
         {
+            if (graphEditor.PanButtonPressedOnMenu)
+                graphEditor.Viewer.InsertingEdge = false;
+
             SetCheckedModeMenuControls();
         }
 
         private void GraphEditor_EdgeModeClicked(object sender, EventArgs e)
         {
+            if (graphEditor.Viewer.InsertingEdge)
+                graphEditor.PanButtonPressedOnMenu = false;
+
             SetCheckedModeMenuControls();
         }
 
