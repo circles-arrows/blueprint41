@@ -210,6 +210,9 @@ namespace Blueprint41.Modeller
 
             ReloadGraph();
             Model.Invalidate();
+            RefreshNodeCombobox();
+            CloseNodeEditor();
+            EnableDisableButtons();
         }
 
         void GraphEditor_NoSelection(object sender, EventArgs e)
@@ -406,7 +409,7 @@ namespace Blueprint41.Modeller
             btnShowLabels.Enabled = hasEntities;
             btnShowInheritedRelationships.Enabled = hasEntities;
             showInheritedRelationshipsToolStripMenuItem.Enabled = hasEntities;
-
+            
             if (!hasEntities)
             {
                 graphEditor.Viewer.InsertingEdge = false;
@@ -446,6 +449,8 @@ namespace Blueprint41.Modeller
 
             toolStripDropDownButtonTools.Visible = Model.ModellerType == ModellerType.Blueprint41;
             toolStripDropDownButtonSettings.Visible = Model.ModellerType == ModellerType.Blueprint41;
+
+            toolStripSeparator4.Visible = Model.ModellerType == ModellerType.Blueprint41;
         }
 
         void ReloadGraph()
@@ -509,30 +514,6 @@ namespace Blueprint41.Modeller
                 cmbNodes.Items.Add(item);
             }
         }
-
-        #region Code Generation Commented
-        //private void StaticDataToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    CodeGeneration codeGeneration = new CodeGeneration();
-        //    codeGeneration.Size = this.Size;
-        //    codeGeneration.T4Template = new Generation.StaticData();
-        //    codeGeneration.T4Template.Name = GenerationEnum.StaticData;
-        //    codeGeneration.Model = Model;
-        //    codeGeneration.T4Template.Modeller = Model;
-        //    codeGeneration.ShowDialog();
-        //}
-
-        //private void APIDefinitionToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    CodeGeneration codeGeneration = new CodeGeneration();
-        //    codeGeneration.Size = this.Size;
-        //    codeGeneration.T4Template = new ApiDefinition();
-        //    codeGeneration.T4Template.Name = GenerationEnum.ApiDefinition;
-        //    codeGeneration.Model = Model;
-        //    codeGeneration.T4Template.Modeller = Model;
-        //    codeGeneration.ShowDialog();
-        //} 
-        #endregion
 
         #region Editor Events
 

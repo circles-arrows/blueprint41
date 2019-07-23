@@ -92,7 +92,7 @@ namespace Blueprint41.Modeller.Controls
         AttributeBase selectedObjectAttr;
         AttributeBase selectedNodeAttr;
         readonly ToolTip toolTip = new ToolTip();
-        ContextMenuStrip contextMenuStrip;
+        ContextMenuStrip contextMenuStrip;        
 
         public GraphEditor()
         {
@@ -164,7 +164,7 @@ namespace Blueprint41.Modeller.Controls
             {
                 m_MouseRightButtonDownPoint = (gViewer).ScreenToSource(e);
                 contextMenuStrip = BuildContextMenu(new GeometryPoint(e.X, e.Y));
-                contextMenuStrip.Show(this, new Point(e.X, e.Y));
+                contextMenuStrip.Show(this, new Point(e.X, e.Y));         
             }
 
             bool leftButtonPressed = e.LeftButtonIsPressed;
@@ -356,12 +356,15 @@ namespace Blueprint41.Modeller.Controls
 
         void BuildSelectionModeContextMenu(ContextMenuStrip cm)
         {
+            bool hasEntities = gViewer.Entities.Count() > 0;
+
             ToolStripSeparator separator = new ToolStripSeparator();
             cm.Items.Add(separator);
 
             ToolStripMenuItem edgeMode = new ToolStripMenuItem("Edge mode");
             edgeMode.Name = "edgeModeMenuItem";
             edgeMode.Checked = gViewer.InsertingEdge;
+            edgeMode.Enabled = hasEntities;
             edgeMode.CheckOnClick = true;
             edgeMode.Click += EdgeMode_Click;
             cm.Items.Add(edgeMode);
@@ -369,6 +372,7 @@ namespace Blueprint41.Modeller.Controls
             ToolStripMenuItem panMode = new ToolStripMenuItem("Pan mode");
             panMode.Name = "panModeMenuItem";
             panMode.Checked = gViewer.PanButtonPressed;
+            panMode.Enabled = hasEntities;
             panMode.CheckOnClick = true;
             panMode.Click += PanMode_Click;
             cm.Items.Add(panMode);
