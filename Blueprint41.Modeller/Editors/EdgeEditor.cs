@@ -121,10 +121,48 @@ namespace Blueprint41.Modeller.Editors
             Apply();
         }
 
+        private string GenerateRelationshipName(string name, Func<string, bool> checkIfRelationShipExists)
+        {
+            string newName = name;
+
+            int count = 0;
+            bool isExists = true;
+
+            while (isExists)
+            {
+                count++;
+                newName = $"{name}{count}";
+                isExists = checkIfRelationShipExists(newName);
+            }
+
+            return newName;
+        }
+
         private void BtnOk_Click(object sender, EventArgs e)
         {
-            Relationship.Name = txtRelationshipName.Text;
-            Relationship.Type = Model.ModellerType == ModellerType.Neo4j ? txtRelationshipName.Text : txtNeo4jName.Text;           
+            string relationshipType = Model.ModellerType == ModellerType.Neo4j ? txtRelationshipName.Text : txtNeo4jName.Text;
+            string relationshipName = txtRelationshipName.Text;
+
+            if (Model.Relationships.Relationship.Any(item => item.Name == relationshipName))
+            {
+                MessageBox.Show("Relationship name already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                relationshipName = GenerateRelationshipName(relationshipName, name => Model.Relationships.Relationship.Any(item => item.Name == name));
+                cbAutoLabel.Checked = false;
+                txtRelationshipName.Text = relationshipName;
+                return;
+            }
+
+            if (Model.Relationships.Relationship.Any(item => item.Type == relationshipType))
+            {
+                MessageBox.Show("Relationship with Neo4j name already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                relationshipType = GenerateRelationshipName(relationshipType, name => Model.Relationships.Relationship.Any(item => item.Type == name));
+                cbAutoLabel.Checked = false;
+                txtNeo4jName.Text = relationshipType;
+                return;
+            }
+
+            Relationship.Name = relationshipName;
+            Relationship.Type = relationshipType;
 
             Relationship.Source.Nullable = SourceNullable;
             Relationship.Target.Nullable = TargetNullable;

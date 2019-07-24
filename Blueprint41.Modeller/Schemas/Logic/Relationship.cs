@@ -66,7 +66,6 @@ namespace Blueprint41.Modeller.Schemas
                 if (Model.Relationships.Relationship.Any(item => item.Name == e.NewValue && ((object)item) != this))
                 {
                     e.Cancel = true;
-                    System.Windows.Forms.MessageBox.Show("Relationship name already exist.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
                 }
             };
         }

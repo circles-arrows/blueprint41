@@ -272,6 +272,42 @@ namespace Blueprint41.Modeller
 
             DataGridViewRow row = pre.DataGridViewRelationship.Rows[e.RowIndex];
 
+            if (e.ColumnIndex == 4)
+            {
+                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                string newName = ((string)textBox.Value)?.Replace(" ", string.Empty);
+
+                if (StorageModel.Relationships.Relationship.Any(item => item.Name == newName))
+                    MessageBox.Show("Relationship name already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                pre.DataGridViewRelationship.CellValueChanged -= DataGridViewRelationships_CellValueChanged;
+
+                textBox.Value = GenerateRelationshipName(newName, name => StorageModel.Relationships.Relationship.Any(item => item.Name == name));
+
+                pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
+
+                if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
+                    relationshipsObservable[e.RowIndex].RenameEdge();
+            }
+
+            if (e.ColumnIndex == 5)
+            {
+                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                string newName = ((string)textBox.Value)?.Replace(" ", string.Empty);
+
+                if (StorageModel.Relationships.Relationship.Any(item => item.Type == newName))
+                    MessageBox.Show("Relationship with Neo4j name already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                pre.DataGridViewRelationship.CellValueChanged -= DataGridViewRelationships_CellValueChanged;
+
+                textBox.Value = GenerateRelationshipName(newName, name => StorageModel.Relationships.Relationship.Any(item => item.Type == name));
+
+                pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
+
+                if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
+                    relationshipsObservable[e.RowIndex].RenameEdge();
+            }
+
             int columnIndex = 0;
             while (columnIndex < 7)
             {
@@ -415,6 +451,23 @@ namespace Blueprint41.Modeller
         }
 
         #endregion
+
+        private string GenerateRelationshipName(string name, Func<string, bool> checkIfRelationShipExists)
+        {
+            string newName = name;
+
+            int count = 0;
+            bool isExists = true;
+
+            while (isExists)
+            {
+                count++;
+                newName = $"{name}{count}";
+                isExists = checkIfRelationShipExists(newName);
+            }
+
+            return newName;
+        }
 
         private void CreateToolTipForShowAllRelationshipsCheckbox()
         {
@@ -1458,7 +1511,7 @@ namespace Blueprint41.Modeller
 
             if (!chkIsStaticData.Checked && Entity.IsStaticData && Entity.StaticData.Records.Record.Count != 0)
             {
-                DialogResult result = MessageBox.Show($@"This will delete all the existing ""{Entity.Label}"" static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show($@"This will delete all the existing ""{Entity.Label}"" static data. Do you wish to proceed?", "Warning", MessageBoxButtons.YesNo);
                 if (result != DialogResult.Yes)
                 {
                     chkIsStaticData.Checked = !chkIsStaticData.Checked;
@@ -1509,7 +1562,7 @@ namespace Blueprint41.Modeller
 
             if (!chkIsStaticData.Checked && Entity.IsStaticData && Entity.StaticData.Records.Record.Count != 0)
             {
-                DialogResult result = MessageBox.Show($@"This will delete all the existing ""{Entity.Label}"" static data. Do you wish to proceed?", "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show($@"This will delete all the existing ""{Entity.Label}"" static data. Do you wish to proceed?", "Warning", MessageBoxButtons.YesNo);
                 if (result != DialogResult.Yes)
                 {
                     chkIsStaticData.Checked = !chkIsStaticData.Checked;
