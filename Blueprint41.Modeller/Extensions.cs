@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Model = Blueprint41.Modeller.Schemas.Modeller;
+
 namespace Blueprint41.Modeller
 {
     public interface IComboBoxItem
@@ -67,6 +68,7 @@ namespace Blueprint41.Modeller
                     inheritedRelationships.Add(relationship);
                     model.CreatedInheritedRelationships.Add(relationship);
                 }
+
                 foreach (var item in inheritedPropertyByDirection[RelationshipDirection.Out])
                 {
                     Relationship relationship = new Relationship(model.Model, (relationship)item.Xml.Clone());

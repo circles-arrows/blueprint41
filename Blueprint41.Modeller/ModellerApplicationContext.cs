@@ -71,6 +71,7 @@ namespace Blueprint41.Modeller
                 client.DownloadFileCompleted += Client_DownloadFileCompleted;
             }
         }
+
         private void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             VerifyLicense();

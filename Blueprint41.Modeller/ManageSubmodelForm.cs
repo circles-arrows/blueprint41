@@ -44,8 +44,10 @@ namespace Blueprint41.Modeller
             if (IsMainModel)
             {
                 numericChapter.Value = 0;
-                chkIsDraft.Checked = true;
-                chkIsLaboratory.Checked = true;
+                chkIsDraft.Checked = false;
+                chkIsLaboratory.Checked = false;
+                chkIsDraft.Enabled = false;
+                chkIsLaboratory.Enabled = false;
 
                 buttonAddAll.Enabled = false;
                 buttonRemoveAll.Enabled = false;
@@ -114,7 +116,6 @@ namespace Blueprint41.Modeller
                 .Replace("<", "&lt;")
                 .Replace(">", "&gt;")
                 .Replace("'", "&apos;");
-
         }
 
         public static string ToNormalString(string self)
