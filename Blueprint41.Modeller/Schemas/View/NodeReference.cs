@@ -29,22 +29,26 @@ namespace Blueprint41.Modeller.Schemas
 
             OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnNullableChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnReferenceGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnTypeChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
         }
     }

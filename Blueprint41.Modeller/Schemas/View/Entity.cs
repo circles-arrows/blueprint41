@@ -13,11 +13,13 @@ namespace Blueprint41.Modeller.Schemas
 {
     public partial class Entity
     {
-
         protected override void InitializeView()
         {
             OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
+                if (Model == null)
+                    return;
+
                 Model.HasChanges = true;
 
                 if (Model.ModellerType == ModellerType.Neo4j && e.NewValue != Label)
@@ -26,6 +28,9 @@ namespace Blueprint41.Modeller.Schemas
 
             OnLabelChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
+                if (Model == null)
+                    return;
+
                 Model.HasChanges = true;
 
                 if (Model.ModellerType == ModellerType.Neo4j && e.NewValue != Name)
@@ -34,52 +39,62 @@ namespace Blueprint41.Modeller.Schemas
 
             OnAbstractChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnVirtualChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnSummaryChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnExampleChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnInheritsChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnPrefixChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnIsStaticDataChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnFunctionalIdChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnMappingGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
         }
     }

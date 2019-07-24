@@ -12,7 +12,8 @@ namespace Blueprint41.Modeller.Schemas
         {
             OnRecordsChanged += delegate (object sender, PropertyChangedEventArgs<Records> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
         }
     }

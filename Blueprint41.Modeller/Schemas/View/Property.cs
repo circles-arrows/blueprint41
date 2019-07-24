@@ -12,17 +12,20 @@ namespace Blueprint41.Modeller.Schemas
         {
             OnPropertyGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnMappingGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnValueChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
         }
     }

@@ -320,23 +320,31 @@ namespace Blueprint41.Modeller.Schemas
         {
             OnTypeChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnEntitiesChanged += delegate (object sender, PropertyChangedEventArgs<EntitiesLocalType> e)
             {
                 RebindControl();
 
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
+
             OnRelationshipsChanged += delegate (object sender, PropertyChangedEventArgs<RelationshipsLocalType> e)
             {
                 RebindControl();
 
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
+
             OnSubmodelsChanged += delegate (object sender, PropertyChangedEventArgs<SubmodelsLocalType> e)
             {
+                if (Model == null)
+                    return;
+
                 if (Model.DisplayedSubmodel != null)
                     RebindControl();
 
@@ -345,7 +353,8 @@ namespace Blueprint41.Modeller.Schemas
 
             OnFunctionalIdsChanged += delegate (object sender, PropertyChangedEventArgs<FunctionalIdsLocalType> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
         }
 

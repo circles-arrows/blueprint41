@@ -30,17 +30,21 @@ namespace Blueprint41.Modeller.Schemas
             OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
                 RenameEdge();
-                Model.HasChanges = true;
+
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnTargetChanged += delegate (object sender, PropertyChangedEventArgs<NodeReference> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnSourceChanged += delegate (object sender, PropertyChangedEventArgs<NodeReference> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
         }
 

@@ -26,6 +26,9 @@ namespace Blueprint41.Modeller.Schemas
         {
             NodeCollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
             {
+                if (Model == null)
+                    return;
+    
                 if (this != Model.DisplayedSubmodel)
                     return;
 
@@ -50,28 +53,35 @@ namespace Blueprint41.Modeller.Schemas
 
             OnExplainationChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
+                if (Model == null)
+                    return;
+
                 if (e.NewValue != Constants.MainModel)
                     Model.HasChanges = true;
             };
 
             OnChapterChanged += delegate (object sender, PropertyChangedEventArgs<Int32?> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnIsDraftChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
 
             OnIsLaboratoryChanged += delegate (object sender, PropertyChangedEventArgs<bool> e)
             {
-                Model.HasChanges = true;
+                if (Model != null)
+                    Model.HasChanges = true;
             };
         }
 
@@ -110,17 +120,20 @@ namespace Blueprint41.Modeller.Schemas
 
                 OnEntityGuidChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
                 {
-                    Model.HasChanges = true;
+                    if (Model != null)
+                        Model.HasChanges = true;
                 };
 
                 OnXcoordinateChanged += delegate (object sender, PropertyChangedEventArgs<double?> e)
                 {
-                    Model.HasChanges = true;
+                    if (Model != null)
+                        Model.HasChanges = true;
                 };
 
                 OnYcoordinateChanged += delegate (object sender, PropertyChangedEventArgs<double?> e)
                 {
-                    Model.HasChanges = true;
+                    if (Model != null)
+                        Model.HasChanges = true;
                 };
             }
 
