@@ -152,15 +152,6 @@ namespace Blueprint41.Modeller.Editors
                 return;
             }
 
-            if (Model.Relationships.Relationship.Any(item => item.Type == relationshipType))
-            {
-                MessageBox.Show("Relationship with Neo4j name already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                relationshipType = GenerateRelationshipName(relationshipType, name => Model.Relationships.Relationship.Any(item => item.Type == name));
-                cbAutoLabel.Checked = false;
-                txtNeo4jName.Text = relationshipType;
-                return;
-            }
-
             Relationship.Name = relationshipName;
             Relationship.Type = relationshipType;
 

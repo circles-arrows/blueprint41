@@ -290,24 +290,6 @@ namespace Blueprint41.Modeller
                     relationshipsObservable[e.RowIndex].RenameEdge();
             }
 
-            if (e.ColumnIndex == 5)
-            {
-                DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                string newName = ((string)textBox.Value)?.Replace(" ", string.Empty);
-
-                if (StorageModel.Relationships.Relationship.Any(item => item.Type == newName))
-                    MessageBox.Show("Relationship with Neo4j name already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-                pre.DataGridViewRelationship.CellValueChanged -= DataGridViewRelationships_CellValueChanged;
-
-                textBox.Value = GenerateRelationshipName(newName, name => StorageModel.Relationships.Relationship.Any(item => item.Type == name));
-
-                pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
-
-                if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
-                    relationshipsObservable[e.RowIndex].RenameEdge();
-            }
-
             int columnIndex = 0;
             while (columnIndex < 7)
             {
