@@ -345,9 +345,9 @@
     <None Include="Resources\lj.bmp" />
     <None Include="Resources\rj.bmp" />
     <None Include="Resources\underscore.bmp" />
-    <Content Include="keywords.txt">
+    <EmbeddedResource Include="keywords.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <None Include="Resources\bp41Logo.png" />
     <Content Include="Resources\Circles-Arrows_Loader.gif" />
     <Content Include="Resources\ol.bmp" />

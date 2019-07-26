@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +16,19 @@ namespace Blueprint41.Modeller
 
         private Keywords()
         {
-            this.reservedWords = File.ReadAllLines(@"keywords.txt", Encoding.UTF8).ToList();
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = "Blueprint41.Modeller.keywords.txt";
+
+            this.reservedWords = new List<string>();
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                while (reader.Peek() >= 0)
+                {
+                    this.reservedWords.Add(reader.ReadLine());
+                }                
+            }
         }
 
         public static Keywords Instance
