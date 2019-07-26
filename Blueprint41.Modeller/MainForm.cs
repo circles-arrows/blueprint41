@@ -84,7 +84,7 @@ namespace Blueprint41.Modeller
 
             EnableDisableButtons();
         }
-       
+
         private void MainForm_SizeChanged(object sender, EventArgs e)
         {
             splitterDistance = splitContainer.SplitterDistance;
@@ -191,9 +191,7 @@ namespace Blueprint41.Modeller
                 if (dialogResult == DialogResult.Yes)
                 {
                     Model.DeleteEntity(node);
-
-                    if (Model?.GraphEditor?.Viewer?.Entities.Count() == 0)                    
-                        ReloadGraph();
+                    ReloadGraph();
 
                     Model.Invalidate();
                     RefreshNodeCombobox();
