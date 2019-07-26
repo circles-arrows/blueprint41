@@ -282,16 +282,16 @@
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 34);
             // 
-            // toolStripDropDownButton1
+            // toolStripDropDownButtonTools
             // 
             this.toolStripDropDownButtonTools.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripDropDownButtonTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.generateCodeToolStripMenuItem,
             this.generateUpdateScriptToolStripMenuItem,
             this.generateDocumentToolStripMenuItem});
-            this.toolStripDropDownButtonTools.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButtonTools.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButtonTools.Image")));
             this.toolStripDropDownButtonTools.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButtonTools.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButtonTools.Name = "toolStripDropDownButtonTools";
             this.toolStripDropDownButtonTools.Size = new System.Drawing.Size(37, 31);
             this.toolStripDropDownButtonTools.Text = "TOOLS";
             // 
@@ -316,14 +316,14 @@
             this.generateDocumentToolStripMenuItem.Text = "Generate Document";
             this.generateDocumentToolStripMenuItem.Click += new System.EventHandler(this.GenerateDocumentToolStripMenuItem_Click);
             // 
-            // toolStripDropDownButton2
+            // toolStripDropDownButtonSettings
             // 
             this.toolStripDropDownButtonSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripDropDownButtonSettings.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.functionalIdToolStripMenuItem});
-            this.toolStripDropDownButtonSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
+            this.toolStripDropDownButtonSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButtonSettings.Image")));
             this.toolStripDropDownButtonSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButtonSettings.Name = "toolStripDropDownButton2";
+            this.toolStripDropDownButtonSettings.Name = "toolStripDropDownButtonSettings";
             this.toolStripDropDownButtonSettings.Size = new System.Drawing.Size(37, 31);
             this.toolStripDropDownButtonSettings.Text = "SETTINGS";
             // 
