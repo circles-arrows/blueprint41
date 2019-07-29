@@ -25,6 +25,9 @@ namespace Blueprint41.Modeller
 
         private void UpdaterForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (this.DialogResult == DialogResult.Yes)
+                return;
+
             if (webClient != null)
             {
                 if (CancelUpdate() == DialogResult.Yes)
@@ -139,13 +142,22 @@ namespace Blueprint41.Modeller
 
             if (result == DialogResult.Yes)
             {
+                RegistryHandler.IsInstallUpgrade = true;
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = installerPath;
                 info.WindowStyle = ProcessWindowStyle.Normal;
                 info.CreateNoWindow = false;
 
+                this.DialogResult = DialogResult.Yes;
+
                 Process.Start(info);
+
                 Application.Exit();
+            }
+            else
+            {
+                this.DialogResult = DialogResult.Yes;
+                Close();
             }
         }
 
@@ -159,6 +171,7 @@ namespace Blueprint41.Modeller
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             Close();
         }
 
@@ -184,7 +197,7 @@ namespace Blueprint41.Modeller
 
         DialogResult CancelUpdate()
         {
-            return MessageBox.Show("Are you sure to cancel the update?", "Cancel Update", MessageBoxButtons.YesNo, MessageBoxIcon.Hand);
+            return MessageBox.Show("Are you sure to cancel the update?", "Cancel Update", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
         }
     }
 }

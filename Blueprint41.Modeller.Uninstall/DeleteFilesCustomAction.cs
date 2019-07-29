@@ -16,6 +16,7 @@ namespace Blueprint41.Modeller.Uninstall
         {
             InitializeComponent();
         }
+
         public override void Uninstall(IDictionary savedState)
         {
             base.Uninstall(savedState);
@@ -33,9 +34,23 @@ namespace Blueprint41.Modeller.Uninstall
                         if (!file.Contains(System.Reflection.Assembly.GetAssembly(typeof(DeleteFilesCustomAction)).GetName().Name))
                             SafeDeleteFile(file);
                     }
+
+                    // delete all directories 
+                    // optional "Modules" if update
                     foreach (var directory in Directory.GetDirectories(pathtodelete))
+                    {
+                        if (RegistryHandler.IsInstallUpgrade && new DirectoryInfo(directory).Name == "Modules")
+                        {
+                            RegistryHandler.IsInstallUpgrade = false;
+
+                            continue;
+                        }
+
                         SafeDeleteDirectory(directory);
+                    }
                 }
+
+                // 
             }
             catch { }
         }
