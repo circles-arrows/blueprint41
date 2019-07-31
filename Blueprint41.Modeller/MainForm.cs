@@ -135,6 +135,7 @@ namespace Blueprint41.Modeller
                 graphEditor.PanButtonPressedOnMenu = false;
 
             SetCheckedModeMenuControls();
+            EnableDisableEntityEditor();
         }
 
         void GraphEditor_EdgeRemoved(object sender, EdgeEventArgs e)
@@ -839,7 +840,11 @@ namespace Blueprint41.Modeller
             graphEditor.PanButtonPressedOnMenu = false;
 
             SetCheckedModeMenuControls();
+            EnableDisableEntityEditor();
+        }
 
+        private void EnableDisableEntityEditor()
+        {
             if (graphEditor.Viewer.InsertingEdge)
                 CloseNodeEditor();
             else

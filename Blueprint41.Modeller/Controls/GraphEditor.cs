@@ -390,6 +390,8 @@ namespace Blueprint41.Modeller.Controls
             {
                 mi = new ToolStripMenuItem() { Text = "Insert " + nte.Name };
                 mi.Click += InsertNode_Click;
+                mi.Enabled = !this.Viewer.InsertingEdge;
+
                 cm.Items.Add(mi);
             }
 
