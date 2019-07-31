@@ -219,6 +219,9 @@ namespace Blueprint41.Modeller.Schemas
                     return;
                 }
 
+                if (Model == null)
+                    return;
+
                 if (Model.Entities.Entity.Any(item => item.Label == e.NewValue))
                 {
                     e.Cancel = true;
@@ -235,6 +238,9 @@ namespace Blueprint41.Modeller.Schemas
                     MessageBox.Show($"Entity name cannot be empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
                 }
+
+                if (Model == null)
+                    return;
 
                 if (Model.Entities.Entity.Any(item => item.Name == e.NewValue))
                 {

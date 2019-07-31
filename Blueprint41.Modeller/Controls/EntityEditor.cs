@@ -274,20 +274,23 @@ namespace Blueprint41.Modeller
 
             if (e.ColumnIndex == 4)
             {
+                Func<Relationship, string, bool> validateRelationship =
+                    (relationship, name) => StorageModel.Relationships.Relationship.Any(item => item.Name == name && ((object)item) != relationship);
+
                 DataGridViewTextBoxCell textBox = (DataGridViewTextBoxCell)pre.DataGridViewRelationship.Rows[e.RowIndex].Cells[e.ColumnIndex];
                 string newName = ((string)textBox.Value)?.Replace(" ", string.Empty);
 
-                if (StorageModel.Relationships.Relationship.Any(item => item.Name == newName))
+                Relationship currentRelationship = relationshipsObservable[e.RowIndex];
+
+                if(validateRelationship(currentRelationship, newName))
                     MessageBox.Show("Relationship name already exist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 pre.DataGridViewRelationship.CellValueChanged -= DataGridViewRelationships_CellValueChanged;
 
-                textBox.Value = GenerateRelationshipName(newName, name => StorageModel.Relationships.Relationship.Any(item => item.Name == name));
+                textBox.Value = GenerateRelationshipName(newName, 
+                                name => StorageModel.Relationships.Relationship.Any(item => item.Name == name && ((object)item) != currentRelationship));
 
                 pre.DataGridViewRelationship.CellValueChanged += DataGridViewRelationships_CellValueChanged;
-
-                if (!string.IsNullOrEmpty(newName) && e.ColumnIndex == 5)
-                    relationshipsObservable[e.RowIndex].RenameEdge();
             }
 
             int columnIndex = 0;
@@ -308,6 +311,11 @@ namespace Blueprint41.Modeller
 
             if (hasErrors)
                 return;
+            else
+            {
+                Relationship currentRelationship = relationshipsObservable[e.RowIndex];
+                currentRelationship?.CreateEdge();
+            }
 
             if (e.ColumnIndex == 0)
             {
@@ -434,18 +442,18 @@ namespace Blueprint41.Modeller
 
         #endregion
 
-        private string GenerateRelationshipName(string name, Func<string, bool> checkIfRelationShipExists)
+        private string GenerateRelationshipName(string name, Func<string, bool> checkRelationshipExists)
         {
             string newName = name;
-
-            int count = 0;
-            bool isExists = true;
+    
+            int count = 1;
+            bool isExists = checkRelationshipExists(newName);
 
             while (isExists)
             {
-                count++;
                 newName = $"{name}{count}";
-                isExists = checkIfRelationShipExists(newName);
+                isExists = checkRelationshipExists(newName);
+                count++;
             }
 
             return newName;

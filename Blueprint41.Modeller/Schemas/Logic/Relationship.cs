@@ -60,6 +60,9 @@ namespace Blueprint41.Modeller.Schemas
             
             OnNameChanged += delegate (object sender, PropertyChangedEventArgs<string> e)
             {
+                if (Model == null)
+                    return;
+
                 if (e.NewValue != e.OldValue)
                     this.Guid = Model.GenerateGuid(e.NewValue).ToString();
 
