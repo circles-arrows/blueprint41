@@ -52,7 +52,10 @@ namespace System.Linq
 
         public static void SetCapacity<T>(this HashSet<T> hs, int capacity)
         {
-            HashSetDelegateHolder<T>.InitializeMethod.Invoke(hs, capacity);
+            // TODO: This won't work on .Net Core 2.1 and above
+            // Exception Message: Cannot bind to the target method because its signature or security transparency is not compatible with that of the delegate type.
+
+            //HashSetDelegateHolder<T>.InitializeMethod.Invoke(hs, capacity);
         }
 
         public static HashSet<T> GetHashSet<T>(int capacity)
