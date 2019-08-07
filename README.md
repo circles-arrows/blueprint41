@@ -4,6 +4,10 @@
 
 Simplify database operations through generated data access objects. 
 
+### Frictionless Development with Intellisense 
+
+![Intellisense](https://raw.githubusercontent.com/circles-arrows/blueprint41/master/Documentation/Blueprint41_Intellisense.gif)
+
 ### Required Neo4j Plugins
 * Download Blueprint41 plugin [here](https://github.com/circles-arrows/functionalid/blob/master/blueprint41-1.0.1.jar?raw=true).
 * Download APOC plugin [here](https://neo4j-contrib.github.io/neo4j-apoc-procedures/#_download_latest_release).
@@ -99,7 +103,3 @@ using (Transaction.Begin())
 }
 ```
 
-
-### Frictionless Development with Intellisense 
-
-![Intellisense](https://raw.githubusercontent.com/circles-arrows/blueprint41/master/Documentation/Blueprint41_Intellisense.gif)
