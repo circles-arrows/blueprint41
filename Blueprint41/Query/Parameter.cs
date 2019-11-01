@@ -156,6 +156,16 @@ namespace Blueprint41
             p.Type = typeof(T);
             return p;
         }
+        public static Parameter New<T>(string name, T value)
+        {
+            Parameter p = new Parameter();
+            p.IsConstant = name == null;
+            p.Name = name;
+            p.Type = typeof(T);
+            p.Value = MaterializeValue(p.Type, value);
+            p.HasValue = true;
+            return p;
+        }
         public static Parameter New(string name, Type type)
         {
             Parameter p = new Parameter();

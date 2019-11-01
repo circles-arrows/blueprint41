@@ -62,7 +62,7 @@ namespace Blueprint41.Query
                         if(rightType.GetInterface(nameof(IEnumerable)) == null)
                             state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, Right))} should be a collection.");
 
-                        rightType = rightType.GetGenericArguments()[0];
+                        rightType = GetEnumeratedType(rightType);
                     }
                     if (GetConversionGroup(leftType, state.TypeMappings) != GetConversionGroup(rightType, state.TypeMappings))
                         state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, Left))} and {state.Preview(s => CompileOperand(s, Right))} are not compatible.");
@@ -132,6 +132,10 @@ namespace Blueprint41.Query
 
                 return Parameter.Constant(operand, type);
             }
+        }
+        private static Type GetEnumeratedType(Type type)
+        {
+            return type.GetElementType() ?? (typeof(IEnumerable).IsAssignableFrom(type) ? type.GenericTypeArguments.FirstOrDefault() : null);
         }
 
         private Type GetOperandType(object operand)

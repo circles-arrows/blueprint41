@@ -20,6 +20,7 @@ using q = <#= Settings.FullQueryNamespace #>;
 namespace <#= Settings.FullCRUDNamespace #>
 {
 <#
+Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
 
 if (!DALModel.IsAbstract)
 {
@@ -320,7 +321,7 @@ if (!DALModel.IsAbstract)
 	}
 #>
 <#		
-	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
+	if (inheritedUnidentifiedProp != null)
 	{
 #>
 				UnidentifiedProperties = new UnidentifiedPropertyCollection(data.UnidentifiedProperties);
@@ -380,7 +381,6 @@ if (!DALModel.IsAbstract)
 
 			#endregion
 <#
-	Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
 	if (inheritedUnidentifiedProp == null)
 	{
 #>

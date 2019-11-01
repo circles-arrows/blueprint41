@@ -15,6 +15,7 @@ namespace <#= Settings.FullQueryNamespace #>
 	public partial class Node
 	{
 <#
+	Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
 	if(DALModel.IsVirtual)
     {
 #>
@@ -179,7 +180,7 @@ namespace <#= Settings.FullQueryNamespace #>
             {
                 if (m_AliasFields == null)
                 {
-                    m_AliasFields = <#= string.IsNullOrEmpty(DALModel.UnidentifiedProperties) ? "" : "new UnidentifiedPropertiesAliasDictionary(" #>new Dictionary<string, FieldResult>()
+                    m_AliasFields = <#= inheritedUnidentifiedProp == null ? "" : "new UnidentifiedPropertiesAliasDictionary(" #>new Dictionary<string, FieldResult>()
                     {
 <#
 	foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
@@ -191,7 +192,7 @@ namespace <#= Settings.FullQueryNamespace #>
 <#
 	}
 #>
-					}<#= string.IsNullOrEmpty(DALModel.UnidentifiedProperties) ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)") #>;
+					}<#= inheritedUnidentifiedProp == null ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)") #>;
 				}
 				return m_AliasFields;
 			}
@@ -240,20 +241,20 @@ namespace <#= Settings.FullQueryNamespace #>
 <#
     }
 
-	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
+	if (inheritedUnidentifiedProp != null)
     {
 #>
-        public UnidentifiedProperties <#= DALModel.UnidentifiedProperties #>
+        public UnidentifiedProperties <#= inheritedUnidentifiedProp.UnidentifiedProperties #>
 		{
 			get
 			{
-				if ((object)m_<#= DALModel.UnidentifiedProperties #> == null)
-					m_<#= DALModel.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]);
+				if ((object)m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> == null)
+					m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]);
 
-				return m_<#= DALModel.UnidentifiedProperties #>;
+				return m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #>;
 			}
 		}
-		private UnidentifiedProperties m_<#= DALModel.UnidentifiedProperties #> = null;
+		private UnidentifiedProperties m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = null;
 
         public class UnidentifiedProperties
         {

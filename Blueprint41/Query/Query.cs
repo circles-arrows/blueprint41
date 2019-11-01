@@ -10,7 +10,7 @@ using query = Blueprint41.Query;
 namespace Blueprint41.Query
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled
+    public class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled, IUnionQuery
     {
         internal Query(PersistenceProvider persistenceProvider)
         {
@@ -37,6 +37,7 @@ namespace Blueprint41.Query
         private AliasResult[] Aliases = null;
         Parameter SkipValue = Parameter.Constant(0);
         Parameter LimitValue = Parameter.Constant(0);
+        private bool UnionWithDuplicates = true;
 
         public CompiledQuery CompiledQuery { get; private set; }
 
@@ -107,6 +108,13 @@ namespace Blueprint41.Query
             SetType(PartType.Or);
             Conditions = conditions;
 
+            return New;
+        }
+        public IUnionQuery UnionMatch(bool duplicates = true, params Node[] patterns)
+        {
+            SetType(PartType.UnionMatch);
+            Patterns = patterns;
+            UnionWithDuplicates = duplicates;
             return New;
         }
 
@@ -271,6 +279,15 @@ namespace Blueprint41.Query
                     state.Text.Append("LIMIT ");
                     LimitValue.Compile(state);
                     break;
+                case PartType.UnionMatch:
+                    if (UnionWithDuplicates)
+                        state.Text.Append("UNION ALL ");
+                    else
+                        state.Text.Append("UNION ");
+
+                    state.Text.Append("MATCH ");
+                    ForEach(Patterns, state.Text, ", ", item => item?.Compile(state));
+                    break;
                 case PartType.None:
                 case PartType.Compiled:
                     // Ignore
@@ -347,6 +364,7 @@ namespace Blueprint41.Query
 
             Type = type;
         }
+
         private enum PartType
         {
             Compiled,
@@ -361,7 +379,8 @@ namespace Blueprint41.Query
             Where,
             With,
             Skip,
-            Limit
+            Limit,
+            UnionMatch
         }
         private string DebuggerDisplay { get => ToString(); }
     }
@@ -404,6 +423,7 @@ namespace Blueprint41.Query
 
     public interface IReturnQuery
     {
+        IUnionQuery UnionMatch(bool duplicates = true, params Node[] patterns);
         ISkipQuery Skip(Parameter skip);
         ILimitQuery Limit(Parameter limit);
         ISkipQuery Skip(int skip);
@@ -413,6 +433,9 @@ namespace Blueprint41.Query
         ILimitQuery Page(int skip, int limit);
         ILimitQuery Page(Parameter skip, Parameter limit);
         ICompiled Compile();
+    }
+    public interface IUnionQuery: IMatchQuery
+    {
     }
 
     public interface ISkipQuery

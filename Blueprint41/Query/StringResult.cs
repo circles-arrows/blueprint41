@@ -77,9 +77,15 @@ namespace Blueprint41.Query
         public StringResult(AliasResult alias, string fieldName, Entity entity, Property property, Type overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
         public StringResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
 
-        public StringListResult Collect() {
+        public StringListResult Collect()
+        {
             return new StringListResult(this, "collect({base})");
         }
+        public StringListResult CollectDistinct()
+        {
+            return new StringListResult(this, "collect(distinct {base})");
+        }
+
 
         public StringResult ToUpperCase()
         {
@@ -165,6 +171,16 @@ namespace Blueprint41.Query
         public QueryCondition In(IEnumerable<string> enumerable)
         {
             return new QueryCondition(this, Operator.In, Parameter.Constant(enumerable.ToArray(), typeof(string)));
+        }
+
+        public QueryCondition NotIn(IEnumerable<string> enumerable)
+        {
+            return new QueryCondition(new BooleanResult(this, "NOT ({base})"), Operator.In, Parameter.Constant(enumerable.ToArray(), typeof(string)));
+        }
+
+        public QueryCondition In(params string[] items)
+        {
+            return new QueryCondition(this, Operator.In, Parameter.Constant(items, typeof(string)));
         }
 
         public StringResult Substring(int begin, int subLength)

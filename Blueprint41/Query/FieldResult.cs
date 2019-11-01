@@ -49,7 +49,7 @@ namespace Blueprint41.Query
         }
         protected FieldResult(string function, object[] arguments, Type type) : this(null, null, null, null, null, function, arguments, type) { }
         protected FieldResult(AliasResult alias, string fieldName, Entity entity, Property property, Type overridenReturnType = null) : this(alias, fieldName, entity, property, null, null, null, null) { OverridenReturnType = overridenReturnType; }
-        protected FieldResult(FieldResult field, string function, object[] arguments, Type type) : this(field.Alias, field.FieldName, field.Entity, field.Property, field, function, arguments, type) { }
+        protected FieldResult(FieldResult field, string function, object[] arguments, Type type) : this(field?.Alias, field?.FieldName, field?.Entity, field?.Property, field, function, arguments, type) { }
         protected FieldResult(FieldResult field)
         {
             Alias = field.Alias;
@@ -129,8 +129,11 @@ namespace Blueprint41.Query
             if (FunctionText == null)
             {
                 Alias.Compile(state);
-                state.Text.Append(".");
-                state.Text.Append(FieldName);
+                if (!string.IsNullOrEmpty(FieldName))
+                {
+                    state.Text.Append(".");
+                    state.Text.Append(FieldName);
+                }
             }
             else
             {

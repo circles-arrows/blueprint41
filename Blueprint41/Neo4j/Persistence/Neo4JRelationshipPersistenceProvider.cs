@@ -202,9 +202,9 @@ namespace Blueprint41.Neo4j.Persistence
             if (keyObject != null)
             {
                 item = Transaction.Current.GetEntityByKey(typeName, keyObject);
-                if (item != null && 
-                    (item.PersistenceState == PersistenceState.HasUid 
-                        || 
+                if (item != null &&
+                    (item.PersistenceState == PersistenceState.HasUid
+                        ||
                     item.PersistenceState == PersistenceState.Loaded))
                 {
                     item.SetData(node.Properties);
@@ -320,44 +320,57 @@ namespace Blueprint41.Neo4j.Persistence
         }
         public override void RemoveAll(Relationship relationship, DirectionEnum direction, OGM item, DateTime? moment, bool timedependent)
         {
-            string cypher;
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("key", item.GetKey());
 
-            string match = (direction == DirectionEnum.Out) ? "MATCH (item:{0})<-[r:{1}]-(useless)" : "MATCH (item:{0})-[r:{1}]->(useless)";
+            string match = (direction == DirectionEnum.Out) ? "MATCH (item:{0})<-[r:{1}]-(out:{2})" : "MATCH (item:{0})-[r:{1}]->(out:{2})";
+            Entity outEntity = (direction == DirectionEnum.Out) ? relationship.InEntity : relationship.OutEntity;
 
+            if (outEntity.IsVirtual)
+            {
+                RemoveAll(relationship, item, moment, timedependent, parameters, match, outEntity.GetNearestNonVirtualSubclass().ToArray());
+            }
+            else
+                RemoveAll(relationship, item, moment, timedependent, parameters, match, outEntity);
+        }
+
+        private static void RemoveAll(Relationship relationship, OGM item, DateTime? moment, bool timedependent, Dictionary<string, object> parameters, string match, params Entity[] outEntities)
+        {
             if (timedependent)
             {
                 parameters.Add("moment", Conversion<DateTime, long>.Convert(moment ?? DateTime.MinValue));
-                
+
                 // End Current
-                cypher = string.Format(
-                    match + " WHERE item.{2} = {{key}} and (r.{4} > {{moment}} OR r.{4} IS NULL) AND (r.{3} <={{moment}} OR r.{3} IS NULL) SET r.EndDate = {{moment}}",
+                string cypher = string.Join(" UNION ", outEntities.Select(outEntity => string.Format(
+                    match + " WHERE item.{3} = {{key}} and (r.{5} > {{moment}} OR r.{5} IS NULL) AND (r.{4} <={{moment}} OR r.{4} IS NULL) SET r.EndDate = {{moment}}",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
+                    outEntity.Label.Name,
                     item.GetEntity().Key.Name,
                     relationship.StartDate,
-                    relationship.EndDate);
+                    relationship.EndDate)));
 
                 Neo4jTransaction.Run(cypher, parameters);
 
                 // Remove Future
-                cypher = string.Format(
-                    match + " WHERE item.{2} = {{key}} and r.{3} > {{moment}} DELETE r",
+                cypher = string.Join(" UNION ", outEntities.Select(outEntity => string.Format(
+                    match + " WHERE item.{3} = {{key}} and r.{4} > {{moment}} DELETE r",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
+                    outEntity.Label.Name,
                     item.GetEntity().Key.Name,
-                    relationship.StartDate);
+                    relationship.StartDate)));
 
                 Neo4jTransaction.Run(cypher, parameters);
             }
             else
             {
-                cypher = string.Format(
-                    match + " WHERE item.{2} = {{key}} DELETE r",
+                string cypher = string.Join(" UNION ", outEntities.Select(outEntity => string.Format(
+                    match + " WHERE item.{3} = {{key}} DELETE r",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
-                    item.GetEntity().Key.Name);
+                    outEntity.Label.Name,
+                    item.GetEntity().Key.Name)));
 
                 Neo4jTransaction.Run(cypher, parameters);
             }

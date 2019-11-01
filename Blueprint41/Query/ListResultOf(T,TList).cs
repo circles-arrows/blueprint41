@@ -133,6 +133,10 @@ namespace Blueprint41.Query
         {
             return NewList("apoc.coll.sort({base})");
         }
+        public override NumericResult Count()
+        {
+            return new NumericResult(this, "size({base})", null, typeof(long));
+        }
 
         public TList Union(StringListResult stringListResult)
         {
@@ -150,19 +154,19 @@ namespace Blueprint41.Query
 
         public QueryCondition All(TType value)
         {
-            return new QueryCondition(new BooleanResult(Field, "all(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
+            return new QueryCondition(new BooleanResult(this, "all(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
         }
         public QueryCondition Any(TType value)
         {
-            return new QueryCondition(new BooleanResult(Field, "any(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
+            return new QueryCondition(new BooleanResult(this, "any(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
         }
         public QueryCondition None(TType value)
         {
-            return new QueryCondition(new BooleanResult(Field, "none(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
+            return new QueryCondition(new BooleanResult(this, "none(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
         }
         public QueryCondition Single(TType value)
         {
-            return new QueryCondition(new BooleanResult(Field, "single(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
+            return new QueryCondition(new BooleanResult(this, "single(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
         }
 
         protected internal TResult NewResult(string function, object[] arguments = null, Type type = null)

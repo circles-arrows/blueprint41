@@ -21,7 +21,8 @@ namespace Blueprint41.Core
                 return null;
 
             TWrapper item = Lookup(key);
-            item.LazyGet();
+            if(item != null && item.PersistenceState != PersistenceState.DoesntExist)
+                item.LazyGet();
 
             if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
                 return item;

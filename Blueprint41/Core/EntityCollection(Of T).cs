@@ -102,7 +102,7 @@ namespace Blueprint41.Core
                 Transaction.Register(actions);
                 LazySet();
             }
-            
+
             return (actions.Count > 0);
         }
         internal sealed override void Clear(bool fireEvents)
@@ -205,7 +205,7 @@ namespace Blueprint41.Core
             LazyLoad();
             return new Enumerator(InnerData.GetEnumerator());
         }
- 
+
         internal class Enumerator : IEnumerator<TEntity>
         {
             internal Enumerator(IEnumerator<CollectionItem<TEntity>> enumerator)
@@ -254,7 +254,7 @@ namespace Blueprint41.Core
         internal override void ForEach(Action<int, CollectionItem> action)
         {
             LazyLoad();
-            
+
             for (int index = InnerData.Count - 1; index >= 0; index--)
                 action.Invoke(index, InnerData[index]);
         }
@@ -314,15 +314,20 @@ namespace Blueprint41.Core
                     OGM oldForeignValue = (item == null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
                     if (oldForeignValue != null)
                         ParentProperty.ClearLookup(oldForeignValue, null);
-                
+
                     foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
                         ForeignProperty.ClearLookup(entity, null);
                 }
 
                 if (item == null)
                 {
-                    if (currentItem.Count != 0)
-                        Clear(false);
+                    if (currentItem.Count > 0)
+                    {
+                        if (ParentProperty.PropertyType == PropertyType.Lookup)
+                            Remove(currentItem[0].Item);
+                        else
+                            Clear(false); // Clear should not be called here as this is for lookup.
+                    }
                 }
                 else
                 {
@@ -330,18 +335,23 @@ namespace Blueprint41.Core
                         return;
 
                     if (currentItem.Count > 0)
-                        Clear(false);
+                    {
+                        if (ParentProperty.PropertyType == PropertyType.Lookup)
+                            Remove(currentItem[0].Item);
+                        else
+                            Clear(false); // Clear should not be called here as this is for lookup.
+                    }
 
                     if (Count == 0)
                         Add(item, false);
                 }
-            }            
+            }
         }
         protected override bool IsNull(bool isUpdate)
         {
             if(!isUpdate && !IsLoaded)
                 return true;
-            
+
             return ((InnerData?.Count ?? 1) == 0);
         }
         protected override void ClearLookup(DateTime? moment)

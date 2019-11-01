@@ -50,6 +50,7 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 22 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
+Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
 
 if (!DALModel.IsAbstract)
 {
@@ -1083,7 +1084,7 @@ if (!DALModel.IsAbstract)
             
             #line 322 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 		
-	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
+	if (inheritedUnidentifiedProp != null)
 	{
 
             
@@ -1349,7 +1350,6 @@ if (!DALModel.IsAbstract)
             
             #line 382 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
-	Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
 	if (inheritedUnidentifiedProp == null)
 	{
 
