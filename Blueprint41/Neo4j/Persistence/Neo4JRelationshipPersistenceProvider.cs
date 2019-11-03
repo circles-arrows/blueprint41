@@ -346,7 +346,7 @@ namespace Blueprint41.Neo4j.Persistence
                 RemoveAll(relationship, item, moment, timedependent, parameters, match, outEntity);
         }
 
-        private static void RemoveAll(Relationship relationship, OGM item, DateTime? moment, bool timedependent, Dictionary<string, object> parameters, string match, params Entity[] outEntities)
+        private static void RemoveAll(Relationship relationship, OGM item, DateTime? moment, bool timedependent, Dictionary<string, object?> parameters, string match, params Entity[] outEntities)
         {
             if (timedependent)
             {

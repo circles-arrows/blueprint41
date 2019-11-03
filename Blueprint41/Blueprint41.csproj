@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Build">
-    <TargetFrameworks>netcoreapp3.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <RootNamespace>Blueprint41</RootNamespace>
     <AssemblyName>Blueprint41</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

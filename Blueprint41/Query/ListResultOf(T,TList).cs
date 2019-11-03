@@ -117,7 +117,7 @@ namespace Blueprint41.Query
             return (body, parameters);
         }
         protected ListResult(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-        protected ListResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
+        protected ListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
 
         public TResult this[int index]
         {

@@ -5,21 +5,36 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
+/********************************************************************************************************
+ ********************************************************************************************************
+ ********************************************************************************************************
+ ********                                                                                        ********
+ ********   There is a lot of mess going on in this file:                                        ********
+ ********   #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider...   ********
+ ********                                                                                        ********
+ ********   We should change the "CreateInstance" methods to call the real constructor via a     ********
+ ********   delegate pulled out of an dictionary/cache.                                          ********
+ ********                                                                                        ********
+ ********   https://stackoverflow.com/questions/2051359/using-a-delegate-to-call-a-constructor   ********
+ ********                                                                                        ********
+ ********************************************************************************************************
+ ********************************************************************************************************
+ ********************************************************************************************************/
+
 namespace Blueprint41.Core
 {
     public abstract class EntityEventArgs
     {
         protected EntityEventArgs(OGMImpl sender)
         {
-            SenderInternalBridge = sender;
-            Entity = sender.GetEntity();
-            Transaction = sender.DbTransaction;
+            Entity = sender?.GetEntity()!;
+            Transaction = sender?.DbTransaction!;
 
             Canceled = false;
             Flushed = false;
         }
 
-        protected virtual OGMImpl SenderInternalBridge { get; set; }
+        protected abstract OGMImpl SenderInternalBridge { get; set; }
         public OGM Sender { get { return SenderInternalBridge; } }
 
         public bool IsInsert { get { return Sender?.PersistenceState == PersistenceState.NewAndChanged; } }
@@ -73,6 +88,9 @@ namespace Blueprint41.Core
     public sealed class EntityEventArgs<TSender> : EntityEventArgs
         where TSender : OGM
     {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        private EntityEventArgs() : base(null!) { }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public EntityEventArgs(OGMImpl sender) : base(sender)
         {
             Sender = (TSender)(object)sender;
@@ -175,6 +193,9 @@ namespace Blueprint41.Core
     public sealed class PropertyEventArgs<TSender, TReturnType> : PropertyEventArgs<TSender>
         where TSender : OGM
     {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        private PropertyEventArgs() : base(null!, null!, OperationEnum.Set, default(TReturnType)!, default(TReturnType)!) { }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public PropertyEventArgs(OGMImpl sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender, property, operation, previousValue, assignedValue)
         {
             PreviousValue = (TReturnType)previousValue!;

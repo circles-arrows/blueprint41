@@ -48,7 +48,7 @@ namespace Blueprint41.Query
             OverridenReturnType = type;
         }
         protected FieldResult(string function, object[]? arguments, Type? type) : this(null, null, null, null, null, function, arguments, type) { }
-        protected FieldResult(AliasResult alias, string fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : this(alias, fieldName, entity, property, null, null, null, null) { OverridenReturnType = overridenReturnType; }
+        protected FieldResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : this(alias, fieldName, entity, property, null, null, null, null) { OverridenReturnType = overridenReturnType; }
         protected FieldResult(FieldResult? field, string function, object[]? arguments, Type? type) : this(field?.Alias, field?.FieldName, field?.Entity, field?.Property, field, function, arguments, type) { }
         protected FieldResult(FieldResult field)
         {

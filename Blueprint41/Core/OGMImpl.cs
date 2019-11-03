@@ -106,13 +106,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    DbTransaction?.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.ForceDelete;
-                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    DbTransaction?.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -139,13 +139,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    DbTransaction?.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.Delete;
-                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    DbTransaction?.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:

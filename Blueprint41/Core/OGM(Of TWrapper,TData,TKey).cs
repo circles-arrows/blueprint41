@@ -24,7 +24,7 @@ namespace Blueprint41.Core
             if (item is null)
                 return null;
 
-            if(item != null && item.PersistenceState != PersistenceState.DoesntExist)
+            if (item.PersistenceState != PersistenceState.DoesntExist)
                 item.LazyGet();
 
             if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
@@ -300,7 +300,7 @@ namespace Blueprint41.Core
 
         internal override object? GetKey()
         {
-            TData? data = InnerData;
+            TData? data = innerData;
             if (data is null)
                 return null;
 

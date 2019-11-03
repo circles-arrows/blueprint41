@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Neo4j.Driver.V1;
 using Blueprint41.Log;
+using System.Runtime.CompilerServices;
 
 namespace Blueprint41.Neo4j.Persistence
 {
@@ -26,8 +27,7 @@ namespace Blueprint41.Neo4j.Persistence
             }
         }
 
-        public static IStatementResult Run(string cypher, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
-        [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
+        public static IStatementResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
             if (trans is null)
@@ -50,7 +50,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             return results;
         }
-        public static IStatementResult Run(string cypher, Dictionary<string, object?>? parameters, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
+        public static IStatementResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
             if (trans is null)

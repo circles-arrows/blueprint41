@@ -75,7 +75,7 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
                     return;
 
-            RunningTransaction.Register(AddAction(item, moment));
+            DbTransaction?.Register(AddAction(item, moment));
         }
         internal void AddRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
         {
@@ -98,7 +98,7 @@ namespace Blueprint41.Core
                 actions.AddLast(AddAction(item, moment));
             }
 
-            RunningTransaction.Register(actions);
+            DbTransaction?.Register(actions);
         }
         public void AddUnmanaged(TEntity item, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
         {
@@ -168,7 +168,7 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                RunningTransaction.Register(actions);
+                DbTransaction?.Register(actions);
                 LazySet();
             }
             return (actions.Count > 0);
@@ -216,7 +216,7 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                RunningTransaction.Register(actions);
+                DbTransaction?.Register(actions);
                 LazySet();
             }
 
@@ -273,12 +273,12 @@ namespace Blueprint41.Core
                         actions.AddLast(RemoveAction(item, moment));
                     });
 
-                    RunningTransaction.Register(actions);
+                    DbTransaction?.Register(actions);
                     return;
                 }
             }
 
-            RunningTransaction.Register(ClearAction(moment));
+            DbTransaction?.Register(ClearAction(moment));
         }
 
         sealed protected override IEnumerator<TEntity> GetEnumeratorInternal()
@@ -447,7 +447,7 @@ namespace Blueprint41.Core
 
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            RunningTransaction.Register(new TimeDependentClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem, moment));
+            DbTransaction?.Register(new TimeDependentClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem, moment));
         }
 
         #endregion

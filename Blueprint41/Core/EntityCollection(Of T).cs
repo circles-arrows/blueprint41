@@ -43,7 +43,7 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                     return;
 
-            RunningTransaction.Register(AddAction(item, null));
+            DbTransaction?.Register(AddAction(item, null));
         }
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
         {
@@ -66,7 +66,7 @@ namespace Blueprint41.Core
                 actions.AddLast(AddAction(item, null));
             }
 
-            RunningTransaction.Register(actions);
+            DbTransaction?.Register(actions);
         }
         public override bool Contains(TEntity item)
         {
@@ -106,7 +106,7 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                RunningTransaction.Register(actions);
+                DbTransaction?.Register(actions);
                 LazySet();
             }
 
@@ -151,12 +151,12 @@ namespace Blueprint41.Core
                         actions.AddLast(RemoveAction(item, null));
                     });
 
-                    RunningTransaction.Register(actions);
+                    DbTransaction?.Register(actions);
                     return;
                 }
             }
 
-            RunningTransaction.Register(ClearAction(null));
+            DbTransaction?.Register(ClearAction(null));
         }
         internal sealed override bool RemoveRange(IEnumerable<TEntity> items, bool fireEvents)
         {
@@ -197,7 +197,7 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                RunningTransaction.Register(actions);
+                DbTransaction?.Register(actions);
                 LazySet();
             }
 
@@ -333,7 +333,7 @@ namespace Blueprint41.Core
                 {
                     if (currentItem.Count > 0)
                     {
-                        if (ParentProperty.PropertyType == PropertyType.Lookup)
+                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
                             Remove(currentItem[0].Item);
                         else
                             Clear(false); // Clear should not be called here as this is for lookup.
@@ -346,7 +346,7 @@ namespace Blueprint41.Core
 
                     if (currentItem.Count > 0)
                     {
-                        if (ParentProperty.PropertyType == PropertyType.Lookup)
+                        if (ParentProperty?.PropertyType == PropertyType.Lookup)
                             Remove(currentItem[0].Item);
                         else
                             Clear(false); // Clear should not be called here as this is for lookup.
@@ -362,7 +362,7 @@ namespace Blueprint41.Core
             if(!isUpdate && !IsLoaded)
                 return true;
 
-            return ((InnerData?.Count ?? 1) == 0);
+            return ((innerData?.Count ?? 1) == 0);
         }
         protected override void ClearLookup(DateTime? moment)
         {
@@ -371,7 +371,7 @@ namespace Blueprint41.Core
 
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            RunningTransaction.Register(new ClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem));
+            DbTransaction?.Register(new ClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem));
         }
 
         #endregion

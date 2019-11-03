@@ -70,7 +70,7 @@ namespace Blueprint41.Core
             if (returnType == null)
                 return value;
 
-            Conversion converter;
+            Conversion? converter;
             if (!ConvertToStoredTypeCache.TryGetValue(returnType, out converter))
                 return value;
 
@@ -88,7 +88,7 @@ namespace Blueprint41.Core
             if (returnType == null)
                 return value;
 
-            Conversion converter;
+            Conversion? converter;
             if (!ConvertFromStoredTypeCache.TryGetValue(returnType, out converter))
                 return value;
 

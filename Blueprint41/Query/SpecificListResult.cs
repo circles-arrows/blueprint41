@@ -16,7 +16,7 @@ namespace Blueprint41.Query
     public class StringListResult : ListResult<StringListResult, StringResult, string>
     {
         public StringListResult(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-        public StringListResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
+        public StringListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
 
         public AsResult As(string aliasName, out StringListResult alias)
         {
@@ -33,7 +33,7 @@ namespace Blueprint41.Query
     public class BooleanListResult : ListResult<BooleanListResult, BooleanResult, bool>
     {
         public BooleanListResult(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-        public BooleanListResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
+        public BooleanListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
 
         public AsResult As(string aliasName, out BooleanListResult alias)
         {
@@ -50,7 +50,7 @@ namespace Blueprint41.Query
     public class DateTimeListResult : ListResult<DateTimeListResult, DateTimeResult, DateTime>
     {
         public DateTimeListResult(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-        public DateTimeListResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
+        public DateTimeListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
 
         public AsResult As(string aliasName, out DateTimeListResult alias)
         {
@@ -67,7 +67,7 @@ namespace Blueprint41.Query
     public class FloatListResult : ListResult<FloatListResult, FloatResult, double>
     {
         public FloatListResult(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-        public FloatListResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
+        public FloatListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
 
         public AsResult As(string aliasName, out FloatListResult alias)
         {
@@ -84,7 +84,7 @@ namespace Blueprint41.Query
     public class NumericListResult : ListResult<NumericListResult, NumericResult, long>
     {
         public NumericListResult(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-        public NumericListResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
+        public NumericListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
 
         public AsResult As(string aliasName, out NumericListResult alias)
         {

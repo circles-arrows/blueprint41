@@ -132,9 +132,16 @@ namespace Blueprint41.Query
                 return Parameter.Constant(operand, type);
             }
         }
-        private static Type GetEnumeratedType(Type type)
+        private static Type GetEnumeratedType(Type? type)
         {
-            return type.GetElementType() ?? (typeof(IEnumerable).IsAssignableFrom(type) ? type.GenericTypeArguments.FirstOrDefault() : null);
+            if (type is null)
+                throw new InvalidOperationException("The type cannot be null");
+
+            Type? result = type.GetElementType();
+            if (result is null && typeof(IEnumerable).IsAssignableFrom(type))
+                result = type.GenericTypeArguments.FirstOrDefault();
+
+            return result ?? type;
         }
 
         private Type? GetOperandType(object? operand)
@@ -164,27 +171,32 @@ namespace Blueprint41.Query
 
         private void CompileOperand(CompileState state, object? operand)
         {
-            if (operand == null)
+            if (operand is null)
+            {
+                state.Text.Append("NULL");
                 return;
-
-            Type type = operand.GetType(); 
-            
-            if (type.IsSubclassOfOrSelf(typeof(Result)))
-            {
-                ((Result)operand).Compile(state);
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(QueryCondition)))
-            {
-                ((QueryCondition)operand).Compile(state);
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Parameter)))
-            {
-                ((Parameter)operand).Compile(state);
             }
             else
             {
-                state.Errors.Add($"The type {type!.Name} is not supported for compilation.");
-                state.Text.Append(operand.ToString());
+                Type type = operand.GetType();
+
+                if (type.IsSubclassOfOrSelf(typeof(Result)))
+                {
+                    ((Result)operand).Compile(state);
+                }
+                else if (type.IsSubclassOfOrSelf(typeof(QueryCondition)))
+                {
+                    ((QueryCondition)operand).Compile(state);
+                }
+                else if (type.IsSubclassOfOrSelf(typeof(Parameter)))
+                {
+                    ((Parameter)operand).Compile(state);
+                }
+                else
+                {
+                    state.Errors.Add($"The type {type!.Name} is not supported for compilation.");
+                    state.Text.Append(operand.ToString());
+                }
             }
         }
 

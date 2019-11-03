@@ -19,7 +19,7 @@ namespace Blueprint41.Core
 
         protected Action<TEntity>? EagerLoadLogic;
 
-        private IList<CollectionItem<TEntity>>? innerData = null;
+        protected private IList<CollectionItem<TEntity>>? innerData = null;
         protected IList<CollectionItem<TEntity>> InnerData
         {
             get
@@ -57,7 +57,7 @@ namespace Blueprint41.Core
             loadedData = tmp;
 
             IsLoaded = true;
-            RunningTransaction.Replay(this);
+            DbTransaction?.Replay(this);
         }
         private void BeforeCollectionChanged(object sender, EventArgs args)
         {

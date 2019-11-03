@@ -12,6 +12,8 @@ namespace Blueprint41
 {
     public class Parameter
     {
+        static private readonly string CONSTANT_NAME = null!;
+
         #region Operators
 
         public static QueryCondition operator ==(Parameter left, string right)
@@ -79,11 +81,12 @@ namespace Blueprint41
         private Parameter(string name)
         {
             Name = name;
+            IsConstant = (name == CONSTANT_NAME);
         }
         public Parameter(string name, object? value, Type? type = null)
         {
             Name = name;
-            IsConstant = name == null;
+            IsConstant = (name == CONSTANT_NAME);
             Value = MaterializeValue(Type, value);
         }
 
@@ -153,7 +156,6 @@ namespace Blueprint41
         public static Parameter New<T>(string name)
         {
             Parameter p = new Parameter(name);
-            p.IsConstant = name == null;
             p.Value = null;
             p.HasValue = false;
             p.Type = typeof(T);
@@ -161,9 +163,7 @@ namespace Blueprint41
         }
         public static Parameter New<T>(string name, T value)
         {
-            Parameter p = new Parameter();
-            p.IsConstant = name == null;
-            p.Name = name;
+            Parameter p = new Parameter(name);
             p.Type = typeof(T);
             p.Value = MaterializeValue(p.Type, value);
             p.HasValue = true;
@@ -172,7 +172,6 @@ namespace Blueprint41
         public static Parameter New(string name, Type type)
         {
             Parameter p = new Parameter(name);
-            p.IsConstant = name == null;
             p.Value = null;
             p.HasValue = false;
             p.Type = type;
@@ -181,7 +180,6 @@ namespace Blueprint41
         public static Parameter New(string name, object? value, Type type)
         {
             Parameter p = new Parameter(name);
-            p.IsConstant = name == null;
             p.HasValue = !(value is null);
             p.Type = type;
             p.Value = MaterializeValue(p.Type, value);
@@ -252,8 +250,7 @@ namespace Blueprint41
         public static Parameter Null => Constant(null, null);
         public static Parameter Constant<T>(T value)
         {
-            Parameter p = new Parameter("Constant");
-            p.IsConstant = true;
+            Parameter p = new Parameter(CONSTANT_NAME);
             p.Value = value;
             p.HasValue = true;
             p.Type = typeof(T);
@@ -261,8 +258,7 @@ namespace Blueprint41
         }
         public static Parameter Constant(object? value, Type? type)
         {
-            Parameter p = new Parameter("Constant");
-            p.IsConstant = true;
+            Parameter p = new Parameter(CONSTANT_NAME);
             p.Value = value;
             p.HasValue = true;
             p.Type = type;
@@ -279,13 +275,12 @@ namespace Blueprint41
         internal void Compile(CompileState state)
         {
             if (!state.Parameters.Contains(this))
-            {
                 state.Parameters.Add(this);
-                if (IsConstant)
-                    state.Values.Add(this);
-            }
 
-            if (Name == null)
+            if (IsConstant && !state.Values.Contains(this))
+                state.Values.Add(this);
+
+            if (Name == CONSTANT_NAME)
             {
                 Name = $"param{state.paramSeq}";
                 state.paramSeq++;

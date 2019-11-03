@@ -985,9 +985,6 @@ namespace Blueprint41
 
                 Relation = model.Relations.FirstOrDefault(item => item.Name == RelationName);
 
-                if (Relation is null)
-                    throw new FormatException($"The relationship '{RelationName}' does not exist");
-
                 if (!string.IsNullOrWhiteSpace(next))
                     Next = new NodePattern(model, next);
             }
@@ -1001,7 +998,7 @@ namespace Blueprint41
             public DirectionPattern RelationDirection { get; private set; }
             public string RelationAlias { get; private set; }
             public string RelationName { get; private set; }
-            public Relationship Relation { get; private set; }
+            public Relationship? Relation { get; private set; }
 
             public NodePattern? Next { get; set; }
 
