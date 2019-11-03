@@ -12,12 +12,12 @@ namespace Blueprint41.DatastoreTemplates
     {
 
         #region Fields
-        private global::System.Text.StringBuilder generationEnvironmentField;
-        private global::System.CodeDom.Compiler.CompilerErrorCollection errorsField;
-        private global::System.Collections.Generic.List<int> indentLengthsField;
+        private global::System.Text.StringBuilder? generationEnvironmentField;
+        private global::System.CodeDom.Compiler.CompilerErrorCollection? errorsField;
+        private global::System.Collections.Generic.List<int>? indentLengthsField;
         private string currentIndentField = "";
         private bool endsWithNewline;
-        private global::System.Collections.Generic.IDictionary<string, object> sessionField;
+        private global::System.Collections.Generic.IDictionary<string, object>? sessionField;
         #endregion
         #region Properties
         /// <summary>
@@ -79,7 +79,7 @@ namespace Blueprint41.DatastoreTemplates
         /// <summary>
         /// Current transformation session
         /// </summary>
-        public virtual global::System.Collections.Generic.IDictionary<string, object> Session
+        public virtual global::System.Collections.Generic.IDictionary<string, object>? Session
         {
             get
             {
@@ -242,14 +242,14 @@ namespace Blueprint41.DatastoreTemplates
             /// <summary>
             /// This is called from the compile/run appdomain to convert objects within an expression block to a string
             /// </summary>
-            public string ToStringWithCulture(object objectToConvert)
+            public string? ToStringWithCulture(object objectToConvert)
             {
                 if ((objectToConvert == null))
                 {
                     throw new global::System.ArgumentNullException("objectToConvert");
                 }
                 System.Type t = objectToConvert.GetType();
-                System.Reflection.MethodInfo method = t.GetMethod("ToString", new System.Type[] {
+                System.Reflection.MethodInfo? method = t.GetMethod("ToString", new System.Type[] {
                             typeof(System.IFormatProvider)});
                 if ((method == null))
                 {
@@ -257,7 +257,7 @@ namespace Blueprint41.DatastoreTemplates
                 }
                 else
                 {
-                    return ((string)(method.Invoke(objectToConvert, new object[] {
+                    return ((string?)(method.Invoke(objectToConvert, new object[] {
                                 this.formatProviderField })));
                 }
             }

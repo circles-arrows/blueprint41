@@ -13,29 +13,29 @@ namespace Blueprint41.Neo4j.Persistence
     {
         internal const decimal DECIMAL_FACTOR = 100000000m;
 
-        private IDriver driver;
+        private IDriver? driver = null;
         public IDriver Driver
         {
             get
             {
-                if(driver == null)
+                if (driver is null)
                 {
                     lock (typeof(Neo4JPersistenceProvider))
                     {
-                        if(driver == null)
+                        if (driver == null)
                             driver = GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password));
                     }
                 }
                 return driver;
             }
         }
-        public TransactionLogger TransactionLogger { get; private set; }
-        private string Uri;
-        private string Username;
-        private string Password;
+        public TransactionLogger? TransactionLogger { get; private set; }
+        private string? Uri;
+        private string? Username;
+        private string? Password;
 
         private Neo4JPersistenceProvider() : this(null, null, null, false) { }
-        public Neo4JPersistenceProvider(string uri, string username, string password, bool withLogging = false)
+        public Neo4JPersistenceProvider(string? uri, string? username, string? password, bool withLogging = false)
         {
             Uri = uri;
             Username = username;

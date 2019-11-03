@@ -8,9 +8,9 @@ namespace Blueprint41.Query
 {
     public abstract class RELATIONSHIP
     {
-        private Repeat repeat = null;
+        private Repeat? repeat = null;
         public Node FromNode { get; set; }
-        public Node ToNode { get; set; }
+        public Node? ToNode { get; set; }
         
 
         public DirectionEnum Direction { get; set; }

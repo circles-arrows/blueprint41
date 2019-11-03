@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Collections.ObjectModel;
 using Blueprint41;
 using System.Runtime.Serialization.Json;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.Linq
 {
@@ -45,7 +47,7 @@ namespace System.Linq
         private static class HashSetDelegateHolder<T>
         {
             private const BindingFlags Flags = BindingFlags.Instance | BindingFlags.NonPublic;
-            private static MethodInfo InitializeMethodInfo = typeof(HashSet<T>).GetMethod("Initialize", Flags);
+            private static MethodInfo InitializeMethodInfo = typeof(HashSet<T>).GetMethod("Initialize", Flags)!;
             public static Action<HashSet<T>, int> InitializeMethod { get; } = (Action<HashSet<T>, int>)Delegate.CreateDelegate(typeof(Action<HashSet<T>, int>), InitializeMethodInfo);
 
         }
@@ -206,9 +208,9 @@ namespace System
 {
     public static partial class ExtensionMethods
     {
-        public static string ToJson<T>(this T self)
+        public static string? ToJson<T>(this T self)
         {
-            if ((object)self == null)
+            if (self is null)
                 return null;
 
             using (MemoryStream writer = new MemoryStream())
@@ -217,11 +219,12 @@ namespace System
                 return Encoding.UTF8.GetString(writer.ToArray());
             }
         }
-
+        
+        [return: MaybeNull]
         public static T FromJson<T>(this string self)
         {
             if (self == null)
-                return default(T);
+                return default!;
 
             using (MemoryStream reader = new MemoryStream(Encoding.UTF8.GetBytes(self)))
             {
@@ -229,10 +232,11 @@ namespace System
             }
         }
 
+        [return: MaybeNull]
         public static T FromJson<T>(this CompressedString self)
         {
-            if ((object)self == null)
-                return default(T);
+            if (self is null)
+                return default!;
 
             return FromJson<T>(self.Value);
         }
@@ -240,6 +244,17 @@ namespace System
         private class Cache<T>
         {
             public static DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(T));
+        }
+
+        public static IEnumerable<T> NotNull<T>(this IEnumerable<T?> self)
+            where T : class
+        {
+            return self.Where(item => !(item is null))!;
+        }
+
+        public static IEnumerable<object> NotNull(this IEnumerable self)
+        {
+            return self.Cast<object?>().Where(item => !(item is null))!;
         }
     }
 }

@@ -9,9 +9,9 @@ namespace Blueprint41.Query
     public class MiscResult : FieldResult
     {
         internal MiscResult(FieldResult field) : base(field) { }
-        public MiscResult(string function, object[] arguments, Type type) : base(function, arguments, type) { }
-        public MiscResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public MiscResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
+        public MiscResult(string function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+        public MiscResult(AliasResult alias, string fieldName, Entity entity, Property? property) : base(alias, fieldName, entity, property) { }
+        public MiscResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         public MiscResult Coalesce(object value)
         {

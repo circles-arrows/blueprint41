@@ -43,7 +43,7 @@ namespace Blueprint41.Query
             return new QueryCondition(left, Operator.NotEquals, right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
@@ -55,12 +55,15 @@ namespace Blueprint41.Query
         internal RelationFieldResult(FieldResult field) : base(field) { }
         //public RelationFieldResult(string function, object[] arguments, Type type) : base(function, arguments, type) { }
         public RelationFieldResult(AliasResult alias, string fieldName) : base(alias, fieldName, null, null, typeof(DateTime)) { }
-        public RelationFieldResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
+        public RelationFieldResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         protected internal override void Compile(CompileState state)
         {
-            Alias.Compile(state);
-            state.Text.Append(".");
+            if (!(Alias is null))
+            {
+                Alias.Compile(state);
+                state.Text.Append(".");
+            }
             state.Text.Append(FieldName);
         }
 

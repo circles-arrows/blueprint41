@@ -17,7 +17,7 @@ namespace Blueprint41.Query
             Parameters = new List<Parameter>(state.Parameters);
             ConstantValues = new List<Parameter>(state.Values);
             ResultColumns = resultColumns;
-            ResultColumnTypeByName = resultColumns.ToDictionary(key => key.GetFieldName(), item => item.GetResultType());
+            ResultColumnTypeByName = resultColumns.ToDictionary(key => key.GetFieldName()!, item => item.GetResultType());
             Errors = new List<string>(state.Errors);
         }
 
@@ -25,16 +25,13 @@ namespace Blueprint41.Query
         public IReadOnlyList<Parameter> Parameters { get; private set; }
         public IReadOnlyList<Parameter> ConstantValues { get; private set; }
         public IReadOnlyList<AsResult> ResultColumns { get; private set; }
-        public IReadOnlyDictionary<string, Type> ResultColumnTypeByName { get; private set; }
+        public IReadOnlyDictionary<string, Type?> ResultColumnTypeByName { get; private set; }
         public IReadOnlyList<string> Errors { get; private set; }
         public override string ToString()
         {
-            if (this == null)
-                return null;
-
             Transaction transaction = Transaction.RunningTransaction;
             string cypherQuery = this.QueryText;
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
+            Dictionary<string, object?> parameterValues = new Dictionary<string, object?>();
 
             foreach (var queryParameter in this.ConstantValues)
             {
@@ -46,7 +43,7 @@ namespace Blueprint41.Query
 
             foreach (var queryParam in parameterValues)
             {
-                object paramValue = queryParam.Value.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value.ToString();
+                object paramValue = queryParam.Value?.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value?.ToString() ?? "NULL";
                 cypherQuery = cypherQuery.Replace(queryParam.Key, paramValue.ToString());
             }
             return cypherQuery;

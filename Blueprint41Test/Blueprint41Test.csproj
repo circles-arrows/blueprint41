@@ -79,7 +79,7 @@
       <Name>Blueprint41.Modeller.Schemas</Name>
     </ProjectReference>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj">
-      <Project>{B24F3C43-0B21-474A-8B42-E9E165E2F8CF}</Project>
+      <Project>{b24f3c43-0b21-474a-8b42-e9e165e2f8cf}</Project>
       <Name>Blueprint41</Name>
     </ProjectReference>
   </ItemGroup>

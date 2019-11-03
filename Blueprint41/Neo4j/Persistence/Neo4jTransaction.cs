@@ -12,7 +12,7 @@ namespace Blueprint41.Neo4j.Persistence
     
     public class Neo4jTransaction : Transaction
     {
-        internal Neo4jTransaction(IDriver driver, bool withTransaction, TransactionLogger logger)
+        internal Neo4jTransaction(IDriver driver, bool withTransaction, TransactionLogger? logger)
         {
             Driver = driver;
             Session = driver.Session();
@@ -29,9 +29,12 @@ namespace Blueprint41.Neo4j.Persistence
         public static IStatementResult Run(string cypher, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
         [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
-            if (trans == null)
+            Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
+            if (trans is null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
+
+            if (trans.StatementRunner is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
 #if DEBUG
             trans.Logger?.Start();
@@ -47,11 +50,14 @@ namespace Blueprint41.Neo4j.Persistence
 
             return results;
         }
-        public static IStatementResult Run(string cypher, Dictionary<string, object> parameters, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
+        public static IStatementResult Run(string cypher, Dictionary<string, object?>? parameters, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "", [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0)
         {
-            Neo4jTransaction trans = RunningTransaction as Neo4jTransaction;
-            if (trans == null)
+            Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
+            if (trans is null)
                 throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
+
+            if (trans.StatementRunner is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
 #if DEBUG
             trans.Logger?.Start();
@@ -70,15 +76,18 @@ namespace Blueprint41.Neo4j.Persistence
         }
 
         public IDriver Driver { get; set; }
-        public ISession Session { get; set; }
-        public ITransaction Transaction { get; set; }
-        public IStatementRunner StatementRunner { get; set; }
-        private TransactionLogger Logger { get; set; }
+        public ISession? Session { get; set; }
+        public ITransaction? Transaction { get; set; }
+        public IStatementRunner? StatementRunner { get; set; }
+        private TransactionLogger? Logger { get; set; }
 
         private bool WithTransaction;
 
         protected override void OnCommit()
         {
+            if (Session is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
             if (WithTransaction)
             {
                 if (Transaction != null)
@@ -88,7 +97,7 @@ namespace Blueprint41.Neo4j.Persistence
                 }   
             }
 
-            if (Session != null)
+            if (!(Session is null))
                 Session.Dispose();
 
             Transaction = null;
@@ -97,13 +106,24 @@ namespace Blueprint41.Neo4j.Persistence
         }
         protected override void OnRollback()
         {
+            if (Session is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
             if (WithTransaction)
-                Transaction.Failure();
-            Session.Dispose();
+                Transaction?.Failure();
+            
+            if (!(Session is null))
+                Session.Dispose();
+
+            StatementRunner = null;
+            Session = null;
         }
 
         protected override void FlushPrivate()
         {
+            if (Session is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
             if (!WithTransaction)
             {
                 Transaction = Session.BeginTransaction();

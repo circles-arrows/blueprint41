@@ -61,7 +61,7 @@ namespace Blueprint41.Query
             return new QueryCondition(left, Operator.LessOrEqual, right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
@@ -73,9 +73,9 @@ namespace Blueprint41.Query
         #endregion
 
         internal StringResult(FieldResult field) : base(field) { }
-        public StringResult(string function, object[] arguments, Type type) : base(function, arguments, type) { }
-        public StringResult(AliasResult alias, string fieldName, Entity entity, Property property, Type overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
-        public StringResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
+        public StringResult(string function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+        public StringResult(AliasResult alias, string fieldName, Entity entity, Property property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+        public StringResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         public StringListResult Collect()
         {
@@ -122,11 +122,11 @@ namespace Blueprint41.Query
         }
         public StringResult Split(StringResult delimiter)
         {
-            return null;
+            return new StringResult(this, "split({base}, {0})", new object[] { delimiter });
         }
         public StringResult Split(Parameter delimiter)
         {
-            return null;
+            return new StringResult(this, "split({base}, {0})", new object[] { delimiter });
         }
 
         public StringResult Left(int subLength)
@@ -135,11 +135,11 @@ namespace Blueprint41.Query
         }
         public StringResult Left(NumericResult subLength)
         {
-            return null;
+            return new StringResult(this, "left({base}, {0})", new object[] { subLength });
         }
         public StringResult Left(Parameter subLength)
         {
-            return null;
+            return new StringResult(this, "left({base}, {0})", new object[] { subLength });
         }
 
         public StringResult Right(int subLength)
@@ -148,11 +148,11 @@ namespace Blueprint41.Query
         }
         public StringResult Right(NumericResult subLength)
         {
-            return null;
+            return new StringResult(this, "right({base}, {0})", new object[] { subLength });
         }
         public StringResult Right(Parameter subLength)
         {
-            return null;
+            return new StringResult(this, "right({base}, {0})", new object[] { subLength });
         }
 
         public StringResult Substring(int begin)

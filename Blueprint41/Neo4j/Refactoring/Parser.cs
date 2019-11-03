@@ -1,4 +1,6 @@
-﻿using Blueprint41.Core;
+﻿#nullable disable
+
+using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Refactoring.Templates;
 using Neo4j.Driver.V1;
@@ -158,21 +160,21 @@ namespace Blueprint41.Neo4j.Refactoring
                 return false;
 
             INode node = record["version"].As<INode>();
-            DatastoreModel.UpgradeScript databaseVersion = new DatastoreModel.UpgradeScript(node);
+            (long major, long minor, long patch) databaseVersion = ((long)node.Properties["Major"], (long)node.Properties["Minor"], (long)node.Properties["Patch"]);
 
-            if (databaseVersion.Major < script.Major)
+            if (databaseVersion.major < script.Major)
                 return false;
 
-            if (databaseVersion.Major > script.Major)
+            if (databaseVersion.major > script.Major)
                 return true;
 
-            if (databaseVersion.Minor < script.Minor)
+            if (databaseVersion.minor < script.Minor)
                 return false;
 
-            if (databaseVersion.Minor > script.Minor)
+            if (databaseVersion.minor > script.Minor)
                 return true;
 
-            if (databaseVersion.Patch < script.Patch)
+            if (databaseVersion.patch < script.Patch)
                 return false;
 
             return true;

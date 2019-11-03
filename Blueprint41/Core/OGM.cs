@@ -5,19 +5,19 @@ using System.Collections.Generic;
 
 public interface OGM
 {
-    object GetKey();
+    object? GetKey();
     void SetKey(object key);
     DateTime GetRowVersion();
     void SetRowVersion(DateTime? value);
-    IDictionary<string,object> GetData();
-    void SetData(IReadOnlyDictionary<string, object> data);
+    IDictionary<string,object?> GetData();
+    void SetData(IReadOnlyDictionary<string, object?> data);
     void Delete(bool force);
     void Save();
     void ValidateSave();
     void ValidateDelete();
 
     PersistenceState PersistenceState { get; set; }
-    Transaction Transaction { get; set; }
+    Transaction? Transaction { get; set; }
 
     Entity GetEntity();
 

@@ -10,17 +10,37 @@ using persistence = Blueprint41.Neo4j.Persistence;
 namespace Blueprint41.Core
 {
     public abstract class EntityCollectionBase<TEntity> : EntityCollectionBase, ICollection<TEntity>, ILookupHelper<TEntity>
-        where TEntity : OGM
+        where TEntity : class, OGM
     {
-        public EntityCollectionBase(OGM parent, Property property, Action<TEntity> eagerLoadLogic) : base(parent, property)
+        public EntityCollectionBase(OGM parent, Property property, Action<TEntity>? eagerLoadLogic) : base(parent, property)
         {
             EagerLoadLogic = eagerLoadLogic;
         }
 
-        protected Action<TEntity> EagerLoadLogic;
+        protected Action<TEntity>? EagerLoadLogic;
 
-        protected IList<CollectionItem<TEntity>> InnerData = null;
-        protected IList<CollectionItem<TEntity>> LoadedData { get; private set; }
+        private IList<CollectionItem<TEntity>>? innerData = null;
+        protected IList<CollectionItem<TEntity>> InnerData
+        {
+            get
+            {
+                if (innerData is null)
+                    throw new InvalidOperationException("The collection is not initialized, please call InitialLoad first.");
+
+                return innerData;
+            }
+        }
+        private IList<CollectionItem<TEntity>>? loadedData = null;
+        protected IList<CollectionItem<TEntity>> LoadedData
+        {
+            get
+            {
+                if (loadedData is null)
+                    throw new InvalidOperationException("The collection is not initialized, please call InitialLoad first.");
+
+                return loadedData;
+            }
+        }
         public IEnumerable<TEntity> OriginalData { get { LazyLoad(); return LoadedData.Select(item => item.Item); } }
         sealed internal override void InitialLoad(IEnumerable<CollectionItem> items)
         {
@@ -33,22 +53,22 @@ namespace Blueprint41.Core
 
             ObservableList<CollectionItem<TEntity>> tmp = new ObservableList<CollectionItem<TEntity>>(items);
             tmp.BeforeCollectionChanged += BeforeCollectionChanged;
-            InnerData = tmp;
-            LoadedData = tmp;
+            innerData = tmp;
+            loadedData = tmp;
 
             IsLoaded = true;
-            Transaction?.Replay(this);
+            RunningTransaction.Replay(this);
         }
         private void BeforeCollectionChanged(object sender, EventArgs args)
         {
-            ObservableList<CollectionItem<TEntity>> tmp = InnerData as ObservableList<CollectionItem<TEntity>>;
+            ObservableList<CollectionItem<TEntity>> tmp = (ObservableList<CollectionItem<TEntity>>)InnerData;
             tmp.BeforeCollectionChanged -= BeforeCollectionChanged;
             if (ReferenceEquals(InnerData, LoadedData))
-                LoadedData = new List<CollectionItem<TEntity>>(InnerData);
+                loadedData = new List<CollectionItem<TEntity>>(InnerData);
         }
         protected virtual void LazySet()
         {
-            if (Parent.PersistenceState == PersistenceState.Persisted && Transaction != Transaction.RunningTransaction)
+            if (Parent.PersistenceState == PersistenceState.Persisted && DbTransaction != Transaction.RunningTransaction)
                 throw new InvalidOperationException("This object was already flushed to the data store.");
             else if (Parent.PersistenceState == PersistenceState.OutOfScope)
                 throw new InvalidOperationException("The transaction for this object has already ended.");
@@ -132,19 +152,19 @@ namespace Blueprint41.Core
             }
         }
 
-        protected abstract TEntity GetOriginalItem(DateTime? moment);
+        protected abstract TEntity? GetOriginalItem(DateTime? moment);
         protected abstract IEnumerable<CollectionItem<TEntity>> GetItems(DateTime? from, DateTime? till);
-        protected abstract TEntity GetItem(DateTime? moment);
-        protected abstract void SetItem(TEntity item, DateTime? moment);
+        protected abstract TEntity? GetItem(DateTime? moment);
+        protected abstract void SetItem(TEntity? item, DateTime? moment);
         protected abstract bool IsNull(bool isUpdate);
         protected abstract void ClearLookup(DateTime? moment);
 
-        TEntity ILookupHelper<TEntity>.GetOriginalItem(DateTime? moment)
+        TEntity? ILookupHelper<TEntity>.GetOriginalItem(DateTime? moment)
         {
             return GetOriginalItem(moment);
         }
 
-        TEntity ILookupHelper<TEntity>.GetItem(DateTime? moment)
+        TEntity? ILookupHelper<TEntity>.GetItem(DateTime? moment)
         {
             return GetItem(moment);
         }
@@ -154,7 +174,7 @@ namespace Blueprint41.Core
             return GetItems(from, till);
         }
 
-        void ILookupHelper<TEntity>.SetItem(TEntity item, DateTime? moment)
+        void ILookupHelper<TEntity>.SetItem(TEntity? item, DateTime? moment)
         {
             SetItem(item, moment);
         }

@@ -112,7 +112,7 @@ namespace Blueprint41.Query
 
         #endregion
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
@@ -125,8 +125,8 @@ namespace Blueprint41.Query
 
         internal FloatResult(FieldResult field) : base(field) { }
         public FloatResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public FloatResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
-        public FloatResult(string function, object[] arguments = null, Type type = null) : base(function, arguments, type) { }
+        public FloatResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+        public FloatResult(string function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 
         public QueryCondition In(IEnumerable<double> enumerable)
         {

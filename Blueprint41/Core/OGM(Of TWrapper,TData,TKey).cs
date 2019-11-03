@@ -15,12 +15,15 @@ namespace Blueprint41.Core
     {
         protected OGM() : base() { }
 
-        public static TWrapper Load(TKey key)
+        public static TWrapper? Load(TKey key)
         {
-            if (key == null)
+            if (key is null)
                 return null;
 
-            TWrapper item = Lookup(key);
+            TWrapper? item = Lookup(key);
+            if (item is null)
+                return null;
+
             if(item != null && item.PersistenceState != PersistenceState.DoesntExist)
                 item.LazyGet();
 
@@ -29,13 +32,13 @@ namespace Blueprint41.Core
             else
                 return null;
         }
-        public static TWrapper Lookup(TKey key)
+        public static TWrapper? Lookup(TKey key)
         {
-            if (key == null)
+            if (key is null)
                 return null;
 
-            TWrapper instance = (TWrapper)Transaction.RunningTransaction.GetEntityByKey(Entity.Name, key);
-            if (instance != null)
+            TWrapper? instance = (TWrapper?)Transaction.RunningTransaction.GetEntityByKey(Entity.Name, key);
+            if (!(instance is null))
                 return instance;
 
             TWrapper item = Transaction.Execute(() => new TWrapper(), EventOptions.GraphEvents);
@@ -103,7 +106,7 @@ namespace Blueprint41.Core
 
         internal abstract void SetKey(TKey key);
 
-        protected static Entity entity = null;
+        protected static Entity? entity = null;
         public static Entity Entity
         {
 
@@ -112,7 +115,7 @@ namespace Blueprint41.Core
                 if (entity == null)
                     Instance.GetEntity();
 
-                return entity;
+                return entity!;
             }
         }
 
@@ -138,7 +141,7 @@ namespace Blueprint41.Core
                 case PersistenceState.Deleted:
                     throw new InvalidOperationException("The object has been deleted, you cannot make changes to it anymore.");
                 case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 default:
@@ -169,8 +172,11 @@ namespace Blueprint41.Core
 
             if (property.PropertyType == PropertyType.Attribute && previousValue is IList)
             {
-                IList pv = previousValue as IList;
-                IList av = assignValue as IList;
+                if (assignValue is null)
+                    throw new InvalidOperationException("You cannot assign null to a list property.");
+
+                IList pv = (IList)previousValue;
+                IList av = (IList)assignValue;
                 if (pv.Count == 0 && av.Count == 0)
                     return false;
 
@@ -199,17 +205,17 @@ namespace Blueprint41.Core
         {
             return base.GetHashCode();
         }
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            TWrapper other = obj as TWrapper;
-            if ((object)other == null)
+            TWrapper? other = obj as TWrapper;
+            if (other is null)
                 return false;
 
-            object key = GetKey();
-            if (key == null)
+            object? key = GetKey();
+            if (key is null)
                 return object.ReferenceEquals(this, other);
 
-            object otherKey = other.GetKey();
+            object? otherKey = other.GetKey();
             if (otherKey == null)
                 return object.ReferenceEquals(this, other);
 
@@ -218,19 +224,19 @@ namespace Blueprint41.Core
 
         public static bool operator ==(OGM<TWrapper, TKey> a, OGM<TWrapper, TKey> b)
         {
-            if ((object)a == null && (object)b == null)
+            if (a is null && b is null)
                 return true;
 
-            if ((object)a == null || (object)b == null)
+            if (a is null || b is null)
                 return false;
 
-            object ka = a.GetKey();
-            object kb = b.GetKey();
+            object? ka = a.GetKey();
+            object? kb = b.GetKey();
 
-            if ((object)ka == null && (object)kb == null)
+            if (ka is null && kb is null)
                 return true;
 
-            if ((object)ka == null || (object)kb == null)
+            if (ka is null || kb is null)
                 return false;
 
             return ka.Equals(kb);
@@ -261,36 +267,41 @@ namespace Blueprint41.Core
         
         public static void Delete(TKey key)
         {
-            TWrapper wrapper = Lookup(key);
-            wrapper.Delete();
+            TWrapper? wrapper = Lookup(key);
+            wrapper?.Delete();
         }
 
         public static void ForceDelete(TKey key)
         {
-            TWrapper wrapper = Lookup(key);
-            wrapper.ForceDelete();
+            TWrapper? wrapper = Lookup(key);
+            wrapper?.ForceDelete();
         }
 
-        internal protected TData InnerData = default(TData);
-        internal protected TData OriginalData = default(TData);
+        private TData? innerData = default(TData);
+        internal protected TData InnerData
+        {
+            get
+            {
+                if (innerData is null)
+                    throw new InvalidOperationException("The inner data is not yet initialized.");
+
+                return innerData;
+            }
+            set { innerData = value; }
+        }
+        internal protected TData? OriginalData = default(TData);
         TData IInnerData<TData>.InnerData { get { return InnerData; } }
 
         public override PersistenceState PersistenceState
         {
-            get
-            {
-                return InnerData.PersistenceState;
-            }
-            internal set
-            {
-                InnerData.PersistenceState = value;
-            }
+            get { return InnerData.PersistenceState; }
+            internal set { InnerData.PersistenceState = value; }
         }
 
-        internal override object GetKey()
+        internal override object? GetKey()
         {
-            TData data = InnerData;
-            if (data == null)
+            TData? data = InnerData;
+            if (data is null)
                 return null;
 
             return data.GetKey();
@@ -329,12 +340,12 @@ namespace Blueprint41.Core
             if (set != null)
                 set.Invoke();
 
-            DbTransaction.Register(Entity.Name, this);
+            RunningTransaction.Register(Entity.Name, this);
         }
 
         #region Stored Queries
 
-        private static IDictionary<string, ICompiled> StoredQueries = null;
+        private static IDictionary<string, ICompiled>? StoredQueries = null;
         private static bool IsInitialized = false;
 
         protected virtual void RegisterStoredQueries() { }
@@ -344,20 +355,20 @@ namespace Blueprint41.Core
         {
             InitializeStoredQueries();
 
-            StoredQueries.Add(name, query);
+            StoredQueries!.Add(name, query);
         }
         public static List<TWrapper> FromQuery(string name, params Parameter[] parameters)
         {
             InitializeStoredQueries();
 
-            ICompiled query = StoredQueries[name];
+            ICompiled query = StoredQueries![name];
             return LoadWhere(query, parameters);
         }
         public static List<TWrapper> FromQuery(string name, Parameter[] parameters, int page, int size, bool ascending = true, params Property[] orderBy)
         {
             InitializeStoredQueries();
 
-            ICompiled query = StoredQueries[name];
+            ICompiled query = StoredQueries![name];
             return LoadWhere(query, parameters, page, size, ascending, orderBy);
         }
 

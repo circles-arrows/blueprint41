@@ -18,20 +18,23 @@ namespace Blueprint41.Core
         internal abstract void RegisterConversion();
 
         protected static List<Conversion> registeredConverters = new List<Conversion>();
-        private static AtomicDictionary<Type, AtomicDictionary<Type, Conversion>> cache = new AtomicDictionary<Type, AtomicDictionary<Type, Conversion>>();
-        public static object Convert(Type from, Type to, object value)
+        private static AtomicDictionary<Type, AtomicDictionary<Type, Conversion?>> cache = new AtomicDictionary<Type, AtomicDictionary<Type, Conversion?>>();
+        public static object? Convert(Type from, Type to, object? value)
         {
-            if (value == null && from?.BaseType == typeof(ValueType) && (!from.IsGenericType || from.GetGenericTypeDefinition() != typeof(Nullable<>)))
+            if (value is null && from?.BaseType == typeof(ValueType) && (!from.IsGenericType || from.GetGenericTypeDefinition() != typeof(Nullable<>)))
                 throw new NullReferenceException($"Cannot convert null to '{from.Name}'");
 
             if (from == to)
                 return value;
 
-            Conversion converter = GetConverter(from, to);
+            Conversion? converter = GetConverter(from!, to); // BUG: C#8 thinks it might be null due to -> if (from?.BaseType... etc
+            if (converter is null)
+                return value;
+
             return converter.Convert(value);
         }
 
-        internal static Conversion GetConverter(Type fromType, Type toType)
+        internal static Conversion? GetConverter(Type fromType, Type toType)
         {
             if (fromType == toType)
                 return null;
@@ -39,15 +42,15 @@ namespace Blueprint41.Core
             if (!registrationsLoaded)
                 Conversion<bool, bool?>.Convert(true); // trick it into doing an initialize...
 
-            AtomicDictionary<Type, Conversion> toCache = cache.TryGetOrAdd(fromType, key => new AtomicDictionary<Type, Core.Conversion>());
+            AtomicDictionary<Type, Conversion?> toCache = cache.TryGetOrAdd(fromType, key => new AtomicDictionary<Type, Core.Conversion?>());
 
-            Conversion converter = toCache.TryGetOrAdd(toType, key =>
+            Conversion? converter = toCache.TryGetOrAdd(toType, key =>
             {
                 converter = registeredConverters.FirstOrDefault(item => item.FromType == fromType && item.ToType == toType);
                 if (converter == null)
                 {
                     Type genericConversionType = typeof(ConversionInstance<,>).MakeGenericType(fromType, toType);
-                    converter = (Conversion)Activator.CreateInstance(genericConversionType, true);
+                    converter = (Conversion)Activator.CreateInstance(genericConversionType, true)!;
                     if (!converter.IsValidConversion())
                         converter = null;
                 }
@@ -58,6 +61,6 @@ namespace Blueprint41.Core
         }
 
         internal abstract bool IsValidConversion();
-        public abstract object Convert(object value);
+        public abstract object? Convert(object? value);
     }
 }

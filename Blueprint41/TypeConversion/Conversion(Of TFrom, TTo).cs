@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Blueprint41.Core
         #region Initialize
 
         static private bool isInitialized = false;
-        static private Func<TFrom, TTo> converterMethod = null;
+        static private Func<TFrom, TTo>? converterMethod = null;
 
         static private void Initialize()
         {
@@ -43,24 +44,27 @@ namespace Blueprint41.Core
 
                             if (fromType.IsGenericType && fromType.GetGenericTypeDefinition() == typeof(Nullable<>))
                             {
-                                fromType = Nullable.GetUnderlyingType(fromType);
+                                fromType = Nullable.GetUnderlyingType(fromType)!;
                                 fromIsNullable = true;
                             }
                             
                             if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
                             {
-                                toType = Nullable.GetUnderlyingType(toType);
+                                toType = Nullable.GetUnderlyingType(toType)!;
                                 toIsNullable = true;
                             }
 
                             if (fromIsNullable || toIsNullable)
                             {
-                                Expression<Func<TFrom, TTo>> uncompiledConvert = CreateNullableVersion(fromType, fromIsNullable, toType, toIsNullable);
-                                Func<TFrom, TTo> compiledConvert = null;
+                                Expression<Func<TFrom, TTo>>? uncompiledConvert = CreateNullableVersion(fromType, fromIsNullable, toType, toIsNullable);
+                                Func<TFrom, TTo>? compiledConvert = null;
                                 converterMethod = delegate (TFrom value)
                                 {
-                                    if (compiledConvert == null)
+                                    if (compiledConvert is null && !(uncompiledConvert is null))
                                         compiledConvert = uncompiledConvert.Compile();
+
+                                    if (compiledConvert is null)
+                                        return default(TTo)!;
 
                                     return compiledConvert.Invoke(value);
                                 };
@@ -79,7 +83,7 @@ namespace Blueprint41.Core
 
                         // IConvertable
                         if (converterMethod == null && typeof(TFrom).GetTypeInfo().ImplementedInterfaces.Any(item => item == typeof(IConvertible)))
-                            converterMethod = delegate (TFrom value) { return (TTo)System.Convert.ChangeType(value, typeof(TTo)); };
+                            converterMethod = delegate (TFrom value) { return (TTo)System.Convert.ChangeType(value, typeof(TTo))!; };
 
                         isInitialized = true;
                     }
@@ -106,12 +110,16 @@ namespace Blueprint41.Core
                             );
             return methods.FirstOrDefault();
         }
-        private static Expression<Func<TFrom, TTo>> CreateNullableVersion(Type fromType, bool fromIsNullable, Type toType, bool toIsNullable)
+        private static Expression<Func<TFrom, TTo>>? CreateNullableVersion(Type fromType, bool fromIsNullable, Type toType, bool toIsNullable)
         {
             Type converterType = typeof(Conversion<,>).MakeGenericType(new Type[] { fromType, toType });
             MethodInfo canConvert = converterType.GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "CanConvert");
 
-            if ((bool)canConvert.Invoke(null, new object[0]) == true)
+            object? canConv = canConvert.Invoke(null, new object[0]);
+            if (canConv is null || !(canConv is bool))
+                throw new NotSupportedException($"You cannot convert a {typeof(TFrom).Name} to a {typeof(TTo).Name}.");
+
+            if ((bool)canConv == true)
             {
                 MethodInfo convertMethodInfo = converterType.GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert");
                 PropertyInfo valuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.FirstOrDefault(item => item.Name == "Value");
@@ -141,7 +149,7 @@ namespace Blueprint41.Core
                     var returnValue = Expression.Variable(typeof(TTo), "returnValue");
 
                     Expression thenExpr = (toIsNullable || toType.IsClass) ?
-                                        (Expression)Expression.Assign(returnValue, Expression.Constant(default(TTo), typeof(TTo))) :
+                                        (Expression)Expression.Assign(returnValue, Expression.Constant(default(TTo)!, typeof(TTo))) :
                                         (Expression)Expression.Throw(
                                                         Expression.Constant(new NullReferenceException($"Cannot convert null to '{typeof(TTo).Name}'"))
                                                     );
@@ -194,7 +202,7 @@ namespace Blueprint41.Core
 
                             foreach (ConversionAttribute attribute in assembly.GetCustomAttributes<ConversionAttribute>())
                             {
-                                Conversion converter = (Conversion)Activator.CreateInstance(attribute.Converter);
+                                Conversion converter = (Conversion)Activator.CreateInstance(attribute.Converter)!;
                                 converter.RegisterConversion();
                                 registeredConverters.Add(converter);
                             }
@@ -211,8 +219,9 @@ namespace Blueprint41.Core
             var stack = new Stack<Assembly>();
 
             stack.Push(typeof(Conversion).Assembly);
-            if(Assembly.GetEntryAssembly() != null)
-                stack.Push(Assembly.GetEntryAssembly());
+            Assembly? entry = Assembly.GetEntryAssembly();
+            if (!(entry is null))
+                stack.Push(entry);
 
             do
             {
@@ -245,7 +254,8 @@ namespace Blueprint41.Core
             while (stack.Count > 0);
         }
 
-        protected abstract TTo Converter(TFrom value);
+        [return: MaybeNull]
+        protected abstract TTo Converter([AllowNull] TFrom value);
         internal override void RegisterConversion()
         {
             converterMethod = Converter;
@@ -255,7 +265,8 @@ namespace Blueprint41.Core
 
         #endregion
 
-        static public TTo Convert(TFrom value)
+        [return: MaybeNull]
+        static public TTo Convert([AllowNull] TFrom value)
         {
             Initialize();
 
@@ -275,9 +286,9 @@ namespace Blueprint41.Core
             return CanConvert();
         }
 
-        public sealed override object Convert(object value)
+        public sealed override object? Convert(object? value)
         {
-            return Convert((TFrom)value);
+            return Convert((TFrom)value!);
         }
     }
 

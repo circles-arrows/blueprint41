@@ -12,8 +12,7 @@ namespace Blueprint41.Dynamic
 {
     public class DynamicEntity : DynamicObject, OGM
     {
-        internal DynamicEntity(Entity entity, bool shouldExecute) : this(entity, shouldExecute, null) { }
-        internal DynamicEntity(Entity entity, bool shouldExecute, object initialize)
+        internal DynamicEntity(Entity entity, bool shouldExecute, object? initialize = null)
         {
             ShouldExecute = shouldExecute;
             Guid = entity.Parent.GenerateGuid(entity.Name);
@@ -23,9 +22,9 @@ namespace Blueprint41.Dynamic
 
             DynamicEntityType = entity;
 
-            Transaction = Transaction.Current;
+            DbTransaction = Transaction.Current;
             if (ShouldExecute)
-                Transaction.Register(this);
+                RunningTransaction.Register(this);
 
             foreach (Property item in entity.GetPropertiesOfBaseTypesAndSelf())
                 RefactorActionPropertyAdded(item);
@@ -33,11 +32,11 @@ namespace Blueprint41.Dynamic
             if (initialize == null)
                 return;
 
-            var values = initialize.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(initialize, null));
-            foreach (KeyValuePair<string, object> init in values)
+            Dictionary<string, object?> values = initialize.GetType().GetProperties().ToDictionary(x => x.Name, x => (object?)x.GetValue(initialize, null));
+            foreach (KeyValuePair<string, object?> init in values)
             {
-                Property property = DynamicEntityType.Search(init.Key);
-                if (property == null)
+                Property? property = DynamicEntityType.Search(init.Key);
+                if (property is null)
                     throw new ArgumentException(string.Format("The property '{0}' is not contained within entity '{1}'.", init.Key, entity.Name));
 
 
@@ -48,21 +47,21 @@ namespace Blueprint41.Dynamic
                 }
                 else
                 {
-                    if ((object)init.Value == null)
+                    if (init.Value is null)
                         continue; // or throw that you cannot delete the collection and should call the Clear method instead?
 
-                    IEnumerable<DynamicEntity> input = init.Value as IEnumerable<DynamicEntity>;
+                    IEnumerable<DynamicEntity>? input = init.Value as IEnumerable<DynamicEntity>;
                     if (input == null)
                         input = (init.Value as IEnumerable<object>)?.Cast<DynamicEntity>();
                     if (input == null)
                         throw new InvalidCastException("should be a collection of DynamicEntity");
 
-                    object member;
+                    object? member;
                     if (!TryGetMember(init.Key, out member))
                         throw new ArgumentException(string.Format("The property '{0}' is not contained within entity '{1}'.", init.Key, entity.Name));
 
-                    EntityCollection<DynamicEntity> collection = member as EntityCollection<DynamicEntity>;
-                    if ((object)collection == null)
+                    EntityCollection<DynamicEntity>? collection = member as EntityCollection<DynamicEntity>;
+                    if (collection is null)
                         throw new ArgumentException(string.Format("The property '{0}' is not contained within entity '{1}'.", init.Key, entity.Name));
 
                     foreach (DynamicEntity item in input)
@@ -78,7 +77,7 @@ namespace Blueprint41.Dynamic
 
         internal void RefactorActionPropertyAdded(Property item)
         {
-            if (item.PropertyType == PropertyType.Attribute)
+            if (item.PropertyType == PropertyType.Attribute || item.Relationship is null)
                 return;
 
             if (item.Relationship.IsTimeDependent)
@@ -95,7 +94,7 @@ namespace Blueprint41.Dynamic
                     case MergeAlgorithm.NotApplicable:
                     case MergeAlgorithm.ThrowOnConflict:
                         {
-                            object oldvalue;
+                            object? oldvalue;
                             if (DynamicEntityValues.TryGetValue(oldname, out oldvalue))
                             {
                                 DynamicEntityValues.Add(item.Name, oldvalue);
@@ -105,7 +104,7 @@ namespace Blueprint41.Dynamic
                         }
                     case MergeAlgorithm.PreferSource:
                         {
-                            object oldvalue;
+                            object? oldvalue;
                             if (DynamicEntityValues.TryGetValue(oldname, out oldvalue))
                             {
                                 if (DynamicEntityValues.ContainsKey(item.Name))
@@ -120,7 +119,7 @@ namespace Blueprint41.Dynamic
                         {
                             if (!DynamicEntityValues.ContainsKey(item.Name))
                             {
-                                object oldvalue;
+                                object? oldvalue;
                                 if (DynamicEntityValues.TryGetValue(oldname, out oldvalue))
                                 {
                                     DynamicEntityValues.Add(item.Name, oldvalue);
@@ -140,7 +139,7 @@ namespace Blueprint41.Dynamic
                     case MergeAlgorithm.NotApplicable:
                     case MergeAlgorithm.ThrowOnConflict:
                         {
-                            EntityCollectionBase<DynamicEntity> oldvalue;
+                            EntityCollectionBase<DynamicEntity>? oldvalue;
                             if (DynamicEntityLinks.TryGetValue(oldname, out oldvalue))
                             {
                                 DynamicEntityLinks.Add(item.Name, oldvalue);
@@ -150,7 +149,7 @@ namespace Blueprint41.Dynamic
                         }
                     case MergeAlgorithm.PreferSource:
                         {
-                            EntityCollectionBase<DynamicEntity> oldvalue;
+                            EntityCollectionBase<DynamicEntity>? oldvalue;
                             if (DynamicEntityLinks.TryGetValue(oldname, out oldvalue))
                             {
                                 if (DynamicEntityLinks.ContainsKey(item.Name))
@@ -165,7 +164,7 @@ namespace Blueprint41.Dynamic
                         {
                             if (!DynamicEntityLinks.ContainsKey(item.Name))
                             {
-                                EntityCollectionBase<DynamicEntity> oldvalue;
+                                EntityCollectionBase<DynamicEntity>? oldvalue;
                                 if (DynamicEntityLinks.TryGetValue(oldname, out oldvalue))
                                 {
                                     DynamicEntityLinks.Add(item.Name, oldvalue);
@@ -181,13 +180,13 @@ namespace Blueprint41.Dynamic
         }
         internal void RefactorActionPropertyConverted(Property item, Type target)
         {
-            if (item.PropertyType != PropertyType.Attribute)
+            if (item.PropertyType != PropertyType.Attribute || item.SystemReturnType is null)
                 throw new NotSupportedException("Only primitive properties can have their return type converted.");
 
-            object oldValue;
+            object? oldValue;
             if (DynamicEntityValues.TryGetValue(item.Name, out oldValue))
             {
-                object newValue = Conversion.Convert(item.SystemReturnType, target, oldValue);
+                object? newValue = Conversion.Convert(item.SystemReturnType, target, oldValue);
                 DynamicEntityValues[item.Name] = newValue;
             }
         }
@@ -204,23 +203,23 @@ namespace Blueprint41.Dynamic
         }
 
         private readonly Entity DynamicEntityType;
-        private readonly Dictionary<string, object> DynamicEntityValues = new Dictionary<string, object>();
+        private readonly Dictionary<string, object?> DynamicEntityValues = new Dictionary<string, object?>();
         private readonly Dictionary<string, EntityCollectionBase<DynamicEntity>> DynamicEntityLinks = new Dictionary<string, EntityCollectionBase<DynamicEntity>>();
         public Guid Guid { get; private set; }
-        public IReadOnlyDictionary<string, object> GetDynamicEntityValues()
+        public IReadOnlyDictionary<string, object?> GetDynamicEntityValues()
         {
             return this.DynamicEntityValues;
         }
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        public override bool TryGetMember(GetMemberBinder binder, out object? result)
         {
             return TryGetMember(binder.Name, out result);
         }
 
-        public bool TryGetMember(string propertyName, out object result)
+        public bool TryGetMember(string propertyName, out object? result)
         {
             result = null;
-            Property property = DynamicEntityType.Search(propertyName);
-            if ((object)property == null)
+            Property? property = DynamicEntityType.Search(propertyName);
+            if (property is null)
                 return false;
 
             LazyGet();
@@ -234,29 +233,29 @@ namespace Blueprint41.Dynamic
                     }
                 case PropertyType.Collection:
                     {
-                        EntityCollectionBase<DynamicEntity> collection;
+                        EntityCollectionBase<DynamicEntity>? collection;
                         DynamicEntityLinks.TryGetValue(propertyName, out collection);
                         result = collection;
                         break;
                     }
                 case PropertyType.Lookup:
                     {
-                        EntityCollectionBase<DynamicEntity> collection;
+                        EntityCollectionBase<DynamicEntity>? collection;
                         DynamicEntityLinks.TryGetValue(propertyName, out collection);
-                        result = ((ILookupHelper<DynamicEntity>)collection).GetItem(null);
+                        result = (collection is null) ? null : ((ILookupHelper<DynamicEntity>)collection).GetItem(null);
                         break;
                     }
             }
             return true;
         }
-        public override bool TrySetMember(SetMemberBinder binder, object value)
+        public override bool TrySetMember(SetMemberBinder binder, object? value)
         {
             return TrySetMember(binder.Name, value);
         }
-        public bool TrySetMember(string name, object value)
+        public bool TrySetMember(string name, object? value)
         {
-            Property property = DynamicEntityType.Search(name);
-            if ((object)property == null)
+            Property? property = DynamicEntityType.Search(name);
+            if (property is null)
                 return false;
 
             if (property.IsKey)
@@ -279,11 +278,11 @@ namespace Blueprint41.Dynamic
                             try
                             {
                                 if (type != property.SystemReturnType)
-                                    value = Convert.ChangeType(value, property.SystemReturnType);
+                                    value = Convert.ChangeType(value, property.SystemReturnType!);
                             }
                             catch
                             {
-                                throw new InvalidCastException($"Cannot cast type '{type.Name}' to '{property.SystemReturnType.Name}'");
+                                throw new InvalidCastException($"Cannot cast type '{type.Name}' to '{property.SystemReturnType?.Name ?? "Unknown"}'");
                             }
 
                             if (DynamicEntityValues.ContainsKey(name))
@@ -295,14 +294,14 @@ namespace Blueprint41.Dynamic
                         }
                     case PropertyType.Collection:
                         {
-                            object tmp;
+                            object? tmp;
                             TryGetMember(name, out tmp);
-                            EntityCollectionBase<DynamicEntity> collection = tmp as EntityCollectionBase<DynamicEntity>;
+                            EntityCollectionBase<DynamicEntity>? collection = tmp as EntityCollectionBase<DynamicEntity>;
                             // TODO: add nice error for tmp not being a EntityCollectionBase<DynamicEntity>
 
                             // TODO: add nice error for value not being a IEnumerable<DynamicEntity>
                             foreach (DynamicEntity item in (IEnumerable<DynamicEntity>)value)
-                                collection.Add(item, false);
+                                collection?.Add(item, false);
 
                             break;
                         }
@@ -311,13 +310,13 @@ namespace Blueprint41.Dynamic
                             if (!typeof(DynamicEntity).IsAssignableFrom(type))
                                 throw new InvalidCastException($"Cannot cast type '{type.Name}' to 'DynamicEntity'.");
 
-                            DynamicEntity node = value as DynamicEntity;
-                            if ((object)node != null && node.GetEntity() != property.EntityReturnType)
+                            DynamicEntity? node = value as DynamicEntity;
+                            if (!(node is null) && node.GetEntity() != property.EntityReturnType)
                                 return false;
 
-                            EntityCollectionBase<DynamicEntity> collection;
+                            EntityCollectionBase<DynamicEntity>? collection;
                             DynamicEntityLinks.TryGetValue(name, out collection);
-                            ((ILookupHelper<DynamicEntity>)collection).SetItem(node, null);
+                            ((ILookupHelper<DynamicEntity>?)collection)?.SetItem(node, null);
 
                             break;
                         }
@@ -351,28 +350,28 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.Loaded:
                     break;
                 case PersistenceState.NewAndChanged:
-                    Transaction.NodePersistenceProvider.Insert(this);
+                    RunningTransaction.NodePersistenceProvider.Insert(this);
                     PersistenceState = PersistenceState.Persisted;
                     break;
                 case PersistenceState.LoadedAndChanged:
-                    Transaction.NodePersistenceProvider.Update(this);
+                    RunningTransaction.NodePersistenceProvider.Update(this);
                     PersistenceState = PersistenceState.Persisted;
                     break;
                 case PersistenceState.Persisted:
                     break;
                 case PersistenceState.Delete:
-                    Transaction.NodePersistenceProvider.Delete(this);
+                    RunningTransaction.NodePersistenceProvider.Delete(this);
                     PersistenceState = PersistenceState.Deleted;
                     return;
                 case PersistenceState.ForceDelete:
-                    Transaction.NodePersistenceProvider.ForceDelete(this);
+                    RunningTransaction.NodePersistenceProvider.ForceDelete(this);
                     PersistenceState = PersistenceState.Deleted;
                     return;
                 case PersistenceState.OutOfScope:
                 case PersistenceState.Error:
                     throw new InvalidOperationException(string.Format("The {0} with key '{1}' cannot be saved because it's state was {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
                 case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The {0} with key '{1}' has an invalid/unknown state {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
             }
@@ -382,7 +381,7 @@ namespace Blueprint41.Dynamic
         {
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-            object key = GetKey();
+            object? key = GetKey();
             //TODO:: Validation here
             foreach (Entity inherited in DynamicEntityType.GetBaseTypesAndSelf())
             {
@@ -399,15 +398,15 @@ namespace Blueprint41.Dynamic
 
                     if (attr.Nullable == false && attr.PropertyType == PropertyType.Attribute)
                     {
-                        object value;
-                        if (!TryGetMember(attr.Name, out value) || (object)value == null)
+                        object? value;
+                        if (!TryGetMember(attr.Name, out value) || value is null)
                             throw new PersistenceException(string.Format("Cannot save {0} with key '{1}' because the {2} cannot be null.", DynamicEntityType.Name, key, attr.Name));
                     }
 
                     if (attr.Nullable == false && attr.PropertyType == PropertyType.Lookup)
                     {
-                        object value;
-                        if (!TryGetMember(attr.Name, out value) || (object)value == null)
+                        object? value;
+                        if (!TryGetMember(attr.Name, out value) || value is null)
                             throw new PersistenceException(string.Format("Cannot save {0} with key '{1}' because the {2} cannot be null.", DynamicEntityType.Name, key, attr.Name));
                     }
                 }
@@ -417,7 +416,7 @@ namespace Blueprint41.Dynamic
         void OGM.ValidateDelete()
         {
             //TODO:: Validation here
-            object key = GetKey();
+            object? key = GetKey();
             foreach (var relationship in DynamicEntityType.Parent.Relations)
             {
                 if (DynamicEntityType.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty != null && relationship.OutProperty.Nullable == false)
@@ -433,36 +432,36 @@ namespace Blueprint41.Dynamic
             }
         }
 
-        internal object GetKey()
+        internal object? GetKey()
         {
             return ((OGM)this).GetKey();
         }
 
-        object OGM.GetKey()
+        object? OGM.GetKey()
         {
-            if ((object)DynamicEntityType.Key == null)
+            if (DynamicEntityType.Key is null)
                 throw new MissingMemberException($"No key exists of entity '{DynamicEntityType.Name}'");
 
-            DynamicEntityValues.TryGetValue(DynamicEntityType.Key.Name, out object key);
+            DynamicEntityValues.TryGetValue(DynamicEntityType.Key.Name, out object? key);
 
-            if (Transaction == null)
+            if (DbTransaction == null)
             {
-                Conversion converter;
-                if (!PersistenceProvider.ConvertToStoredTypeCache.TryGetValue(DynamicEntityType.Key.SystemReturnType, out converter))
+                Conversion? converter;
+                if (!PersistenceProvider.ConvertToStoredTypeCache.TryGetValue(DynamicEntityType.Key.SystemReturnType!, out converter))
                     return key;
 
-                if ((object)converter == null)
+                if (converter is null)
                     return key;
 
                 return converter.Convert(key);
             }
 
-            return PersistenceProvider.ConvertToStoredType(DynamicEntityType.Key.SystemReturnType, key);
+            return PersistenceProvider.ConvertToStoredType(DynamicEntityType.Key.SystemReturnType!, key);
         }
 
         void OGM.SetKey(object key)
         {
-            object convertedKey = PersistenceProvider.ConvertFromStoredType(DynamicEntityType.Key.SystemReturnType, key);
+            object? convertedKey = PersistenceProvider.ConvertFromStoredType(DynamicEntityType.Key.SystemReturnType!, key);
             if (DynamicEntityValues.ContainsKey(DynamicEntityType.Key.Name))
                 DynamicEntityValues[DynamicEntityType.Key.Name] = convertedKey;
             else
@@ -474,7 +473,7 @@ namespace Blueprint41.Dynamic
             PersistenceState = PersistenceState.HasUid;
 
             if (ShouldExecute)
-                Transaction.Current.Register(DynamicEntityType.Name, this);
+                Transaction.RunningTransaction.Register(DynamicEntityType.Name, this);
         }
         void OGM.SetRowVersion(DateTime? value)
         {
@@ -491,7 +490,7 @@ namespace Blueprint41.Dynamic
             if (entity.RowVersion == null)
                 throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
 
-            object result;
+            object? result;
             if (!TryGetMember(entity.RowVersion.Name, out result))
                 return DateTime.MinValue;
 
@@ -509,12 +508,12 @@ namespace Blueprint41.Dynamic
         private void KeySet()
         {
             if (ShouldExecute)
-                Transaction.Register(DynamicEntityType.Name, this);
+                RunningTransaction.Register(DynamicEntityType.Name, this);
         }
 
         private void LazySet()
         {
-            if (PersistenceState == PersistenceState.Persisted && Transaction != Transaction.RunningTransaction)
+            if (PersistenceState == PersistenceState.Persisted && DbTransaction != Transaction.RunningTransaction)
                 throw new InvalidOperationException("This object was already flushed to the data store.");
             else if (PersistenceState == PersistenceState.OutOfScope)
                 throw new InvalidOperationException("The transaction for this object has already ended.");
@@ -535,7 +534,7 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.NewAndChanged:
                     break;
                 case PersistenceState.HasUid:
-                    Transaction.NodePersistenceProvider.Load(this);
+                    RunningTransaction.NodePersistenceProvider.Load(this);
                     break;
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
@@ -549,23 +548,23 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
         }
 
-        IDictionary<string, object> OGM.GetData()
+        IDictionary<string, object?> OGM.GetData()
         {
-            return DynamicEntityValues.ToDictionary(item => item.Key, item => PersistenceProvider.ConvertToStoredType(DynamicEntityType.Search(item.Key).SystemReturnType, item.Value));
+            return DynamicEntityValues.ToDictionary(item => item.Key, item => PersistenceProvider.ConvertToStoredType(DynamicEntityType.Search(item.Key)!.SystemReturnType!, item.Value));
         }
 
-        void OGM.SetData(IReadOnlyDictionary<string, object> data)
+        void OGM.SetData(IReadOnlyDictionary<string, object?> data)
         {
             DynamicEntityValues.Clear();
-            foreach (KeyValuePair<string, object> item in data)
+            foreach (KeyValuePair<string, object?> item in data)
             {
-                DynamicEntityValues.Add(item.Key, PersistenceProvider.ConvertFromStoredType(DynamicEntityType.Search(item.Key).SystemReturnType, item.Value));
+                DynamicEntityValues.Add(item.Key, PersistenceProvider.ConvertFromStoredType(DynamicEntityType.Search(item.Key)!.SystemReturnType!, item.Value));
             }
         }
 
@@ -584,13 +583,13 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.ForceDelete;
-                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -598,13 +597,13 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
                 case PersistenceState.Persisted:
-                    if (Transaction != Transaction.RunningTransaction)
+                    if (DbTransaction != Transaction.RunningTransaction)
                         throw new InvalidOperationException("This object was already flushed to the data store.");
                     break;
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
@@ -617,13 +616,13 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.Delete;
-                    Transaction.Register(new ClearRelationshipsAction(Transaction.RelationshipPersistenceProvider, null, this, this));
+                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -631,13 +630,13 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
                 case PersistenceState.Persisted:
-                    if (Transaction != Transaction.RunningTransaction)
+                    if (DbTransaction != Transaction.RunningTransaction)
                         throw new InvalidOperationException("This object was already flushed to the data store.");
                     break;
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
@@ -670,7 +669,7 @@ namespace Blueprint41.Dynamic
 
         PersistenceState OGM.PersistenceState { get; set; }
 
-        public Transaction Transaction
+        public Transaction? DbTransaction
         {
             get
             {
@@ -681,29 +680,46 @@ namespace Blueprint41.Dynamic
                 ((OGM)this).Transaction = value;
             }
         }
+        protected private Transaction RunningTransaction
+        {
+            get
+            {
+                Transaction? trans = DbTransaction;
 
-        Transaction OGM.Transaction { get; set; }
+                if (trans == null)
+                    throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
+
+                if (!trans.InTransaction)
+                    throw new InvalidOperationException("The transaction was already committed or rolled back.");
+
+                return trans;
+            }
+        }
+        Transaction? OGM.Transaction { get; set; }
 
         public bool HasKey
         {
             get
             {
-                object key = ((OGM)this).GetKey();
+                object? key = ((OGM)this).GetKey();
                 return (key != null);
             }
         }
 
         protected bool RelationshipExists(Property foreignProperty, OGM instance)
         {
-            return Transaction.NodePersistenceProvider.RelationshipExists(foreignProperty, instance);
+            return RunningTransaction.NodePersistenceProvider.RelationshipExists(foreignProperty, instance);
         }
 
-        public static dynamic Load(Entity entity, object key)
+        public static dynamic? Load(Entity entity, object? key)
         {
             if (key == null)
                 return null;
 
-            DynamicEntity item = Lookup(entity, key);
+            DynamicEntity? item = Lookup(entity, key);
+            if (item is null)
+                return null;
+
             item.LazyGet();
 
             if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
@@ -711,12 +727,12 @@ namespace Blueprint41.Dynamic
             else
                 return null;
         }
-        public static dynamic Lookup(Entity entity, object key)
+        public static dynamic? Lookup(Entity entity, object? key)
         {
             if (key == null)
                 return null;
 
-            DynamicEntity instance = (DynamicEntity)Transaction.RunningTransaction.GetEntityByKey(entity.Name, key);
+            DynamicEntity? instance = (DynamicEntity?)Transaction.RunningTransaction.GetEntityByKey(entity.Name, key);
             if (instance != null)
                 return instance;
 
@@ -727,8 +743,8 @@ namespace Blueprint41.Dynamic
         }
         public static void Delete(Entity entity, object key)
         {
-            DynamicEntity item = Load(entity, key);
-            if (Parser.ShouldExecute && entity.ContainsStaticData && item == null)
+            DynamicEntity? item = Load(entity, key);
+            if (item == null || (Parser.ShouldExecute && entity.ContainsStaticData))
                 return;
 
             item.Delete();

@@ -16,7 +16,12 @@ namespace Blueprint41
         {
             InTransaction = true;
             DisableForeignKeyChecks = false;
-        } 
+
+            PersistenceProvider factory = PersistenceProvider.CurrentPersistenceProvider;
+            PersistenceProviderFactory = factory;
+            NodePersistenceProvider = factory.NodePersistenceProvider;
+            RelationshipPersistenceProvider = factory.RelationshipPersistenceProvider;
+        }
 
         #region Transaction Logic
 
@@ -24,29 +29,21 @@ namespace Blueprint41
         {
             return Begin(false, OptimizeFor.PartialSubGraphAccess);
         }
-
         public static Transaction Begin(bool withTransaction)
         {
             return Begin(withTransaction, OptimizeFor.PartialSubGraphAccess);
         }
-
         public static Transaction Begin(OptimizeFor mode)
         {
             return Begin(false, mode);
         }
-
         public static Transaction Begin(bool withTransaction, OptimizeFor mode)
         {
-            if (PersistenceProvider.CurrentPersistenceProvider == null)
+            if (PersistenceProvider.CurrentPersistenceProvider is null)
                 throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
 
-            PersistenceProvider factory = PersistenceProvider.CurrentPersistenceProvider;
-
-            Transaction trans = factory.NewTransaction(withTransaction);
+            Transaction trans = PersistenceProvider.CurrentPersistenceProvider.NewTransaction(withTransaction);
             trans.TransactionDate = DateTime.UtcNow;
-            trans.PersistenceProviderFactory = factory;
-            trans.NodePersistenceProvider = factory.NodePersistenceProvider;
-            trans.RelationshipPersistenceProvider = factory.RelationshipPersistenceProvider;
             trans.Mode = mode;
             trans.FireEvents = EventOptions.AllEvents;
 
@@ -137,9 +134,10 @@ namespace Blueprint41
                     if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
                     {
                         entity.Save();
-                        Dictionary<object, OGM> cache; 
-                        if (entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
-                            cache.Remove(entity.GetKey());
+                        object? key = entity.GetKey();
+                        Dictionary<object, OGM>? cache; 
+                        if (!(key is null) && entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
+                            cache.Remove(key);
                         entitySet.Remove(entity);
                     }
                 }
@@ -169,7 +167,7 @@ namespace Blueprint41
             trans.Invalidate();
             trans.InTransaction = false;
         }
-        public static Transaction Current
+        public static Transaction? Current
         {
             get
             {
@@ -187,7 +185,7 @@ namespace Blueprint41
         {
             get
             {
-                Transaction trans = Current;
+                Transaction? trans = Current;
 
                 if (trans == null)
                     throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
@@ -220,10 +218,10 @@ namespace Blueprint41
         #region Storage
 
         [ThreadStatic]
-        private static Stack<Transaction> transactions = null;
+        private static Stack<Transaction>? transactions = null;
 
         [ThreadStatic]
-        private static Transaction transaction = null;
+        private static Transaction? transaction = null;
 
         #endregion
 
@@ -276,14 +274,14 @@ namespace Blueprint41
 
             string entityName = item.GetEntity().Name;
 
-            Dictionary<OGM, OGM> values;
+            Dictionary<OGM, OGM>? values;
             if (!registeredEntities.TryGetValue(entityName, out values))
             {
                 values = new Dictionary<OGM, OGM>(1000);
                 registeredEntities.Add(entityName, values);
             }
 
-            OGM inSet;
+            OGM? inSet;
             if (values.TryGetValue(item, out inSet))
             {
                 if (inSet.PersistenceState != PersistenceState.DoesntExist && inSet == item)
@@ -297,11 +295,11 @@ namespace Blueprint41
 
         internal void Register(string type, OGM item, bool noError = false)
         {
-            object key = item.GetKey();
-            if (key == null)
+            object? key = item.GetKey();
+            if (key is null)
                 return;
 
-            Dictionary<object, OGM> values;
+            Dictionary<object, OGM>? values;
             if (!entitiesByKey.TryGetValue(type, out values))
             {
                 values = new Dictionary<object, OGM>(1000);
@@ -325,20 +323,20 @@ namespace Blueprint41
             if (item == null)
                 return;
 
-            item.Transaction = this;
+            item.DbTransaction = this;
 
             string relationshipName = item.Relationship.Name;
 
-            Dictionary<string, HashSet<Core.EntityCollectionBase>> properties;
+            Dictionary<string, HashSet<Core.EntityCollectionBase>>? properties;
             if (!registeredCollections.TryGetValue(relationshipName, out properties))
             {
                 properties = new Dictionary<string, HashSet<Core.EntityCollectionBase>>();
                 registeredCollections.Add(relationshipName, properties);
             }
 
-            string propertyName = string.Concat(item.Parent.GetEntity().Name, ".", item.ParentProperty.Name);
+            string propertyName = string.Concat(item.Parent.GetEntity().Name, ".", item.ParentProperty?.Name ?? "NonExisting");
 
-            HashSet<Core.EntityCollectionBase> values;
+            HashSet<Core.EntityCollectionBase>? values;
             if (!properties.TryGetValue(propertyName, out values))
             {
                 values = new HashSet<Core.EntityCollectionBase>();
@@ -362,7 +360,7 @@ namespace Blueprint41
             registeredEntities.Clear();
 
             foreach (Core.EntityCollectionBase item in registeredCollections.Values.SelectMany(item => item.Values).SelectMany(item => item))
-                item.Transaction = null;
+                item.DbTransaction = null;
 
             registeredCollections.Clear();
         }
@@ -370,16 +368,16 @@ namespace Blueprint41
 
         private Dictionary<string, Dictionary<object, OGM>> entitiesByKey = new Dictionary<string, Dictionary<object, OGM>>(50);
 
-        public OGM GetEntityByKey(string type, object key)
+        public OGM? GetEntityByKey(string type, object key)
         {
-            if (key == null)
+            if (key is null)
                 return null;
 
-            Dictionary<object, OGM> values;
+            Dictionary<object, OGM>? values;
             if (!entitiesByKey.TryGetValue(type, out values))
                 return null;
 
-            OGM item;
+            OGM? item;
             if (!values.TryGetValue(key, out item))
                 return null;
 
@@ -421,16 +419,16 @@ namespace Blueprint41
 
             string relationshipName = collection.Relationship.Name;
 
-            Dictionary<string, HashSet<Core.EntityCollectionBase>> properties;
+            Dictionary<string, HashSet<Core.EntityCollectionBase>>? properties;
             if (!registeredCollections.TryGetValue(relationshipName, out properties))
             {
                 properties = new Dictionary<string, HashSet<Core.EntityCollectionBase>>();
                 registeredCollections.Add(relationshipName, properties);
             }
 
-            string propertyName = string.Concat(collection.Parent.GetEntity().Name, ".", collection.ParentProperty.Name);
+            string propertyName = string.Concat(collection.Parent.GetEntity().Name, ".", collection.ParentProperty?.Name ?? "NonExisting");
 
-            HashSet<Core.EntityCollectionBase> values;
+            HashSet<Core.EntityCollectionBase>? values;
             if (!properties.TryGetValue(propertyName, out values))
                 return;
 
@@ -449,7 +447,7 @@ namespace Blueprint41
 
                 foreach (Core.EntityCollectionBase item in chunk)
                 {
-                    CollectionItemList items = null;
+                    CollectionItemList? items = null;
                     if(allItems.TryGetValue(item.Parent, out items))
                         item.InitialLoad(items.Items);
                     else
@@ -499,8 +497,8 @@ namespace Blueprint41
         }
         public static T Execute<T>(Func<T> action, EventOptions withEvents = EventOptions.GraphEvents)
         {
-            if (action == null)
-                return default(T);
+            if (action is null)
+                return default!;
 
             T result;
             Transaction trans = RunningTransaction;

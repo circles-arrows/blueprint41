@@ -136,7 +136,7 @@ namespace Blueprint41.Query
 
         #endregion
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
@@ -150,7 +150,7 @@ namespace Blueprint41.Query
         internal DateTimeResult(FieldResult field) : base(field) { }
         public DateTimeResult(string function, object[] arguments, Type type) : base(function, arguments, type) { }
         public DateTimeResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public DateTimeResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
+        public DateTimeResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         public QueryCondition In(IEnumerable<DateTime> enumerable)
         {

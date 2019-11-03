@@ -33,10 +33,10 @@ namespace Blueprint41.Neo4j.Persistence
 
             string returnStatement = " RETURN node";
             string match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}}", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
-            Dictionary<string, object> customState = null;
+            Dictionary<string, object?>? customState = null;
             var args = item.GetEntity().RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
 
             var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
@@ -55,11 +55,11 @@ namespace Blueprint41.Neo4j.Persistence
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
-            args = item.GetEntity().RaiseOnNodeLoaded(trans, args, loaded.Id, loaded.Labels, (Dictionary<string, object>)loaded.Properties);
+            args = item.GetEntity().RaiseOnNodeLoaded(trans, args, loaded.Id, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
 
             if (item.PersistenceState == PersistenceState.HasUid || item.PersistenceState == PersistenceState.Loaded)
             {
-                item.SetData(args.Properties);
+                item.SetData(args.Properties!);
                 item.PersistenceState = PersistenceState.Loaded;
             }
         }
@@ -70,7 +70,7 @@ namespace Blueprint41.Neo4j.Persistence
             Entity entity = item.GetEntity();
 
             string match;
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
             if (entity.RowVersion == null)
@@ -83,7 +83,7 @@ namespace Blueprint41.Neo4j.Persistence
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
-            Dictionary<string, object> customState = null;
+            Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
             
             IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
@@ -100,7 +100,7 @@ namespace Blueprint41.Neo4j.Persistence
             Entity entity = item.GetEntity();
 
             string match;
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
             if (entity.RowVersion == null)
@@ -113,7 +113,7 @@ namespace Blueprint41.Neo4j.Persistence
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
-            Dictionary<string, object> customState = null;
+            Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
             
             IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
@@ -134,28 +134,32 @@ namespace Blueprint41.Neo4j.Persistence
             if (entity.RowVersion != null)
                 item.SetRowVersion(trans.TransactionDate);
 
-            IDictionary<string, object> node = item.GetData();
+            IDictionary<string, object?> node = item.GetData();
 
             string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
-            if (item.GetKey() == null && entity.FunctionalId != null)
+            if (entity.FunctionalId != null)
             {
-                string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", entity.FunctionalId.Label);
-                if (entity.FunctionalId.Format == IdFormat.Numeric)
-                    nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
+                object? key = item.GetKey();
+                if (key is null)
+                {
+                    string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", entity.FunctionalId.Label);
+                    if (entity.FunctionalId.Format == IdFormat.Numeric)
+                        nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
 
-                create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
+                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
 
-                node.Remove(entity.Key.Name);
+                    node.Remove(entity.Key.Name);
+                }
+                else
+                {
+                    entity.FunctionalId.SeenUid(key.ToString()!);
+                }
             }
-            else if (entity.FunctionalId != null)
-            {
-                entity.FunctionalId.SeenUid(item.GetKey().ToString());
-            }
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("node", node);
 
-            Dictionary<string, object> customState = null;
+            Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
             var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
@@ -170,12 +174,12 @@ namespace Blueprint41.Neo4j.Persistence
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
-            args.Properties = (Dictionary<string, object>)inserted.Properties;
-            args = entity.RaiseOnNodeCreated(trans, args, inserted.Id, inserted.Labels, (Dictionary<string, object>)inserted.Properties);
+            args.Properties = (Dictionary<string, object?>)inserted.Properties;
+            args = entity.RaiseOnNodeCreated(trans, args, inserted.Id, inserted.Labels, (Dictionary<string, object?>)inserted.Properties);
 
-            item.SetData(args.Properties);
+            item.SetData(args.Properties!);
             item.PersistenceState = PersistenceState.Persisted;
-            Transaction.Current.Register(entity.Name, item, true);
+            Transaction.RunningTransaction.Register(entity.Name, item, true);
         }
 
         public override void Update(OGM item)
@@ -184,7 +188,7 @@ namespace Blueprint41.Neo4j.Persistence
             Entity entity = item.GetEntity();
 
             string match;
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
             if (entity.RowVersion == null)
@@ -198,10 +202,10 @@ namespace Blueprint41.Neo4j.Persistence
                 item.SetRowVersion(trans.TransactionDate);
             }
 
-            IDictionary<string, object> node = item.GetData();
+            IDictionary<string, object?> node = item.GetData();
             parameters.Add("newValues", node);
 
-            Dictionary<string, object> customState = null;
+            Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
 
             IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
@@ -223,10 +227,10 @@ namespace Blueprint41.Neo4j.Persistence
                 nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", functionalId.Label);
 
             var result = Neo4jTransaction.Run(nextKey).First();
-            return result["key"].ToString();
+            return result["key"]?.ToString()!;
         }
 
-        public override List<T> LoadWhere<T>(Entity entity, string conditions, Parameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        public override List<T> LoadWhere<T>(Entity entity, string conditions, Parameter[]? parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
             Transaction trans = Transaction.RunningTransaction;
 
@@ -263,8 +267,8 @@ namespace Blueprint41.Neo4j.Persistence
                 sb.Append(pageSize);
             }
 
-            Dictionary<string, object> customState = null;
-            Dictionary<string, object> arguments = new Dictionary<string, object>();
+            Dictionary<string, object?>? customState = null;
+            Dictionary<string, object?> arguments = new Dictionary<string, object?>();
             if (parameters != null)
                 foreach (Parameter parameter in parameters)
                     arguments.Add(parameter.Name, parameter.Value);
@@ -281,7 +285,7 @@ namespace Blueprint41.Neo4j.Persistence
             QueryExecutionContext context = query.GetExecutionContext();
             foreach (Parameter queryParameter in parameters)
             {
-                if ((object)queryParameter.Value == null)
+                if (queryParameter.Value is null)
                     context.SetParameter(queryParameter.Name, null);
                 else
                     context.SetParameter(queryParameter.Name, entity.Parent.PersistenceProvider.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
@@ -308,7 +312,7 @@ namespace Blueprint41.Neo4j.Persistence
                 sb.Append(" LIMIT ");
                 sb.Append(pageSize);
             }
-            Dictionary<string, object> customState = null;
+            Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters, ref customState);
 
             var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
@@ -316,7 +320,8 @@ namespace Blueprint41.Neo4j.Persistence
             return Load<T>(entity, args, result, trans);
         }
 
-        private List<T> Load<T>(Entity entity, NodeEventArgs args, IStatementResult result, Transaction trans) where T : OGM
+        private List<T> Load<T>(Entity entity, NodeEventArgs args, IStatementResult result, Transaction trans)
+            where T : class, OGM
         {
             List<Entity> concretes = entity.GetConcreteClasses();
 
@@ -329,7 +334,7 @@ namespace Blueprint41.Neo4j.Persistence
 
                 var key = node.Properties[entity.Key.Name];
 
-                Entity concrete = null;
+                Entity? concrete = null;
                 if (entity.IsAbstract)
                 {
                     if (entity.NodeType != null)
@@ -347,25 +352,25 @@ namespace Blueprint41.Neo4j.Persistence
                     concrete = entity;
                 }
 
-                T wrapper = (T)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
+                T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
                 if (wrapper == null)
                 {
                     wrapper = Activator<T>(concrete);
                     wrapper.SetKey(key);
                     args.Sender = wrapper;
-                    args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object>)node.Properties);
-                    wrapper.SetData(args.Properties);
+                    args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
+                    wrapper.SetData(args.Properties!);
                     wrapper.PersistenceState = PersistenceState.Loaded; 
                 }
                 else
                 {
                     args.Sender = wrapper;
-                    args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object>)node.Properties);
+                    args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
 
                     PersistenceState tmp = wrapper.PersistenceState;
                     if (tmp == PersistenceState.HasUid || tmp == PersistenceState.Loaded || tmp == PersistenceState.Persisted)
                     {
-                        wrapper.SetData(args.Properties);
+                        wrapper.SetData(args.Properties!);
                         wrapper.PersistenceState = PersistenceState.Loaded;
                     }
                 }
@@ -428,7 +433,7 @@ namespace Blueprint41.Neo4j.Persistence
                 sb.Append(pageSize);
             }
 
-            Dictionary<string, object> customState = null;
+            Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), null, ref customState);
 
             var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
@@ -447,10 +452,10 @@ namespace Blueprint41.Neo4j.Persistence
                 pattern, 
                 item.GetEntity().Label.Name, 
                 item.GetEntity().Key.Name,
-                foreignProperty.Relationship.Neo4JRelationshipType,
+                foreignProperty.Relationship?.Neo4JRelationshipType,
                 foreignProperty.Parent.Label.Name);
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
             var result = Neo4jTransaction.Run(match, parameters);
@@ -486,9 +491,9 @@ namespace Blueprint41.Neo4j.Persistence
         static private AtomicDictionary<string, Func<OGM>> activators = new AtomicDictionary<string, Func<OGM>>();
 
         static private AtomicDictionary<string, Entity> entityByLabel = new AtomicDictionary<string, Entity>();
-        static private Entity GetEntity(DatastoreModel datastore, IEnumerable<string> labels)
+        static private Entity? GetEntity(DatastoreModel datastore, IEnumerable<string> labels)
         {
-            Entity entity = null;
+            Entity? entity = null;
             foreach (string label in labels)
             {
                 entity = entityByLabel.TryGetOrAdd(label, key => datastore.Entities.FirstOrDefault(item => item.Label.Name == label));

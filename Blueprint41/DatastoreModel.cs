@@ -25,7 +25,11 @@ namespace Blueprint41
     {
         protected DatastoreModel(Type targetDatabase)
         {
-            PersistenceProvider = (PersistenceProvider)Activator.CreateInstance(targetDatabase, true);
+            PersistenceProvider? tmp = (PersistenceProvider?)Activator.CreateInstance(targetDatabase, true);
+            if (tmp is null)
+                throw new NotSupportedException($"The database provider '{targetDatabase.Name}' is not supported.");
+
+            PersistenceProvider = tmp;
 
             Entities = new EntityCollection(this);
             Relations = new RelationshipCollection(this);
@@ -68,13 +72,13 @@ namespace Blueprint41
         private bool executed = false;
         private bool datamigration = false;
 
-        internal List<UpgradeScript> GetUpgradeScripts(MethodInfo unitTestScript)
+        internal List<UpgradeScript> GetUpgradeScripts(MethodInfo? unitTestScript)
         {
             List<UpgradeScript> scripts = new List<UpgradeScript>();
 
             foreach (MethodInfo info in GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
             {
-                VersionAttribute attr = info.GetCustomAttribute<VersionAttribute>();
+                VersionAttribute? attr = info.GetCustomAttribute<VersionAttribute>();
                 if (attr != null)
                 {
                     Action method = (Action)Delegate.CreateDelegate(typeof(Action), this, info);
@@ -83,17 +87,17 @@ namespace Blueprint41
             }
             scripts.Sort();
 
-            UpgradeScript prev = null;
+            UpgradeScript? prev = null;
             foreach (UpgradeScript item in scripts)
             {
-                if (prev != null && prev.Equals(item)) // don't use prev == item !!!!
+                if (!(prev is null) && prev.Equals(item)) // don't use prev == item !!!!
                     throw new NotSupportedException($"There are two methods ({prev.Name} & {item.Name}) with the same script version ({item.Major}.{item.Minor}.{item.Patch}).");
 
                 prev = item;
             }
 
 
-            if ((object)unitTestScript != null)
+            if (!(unitTestScript is null))
             {
                 UpgradeScript prevScript = scripts.LastOrDefault();
                 long major = prevScript?.Major ?? 0;
@@ -112,7 +116,7 @@ namespace Blueprint41
         {
             Execute(upgradeDatastore, null);
         }
-        internal void Execute(bool upgradeDatastore, MethodInfo unitTestScript)
+        internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript)
         {
             if (isExecuting)
                 throw new InvalidOperationException("It is not allowed to call the 'Execute' method from within an upgrade script.");
@@ -138,7 +142,7 @@ namespace Blueprint41
         }
         private bool isExecuting = false;
 
-        internal void Execute(bool upgradeDatastore, MethodInfo unitTestScript, Predicate<UpgradeScript> predicate, bool standAloneScript)
+        internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript, Predicate<UpgradeScript> predicate, bool standAloneScript)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
 
@@ -237,15 +241,15 @@ namespace Blueprint41
                 StackTrace stack = new StackTrace(e, true);
                 for (int frameIndex = 0; frameIndex < stack.FrameCount; frameIndex++)
                 {
-                    StackFrame frame = stack.GetFrame(frameIndex);
-                    MethodBase method = frame.GetMethod();
+                    StackFrame? frame = stack.GetFrame(frameIndex);
+                    MethodBase? method = frame?.GetMethod();
                     if (method == null)
                         continue;
 
-                    VersionAttribute attr = method.GetCustomAttribute<VersionAttribute>();
+                    VersionAttribute? attr = method.GetCustomAttribute<VersionAttribute>();
                     if (attr != null)
                     {
-                        line = frame.GetFileLineNumber();
+                        line = frame?.GetFileLineNumber() ?? 0;
                         break;
                     }
                 }
@@ -265,13 +269,6 @@ namespace Blueprint41
                 Minor = minor;
                 Patch = patch;
                 Name = name;
-            }
-
-            internal UpgradeScript(INode node)
-            {
-                Major = (long)node.Properties["Major"];
-                Minor = (long)node.Properties["Minor"];
-                Patch = (long)node.Properties["Patch"];
             }
 
             public Action Method { get; private set; }
@@ -297,10 +294,10 @@ namespace Blueprint41
                 return this.Name.CompareTo(other.Name);
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
-                UpgradeScript other = obj as UpgradeScript;
-                if ((object)other == null)
+                UpgradeScript? other = obj as UpgradeScript;
+                if (other is null)
                     return false;
 
                 return (Patch == other.Patch && Minor == other.Minor && Major == other.Major);
@@ -443,12 +440,14 @@ namespace Blueprint41
             /// <param name="cypher">The query</param>
             /// <param name="parameters">Any parameters used in the query</param>
             /// <returns>An IStatementResult object</returns>
-            public IStatementResult ExecuteCypher(string cypher, Dictionary<string, object> parameters = null)
+            public IStatementResult ExecuteCypher(string cypher, Dictionary<string, object?>? parameters = null)
             {
-                if (parameters == null)
-                    parameters = new Dictionary<string, object>();
+                Dictionary<string, object?> convertedParams;
 
-                Dictionary<string, object> convertedParams = parameters.ToDictionary(item => item.Key, item => ((object)item.Value == null) ? null : Model.PersistenceProvider.ConvertToStoredType(item.Value.GetType(), item.Value));
+                if (parameters == null)
+                    convertedParams = new Dictionary<string, object?>();
+                else 
+                    convertedParams = parameters.ToDictionary(item => item.Key, item => (item.Value is null) ? null : Model.PersistenceProvider.ConvertToStoredType(item.Value.GetType(), item.Value));
 
                 return Neo4jTransaction.Run(cypher, convertedParams);
             }
@@ -510,7 +509,7 @@ namespace Blueprint41
         protected DatastoreModel() : this(typeof(Neo4JPersistenceProvider)) { }
         protected DatastoreModel(Type targetDatabase) : base(targetDatabase) { }
 
-        private static DatastoreModel model = null;
+        private static DatastoreModel? model = null;
         public static DatastoreModel Model
         {
             get

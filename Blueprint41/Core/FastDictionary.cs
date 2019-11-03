@@ -6,6 +6,7 @@ using System.Text;
 namespace Blueprint41.Core
 {
     public class FastDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+        where TKey : notnull
     {
         private Dictionary<TKey, TValue> dict;
         private SortedList<TKey, TValue> list;
@@ -51,10 +52,10 @@ namespace Blueprint41.Core
             if (!dict.TryGetValue(item.Key, out value))
                 return false;
 
-            if ((object)item.Value == null && (object)value == null)
+            if (item.Value is null && value is null)
                 return true;
 
-            if ((object)item.Value == null || (object)value == null)
+            if (item.Value is null || value is null)
                 return false;
 
             return item.Value.Equals(value);

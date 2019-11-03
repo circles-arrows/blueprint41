@@ -12,7 +12,7 @@ namespace Blueprint41.DatastoreTemplates
 {
     public static class Generator
     {
-        public static GeneratorResult Execute<T>(GeneratorSettings settings = null)
+        public static GeneratorResult Execute<T>(GeneratorSettings? settings = null)
             where T : DatastoreModel<T>, new()
         {
             if (settings == null)
@@ -128,11 +128,11 @@ namespace Blueprint41.DatastoreTemplates
             }
         }
 
-        private static void RecursiveDelete(string currentDirectory)
+        private static void RecursiveDelete(string? currentDirectory)
         {
             if (Directory.GetFiles(currentDirectory).Length == 0)
             {
-                string parentDirectory = Path.GetDirectoryName(currentDirectory);
+                string? parentDirectory = Path.GetDirectoryName(currentDirectory);
                 Directory.Delete(currentDirectory);
                 RecursiveDelete(parentDirectory);
             }

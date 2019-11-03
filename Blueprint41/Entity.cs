@@ -19,11 +19,11 @@ namespace Blueprint41
     [DebuggerDisplay("Entity: {Name}")]
     public partial class Entity : IRefactorEntity, IEntityEvents, ISetRuntimeType
     {
-        internal Entity(DatastoreModel parent, string name, string label, string prefix, Entity inherits)
+        internal Entity(DatastoreModel parent, string name, string label, string? prefix, Entity? inherits)
             : this(parent, name, label, GetFunctionalId(parent, name, label, prefix), inherits)
         {
         }
-        internal Entity(DatastoreModel parent, string name, string label, FunctionalId functionalId, Entity inherits)
+        internal Entity(DatastoreModel parent, string name, string label, FunctionalId? functionalId, Entity? inherits)
         {
             Properties = new PropertyCollection(this);
 
@@ -50,9 +50,9 @@ namespace Blueprint41
             rowVersion = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
         }
 
-        static private FunctionalId GetFunctionalId(DatastoreModel parent, string name, string label, string prefix)
+        static private FunctionalId? GetFunctionalId(DatastoreModel parent, string name, string label, string? prefix)
         {
-            FunctionalId functionalId = null;
+            FunctionalId? functionalId = null;
             if (prefix != null)
             {
                 if (string.IsNullOrWhiteSpace(prefix))
@@ -79,11 +79,11 @@ namespace Blueprint41
                 return Name;
             }
         }
-        public string Description { get; private set; }
+        public string? Description { get; private set; }
         public Guid Guid { get; private set; }
 
-        private FunctionalId functionalId = null;
-        public FunctionalId FunctionalId
+        private FunctionalId? functionalId = null;
+        public FunctionalId? FunctionalId
         {
             get
             {
@@ -92,9 +92,9 @@ namespace Blueprint41
 
                 return functionalId;
 
-                FunctionalId FindFunctionalId()
+                FunctionalId? FindFunctionalId()
                 {
-                    Entity entity = this.Inherits;
+                    Entity? entity = this.Inherits;
                     while(entity != null)
                     {
                         if (entity.functionalId != null)
@@ -112,7 +112,7 @@ namespace Blueprint41
 
         private bool containsStaticData = false;
         public bool ContainsStaticData { get { return (containsStaticData || staticData.Count != 0); } }
-        public Entity Inherits { get; private set; }
+        public Entity? Inherits { get; private set; }
 
         public model.Label Label { get; private set; }
 
@@ -136,8 +136,8 @@ namespace Blueprint41
 
         public Entity SetFullTextProperty(string propertyName)
         {
-            Property property = Search(propertyName);
-            if (property == null)
+            Property? property = Search(propertyName);
+            if (property is null)
                 throw new NotSupportedException("Property does not exist.");
 
             FullTextIndexProperties.Add(property);
@@ -145,8 +145,8 @@ namespace Blueprint41
         }
         public Entity RemoveFullTextProperty(string propertyName)
         {
-            Property property = Search(propertyName);
-            if (property == null)
+            Property? property = Search(propertyName);
+            if (property is null)
                 throw new NotSupportedException("Property does not exist.");
 
             FullTextIndexProperties.Remove(property);
@@ -212,9 +212,9 @@ namespace Blueprint41
 
         public List<Property> FullTextIndexProperties { get; private set; }
         public PropertyCollection Properties { get; private set; }
-        public string UnidentifiedProperties { get; private set; }
+        public string? UnidentifiedProperties { get; private set; }
 
-        public Entity InheritedUnidentifiedProperties()
+        public Entity? InheritedUnidentifiedProperties()
         {
             if (!string.IsNullOrEmpty(UnidentifiedProperties))
                 return this;
@@ -317,7 +317,7 @@ namespace Blueprint41
         private FastDictionary<object, DynamicEntity> staticData = new FastDictionary<object, DynamicEntity>();
         public ICollection<DynamicEntity> StaticData { get { return staticData.Values; } }
 
-        private string summary = null;
+        private string? summary = null;
         public Entity Summary(string summary)
         {
             this.summary = AddDot(summary);
@@ -327,7 +327,7 @@ namespace Blueprint41
             return this;
         }
 
-        private string example = null;
+        private string? example = null;
         public Entity Example(string example)
         {
             this.example = AddDot(example);
@@ -379,7 +379,7 @@ namespace Blueprint41
 
         private void VerifyFromInheritedProperties(string propertyName, bool excludeThis = false)
         {
-            Entity item = this;
+            Entity? item = this;
             while (item != null && item.Name != "Neo4jBase")
             {
                 if (excludeThis && item == this)
@@ -405,8 +405,8 @@ namespace Blueprint41
                 VerifyFromInheritedProperties(prop.Name, true);
         }
 
-        public Type RuntimeReturnType { get; private set; }
-        public Type RuntimeClassType { get; private set; }
+        public Type? RuntimeReturnType { get; private set; }
+        public Type? RuntimeClassType { get; private set; }
         void ISetRuntimeType.SetRuntimeTypes(Type returnType, Type classType)
         {
             RuntimeReturnType = returnType;
@@ -487,7 +487,7 @@ namespace Blueprint41
 
             dynamic tmp = new ExpandoObject();
             values.Invoke(tmp);
-            IDictionary<string, object> fields = tmp as IDictionary<string, object>;
+            IDictionary<string, object?> fields = (IDictionary<string, object?>)tmp;
 
             foreach (string key in fields.Keys)
             {
@@ -510,12 +510,12 @@ namespace Blueprint41
             if (GetConcreteClasses().Any(item => item.ContainsStaticData))
                 throw new NotSupportedException("You cannot copy (potentially dynamic) data to a static data node.");
 
-            Property source = Search(sourceProperty);
-            if (source == null)
+            Property? source = Search(sourceProperty);
+            if (source is null)
                 throw new NotSupportedException(string.Format("The source property '{0}' was not found on entity '{1}', you cannot copy data outside of the entity with this refactor action.", sourceProperty, Name));
 
-            Property target = Search(targetProperty);
-            if (target == null)
+            Property? target = Search(targetProperty);
+            if (target is null)
                 throw new NotSupportedException(string.Format("The target property '{0}' was not found on entity '{1}', you cannot copy data outside of the entity with this refactor action.", targetProperty, Name));
 
             if (!Parser.ShouldExecute)
@@ -574,7 +574,9 @@ namespace Blueprint41
 
             DynamicEntity entity = new DynamicEntity(this, Parser.ShouldExecute, node);
 
-            object key = entity.GetKey();
+            object? key = entity.GetKey();
+            if (key is null)
+                return entity;
 
             if (staticData.ContainsKey(key))
                 throw new PersistenceException(string.Format("A static entity with the same key already exists."));
@@ -583,14 +585,14 @@ namespace Blueprint41
 
             return entity;
         }
-        dynamic IRefactorEntity.MatchNode(object key)
+        dynamic? IRefactorEntity.MatchNode(object key)
         {
             Parent.EnsureSchemaMigration();
 
             if (key == null)
                 throw new ArgumentNullException("key");
 
-            if (!Key.SystemReturnType.IsAssignableFrom(key.GetType()))
+            if (!Key.SystemReturnType!.IsAssignableFrom(key.GetType()))
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
 
             DynamicEntity value;
@@ -609,7 +611,7 @@ namespace Blueprint41
             if (key == null)
                 throw new ArgumentNullException("key");
 
-            if (!Key.SystemReturnType.IsAssignableFrom(key.GetType()))
+            if (!Key.SystemReturnType!.IsAssignableFrom(key.GetType()))
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
 
             if (!staticData.Remove(key))
@@ -637,7 +639,7 @@ namespace Blueprint41
                     relation.Refactor.Deprecate();
 
                 if (!Parent.Entities.Any(item => item != entity && item.FunctionalId == entity.FunctionalId))
-                    Parent.FunctionalIds.Remove(entity.FunctionalId.Label);
+                    Parent.FunctionalIds.Remove(entity.FunctionalId!.Label);
 
                 Parent.Entities.Remove(entity.Name);
                 Parent.Labels.Remove(entity.Label.Name);
@@ -648,11 +650,11 @@ namespace Blueprint41
         {
             Parent.EnsureSchemaMigration();
 
-            Entity originalParent = this.Inherits;
+            Entity? originalParent = this.Inherits;
             if (originalParent != null)
             {
                 bool hasMandatoryProperty = false;
-                Entity newParent = newParentEntity;
+                Entity? newParent = newParentEntity;
                 while (newParent != null && newParent != originalParent)
                 {
                     if (newParent.Properties.Any(prop => !prop.Nullable))
@@ -759,18 +761,18 @@ namespace Blueprint41
         {
             get
             {
-                if (entityEventArgsType == null)
+                if (entityEventArgsType is null)
                 {
                     lock (this)
                     {
-                        if (entityEventArgsType == null)
-                            entityEventArgsType = typeof(EntityEventArgs<>).MakeGenericType(RuntimeReturnType);
+                        if (entityEventArgsType is null)
+                            entityEventArgsType = typeof(EntityEventArgs<>).MakeGenericType(RuntimeReturnType!);
                     }
                 }
                 return entityEventArgsType;
             }
         }
-        private Type entityEventArgsType;
+        private Type? entityEventArgsType = null;
 
         internal void RaiseOnNew(OGMImpl sender, Transaction trans)
         {
@@ -778,12 +780,10 @@ namespace Blueprint41
             if (!trans.FireEntityEvents)
                 return;
 
-            EventHandler<EntityEventArgs> handler = onNew;
-            if ((object)handler != null)
-                handler.Invoke(sender, args);
+            onNew?.Invoke(sender, args);
         }
         bool IEntityEvents.HasRegisteredOnNewHandlers { get { return onNew != null; } }
-        private EventHandler<EntityEventArgs> onNew;
+        private EventHandler<EntityEventArgs>? onNew;
         event EventHandler<EntityEventArgs> IEntityEvents.OnNew
         {
             add { onNew += value; }
@@ -796,12 +796,10 @@ namespace Blueprint41
             if (!trans.FireEntityEvents)
                 return;
 
-            EventHandler<EntityEventArgs> handler = onSave;
-            if ((object)handler != null)
-                handler.Invoke(sender, args);
+            onSave?.Invoke(sender, args);
         }
         bool IEntityEvents.HasRegisteredOnSaveHandlers { get { return onSave != null; } }
-        private EventHandler<EntityEventArgs> onSave;
+        private EventHandler<EntityEventArgs>? onSave;
         event EventHandler<EntityEventArgs> IEntityEvents.OnSave
         {
             add { onSave += value; }
@@ -814,52 +812,46 @@ namespace Blueprint41
             if (!trans.FireEntityEvents)
                 return;
 
-            EventHandler<EntityEventArgs> handler = onDelete;
-            if ((object)handler != null)
-                handler.Invoke(sender, args);
+            onDelete?.Invoke(sender, args);
         }
         bool IEntityEvents.HasRegisteredOnDeleteHandlers { get { return onDelete != null; } }
-        private EventHandler<EntityEventArgs> onDelete;
+        private EventHandler<EntityEventArgs>? onDelete;
         event EventHandler<EntityEventArgs> IEntityEvents.OnDelete
         {
             add { onDelete += value; }
             remove { onDelete -= value; }
         }
 
-        internal NodeEventArgs RaiseOnNodeLoading(Transaction trans, OGM sender, string cypher, Dictionary<string, object> parameters, ref Dictionary<string, object> customState)
+        internal NodeEventArgs RaiseOnNodeLoading(Transaction trans, OGM? sender, string cypher, Dictionary<string, object?>? parameters, ref Dictionary<string, object?>? customState)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeLoading, trans, sender, cypher, parameters, customState);
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onNodeLoading;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onNodeLoading?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnNodeLoadingHandlers { get { return onNodeLoading != null; } }
-        private EventHandler<NodeEventArgs> onNodeLoading;
+        private EventHandler<NodeEventArgs>? onNodeLoading;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeLoading
         {
             add { onNodeLoading += value; }
             remove { onNodeLoading -= value; }
         }
 
-        internal NodeEventArgs RaiseOnNodeLoaded(Transaction trans, NodeEventArgs previousArgs, long id, IReadOnlyList<string> labels, Dictionary<string, object> properties)
+        internal NodeEventArgs RaiseOnNodeLoaded(Transaction trans, NodeEventArgs previousArgs, long id, IReadOnlyList<string> labels, Dictionary<string, object?> properties)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeLoaded, previousArgs, id, labels, properties);
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onNodeLoaded;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onNodeLoaded?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnNodeLoadedHandlers { get { return onNodeLoaded != null; } }
-        private EventHandler<NodeEventArgs> onNodeLoaded;
+        private EventHandler<NodeEventArgs>? onNodeLoaded;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeLoaded
         {
             add { onNodeLoaded += value; }
@@ -872,74 +864,66 @@ namespace Blueprint41
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onBatchFinished;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onBatchFinished?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnBatchFinishedHandlers { get { return onBatchFinished != null; } }
-        private EventHandler<NodeEventArgs> onBatchFinished;
+        private EventHandler<NodeEventArgs>? onBatchFinished;
         event EventHandler<NodeEventArgs> IEntityEvents.OnBatchFinished
         {
             add { onBatchFinished += value; }
             remove { onBatchFinished -= value; }
         }
 
-        internal NodeEventArgs RaiseOnNodeCreate(Transaction trans, OGM sender, string cypher, Dictionary<string, object> parameters, ref Dictionary<string, object> customState)
+        internal NodeEventArgs RaiseOnNodeCreate(Transaction trans, OGM sender, string cypher, Dictionary<string, object?> parameters, ref Dictionary<string, object?>? customState)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeCreate, trans, sender, cypher, parameters, customState);
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onNodeCreate;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onNodeCreate?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnNodeCreateHandlers { get { return onNodeCreate != null; } }
-        private EventHandler<NodeEventArgs> onNodeCreate;
+        private EventHandler<NodeEventArgs>? onNodeCreate;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeCreate
         {
             add { onNodeCreate += value; }
             remove { onNodeCreate -= value; }
         }
 
-        internal NodeEventArgs RaiseOnNodeCreated(Transaction trans, NodeEventArgs previousArgs, long id, IReadOnlyList<string> labels, Dictionary<string, object> properties)
+        internal NodeEventArgs RaiseOnNodeCreated(Transaction trans, NodeEventArgs previousArgs, long id, IReadOnlyList<string> labels, Dictionary<string, object?> properties)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeCreated, previousArgs, id, labels, properties);
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onNodeCreated;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onNodeCreated?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnNodeCreatedHandlers { get { return onNodeCreated != null; } }
-        private EventHandler<NodeEventArgs> onNodeCreated;
+        private EventHandler<NodeEventArgs>? onNodeCreated;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeCreated
         {
             add { onNodeCreated += value; }
             remove { onNodeCreated -= value; }
         }
 
-        internal NodeEventArgs RaiseOnNodeUpdate(Transaction trans, OGM sender, string cypher, Dictionary<string, object> parameters, ref Dictionary<string, object> customState)
+        internal NodeEventArgs RaiseOnNodeUpdate(Transaction trans, OGM sender, string cypher, Dictionary<string, object?> parameters, ref Dictionary<string, object?>? customState)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeUpdate, trans, sender, cypher, parameters, customState);
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onNodeUpdate;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onNodeUpdate?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnNodeUpdateHandlers { get { return onNodeUpdate != null; } }
-        private EventHandler<NodeEventArgs> onNodeUpdate;
+        private EventHandler<NodeEventArgs>? onNodeUpdate;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeUpdate
         {
             add { onNodeUpdate += value; }
@@ -952,34 +936,30 @@ namespace Blueprint41
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onNodeUpdated;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onNodeUpdated?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnNodeUpdatedHandlers { get { return onNodeUpdated != null; } }
-        private EventHandler<NodeEventArgs> onNodeUpdated;
+        private EventHandler<NodeEventArgs>? onNodeUpdated;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeUpdated
         {
             add { onNodeUpdated += value; }
             remove { onNodeUpdated -= value; }
         }
 
-        internal NodeEventArgs RaiseOnNodeDelete(Transaction trans, OGM sender, string cypher, Dictionary<string, object> parameters, ref Dictionary<string, object> customState)
+        internal NodeEventArgs RaiseOnNodeDelete(Transaction trans, OGM sender, string cypher, Dictionary<string, object?> parameters, ref Dictionary<string, object?>? customState)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeDelete, trans, sender, cypher, parameters, customState);
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onNodeDelete;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onNodeDelete?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnNodeDeleteHandlers { get { return onNodeDelete != null; } }
-        private EventHandler<NodeEventArgs> onNodeDelete;
+        private EventHandler<NodeEventArgs>? onNodeDelete;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeDelete
         {
             add { onNodeDelete += value; }
@@ -992,14 +972,12 @@ namespace Blueprint41
             if (!trans.FireGraphEvents)
                 return args;
 
-            EventHandler<NodeEventArgs> handler = onNodeDeleted;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onNodeDeleted?.Invoke(this, args);
 
             return args;
         }
         bool IEntityEvents.HasRegisteredOnNodeDeletedHandlers { get { return onNodeDeleted != null; } }
-        private EventHandler<NodeEventArgs> onNodeDeleted;
+        private EventHandler<NodeEventArgs>? onNodeDeleted;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeDeleted
         {
             add { onNodeDeleted += value; }
@@ -1043,7 +1021,7 @@ namespace Blueprint41
             return found;
         }
 
-        private static void WalkBaseTypes(Entity item, Action<Entity> action)
+        private static void WalkBaseTypes(Entity? item, Action<Entity> action)
         {
             while (item != null)
             {
@@ -1051,7 +1029,7 @@ namespace Blueprint41
                 item = item.Inherits;
             }
         }
-        private static void WalkBaseTypes(Entity item, Func<Entity, bool> action)
+        private static void WalkBaseTypes(Entity? item, Func<Entity, bool> action)
         {
             while (item != null)
             {
@@ -1064,7 +1042,7 @@ namespace Blueprint41
 
 
 
-        private List<Entity> baseTypes = null;
+        private List<Entity>? baseTypes = null;
         public List<Entity> GetBaseTypes()
         {
             return InitSubList(ref baseTypes, delegate (List<Entity> result)
@@ -1077,7 +1055,7 @@ namespace Blueprint41
             });
         }
 
-        private List<Entity> baseTypesAndSelf = null;
+        private List<Entity>? baseTypesAndSelf = null;
         public List<Entity> GetBaseTypesAndSelf()
         {
             return InitSubList(ref baseTypesAndSelf, delegate (List<Entity> result)
@@ -1090,7 +1068,7 @@ namespace Blueprint41
             });
         }
 
-        private List<Entity> subclassesOrSelf = null;
+        private List<Entity>? subclassesOrSelf = null;
         public List<Entity> GetSubclassesOrSelf()
         {
             return InitSubList(ref subclassesOrSelf, delegate (List<Entity> classes)
@@ -1104,7 +1082,7 @@ namespace Blueprint41
             });
         }
 
-        private List<Entity> subclasses = null;
+        private List<Entity>? subclasses = null;
         public List<Entity> GetSubclasses()
         {
             return InitSubList(ref subclasses, delegate (List<Entity> classes)
@@ -1118,7 +1096,7 @@ namespace Blueprint41
             });
         }
 
-        private List<Entity> directSubclasses = null;
+        private List<Entity>? directSubclasses = null;
         public List<Entity> GetDirectSubclasses()
         {
             return InitSubList(ref directSubclasses, delegate (List<Entity> classes)
@@ -1136,7 +1114,7 @@ namespace Blueprint41
             });
         }
 
-        private List<Entity> nearestNonVirtualSubclasses = null;
+        private List<Entity>? nearestNonVirtualSubclasses = null;
         public List<Entity> GetNearestNonVirtualSubclass()
         {
             return InitSubList(ref nearestNonVirtualSubclasses, delegate (List<Entity> classes)
@@ -1154,7 +1132,8 @@ namespace Blueprint41
             });
         }
 
-        private List<Property> propertiesOfBaseTypesAndSelf = null;
+        private List<Property>? propertiesOfBaseTypesAndSelf = null;
+
         public List<Property> GetPropertiesOfBaseTypesAndSelf()
         {
             return InitSubList(ref propertiesOfBaseTypesAndSelf, delegate (List<Property> allProperties)
@@ -1166,7 +1145,7 @@ namespace Blueprint41
             });
         }
 
-        private List<Entity> concreteClasses = null;
+        private List<Entity>? concreteClasses = null;
         public List<Entity> GetConcreteClasses()
         {
             return InitSubList(ref concreteClasses, delegate (List<Entity> classes)
@@ -1183,13 +1162,13 @@ namespace Blueprint41
             });
         }
 
-        private List<T> InitSubList<T>(ref List<T> listReference, Action<List<T>> initialize)
+        private List<T> InitSubList<T>(ref List<T>? listReference, Action<List<T>> initialize)
         {
-            if (listReference == null)
+            if (listReference is null)
             {
                 lock (this)
                 {
-                    if (listReference == null)
+                    if (listReference is null)
                     {
                         List<T> list = new List<T>();
 
@@ -1206,15 +1185,15 @@ namespace Blueprint41
             return listReference;
         }
 
-        private IReadOnlyDictionary<string, Property> namedPropertiesOfBaseTypesAndSelf = null;
-        public Property Search(string name)
+        private IReadOnlyDictionary<string, Property>? namedPropertiesOfBaseTypesAndSelf = null;
+        public Property? Search(string name)
         {
             if (Parent.IsUpgraded)
             {
                 if (namedPropertiesOfBaseTypesAndSelf == null)
                     namedPropertiesOfBaseTypesAndSelf = GetPropertiesOfBaseTypesAndSelf().ToDictionary(key => key.Name.ToLower(), value => value);
 
-                Property foundProperty;
+                Property? foundProperty;
                 namedPropertiesOfBaseTypesAndSelf.TryGetValue(name.ToLower(), out foundProperty);
                 return foundProperty;
             }

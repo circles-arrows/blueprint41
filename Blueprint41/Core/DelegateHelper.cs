@@ -51,7 +51,11 @@ namespace Blueprint41.Core
         /// <returns>The method info for the given delegate type.</returns>
         public static MethodInfo MethodInfoFromDelegateType(Type delegateType)
         {
-            return delegateType.GetMethod(InvokeMethod);
+            MethodInfo? methodInfo = delegateType.GetMethod(InvokeMethod);
+            if (methodInfo is null)
+                throw new ArgumentException($"The argument '{nameof(delegateType)}' is not a type definition of a delegate.", nameof(delegateType));
+
+            return methodInfo;
         }
 
         /// <summary>
@@ -94,7 +98,7 @@ namespace Blueprint41.Core
         /// <param name = "options">Options which specify what type of delegate should be created.</param>
         public static TDelegate CreateDelegate<TDelegate>(
             MethodInfo method,
-            object instance = null,
+            object? instance = null,
             CreateOptions options = CreateOptions.None)
             where TDelegate : class
         {
@@ -102,7 +106,7 @@ namespace Blueprint41.Core
             {
                 case CreateOptions.None:
                     // Ordinary delegate creation, maintaining variance safety.
-                    return Delegate.CreateDelegate(typeof(TDelegate), instance, method) as TDelegate;
+                    return (Delegate.CreateDelegate(typeof(TDelegate), instance, method) as TDelegate)!;
 
                 case CreateOptions.Downcasting:
                     {
@@ -150,7 +154,7 @@ namespace Blueprint41.Core
             {
                 case CreateOptions.None:
                     // Ordinary delegate creation, maintaining variance safety.
-                    return Delegate.CreateDelegate(typeof(TDelegate), method) as TDelegate;
+                    return (Delegate.CreateDelegate(typeof(TDelegate), method) as TDelegate)!;
 
                 case CreateOptions.Downcasting:
                     {
@@ -159,7 +163,7 @@ namespace Blueprint41.Core
 
                         // Convert instance type when necessary.
                         Type delegateInstanceType = delegateParameters.Select(p => p.ParameterType).First();
-                        Type methodInstanceType = method.DeclaringType;
+                        Type methodInstanceType = method.DeclaringType!;
                         ParameterExpression instance = Expression.Parameter(delegateInstanceType);
                         Expression convertedInstance = ConvertOrWrapDelegate(instance, methodInstanceType);
 
@@ -289,12 +293,12 @@ namespace Blueprint41.Core
             if (targetType.IsGenericType)
             {
                 Type genericDefinition = targetType.GetGenericTypeDefinition();
-                Type sourceGeneric = fromType.GetMatchingGenericType(genericDefinition);
+                Type? sourceGeneric = fromType.GetMatchingGenericType(genericDefinition);
 
                 // Delegates never support casting in the 'opposite' direction than their varience type parameters dictate.
                 bool cast = fromType.IsDelegate() ? false : sameHierarchy;
 
-                if (sourceGeneric != null) // Same generic types.
+                if (!(sourceGeneric is null)) // Same generic types.
                 {
                     // Check whether parameters correspond, taking into account variance rules.
                     return sourceGeneric.GetGenericArguments().Zip(
@@ -314,7 +318,7 @@ namespace Blueprint41.Core
             return false;
         }
 
-        public static Type GetMatchingGenericType(this Type source, Type type)
+        public static Type? GetMatchingGenericType(this Type source, Type type)
         {
             Type[] genericArguments = type.GetGenericArguments();
             Type rawType = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
@@ -326,7 +330,7 @@ namespace Blueprint41.Core
                     .All(t => t.Item1.IsGenericParameter // No type specified.
                        || t.Item1 == t.Item2);
 
-            Type matchingType = null;
+            Type? matchingType = null;
             if (type.IsInterface && !source.IsInterface)
             {
                 // Traverse across all interfaces to find a matching interface.
@@ -340,7 +344,7 @@ namespace Blueprint41.Core
             else
             {
                 // Traverse across the type, and all it's base types.
-                Type baseType = source;
+                Type? baseType = source;
                 while (baseType != null && baseType != typeof(object))
                 {
                     Type rawCurrent = baseType.IsGenericType ? baseType.GetGenericTypeDefinition() : baseType;

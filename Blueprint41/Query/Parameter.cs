@@ -65,7 +65,7 @@ namespace Blueprint41
             return new QueryCondition(left, Operator.LessOrEqual, right);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
@@ -76,18 +76,22 @@ namespace Blueprint41
 
         #endregion
 
-        private Parameter() { }
-        public Parameter(string name, object value, Type type = null)
+        private Parameter(string name)
+        {
+            Name = name;
+        }
+        public Parameter(string name, object? value, Type? type = null)
         {
             Name = name;
             IsConstant = name == null;
-            Type = type ?? value?.GetType();
             Value = MaterializeValue(Type, value);
         }
 
-        private static object MaterializeValue(Type type, object value)
+        private static object? MaterializeValue(Type? type, object? value)
         {
-            if (value == null)
+            type = type ?? value?.GetType();
+
+            if (value is null || type is null)
                 return null;
 
             if (type.IsGenericType)
@@ -96,13 +100,13 @@ namespace Blueprint41
                 {
                     return fromEnumeratorCache.TryGetOrAdd(type, key =>
                     {
-                        Func<object, object> retval = null;
+                        Func<object, object>? retval = null;
 
                         Type genericeType = type.GetGenericTypeDefinition();
                         if (genericeType != typeof(List<>))
                         {
-                            Type iface = null;
-                            Type search = type;
+                            Type? iface = null;
+                            Type? search = type;
                             while (search != null && iface == null)
                             {
                                 foreach (Type item in search.GetInterfaces())
@@ -119,9 +123,9 @@ namespace Blueprint41
                             if (iface != null)
                             {
                                 Type typeT = iface.GenericTypeArguments[0];
-                                MethodInfo methodInfo = typeof(Parameter).GetMethod(nameof(FromEnumerator), BindingFlags.NonPublic | BindingFlags.Static).MakeGenericMethod(typeT);
-
-                                retval = (Func<object, object>)Delegate.CreateDelegate(typeof(Func<object, object>), methodInfo);
+                                MethodInfo? methodInfo = typeof(Parameter).GetMethod(nameof(FromEnumerator), BindingFlags.NonPublic | BindingFlags.Static)?.MakeGenericMethod(typeT);
+                                if (!(methodInfo is null))
+                                    retval = (Func<object, object>)Delegate.CreateDelegate(typeof(Func<object, object>), methodInfo);
                             }
                         }
 
@@ -148,9 +152,8 @@ namespace Blueprint41
 
         public static Parameter New<T>(string name)
         {
-            Parameter p = new Parameter();
+            Parameter p = new Parameter(name);
             p.IsConstant = name == null;
-            p.Name = name;
             p.Value = null;
             p.HasValue = false;
             p.Type = typeof(T);
@@ -168,20 +171,18 @@ namespace Blueprint41
         }
         public static Parameter New(string name, Type type)
         {
-            Parameter p = new Parameter();
+            Parameter p = new Parameter(name);
             p.IsConstant = name == null;
-            p.Name = name;
             p.Value = null;
             p.HasValue = false;
             p.Type = type;
             return p;
         }
-        public static Parameter New(string name, object value, Type type)
+        public static Parameter New(string name, object? value, Type type)
         {
-            Parameter p = new Parameter();
+            Parameter p = new Parameter(name);
             p.IsConstant = name == null;
-            p.Name = name;
-            p.HasValue = true;
+            p.HasValue = !(value is null);
             p.Type = type;
             p.Value = MaterializeValue(p.Type, value);
             return p;
@@ -251,19 +252,17 @@ namespace Blueprint41
         public static Parameter Null => Constant(null, null);
         public static Parameter Constant<T>(T value)
         {
-            Parameter p = new Parameter();
+            Parameter p = new Parameter("Constant");
             p.IsConstant = true;
-            p.Name = null;
             p.Value = value;
             p.HasValue = true;
             p.Type = typeof(T);
             return p;
         }
-        public static Parameter Constant(object value, Type type)
+        public static Parameter Constant(object? value, Type? type)
         {
-            Parameter p = new Parameter();
+            Parameter p = new Parameter("Constant");
             p.IsConstant = true;
-            p.Name = null;
             p.Value = value;
             p.HasValue = true;
             p.Type = type;
@@ -271,10 +270,10 @@ namespace Blueprint41
         }
 
         public string Name { get; private set; }
-        public object Value { get; private set; }
+        public object? Value { get; private set; }
         public bool HasValue { get; private set; }
 
-        public Type Type { get; private set; }
+        public Type? Type { get; private set; }
         public bool IsConstant { get; private set; }
 
         internal void Compile(CompileState state)

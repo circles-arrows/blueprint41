@@ -53,10 +53,10 @@ namespace Blueprint41.Core
                 (EndDate?.GetHashCode() ?? 0);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            CollectionItem other = obj as CollectionItem;
-            if ((object)other == null)
+            CollectionItem? other = obj as CollectionItem;
+            if (other is null)
                 return false;
 
             if (!this.StartDate.HasValue && !other.StartDate.HasValue && !this.EndDate.HasValue && !other.EndDate.HasValue)

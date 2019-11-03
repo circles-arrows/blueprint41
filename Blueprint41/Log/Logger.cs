@@ -40,9 +40,11 @@ namespace Blueprint41.Log
 
         public TransactionLogger()
         {
+            LogFile = string.Empty;
+
             ThresholdInSeconds = 100 /*1s*/;
             MaxFileSize = 2 * 1024 * 1024;
-            LogDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TransactionLogs");           
+            m_LogDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? @"C:\", "TransactionLogs");           
 
             watcher = new Stopwatch();
         }        
@@ -53,7 +55,7 @@ namespace Blueprint41.Log
             watcher.Start();
         }
 
-        internal void Stop(string message, Dictionary<string, object> parameters = null, List<string> callerInfo = null)
+        internal void Stop(string message, Dictionary<string, object?>? parameters = null, List<string>? callerInfo = null)
         {
             watcher.Stop();
             if (watcher.ElapsedMilliseconds >= ThresholdInSeconds)
@@ -62,7 +64,10 @@ namespace Blueprint41.Log
                     foreach (var par in parameters)
                         message = message.Replace("{" + par.Key + "}", Serializer.Serialize(par.Value).Replace("\"", "\'"));
 
-                Log(string.Format("{0}\t{1}\t{2}\t{3}\t{4}", callerInfo[0], callerInfo[1], callerInfo[2], TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), message));
+                if (callerInfo is null)
+                    Log(string.Format("{0}\t{1}", TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), message));
+                else
+                    Log(string.Format("{0}\t{1}\t{2}\t{3}\t{4}", callerInfo[0], callerInfo[1], callerInfo[2], TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), message));
             }
         }
 

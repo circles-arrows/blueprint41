@@ -11,32 +11,38 @@ namespace Blueprint41.Core
 {
     public abstract class Data
     {
-        protected Data()
-        {
-            UnidentifiedProperties = null;
-        }
 
         public void Initialize(OGM parent)
         {
-            if (Wrapper != null)
+            if (wrapper != null)
                 throw new NotSupportedException("You should not call this method... Leave it to the professionals... Greetzz from the A Team.");
 
-            Wrapper = parent;
+            wrapper = parent;
             InitializeCollections();
 
-            if (Wrapper.GetEntity().InheritedUnidentifiedProperties() != null)
+            if (wrapper.GetEntity().InheritedUnidentifiedProperties() != null)
                 UnidentifiedProperties = new UnidentifiedPropertyCollection(Wrapper);
         }
         protected abstract void InitializeCollections();
 
-        public OGM Wrapper { get; private set; }
+        private OGM? wrapper = null;
+        public OGM Wrapper
+        {
+            get
+            {
+                if (wrapper is null)
+                    throw new InvalidOperationException("The data class is not initialized, please initialize it first.");
+
+                return wrapper;
+            }
+        }
 
         private static AtomicDictionary<string, Dictionary<string, PropertyDetail>> s_PropertyDetails = new AtomicDictionary<string, Dictionary<string, Data.PropertyDetail>>();
         protected Dictionary<string, PropertyDetail> PropertyDetails
         {
             get
             {
-                PersistenceProvider factory = Transaction.RunningTransaction?.PersistenceProviderFactory;
+                PersistenceProvider factory = Transaction.RunningTransaction.PersistenceProviderFactory;
 
                 Entity entity = Wrapper.GetEntity();
                 
@@ -60,7 +66,7 @@ namespace Blueprint41.Core
             }
         }
 
-        public virtual void MapFrom(IReadOnlyDictionary<string, object> properties)
+        public virtual void MapFrom(IReadOnlyDictionary<string, object?> properties)
         {
             bool hasUnidentifiedProperties = (Wrapper.GetEntity().InheritedUnidentifiedProperties() != null);
             if (hasUnidentifiedProperties)
@@ -70,9 +76,9 @@ namespace Blueprint41.Core
                 else 
                     UnidentifiedProperties.ClearInternal();
             }
-            foreach (KeyValuePair<string, object> property in properties)
+            foreach (KeyValuePair<string, object?> property in properties)
             {
-                PropertyDetail info;
+                PropertyDetail? info;
                 if (PropertyDetails.TryGetValue(property.Key, out info))
                     info.SetValue(this, property.Value);
                 else
@@ -81,13 +87,13 @@ namespace Blueprint41.Core
             }
         }
 
-        public virtual IDictionary<string, object> MapTo()
+        public virtual IDictionary<string, object?> MapTo()
         {
-            IDictionary<string, object> dictionary = new Dictionary<string, object>();
+            IDictionary<string, object?> dictionary = new Dictionary<string, object?>();
 
             foreach (PropertyDetail info in PropertyDetails.Values)
             {
-                object value = info.GetValue(this);
+                object? value = info.GetValue(this);
                 if (value != null)
                 {
                     dictionary.Add(info.PropertyName, info.GetValue(this));
@@ -100,10 +106,10 @@ namespace Blueprint41.Core
             return dictionary;
         }
 
-        public object GetValue(string propertyName, bool throwWhenMissing = false)
+        public object? GetValue(string propertyName, bool throwWhenMissing = false)
         {
 
-            PropertyDetail info;
+            PropertyDetail? info;
             if (PropertyDetails.TryGetValue(propertyName, out info))
             {
                 return info.GetValue(this);
@@ -112,7 +118,7 @@ namespace Blueprint41.Core
             {
                 if (UnidentifiedProperties != null)
                 {
-                    object value;
+                    object? value;
                     if (UnidentifiedProperties.TryGetValue(propertyName, out value))
                         return value;
                 }
@@ -137,13 +143,13 @@ namespace Blueprint41.Core
                 SetValue = BuildSetAccessor(info);
             }
 
-            public Func<Data, object> GetValue;
-            public Action<Data, object> SetValue;
+            public Func<Data, object?> GetValue;
+            public Action<Data, object?> SetValue;
 
             public string PropertyName { get; private set; }
             public TypeMapping Mapping { get; private set; }
 
-            private Func<Data, object> BuildGetAccessor(PropertyInfo propertyInfo)
+            private Func<Data, object?> BuildGetAccessor(PropertyInfo propertyInfo)
             {
                 if (Mapping == null)
                     return delegate (Data d)
@@ -159,17 +165,17 @@ namespace Blueprint41.Core
                                         (Expression)property;
                 var value = Expression.TypeAs(convertedValue, typeof(object));
 
-                return (Func<Data, object>)Expression.Lambda(value, instance).Compile();
+                return (Func<Data, object?>)Expression.Lambda(value, instance).Compile();
             }
-            private Action<Data, object> BuildSetAccessor(PropertyInfo propertyInfo)
+            private Action<Data, object?> BuildSetAccessor(PropertyInfo propertyInfo)
             {
-                if (Mapping == null)
-                    return delegate (Data d, object o)
+                MethodInfo? method = propertyInfo.GetSetMethod(true);
+
+                if (Mapping == null || method is null)
+                    return delegate (Data d, object? o)
                     {
                         throw new NotSupportedException(string.Format("The property type '{0}' is not supported by the storage provider.", propertyInfo.PropertyType.Name));
                     };
-
-                MethodInfo method = propertyInfo.GetSetMethod(true);
 
                 var obj = Expression.Parameter(typeof(Data), "o");
                 var value = Expression.Parameter(typeof(object));
@@ -179,8 +185,8 @@ namespace Blueprint41.Core
                                             (Expression)Expression.Call(Mapping.GetSetConverter(), valueTypesafe) :
                                             (Expression)valueTypesafe;
 
-                Expression<Action<Data, object>> expr =
-                    Expression.Lambda<Action<Data, object>>(
+                Expression<Action<Data, object?>> expr =
+                    Expression.Lambda<Action<Data, object?>>(
                         Expression.Call(
                             Expression.Convert(obj, method.DeclaringType),
                             method,
@@ -194,6 +200,17 @@ namespace Blueprint41.Core
 
         internal protected abstract void SetKey(object key);
 
-        public UnidentifiedPropertyCollection UnidentifiedProperties { get; set; }
+        private UnidentifiedPropertyCollection? m_UnidentifiedProperties = null;
+        public UnidentifiedPropertyCollection UnidentifiedProperties
+        {
+            get
+            {
+                if (m_UnidentifiedProperties is null)
+                    throw new NotSupportedException("The database schema did not enable support for UnidentifiedProperties.");
+
+                return m_UnidentifiedProperties;
+            }
+            set { m_UnidentifiedProperties = value; }
+        }
     }
  }

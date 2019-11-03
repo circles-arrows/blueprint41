@@ -9,8 +9,12 @@ namespace Blueprint41.Core
 {
     public abstract class EntityEventArgs
     {
-        protected EntityEventArgs()
+        protected EntityEventArgs(OGMImpl sender)
         {
+            SenderInternalBridge = sender;
+            Entity = sender.GetEntity();
+            Transaction = sender.DbTransaction;
+
             Canceled = false;
             Flushed = false;
         }
@@ -18,22 +22,22 @@ namespace Blueprint41.Core
         protected virtual OGMImpl SenderInternalBridge { get; set; }
         public OGM Sender { get { return SenderInternalBridge; } }
 
-        public bool IsInsert { get { return Sender.PersistenceState == PersistenceState.NewAndChanged; } }
-        public bool IsUpdate { get { return Sender.PersistenceState == PersistenceState.LoadedAndChanged; } }
-        public bool IsDelete { get { return Sender.PersistenceState == PersistenceState.Delete || Sender.PersistenceState == PersistenceState.ForceDelete; } }
+        public bool IsInsert { get { return Sender?.PersistenceState == PersistenceState.NewAndChanged; } }
+        public bool IsUpdate { get { return Sender?.PersistenceState == PersistenceState.LoadedAndChanged; } }
+        public bool IsDelete { get { return Sender?.PersistenceState == PersistenceState.Delete || Sender?.PersistenceState == PersistenceState.ForceDelete; } }
 
         public Entity Entity { get; protected set; }
 
-        public Transaction Transaction { get; protected set; }
+        public Transaction? Transaction { get; protected set; }
         public EventTypeEnum EventType { get; protected set; }
 
-        public IDictionary<string, object> CustomState { get { return SenderInternalBridge.CustomState; } }
+        public IDictionary<string, object?> CustomState { get { return SenderInternalBridge.CustomState; } }
 
         internal static EntityEventArgs CreateInstance(EventTypeEnum eventType, OGMImpl sender, Transaction trans, bool locked = false)
         {
             Type type = sender.GetEntity().EntityEventArgsType;
 
-            EntityEventArgs args = (EntityEventArgs)Activator.CreateInstance(type, true);
+            EntityEventArgs args = (EntityEventArgs)Activator.CreateInstance(type, true)!;
             args.EventType = eventType;
             args.SenderInternalBridge = sender;
             args.Entity = sender.GetEntity();
@@ -69,12 +73,15 @@ namespace Blueprint41.Core
     public sealed class EntityEventArgs<TSender> : EntityEventArgs
         where TSender : OGM
     {
-        private EntityEventArgs() { }
+        public EntityEventArgs(OGMImpl sender) : base(sender)
+        {
+            Sender = (TSender)(object)sender;
+        }
 
         protected sealed override OGMImpl SenderInternalBridge
         {
-            get { return Sender as OGMImpl; }
-            set { Sender = (TSender)(value as OGM); }
+            get { return (OGMImpl)(object)Sender; }
+            set { Sender = (TSender)(value as OGM)!; }
         }
         new public TSender Sender { get; private set; }
         public sealed override Type SenderType { get { return typeof(TSender); } }
@@ -82,23 +89,31 @@ namespace Blueprint41.Core
 
     public abstract class PropertyEventArgs : EntityEventArgs
     {
+        protected PropertyEventArgs(OGMImpl sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender)
+        {
+            Property = property;
+            Operation = operation;
+            PreviousValueInternalBridge = previousValue;
+            AssignedValueInternalBridge = assignedValue;
+        }
+
         public Property Property { get; protected set; }
         public OperationEnum Operation { get; protected set; }
 
-        protected virtual object PreviousValueInternalBridge { get; set; }
-        public object PreviousValue { get { return PreviousValueInternalBridge; } }
+        protected virtual object? PreviousValueInternalBridge { get; set; }
+        public object? PreviousValue { get { return PreviousValueInternalBridge; } }
 
-        protected virtual object AssignedValueInternalBridge { get; set; }
-        public object AssignedValue { get { return AssignedValueInternalBridge; } }
+        protected virtual object? AssignedValueInternalBridge { get; set; }
+        public object? AssignedValue { get { return AssignedValueInternalBridge; } }
 
         public DateTime Moment { get; private set; }
 
-        internal static PropertyEventArgs CreateInstance(EventTypeEnum eventType, OGMImpl sender, Property property, object previousValue, object assignedValue, DateTime moment, OperationEnum operation, Transaction trans)
+        internal static PropertyEventArgs CreateInstance(EventTypeEnum eventType, OGMImpl sender, Property property, object? previousValue, object? assignedValue, DateTime moment, OperationEnum operation, Transaction trans)
         {
             Type senderType = sender.GetType();
             Type argsType = property.GetPropertyEventArgsType(senderType);
 
-            PropertyEventArgs args = (PropertyEventArgs)Activator.CreateInstance(argsType, true);
+            PropertyEventArgs args = (PropertyEventArgs)Activator.CreateInstance(argsType, true)!;
             args.EventType = eventType;
             args.SenderInternalBridge = sender;
             args.Entity = sender.GetEntity();
@@ -117,11 +132,11 @@ namespace Blueprint41.Core
         public virtual PropertyEventArgs<TSender, TReturnType> As<TSender, TReturnType>()
              where TSender : OGMImpl
         {
-            if (!Sender.GetType().IsSubclassOfOrSelf(typeof(TSender)))
-                throw new InvalidCastException(string.Format("The event sender (type={0}) cannot be cast to generic parmameter TSender (type={1})", Sender.GetType().Name, typeof(TSender).Name));
+            if (Sender is null || !Sender.GetType().IsSubclassOfOrSelf(typeof(TSender)))
+                throw new InvalidCastException(string.Format("The event sender (type={0}) cannot be cast to generic parmameter TSender (type={1})", Sender?.GetType().Name ?? "Unknown", typeof(TSender).Name));
 
-            if (typeof(TReturnType) != (Property.SystemReturnType ?? Property.EntityReturnType.RuntimeReturnType))
-                throw new InvalidCastException(string.Format("The property return value (type={0}) cannot be cast to generic parmameter TReturnType (type={1})", (Property.SystemReturnType ?? Property.EntityReturnType.RuntimeReturnType).Name, typeof(TSender).Name));
+            if (typeof(TReturnType) != (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType))
+                throw new InvalidCastException(string.Format("The property return value (type={0}) cannot be cast to generic parmameter TReturnType (type={1})", (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType)?.Name ?? "Unknown", typeof(TSender).Name));
 
             return (PropertyEventArgs<TSender, TReturnType>)this;
         }
@@ -130,9 +145,14 @@ namespace Blueprint41.Core
     public abstract class PropertyEventArgs<TSender> : PropertyEventArgs
         where TSender : OGM
     {
+        protected PropertyEventArgs(OGMImpl sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender, property, operation, previousValue, assignedValue)
+        {
+            Sender = (TSender)(object)sender;
+        }
+
         protected sealed override OGMImpl SenderInternalBridge
         {
-            get { return Sender as OGMImpl; }
+            get { return (OGMImpl)(object)Sender; }
             set { Sender = (TSender)(value as OGM); }
         }
         new public TSender Sender { get; private set; }
@@ -144,8 +164,8 @@ namespace Blueprint41.Core
 
         public virtual PropertyEventArgs<TSender, TReturnType> As<TReturnType>()
         {
-            if (typeof(TReturnType) != (Property.SystemReturnType ?? Property.EntityReturnType.RuntimeReturnType))
-                throw new InvalidCastException(string.Format("The property return value (type={0}) cannot be cast to generic parmameter TReturnType (type={1})", (Property.SystemReturnType ?? Property.EntityReturnType.RuntimeReturnType).Name, typeof(TSender).Name));
+            if (typeof(TReturnType) != (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType))
+                throw new InvalidCastException(string.Format("The property return value (type={0}) cannot be cast to generic parmameter TReturnType (type={1})", (Property.SystemReturnType ?? Property.EntityReturnType?.RuntimeReturnType)?.Name ?? "Unknown", typeof(TSender).Name));
 
             return (PropertyEventArgs<TSender, TReturnType>)this;
         }
@@ -155,19 +175,23 @@ namespace Blueprint41.Core
     public sealed class PropertyEventArgs<TSender, TReturnType> : PropertyEventArgs<TSender>
         where TSender : OGM
     {
-        private PropertyEventArgs() { }
+        public PropertyEventArgs(OGMImpl sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender, property, operation, previousValue, assignedValue)
+        {
+            PreviousValue = (TReturnType)previousValue!;
+            AssignedValue = (TReturnType)assignedValue!;
+        }
 
-        protected sealed override object PreviousValueInternalBridge
+        protected sealed override object? PreviousValueInternalBridge
         {
             get { return PreviousValue; }
-            set { PreviousValue = (TReturnType)value; }
+            set { PreviousValue = (TReturnType)value!; }
         }
         new public TReturnType PreviousValue { get; private set; }
 
-        protected sealed override object AssignedValueInternalBridge
+        protected sealed override object? AssignedValueInternalBridge
         {
             get { return AssignedValue; }
-            set { AssignedValue = (TReturnType)value; }
+            set { AssignedValue = (TReturnType)value!; }
         }
         new public TReturnType AssignedValue { get; private set; }
 
@@ -183,7 +207,7 @@ namespace Blueprint41.Core
 
     public struct NodeEventArgs
     {
-        internal NodeEventArgs(EventTypeEnum eventType, Transaction trans, OGM sender, string cypher, Dictionary<string, object> parameters, IDictionary<string, object> customState)
+        internal NodeEventArgs(EventTypeEnum eventType, Transaction trans, OGM? sender, string cypher, Dictionary<string, object?>? parameters, IDictionary<string, object?>? customState)
             :this()
         {
             EventType = eventType;
@@ -195,7 +219,7 @@ namespace Blueprint41.Core
             Parameters = parameters;
             CustomState = customState;
         }
-        internal NodeEventArgs(EventTypeEnum eventType, NodeEventArgs previous, long id = 0, IReadOnlyList<string> labels = null, Dictionary<string, object> properties = null)
+        internal NodeEventArgs(EventTypeEnum eventType, NodeEventArgs previous, long id = 0, IReadOnlyList<string>? labels = null, Dictionary<string, object?>? properties = null)
             : this()
         {
             EventType = eventType;
@@ -207,39 +231,39 @@ namespace Blueprint41.Core
             CustomState = previous.CustomState;
 
             Id = 0;
-            Labels = labels;
+            Labels = labels ?? new string[0];
             Properties = properties;
         }
 
         public EventTypeEnum EventType { get; private set; }
-        public OGM Sender { get; internal set; }
+        public OGM? Sender { get; internal set; }
 
         public bool IsBatch { get; private set; }
         public string Cypher { get; set; }
-        public Dictionary<string, object> Parameters { get; private set; }
+        public Dictionary<string, object?>? Parameters { get; private set; }
         public Transaction Transaction { get; internal set; }
 
         public long Id { get; internal set; }
         public IReadOnlyList<string> Labels { get; internal set; }
-        public Dictionary<string, object> Properties { get; internal set; }
+        public Dictionary<string, object?>? Properties { get; internal set; }
 
-        public IDictionary<string, object> CustomState { get; private set; }
+        public IDictionary<string, object?>? CustomState { get; private set; }
     }
     public struct RelationshipEventArgs
     {
         #region CustomState
 
-        private Dictionary<string, object> customState;
-        public IDictionary<string, object> CustomState
+        private Dictionary<string, object?>? customState;
+        public IDictionary<string, object?> CustomState
         {
             get
             {
-                if ((object)customState == null)
+                if (customState is null)
                 {
                     lock (typeof(RelationshipEventArgs))
                     {
-                        if ((object)customState == null)
-                            customState = new Dictionary<string, object>(32);
+                        if (customState is null)
+                            customState = new Dictionary<string, object?>(32);
                     }
                 }
                 return customState;

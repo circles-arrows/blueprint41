@@ -21,8 +21,8 @@ namespace Blueprint41.Query
         public int patternSeq = 0;
         public int paramSeq = 0;
 
-        public IEnumerable<TypeMapping> TypeMappings = null;
-        internal string Preview(Action<CompileState> compile, CompileState state = null)
+        public IEnumerable<TypeMapping> TypeMappings;
+        internal string Preview(Action<CompileState> compile, CompileState? state = null)
         {
             string compiled;
 

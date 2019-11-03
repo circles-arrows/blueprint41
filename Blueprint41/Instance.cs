@@ -24,10 +24,10 @@ namespace Blueprint41
         {
             IDictionary<string, object> expando = new ExpandoObject();
 
-            foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(value.GetType()))
+            foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(value.GetType()).NotNull())
                 expando.Add(property.Name, property.GetValue(value));
 
-            return expando as ExpandoObject;
+            return (ExpandoObject)expando;
         }
     }
 }

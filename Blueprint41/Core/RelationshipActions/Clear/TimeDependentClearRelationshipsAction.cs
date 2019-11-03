@@ -9,17 +9,20 @@ namespace Blueprint41.Core
     internal class TimeDependentClearRelationshipsAction : TimeDependentRelationshipAction
     {
         public DirectionEnum Direction { get; private set; }
-        internal TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? moment)
-            : base(persistenceProvider, relationship, inItem, outItem, moment)
+        internal TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment)
+            : base(persistenceProvider, relationship, inItem!, outItem!, moment)
         {
             Direction = inItem != null ? DirectionEnum.In : DirectionEnum.Out;
         }
+
+        new public OGM? InItem => base.InItem; 
+        new public OGM? OutItem => base.OutItem;
 
         protected override bool ActsOnSpecificParent() { return false; }
 
         protected override void InDatastoreLogic(Relationship Relationship)
         {
-            PersistenceProvider.RemoveAll(Relationship, Direction, InItem ?? OutItem, Moment, true);
+            PersistenceProvider.RemoveAll(Relationship, Direction, (InItem ?? OutItem)!, Moment, true);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)

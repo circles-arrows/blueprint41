@@ -24,11 +24,11 @@ namespace Blueprint41.Query
             state.Text.Append(AliasName);
         }
 
-        public override Type GetResultType()
+        public override Type? GetResultType()
         {
             return Result.GetResultType();
         }
-        public override string GetFieldName()
+        public override string? GetFieldName()
         {
             return AliasName;
         }

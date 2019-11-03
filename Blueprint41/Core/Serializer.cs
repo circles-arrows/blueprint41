@@ -26,19 +26,19 @@ namespace Blueprint41
             },
         };
             
-        protected abstract string SerializeInternal(object value);
-        protected abstract object DeserializeInternal(string value);
+        protected abstract string SerializeInternal(object? value);
+        protected abstract object? DeserializeInternal(string value);
 
-        public static string Serialize(object value)
+        public static string Serialize(object? value)
         {
             return GetSerializer(value?.GetType()).SerializeInternal(value);
         }
         public static T Deserialize<T>(string value)
         {
-            return (T)GetSerializer(typeof(T)).DeserializeInternal(value);
+            return (T)GetSerializer(typeof(T)).DeserializeInternal(value)!;
         }
 
-        private static Serializer GetSerializer(Type type)
+        private static Serializer GetSerializer(Type? type)
         {
             if (type == null)
                 type = typeof(object);
@@ -46,7 +46,7 @@ namespace Blueprint41
             return cache.TryGetOrAdd(type, key =>
             {
                 Type serializerType = typeof(Serializer<>).MakeGenericType(new[] { type });
-                return (Serializer)Activator.CreateInstance(serializerType);
+                return (Serializer)Activator.CreateInstance(serializerType)!;
             });
         }
         private static AtomicDictionary<Type, Serializer> cache = new AtomicDictionary<Type, Serializer>();
@@ -55,11 +55,11 @@ namespace Blueprint41
     {
         static DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T), settings);
 
-        protected sealed override string SerializeInternal(object value)
+        protected sealed override string SerializeInternal(object? value)
         {
-            return this.Serialize((T)value);
+            return this.Serialize((T)value!);
         }
-        protected sealed override object DeserializeInternal(string value)
+        protected sealed override object? DeserializeInternal(string value)
         {
             return this.Deserialize(value);
         }

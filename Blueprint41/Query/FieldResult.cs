@@ -25,7 +25,7 @@ namespace Blueprint41.Query
             return new QueryCondition(a, Operator.NotEquals, b);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
@@ -36,7 +36,7 @@ namespace Blueprint41.Query
 
 
         private object[] emptyArguments = new object[0];
-        private FieldResult(AliasResult alias, string fieldName, Entity entity, Property property, FieldResult field, string function, object[] arguments, Type type)
+        private FieldResult(AliasResult? alias, string? fieldName, Entity? entity, Property? property, FieldResult? field, string? function, object[]? arguments, Type? type)
         {
             Alias = alias;
             FieldName = fieldName;
@@ -47,9 +47,9 @@ namespace Blueprint41.Query
             FunctionArgs = arguments ?? emptyArguments;
             OverridenReturnType = type;
         }
-        protected FieldResult(string function, object[] arguments, Type type) : this(null, null, null, null, null, function, arguments, type) { }
-        protected FieldResult(AliasResult alias, string fieldName, Entity entity, Property property, Type overridenReturnType = null) : this(alias, fieldName, entity, property, null, null, null, null) { OverridenReturnType = overridenReturnType; }
-        protected FieldResult(FieldResult field, string function, object[] arguments, Type type) : this(field?.Alias, field?.FieldName, field?.Entity, field?.Property, field, function, arguments, type) { }
+        protected FieldResult(string function, object[]? arguments, Type? type) : this(null, null, null, null, null, function, arguments, type) { }
+        protected FieldResult(AliasResult alias, string fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : this(alias, fieldName, entity, property, null, null, null, null) { OverridenReturnType = overridenReturnType; }
+        protected FieldResult(FieldResult? field, string function, object[]? arguments, Type? type) : this(field?.Alias, field?.FieldName, field?.Entity, field?.Property, field, function, arguments, type) { }
         protected FieldResult(FieldResult field)
         {
             Alias = field.Alias;
@@ -62,14 +62,14 @@ namespace Blueprint41.Query
             OverridenReturnType = field.OverridenReturnType;
         }
 
-        public AliasResult Alias { get; private set; }
-        public string FieldName { get; private set; }
-        internal Entity Entity { get; private set; }
-        internal Property Property { get; private set; }
-        public FieldResult Field { get; private set; }
-        private string FunctionText { get; set; }
-        private object[] FunctionArgs { get; set; }
-        private Type OverridenReturnType { get; set; }
+        public AliasResult? Alias { get; private set; }
+        public string? FieldName { get; private set; }
+        internal Entity? Entity { get; private set; }
+        internal Property? Property { get; private set; }
+        public FieldResult? Field { get; private set; }
+        private string? FunctionText { get; set; }
+        private object[]? FunctionArgs { get; set; }
+        private Type? OverridenReturnType { get; set; }
 
         public virtual NumericResult Count()
         {
@@ -128,11 +128,14 @@ namespace Blueprint41.Query
         {
             if (FunctionText == null)
             {
-                Alias.Compile(state);
-                if (!string.IsNullOrEmpty(FieldName))
+                if (!(Alias is null))
                 {
-                    state.Text.Append(".");
-                    state.Text.Append(FieldName);
+                    Alias.Compile(state);
+	                if (!string.IsNullOrEmpty(FieldName))
+	                {
+	                    state.Text.Append(".");
+	                    state.Text.Append(FieldName);
+	                }
                 }
             }
             else
@@ -140,7 +143,7 @@ namespace Blueprint41.Query
                 string[] compiledArgs = FunctionArgs.Select(arg => state.Preview(GetCompile(arg), state)).ToArray();
                 string compiledText = string.Format(FunctionText.Replace("{base}", "{{base}}"), compiledArgs);
 
-                if ((object)Field == null)
+                if (Field is null)
                 {
                     state.Text.Append(compiledText);
                 }
@@ -239,12 +242,12 @@ namespace Blueprint41.Query
         {
             throw new NotSupportedException();
         }
-        public override Type GetResultType()
+        public override Type? GetResultType()
         {
-            if (OverridenReturnType == null && (object)Field != null)
+            if (OverridenReturnType == null && !(Field is null))
                 return Field.GetResultType();
 
-            if (OverridenReturnType == null && (object)Property != null)
+            if (OverridenReturnType == null && !(Property is null))
                 return Property.SystemReturnType;
 
             return OverridenReturnType;

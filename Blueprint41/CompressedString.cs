@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlTypes;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -13,8 +14,7 @@ namespace System
         public string Value { get { return m_Value.Value; } }
         public int Length => Value.Length;
 
-        public CompressedString() : base() { }
-        public CompressedString(string x)
+        public CompressedString(string? x)
         {
             m_Value = new Lazy<string>(
                 delegate()
@@ -38,7 +38,8 @@ namespace System
 
         #region To CompressedString
 
-        public static explicit operator CompressedString(Nullable<bool> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<bool> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -47,25 +48,28 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<byte> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<byte> x)
         {
             if (x.HasValue == false) return null;
-            return new CompressedString(x.Value.ToString());
+            return new CompressedString(x.ToString());
         }
         public static explicit operator CompressedString(byte x)
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<sbyte> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<sbyte> x)
         {
             if (x.HasValue == false) return null;
-            return new CompressedString(x.Value.ToString());
+            return new CompressedString(x.ToString());
         }
         public static explicit operator CompressedString(sbyte x)
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<short> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<short> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -74,7 +78,8 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<ushort> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<ushort> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -83,7 +88,8 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<int> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<int> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -92,7 +98,8 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<uint> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<uint> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -101,7 +108,8 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<long> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<long> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -110,7 +118,8 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<ulong> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<ulong> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -119,7 +128,8 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<decimal> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<decimal> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -128,7 +138,8 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<float> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<float> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -137,7 +148,8 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(Nullable<double> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<double> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -146,17 +158,20 @@ namespace System
         {
             return new CompressedString(x.ToString());
         }
-        public static explicit operator CompressedString(byte[] x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(byte[]? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return new CompressedString(x);
         }
-        public static implicit operator CompressedString(string x)
+        [return: NotNullIfNotNull("x")]
+        public static implicit operator CompressedString?(string? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return new CompressedString(x);
         }
-        public static explicit operator CompressedString(Nullable<DateTime> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<DateTime> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(string.Format("{0:yyyy-MM-dd HH:mm:ss}", x));
@@ -165,7 +180,8 @@ namespace System
         {
             return new CompressedString(x.ToString("yyyy-MM-dd HH:mm:ss"));
         }
-        public static explicit operator CompressedString(Nullable<Guid> x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator CompressedString?(Nullable<Guid> x)
         {
             if (x.HasValue == false) return null;
             return new CompressedString(x.ToString());
@@ -179,14 +195,16 @@ namespace System
 
         #region from CompressedString
 
-        public static explicit operator Nullable<byte>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<byte>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return byte.Parse(x.Value);
         }
-        public static explicit operator Nullable<sbyte>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<sbyte>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return sbyte.Parse(x.Value);
         }
         public static explicit operator byte(CompressedString x)
@@ -197,63 +215,70 @@ namespace System
         {
             return sbyte.Parse(x.Value);
         }
-        public static explicit operator Nullable<short>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<short>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return short.Parse(x.Value);
         }
         public static explicit operator short(CompressedString x)
         {
             return short.Parse(x.Value);
         }
-        public static explicit operator Nullable<ushort>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<ushort>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return ushort.Parse(x.Value);
         }
         public static explicit operator ushort(CompressedString x)
         {
             return ushort.Parse(x.Value);
         }
-        public static explicit operator Nullable<int>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<int>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return int.Parse(x.Value);
         }
         public static explicit operator int(CompressedString x)
         {
             return int.Parse(x.Value);
         }
-        public static explicit operator Nullable<uint>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<uint>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return uint.Parse(x.Value);
         }
         public static explicit operator uint(CompressedString x)
         {
             return uint.Parse(x.Value);
         }
-        public static explicit operator Nullable<long>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<long>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return long.Parse(x.Value);
         }
         public static explicit operator long(CompressedString x)
         {
             return long.Parse(x.Value);
         }
-        public static explicit operator Nullable<ulong>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<ulong>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return ulong.Parse(x.Value);
         }
         public static explicit operator ulong(CompressedString x)
         {
             return ulong.Parse(x.Value);
         }
-        public static explicit operator Nullable<decimal>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<decimal>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return decimal.Parse(x.Value);
         }
         public static explicit operator decimal(CompressedString x)
@@ -264,38 +289,43 @@ namespace System
         {
             return SqlDecimal.Parse(x.Value);
         }
-        public static explicit operator Nullable<float>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<float>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return float.Parse(x.Value);
         }
         public static explicit operator float(CompressedString x)
         {
             return float.Parse(x.Value);
         }
-        public static explicit operator Nullable<double>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<double>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return double.Parse(x.Value);
         }
         public static explicit operator double(CompressedString x)
         {
             return double.Parse(x.Value);
         }
-        public static implicit operator string(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static implicit operator string?(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return x.Value;
         }
-        public static implicit operator Lazy<string>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static implicit operator Lazy<string>?(CompressedString? x)
         {
-            if ((object)x == null) return new Lazy<string>(() => null);
+            if (x is null) return null;
             return new Lazy<string>(() => x.Value);
         }
+        [return: NotNullIfNotNull("x")]
         public static explicit operator Nullable<bool>(CompressedString x)
         {
-            if ((object)x == null) return null;
-            CompressedString value = x.Value.Trim();
+            if (x is null || x.Value is null) return null;
+            string value = x.Value.Trim();
 
             if (value.ToUpper() == "TRUE" || value.ToUpper() == "YES" || value == "1")
                 return true;
@@ -306,7 +336,7 @@ namespace System
         }
         public static explicit operator bool(CompressedString x)
         {
-            CompressedString value = x.Value.Trim();
+            string value = x.Value.Trim();
 
             if (value.ToUpper() == "TRUE" || value.ToUpper() == "YES" || value == "1")
                 return true;
@@ -315,28 +345,26 @@ namespace System
 
             return bool.Parse(value);
         }
-        public static explicit operator Nullable<DateTime>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<DateTime>(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return DateTime.Parse(x.Value);
         }
         public static explicit operator DateTime(CompressedString x)
         {
             return DateTime.Parse(x.Value);
         }
-        public static explicit operator Nullable<Guid>(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator byte[]?(CompressedString? x)
         {
-            if ((object)x == null) return null;
-            return new Guid(x.Value);
-        }
-        public static explicit operator byte[] (CompressedString x)
-        {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             return Compress(x.Value);
         }
-        public static explicit operator XmlDocument(CompressedString x)
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator XmlDocument?(CompressedString? x)
         {
-            if ((object)x == null) return null;
+            if (x is null) return null;
             XmlDocument xmldoc = new XmlDocument();
             xmldoc.InnerText = x.Value;
             return xmldoc;
@@ -345,33 +373,39 @@ namespace System
         {
             return new Guid(x.Value);
         }
+        [return: NotNullIfNotNull("x")]
+        public static explicit operator Nullable<Guid>(CompressedString? x)
+        {
+            if (x is null) return null;
+            return new Guid(x.Value);
+        }
 
         #endregion
 
         #region Operators
-        public static bool operator ==(string a, CompressedString b)
+        public static bool operator ==(string? a, CompressedString? b)
         {
-            if ((object)a == null && (object)b == null) { return true; }
-            if ((object)a == null) { return false; }
-            if ((object)b == null) { return false; }
+            if (a is null && b is null) { return true; }
+            if (a is null) { return false; }
+            if (b is null) { return false; }
             return a.Equals(b.Value);
         }
-        public static bool operator !=(string a, CompressedString b)
+        public static bool operator !=(string? a, CompressedString? b)
         {
 
             return !(a == b);
         }
 
-        public static CompressedString operator +(CompressedString a, CompressedString b)
+        public static CompressedString operator +(CompressedString? a, CompressedString? b)
         {
-            if ((object)a == null && (object)b == null) { return new CompressedString(""); }
-            if ((object)a == null) { return b; }
-            if ((object)b == null) { return a; }
-            return (CompressedString)(a.Value + b.Value);
+            if (a is null && b is null) { return new CompressedString(""); }
+            if (a is null) { return b!; }
+            if (b is null) { return a; }
+            return new CompressedString(a.Value ?? "" + b.Value ?? "");
         }
-        public static bool operator >(CompressedString a, CompressedString b)
+        public static bool operator >(CompressedString? a, CompressedString? b)
         {
-            if ((object)a == null || (object)b == null) { return false; }
+            if (a is null || b is null) { return false; }
             int max = Math.Min(a.Value.Length, b.Value.Length);
 
             int i = -1;
@@ -382,9 +416,9 @@ namespace System
             else
                 return (a.Value[i] > b.Value[i]);
         }
-        public static bool operator <(CompressedString a, CompressedString b)
+        public static bool operator <(CompressedString? a, CompressedString? b)
         {
-            if ((object)a == null || (object)b == null) { return false; }
+            if (a is null || b is null) { return false; }
             int max = Math.Min(a.Value.Length, b.Value.Length);
 
             int i = -1;
@@ -395,10 +429,10 @@ namespace System
             else
                 return (a.Value[i] < b.Value[i]);
         }
-        public static bool operator >=(CompressedString a, CompressedString b)
+        public static bool operator >=(CompressedString? a, CompressedString? b)
         {
-            if ((object)a == null && (object)b == null) { return true; }
-            if ((object)a == null || (object)b == null) { return false; }
+            if (a is null && b is null) { return true; }
+            if (a is null || b is null) { return false; }
             int max = Math.Min(a.Value.Length, b.Value.Length);
 
             int i = -1;
@@ -409,10 +443,10 @@ namespace System
             else
                 return (a.Value[i] >= b.Value[i]);
         }
-        public static bool operator <=(CompressedString a, CompressedString b)
+        public static bool operator <=(CompressedString? a, CompressedString? b)
         {
-            if ((object)a == null && (object)b == null) { return true; }
-            if ((object)a == null || (object)b == null) { return false; }
+            if (a is null && b is null) { return true; }
+            if (a is null || b is null) { return false; }
             int max = Math.Min(a.Value.Length, b.Value.Length);
 
             int i = -1;
@@ -433,85 +467,85 @@ namespace System
             return ((IConvertible)Value).GetTypeCode();
         }
 
-        bool IConvertible.ToBoolean(IFormatProvider provider)
+        bool IConvertible.ToBoolean(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToBoolean(provider);
         }
 
-        byte IConvertible.ToByte(IFormatProvider provider)
+        byte IConvertible.ToByte(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToByte(provider);
         }
 
-        char IConvertible.ToChar(IFormatProvider provider)
+        char IConvertible.ToChar(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToChar(provider);
         }
 
-        DateTime IConvertible.ToDateTime(IFormatProvider provider)
+        DateTime IConvertible.ToDateTime(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToDateTime(provider);
         }
 
-        decimal IConvertible.ToDecimal(IFormatProvider provider)
+        decimal IConvertible.ToDecimal(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToDecimal(provider);
         }
 
-        double IConvertible.ToDouble(IFormatProvider provider)
+        double IConvertible.ToDouble(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToDouble(provider);
         }
 
-        short IConvertible.ToInt16(IFormatProvider provider)
+        short IConvertible.ToInt16(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToInt16(provider);
         }
 
-        int IConvertible.ToInt32(IFormatProvider provider)
+        int IConvertible.ToInt32(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToInt32(provider);
         }
 
-        long IConvertible.ToInt64(IFormatProvider provider)
+        long IConvertible.ToInt64(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToInt64(provider);
         }
 
-        sbyte IConvertible.ToSByte(IFormatProvider provider)
+        sbyte IConvertible.ToSByte(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToSByte(provider);
         }
 
-        float IConvertible.ToSingle(IFormatProvider provider)
+        float IConvertible.ToSingle(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToSingle(provider);
         }
 
-        string IConvertible.ToString(IFormatProvider provider)
+        string IConvertible.ToString(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToString(provider);
         }
 
-        object IConvertible.ToType(Type conversionType, IFormatProvider provider)
+        object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
         {
             if (conversionType == typeof(byte[]))
-                return (byte[])this;
+                return (byte[])this!;
 
             return ((IConvertible)Value).ToType(conversionType, provider);
         }
 
-        ushort IConvertible.ToUInt16(IFormatProvider provider)
+        ushort IConvertible.ToUInt16(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToUInt16(provider);
         }
 
-        uint IConvertible.ToUInt32(IFormatProvider provider)
+        uint IConvertible.ToUInt32(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToUInt32(provider);
         }
 
-        ulong IConvertible.ToUInt64(IFormatProvider provider)
+        ulong IConvertible.ToUInt64(IFormatProvider? provider)
         {
             return ((IConvertible)Value).ToUInt64(provider);
         }
@@ -519,9 +553,9 @@ namespace System
 
         public object Clone()
         {
-            return this;
+            return new CompressedString(this);
         }
-        public int CompareTo(object value)
+        public int CompareTo(object? value)
         {
             if (value is CompressedString)
             {
@@ -532,21 +566,21 @@ namespace System
                 return 0;
             }
         }
-        public bool Equals(CompressedString other)
+        public bool Equals(CompressedString? other)
         {
-            if ((object)other == null) return false;
+            if (other is null) return false;
             return Value.Equals(other.Value, StringComparison.Ordinal);
         }
-
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
-
-
-        public bool Equals(string obj)
+        public bool Equals(string? obj)
         {
-            return this == obj;
+            if (obj is null)
+                return false;
+
+            return (this == obj);
         }
         
         public override int GetHashCode()
@@ -561,47 +595,47 @@ namespace System
 
         public int IndexOf(string x)
         {
-            if ((object)x == null) { return -1; }
+            if (x is null) { return -1; }
             return Value.IndexOf(x, StringComparison.OrdinalIgnoreCase);
         }
         public int IndexOf(CompressedString x)
         {
-            if ((object)x == null) { return -1; }
+            if (x is null) { return -1; }
             return Value.IndexOf(x.Value, StringComparison.OrdinalIgnoreCase);
         }
         public int IndexOf(string x, int y)
         {
-            if ((object)x == null) { return -1; }
+            if (x is null) { return -1; }
             return Value.IndexOf(x, y, StringComparison.OrdinalIgnoreCase);
         }
         public int LastIndexOf(string x)
         {
-            if ((object)x == null) { return -1; }
+            if (x is null) { return -1; }
             return Value.LastIndexOf(x, StringComparison.OrdinalIgnoreCase);
         }
         public int LastIndexOf(CompressedString x)
         {
-            if ((object)x == null) { return -1; }
+            if (x is null) { return -1; }
             return Value.LastIndexOf(x.Value, StringComparison.OrdinalIgnoreCase);
         }
         public int LastIndexOf(string x, int y)
         {
-            if ((object)x == null) { return -1; }
+            if (x is null) { return -1; }
             return Value.LastIndexOf(x, y, StringComparison.OrdinalIgnoreCase);
         }
 
         public CompressedString ToLower()
         {
-            return Value.ToLower();
+            return Value.ToLower()!;
         }
         public CompressedString ToUpper()
         {
-            return Value.ToUpper();
+            return Value.ToUpper()!;
         }
 
         public CompressedString Trim()
         {
-            return Value.Trim();
+            return Value.Trim()!;
         }
         public CompressedString Trim(string trimText)
         {
@@ -613,11 +647,11 @@ namespace System
         }
         public CompressedString Trim(params char[] trimChars)
         {
-            return Value.Trim(trimChars);
+            return Value.Trim(trimChars)!;
         }
         public CompressedString TrimStart()
         {
-            return Value.TrimStart();
+            return Value.TrimStart()!;
         }
         public CompressedString TrimStart(string trimText)
         {
@@ -635,11 +669,11 @@ namespace System
         }
         public CompressedString TrimStart(params char[] trimChars)
         {
-            return Value.TrimStart(trimChars);
+            return Value.TrimStart(trimChars)!;
         }
         public CompressedString TrimEnd()
         {
-            return Value.TrimEnd();
+            return Value.TrimEnd()!;
         }
         public CompressedString TrimEnd(string trimText)
         {
@@ -657,49 +691,67 @@ namespace System
         }
         public CompressedString TrimEnd(params char[] trimChars)
         {
-            return Value.TrimEnd(trimChars);
+            return Value.TrimEnd(trimChars)!;
         }
 
         public CompressedString Substring(int x)
         {
-            return Value.Substring((int)x);
+            return Value.Substring((int)x)!;
         }
         public CompressedString Substring(int x, int y)
         {
-            return Value.Substring((int)x, (int)y);
+            return Value.Substring((int)x, (int)y)!;
         }
         public CompressedString Replace(string x, string y)
         {
-            return Value.Replace(x, y);
+            return Value.Replace(x, y)!;
         }
         public CompressedString Replace(CompressedString x, CompressedString y)
         {
-            return Value.Replace(x.Value, y.Value);
+            return Value.Replace(x.Value, y.Value)!;
         }
 
-        public bool StartsWith(string value)
+        public bool StartsWith(string? value)
         {
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
             return Value.StartsWith(value);
         }
-        public bool StartsWith(CompressedString value)
+        public bool StartsWith(CompressedString? value)
         {
-            return Value.StartsWith(value);
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
+            return Value.StartsWith(value.Value);
         }
-        public bool EndsWith(string value)
+        public bool EndsWith(string? value)
         {
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
             return Value.EndsWith(value);
         }
-        public bool EndsWith(CompressedString value)
+        public bool EndsWith(CompressedString? value)
         {
-            return Value.EndsWith(value);
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
+            return Value.EndsWith(value.Value);
         }
-        public bool Contains(string x)
+        public bool Contains(string? value)
         {
-            return Value.Contains(x);
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
+            return Value.Contains(value);
         }
-        public bool Contains(CompressedString x)
+        public bool Contains(CompressedString? value)
         {
-            return Value.Contains(x.Value);
+            if (value is null)
+                throw new ArgumentNullException(nameof(value));
+
+            return Value.Contains(value.Value);
         }
 
         static public string[] Split(string input, string delimiter)
@@ -710,7 +762,7 @@ namespace System
         {
             return Split(input, delimiter, qualifier, false);
         }
-        static public string[] Split(string input, string delimiter, string qualifier, bool ignoreCase)
+        static public string[] Split(string input, string? delimiter, string? qualifier, bool ignoreCase)
         {
             bool qualifierState = false;
             int startIndex = 0;
@@ -718,14 +770,14 @@ namespace System
 
             for (int i = 0; i < input.Length - 1; i++)
             {
-                if ((qualifier != null) & (string.Compare(input.Substring(i, qualifier.Length), qualifier, ignoreCase) == 0))
+                if (!(qualifier is null) && (string.Compare(input.Substring(i, qualifier.Length), qualifier, ignoreCase) == 0))
                 {
                     //edited by nitz : will still split according to delimiter despite faulty qualifiers
                     string nextStr = input.Substring(i + 1, qualifier.Length);
                     if ((qualifierState == false) || (string.Compare(nextStr, delimiter, ignoreCase) == 0))
                         qualifierState = !(qualifierState);
                 }
-                else if (!(qualifierState) & (delimiter != null) & (string.Compare(input.Substring(i, delimiter.Length), delimiter, ignoreCase) == 0))
+                else if (!(qualifierState) && (delimiter != null) && (string.Compare(input.Substring(i, delimiter.Length), delimiter, ignoreCase) == 0))
                 {
                     values.Add(input.Substring(startIndex, i - startIndex));
                     startIndex = i + 1;
@@ -740,11 +792,11 @@ namespace System
 
             return returnValues;
         }
-        static public CompressedString[] Split(CompressedString input, string delimiter, string qualifier)
+        static public CompressedString[] Split(CompressedString input, string? delimiter, string? qualifier)
         {
             return Split(input, delimiter, qualifier, false);
         }
-        static public CompressedString[] Split(CompressedString input, string delimiter, string qualifier, bool ignoreCase)
+        static public CompressedString[] Split(CompressedString input, string? delimiter, string? qualifier, bool ignoreCase)
         {
             bool qualifierState = false;
             int startIndex = 0;
@@ -752,11 +804,11 @@ namespace System
 
             for (int i = 0; i < input.Length - 1; i++)
             {
-                if ((qualifier != null) & (string.Compare(input.Substring(i, qualifier.Length), qualifier, ignoreCase) == 0))
+                if (!(qualifier is null) && (string.Compare(input.Substring(i, qualifier.Length), qualifier, ignoreCase) == 0))
                 {
                     qualifierState = !(qualifierState);
                 }
-                else if (!(qualifierState) & (delimiter != null) & (string.Compare(input.Substring(i, delimiter.Length), delimiter, ignoreCase) == 0))
+                else if (!(qualifierState) && (delimiter != null) && (string.Compare(input.Substring(i, delimiter.Length), delimiter, ignoreCase) == 0))
                 {
                     values.Add(input.Substring(startIndex, i - startIndex));
                     startIndex = i + 1;

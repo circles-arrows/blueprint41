@@ -9,7 +9,7 @@ namespace Blueprint41.Core
 {
     public abstract class OGMAbstractImpl<TSelf, TInterface, TKey>
         where TSelf : OGMAbstractImpl<TSelf, TInterface, TKey>
-        where TInterface : OGM
+        where TInterface : class, OGM
     {
         protected const string Param0 = "P0";
         protected const string Param1 = "P1";
@@ -22,13 +22,13 @@ namespace Blueprint41.Core
         protected const string Param8 = "P8";
         protected const string Param9 = "P9";
 
-        public static TInterface Load(TKey key)
+        public static TInterface? Load(TKey key)
         {
             if (Entity.Key.IndexType != IndexType.Unique)
                 throw new NotSupportedException("The key is not marked unique for the abstract base type, please load the entity via its concrete sub type instead.");
 
             if (key == null)
-                return default(TInterface);
+                return default;
 
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, string.Format("{{0}}.{0} = {{{{key}}}}", Entity.Key.Name), new Parameter[] { new Parameter("key", key) }).FirstOrDefault();
         }
@@ -85,17 +85,17 @@ namespace Blueprint41.Core
 
         public static void ForceDelete(TKey key)
         {
-            TInterface instance = Load(key);
-            instance.Delete(true);
+            TInterface? instance = Load(key);
+            instance?.Delete(true);
         }
 
-        protected static Entity entity = null;
+        protected static Entity? entity = null;
         public static Entity Entity
         {
 
             get
             {
-                if (entity == null)
+                if (entity is null)
                     entity = Instance.GetEntity();
 
                 return entity;
@@ -107,7 +107,7 @@ namespace Blueprint41.Core
 
         #region Stored Queries
 
-        private static IDictionary<string, ICompiled> StoredQueries = null;
+        private static IDictionary<string, ICompiled>? StoredQueries = null;
 
         protected virtual void RegisterStoredQueries() { }
         protected abstract void RegisterGeneratedStoredQueries();
@@ -116,19 +116,19 @@ namespace Blueprint41.Core
         {
             InitializeStoredQueries();
 
-            StoredQueries.Add(name, query);
+            StoredQueries!.Add(name, query);
         }
         public static List<TInterface> FromQuery(string name, params Parameter[] parameters)
         {
             InitializeStoredQueries();
 
-            ICompiled query = StoredQueries[name];
+            ICompiled query = StoredQueries![name];
             return LoadWhere(query, parameters);
         }
 
         private static void InitializeStoredQueries()
         {
-            if (StoredQueries != null)
+            if (!(StoredQueries is null))
                 return;
 
             lock (typeof(TInterface))

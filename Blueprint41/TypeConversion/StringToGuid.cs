@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.TypeConversion
 {
-    internal class StringToGuid : Conversion<string, Guid>
+    internal class StringToGuid : Conversion<string?, Guid>
     {
-        protected override Guid Converter(string value)
+        protected override Guid Converter(string? value)
         {
+            if (value is null)
+                return Guid.Empty;
+
             return Guid.ParseExact(value, "B");
         }
     }

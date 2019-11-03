@@ -24,22 +24,22 @@ namespace Blueprint41.Query
             PersistenceProvider = parent.PersistenceProvider;
 
         }
-        private Query Parent;
+        private Query? Parent;
 
         private bool Distinct = true;
         private bool Ascending = true;
         private PartType Type = PartType.None;
-        private Node[] Patterns = null;
-        private Result[] WithResults = null;
-        private AsResult[] Results = null;
-        private QueryCondition[] Conditions = null;
-        private FieldResult[] Fields = null;
-        private AliasResult[] Aliases = null;
+        private Node[]? Patterns = null;
+        private Result[]? WithResults = null;
+        private AsResult[]? Results = null;
+        private QueryCondition[]? Conditions = null;
+        private FieldResult[]? Fields = null;
+        private AliasResult[]? Aliases = null;
         Parameter SkipValue = Parameter.Constant(0);
         Parameter LimitValue = Parameter.Constant(0);
         private bool UnionWithDuplicates = true;
 
-        public CompiledQuery CompiledQuery { get; private set; }
+        public CompiledQuery? CompiledQuery { get; private set; }
 
         public IMatchQuery Match(params Node[] patterns)
         {
@@ -141,35 +141,35 @@ namespace Blueprint41.Query
 
         IWithQuery IWithQuery.Skip(int skip)
         {
-            return Skip(skip) as Query;
+            return (Query)Skip(skip);
         }
         IWithQuery IWithQuery.OrderBy(params FieldResult[] fields)
         {
-            return OrderBy(fields) as Query;
+            return (Query)OrderBy(fields);
         }
         IWithQuery IWithQuery.OrderBy(bool ascending, params FieldResult[] fields)
         {
-            return OrderBy(ascending, fields) as Query;
+            return (Query)OrderBy(ascending, fields);
         }
         IWithQuery IWithQuery.Limit(int limit)
         {
-            return Limit(limit) as Query;
+            return (Query)Limit(limit);
         }
         IWithQuery IWithQuery.Skip(Parameter skip)
         {
-            return Skip(skip) as Query;
+            return (Query)Skip(skip);
         }
         IWithQuery IWithQuery.Limit(Parameter limit)
         {
-            return Limit(limit) as Query;
+            return (Query)Limit(limit);
         }
         IWithQuery IWithQuery.Page(int skip, int limit)
         {
-            return Skip(skip).Limit(limit) as Query;
+            return (Query)Skip(skip).Limit(limit);
         }
         IWithQuery IWithQuery.Page(Parameter skip, Parameter limit)
         {
-            return Skip(skip).Limit(limit) as Query;
+            return (Query)Skip(skip).Limit(limit);
         }
         public ILimitQuery Page(int skip, int limit)
         {
@@ -208,7 +208,7 @@ namespace Blueprint41.Query
             var state = new CompileState(PersistenceProvider.SupportedTypeMappings);
             Query[] parts = GetParts();
             ForEach(parts, state.Text, "\r\n", item => item?.Compile(state));
-            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Results != null).Results);
+            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Results != null).Results ?? new AsResult[0]);
 
             if (CompiledQuery.Errors.Count > 0)
                 throw new QueryException(CompiledQuery);
@@ -231,7 +231,10 @@ namespace Blueprint41.Query
                     state.Text.Append("USING SCAN ");
                     ForEach(Aliases, state.Text, "\r\nUSING SCAN ", item =>
                     {
-                        item?.Compile(state);
+                        if (item.Node is null)
+                            return;
+
+                        item.Compile(state);
                         state.Text.Append(":" + item.Node.Neo4jLabel);
                     });
                     break;
@@ -239,6 +242,9 @@ namespace Blueprint41.Query
                     state.Text.Append("USING INDEX ");
                     ForEach(Fields, state.Text, "\r\nUSING INDEX ", item =>
                     {
+                        if (item.Alias is null || item.Alias.Node is null)
+                            return;
+
                         state.Text.Append(string.Format("{0}:{1}({2})", item.Alias.AliasName, item.Alias.Node.Neo4jLabel, item.FieldName));
                     });
                     break;
@@ -305,11 +311,11 @@ namespace Blueprint41.Query
         public override string ToString()
         {
             if (CompiledQuery == null)
-                return null;
+                return string.Empty;
 
             Transaction transaction = Transaction.RunningTransaction;
             string cypherQuery = CompiledQuery.QueryText;
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
+            Dictionary<string, object?> parameterValues = new Dictionary<string, object?>();
 
             foreach (var queryParameter in CompiledQuery.ConstantValues)
             {
@@ -321,8 +327,8 @@ namespace Blueprint41.Query
 
             foreach (var queryParam in parameterValues)
             {
-                object paramValue = queryParam.Value.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value.ToString();
-                cypherQuery = cypherQuery.Replace(queryParam.Key, paramValue.ToString());
+                string paramValue = queryParam.Value?.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value?.ToString() ?? "NULL";
+                cypherQuery = cypherQuery.Replace(queryParam.Key, paramValue);
             }
             return cypherQuery;
         }
@@ -330,7 +336,7 @@ namespace Blueprint41.Query
         private Query[] GetParts()
         {
             LinkedList<Query> parts = new LinkedList<Query>();
-            Query query = Parent;
+            Query? query = Parent;
             while (query != null)
             {
                 parts.AddFirst(query);
@@ -339,7 +345,8 @@ namespace Blueprint41.Query
 
             return parts.ToArray();
         }
-        private void ForEach<T>(T[] items, StringBuilder sb, string delimiter, Action<T> action)
+        private void ForEach<T>(T[]? items, StringBuilder sb, string delimiter, Action<T> action)
+            where T : notnull
         {
             if (items == null || items.Length == 0)
                 return;
@@ -470,7 +477,7 @@ namespace Blueprint41.Query
     public interface ICompiled
     {
         QueryExecutionContext GetExecutionContext();
-        CompiledQuery CompiledQuery { get; }
+        CompiledQuery? CompiledQuery { get; }
         string ToString();
     }
 

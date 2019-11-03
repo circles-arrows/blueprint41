@@ -8,7 +8,7 @@ namespace Blueprint41.Core
 {
     internal abstract class RelationshipAction
     {
-        protected RelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem)
+        protected RelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship? relationship, OGM inItem, OGM outItem)
         {
             Relationship = relationship;
             InItem = inItem;
@@ -18,7 +18,7 @@ namespace Blueprint41.Core
 
         public RelationshipPersistenceProvider PersistenceProvider { get; internal set; }
 
-        private Relationship Relationship { get; set; }
+        private Relationship? Relationship { get; set; }
         public OGM InItem { get; private set; }
         public OGM OutItem { get; private set; }
 

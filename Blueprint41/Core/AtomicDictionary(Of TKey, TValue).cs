@@ -7,6 +7,7 @@ using System.Threading;
 namespace Blueprint41.Core
 {
     public class AtomicDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+        where TKey : notnull
     {
         private object sync = new object();
         private IDictionary<TKey, TValue> dict;

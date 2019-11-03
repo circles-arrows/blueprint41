@@ -16,16 +16,16 @@ namespace Blueprint41.Core
             get
             {
                 TKey key = GetKey();
-                if (key == null)
+                if (key is null)
                     return false;
 
-                return !key.Equals(default(TKey));
+                return !key.Equals(default(TKey)!);
             }
         }
 
-        sealed internal protected override void SetKey(object key)
+        sealed internal protected override void SetKey(object? key)
         {
-            SetKey((TKey)key);
+            SetKey((TKey)key!);
         }
         protected virtual void SetKey(TKey key)
         {
@@ -33,7 +33,7 @@ namespace Blueprint41.Core
                 throw new InvalidOperationException("You cannot set the key after it was already assigned.");
 
             PersistenceState = PersistenceState.HasUid;
-            Transaction.Current.Register(Wrapper.GetEntity().Name, Wrapper);
+            Transaction.RunningTransaction.Register(Wrapper.GetEntity().Name, Wrapper);
         }
     }
 }

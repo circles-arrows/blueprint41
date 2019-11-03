@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using persistence = Blueprint41.Neo4j.Persistence;
 
-
 namespace Blueprint41.Core
 {
     public abstract class OGMImpl : OGM
@@ -69,7 +68,7 @@ namespace Blueprint41.Core
                 case PersistenceState.Error:
                     throw new InvalidOperationException(string.Format("The {0} with key '{1}' cannot be saved because it's state was {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
                 case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The {0} with key '{1}' has an invalid/unknown state {2}.", GetEntity().Name, GetKey() ?? "<null>", PersistenceState.ToString()));
             }
@@ -107,13 +106,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
+                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.ForceDelete;
-                    DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
+                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -127,7 +126,7 @@ namespace Blueprint41.Core
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
@@ -140,13 +139,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
+                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.Delete;
-                    DbTransaction.Register(new ClearRelationshipsAction(DbTransaction.RelationshipPersistenceProvider, null, this, this));
+                    RunningTransaction.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -160,7 +159,7 @@ namespace Blueprint41.Core
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
-                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey().ToString()} couldn't be loaded from the database.");
+                    throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
@@ -168,7 +167,7 @@ namespace Blueprint41.Core
 
         #region Explicit OGM
 
-        object OGM.GetKey() { return this.GetKey(); }
+        object? OGM.GetKey() { return this.GetKey(); }
         void OGM.SetKey(object key)
         {
             this.GetData().SetKey(key);
@@ -176,21 +175,21 @@ namespace Blueprint41.Core
 
         DateTime OGM.GetRowVersion() { return this.GetRowVersion(); }
 
-        IDictionary<string, object> OGM.GetData()
+        IDictionary<string, object?> OGM.GetData()
         {
             return this.GetData().MapTo();
         }
-        void OGM.SetData(IReadOnlyDictionary<string, object> data)
+        void OGM.SetData(IReadOnlyDictionary<string, object?> data)
         {
             this.GetData().MapFrom(data);
         }
 
         PersistenceState OGM.PersistenceState { get { return this.PersistenceState; } set { this.PersistenceState = value; } }
-        Transaction OGM.Transaction { get { return this.DbTransaction; } set { this.DbTransaction = value; } }
+        Transaction? OGM.Transaction { get { return this.DbTransaction; } set { this.DbTransaction = value; } }
 
         #endregion
 
-        internal abstract object GetKey();
+        internal abstract object? GetKey();
         internal abstract Data GetData();
 
         public virtual void SetRowVersion(DateTime? value)
@@ -211,7 +210,22 @@ namespace Blueprint41.Core
         }
 
         public abstract PersistenceState PersistenceState { get; internal set; }
-        internal Transaction DbTransaction { get; set; }
+        internal Transaction? DbTransaction { get; set; }
+        protected private Transaction RunningTransaction
+        {
+            get
+            {
+                Transaction? trans = DbTransaction;
+
+                if (trans == null)
+                    throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
+
+                if (!trans.InTransaction)
+                    throw new InvalidOperationException("The transaction was already committed or rolled back.");
+
+                return trans;
+            }
+        }
 
         public abstract Entity GetEntity();
 
@@ -225,32 +239,32 @@ namespace Blueprint41.Core
                 return persistenceProvider;
             }
         }
-        private PersistenceProvider persistenceProvider = null;
+        private PersistenceProvider? persistenceProvider = null;
 
         public override int GetHashCode()
         {
-            object key = GetKey();
-            if (key == null)
+            object? key = GetKey();
+            if (key is null)
                 return base.GetHashCode();
 
             return GetEntity().Name.GetHashCode() ^ key.GetHashCode();
         }
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            OGM other = obj as OGM;
-            if ((object)other == null)
+            OGM? other = obj as OGM;
+            if (other is null)
                 return false;
 
             if (GetEntity().Name != other.GetEntity().Name)
                 return false;
 
-            object key = GetKey();
-            if (key == null)
-                return base.Equals(other);
+            object? key = GetKey();
+            if (key is null)
+                return object.ReferenceEquals(this, other);
 
-            object otherKey = other.GetKey();
-            if (otherKey == null)
-                return base.Equals(other);
+            object? otherKey = other.GetKey();
+            if (otherKey is null)
+                return object.ReferenceEquals(this, other);
 
             return key.Equals(otherKey);
         }
@@ -264,17 +278,17 @@ namespace Blueprint41.Core
 
         #region Events
 
-        private Dictionary<string, object> customState;
-        internal IDictionary<string, object> CustomState
+        private Dictionary<string, object?>? customState = null;
+        internal IDictionary<string, object?> CustomState
         {
             get
             {
-                if (customState == null)
+                if (customState is null)
                 {
                     lock (this)
                     {
-                        if (customState == null)
-                            customState = new Dictionary<string, object>();
+                        if (customState is null)
+                            customState = new Dictionary<string, object?>();
                     }
                 }
                 return customState;

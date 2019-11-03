@@ -9,12 +9,12 @@ namespace Blueprint41.DatastoreTemplates
     public abstract partial class GeneratorBase
     {
         public abstract string TransformText();
-        public Entity DALModel { get; set; }
-        public Relationship DALRelation { get; set; }
-        public DatastoreModel Datastore { get; set; }
+        public Entity? DALModel { get; set; }
+        public Relationship? DALRelation { get; set; }
+        public DatastoreModel? Datastore { get; set; }
         public List<TypeMapping> SupportedTypeMappings { get; set; }
 
-        public GeneratorSettings Settings { get; set; }
+        public GeneratorSettings? Settings { get; set; }
 
         public void Log(string text, params object[] arguments)
         {
@@ -25,7 +25,5 @@ namespace Blueprint41.DatastoreTemplates
         {
             SupportedTypeMappings = Blueprint41.Neo4j.Persistence.Neo4JPersistenceProvider.supportedTypeMappings;
         }
-        
-
     }
 }

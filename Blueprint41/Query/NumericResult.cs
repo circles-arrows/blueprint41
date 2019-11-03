@@ -121,7 +121,7 @@ namespace Blueprint41.Query
 
         #endregion
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
@@ -133,9 +133,9 @@ namespace Blueprint41.Query
         #endregion
 
         internal NumericResult(FieldResult field) : base(field) { }
-        public NumericResult(string function, object[] arguments, Type type) : base(function, arguments, type) { }
+        public NumericResult(string function, object[]? arguments, Type? type) : base(function, arguments, type) { }
         public NumericResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public NumericResult(FieldResult field, string function, object[] arguments = null, Type type = null) : base(field, function, arguments, type) { }
+        public NumericResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         public NumericListResult Collect()
         {

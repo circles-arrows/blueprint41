@@ -10,7 +10,7 @@ namespace Blueprint41.Query
     {
         internal protected abstract void Compile(CompileState state);
 
-        public abstract string GetFieldName();
-        public abstract Type GetResultType();
+        public abstract string? GetFieldName();
+        public abstract Type? GetResultType();
     }
 }

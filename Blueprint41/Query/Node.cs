@@ -25,13 +25,13 @@ namespace Blueprint41.Query
             Neo4jLabel = label ?? GetNeo4jLabel();
         }
 
-        public RELATIONSHIP FromRelationship { get; set; }
-        public RELATIONSHIP ToRelationship { get; set; }
+        public RELATIONSHIP? FromRelationship { get; set; }
+        public RELATIONSHIP? ToRelationship { get; set; }
         public DirectionEnum Direction { get; set; }
 
         protected abstract string GetNeo4jLabel();
         public string Neo4jLabel { get; private set; }
-        public AliasResult NodeAlias { get; protected set; }
+        public AliasResult? NodeAlias { get; protected set; }
         public bool IsReference { get; protected set; }
 
         internal void Compile(CompileState state)
@@ -41,11 +41,11 @@ namespace Blueprint41.Query
             while (root.FromRelationship != null)
                 root = root.FromRelationship.FromNode;
 
-            Node current = root;
+            Node? current = root;
             do
             {
                 GetDirection(current, state.Text);
-                if ((object)current.NodeAlias != null)
+                if (!(current.NodeAlias is null))
                 {
                     if (current.NodeAlias.AliasName == null)
                         current.NodeAlias.AliasName = string.Format("n{0}", state.patternSeq++);
@@ -66,6 +66,8 @@ namespace Blueprint41.Query
                 {
                     current.ToRelationship.Compile(state);
                     current = current.ToRelationship.ToNode;
+                    if (current is null)
+                        break;
                 }
                 else
                     break;

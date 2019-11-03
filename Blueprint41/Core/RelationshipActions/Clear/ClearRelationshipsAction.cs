@@ -9,17 +9,20 @@ namespace Blueprint41.Core
     internal class ClearRelationshipsAction : RelationshipAction
     {
         public DirectionEnum Direction { get; private set; }
-        internal ClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem)
-            : base(persistenceProvider, relationship, inItem, outItem)
+        internal ClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship? relationship, OGM? inItem, OGM? outItem)
+            : base(persistenceProvider, relationship, inItem!, outItem!)
         {
             Direction = inItem != null ? DirectionEnum.In : DirectionEnum.Out;
         }
+
+        new public OGM? InItem => base.InItem;
+        new public OGM? OutItem => base.OutItem;
 
         protected override bool ActsOnSpecificParent() { return false; }
 
         protected override void InDatastoreLogic(Relationship Relationship)
         {
-            PersistenceProvider.RemoveAll(Relationship, Direction, InItem ?? OutItem, null, false);
+            PersistenceProvider.RemoveAll(Relationship, Direction, (InItem ?? OutItem)!, null, false);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)

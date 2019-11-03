@@ -14,7 +14,7 @@ namespace Blueprint41
     [DebuggerDisplay("Relationship: {Name}")]
     public class Relationship : IRefactorRelationship, Core.IRelationshipEvents
     {
-        internal Relationship(DatastoreModel parent, string name, string neo4JRelationshipType, Entity inEntity, Entity outEntity)
+        internal Relationship(DatastoreModel parent, string name, string? neo4JRelationshipType, Entity inEntity, Entity outEntity)
         {
             Parent = parent;
             RelationshipType =  RelationshipType.None;
@@ -35,9 +35,9 @@ namespace Blueprint41
         public RelationshipType RelationshipType      { get; private set; }
 
         public Entity           InEntity              { get; private set; }
-        public Property         InProperty            { get; private set; }
+        public Property?        InProperty            { get; private set; }
         public Entity           OutEntity             { get; private set; }
-        public Property         OutProperty           { get; private set; }
+        public Property?        OutProperty           { get; private set; }
 
         public string           CreationDate { get { return "CreationDate"; } }
 
@@ -51,7 +51,7 @@ namespace Blueprint41
 
         #region Modeling Actions
 
-        internal void Rename(string newName, string newNeo4JRelationshipType = null)
+        internal void Rename(string newName, string? newNeo4JRelationshipType = null)
         {
             if (string.IsNullOrEmpty(newName))
                 throw new ArgumentNullException("newName");
@@ -301,12 +301,10 @@ namespace Blueprint41
 
         internal void RaiseOnRelationCreate(RelationshipEventArgs args)
         {
-            EventHandler<RelationshipEventArgs> handler = onRelationCreate;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onRelationCreate?.Invoke(this, args);
         }
         bool IRelationshipEvents.HasRegisteredOnRelationCreateHandlers { get { return onRelationCreate != null; } }
-        private event EventHandler<RelationshipEventArgs> onRelationCreate;
+        private event EventHandler<RelationshipEventArgs>? onRelationCreate;
         event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreate
         {
             add { onRelationCreate += value; }
@@ -315,12 +313,10 @@ namespace Blueprint41
 
         internal void RaiseOnRelationCreated(RelationshipEventArgs args)
         {
-            EventHandler<RelationshipEventArgs> handler = onRelationCreated;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onRelationCreated?.Invoke(this, args);
         }
         bool IRelationshipEvents.HasRegisteredOnRelationCreatedHandlers { get { return onRelationCreated != null; } }
-        private event EventHandler<RelationshipEventArgs> onRelationCreated;
+        private event EventHandler<RelationshipEventArgs>? onRelationCreated;
         event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreated
         {
             add { onRelationCreated += value; }
@@ -329,12 +325,10 @@ namespace Blueprint41
 
         internal void RaiseOnRelationDelete(RelationshipEventArgs args)
         {
-            EventHandler<RelationshipEventArgs> handler = onRelationDelete;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onRelationDelete?.Invoke(this, args);
         }
         bool IRelationshipEvents.HasRegisteredOnRelationDeleteHandlers { get { return onRelationDelete != null; } }
-        private event EventHandler<RelationshipEventArgs> onRelationDelete;
+        private event EventHandler<RelationshipEventArgs>? onRelationDelete;
         event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDelete
         {
             add { onRelationDelete += value; }
@@ -343,12 +337,10 @@ namespace Blueprint41
 
         internal void RaiseOnRelationDeleted(RelationshipEventArgs args)
         {
-            EventHandler<RelationshipEventArgs> handler = onRelationDeleted;
-            if ((object)handler != null)
-                handler.Invoke(this, args);
+            onRelationDeleted?.Invoke(this, args);
         }
         bool IRelationshipEvents.HasRegisteredOnRelationDeletedHandlers { get { return onRelationDeleted != null; } }
-        private event EventHandler<RelationshipEventArgs> onRelationDeleted;
+        private event EventHandler<RelationshipEventArgs>? onRelationDeleted;
         event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDeleted
         {
             add { onRelationDeleted += value; }
@@ -357,19 +349,19 @@ namespace Blueprint41
 
         #endregion
 
-        private string ComputeAliasName(string name, string neo4JRelationshipType, Property outProperty)
+        private string ComputeAliasName(string? name, string? neo4JRelationshipType, Property? outProperty)
         {
-            if (name != null)
+            if (!(name is null))
                 return name;
 
             return ComputeNeo4JName(name, neo4JRelationshipType, outProperty);
         }
-        private string ComputeNeo4JName(string name, string neo4JRelationshipType, Property outProperty)
+        private string ComputeNeo4JName(string? name, string? neo4JRelationshipType, Property? outProperty)
         {
-            if (neo4JRelationshipType != null)
+            if (!(neo4JRelationshipType is null))
                 return neo4JRelationshipType;
 
-            if (name != null)
+            if (!(name is null))
                 return name;
 
             return string.Format("{0}_{1}", InEntity.Name.ToUpperInvariant(), OutEntity.Name.ToUpperInvariant());

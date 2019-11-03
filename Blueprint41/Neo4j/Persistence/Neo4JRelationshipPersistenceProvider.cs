@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Neo4j.Driver.V1;
 using Blueprint41.Dynamic;
 using Blueprint41.Neo4j.Refactoring;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Blueprint41.Neo4j.Persistence
 {
@@ -38,7 +39,7 @@ namespace Blueprint41.Neo4j.Persistence
                target.Relationship.Neo4JRelationshipType,
                targetEntity.GetDbName("out"));
 
-            Dictionary<string, object> parameters2 = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters2 = new Dictionary<string, object?>();
             parameters2.Add("key", parent.GetKey());
 
             List<CollectionItem> items = new List<CollectionItem>();
@@ -46,7 +47,11 @@ namespace Blueprint41.Neo4j.Persistence
 
             foreach (var record in result)
             {
-                OGM item = ReadNode(parent, targetEntity, record.Values["out"].As<INode>());
+                INode node = record.Values["out"].As<INode>();
+                if (node is null)
+                    continue;
+
+                OGM item = ReadNode(parent, targetEntity, node);
                 IRelationship rel = record.Values["rel"].As<IRelationship>();
 
                 DateTime? startDate = null;
@@ -54,7 +59,7 @@ namespace Blueprint41.Neo4j.Persistence
 
                 if (target.Relationship.IsTimeDependent)
                 {
-                    object value;
+                    object? value;
                     if (rel.Properties.TryGetValue(target.Relationship.StartDate, out value))
                         startDate = Conversion<long, DateTime>.Convert((long)value);
                     if (rel.Properties.TryGetValue(target.Relationship.EndDate, out value))
@@ -75,8 +80,12 @@ namespace Blueprint41.Neo4j.Persistence
             Dictionary<object, OGM> parentDict = new Dictionary<object, OGM>();
             foreach (OGM parent in parents)
             {
-                if(!parentDict.ContainsKey(parent.GetKey()))
-                    parentDict.Add(parent.GetKey(), parent);
+                object? key = parent.GetKey();
+                if (key is null)
+                    continue;
+
+                if (!parentDict.ContainsKey(key))
+                    parentDict.Add(key, parent);
             }
 
             string matchClause = string.Empty;
@@ -98,7 +107,7 @@ namespace Blueprint41.Neo4j.Persistence
                targetEntity.GetDbName("out"),
                targetEntity.Key.Name);
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("keys", parents.Select(item => item.GetKey()).ToArray());
 
             if (parents.Any(parent => parent.GetEntity() != target.Parent.GetEntity()))
@@ -128,7 +137,7 @@ namespace Blueprint41.Neo4j.Persistence
                 OGM parent = parentDict[index.SourceEntityKey];
                 foreach (var item in itemsCache[index.TargetEntityKey])
                 {
-                    OGM child = ReadNode(parent, targetEntity, item);
+                    OGM? child = ReadNode(parent, targetEntity, item);
                     items.Add(target.NewCollectionItem(parent, child, index.StartDate, index.EndDate));
                 }
             }
@@ -156,14 +165,14 @@ namespace Blueprint41.Neo4j.Persistence
                 );
             }
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("keys", keys.Distinct().ToList());
             var result = Neo4jTransaction.Run(match, parameters);
 
             Dictionary<object, List<INode>> retval = new Dictionary<object, List<INode>>();
             foreach (var record in result)
             {
-                List<INode> items;
+                List<INode>? items;
                 if (!retval.TryGetValue(record.Values["key"].As<object>(), out items))
                 {
                     items = new List<INode>();
@@ -176,13 +185,13 @@ namespace Blueprint41.Neo4j.Persistence
         }
         private OGM ReadNode(OGM parent, Entity targetEntity, INode node)
         {
-            object keyObject;
+            object? keyObject;
             node.Properties.TryGetValue(targetEntity.Key?.Name, out keyObject);
 
-            string typeName = null;
+            string? typeName = null;
             if (targetEntity.NodeType != null)
             {
-                object nodeType;
+                object? nodeType;
                 if (node.Properties.TryGetValue(targetEntity.NodeType.Name, out nodeType))
                     typeName = nodeType as string;
             }
@@ -198,10 +207,10 @@ namespace Blueprint41.Neo4j.Persistence
             if (typeName == null)
                 throw new NotSupportedException("The concrete type of the node could not be determined.");
 
-            OGM item = null;
+            OGM? item = null;
             if (keyObject != null)
             {
-                item = Transaction.Current.GetEntityByKey(typeName, keyObject);
+                item = Transaction.RunningTransaction.GetEntityByKey(typeName, keyObject);
                 if (item != null &&
                     (item.PersistenceState == PersistenceState.HasUid
                         ||
@@ -210,29 +219,32 @@ namespace Blueprint41.Neo4j.Persistence
                     item.SetData(node.Properties);
                     item.PersistenceState = PersistenceState.Loaded;
                 }
-            }
 
-            if (item == null)
-            {
-                if (targetEntity.Parent.IsUpgraded)
+                if (item == null)
                 {
-                    Type type = typeCache.TryGetOrAdd(typeName, key =>
+                    if (targetEntity.Parent.IsUpgraded)
                     {
-                        type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
-                        if (type == null)
-                            throw new NotSupportedException();
+                        Type type = typeCache.TryGetOrAdd(typeName, key =>
+                        {
+                            type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
+                            if (type == null)
+                                throw new NotSupportedException();
 
-                        return type;
-                    });
-                    item = (OGM)Activator.CreateInstance(type);
+                            return type;
+                        });
+                        item = (OGM)Activator.CreateInstance(type)!;
+                    }
+                    else
+                        item = new DynamicEntity(targetEntity, Parser.ShouldExecute);
+
+                    item.SetData(node.Properties);
+                    item.SetKey(keyObject);
+                    item.PersistenceState = PersistenceState.Loaded;
                 }
-                else
-                    item = new DynamicEntity(targetEntity, Parser.ShouldExecute);
-
-                item.SetData(node.Properties);
-                item.SetKey(item.GetKey());
-                item.PersistenceState = PersistenceState.Loaded;
             }
+
+            if (item is null)
+                throw new InvalidOperationException("Could not load object from node properties.");
 
             return item;
         }
@@ -249,12 +261,12 @@ namespace Blueprint41.Neo4j.Persistence
                 outItem.GetEntity().Key.Name);
             string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr += {{node}}", relationship.Neo4JRelationshipType);
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.Current.TransactionDate));
+            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
             if (timedependent)
             {
                 DateTime startDate = moment.HasValue ? moment.Value : DateTime.MinValue;
@@ -272,7 +284,7 @@ namespace Blueprint41.Neo4j.Persistence
             Checks(relationship, inItem, outItem);
 
             string cypher;
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
 
@@ -320,7 +332,7 @@ namespace Blueprint41.Neo4j.Persistence
         }
         public override void RemoveAll(Relationship relationship, DirectionEnum direction, OGM item, DateTime? moment, bool timedependent)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
             string match = (direction == DirectionEnum.Out) ? "MATCH (item:{0})<-[r:{1}]-(out:{2})" : "MATCH (item:{0})-[r:{1}]->(out:{2})";
@@ -392,7 +404,7 @@ namespace Blueprint41.Neo4j.Persistence
                     relationship.StartDate,
                     relationship.EndDate);
 
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                Dictionary<string, object?> parameters = new Dictionary<string, object?>();
                 parameters.Add("inKey", inItem.GetKey());
                 parameters.Add("outKey", outItem.GetKey());
                 parameters.Add("startDate", Conversion<DateTime, long>.Convert(startDate ?? DateTime.MinValue));
@@ -435,14 +447,14 @@ namespace Blueprint41.Neo4j.Persistence
             string create = string.Format("CREATE (in)-[outr:{0} {{node}}]->(out)", relationship.Neo4JRelationshipType);
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.Current.TransactionDate));
+            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
             if (relationship.IsTimeDependent)
             {
                 node.Add(relationship.StartDate, Conversion<DateTime, long>.Convert(startDate ?? DateTime.MinValue));
                 node.Add(relationship.EndDate, Conversion<DateTime, long>.Convert(endDate ?? DateTime.MaxValue));
             }
 
-            Dictionary<string, object> parameters2 = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters2 = new Dictionary<string, object?>();
             parameters2.Add("inKey", inItem.GetKey());
             parameters2.Add("outKey", outItem.GetKey());
             parameters2.Add("node", node);
@@ -466,7 +478,7 @@ namespace Blueprint41.Neo4j.Persistence
                 outItem.GetEntity().Key.Name,
                 relationship.StartDate);
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
             parameters.Add("moment", Conversion<DateTime, long>.Convert(moment ?? DateTime.MinValue));
@@ -474,6 +486,5 @@ namespace Blueprint41.Neo4j.Persistence
 
             Neo4jTransaction.Run(match, parameters);
         }
-
     }
 }

@@ -63,7 +63,7 @@ namespace Blueprint41
 
         public string NextFunctionID()
         {
-            return Transaction.Current.NodePersistenceProvider.NextFunctionID(this);
+            return Transaction.RunningTransaction.NodePersistenceProvider.NextFunctionID(this);
         }
         #endregion
     }

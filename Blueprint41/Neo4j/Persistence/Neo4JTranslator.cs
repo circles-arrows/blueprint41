@@ -8,29 +8,29 @@ namespace Blueprint41.Neo4j.Model
 {
     internal class Neo4JTranslator
     {
-        public object GenerateCreateNode()
+        public object? GenerateCreateNode()
         {
             return null;
         }
-        public object GenerateUpdateNode()
+        public object? GenerateUpdateNode()
         {
             return null;
         }
-        public object GenerateDeleteNode()
+        public object? GenerateDeleteNode()
         {
             return null;
         }
 
 
-        public object GenerateCreateRelation()
+        public object? GenerateCreateRelation()
         {
             return null;
         }
-        public object GenerateUpdateRelation()
+        public object? GenerateUpdateRelation()
         {
             return null;
         }
-        public object GenerateDeleteRelation()
+        public object? GenerateDeleteRelation()
         {
             return null;
         }

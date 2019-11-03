@@ -12,7 +12,7 @@ namespace Blueprint41.Query
         protected internal AliasResult()
         {
         }
-        protected AliasResult(AliasResult parent, string function, object[] arguments = null, Type type = null)
+        protected AliasResult(AliasResult parent, string function, object[]? arguments = null, Type? type = null)
         {
             Alias = parent;
             Node = parent.Node;
@@ -20,10 +20,10 @@ namespace Blueprint41.Query
             FunctionArgs = arguments ?? emptyArguments;
             OverridenReturnType = type;
         }
-        public AliasResult Alias { get; private set; }
-        private string FunctionText { get; set; }
-        private object[] FunctionArgs { get; set; }
-        private Type OverridenReturnType { get; set; }
+        public AliasResult? Alias { get; private set; }
+        private string? FunctionText { get; set; }
+        private object[]? FunctionArgs { get; set; }
+        private Type? OverridenReturnType { get; set; }
 
 
         public static QueryCondition operator ==(AliasResult a, AliasResult b)
@@ -43,7 +43,7 @@ namespace Blueprint41.Query
             return new QueryCondition(a, Operator.NotEquals, b);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return base.Equals(obj);
         }
@@ -52,8 +52,8 @@ namespace Blueprint41.Query
             return base.GetHashCode();
         }
 
-        public string AliasName { get; protected internal set; }
-        public Node Node { get; protected set; }
+        public string? AliasName { get; protected internal set; }
+        public Node? Node { get; protected set; }
 
         protected internal override void Compile(CompileState state)
         {
@@ -66,7 +66,7 @@ namespace Blueprint41.Query
                 string[] compiledArgs = FunctionArgs.Select(arg => state.Preview(GetCompile(arg), state)).ToArray();
                 string compiledText = string.Format(FunctionText.Replace("{base}", "{{base}}"), compiledArgs);
 
-                if ((object)Alias == null)
+                if (Alias is null)
                 {
                     state.Text.Append(compiledText);
                 }
@@ -144,7 +144,7 @@ namespace Blueprint41.Query
         {
             alias = new AliasResult()
             {
-                AliasName = aliasName
+                AliasName = aliasName,
             };
             return new AsResult(this, aliasName);
         }
@@ -158,28 +158,32 @@ namespace Blueprint41.Query
             return new AsResult(new MiscResult("properties({0})", new object[] { this }, null), alias);
         }
 
-        public override string GetFieldName()
+        public override string? GetFieldName()
         {
             return AliasName;
         }
 
-        public override Type GetResultType()
+        public override Type? GetResultType()
         {
-            if (OverridenReturnType == null && (object)Alias != null)
-                return Alias.GetResultType();
-
-            return OverridenReturnType;
+            return OverridenReturnType ?? Alias?.GetResultType() ?? null;
         }
 
         new public StringResult ToString()
         {
+            if (AliasName is null)
+                throw new InvalidOperationException("You cannot use the labels function in this context.");
+
             return new StringResult(AliasName, null, typeof(string));
         }
 
-        public virtual IReadOnlyDictionary<string, FieldResult> AliasFields { get { return null; }  }
+        public virtual IReadOnlyDictionary<string, FieldResult> AliasFields { get { return emptyAliasFields; }  }
+        private static Dictionary<string, FieldResult> emptyAliasFields = new Dictionary<string, FieldResult>();
 
         public StringListResult Labels()
         {
+            if (AliasName is null)
+                throw new InvalidOperationException("You cannot use the labels function in this context.");
+
             return new StringListResult(null, "LABELS({0})", new object[] { AliasName }, typeof(string));
         }
         public AliasListResult Collect()

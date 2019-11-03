@@ -39,7 +39,7 @@ namespace Blueprint41.Core
             }
         }
 
-        private MethodInfo getConverter = null;
+        private MethodInfo? getConverter = null;
         public MethodInfo GetGetConverter()
         {
             if (getConverter == null)
@@ -48,7 +48,7 @@ namespace Blueprint41.Core
             return getConverter;
         }
 
-        private MethodInfo setConverter = null;
+        private MethodInfo? setConverter = null;
         public MethodInfo GetSetConverter()
         {
             if (setConverter == null)

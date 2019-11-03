@@ -11,8 +11,8 @@ namespace Blueprint41
     public sealed class ObservableList<T> : IList<T>, INotifyChanged<T>
     {
         private List<T> InnerList;
-        public event NotifyChangedEventHandler<T> BeforeCollectionChanged;
-        public event NotifyChangedEventHandler<T> CollectionChanged;
+        public event NotifyChangedEventHandler<T>? BeforeCollectionChanged;
+        public event NotifyChangedEventHandler<T>? CollectionChanged;
 
         public ObservableList()
         {
@@ -31,7 +31,12 @@ namespace Blueprint41
             }
             set
             {
-                if ((object)InnerList[index] != (object)value)
+                T item = InnerList[index];
+
+                if (item is null && value is null)
+                    return;
+
+                if (item is null || value is null || item.Equals(value))
                 {
                     NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Replace, value, InnerList[index], index);
                     BeforeCollectionChanged?.Invoke(this, eventArgs);

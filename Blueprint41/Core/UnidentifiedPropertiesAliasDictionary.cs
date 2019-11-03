@@ -23,7 +23,7 @@ namespace Blueprint41.Core
         {
             get
             {
-                FieldResult value;
+                FieldResult? value;
                 if (!Items.TryGetValue(key, out value))
                     value = new MiscResult(Alias, key, Entity, null);
 

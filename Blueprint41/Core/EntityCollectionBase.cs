@@ -14,9 +14,13 @@ namespace Blueprint41.Core
     {
         public EntityCollectionBase(OGM parent, Property property)
         {
+            if (property.Relationship is null)
+                throw new NotSupportedException("The property is not a relationship property.");
+
             Parent = parent;
             Relationship = property.Relationship;
             Direction = property.Direction;
+            DbTransaction = Transaction.Current;
 
             switch (Direction)
             {
@@ -42,8 +46,7 @@ namespace Blueprint41.Core
 
             if (parent is OGMImpl || (parent is DynamicEntity && ((DynamicEntity)parent).ShouldExecute))
             {
-                Transaction.Current.Register(this);
-                PersistenceProvider = Transaction.Current.RelationshipPersistenceProvider;
+                RunningTransaction.Register(this);
             }
         }
 
@@ -51,9 +54,9 @@ namespace Blueprint41.Core
 
         public OGM Parent { get; private set; }
         public Entity ParentEntity { get; private set; }
-        public Property ParentProperty { get; private set; }
+        public Property? ParentProperty { get; private set; }
         public Entity ForeignEntity { get; private set; }
-        public Property ForeignProperty { get; private set; }
+        public Property? ForeignProperty { get; private set; }
 
         public Relationship Relationship { get; private set; }
         public DirectionEnum Direction { get; private set; }
@@ -156,8 +159,7 @@ namespace Blueprint41.Core
                 return;
             }
 
-            Transaction trans = Transaction.Current;
-
+            Transaction trans = Transaction.RunningTransaction;
             if (trans.Mode == OptimizeFor.RecursiveSubGraphAccess)
             {
                 trans.LoadAll(this);
@@ -173,7 +175,23 @@ namespace Blueprint41.Core
 
         #endregion
 
-        public Transaction Transaction { get; internal set; }
-        internal RelationshipPersistenceProvider PersistenceProvider { get; set; }
+        public Transaction? DbTransaction { get; internal set; }
+        protected private Transaction RunningTransaction
+        {
+            get
+            {
+                Transaction? trans = DbTransaction;
+
+                if (trans is null)
+                    throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
+
+                if (!trans.InTransaction)
+                    throw new InvalidOperationException("The transaction was already committed or rolled back.");
+
+                return trans;
+            }
+        }
+
+        internal RelationshipPersistenceProvider PersistenceProvider => RunningTransaction.RelationshipPersistenceProvider;
     }
 }

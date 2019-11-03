@@ -31,7 +31,7 @@ namespace Blueprint41.Query
         {
             throw new NotSupportedException();
         }
-        public override Type GetResultType()
+        public override Type? GetResultType()
         {
             return null;
         }

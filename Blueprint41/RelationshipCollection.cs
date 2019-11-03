@@ -14,7 +14,7 @@ namespace Blueprint41
         {
         }
 
-        public Relationship New(Entity inEntity, Entity outEntity, string name, string neo4jRelationshipType = null)
+        public Relationship New(Entity inEntity, Entity outEntity, string name, string? neo4jRelationshipType = null)
         {
             Relationship value = new Relationship(Parent,name, neo4jRelationshipType, inEntity, outEntity);
 

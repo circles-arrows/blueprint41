@@ -21,11 +21,13 @@ namespace Blueprint41.Query
 
         internal QueryCondition(object left, Operator op, object right)
         {
+            if (op == Operator.Boolean && (left as BooleanResult) is null)
+                throw new InvalidOperationException("The left side of an boolean operator must be of type BooleanResult");
+                    
             Left = left;
             Operator = op;
             Right = right;
         }
-
         public QueryCondition(BooleanResult booleanResult)
         {
             Left = booleanResult;
@@ -33,9 +35,9 @@ namespace Blueprint41.Query
             Right = null;
         }
 
-        private object Left;
+        private object? Left;
         private Operator Operator;
-        private object Right;
+        private object? Right;
 
         internal void Compile(CompileState state)
         {
@@ -45,13 +47,13 @@ namespace Blueprint41.Query
             if (Operator == Operator.Boolean)
             {
                 state.Text.Append("(");
-                ((BooleanResult)Left).Compile(state);
+                ((BooleanResult)Left!).Compile(state);
                 state.Text.Append(")");
                 return;
             }
 
-            Type leftType = GetOperandType(Left);
-            Type rightType = GetOperandType(Right);
+            Type? leftType = GetOperandType(Left);
+            Type? rightType = GetOperandType(Right);
 
             if (leftType != null && rightType != null)
             {
@@ -77,7 +79,7 @@ namespace Blueprint41.Query
 
             if (Right is Parameter)
             {
-                Parameter rightParameter = Right as Parameter;
+                Parameter rightParameter = (Parameter)Right; 
                 if (rightParameter.IsConstant && rightParameter.Value == null)
                 {
                     Operator.Compile(state, true);
@@ -98,21 +100,18 @@ namespace Blueprint41.Query
             if (Operator == Operator.Not)
                 state.Text.Append(")");
 
-
-
             state.Text.Append(")");
         }
 
 
-        private object Substitute(CompileState state, object operand)
+        private object? Substitute(CompileState state, object? operand)
         {
-            Type type = operand?.GetType();
-
             if (operand == null)
-            {
                 return null;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Result)))
+
+            Type type = operand.GetType();
+
+            if (type.IsSubclassOfOrSelf(typeof(Result)))
             {
                 return operand;
             }
@@ -138,15 +137,14 @@ namespace Blueprint41.Query
             return type.GetElementType() ?? (typeof(IEnumerable).IsAssignableFrom(type) ? type.GenericTypeArguments.FirstOrDefault() : null);
         }
 
-        private Type GetOperandType(object operand)
+        private Type? GetOperandType(object? operand)
         {
-            Type type = operand?.GetType();
-
             if (operand == null)
-            {
                 return null;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Result)))
+
+            Type type = operand.GetType();
+
+            if (type.IsSubclassOfOrSelf(typeof(Result)))
             {
                 return ((Result)operand).GetResultType();
             }
@@ -164,15 +162,14 @@ namespace Blueprint41.Query
             }
         }
 
-        private void CompileOperand(CompileState state, object operand)
+        private void CompileOperand(CompileState state, object? operand)
         {
-            Type type = operand?.GetType();
-
             if (operand == null)
-            {
-                state.Text.Append("NULL");
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Result)))
+                return;
+
+            Type type = operand.GetType(); 
+            
+            if (type.IsSubclassOfOrSelf(typeof(Result)))
             {
                 ((Result)operand).Compile(state);
             }
@@ -186,7 +183,7 @@ namespace Blueprint41.Query
             }
             else
             {
-                state.Errors.Add($"The type {type.Name} is not supported for compilation.");
+                state.Errors.Add($"The type {type!.Name} is not supported for compilation.");
                 state.Text.Append(operand.ToString());
             }
         }

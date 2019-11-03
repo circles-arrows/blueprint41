@@ -14,14 +14,14 @@ namespace Blueprint41.Core
             NodePersistenceProvider = GetNodePersistenceProvider();
             RelationshipPersistenceProvider = GetRelationshipPersistenceProvider();
 
-            convertToStoredType = new Lazy<Dictionary<Type, Conversion>>(
+            convertToStoredType = new Lazy<Dictionary<Type, Conversion?>>(
             delegate ()
             {
                 return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.ReturnType, item.PersistedType));
 
             }, true);
 
-            convertFromStoredType = new Lazy<Dictionary<Type, Conversion>>(
+            convertFromStoredType = new Lazy<Dictionary<Type, Conversion?>>(
             delegate ()
             {
                 return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.PersistedType, item.ReturnType));
@@ -39,11 +39,11 @@ namespace Blueprint41.Core
 
         public abstract IEnumerable<TypeMapping> SupportedTypeMappings { get; }
 
-        private Lazy<Dictionary<Type, Conversion>> convertToStoredType;
-        internal Dictionary<Type, Conversion> ConvertToStoredTypeCache { get { return convertToStoredType.Value; } }
+        private Lazy<Dictionary<Type, Conversion?>> convertToStoredType;
+        internal Dictionary<Type, Conversion?> ConvertToStoredTypeCache { get { return convertToStoredType.Value; } }
 
-        private Lazy<Dictionary<Type, Conversion>> convertFromStoredType;
-        internal Dictionary<Type, Conversion> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
+        private Lazy<Dictionary<Type, Conversion?>> convertFromStoredType;
+        internal Dictionary<Type, Conversion?> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
 
 
         public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4JPersistenceProvider(null, null, null, false);
@@ -61,11 +61,11 @@ namespace Blueprint41.Core
 
         #region Conversion
 
-        public object ConvertToStoredType<TValue>(TValue value)
+        public object? ConvertToStoredType<TValue>(TValue value)
         {
             return ConvertToStoredTypeCacheVia<TValue>.Convert(this, value);
         }
-        public object ConvertToStoredType(Type returnType, object value)
+        public object? ConvertToStoredType(Type returnType, object? value)
         {
             if (returnType == null)
                 return value;
@@ -74,16 +74,16 @@ namespace Blueprint41.Core
             if (!ConvertToStoredTypeCache.TryGetValue(returnType, out converter))
                 return value;
 
-            if ((object)converter == null)
+            if (converter is null)
                 return value;
 
             return converter.Convert(value);
         }
-        public TReturnType ConvertFromStoredType<TReturnType>(object value)
+        public TReturnType ConvertFromStoredType<TReturnType>(object? value)
         {
-            return (TReturnType)ConvertFromStoredTypeCacheVia<TReturnType>.Convert(this, value);
+            return (TReturnType)ConvertFromStoredTypeCacheVia<TReturnType>.Convert(this, value)!;
         }
-        public object ConvertFromStoredType(Type returnType, object value)
+        public object? ConvertFromStoredType(Type returnType, object? value)
         {
             if (returnType == null)
                 return value;
@@ -92,20 +92,20 @@ namespace Blueprint41.Core
             if (!ConvertFromStoredTypeCache.TryGetValue(returnType, out converter))
                 return value;
 
-            if ((object)converter == null)
+            if (converter is null)
                 return value;
 
             return converter.Convert(value);
         }
 
-        public Type GetStoredType<TReturnType>()
+        public Type? GetStoredType<TReturnType>()
         {
             ConvertFromStoredTypeCacheVia<TReturnType>.Initialize(this);
             return ConvertFromStoredTypeCacheVia<TReturnType>.Converter?.FromType ?? typeof(TReturnType);
         }
-        public Type GetStoredType(Type returnType)
+        public Type? GetStoredType(Type returnType)
         {
-            Conversion converter;
+            Conversion? converter;
             if (!ConvertFromStoredTypeCache.TryGetValue(returnType, out converter))
                 return null;
 
@@ -114,10 +114,10 @@ namespace Blueprint41.Core
 
         private class ConvertToStoredTypeCacheVia<TReturnType>
         {
-            public static Conversion Converter = null;
+            public static Conversion? Converter = null;
             public static bool IsInitialized = false;
 
-            public static object Convert(PersistenceProvider factory, object value)
+            public static object? Convert(PersistenceProvider factory, object? value)
             {
                 Initialize(factory);
 
@@ -144,10 +144,10 @@ namespace Blueprint41.Core
         }
         private class ConvertFromStoredTypeCacheVia<TReturnType>
         {
-            public static Conversion Converter = null;
+            public static Conversion? Converter = null;
             public static bool IsInitialized = false;
 
-            public static object Convert(PersistenceProvider factory, object value)
+            public static object? Convert(PersistenceProvider factory, object? value)
             {
                 Initialize(factory);
 

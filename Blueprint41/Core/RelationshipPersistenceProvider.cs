@@ -38,7 +38,7 @@ namespace Blueprint41.Core
                 Dictionary<OGM, CollectionItemList> result = new Dictionary<OGM, CollectionItemList>();
                 IEnumerable<CollectionItem> sorted = items.OrderBy(item => item.Parent.GetKey());
 
-                CollectionItemList current = null;
+                CollectionItemList? current = null;
                 foreach (CollectionItem item in sorted)
                 {
                     if (current == null || current.Parent != item.Parent)

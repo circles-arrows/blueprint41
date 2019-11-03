@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Core
 {
-    public class UnidentifiedPropertyCollection : IDictionary<string, object>
+    public class UnidentifiedPropertyCollection : IDictionary<string, object?>
     {
         internal UnidentifiedPropertyCollection(OGM parent)
         {
@@ -17,19 +17,19 @@ namespace Blueprint41.Core
         public UnidentifiedPropertyCollection(UnidentifiedPropertyCollection source)
         {
             Parent = source.Parent;
-            foreach (KeyValuePair<string, object> item in source.UnidentifiedBacking)
+            foreach (KeyValuePair<string, object?> item in source.UnidentifiedBacking)
                 AddInternal(item.Key, item.Value);
         }
 
-        private Dictionary<string, object> UnidentifiedBacking = new Dictionary<string, object>();
+        private Dictionary<string, object?> UnidentifiedBacking = new Dictionary<string, object?>();
         private OGMImpl Parent;
 
-        internal void ForEachInternal(Action<KeyValuePair<string, object>> action)
+        internal void ForEachInternal(Action<KeyValuePair<string, object?>> action)
         {
-            foreach (KeyValuePair<string, object> item in UnidentifiedBacking)
+            foreach (KeyValuePair<string, object?> item in UnidentifiedBacking)
                 action.Invoke(item);
         }
-        internal void AddInternal(string key, object value)
+        internal void AddInternal(string key, object? value)
         {
             UnidentifiedBacking.Add(key, value);
         }
@@ -38,7 +38,7 @@ namespace Blueprint41.Core
             UnidentifiedBacking.Clear();
         }
 
-        private object RepairList(object value)
+        private object? RepairList(object? value)
         {
             if (value is IList list)
             {
@@ -54,7 +54,7 @@ namespace Blueprint41.Core
 
         #region IDictionary<string, object>
 
-        public object this[string key]
+        public object? this[string key]
         {
             get
             {
@@ -95,7 +95,7 @@ namespace Blueprint41.Core
             }
         }
 
-        public ICollection<object> Values
+        public ICollection<object?> Values
         {
             get
             {
@@ -104,13 +104,13 @@ namespace Blueprint41.Core
             }
         }
 
-        public void Add(KeyValuePair<string, object> item)
+        public void Add(KeyValuePair<string, object?> item)
         {
             Parent.LazySet();
             UnidentifiedBacking.Add(item.Key, RepairList(item.Value));
         }
 
-        public void Add(string key, object value)
+        public void Add(string key, object? value)
         {
             Parent.LazySet();
             UnidentifiedBacking.Add(key, RepairList(value));
@@ -122,7 +122,7 @@ namespace Blueprint41.Core
             UnidentifiedBacking.Clear();
         }
 
-        public bool Contains(KeyValuePair<string, object> item)
+        public bool Contains(KeyValuePair<string, object?> item)
         {
             return UnidentifiedBacking.Contains(item);
         }
@@ -134,19 +134,19 @@ namespace Blueprint41.Core
         }
 
         [Obsolete("This method is not supported.", true)]
-        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
         {
             Parent.LazyGet();
             return UnidentifiedBacking.GetEnumerator();
         }
 
         [Obsolete("Please use \"public bool Remove(string key)\" instead.", true)]
-        public bool Remove(KeyValuePair<string, object> item)
+        public bool Remove(KeyValuePair<string, object?> item)
         {
             throw new NotImplementedException();
         }
@@ -157,7 +157,7 @@ namespace Blueprint41.Core
             return UnidentifiedBacking.Remove(key);
         }
 
-        public bool TryGetValue(string key, out object value)
+        public bool TryGetValue(string key, out object? value)
         {
             Parent.LazyGet();
             return UnidentifiedBacking.TryGetValue(key, out value);

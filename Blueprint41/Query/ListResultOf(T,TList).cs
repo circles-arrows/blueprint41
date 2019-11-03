@@ -13,19 +13,19 @@ namespace Blueprint41.Query
     {
         static ListResult()
         {
-            newResultCtor = new Lazy<Func<AliasResult, string, object[], Type, TResult>>(delegate ()
+            newResultCtor = new Lazy<Func<AliasResult, string, object[]?, Type?, TResult>>(delegate ()
             {
                 var exp = GetExp<TResult>(typeof(AliasResult), typeof(string), typeof(object[]), typeof(Type));
-                return Expression.Lambda<Func<AliasResult, string, object[], Type, TResult>>(exp.body, exp.parameters).Compile();
+                return Expression.Lambda<Func<AliasResult, string, object[]?, Type?, TResult>>(exp.body, exp.parameters).Compile();
             }, true);
-            newListCtor = new Lazy<Func<AliasResult, string, object[], Type, TList>>(delegate ()
+            newListCtor = new Lazy<Func<AliasResult, string, object[]?, Type?, TList>>(delegate ()
             {
                 var exp = GetExp<TList>(typeof(AliasResult), typeof(string), typeof(object[]), typeof(Type));
-                return Expression.Lambda<Func<AliasResult, string, object[], Type, TList>>(exp.body, exp.parameters).Compile();
+                return Expression.Lambda<Func<AliasResult, string, object[]?, Type?, TList>>(exp.body, exp.parameters).Compile();
             }, true);
         }
 
-        protected ListResult(AliasResult parent, string function, object[] arguments = null, Type type = null): base(parent, function, arguments, type) { }
+        protected ListResult(AliasResult parent, string function, object[]? arguments = null, Type? type = null): base(parent, function, arguments, type) { }
 
         private static (Expression body, ParameterExpression[] parameters) GetExp<T>(params Type[] types)
         {
@@ -33,7 +33,10 @@ namespace Blueprint41.Query
             for (int index = 0; index < types.Length; index++)
                 parameters[index] = Expression.Parameter(types[index]);
 
-            ConstructorInfo ctor = typeof(T).GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
+            ConstructorInfo? ctor = typeof(T).GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
+            if (ctor is null)
+                throw new ArgumentException($"The type {typeof(T).Name} is not supported for use in a ListResult");
+
             Expression body = Expression.New(ctor, parameters);
 
             return (body, parameters);
@@ -70,17 +73,17 @@ namespace Blueprint41.Query
             throw new NotSupportedException();
         }
 
-        protected internal TResult NewResult(string function, object[] arguments = null, Type type = null)
+        protected internal TResult NewResult(string function, object[]? arguments = null, Type? type = null)
         {
-            return newResultCtor.Value.Invoke(this, function, arguments, type);
+            return newResultCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private  static Lazy<Func<AliasResult, string, object[], Type, TResult>> newResultCtor = null;
+        private  static Lazy<Func<AliasResult, string, object[]?, Type?, TResult>>? newResultCtor = null;
 
-        protected internal TList NewList(string function, object[] arguments = null, Type type = null)
+        protected internal TList NewList(string function, object[]? arguments = null, Type? type = null)
         {
-            return newListCtor.Value.Invoke(this, function, arguments, type);
+            return newListCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private static Lazy<Func<AliasResult, string, object[], Type, TList>> newListCtor = null;
+        private static Lazy<Func<AliasResult, string, object[]?, Type?, TList>>? newListCtor = null;
     }
     public abstract class ListResult<TList, TResult, TType> : FieldResult
         where TList : ListResult<TList, TResult, TType>
@@ -88,15 +91,15 @@ namespace Blueprint41.Query
     {
         static ListResult()
         {
-            newResultCtor = new Lazy<Func<FieldResult, string, object[], Type, TResult>>(delegate ()
+            newResultCtor = new Lazy<Func<FieldResult, string, object[]?, Type?, TResult>>(delegate ()
             {
                 var exp = GetExp<TResult>(typeof(FieldResult), typeof(string), typeof(object[]), typeof(Type));
-                return Expression.Lambda<Func<FieldResult, string, object[], Type, TResult>>(exp.body, exp.parameters).Compile();
+                return Expression.Lambda<Func<FieldResult, string, object[]?, Type?, TResult>>(exp.body, exp.parameters).Compile();
             }, true);
-            newListCtor = new Lazy<Func<FieldResult, string, object[], Type, TList>>(delegate ()
+            newListCtor = new Lazy<Func<FieldResult, string, object[]?, Type?, TList>>(delegate ()
             {
                 var exp = GetExp<TList>(typeof(FieldResult), typeof(string), typeof(object[]), typeof(Type));
-                return Expression.Lambda<Func<FieldResult, string, object[], Type, TList>>(exp.body, exp.parameters).Compile();
+                return Expression.Lambda<Func<FieldResult, string, object[]?, Type?, TList>>(exp.body, exp.parameters).Compile();
             }, true);
         }
         private static (Expression body, ParameterExpression[] parameters) GetExp<T>(params Type[] types)
@@ -105,12 +108,15 @@ namespace Blueprint41.Query
             for (int index = 0; index < types.Length; index++)
                 parameters[index] = Expression.Parameter(types[index]);
 
-            ConstructorInfo ctor = typeof(T).GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
+            ConstructorInfo? ctor = typeof(T).GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, types, null);
+            if (ctor is null)
+                throw new ArgumentException($"The type {typeof(T).Name} is not supported for use in a ListResult");
+
             Expression body = Expression.New(ctor, parameters);
 
             return (body, parameters);
         }
-        protected ListResult(FieldResult parent, string function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        protected ListResult(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
         protected ListResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
 
         public TResult this[int index]
@@ -169,16 +175,16 @@ namespace Blueprint41.Query
             return new QueryCondition(new BooleanResult(this, "single(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
         }
 
-        protected internal TResult NewResult(string function, object[] arguments = null, Type type = null)
+        protected internal TResult NewResult(string function, object[]? arguments = null, Type? type = null)
         {
-            return newResultCtor.Value.Invoke(this, function, arguments, type);
+            return newResultCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private static Lazy<Func<FieldResult, string, object[], Type, TResult>> newResultCtor = null;
+        private static Lazy<Func<FieldResult, string, object[]?, Type?, TResult>>? newResultCtor = null;
 
-        protected internal TList NewList(string function, object[] arguments = null, Type type = null)
+        protected internal TList NewList(string function, object[]? arguments = null, Type? type = null)
         {
-            return newListCtor.Value.Invoke(this, function, arguments, type);
+            return newListCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private static Lazy<Func<FieldResult, string, object[], Type, TList>> newListCtor = null;
+        private static Lazy<Func<FieldResult, string, object[]?, Type?, TList>>? newListCtor = null;
     }
 }

@@ -3,6 +3,13 @@
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#
+	var referenceTypes = new List<string>()
+	{
+		"object",
+		"string",
+		"CompressedString",
+		"byte[]",
+	};
 
 	var conversions = new []
     {
@@ -55,6 +62,9 @@ using Blueprint41.TypeConversion;
 
 	foreach (var key in conversions)
     {
+		if (key[0].EndsWith("?"))
+			continue;
+
 		foreach (var value in conversions)
 		{
 			string kName = string.Concat(Char.ToUpper(key[0][0]), key[0].Substring(1)).Replace("?", "Nullable");
@@ -101,6 +111,9 @@ namespace Blueprint41.Neo4j.Persistence
 <#
 	foreach (var key in conversions)
     {
+		if (key[0].EndsWith("?"))
+			continue;
+
 		foreach (var value in conversions)
 		{
 #>
@@ -123,26 +136,38 @@ namespace Blueprint41.TypeConversion
 	foreach (var item in conversions)
     {
 		string name = string.Concat(Char.ToUpper(item[0][0]), item[0].Substring(1)).Replace("?", "Nullable");
-
+		bool[] nullable = new bool[]
+		{
+			(referenceTypes.Contains(item[0]) || item[0].EndsWith("?")),
+			(referenceTypes.Contains(item[1]) || item[1].EndsWith("?")),
+		};
+		string[] obj = new string[]
+		{
+			(nullable[0]) ? "object?" : "object",
+			(nullable[0] && !item[1].EndsWith("?")) ? string.Concat(item[1], "?") : item[1],
+			(nullable[0]) ? "" : "!",
+			(nullable[0] && !item[1].EndsWith("?")) ? "" : "!",
+			(nullable[0] && !item[0].EndsWith("?")) ? string.Concat(item[0], "?") : item[0],
+		};
 #>
-    internal class ListOfObjectToListOf<#= name #> : Conversion<List<object>, List<<#= item[0] #>>>
+    internal class ListOfObjectToListOf<#= name #> : Conversion<List<<#= obj[0] #>>?, List<<#= obj[4] #>>?>
     {
-        protected override List<<#= item[0] #>> Converter(List<object> value)
+        protected override List<<#= obj[4] #>>? Converter(List<<#= obj[0] #>>? value)
         {
-			if ((object)value == null)
+			if (value is null)
 				return null;
 
-            return value.Select(item => Conversion<<#= item[1] #>, <#= item[0] #>>.Convert((<#= item[1] #>)item)).ToList();
+            return value.Select(item => Conversion<<#= obj[1] #>, <#= item[0] #>>.Convert((<#= obj[1] #>)item)<#= obj[3] #>).ToList();
         }
     }	
-    internal class ListOf<#= name #>ToListOfObject : Conversion<List<<#= item[0] #>>, List<object>>
+    internal class ListOf<#= name #>ToListOfObject : Conversion<List<<#= obj[4] #>>?, List<<#= obj[0] #>>?>
     {
-        protected override List<object> Converter(List<<#= item[0] #>> value)
+        protected override List<<#= obj[0] #>>? Converter(List<<#= obj[4] #>>? value)
         {
-			if ((object)value == null)
+			if (value is null)
 				return null;
 
-            return value.Select(item => (object)Conversion<<#= item[0] #>, <#= item[1] #>>.Convert(item)).ToList();
+            return value.Select(item => (<#= obj[0] #>)Conversion<<#= item[0] #>, <#= item[1] #>>.Convert(item)<#= obj[2] #>).ToList();
         }
     }	
 <#
@@ -156,30 +181,48 @@ namespace Blueprint41.TypeConversion
 <#
 	foreach (var key in conversions)
     {
+		if (key[0].EndsWith("?"))
+			continue;
+
 		foreach (var value in conversions)
 		{
 			string kName = string.Concat(Char.ToUpper(key[0][0]), key[0].Substring(1)).Replace("?", "Nullable");
 			string vName = string.Concat(Char.ToUpper(value[0][0]), value[0].Substring(1)).Replace("?", "Nullable");
 
+			bool[] nullable = new bool[]
+			{
+				(referenceTypes.Contains(value[0]) || value[0].EndsWith("?")),
+				(referenceTypes.Contains(value[1]) || value[1].EndsWith("?")),
+				(referenceTypes.Contains(key[1])),
+			};
+			string[] obj = new string[]
+			{
+				(nullable[0]) ? "object?" : "object",
+				(nullable[0] && !value[1].EndsWith("?")) ? string.Concat(value[1], "?") : value[1],
+				(nullable[0]) ? "" : "!",
+				(nullable[0] && !value[1].EndsWith("?")) ? "" : "!",
+				(nullable[0] && !value[0].EndsWith("?")) ? string.Concat(value[0], "?") : value[0],
+				(nullable[2]) ? "!" : "",
+			};
 #>
-    internal class DictOfObjectObjectToDictOf<#= kName #><#= vName #> : Conversion<string, Dictionary<<#= key[0] #>, <#= value[0] #>>>
+    internal class DictOfObjectObjectToDictOf<#= kName #><#= vName #> : Conversion<string?, Dictionary<<#= key[0] #>, <#= obj[4] #>>?>
     {
-        protected override Dictionary<<#= key[0] #>, <#= value[0] #>> Converter(string value)
+        protected override Dictionary<<#= key[0] #>, <#= obj[4] #>>? Converter(string? value)
         {
-			if ((object)value == null)
+			if (value is null)
 				return null;
 
-			return value.FromJson<Dictionary<<#= key[1] #>, <#= value[1] #>>>().ToDictionary(item => Conversion<<#= key[1] #>, <#= key[0] #>>.Convert((<#= key[1] #>)item.Key), item => Conversion<<#= value[1] #>, <#= value[0] #>>.Convert((<#= value[1] #>)item.Value));
+			return value.FromJson<Dictionary<<#= key[1] #>, <#= value[1] #>>>().ToDictionary(item => Conversion<<#= key[1] #>, <#= key[0] #>>.Convert((<#= key[1] #>)item.Key)<#= obj[5] #>, item => Conversion<<#= value[1] #>, <#= obj[4] #>>.Convert((<#= value[1] #>)item.Value)<#= obj[3] #>);
         }
     }	
-    internal class DictOf<#= kName #><#= vName #>ToDictOfObjectObject : Conversion<Dictionary<<#= key[0] #>, <#= value[0] #>>, string>
+    internal class DictOf<#= kName #><#= vName #>ToDictOfObjectObject : Conversion<Dictionary<<#= key[0] #>, <#= obj[4] #>>?, string?>
     {
-        protected override string Converter(Dictionary<<#= key[0] #>, <#= value[0] #>> value)
+        protected override string? Converter(Dictionary<<#= key[0] #>, <#= obj[4] #>>? value)
         {
-			if ((object)value == null)
+			if (value is null)
 				return null;
 
-			return value.ToDictionary(item => (object)Conversion<<#= key[0] #>, <#= key[1] #>>.Convert(item.Key), item => (object)Conversion<<#= value[0] #>, <#= value[1] #>>.Convert(item.Value)).ToJson();
+			return value.ToDictionary(item => (object)Conversion<<#= key[0] #>, <#= key[1] #>>.Convert(item.Key)<#= obj[5] #>, item => (<#= obj[0] #>)Conversion<<#= value[0] #>, <#= value[1] #>>.Convert(item.Value)<#= obj[2] #>).ToJson();
         }
     }	
 <#

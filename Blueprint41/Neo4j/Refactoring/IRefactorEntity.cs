@@ -24,7 +24,7 @@ namespace Blueprint41.Neo4j.Refactoring
         void CreateIndexes();
 
         dynamic CreateNode(object node);
-        dynamic MatchNode(object key);
+        dynamic? MatchNode(object key);
         void DeleteNode(object key);
 
         void Deprecate();

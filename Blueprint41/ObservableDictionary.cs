@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 namespace Blueprint41
 {
     public sealed class ObservableDictionary<TKey, TValue> : IDictionary<TKey, TValue>, INotifyChanged<KeyValuePair<TKey, TValue>>
+        where TKey : notnull
     {
         private Dictionary<TKey, TValue> InnerDictionary;
-        public event NotifyChangedEventHandler<KeyValuePair<TKey, TValue>> BeforeCollectionChanged;
-        public event NotifyChangedEventHandler<KeyValuePair<TKey, TValue>> CollectionChanged;
+        public event NotifyChangedEventHandler<KeyValuePair<TKey, TValue>>? BeforeCollectionChanged;
+        public event NotifyChangedEventHandler<KeyValuePair<TKey, TValue>>? CollectionChanged;
 
         public ObservableDictionary()
         {

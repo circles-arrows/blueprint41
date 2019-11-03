@@ -11,8 +11,8 @@ namespace Blueprint41
     {
         internal FunctionalIdCollection(DatastoreModel parent) : base(parent) { }
 
-        private FunctionalId m_Default = null;
-        public FunctionalId Default
+        private FunctionalId? m_Default = null;
+        public FunctionalId? Default
         {
             get { return m_Default; }
             set

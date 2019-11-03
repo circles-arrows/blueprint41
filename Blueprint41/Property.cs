@@ -14,13 +14,14 @@ using Blueprint41.Core;
 using System.Reflection;
 using Blueprint41.Dynamic;
 using Blueprint41.Neo4j.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Blueprint41
 {
     [DebuggerDisplay("{Parent.Name}.{Name}")]
     public class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
     {
-        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[] enumeration = null)
+        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
         {
             Parent = parent;
             PropertyType = storage;
@@ -31,7 +32,7 @@ namespace Blueprint41
             IndexType = indexType;
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            EnumValues = (enumeration == null || enumeration.Length == 0) ? null : enumeration;
+            EnumValues = (enumeration == null || enumeration.Length == 0) ? new string[0] : enumeration;
         }
         internal Property(Entity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
         {
@@ -44,6 +45,7 @@ namespace Blueprint41
             IndexType = indexType;
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
+            EnumValues = new string[0];
         }
         internal Property(Entity parent, PropertyType storage, string name, Property reference)
         {
@@ -56,6 +58,7 @@ namespace Blueprint41
             IndexType = IndexType.None;
             Reference = reference;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
+            EnumValues = new string[0];
         }
 
         #region Properties
@@ -64,8 +67,8 @@ namespace Blueprint41
         public PropertyType PropertyType { get; private set; }
         public string Name { get; private set; }
         public IReadOnlyList<string> EnumValues { get; private set; }
-        public Type SystemReturnType { get; private set; }
-        public Type SystemReturnTypeWithNullability
+        public Type? SystemReturnType { get; private set; }
+        public Type? SystemReturnTypeWithNullability
         {
             get
             {
@@ -81,17 +84,17 @@ namespace Blueprint41
                 return typeof(Nullable<>).MakeGenericType(SystemReturnType);  //Caching this type?...
             }
         }
-        public Entity EntityReturnType { get; private set; }
+        public Entity? EntityReturnType { get; private set; }
         public bool Nullable { get; private set; }
         public IndexType IndexType { get; private set; }
         public bool IsKey { get; internal set; }
         public bool IsNodeType { get; internal set; }
         public bool IsRowVersion { get; internal set; }
         internal bool HideSetter { get; set; }
-        public Property Reference { get; private set; }
+        public Property? Reference { get; private set; }
         public Guid Guid { get; private set; }
 
-        private string innerReturnType = null;
+        private string? innerReturnType = null;
         public string InnerReturnType
         {
             get
@@ -103,7 +106,7 @@ namespace Blueprint41
 
                     if (PropertyType == PropertyType.Collection || PropertyType == PropertyType.Lookup)
                     {
-                        if (Relationship.IsTimeDependent)
+                        if (Relationship?.IsTimeDependent ?? false)
                             sb.Append("EntityTimeCollection<");
                         else
                             sb.Append("EntityCollection<");
@@ -114,7 +117,7 @@ namespace Blueprint41
                     else if (EntityReturnType != null)
                         sb.Append(EntityReturnType.ClassName);
                     else
-                        sb.Append(Reference.InnerReturnType);
+                        sb.Append(Reference!.InnerReturnType);
 
                     if (PropertyType == PropertyType.Collection || PropertyType == PropertyType.Lookup)
                         sb.Append(">");
@@ -126,7 +129,7 @@ namespace Blueprint41
             }
         }
 
-        private string outerReturnType = null;
+        private string? outerReturnType = null;
         public string OuterReturnType
         {
             get
@@ -138,7 +141,7 @@ namespace Blueprint41
 
                     if (PropertyType == PropertyType.Collection)
                     {
-                        if (Relationship.IsTimeDependent)
+                        if (Relationship?.IsTimeDependent ?? false)
                             sb.Append("EntityTimeCollection<");
                         else
                             sb.Append("EntityCollection<");
@@ -151,7 +154,7 @@ namespace Blueprint41
                     else if (EntityReturnType != null)
                         sb.Append(EntityReturnType.ClassName);
                     else
-                        sb.Append(Reference.OuterReturnType);
+                        sb.Append(Reference!.OuterReturnType);
 
                     if (PropertyType == PropertyType.Collection)
                         sb.Append(">");
@@ -163,7 +166,7 @@ namespace Blueprint41
             }
         }
 
-        private string outerReturnTypeReadOnly = null;
+        private string? outerReturnTypeReadOnly = null;
         public string OuterReturnTypeReadOnly
         {
             get
@@ -185,7 +188,7 @@ namespace Blueprint41
                     else if (EntityReturnType != null)
                         sb.Append(EntityReturnType.ClassName);
                     else
-                        sb.Append(Reference.OuterReturnTypeReadOnly);
+                        sb.Append(Reference!.OuterReturnTypeReadOnly);
 
                     if (PropertyType == PropertyType.Collection)
                         sb.Append(">");
@@ -197,10 +200,10 @@ namespace Blueprint41
             }
         }
 
-        public Relationship Relationship { get; internal set; } = null;
+        public Relationship? Relationship { get; internal set; } = null;
         public DirectionEnum Direction { get; internal set; } = DirectionEnum.None;
 
-        public Entity ForeignEntity
+        public Entity? ForeignEntity
         {
             get
             {
@@ -218,7 +221,7 @@ namespace Blueprint41
                 }
             }
         }
-        public Property ForeignProperty
+        public Property? ForeignProperty
         {
             get
             {
@@ -420,13 +423,13 @@ namespace Blueprint41
         {
             Parent.Parent.EnsureSchemaMigration();
 
-            if (PropertyType != PropertyType.Attribute)
+            if (PropertyType != PropertyType.Attribute || Relationship is null)
                 throw new NotImplementedException();
 
-            if (!Relationship.RelationshipType.IsCompatible(target.Relationship.RelationshipType))
-                throw new NotSupportedException(string.Format("Merging is not supported between relationships of type {0} and {1}.", this.Relationship.RelationshipType.ToString(), target.Relationship.RelationshipType.ToString()));
+            if (!Relationship.RelationshipType.IsCompatible(target.Relationship?.RelationshipType ?? RelationshipType.None))
+                throw new NotSupportedException(string.Format("Merging is not supported between relationships of type {0} and {1}.", this.Relationship.RelationshipType.ToString(), (target.Relationship?.RelationshipType ?? RelationshipType.None).ToString()));
 
-            if (Relationship.RelationshipType.IsImplicitLookup() || target.Relationship.RelationshipType.IsImplicitLookup())
+            if (Relationship.RelationshipType.IsImplicitLookup() || (target.Relationship?.RelationshipType ?? RelationshipType.None).IsImplicitLookup())
                 if (mergeAlgorithm == MergeAlgorithm.NotApplicable)
                     throw new NotSupportedException("You cannot ignore conflicts on lookup properties.");
 
@@ -463,15 +466,15 @@ namespace Blueprint41
                         {
                             string text = item["Text"].As<string>();
 
-                            Dictionary<string, object> map = new Dictionary<string, object>();
+                            Dictionary<string, object?> map = new Dictionary<string, object?>();
                             map.Add("Text", text);
-                            map.Add("Blob", (byte[])(CompressedString)text);
+                            map.Add("Blob", (byte[]?)(CompressedString?)text);
                             list.Add(map);
                         }
 
                         if (list.Count > 0)
                         {
-                            Dictionary<string, object> batch = new Dictionary<string, object>();
+                            Dictionary<string, object?> batch = new Dictionary<string, object?>();
                             batch.Add("Batch", list);
 
                             Parser.Execute(cypherWrite, batch);
@@ -490,10 +493,10 @@ namespace Blueprint41
         {
             Parent.Parent.EnsureSchemaMigration();
 
-            if (PropertyType != PropertyType.Attribute)
+            if (PropertyType != PropertyType.Attribute || SystemReturnType is null)
                 throw new NotSupportedException("Only primitive properties can have their return type converted.");
 
-            Type from = this.SystemReturnType;
+            Type from = SystemReturnType;
             Type to = target;
 
             if (from == to)
@@ -501,8 +504,8 @@ namespace Blueprint41
 
             if (!skipConvertionLogic)
             {
-                Type fromDb = Parent.Parent.PersistenceProvider.GetStoredType(from);
-                Type toDb = Parent.Parent.PersistenceProvider.GetStoredType(to);
+                Type? fromDb = Parent.Parent.PersistenceProvider.GetStoredType(from);
+                Type? toDb = Parent.Parent.PersistenceProvider.GetStoredType(to);
 
                 string chkScript, convScript;
                 (_, _, chkScript, convScript) = specificConvertTabel.FirstOrDefault(item => item.fromType == from && (item.toType == null || item.toType == to));
@@ -539,7 +542,7 @@ namespace Blueprint41
         private const string TO_DOUBLE     = "toFloat({0})";
         private const string TO_STRING     = "toString({0})";
 
-        private static readonly (Type fromType, Type toType, string typeCheck, string typeConv)[] specificConvertTabel = new[] {
+        private static readonly (Type fromType, Type? toType, string typeCheck, string typeConv)[] specificConvertTabel = new[] {
             (typeof(DateTime), typeof(long),  NO_SCRIPT,     NO_SCRIPT),
             (typeof(DateTime), typeof(ulong), NO_SCRIPT,     NO_SCRIPT),
             (typeof(DateTime), null,          NOT_SUPPORTED, NOT_SUPPORTED),
@@ -571,7 +574,7 @@ namespace Blueprint41
         {
             Parent.Parent.EnsureSchemaMigration();
 
-            if (PropertyType == PropertyType.Attribute)
+            if (PropertyType == PropertyType.Attribute || Relationship is null)
             {
                 RemoveIndexesAndContraints();
                 Parent.RemoveFullTextProperty(Name);
@@ -612,6 +615,9 @@ namespace Blueprint41
         
         void IRefactorProperty.Reroute(string pattern, string newPropertyName, bool strict)
         {
+            if (Relationship == null || EntityReturnType is null)
+                throw new NotSupportedException("This operation can only be done on an relationship property");
+
             Reroute(pattern, newPropertyName, Relationship.Name, Relationship.Neo4JRelationshipType, strict);
         }
         void IRefactorProperty.Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
@@ -622,7 +628,7 @@ namespace Blueprint41
         {
             Parent.Parent.EnsureSchemaMigration();
 
-            if (Relationship == null)
+            if (Relationship == null || EntityReturnType is null)
                 throw new NotSupportedException("This operation can only be done on an relationship property");
 
             if (string.IsNullOrWhiteSpace(pattern))
@@ -634,7 +640,7 @@ namespace Blueprint41
             decoded.Validate(EntityReturnType, strict);
 
             Entity original = Parent;
-            Entity target = decoded.GetToEntity();
+            Entity? target = decoded.GetToEntity();
 
             string left = (Direction == DirectionEnum.Out) ? "<-" : "-";
             string right = (Direction == DirectionEnum.In) ? "->" : "-";
@@ -642,10 +648,10 @@ namespace Blueprint41
 
             Parser.Execute(cypher, null);
 
-            Entity inEntity = Relationship.InEntity;
-            Property inProperty = Relationship.InProperty;
-            Entity outEntity = Relationship.OutEntity;
-            Property outProperty = Relationship.OutProperty;
+            Entity? inEntity = Relationship.InEntity;
+            Property? inProperty = Relationship.InProperty;
+            Entity? outEntity = Relationship.OutEntity;
+            Property? outProperty = Relationship.OutProperty;
             switch (Direction)
             {
                 case DirectionEnum.In:
@@ -667,7 +673,7 @@ namespace Blueprint41
                 rel.SetOutProperty(outProperty.Name, outProperty.PropertyType, outProperty.Nullable);
 
             // StaticData
-            Property targetProperty = null;
+            Property? targetProperty = null;
             switch (Direction)
             {
                 case DirectionEnum.In:
@@ -677,7 +683,7 @@ namespace Blueprint41
                     targetProperty = rel.InProperty;
                     break;
             }
-            original.DynamicEntityPropertyRerouted(oldname, target, targetProperty);
+            original.DynamicEntityPropertyRerouted(oldname, target, targetProperty!);
         }
 
         void IRefactorProperty.ConvertToCollection()
@@ -748,7 +754,7 @@ namespace Blueprint41
             if (Nullable == false)
                 throw new NotSupportedException("The property is already mandatory.");
 
-            if (PropertyType == PropertyType.Attribute)
+            if (PropertyType == PropertyType.Attribute && !(SystemReturnType is null))
             {
                 Nullable = false;
                 foreach (var entity in Parent.GetConcreteClasses())
@@ -763,7 +769,7 @@ namespace Blueprint41
             }
             else
             {
-                if (PropertyType == PropertyType.Collection)
+                if (PropertyType == PropertyType.Collection || ForeignEntity is null)
                     throw new NotSupportedException("A collection cannot be made mandatory.");
 
                 if (defaultValue == null || defaultValue.GetType() != ForeignEntity.Key?.SystemReturnType)
@@ -788,7 +794,7 @@ namespace Blueprint41
             if (PropertyType == PropertyType.Collection)
                 throw new NotSupportedException("A collection cannot be made mandatory.");
 
-            if (PropertyType == PropertyType.Attribute)
+            if (PropertyType == PropertyType.Attribute || ForeignEntity is null)
                 throw new ArgumentException("The property type does not match the type of the supplied 'defaultValue'.");
 
             if(defaultValue.GetEntity().Name != ForeignEntity.Name)
@@ -799,7 +805,7 @@ namespace Blueprint41
             Parser.ExecuteBatched<SetDefaultLookupValue>(delegate (SetDefaultLookupValue template)
             {
                 template.Property = this;
-                template.Value = (string)defaultValue.GetKey();
+                template.Value = (string?)defaultValue.GetKey();
             });
         }
 
@@ -811,17 +817,6 @@ namespace Blueprint41
             {
                 Model = model;
 
-                string next = InterpretPattern(pattern);
-                InterpretNode();
-
-                if (EntityName != "")
-                    Entity = model.Entities.FirstOrDefault(item => item.Name == EntityName);
-
-                if (!string.IsNullOrWhiteSpace(next))
-                    Next = new RelationshipPattern(model, next);
-            }
-            private string InterpretPattern(string pattern)
-            {
                 int pOpen = pattern.IndexOf("(");
                 int pClose = pattern.IndexOf(")");
                 if (pOpen == -1 || pClose == -1 || pClose < pOpen)
@@ -829,11 +824,8 @@ namespace Blueprint41
 
                 Pattern = pattern.Substring(pOpen, pClose - pOpen + 1);
 
-                string rest = pattern.Substring(pClose + 1);
-                return rest;
-            }
-            private void InterpretNode()
-            {
+                string next = pattern.Substring(pClose + 1);
+
                 string[] innerPattern = Pattern.TrimStart('(').TrimEnd(')').Split(':');
                 if (innerPattern.Length == 0)
                 {
@@ -852,6 +844,14 @@ namespace Blueprint41
                 }
                 else
                     throw new FormatException("The node cannot have multiple aliases");
+
+                Entity = model.Entities.FirstOrDefault(item => item.Name == EntityName);
+
+                if (Entity is null)
+                    throw new FormatException($"The node '{EntityName}' does not seem to exist");
+
+                if (!string.IsNullOrWhiteSpace(next))
+                    Next = new RelationshipPattern(model, next);
             }
 
             #endregion
@@ -864,7 +864,7 @@ namespace Blueprint41
             public string EntityName { get; private set; }
             public Entity Entity { get; private set; }
 
-            public RelationshipPattern Next { get; set; }
+            public RelationshipPattern? Next { get; set; }
 
             #endregion
 
@@ -888,10 +888,7 @@ namespace Blueprint41
                 if (EntityName == "")
                     throw new FormatException("The node name must be specified");
 
-                if (Entity == null)
-                    throw new FormatException($"The node '{EntityName}' does not seem to exist");
-
-                if (EntityAlias == "from" && Entity != fromEntity)
+                 if (EntityAlias == "from" && Entity != fromEntity)
                     throw new FormatException($"The property return type is '{fromEntity.Name}' while the pattern is (from:{EntityName})");
 
                 if (Next != null)
@@ -911,17 +908,27 @@ namespace Blueprint41
 
             public string Compile()
             {
-                if (Next == null)
-                    return $"({EntityAlias}:{Entity.Label.Name})";
+                if (Entity is null)
+                {
+                    if (Next == null)
+                        return $"({EntityAlias})";
 
-                return $"({EntityAlias}:{Entity.Label.Name}){Next.Compile()}";
+                    return $"({EntityAlias})";
+                }
+                else
+                {
+                    if (Next == null)
+                        return $"({EntityAlias}:{Entity.Label.Name})";
+
+                    return $"({EntityAlias}:{Entity.Label.Name}){Next.Compile()}";
+                }
             }
             public Entity GetToEntity()
             {
                 if (EntityAlias == "to")
                     return Entity;
 
-                return Next?.GetToEntity();
+                return Next?.GetToEntity() ?? throw new FormatException("The pattern must have a 'to' node specified.");
             }
         }
         private class RelationshipPattern
@@ -932,18 +939,6 @@ namespace Blueprint41
             {
                 Model = model;
 
-                string next = InterpretPattern(pattern);
-                InterpretDirection();
-                InterpretRelation();
-
-                if (RelationName != "")
-                    Relation = model.Relations.FirstOrDefault(item => item.Name == RelationName);
-
-                if (!string.IsNullOrWhiteSpace(next))
-                    Next = new NodePattern(model, next);
-            }
-            private string InterpretPattern(string pattern)
-            {
                 int dOpen = pattern.IndexOf("<-[");
                 if (dOpen == -1)
                     dOpen = pattern.IndexOf("-[");
@@ -961,19 +956,14 @@ namespace Blueprint41
 
                 Pattern = pattern.Substring(dOpen, dClose - dOpen + plus);
 
-                string rest = pattern.Substring(dClose + plus);
-                return rest;
-            }
-            private void InterpretDirection()
-            {
+                string next = pattern.Substring(dClose + plus);
+
                 RelationDirection = DirectionPattern.Unknown;
                 if (Pattern.StartsWith("<"))
                     RelationDirection = DirectionPattern.Left;
                 else if (Pattern.EndsWith(">"))
                     RelationDirection = DirectionPattern.Right;
-            }
-            private void InterpretRelation()
-            {
+
                 string[] innerPattern = Pattern.TrimStart('<', '-', '[').TrimEnd('>', '-', ']').Split(':');
                 if (innerPattern.Length == 0)
                 {
@@ -992,6 +982,14 @@ namespace Blueprint41
                 }
                 else
                     throw new FormatException("The node cannot have multiple aliases");
+
+                Relation = model.Relations.FirstOrDefault(item => item.Name == RelationName);
+
+                if (Relation is null)
+                    throw new FormatException($"The relationship '{RelationName}' does not exist");
+
+                if (!string.IsNullOrWhiteSpace(next))
+                    Next = new NodePattern(model, next);
             }
 
             #endregion
@@ -1005,7 +1003,7 @@ namespace Blueprint41
             public string RelationName { get; private set; }
             public Relationship Relation { get; private set; }
 
-            public NodePattern Next { get; set; }
+            public NodePattern? Next { get; set; }
 
             #endregion
 
@@ -1015,9 +1013,6 @@ namespace Blueprint41
             {
                 if (RelationAlias != "")
                     throw new FormatException("A relationship cannot have an alias");
-
-                if (RelationName != "" && Relation == null)
-                    throw new FormatException($"The relationship '{RelationName}' does not exist");
 
                 if (Next == null)
                     throw new FormatException($"The pattern cannot end in a relationship");
@@ -1050,16 +1045,22 @@ namespace Blueprint41
             }
             internal int HasAlias(string alias)
             {
-                return Next.HasAlias(alias);
+                return Next?.HasAlias(alias) ?? 0;
             }
 
             #endregion
             public string Compile()
             {
+                if (Next == null)
+                    throw new FormatException($"The pattern cannot end in a relationship");
+
                 return $"{(RelationDirection == DirectionPattern.Left ? "<" : "")}-[{Relation?.Neo4JRelationshipType ?? ""}]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}{Next.Compile()}";
             }
             public Entity GetToEntity()
             {
+                if (Next == null)
+                    throw new FormatException($"The pattern cannot end in a relationship");
+
                 return Next.GetToEntity();
             }
         }
@@ -1134,7 +1135,7 @@ namespace Blueprint41
 
         public object GetValue(OGM instance, DateTime? moment = null)
         {
-            if (PropertyType == PropertyType.Lookup && Relationship.IsTimeDependent)
+            if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
             {
                 if (getValueWithMoment == null)
                 {
@@ -1143,7 +1144,10 @@ namespace Blueprint41
                         if (getValueWithMoment == null)
                         {
                             string name = string.Concat("Get", Name);
-                            MethodInfo method = Parent.RuntimeReturnType.GetMethods().First(item => item.Name == name);
+                            MethodInfo? method = Parent.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
+                            if (method is null)
+                                throw new NotSupportedException("No get accessor exists");
+
                             getValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, DateTime?, object>>(method, DelegateHelper.CreateOptions.Downcasting);
                         }
                     }
@@ -1158,7 +1162,10 @@ namespace Blueprint41
                     {
                         if (getValue == null)
                         {
-                            MethodInfo method = Parent.RuntimeReturnType.GetProperties().First(item => item.Name == Name).GetGetMethod();
+                            MethodInfo? method = Parent.RuntimeReturnType!.GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
+                            if (method is null)
+                                throw new NotSupportedException("No get accessor exists");
+
                             getValue = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, object>>(method, DelegateHelper.CreateOptions.Downcasting);
                         }
                     }
@@ -1166,12 +1173,12 @@ namespace Blueprint41
                 return getValue.Invoke(instance);
             }
         }
-        private Func<OGM, object> getValue = null;
-        private Func<OGM, DateTime?, object> getValueWithMoment = null;
+        private Func<OGM, object>? getValue = null;
+        private Func<OGM, DateTime?, object>? getValueWithMoment = null;
 
-        public void SetValue(OGM instance, object value, DateTime? moment = null)
+        public void SetValue(OGM instance, object? value, DateTime? moment = null)
         {
-            if (PropertyType == PropertyType.Lookup && Relationship.IsTimeDependent)
+            if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
             {
                 if (setValueWithMoment == null)
                 {
@@ -1180,8 +1187,11 @@ namespace Blueprint41
                         if (setValueWithMoment == null)
                         {
                             string name = string.Concat("Set", Name);
-                            MethodInfo method = Parent.RuntimeReturnType.GetMethods().First(item => item.Name == name);
-                            setValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object, DateTime?>>(method, DelegateHelper.CreateOptions.Downcasting);
+                            MethodInfo? method = Parent.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
+                            if (method is null)
+                                throw new NotSupportedException("No set accessor exists");
+
+                            setValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?, DateTime?>>(method, DelegateHelper.CreateOptions.Downcasting);
                         }
                     }
                 }
@@ -1195,24 +1205,29 @@ namespace Blueprint41
                     {
                         if (setValue == null)
                         {
-                            MethodInfo method = Parent.RuntimeReturnType.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
-                            if (method == null && IsRowVersion)
-                                method = typeof(OGM).GetMethod("SetRowVersion");
-
-                            setValue = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object>>(method, DelegateHelper.CreateOptions.Downcasting);
+                            MethodInfo? method = Parent.RuntimeReturnType!.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
+                            if (method is null)
+                            {
+                                if (IsRowVersion)
+                                    method = typeof(OGM).GetMethod("SetRowVersion");
+                                
+                                if (method is null)
+                                    throw new NotSupportedException("No set accessor exists");
+                            }
+                            setValue = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?>>(method, DelegateHelper.CreateOptions.Downcasting);
                         }
                     }
                 }
                 setValue.Invoke(instance, value);
             }
         }
-        private Action<OGM, object> setValue = null;
-        private Action<OGM, object, DateTime?> setValueWithMoment = null;
+        private Action<OGM, object?>? setValue = null;
+        private Action<OGM, object?, DateTime?>? setValueWithMoment = null;
 
         internal void ClearLookup(OGM instance, DateTime? moment = null)
         {
             Type type = instance.GetType();
-            Action<OGM, DateTime?> clearLookup;
+            Action<OGM, DateTime?>? clearLookup;
 
             if (PropertyType == PropertyType.Lookup)
             {
@@ -1240,13 +1255,13 @@ namespace Blueprint41
 
         public Core.IPropertyEvents Events { get { return this; } }
 
-        internal bool RaiseOnChange<T>(OGMImpl sender, T previousValue, T assignedValue, DateTime? moment, OperationEnum operation)
+        internal bool RaiseOnChange<T>(OGMImpl sender, [AllowNull] T previousValue, [AllowNull] T assignedValue, DateTime? moment, OperationEnum operation)
         {
             Transaction trans = Transaction.RunningTransaction;
             if (!trans.FireEntityEvents)
                 return false;
 
-            OGMImpl otherSender;
+            OGMImpl? otherSender;
             bool canceled = false;
 
             if (ForeignProperty != null)
@@ -1288,14 +1303,12 @@ namespace Blueprint41
                     return false;
 
                 PropertyEventArgs args = PropertyEventArgs.CreateInstance(EventTypeEnum.OnPropertyChange, target, this, oldValue, newValue, moment ?? trans.TransactionDate, op, trans);
-                EventHandler<PropertyEventArgs> handler = onChange;
-                if ((object)handler != null)
-                    handler.Invoke(target, args);
+                onChange?.Invoke(target, args);
 
                 args.Lock();
                 return args.Canceled;
             }
-            bool RaiseOther(OGMImpl target, Property property, object oldValue, object newValue, OperationEnum op)
+            bool RaiseOther(OGMImpl? target, Property? property, object? oldValue, object? newValue, OperationEnum op)
             {
                 if (target == null || property == null)
                     return false;
@@ -1308,9 +1321,7 @@ namespace Blueprint41
                 }
 
                 PropertyEventArgs args = PropertyEventArgs.CreateInstance(EventTypeEnum.OnPropertyChange, target, property, oldValue, newValue, moment ?? trans.TransactionDate, op, trans);
-                EventHandler<PropertyEventArgs> handler = property.onChange;
-                if ((object)handler != null)
-                    handler.Invoke(target, args);
+                property.onChange?.Invoke(target, args);
 
                 args.Lock();
                 return args.Canceled;
@@ -1323,7 +1334,7 @@ namespace Blueprint41
                 return onChange != null || ForeignProperty?.onChange != null;
             }
         }
-        private EventHandler<PropertyEventArgs> onChange;
+        private EventHandler<PropertyEventArgs>? onChange;
         event EventHandler<PropertyEventArgs> IPropertyEvents.OnChange
         {
             add { onChange += value; }
@@ -1332,14 +1343,14 @@ namespace Blueprint41
 
         internal Type GetPropertyEventArgsType(Type senderType)
         {
-            Type type;
+            Type? type;
             if (!propertyEventArgsType.TryGetValue(senderType, out type))
             {
                 lock (this)
                 {
                     if (!propertyEventArgsType.TryGetValue(senderType, out type))
                     {
-                        type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, SystemReturnTypeWithNullability ?? EntityReturnType.RuntimeReturnType);
+                        type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, SystemReturnTypeWithNullability ?? EntityReturnType!.RuntimeReturnType!);
                         propertyEventArgsType.Add(senderType, type);
                     }
                 }

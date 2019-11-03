@@ -479,7 +479,7 @@ namespace System.Collections.Specialized
                 this.InitializeRemove(action, changedItems, startingIndex);
             }
         }
-        private void InitializeAdd(NotifyCollectionChangedAction action, T[] newItems, int newStartingIndex)
+        private void InitializeAdd(NotifyCollectionChangedAction action, T[]? newItems, int newStartingIndex)
         {
             this._action = action;
             this._newItems = newItems;
@@ -498,8 +498,9 @@ namespace System.Collections.Specialized
         }
 
         private NotifyCollectionChangedAction _action;
-        private T[] _newItems;
-        private T[] _oldItems;
+        private T[] _emptyItems = new T[0];
+        private T[]? _newItems;
+        private T[]? _oldItems;
         private int _newStartingIndex = -1;
         private int _oldStartingIndex = -1;
 
@@ -517,7 +518,7 @@ namespace System.Collections.Specialized
         //
         // Returns:
         //     The list of new items involved in the change.
-        public IReadOnlyList<T> NewItems { get { return _newItems; } }
+        public IReadOnlyList<T> NewItems { get { return _newItems ?? _emptyItems; } }
         //
         // Summary:
         //     Gets the index at which the change occurred.
@@ -533,7 +534,7 @@ namespace System.Collections.Specialized
         // Returns:
         //     The list of items affected by a System.Collections.Specialized.NotifyCollectionChangedAction.Replace,
         //     Remove, or Move action.
-        public IReadOnlyList<T> OldItems { get { return _oldItems; } }
+        public IReadOnlyList<T> OldItems { get { return _oldItems ?? _emptyItems; } }
         //
         // Summary:
         //     Gets the index at which a System.Collections.Specialized.NotifyCollectionChangedAction.Move,
