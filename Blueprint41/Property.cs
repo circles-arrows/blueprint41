@@ -32,7 +32,7 @@ namespace Blueprint41
             IndexType = indexType;
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            EnumValues = (enumeration == null || enumeration.Length == 0) ? new string[0] : enumeration;
+            EnumValues = (enumeration == null || enumeration.Length == 0) ? null : enumeration;
         }
         internal Property(Entity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
         {
@@ -45,7 +45,7 @@ namespace Blueprint41
             IndexType = indexType;
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            EnumValues = new string[0];
+            EnumValues = null;
         }
         internal Property(Entity parent, PropertyType storage, string name, Property reference)
         {
@@ -58,7 +58,7 @@ namespace Blueprint41
             IndexType = IndexType.None;
             Reference = reference;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            EnumValues = new string[0];
+            EnumValues = null;
         }
 
         #region Properties
@@ -66,7 +66,7 @@ namespace Blueprint41
         public Entity Parent { get; private set; }
         public PropertyType PropertyType { get; private set; }
         public string Name { get; private set; }
-        public IReadOnlyList<string> EnumValues { get; private set; }
+        public IReadOnlyList<string>? EnumValues { get; private set; }
         public Type? SystemReturnType { get; private set; }
         public Type? SystemReturnTypeWithNullability
         {
