@@ -36,7 +36,7 @@ namespace Blueprint41
                 if (item is null && value is null)
                     return;
 
-                if (item is null || value is null || item.Equals(value))
+                if (item is null || value is null || !item.Equals(value))
                 {
                     NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Replace, value, InnerList[index], index);
                     BeforeCollectionChanged?.Invoke(this, eventArgs);

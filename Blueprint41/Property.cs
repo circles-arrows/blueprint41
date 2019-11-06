@@ -246,7 +246,7 @@ namespace Blueprint41
         }
         internal void SetReturnTypeEntity(Entity returnType)
         {
-            EntityReturnType = returnType; 
+            EntityReturnType = returnType;
         }
 
         #endregion
@@ -363,7 +363,7 @@ namespace Blueprint41
             //{
             //    case StorageModel.Lookup:
             //    case StorageModel.Collection:
-            //        string format = string.Format("MATCH (in:{0})-[rel:{1}]-(out:{2}) MERGE (in)-[:LANGUAGE_FOR]->(out) DELETE rel", 
+            //        string format = string.Format("MATCH (in:{0})-[rel:{1}]-(out:{2}) MERGE (in)-[:LANGUAGE_FOR]->(out) DELETE rel",
             //            this.Relationship.InEntity.Label.Name,
             //            this.Relationship.Name,
             //            this.Relationship.OutEntity.Label.Name,
@@ -385,7 +385,7 @@ namespace Blueprint41
         }
 
         ///// <summary>
-        ///// 
+        /////
         ///// </summary>
         ///// <param name="baseProperty"></param>
         ///// <param name="mergeAlgorithm">(source, target) => source ?? target</param>
@@ -612,7 +612,7 @@ namespace Blueprint41
             // commit to db is automatic after any script ran during upgrade...
         }
 
-        
+
         void IRefactorProperty.Reroute(string pattern, string newPropertyName, bool strict)
         {
             if (Relationship == null || EntityReturnType is null)
@@ -1207,7 +1207,7 @@ namespace Blueprint41
                             {
                                 if (IsRowVersion)
                                     method = typeof(OGM).GetMethod("SetRowVersion");
-                                
+
                                 if (method is null)
                                     throw new NotSupportedException("No set accessor exists");
                             }
