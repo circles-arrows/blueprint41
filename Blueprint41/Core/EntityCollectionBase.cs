@@ -45,9 +45,7 @@ namespace Blueprint41.Core
             IsLoaded = false;
 
             if (parent is OGMImpl || (parent is DynamicEntity && ((DynamicEntity)parent).ShouldExecute))
-            {
-                RunningTransaction.Register(this);
-            }
+                DbTransaction?.Register(this);
         }
 
         #region Properties

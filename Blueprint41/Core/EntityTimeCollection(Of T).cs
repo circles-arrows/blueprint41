@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Blueprint41.Dynamic;
 using model = Blueprint41.Neo4j.Model;
 using persistence = Blueprint41.Neo4j.Persistence;
 
@@ -75,7 +77,8 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
                     return;
 
-            DbTransaction?.Register(AddAction(item, moment));
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(AddAction(item, moment));
         }
         internal void AddRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
         {
@@ -98,7 +101,8 @@ namespace Blueprint41.Core
                 actions.AddLast(AddAction(item, moment));
             }
 
-            DbTransaction?.Register(actions);
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(actions);
         }
         public void AddUnmanaged(TEntity item, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
         {
@@ -168,7 +172,9 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                DbTransaction?.Register(actions);
+                if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                    DbTransaction?.Register(actions);
+
                 LazySet();
             }
             return (actions.Count > 0);
@@ -216,7 +222,9 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                DbTransaction?.Register(actions);
+                if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                    DbTransaction?.Register(actions);
+
                 LazySet();
             }
 
@@ -273,12 +281,15 @@ namespace Blueprint41.Core
                         actions.AddLast(RemoveAction(item, moment));
                     });
 
-                    DbTransaction?.Register(actions);
+                    if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                        DbTransaction?.Register(actions);
+
                     return;
                 }
             }
 
-            DbTransaction?.Register(ClearAction(moment));
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(ClearAction(moment));
         }
 
         sealed protected override IEnumerator<TEntity> GetEnumeratorInternal()
@@ -447,7 +458,8 @@ namespace Blueprint41.Core
 
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            DbTransaction?.Register(new TimeDependentClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem, moment));
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(new TimeDependentClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem, moment));
         }
 
         #endregion

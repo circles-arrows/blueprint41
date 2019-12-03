@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Blueprint41.Dynamic;
 using model = Blueprint41.Neo4j.Model;
 using persistence = Blueprint41.Neo4j.Persistence;
 
@@ -57,7 +59,8 @@ namespace Blueprint41.Core
             loadedData = tmp;
 
             IsLoaded = true;
-            DbTransaction?.Replay(this);
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Replay(this);
         }
         private void BeforeCollectionChanged(object sender, EventArgs args)
         {

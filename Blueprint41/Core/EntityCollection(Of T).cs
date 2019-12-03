@@ -6,6 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Blueprint41.Dynamic;
 using model = Blueprint41.Neo4j.Model;
 using persistence = Blueprint41.Neo4j.Persistence;
 
@@ -43,7 +45,8 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                     return;
 
-            DbTransaction?.Register(AddAction(item, null));
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(AddAction(item, null));
         }
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
         {
@@ -66,7 +69,8 @@ namespace Blueprint41.Core
                 actions.AddLast(AddAction(item, null));
             }
 
-            DbTransaction?.Register(actions);
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(actions);
         }
         public override bool Contains(TEntity item)
         {
@@ -106,7 +110,9 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                DbTransaction?.Register(actions);
+                if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                    DbTransaction?.Register(actions);
+
                 LazySet();
             }
 
@@ -151,12 +157,15 @@ namespace Blueprint41.Core
                         actions.AddLast(RemoveAction(item, null));
                     });
 
-                    DbTransaction?.Register(actions);
+                    if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                        DbTransaction?.Register(actions);
+
                     return;
                 }
             }
 
-            DbTransaction?.Register(ClearAction(null));
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(ClearAction(null));
         }
         internal sealed override bool RemoveRange(IEnumerable<TEntity> items, bool fireEvents)
         {
@@ -197,7 +206,9 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                DbTransaction?.Register(actions);
+                if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                    DbTransaction?.Register(actions);
+
                 LazySet();
             }
 
@@ -371,7 +382,8 @@ namespace Blueprint41.Core
 
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            DbTransaction?.Register(new ClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem));
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(new ClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem));
         }
 
         #endregion

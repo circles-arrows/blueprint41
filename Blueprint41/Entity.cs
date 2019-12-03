@@ -443,39 +443,6 @@ namespace Blueprint41
                 template.OldName = oldLabelName;
                 template.NewName = newName;
             });
-
-            if (this.IsAbstract == false)
-                Refactor.ApplyConstraints();
-        }
-
-        void IRefactorEntity.ApplyConstraints()
-        {
-            Parent.EnsureSchemaMigration();
-
-            foreach (var property in GetPropertiesOfBaseTypesAndSelf())
-            {
-                if (property.IndexType == IndexType.Unique && !IsAbstract)
-                {
-                    //Parser.Execute<CreateUniqueConstraint>(delegate (CreateUniqueConstraint template)
-                    //{
-                    //    template.Entity = this;
-                    //    template.Property = property;
-                    //}, false);
-                }
-                else if (property.IndexType == IndexType.Indexed || (property.IndexType == IndexType.Unique && IsAbstract))
-                {
-                    Parser.Execute<CreateIndex>(delegate (CreateIndex template)
-                    {
-                        template.Entity = this;
-                        template.Property = property;
-                    }, false);
-                }
-                else if (property.IndexType == IndexType.None && property.SystemReturnType != null)
-                {
-                    // Check if constraint exists
-                    // if so, remove constraint
-                }
-            }
         }
 
         void IRefactorEntity.SetDefaultValue(Action<dynamic> values)
