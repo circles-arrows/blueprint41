@@ -415,7 +415,7 @@ namespace Blueprint41
             }
             public DatastoreModel Model { get; private set; }
 
-            public void Run(Action script)
+            public void Run(Expression<Action> script)
             {
                 if (Model.datamigration)
                     throw new InvalidOperationException("Calling DataMigration.Run() from inside another data migration block is not allowed.");
@@ -425,7 +425,9 @@ namespace Blueprint41
                 if (script != null && Parser.ShouldExecute)
                 {
                     Transaction.Flush();
-                    script.Invoke();
+
+                    Debug.WriteLine("\r\n------------------\r\nDataMigration.Run:\r\n------------------" + script.ToString() + "\r\n------------------");
+                    script.Compile().Invoke();
                 }
 
                 Model.datamigration = false;
