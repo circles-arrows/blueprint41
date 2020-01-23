@@ -346,7 +346,8 @@ namespace Blueprint41.Core
                     {
                         if (ParentProperty?.PropertyType == PropertyType.Lookup)
                             Remove(currentItem[0].Item);
-                        else
+
+                        if (Count > 0)
                             Clear(false); // Clear should not be called here as this is for lookup.
                     }
                 }
@@ -359,7 +360,8 @@ namespace Blueprint41.Core
                     {
                         if (ParentProperty?.PropertyType == PropertyType.Lookup)
                             Remove(currentItem[0].Item);
-                        else
+
+                        if (Count > 0)
                             Clear(false); // Clear should not be called here as this is for lookup.
                     }
 

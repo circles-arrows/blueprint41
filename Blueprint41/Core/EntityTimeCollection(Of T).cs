@@ -431,13 +431,19 @@ namespace Blueprint41.Core
 
                 if (item == null)
                 {
-                    if (currentItem.Count != 0)
+                    if (ParentProperty?.PropertyType == PropertyType.Lookup)
+                        Remove(currentItem[0].Item, moment);
+
+                    if (currentItem.Count > 0)
                         Clear(moment, false);
                 }
                 else
                 {
                     if (currentItem.Count == 1 && currentItem[0].Item.Equals(item))
                         return;
+
+                    if (ParentProperty?.PropertyType == PropertyType.Lookup)
+                        Remove(currentItem[0].Item, moment);
 
                     if (currentItem.Count > 0)
                         Clear(moment, false);
