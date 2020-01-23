@@ -39,7 +39,7 @@ namespace Blueprint41
         public Entity           OutEntity             { get; private set; }
         public Property?        OutProperty           { get; private set; }
 
-        public string           CreationDate          { get { return "CreationDate"; } }
+        public string           CreationDate { get { return "CreationDate"; } }
 
         public string           StartDate             { get { return "StartDate"; } }
         public string           EndDate               { get { return "EndDate";  } }

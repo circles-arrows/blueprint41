@@ -259,14 +259,14 @@ namespace Blueprint41.Neo4j.Persistence
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr += {{node}}", relationship.Neo4JRelationshipType);
+            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr.CreationDate = {{{1}}} SET outr += {{node}}", relationship.Neo4JRelationshipType, relationship.CreationDate);
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
+            parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
             if (timedependent)
             {
                 DateTime startDate = moment.HasValue ? moment.Value : DateTime.MinValue;
@@ -277,7 +277,9 @@ namespace Blueprint41.Neo4j.Persistence
             parameters.Add("node", node);
 
             string query = match + "\r\n" + create;
-            Neo4jTransaction.Run(query, parameters);
+            IStatementResult result = Neo4jTransaction.Run(query, parameters);
+            //if (result.Summary.Counters.RelationshipsCreated == 0)
+            //    throw new ApplicationException($"Unable to create relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
         }
         public override void Remove(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
         {
@@ -315,7 +317,9 @@ namespace Blueprint41.Neo4j.Persistence
                     outItem.GetEntity().Key.Name,
                     relationship.StartDate);
 
-                Neo4jTransaction.Run(cypher, parameters);
+                IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
+                if (result.Summary.Counters.RelationshipsDeleted == 0)
+                    throw new ApplicationException($"Unable to delete time dependent future relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
             }
             else
             {
@@ -327,7 +331,9 @@ namespace Blueprint41.Neo4j.Persistence
                     inItem.GetEntity().Key.Name,
                     outItem.GetEntity().Key.Name);
 
-                Neo4jTransaction.Run(cypher, parameters);
+                IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
+                if (result.Summary.Counters.RelationshipsDeleted == 0)
+                    throw new ApplicationException($"Unable to delete relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
             }
         }
         public override void RemoveAll(Relationship relationship, DirectionEnum direction, OGM item, DateTime? moment, bool timedependent)
@@ -373,7 +379,10 @@ namespace Blueprint41.Neo4j.Persistence
                     item.GetEntity().Key.Name,
                     relationship.StartDate)));
 
-                Neo4jTransaction.Run(cypher, parameters);
+                IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
+                if (result.Summary.Counters.RelationshipsDeleted == 0)
+                    throw new ApplicationException($"Unable to delete all time dependent future relationships '{relationship.Neo4JRelationshipType}' related to {item.GetEntity().Label.Name}({item.GetKey()}).");
+
             }
             else
             {
@@ -384,7 +393,9 @@ namespace Blueprint41.Neo4j.Persistence
                     outEntity.Label.Name,
                     item.GetEntity().Key.Name)));
 
-                Neo4jTransaction.Run(cypher, parameters);
+                IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
+                if (result.Summary.Counters.RelationshipsDeleted == 0)
+                    throw new ApplicationException($"Unable to remove all relationships '{relationship.Neo4JRelationshipType}' related to {item.GetEntity().Label.Name}({item.GetKey()}).");
             }
         }
 

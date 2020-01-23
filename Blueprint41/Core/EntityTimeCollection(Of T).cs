@@ -78,7 +78,10 @@ namespace Blueprint41.Core
                     return;
 
             if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                DbTransaction?.Register(AddAction(item, moment));
+            {
+                CollectionItem<TEntity> oldItem = InnerData.FirstOrDefault(item => item.Item.GetKey() == item.Item.GetKey());
+                DbTransaction?.Register(AddAction(item, (oldItem != null) ? oldItem.StartDate : moment));
+            }
         }
         internal void AddRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
         {
@@ -98,7 +101,8 @@ namespace Blueprint41.Core
                     if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
                         continue;
 
-                actions.AddLast(AddAction(item, moment));
+                CollectionItem<TEntity> oldItem = InnerData.FirstOrDefault(item => item.Item.GetKey() == item.Item.GetKey());
+                actions.AddLast(AddAction(item, (oldItem != null) ? oldItem.StartDate : moment));
             }
 
             if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
@@ -404,6 +408,9 @@ namespace Blueprint41.Core
         {
             LazyLoad();
             LazySet();
+
+            if (!moment.HasValue)
+                moment = RunningTransaction.TransactionDate;
 
             if (item != null && EagerLoadLogic != null)
                 EagerLoadLogic.Invoke(item);

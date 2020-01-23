@@ -44,10 +44,10 @@ namespace Blueprint41.Log
 
             ThresholdInSeconds = 100 /*1s*/;
             MaxFileSize = 2 * 1024 * 1024;
-            m_LogDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? @"C:\", "TransactionLogs");           
+            m_LogDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? @"C:\", "TransactionLogs");
 
             watcher = new Stopwatch();
-        }        
+        }
 
         internal void Start()
         {
@@ -71,7 +71,7 @@ namespace Blueprint41.Log
             }
         }
 
-        private void Log(string message)
+        internal void Log(string message)
         {
             if (!Directory.Exists(LogDirectory))
                 Directory.CreateDirectory(LogDirectory);

@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace Blueprint41.Neo4j.Persistence
 {
-    
+
     public class Neo4jTransaction : Transaction
     {
         internal Neo4jTransaction(IDriver driver, bool withTransaction, TransactionLogger? logger)
@@ -79,7 +79,7 @@ namespace Blueprint41.Neo4j.Persistence
         public ISession? Session { get; set; }
         public ITransaction? Transaction { get; set; }
         public IStatementRunner? StatementRunner { get; set; }
-        private TransactionLogger? Logger { get; set; }
+        internal TransactionLogger? Logger { get; set; }
 
         private bool WithTransaction;
 
@@ -94,7 +94,7 @@ namespace Blueprint41.Neo4j.Persistence
                 {
                     Transaction.Success();
                     Transaction.Dispose();
-                }   
+                }
             }
 
             if (!(Session is null))
@@ -111,7 +111,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             if (WithTransaction)
                 Transaction?.Failure();
-            
+
             if (!(Session is null))
                 Session.Dispose();
 
@@ -134,6 +134,14 @@ namespace Blueprint41.Neo4j.Persistence
             base.FlushPrivate();
         }
 
+        public static void Log(string message)
+        {
+            Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
+            if (trans is null)
+                throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
+
+            trans.Logger?.Log(message);
+        }
 
         protected override void ApplyFunctionalId(FunctionalId functionalId)
         {

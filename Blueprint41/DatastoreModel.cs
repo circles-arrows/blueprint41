@@ -415,7 +415,7 @@ namespace Blueprint41
             }
             public DatastoreModel Model { get; private set; }
 
-            public void Run(Expression<Action> script)
+            public void Run(Action script)
             {
                 if (Model.datamigration)
                     throw new InvalidOperationException("Calling DataMigration.Run() from inside another data migration block is not allowed.");
@@ -425,9 +425,7 @@ namespace Blueprint41
                 if (script != null && Parser.ShouldExecute)
                 {
                     Transaction.Flush();
-
-                    Debug.WriteLine("\r\n------------------\r\nDataMigration.Run:\r\n------------------" + script.ToString() + "\r\n------------------");
-                    script.Compile().Invoke();
+                    script.Invoke();
                 }
 
                 Model.datamigration = false;
@@ -496,8 +494,8 @@ namespace Blueprint41
         private static Guid GetHash(byte[] b1, byte[] b2)
         {
             uint i1 = Crc32Algorithm.Compute(b1);
-            uint i2 = Crc32CAlgorithm.Compute(b1);
-            byte[] i3 = BitConverter.GetBytes(Crc32Algorithm.Compute(b2));
+            uint i2 = Crc32CAlgorithm.Compute(b2);
+            byte[] i3 = BitConverter.GetBytes(Crc32Algorithm.Compute(b1));
             byte[] i4 = BitConverter.GetBytes(Crc32CAlgorithm.Compute(b2));
 
             return new Guid(i1, (ushort)i2, (ushort)(i2 >> 16), i3[0], i3[1], i3[2], i3[3], i4[0], i4[1], i4[2], i4[3]);

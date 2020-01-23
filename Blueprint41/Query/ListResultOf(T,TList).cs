@@ -158,6 +158,15 @@ namespace Blueprint41.Query
             return NewResult("reduce(value = {0}, item in {base} | {1})", new object[] { Parameter.Constant<TType>(init), result }, typeof(TType));
         }
 
+        public TList Extract(Func<TResult, TResult, TResult> logic)
+        {
+            TResult valueField = NewResult("value", new object[0], typeof(TType));
+            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            TResult result = logic.Invoke(valueField, itemField);
+
+            return NewList("extract(item in {base} | {0})", new object[] { result });
+        }
+
         public QueryCondition All(TType value)
         {
             return new QueryCondition(new BooleanResult(this, "all(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));

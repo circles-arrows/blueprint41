@@ -25,7 +25,7 @@ namespace Blueprint41.Core
         public OGM Parent { get; private set; }
         public OGM Item { get; private set; }
         public DateTime? StartDate { get; private set; }
-        public DateTime? EndDate { get; private set; }
+        public DateTime? EndDate { get; internal set; }
 
         public bool IsBefore(DateTime moment)
         {
@@ -46,10 +46,10 @@ namespace Blueprint41.Core
 
         public override int GetHashCode()
         {
-            return 
-                (Parent?.GetHashCode() ?? 0) ^ 
+            return
+                (Parent?.GetHashCode() ?? 0) ^
                 (Item?.GetHashCode() ?? 0) ^
-                (StartDate?.GetHashCode() ?? 0) ^ 
+                (StartDate?.GetHashCode() ?? 0) ^
                 (EndDate?.GetHashCode() ?? 0);
         }
 
@@ -94,7 +94,7 @@ namespace Blueprint41.Core
     sealed public class CollectionItem<TEntity> : CollectionItem
          where TEntity : OGM
     {
-        public CollectionItem(OGM parent, TEntity item) 
+        public CollectionItem(OGM parent, TEntity item)
             : this(parent, item, null, null)
         {
         }
