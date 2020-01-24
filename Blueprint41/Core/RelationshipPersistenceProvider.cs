@@ -21,7 +21,7 @@ namespace Blueprint41.Core
         public abstract Dictionary<OGM, CollectionItemList> Load(IEnumerable<OGM> parents, Core.EntityCollectionBase target);
         public abstract void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent);
         public abstract void Remove(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent);
-        public abstract void RemoveAll(Relationship relationship, DirectionEnum direction, OGM item, DateTime? moment, bool timedependent);
+        public abstract void RemoveAll(Relationship relationship, OGM item, DateTime? moment, bool timedependent);
         public abstract void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false);
         public abstract void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate);
 

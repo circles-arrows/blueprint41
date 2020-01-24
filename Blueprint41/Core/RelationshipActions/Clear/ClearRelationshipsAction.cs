@@ -8,21 +8,17 @@ namespace Blueprint41.Core
 {
     internal class ClearRelationshipsAction : RelationshipAction
     {
-        public DirectionEnum Direction { get; private set; }
         internal ClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship? relationship, OGM? inItem, OGM? outItem)
-            : base(persistenceProvider, relationship, inItem!, outItem!)
-        {
-            Direction = inItem != null ? DirectionEnum.In : DirectionEnum.Out;
-        }
+            : base(persistenceProvider, relationship, inItem!, outItem!){}
 
         new public OGM? InItem => base.InItem;
         new public OGM? OutItem => base.OutItem;
 
         protected override bool ActsOnSpecificParent() { return false; }
-
-        protected override void InDatastoreLogic(Relationship Relationship)
+        
+        protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.RemoveAll(Relationship, Direction, (InItem ?? OutItem)!, null, false);
+            PersistenceProvider.RemoveAll(relationship, (InItem ?? OutItem)!, null, false);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)
@@ -63,7 +59,7 @@ p.ParentOrg (p = parent, p = out)
 	O Has_Parent
 	|
 	^
-c.ChildOrgs  (c = parent, c = in) 
+c.ChildOrgs  (c = parent, c = in)
 
 Check that caller of ClearRelationshipsActions feed in the right InItem and OutItem
 

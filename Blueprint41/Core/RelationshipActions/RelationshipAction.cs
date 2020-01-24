@@ -69,17 +69,17 @@ namespace Blueprint41.Core
             }
             else
             {
-                foreach (var relationship in InItem.GetEntity().Parent.Relations)
+                Entity entity = InItem.GetEntity();
+                foreach (var relationship in entity.Parent.Relations)
                 {
-                    Entity entity = InItem.GetEntity();
                     bool shouldRun = false;
-                    if (relationship.InEntity == entity)
+                    if (entity.IsSelfOrSubclassOf(relationship.InEntity))
                     {
                         shouldRun = true;
                         if (relationship.OutProperty != null && !relationship.OutProperty.Nullable)
                             continue;
                     }
-                    if (relationship.OutEntity == entity)
+                    if (entity.IsSelfOrSubclassOf(relationship.OutEntity))
                     {
                         shouldRun = true;
                         if (relationship.InProperty != null && !relationship.InProperty.Nullable)
@@ -92,6 +92,6 @@ namespace Blueprint41.Core
                 }
             }
         }
-        protected abstract void InDatastoreLogic(Relationship Relationship);
+        protected abstract void InDatastoreLogic(Relationship relationship);
     }
 }
