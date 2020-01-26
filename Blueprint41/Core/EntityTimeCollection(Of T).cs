@@ -379,7 +379,7 @@ namespace Blueprint41.Core
             InnerData.RemoveAt(index);
         }
 
-        protected override TEntity GetItem(DateTime? moment)
+        protected override TEntity? GetItem(DateTime? moment)
         {
             LazyLoad();
             if (!moment.HasValue)
@@ -396,7 +396,7 @@ namespace Blueprint41.Core
 
             return InnerData.Where(item => item.Overlaps(from, till));
         }
-        protected override TEntity GetOriginalItem(DateTime? moment)
+        protected override TEntity? GetOriginalItem(DateTime? moment)
         {
             LazyLoad();
             if (!moment.HasValue)

@@ -11,7 +11,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// <summary>
     /// Base class for this transformation
     /// </summary>
-    internal abstract class TemplateBase
+    public abstract class TemplateBase
     {
         protected TemplateBase()
         {
