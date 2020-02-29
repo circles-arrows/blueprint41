@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public class MiscResult : FieldResult
+    public partial class MiscResult : FieldResult
     {
         internal MiscResult(FieldResult field) : base(field) { }
         public MiscResult(string function, object[]? arguments, Type? type) : base(function, arguments, type) { }

@@ -1,0 +1,62 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+	var listTypes = new []
+	{
+		( listType: "MiscListResult",     fieldType: "MiscResult",     underlyingType: "object"   ),
+		( listType: "StringListResult",   fieldType: "StringResult",   underlyingType: "string"   ),
+		( listType: "BooleanListResult",  fieldType: "BooleanResult",  underlyingType: "bool"     ),
+		( listType: "DateTimeListResult", fieldType: "DateTimeResult", underlyingType: "DateTime" ),
+		( listType: "FloatListResult",    fieldType: "FloatResult",    underlyingType: "double"   ),
+		( listType: "NumericListResult",  fieldType: "NumericResult",  underlyingType: "long"     ),
+	};
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
+
+namespace Blueprint41.Query
+{
+	public abstract partial class ListResult<TList, TResult>
+	{
+<#
+	foreach ((string listType, string fieldType, string underlyingType) in listTypes)
+	{
+		string type = (underlyingType is null) ? "null" : $"typeof({underlyingType})";
+#>
+		//public <#= listType #> Extract(Func<TResult, <#= fieldType #>> logic)
+        //{
+        //    TResult itemField = NewResult("item", new object[0], <#= type #>);
+        //    <#= fieldType #> result = logic.Invoke(itemField);
+		//
+        //    return new <#= listType #>(this, "extract(item in {base} | {0})", new object[] { result }, <#= type #>);
+        //}
+<#
+	}
+#>
+	}
+	public abstract partial class ListResult<TList, TResult, TType>
+	{
+<#
+	foreach ((string listType, string fieldType, string underlyingType) in listTypes)
+	{
+#>
+		public <#= listType #> Extract(Func<TResult, <#= fieldType #>> logic)
+        {
+            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            <#= fieldType #> result = logic.Invoke(itemField);
+
+            return new <#= listType #>(this, "extract(item in {base} | {0})", new object[] { result });
+        }
+<#
+	}
+#>
+	}
+}

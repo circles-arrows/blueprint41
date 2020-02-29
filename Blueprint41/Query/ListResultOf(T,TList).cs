@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Blueprint41.Query
 {
-    public abstract class ListResult<TList, TResult> : AliasResult
+    public abstract partial class ListResult<TList, TResult> : AliasResult
         where TList : ListResult<TList, TResult>
         where TResult : Result
     {
@@ -85,7 +85,7 @@ namespace Blueprint41.Query
         }
         private static Lazy<Func<AliasResult, string, object[]?, Type?, TList>>? newListCtor = null;
     }
-    public abstract class ListResult<TList, TResult, TType> : FieldResult
+    public abstract partial class ListResult<TList, TResult, TType> : FieldResult
         where TList : ListResult<TList, TResult, TType>
         where TResult : Result
     {

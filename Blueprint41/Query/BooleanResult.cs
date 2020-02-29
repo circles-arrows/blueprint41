@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public class BooleanResult : FieldResult
+    public partial class BooleanResult : FieldResult
     {
         #region Operator
 
@@ -51,10 +51,6 @@ namespace Blueprint41.Query
         public BooleanResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
         public BooleanResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
-        public BooleanListResult Collect()
-        {
-            return new BooleanListResult(this, "collect({base})");
-        }
         public BooleanResult Coalesce(bool value)
         {
             return new BooleanResult(this, "coalesce({base}, {0})", new object[] { Parameter.Constant(value) });

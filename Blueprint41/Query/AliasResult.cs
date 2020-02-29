@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public class AliasResult : Result
+    public partial class AliasResult : Result
     {
         private object[] emptyArguments = new object[0];
         protected internal AliasResult()
@@ -186,10 +186,5 @@ namespace Blueprint41.Query
 
             return new StringListResult(null, "LABELS({0})", new object[] { AliasName }, typeof(string));
         }
-        public AliasListResult Collect()
-        {
-            return new AliasListResult(this, "collect({base})");
-        }
-
     }
 }

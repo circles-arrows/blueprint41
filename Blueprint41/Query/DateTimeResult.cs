@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public class DateTimeResult : FieldResult
+    public partial class DateTimeResult : FieldResult
     {
         #region Operators
 
@@ -157,10 +157,6 @@ namespace Blueprint41.Query
             return new QueryCondition(this, Operator.In, Parameter.Constant(enumerable.ToArray(), typeof(DateTime)));
         }
 
-        public DateTimeListResult Collect()
-        {
-            return new DateTimeListResult(this, "collect({base})");
-        }
         public DateTimeResult Coalesce(DateTime value)
         {
             return new DateTimeResult(this, "coalesce({base}, {0})", new object[] { Parameter.Constant(value) });
