@@ -26,24 +26,39 @@ namespace Blueprint41.Neo4j.Persistence
 
         public override IEnumerable<CollectionItem> Load(OGM parent, Core.EntityCollectionBase target)
         {
-            string pattern = string.Empty;
-            if (target.Direction == DirectionEnum.In)
-                pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} = {{key}} RETURN out, rel";
-            else if(target.Direction == DirectionEnum.Out)
-                pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} = {{key}} RETURN out, rel";
-
             Entity targetEntity = target.ForeignEntity;
-            string match = string.Format(pattern,
-               target.Parent.GetEntity().GetDbName("node"),
-               target.ParentEntity.Key.Name,
-               target.Relationship.Neo4JRelationshipType,
-               targetEntity.GetDbName("out"));
+            string[] nodeNames = target.Parent.GetEntity().GetDbNames("node");
+            string[] outNames = targetEntity.GetDbNames("out");
+
+            if (nodeNames.Length > 1 && outNames.Length > 1)
+                throw new InvalidOperationException("Both ends are virtual entities, this is too expensive to query...");
+
+            List<string> fullMatch = new List<string>();
+            for (int nodeIndex = 0; nodeIndex < nodeNames.Length; nodeIndex++)
+            {
+                for (int outIndex = 0; outIndex < outNames.Length; outIndex++)
+                {
+                    string pattern = string.Empty;
+                    if (target.Direction == DirectionEnum.In)
+                        pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} = {{key}} RETURN out, rel";
+                    else if (target.Direction == DirectionEnum.Out)
+                        pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} = {{key}} RETURN out, rel";
+
+                    string match = string.Format(pattern,
+                       nodeNames[nodeIndex],
+                       target.ParentEntity.Key.Name,
+                       target.Relationship.Neo4JRelationshipType,
+                       outNames[outIndex]);
+
+                    fullMatch.Add(match);
+                }
+            }
 
             Dictionary<string, object?> parameters2 = new Dictionary<string, object?>();
             parameters2.Add("key", parent.GetKey());
 
             List<CollectionItem> items = new List<CollectionItem>();
-            var result = Neo4jTransaction.Run(match, parameters2);
+            var result = Neo4jTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
 
             foreach (var record in result)
             {
@@ -100,12 +115,28 @@ namespace Blueprint41.Neo4j.Persistence
                 returnClause = $" RETURN node.{{1}} as ParentKey, out.{{4}} as ItemKey, rel.{target.Relationship.StartDate} as StartDate, rel.{target.Relationship.EndDate} as EndDate";
 
             Entity targetEntity = target.ForeignEntity;
-            string match = string.Format(string.Concat(matchClause, whereClause, returnClause),
-               target.Parent.GetEntity().GetDbName("node"),
-               target.ParentEntity.Key.Name,
-               target.Relationship.Neo4JRelationshipType,
-               targetEntity.GetDbName("out"),
-               targetEntity.Key.Name);
+
+            string[] nodeNames = target.Parent.GetEntity().GetDbNames("node");
+            string[] outNames = targetEntity.GetDbNames("out");
+
+            if (nodeNames.Length > 1 && outNames.Length > 1)
+                throw new InvalidOperationException("Both ends are virtual entities, this is too expensive to query...");
+
+            List<string> fullMatch = new List<string>();
+            for (int nodeIndex = 0; nodeIndex < nodeNames.Length; nodeIndex++)
+            {
+                for (int outIndex = 0; outIndex < outNames.Length; outIndex++)
+                {
+                    string match = string.Format(string.Concat(matchClause, whereClause, returnClause),
+                    nodeNames[nodeIndex],
+                    target.ParentEntity.Key.Name,
+                    target.Relationship.Neo4JRelationshipType,
+                    outNames[outIndex],
+                    targetEntity.Key.Name);
+
+                    fullMatch.Add(match);
+                }
+            }
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("keys", parents.Select(item => item.GetKey()).ToArray());
@@ -113,7 +144,7 @@ namespace Blueprint41.Neo4j.Persistence
             if (parents.Any(parent => parent.GetEntity() != target.Parent.GetEntity()))
                 throw new InvalidOperationException("This code should only load collections of the same concrete parent class.");
 
-            var result = Neo4jTransaction.Run(match, parameters);
+            var result = Neo4jTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
             List<RelationshipIndex> indexCache = new List<RelationshipIndex>();
             foreach (var record in result)
             {
@@ -147,27 +178,22 @@ namespace Blueprint41.Neo4j.Persistence
 
         private Dictionary<object, List<INode>> Load(Entity targetEntity, IEnumerable<object> keys)
         {
-            string match = string.Format(
-                "MATCH (node:{0}) WHERE node.{1} in ({{keys}}) RETURN DISTINCT node, node.{1} as key",
-                targetEntity.Label.Name,
-                targetEntity.Key.Name
-            );
+            string[] nodeNames = targetEntity.GetDbNames("node");
 
-            if (targetEntity.IsVirtual)
+            List<string> fullMatch = new List<string>();
+            for (int nodeIndex = 0; nodeIndex < nodeNames.Length; nodeIndex++)
             {
-                string subclasses = string.Join(" OR ", targetEntity.GetNearestNonVirtualSubclass().Select(sc => string.Concat("node:", sc.Label.Name)));
-
-                match = string.Format(
-                    "MATCH ({0}) WHERE node.{1} in ({{keys}}) AND ({2}) RETURN DISTINCT node, node.{1} as key",
-                    targetEntity.GetDbName("node"),
-                    targetEntity.Key.Name,
-                    subclasses
+                string match = string.Format(
+                    "MATCH ({0}) WHERE node.{1} in ({{keys}}) RETURN DISTINCT node, node.{1} as key",
+                    nodeNames[nodeIndex],
+                    targetEntity.Key.Name
                 );
+                fullMatch.Add(match);
             }
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("keys", keys.Distinct().ToList());
-            var result = Neo4jTransaction.Run(match, parameters);
+            var result = Neo4jTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
 
             Dictionary<object, List<INode>> retval = new Dictionary<object, List<INode>>();
             foreach (var record in result)
@@ -342,43 +368,35 @@ namespace Blueprint41.Neo4j.Persistence
             parameters.Add("key", item.GetKey());
 
             DirectionEnum direction = relationship.ComputeDirection(item.GetEntity());
-            string match = (direction == DirectionEnum.Out) ? "MATCH (item:{0})<-[r:{1}]-(out:{2})" : "MATCH (item:{0})-[r:{1}]->(out:{2})";
+            string match = (direction == DirectionEnum.Out) ? "MATCH (item:{0})<-[r:{1}]-(out)" : "MATCH (item:{0})-[r:{1}]->(out)";
             Entity outEntity = (direction == DirectionEnum.Out) ? relationship.InEntity : relationship.OutEntity;
 
-            if (outEntity.IsVirtual)
-            {
-                RemoveAll(relationship, item, moment, timedependent, parameters, match, outEntity.GetNearestNonVirtualSubclass().ToArray());
-            }
-            else
-                RemoveAll(relationship, item, moment, timedependent, parameters, match, outEntity);
-        }
+            string condition = string.Join(" OR ", outEntity.GetDbNames("out"));
 
-        private static void RemoveAll(Relationship relationship, OGM item, DateTime? moment, bool timedependent, Dictionary<string, object?> parameters, string match, params Entity[] outEntities)
-        {
             if (timedependent)
             {
                 parameters.Add("moment", Conversion<DateTime, long>.Convert(moment ?? DateTime.MinValue));
 
                 // End Current
-                string cypher = string.Join(" UNION ", outEntities.Select(outEntity => string.Format(
-                    match + " WHERE item.{3} = {{key}} and (r.{5} > {{moment}} OR r.{5} IS NULL) AND (r.{4} <={{moment}} OR r.{4} IS NULL) SET r.EndDate = {{moment}}",
+                string cypher = string.Format(
+                    match + " WHERE ({2}) and item.{3} = {{key}} and (r.{5} > {{moment}} OR r.{5} IS NULL) AND (r.{4} <={{moment}} OR r.{4} IS NULL) SET r.EndDate = {{moment}}",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
-                    outEntity.Label.Name,
+                    condition,
                     item.GetEntity().Key.Name,
                     relationship.StartDate,
-                    relationship.EndDate)));
+                    relationship.EndDate);
 
                 Neo4jTransaction.Run(cypher, parameters);
 
                 // Remove Future
-                cypher = string.Join(" UNION ", outEntities.Select(outEntity => string.Format(
-                    match + " WHERE item.{3} = {{key}} and r.{4} > {{moment}} DELETE r",
+                cypher = string.Format(
+                    match + " WHERE ({2}) and item.{3} = {{key}} and r.{4} > {{moment}} DELETE r",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
-                    outEntity.Label.Name,
+                    condition,
                     item.GetEntity().Key.Name,
-                    relationship.StartDate)));
+                    relationship.StartDate);
 
                 Neo4jTransaction.Run(cypher, parameters);
                 //IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
@@ -388,12 +406,12 @@ namespace Blueprint41.Neo4j.Persistence
             }
             else
             {
-                string cypher = string.Join(" UNION ", outEntities.Select(outEntity => string.Format(
-                    match + " WHERE item.{3} = {{key}} DELETE r",
+                string cypher = string.Format(
+                    match + " WHERE ({2}) and item.{3} = {{key}} DELETE r",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
-                    outEntity.Label.Name,
-                    item.GetEntity().Key.Name)));
+                    condition,
+                    item.GetEntity().Key.Name);
 
                 Neo4jTransaction.Run(cypher, parameters);
 

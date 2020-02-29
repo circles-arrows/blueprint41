@@ -178,6 +178,14 @@
       <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
     </None>
+    <None Update="Query\Result.Partial.tt">
+      <LastGenOutput>Result.Partial.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Query\ListResult.Partial.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ListResult.Partial.cs</LastGenOutput>
+    </None>
     <None Update="TypeConversion\ListAndDictConverters.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ListAndDictConverters.cs</LastGenOutput>
@@ -313,6 +321,16 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Query\ListResult.Partial.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ListResult.Partial.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Query\Result.Partial.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Result.Partial.tt</DependentUpon>
     </Compile>
     <Compile Update="TypeConversion\ListAndDictConverters.cs">
       <DesignTime>True</DesignTime>

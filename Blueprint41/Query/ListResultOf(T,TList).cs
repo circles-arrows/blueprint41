@@ -9,7 +9,7 @@ namespace Blueprint41.Query
 {
     public abstract partial class ListResult<TList, TResult> : AliasResult
         where TList : ListResult<TList, TResult>
-        where TResult : Result
+        where TResult : AliasResult
     {
         static ListResult()
         {
@@ -68,6 +68,35 @@ namespace Blueprint41.Query
             return NewList("{base} + {0}", new object[] { stringListResult });
         }
 
+        //public QueryCondition All(Func<TResult, QueryCondition> condition)
+        //{
+        //    TResult alias = NewResult("item", new object[0]);
+        //    QueryCondition test = condition.Invoke(alias);
+
+        //    return new QueryCondition(new BooleanResult("all(item IN {base} WHERE {0})", new object[] { test }));
+        //}
+        //public QueryCondition Any(Func<TResult, QueryCondition> condition)
+        //{
+        //    TResult alias = NewResult("item", new object[0]);
+        //    QueryCondition test = condition.Invoke(itemField);
+
+        //    return new QueryCondition(new BooleanResult(itemField, "any(item IN {base} WHERE {0})", new object[] { test }));
+        //}
+        //public QueryCondition None(Func<TResult, QueryCondition> condition)
+        //{
+        //    TResult alias = NewResult("item", new object[0]);
+        //    QueryCondition test = condition.Invoke(itemField);
+
+        //    return new QueryCondition(new BooleanResult(this, "none(item IN {base} WHERE {0})", new object[] { test }));
+        //}
+        //public QueryCondition Single(Func<TResult, QueryCondition> condition)
+        //{
+        //    TResult alias = NewResult("item", new object[0]);
+        //    QueryCondition test = condition.Invoke(itemField);
+
+        //    return new QueryCondition(new BooleanResult(this, "single(item IN {base} WHERE {0})", new object[] { test }));
+        //}
+
         public override string GetFieldName()
         {
             throw new NotSupportedException();
@@ -77,7 +106,7 @@ namespace Blueprint41.Query
         {
             return newResultCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private  static Lazy<Func<AliasResult, string, object[]?, Type?, TResult>>? newResultCtor = null;
+        private static Lazy<Func<AliasResult, string, object[]?, Type?, TResult>>? newResultCtor = null;
 
         protected internal TList NewList(string function, object[]? arguments = null, Type? type = null)
         {
@@ -87,7 +116,7 @@ namespace Blueprint41.Query
     }
     public abstract partial class ListResult<TList, TResult, TType> : FieldResult
         where TList : ListResult<TList, TResult, TType>
-        where TResult : Result
+        where TResult : FieldResult
     {
         static ListResult()
         {
@@ -149,39 +178,65 @@ namespace Blueprint41.Query
             return NewList("{base} + {0}", new object[] { stringListResult });
         }
 
-        public TResult Reduce(TType init, Func<TResult, TResult, TResult> logic)
+        public StringResult Reduce(string init, Func<StringResult, TResult, StringResult> logic)
         {
-            TResult valueField = NewResult("value", new object[0], typeof(TType));
+            StringResult valueField = new StringResult(null!, "value", new object[0], typeof(string));
             TResult itemField = NewResult("item", new object[0], typeof(TType));
-            TResult result = logic.Invoke(valueField, itemField);
+            StringResult result = logic.Invoke(valueField, itemField);
 
-            return NewResult("reduce(value = {0}, item in {base} | {1})", new object[] { Parameter.Constant<TType>(init), result }, typeof(TType));
+            return new StringResult(this, "reduce(value = {0}, item in {base} | {1})", new object[] { Parameter.Constant<string>(init), result }, typeof(string));
         }
 
-        public TList Extract(Func<TResult, TResult, TResult> logic)
+        public StringResult Join(string separator, Func<TResult, StringResult> logic)
         {
-            TResult valueField = NewResult("value", new object[0], typeof(TType));
             TResult itemField = NewResult("item", new object[0], typeof(TType));
-            TResult result = logic.Invoke(valueField, itemField);
+            StringResult result = logic.Invoke(itemField);
 
-            return NewList("extract(item in {base} | {0})", new object[] { result });
+            return Reduce("", (value, item) => value.Concat(Parameter.Constant(separator), result).Substring(separator.Length));
         }
-
         public QueryCondition All(TType value)
         {
-            return new QueryCondition(new BooleanResult(this, "all(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
+            return All(item => item == Parameter.Constant(value));
+        }
+        public QueryCondition All(Func<TResult, QueryCondition> condition)
+        {
+            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            QueryCondition test = condition.Invoke(itemField);
+
+            return new QueryCondition(new BooleanResult(this, "all(item IN {base} WHERE {0})", new object[] { test }));
         }
         public QueryCondition Any(TType value)
         {
-            return new QueryCondition(new BooleanResult(this, "any(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
+            return Any(item => item == Parameter.Constant(value));
+        }
+        public QueryCondition Any(Func<TResult, QueryCondition> condition)
+        {
+            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            QueryCondition test = condition.Invoke(itemField);
+
+            return new QueryCondition(new BooleanResult(this, "any(item IN {base} WHERE {0})", new object[] { test }));
         }
         public QueryCondition None(TType value)
         {
-            return new QueryCondition(new BooleanResult(this, "none(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
+            return None(item => item == Parameter.Constant(value));
+        }
+        public QueryCondition None(Func<TResult, QueryCondition> condition)
+        {
+            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            QueryCondition test = condition.Invoke(itemField);
+
+            return new QueryCondition(new BooleanResult(this, "none(item IN {base} WHERE {0})", new object[] { test }));
         }
         public QueryCondition Single(TType value)
         {
-            return new QueryCondition(new BooleanResult(this, "single(item IN {base} WHERE item = {0})", new object[] { Parameter.Constant<TType>(value) }));
+            return Single(item => item == Parameter.Constant(value));
+        }
+        public QueryCondition Single(Func<TResult, QueryCondition> condition)
+        {
+            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            QueryCondition test = condition.Invoke(itemField);
+
+            return new QueryCondition(new BooleanResult(itemField, "single(item IN {base} WHERE {0})", new object[] { test }));
         }
 
         protected internal TResult NewResult(string function, object[]? arguments = null, Type? type = null)

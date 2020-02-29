@@ -343,9 +343,12 @@ namespace Blueprint41
             return this;
         }
 
-        internal string GetDbName(string alias)
+        internal string[] GetDbNames(string alias)
         {
-            return IsVirtual ? alias : string.Concat(alias, ":", Label.Name);
+            if (IsVirtual)
+                return GetNearestNonVirtualSubclass().Select(item => string.Concat(alias, ":", item.Label.Name)).ToArray();
+            else
+                return new string[] { string.Concat(alias, ":", Label.Name) };
         }
 
         private string AddDot(string text)

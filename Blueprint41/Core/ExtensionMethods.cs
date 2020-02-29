@@ -69,6 +69,14 @@ namespace System.Linq
 
         #endregion
 
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
+        {
+            if (action is null)
+                return;
+            
+            foreach (T item in items)
+                action.Invoke(item);
+        }
         public static IEnumerable<ReadOnlyCollection<T>> Chunks<T>(this IEnumerable<T> source, int pageSize)
         {
             using (var enumerator = source.GetEnumerator())

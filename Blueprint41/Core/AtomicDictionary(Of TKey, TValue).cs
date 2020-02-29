@@ -2,149 +2,229 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Threading;
 
 namespace Blueprint41.Core
 {
+    /// <summary>
+    /// Dictionary with fast read and not too bad write performance. Use if you have many reads and few writes or updates, eg. caching.
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     public class AtomicDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         where TKey : notnull
     {
-        private object sync = new object();
-        private IDictionary<TKey, TValue> dict;
+        private int readerCount = 0;
+        private int awaitingWrite = 0;
+        private object syncLock = new object();
+
+        private readonly IDictionary<TKey, TValue> dictionary;
 
         public AtomicDictionary()
         {
-            dict = new Dictionary<TKey, TValue>();
+            dictionary = new Dictionary<TKey, TValue>();
         }
         public AtomicDictionary(IEqualityComparer<TKey> comparer)
         {
-            dict = new Dictionary<TKey, TValue>(comparer);
+            dictionary = new Dictionary<TKey, TValue>(comparer);
         }
         public AtomicDictionary(IDictionary<TKey, TValue> dictionary)
         {
-            dict = new Dictionary<TKey, TValue>(dictionary);
+            this.dictionary = new Dictionary<TKey, TValue>(dictionary);
         }
         public AtomicDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
         {
-            dict = new Dictionary<TKey, TValue>(dictionary, comparer);
+            this.dictionary = new Dictionary<TKey, TValue>(dictionary, comparer);
         }
 
-        private void Write(Action<IDictionary<TKey, TValue>> logic)
+        public void Read(Action<IDictionary<TKey, TValue>> logic)
         {
-            lock (sync)
+            if (awaitingWrite != 0)
             {
-                IDictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>(dict);
-                logic.Invoke(newDict);
+                lock (syncLock)
+                    ReadInternal();
+            }
+            else
+            {
+                ReadInternal();
+            }
 
-                Interlocked.Exchange(ref dict, newDict);
+            void ReadInternal()
+            {
+                Interlocked.Increment(ref readerCount);
+                try
+                {
+                    logic.Invoke(dictionary);
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref readerCount);
+                }
             }
         }
-        private T Write<T>(Func<IDictionary<TKey, TValue>, T> logic)
+        public T Read<T>(Func<IDictionary<TKey, TValue>, T> logic)
         {
-            lock (sync)
+            if (awaitingWrite != 0)
             {
-                IDictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>(dict);
-                T retval = logic.Invoke(newDict);
+                lock (syncLock)
+                    return ReadInternal();
+            }
+            else
+            {
+                return ReadInternal();
+            }
 
-                Interlocked.Exchange(ref dict, newDict);
-
-                return retval;
+            T ReadInternal()
+            {
+                Interlocked.Increment(ref readerCount);
+                try
+                {
+                    return logic.Invoke(dictionary);
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref readerCount);
+                }
             }
         }
+        public void Write(Action<IDictionary<TKey, TValue>> logic)
+        {
+            lock (syncLock)
+            {
+                Interlocked.Increment(ref awaitingWrite);
+                try
+                {
+                    while (readerCount != 0)
+                        Thread.Yield();
+
+                    logic.Invoke(dictionary);
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref awaitingWrite);
+                }
+            }
+        }
+        public T Write<T>(Func<IDictionary<TKey, TValue>, T> logic)
+        {
+            lock (syncLock)
+            {
+                Interlocked.Increment(ref awaitingWrite);
+                try
+                {
+                    while (readerCount != 0)
+                        Thread.Yield();
+
+                    return logic.Invoke(dictionary);
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref awaitingWrite);
+                }
+            }
+        }
+        public void ReadOptionalWrite(ReadLogic readLogic, Action<IDictionary<TKey, TValue>> writeLogic)
+        {
+            bool executeWrite = false;
+            Read(readDict => readLogic.Invoke(readDict, out executeWrite));
+            if (executeWrite)
+            {
+                Write(delegate (IDictionary<TKey, TValue> writeDict)
+                {
+                    readLogic.Invoke(writeDict, out executeWrite);
+                    if (executeWrite)
+                        writeLogic.Invoke(writeDict);
+                });
+            }
+        }
+        public T ReadOptionalWrite<T>(ReadLogic<T> readLogic, Func<IDictionary<TKey, TValue>, T> writeLogic)
+        {
+            bool executeWrite = false;
+            T result = Read(readDict => readLogic.Invoke(readDict, out executeWrite));
+            if (executeWrite)
+            {
+                Write(delegate (IDictionary<TKey, TValue> writeDict)
+                {
+                    result = readLogic.Invoke(writeDict, out executeWrite);
+                    if (executeWrite)
+                        result = writeLogic.Invoke(writeDict);
+                });
+            }
+            return result;
+        }
+        public delegate void ReadLogic(IDictionary<TKey, TValue> dictionary, out bool executeWrite);
+        public delegate T ReadLogic<T>(IDictionary<TKey, TValue> dictionary, out bool executeWrite);
 
         public TValue this[TKey key]
         {
-            get => dict[key];
+            get => Read(dict => dict[key]);
             set => Write(dict => dict[key] = value);
         }
-        public ICollection<TKey> Keys => dict.Keys;
-        public ICollection<TValue> Values => dict.Values;
-        public int Count => dict.Count;
+
         public bool IsReadOnly => false;
+        public int Count => Read(dict => dict.Count);
+        public bool Contains(KeyValuePair<TKey, TValue> item) => Read(dict => dict.Contains(item));
+        public bool ContainsKey(TKey key) => Read(dict => dict.ContainsKey(key));
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) => Read(dict => dict.CopyTo(array, arrayIndex));
         public void Add(TKey key, TValue value) => Write(dict => dict.Add(key, value));
         public void Add(KeyValuePair<TKey, TValue> item) => Write(dict => dict.Add(item));
-        public bool Contains(KeyValuePair<TKey, TValue> item) => dict.Contains(item);
-        public bool ContainsKey(TKey key) => dict.ContainsKey(key);
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) => dict.CopyTo(array, arrayIndex);
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => dict.GetEnumerator();
+        public void Add(IEnumerable<KeyValuePair<TKey, TValue>> items) => Write(dict => items.ForEach(item => AddIfNotExists(dict, item)));
         public bool Remove(TKey key) => Write(dict => dict.Remove(key));
         public bool Remove(KeyValuePair<TKey, TValue> item) => Write(dict => dict.Remove(item));
-        public bool TryGetValue(TKey key, out TValue value) => dict.TryGetValue(key, out value);
-        IEnumerator IEnumerable.GetEnumerator() => dict.GetEnumerator();
+        public void Remove(IEnumerable<TKey> keys) => Write(dict => keys.ForEach(key => dict.Remove(key)));
+        public void Clear() => Write(dict => dict.Clear());
 
-        public void Clear()
+        public ICollection<TKey> Keys => Read(dict => dict.Keys);
+        public ICollection<TValue> Values => Read(dict => dict.Values);
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Read(dict => dict.GetEnumerator());
+        IEnumerator IEnumerable.GetEnumerator() => Read(dict => dict.GetEnumerator());
+
+        public bool TryGetValue(TKey key, out TValue value)
         {
-            lock (sync)
-            {
-                IDictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>(((Dictionary<TKey, TValue>)dict).Comparer);
-                Interlocked.Exchange(ref dict, newDict);
-            }
-        }
-        private void Add(IEnumerable<KeyValuePair<TKey, TValue>> items)
-        {
-            lock (sync)
-            {
-                IDictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>(dict);
-                foreach (KeyValuePair<TKey, TValue> kvp in items)
-                    if (!newDict.ContainsKey(kvp.Key))
-                        newDict.Add(kvp.Key, kvp.Value);
+            bool retval = false;
 
-                Interlocked.Exchange(ref dict, newDict);
-            }
-        }
-        public void Remove(IEnumerable<TKey> keys)
-        {
-            lock (sync)
+            value = Read(dict =>
             {
-                IDictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>(dict);
-                foreach (TKey key in keys)
-                    if (!newDict.ContainsKey(key))
-                        newDict.Remove(key);
+                retval = dict.TryGetValue(key, out TValue v);
+                return v;
+            });
 
-                Interlocked.Exchange(ref dict, newDict);
-            }
+            return retval;
         }
-
         public TValue TryGetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
         {
-            TValue value;
-            if (!dict.TryGetValue(key, out value))
+            return ReadOptionalWrite(delegate (IDictionary<TKey, TValue> dictRead, out bool executeWrite)
             {
-                lock (sync)
-                {
-                    if (!dict.TryGetValue(key, out value))
-                    {
-                        IDictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>(dict);
-                        value = valueFactory.Invoke(key);
-                        newDict.Add(key, value);
+                executeWrite = !dictRead.TryGetValue(key, out TValue value);
+                return value;
 
-                        Interlocked.Exchange(ref dict, newDict);
-                    }
-                }
-            }
-            return value;
+            }, delegate (IDictionary<TKey, TValue> dictWrite)
+            {
+                TValue value = valueFactory.Invoke(key);
+                dictWrite.Add(key, value);
+                return value;
+            });
         }
         public TValue TryGetOrAdd(TKey key, Func<TKey, IEnumerable<KeyValuePair<TKey, TValue>>> valueFactory)
         {
-            TValue value;
-            if (!dict.TryGetValue(key, out value))
+            return ReadOptionalWrite(delegate (IDictionary<TKey, TValue> dictRead, out bool executeWrite)
             {
-                lock (sync)
-                {
-                    if (!dict.TryGetValue(key, out value))
-                    {
-                        IDictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>(dict);
-                        foreach (KeyValuePair<TKey, TValue> kvp in valueFactory.Invoke(key))
-                            if (!newDict.ContainsKey(kvp.Key))
-                                newDict.Add(kvp.Key, kvp.Value);
+                executeWrite = !dictRead.TryGetValue(key, out TValue value);
+                return value;
 
-                        Interlocked.Exchange(ref dict, newDict);
+            }, delegate (IDictionary<TKey, TValue> dictWrite)
+            {
+                IEnumerable<KeyValuePair<TKey, TValue>> values = valueFactory.Invoke(key);
+                values.ForEach(item => dictWrite.Add(item.Key, item.Value));
+                return dictWrite[key]; 
+            });
+        }
 
-                        return newDict[key];
-                    }
-                }
-            }
-            return value;
+        private void AddIfNotExists(IDictionary<TKey, TValue> dict, KeyValuePair<TKey, TValue> kvp)
+        {
+            if (!dict.ContainsKey(kvp.Key))
+                dict.Add(kvp.Key, kvp.Value);
         }
     }
 }
