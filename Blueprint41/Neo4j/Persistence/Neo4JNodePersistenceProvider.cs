@@ -323,7 +323,7 @@ namespace Blueprint41.Neo4j.Persistence
         private List<T> Load<T>(Entity entity, NodeEventArgs args, IStatementResult result, Transaction trans)
             where T : class, OGM
         {
-            List<Entity> concretes = entity.GetConcreteClasses();
+            IReadOnlyList<Entity> concretes = entity.GetConcreteClasses();
 
             List<T> items = new List<T>();
             foreach (var record in result)

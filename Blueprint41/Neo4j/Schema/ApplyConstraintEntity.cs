@@ -25,7 +25,7 @@ namespace Blueprint41.Neo4j.Schema
             List<ApplyConstraintProperty> actions = new List<ApplyConstraintProperty>();
             IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity == Entity.Label.Name);
             IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity == Entity.Label.Name);
-            List<Property> properties = Entity.GetPropertiesOfBaseTypesAndSelf();
+            IReadOnlyList<Property> properties = Entity.GetPropertiesOfBaseTypesAndSelf();
 
             foreach (Property property in properties)
             {

@@ -140,7 +140,7 @@ namespace Blueprint41
             if (property is null)
                 throw new NotSupportedException("Property does not exist.");
 
-            FullTextIndexProperties.Add(property);
+            fullTextIndexProperties.Add(property);
             return this;
         }
         public Entity RemoveFullTextProperty(string propertyName)
@@ -149,7 +149,7 @@ namespace Blueprint41
             if (property is null)
                 throw new NotSupportedException("Property does not exist.");
 
-            FullTextIndexProperties.Remove(property);
+            fullTextIndexProperties.Remove(property);
             return this;
         }
 
@@ -210,7 +210,9 @@ namespace Blueprint41
             return this;
         }
 
-        public List<Property> FullTextIndexProperties { get; private set; }
+        public IReadOnlyList<Property> FullTextIndexProperties { get; private set; }
+        private List<Property> fullTextIndexProperties = new List<Property>();
+
         public PropertyCollection Properties { get; private set; }
         public string? UnidentifiedProperties { get; private set; }
 
@@ -278,7 +280,7 @@ namespace Blueprint41
         }
         public Entity SetKey(string property, bool autoGenerate)
         {
-            List<Property> properties = GetPropertiesOfBaseTypesAndSelf();
+            IReadOnlyList<Property> properties = GetPropertiesOfBaseTypesAndSelf();
             if (properties.Where(x => x.Name != property && x.IsKey).Count() > 0)
                 throw new NotSupportedException("Multiple key not allowed.");
 
@@ -290,7 +292,7 @@ namespace Blueprint41
         }
         public Entity SetNodeType(string property)
         {
-            List<Property> properties = GetPropertiesOfBaseTypesAndSelf();
+            IReadOnlyList<Property> properties = GetPropertiesOfBaseTypesAndSelf();
             if (properties.Where(x => x.Name != property && x.IsNodeType).Count() > 0)
                 throw new NotSupportedException("Multiple node type not allowed.");
 
@@ -299,7 +301,7 @@ namespace Blueprint41
         }
         public Entity SetRowVersionField(string property, bool hideSetter = true)
         {
-            List<Property> properties = GetPropertiesOfBaseTypesAndSelf();
+            IReadOnlyList<Property> properties = GetPropertiesOfBaseTypesAndSelf();
             if (properties.Where(x => x.Name != property && x.IsRowVersion).Count() > 0)
                 throw new NotSupportedException("Multiple row version fields are not allowed.");
 
@@ -1013,7 +1015,7 @@ namespace Blueprint41
 
 
         private List<Entity>? baseTypes = null;
-        public List<Entity> GetBaseTypes()
+        public IReadOnlyList<Entity> GetBaseTypes()
         {
             return InitSubList(ref baseTypes, delegate (List<Entity> result)
             {
@@ -1026,7 +1028,7 @@ namespace Blueprint41
         }
 
         private List<Entity>? baseTypesAndSelf = null;
-        public List<Entity> GetBaseTypesAndSelf()
+        public IReadOnlyList<Entity> GetBaseTypesAndSelf()
         {
             return InitSubList(ref baseTypesAndSelf, delegate (List<Entity> result)
             {
@@ -1039,7 +1041,7 @@ namespace Blueprint41
         }
 
         private List<Entity>? subclassesOrSelf = null;
-        public List<Entity> GetSubclassesOrSelf()
+        public IReadOnlyList<Entity> GetSubclassesOrSelf()
         {
             return InitSubList(ref subclassesOrSelf, delegate (List<Entity> classes)
             {
@@ -1053,7 +1055,7 @@ namespace Blueprint41
         }
 
         private List<Entity>? subclasses = null;
-        public List<Entity> GetSubclasses()
+        public IReadOnlyList<Entity> GetSubclasses()
         {
             return InitSubList(ref subclasses, delegate (List<Entity> classes)
             {
@@ -1067,7 +1069,7 @@ namespace Blueprint41
         }
 
         private List<Entity>? directSubclasses = null;
-        public List<Entity> GetDirectSubclasses()
+        public IReadOnlyList<Entity> GetDirectSubclasses()
         {
             return InitSubList(ref directSubclasses, delegate (List<Entity> classes)
             {
@@ -1085,7 +1087,7 @@ namespace Blueprint41
         }
 
         private List<Entity>? nearestNonVirtualSubclasses = null;
-        public List<Entity> GetNearestNonVirtualSubclass()
+        public IReadOnlyList<Entity> GetNearestNonVirtualSubclass()
         {
             return InitSubList(ref nearestNonVirtualSubclasses, delegate (List<Entity> classes)
             {
@@ -1103,8 +1105,7 @@ namespace Blueprint41
         }
 
         private List<Property>? propertiesOfBaseTypesAndSelf = null;
-
-        public List<Property> GetPropertiesOfBaseTypesAndSelf()
+        public IReadOnlyList<Property> GetPropertiesOfBaseTypesAndSelf()
         {
             return InitSubList(ref propertiesOfBaseTypesAndSelf, delegate (List<Property> allProperties)
             {
@@ -1116,7 +1117,7 @@ namespace Blueprint41
         }
 
         private List<Entity>? concreteClasses = null;
-        public List<Entity> GetConcreteClasses()
+        public IReadOnlyList<Entity> GetConcreteClasses()
         {
             return InitSubList(ref concreteClasses, delegate (List<Entity> classes)
             {
