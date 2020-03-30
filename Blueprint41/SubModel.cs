@@ -64,6 +64,10 @@ namespace Blueprint41
 
             return this;
         }
+        internal void AddEntityInternal(Entity entity)
+        {
+            entities.Add(entity);
+        }
 
         public SubModel SetEntities(params string[] entities)
         {
@@ -96,10 +100,6 @@ namespace Blueprint41
 
             return this;
         }
-        internal void RemoveEntityInternal(Entity entity)
-        {
-            entities.Remove(entity);
-        }
         public SubModel RemoveEntities(params string[] entities)
         {
             Entity[] target = new Entity[entities.Length];
@@ -120,6 +120,10 @@ namespace Blueprint41
                     this.entities.Remove(entity);
 
             return this;
+        }
+        internal void RemoveEntityInternal(Entity entity)
+        {
+            entities.Remove(entity);
         }
 
         public SubModel Rename(string name)

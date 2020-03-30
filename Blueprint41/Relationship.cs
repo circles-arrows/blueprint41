@@ -367,7 +367,7 @@ namespace Blueprint41
             return string.Format("{0}_{1}", InEntity.Name.ToUpperInvariant(), OutEntity.Name.ToUpperInvariant());
        }
 
-        public DirectionEnum ComputeDirection(Entity entity)
+        internal DirectionEnum ComputeDirection(Entity entity)
         {
             return entity.IsSelfOrSubclassOf(InEntity) ? DirectionEnum.In : DirectionEnum.Out;
         }

@@ -49,7 +49,7 @@ namespace Blueprint41
             nodeType = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType); }, true);
             rowVersion = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
 
-            Parent.SubModels["Main"].AddEntity(this);
+            Parent.SubModels["Main"].AddEntityInternal(this);
         }
 
         static private FunctionalId? GetFunctionalId(DatastoreModel parent, string name, string label, string? prefix)
