@@ -43,8 +43,6 @@ namespace Blueprint41
 
             this.functionalId = functionalId;
 
-            FullTextIndexProperties = new List<Blueprint41.Property>();
-
             key = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey); }, true);
             nodeType = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType); }, true);
             rowVersion = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
@@ -212,7 +210,10 @@ namespace Blueprint41
             return this;
         }
 
-        public IReadOnlyList<Property> FullTextIndexProperties { get; private set; }
+        public IReadOnlyList<Property> FullTextIndexProperties
+        {
+            get { return fullTextIndexProperties; }
+        }
         private List<Property> fullTextIndexProperties = new List<Property>();
 
         public PropertyCollection Properties { get; private set; }
@@ -425,10 +426,6 @@ namespace Blueprint41
         public IRefactorEntity Refactor { get { return this; } }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="newName"></param>
         void IRefactorEntity.Rename(string newName)
         {
             if (string.IsNullOrEmpty(newName))
