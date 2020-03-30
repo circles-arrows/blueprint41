@@ -12,6 +12,7 @@ namespace Blueprint41
         internal SubModelCollection(DatastoreModel parent)
             : base(parent)
         {
+            New("Main", 0, false, false);
         }
 
         public SubModel New(string name)
@@ -34,6 +35,9 @@ namespace Blueprint41
 
         new public void Remove(string name)
         {
+            if (name == "Main")
+                throw new InvalidOperationException("You cannot remove the 'Main' SubModel.");
+
             base.Remove(name);
         }
     }

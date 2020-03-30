@@ -48,6 +48,8 @@ namespace Blueprint41
             key = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey); }, true);
             nodeType = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType); }, true);
             rowVersion = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
+
+            Parent.SubModels["Main"].AddEntity(this);
         }
 
         static private FunctionalId? GetFunctionalId(DatastoreModel parent, string name, string label, string? prefix)
@@ -612,6 +614,9 @@ namespace Blueprint41
 
                 if (!Parent.Entities.Any(item => item != entity && item.FunctionalId == entity.FunctionalId))
                     Parent.FunctionalIds.Remove(entity.FunctionalId!.Label);
+
+                foreach (SubModel model in Parent.SubModels)
+                    model.RemoveEntityInternal(entity);
 
                 Parent.Entities.Remove(entity.Name);
                 Parent.Labels.Remove(entity.Label.Name);

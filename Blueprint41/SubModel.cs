@@ -33,6 +33,9 @@ namespace Blueprint41
         }
         public SubModel AddEntity(Entity entity)
         {
+            if (Name == "Main")
+                throw new InvalidOperationException("You cannot add entities to the 'Main' SubModel.");
+
             if (entities.Contains(entity))
                 return this;
 
@@ -50,6 +53,9 @@ namespace Blueprint41
         }
         public SubModel AddEntities(params Entity[] entities)
         {
+            if (Name == "Main")
+                throw new InvalidOperationException("You cannot add entities to the 'Main' SubModel.");
+
             HashSet<Entity> test = new HashSet<Entity>(entities);
 
             foreach (Entity entity in entities.Distinct())
@@ -69,6 +75,9 @@ namespace Blueprint41
         }
         public SubModel SetEntities(params Entity[] entities)
         {
+            if (Name == "Main")
+                throw new InvalidOperationException("You cannot set entities for the 'Main' SubModel.");
+
             this.entities = entities.ToList();
 
             return this;
@@ -80,9 +89,16 @@ namespace Blueprint41
         }
         public SubModel RemoveEntity(Entity entity)
         {
-            entities.Remove(entity);
+            if (Name == "Main")
+                throw new InvalidOperationException("You cannot remove entities from the 'Main' SubModel.");
+
+            RemoveEntityInternal(entity);
 
             return this;
+        }
+        internal void RemoveEntityInternal(Entity entity)
+        {
+            entities.Remove(entity);
         }
         public SubModel RemoveEntities(params string[] entities)
         {
@@ -94,6 +110,9 @@ namespace Blueprint41
         }
         public SubModel RemoveEntities(params Entity[] entities)
         {
+            if (Name == "Main")
+                throw new InvalidOperationException("You cannot remove entities from the 'Main' SubModel.");
+
             HashSet<Entity> test = new HashSet<Entity>(entities);
 
             foreach (Entity entity in entities.Distinct())
@@ -105,12 +124,23 @@ namespace Blueprint41
 
         public SubModel Rename(string name)
         {
+            if (Name == "Main")
+                throw new InvalidOperationException("You cannot rename the 'Main' SubModel.");
+
+            if (name == "Main")
+                throw new InvalidOperationException("You cannot rename a SubModel to 'Main'.");
+
+            Parent.SubModels.Remove(Name);
             Name = name;
+            Parent.SubModels.Add(Name, this);
 
             return this;
         }
         public SubModel SetChapter(int chapter)
         {
+            if (Name == "Main")
+                throw new InvalidOperationException("You cannot set the chapter for the 'Main' SubModel.");
+
             Chapter = chapter;
 
             return this;
