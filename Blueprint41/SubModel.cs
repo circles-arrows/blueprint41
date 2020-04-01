@@ -15,6 +15,7 @@ namespace Blueprint41
             IsDraft = isDraft;
             IsLaboratory = isLaboratory;
             Explanation = null;
+            Guid = parent.GenerateGuid(name);
         }
 
         public DatastoreModel Parent { get; private set; }
@@ -23,6 +24,7 @@ namespace Blueprint41
         public bool IsDraft { get; private set; }
         public bool IsLaboratory { get; private set; }
         public string? Explanation { get; private set; }
+        public Guid Guid { get; private set; }
 
         public IReadOnlyList<Entity> Entities { get { return entities; } }
         private List<Entity> entities = new List<Entity>();
