@@ -58,7 +58,7 @@ namespace Blueprint41
             if (Name == "Main")
                 throw new InvalidOperationException("You cannot add entities to the 'Main' SubModel.");
 
-            HashSet<Entity> test = new HashSet<Entity>(entities);
+            HashSet<Entity> test = new HashSet<Entity>(this.entities);
 
             foreach (Entity entity in entities.Distinct())
                 if (!test.Contains(entity))
