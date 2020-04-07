@@ -8,18 +8,18 @@ using Blueprint41.Core;
 namespace <#= Settings.FullCRUDNamespace #>
 {
   internal class Register
-    {
-        private static bool isInitialized = false;
+	{
+		private static bool isInitialized = false;
 
-        public static void Types()
-        {
-            if (isInitialized)
-                return;
+		public static void Types()
+		{
+			if (isInitialized)
+				return;
 
-            lock (typeof(Register))
-            {
-                if (isInitialized)
-                    return;
+			lock (typeof(Register))
+			{
+				if (isInitialized)
+					return;
 
 				isInitialized = true;
 
@@ -27,11 +27,11 @@ namespace <#= Settings.FullCRUDNamespace #>
 foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
 {	
 #>
-                ((ISetRuntimeType)<#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]).SetRuntimeTypes(typeof(<#= DALModel.ClassName #>), typeof(<#= DALModel.Name #>));
+				((ISetRuntimeType)<#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]).SetRuntimeTypes(typeof(<#= DALModel.ClassName #>), typeof(<#= DALModel.Name #>));
 <#
 }
 #>
-            }
-        }
-    }
+			}
+		}
+	}
 }

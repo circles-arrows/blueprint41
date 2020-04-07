@@ -26,7 +26,7 @@ if (DALModel.IsAbstract)
 {
 #>
 	public interface I<#= DALModel.Name #>OriginalData<#= DALModel.Inherits == null ? "" : string.Concat(" : I", DALModel.Inherits.Name, "OriginalData") #>
-    {
+	{
 <#
 	foreach (Property attr in DALModel.Properties)
 	{
@@ -78,22 +78,22 @@ if (DALModel.IsAbstract)
 	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
 	{
 #>
-        
+		
 		#region Member for UnidentifiedProperties
 
-        IDictionary<string, object> <#= DALModel.UnidentifiedProperties #> { get; }
+		IDictionary<string, object> <#= DALModel.UnidentifiedProperties #> { get; }
 
-        #endregion
+		#endregion
 <#
 	}
 #>
-    }
+	}
 
 	public partial interface <#= DALModel.ClassName #> : OGM<#= string.Join("", DALModel.GetBaseTypes().Where(item => item.IsAbstract).Select(item => string.Concat(", ", item.ClassName)).ToArray()) #>
 	{
 <#
 	if((object)DALModel.NodeType == null && DALModel.GetBaseTypes().Count == 0)
-    {
+	{
 #>
 		string <#= DALModel.NodeTypeName #> { get; }
 <#
@@ -126,12 +126,12 @@ if (DALModel.IsAbstract)
 	if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
 	{
 #>
-        
+		
 		#region Member for UnidentifiedProperties
 
-        IDictionary<string, object> <#= DALModel.UnidentifiedProperties #> { get; }
+		IDictionary<string, object> <#= DALModel.UnidentifiedProperties #> { get; }
 
-        #endregion
+		#endregion
 <#
 	}
 #>
@@ -141,77 +141,77 @@ if (DALModel.IsAbstract)
 
 	public partial class <#= DALModel.Name #> : OGMAbstractImpl<<#= DALModel.Name #>, <#= DALModel.ClassName #>, <#= DALModel.Key.SystemReturnType #>>
 	{
-        #region Initialize
+		#region Initialize
 
 		static <#= DALModel.Name #>()
-        {
-            Register.Types();
-        }
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
+		protected override void RegisterGeneratedStoredQueries()
+		{
 <#
-    if (!DALModel.IsVirtual)
-    {
+	if (!DALModel.IsVirtual)
+	{
 #>
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.<#= DALModel.Key.Name #>.In(Parameter.New<<#= DALModel.Key.SystemReturnType #>>(Param0))));
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.<#= DALModel.Key.Name #>.In(Parameter.New<<#= DALModel.Key.SystemReturnType #>>(Param0))));
 
-            #endregion
+			#endregion
 
 <#
-    }
+	}
 #>
 			AdditionalGeneratedStoredQueries();
-        }
+		}
 		partial void AdditionalGeneratedStoredQueries();
 <#
-    if (!DALModel.IsVirtual)
-    {
+	if (!DALModel.IsVirtual)
+	{
 #>
-        
-        public static Dictionary<<#= DALModel.Key.SystemReturnType #>, <#= DALModel.ClassName #>> LoadByKeys(IEnumerable<<#= DALModel.Key.SystemReturnType #>> <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
-        }
+		
+		public static Dictionary<<#= DALModel.Key.SystemReturnType #>, <#= DALModel.ClassName #>> LoadByKeys(IEnumerable<<#= DALModel.Key.SystemReturnType #>> <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.<#= DALModel.Name #>Alias, IWhereQuery> query)
-        {
-            q.<#= DALModel.Name #>Alias alias;
+		{
+			q.<#= DALModel.Name #>Alias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.<#= DALModel.Name #>.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.<#= DALModel.Name #>.Alias(out alias));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 <#
-    }
+	}
 #>
 
 		#endregion
 
-        private static <#= DALModel.ClassName #>Members members = null;
-        public static <#= DALModel.ClassName #>Members Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(<#= DALModel.ClassName #>))
-                    {
-                        if (members == null)
-                            members = new <#= DALModel.ClassName #>Members();
-                    }
-                }
-                return members;
-            }
-        }
-        public class <#= DALModel.ClassName #>Members
-        {
-            internal <#= DALModel.ClassName #>Members() { }
+		private static <#= DALModel.ClassName #>Members members = null;
+		public static <#= DALModel.ClassName #>Members Members
+		{
+			get
+			{
+				if (members == null)
+				{
+					lock (typeof(<#= DALModel.ClassName #>))
+					{
+						if (members == null)
+							members = new <#= DALModel.ClassName #>Members();
+					}
+				}
+				return members;
+			}
+		}
+		public class <#= DALModel.ClassName #>Members
+		{
+			internal <#= DALModel.ClassName #>Members() { }
 
 <#
 	foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
@@ -223,7 +223,7 @@ if (DALModel.IsAbstract)
 		foreach (Property attr in inherited.Properties)
 		{
 #>
-            public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
+			public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
 <#
 		}
 #>
@@ -232,54 +232,54 @@ if (DALModel.IsAbstract)
 <#
 	}
 #>
-        }
+		}
 <#
-    var enumProperties = DALModel.Properties.Where(item => item.EnumValues != null).ToList();
+	var enumProperties = DALModel.Properties.Where(item => item.EnumValues != null).ToList();
 
-    if (enumProperties.Count != 0)
-    {
+	if (enumProperties.Count != 0)
+	{
 #>
 
-        #region Enumerations
+		#region Enumerations
 
 <#
 		foreach (Property attr in enumProperties)
 		{
 			if (attr.EnumValues == null)
-                continue;
+				continue;
 #>
-        public enum <#= attr.Name #>Enum
-        {
+		public enum <#= attr.Name #>Enum
+		{
 <#
-            foreach (string value in attr.EnumValues)
-            {
+			foreach (string value in attr.EnumValues)
+			{
 #>
-            <#= value #>,
+			<#= value #>,
 <#
-            }
+			}
 #>
-        }
+		}
 
 <#
-        }
+		}
 #>
-        #endregion
+		#endregion
 <#
-    }
+	}
 #>
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(<#= DALModel.ClassName #>))
-                {
-                    if (entity == null)
-                        entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity == null)
+			{
+				lock (typeof(<#= DALModel.ClassName #>))
+				{
+					if (entity == null)
+						entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
+				}
+			}
+			return entity;
+		}
 	}
 <#
 }

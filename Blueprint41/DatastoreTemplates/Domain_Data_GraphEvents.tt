@@ -12,9 +12,9 @@ using Blueprint41.DatastoreTemplates;
 namespace <#= Settings.FullCRUDNamespace #>
 {
 	public static class GraphEvents
-    {
+	{
 		public static class Nodes
-        {
+		{
 <#
 List<string> nodeEvents = new List<string>();
 nodeEvents.Add("OnNodeLoading");
@@ -31,8 +31,8 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
 {	
 #>
 			public static class <#= DALModel.Name #>
-            {
-                private static readonly Entity Entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
+			{
+				private static readonly Entity Entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
 
 <#
 	foreach (var evnt in nodeEvents)
@@ -83,13 +83,13 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
 <#
 	}  
 #>
-            }
+			}
 <#
 }
 #>
 		}
 		public static class Relationships
-        {
+		{
 <#
 List<string> relationEvents = new List<string>();
 relationEvents.Add("OnRelationCreate");
@@ -101,7 +101,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
 {	
 #>
 			public static class <#= DALModel.Name #>
-            {
+			{
 				private static readonly Relationship Relationship = <#= Datastore.GetType().FullName #>.Model.Relations["<#= DALModel.Name #>"];
 
 <#
@@ -153,7 +153,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
 <#
 	}  
 #>
-            }
+			}
 <#
 }
 #>        }

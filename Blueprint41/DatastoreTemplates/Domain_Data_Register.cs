@@ -38,18 +38,18 @@ namespace Blueprint41.DatastoreTemplates
             this.Write(@"
 {
   internal class Register
-    {
-        private static bool isInitialized = false;
+	{
+		private static bool isInitialized = false;
 
-        public static void Types()
-        {
-            if (isInitialized)
-                return;
+		public static void Types()
+		{
+			if (isInitialized)
+				return;
 
-            lock (typeof(Register))
-            {
-                if (isInitialized)
-                    return;
+			lock (typeof(Register))
+			{
+				if (isInitialized)
+					return;
 
 				isInitialized = true;
 
@@ -63,7 +63,7 @@ foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
             
             #line default
             #line hidden
-            this.Write("                ((ISetRuntimeType)");
+            this.Write("\t\t\t\t((ISetRuntimeType)");
             
             #line 30 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
@@ -100,7 +100,7 @@ foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
             
             #line default
             #line hidden
-            this.Write("            }\r\n        }\r\n    }\r\n}\r\n");
+            this.Write("\t\t\t}\r\n\t\t}\r\n\t}\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

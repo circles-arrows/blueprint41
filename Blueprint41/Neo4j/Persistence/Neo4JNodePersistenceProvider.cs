@@ -297,7 +297,7 @@ namespace Blueprint41.Neo4j.Persistence
             {
                 Property odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
                 if (odd != null)
-                    throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2)'.", odd.Name, odd.Parent.Name, entity.Name));
+                    throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2}'.", odd.Name, odd.Parent.Name, entity.Name));
 
                 sb.Append(" ORDER BY ");
                 sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
