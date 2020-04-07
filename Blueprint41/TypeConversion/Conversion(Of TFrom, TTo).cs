@@ -271,7 +271,7 @@ namespace Blueprint41.Core
             Initialize();
 
             if (converterMethod != null)
-                return converterMethod.Invoke(value);
+                return converterMethod.Invoke(value!);
 
             throw new InvalidCastException(string.Format("Conversion from '{0}' to '{1}' is not supported.", typeof(TFrom).Name, typeof(TTo).Name));
         }

@@ -1277,7 +1277,7 @@ namespace Blueprint41
                             canceled = true;
                 }
 
-                if (RaiseMain(sender, previousValue, assignedValue, operation))
+                if (RaiseMain(sender, previousValue!, assignedValue!, operation))
                     canceled = true;
 
                 otherSender = assignedValue as OGMImpl;
@@ -1288,7 +1288,7 @@ namespace Blueprint41
             }
             else
             {
-                if (RaiseMain(sender, previousValue, assignedValue, operation))
+                if (RaiseMain(sender, previousValue!, assignedValue!, operation))
                     canceled = true;
             }
 
