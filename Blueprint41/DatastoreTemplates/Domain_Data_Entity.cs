@@ -3016,7 +3016,7 @@ if (!DALModel.IsAbstract)
             
             #line 926 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
 
-			foreach (string value in attr.EnumValues)
+			foreach (var value in attr.EnumValues)
 			{
 
             
@@ -3025,7 +3025,14 @@ if (!DALModel.IsAbstract)
             this.Write("\t\t\t");
             
             #line 930 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(value));
+            this.Write(this.ToStringHelper.ToStringWithCulture(value.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" = ");
+            
+            #line 930 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(value.Value));
             
             #line default
             #line hidden

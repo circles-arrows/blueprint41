@@ -21,19 +21,6 @@ namespace Blueprint41
     [DebuggerDisplay("{Parent.Name}.{Name}")]
     public class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
     {
-        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
-        {
-            Parent = parent;
-            PropertyType = storage;
-            Name = name;
-            SystemReturnType = systemType;
-            EntityReturnType = null;
-            Nullable = nullable;
-            IndexType = indexType;
-            Reference = null;
-            Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            EnumValues = (enumeration == null || enumeration.Length == 0) ? null : enumeration;
-        }
         internal Property(Entity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
         {
             Parent = parent;
@@ -45,7 +32,7 @@ namespace Blueprint41
             IndexType = indexType;
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            EnumValues = null;
+            Enumeration = null;
         }
         internal Property(Entity parent, PropertyType storage, string name, Property reference)
         {
@@ -58,7 +45,33 @@ namespace Blueprint41
             IndexType = IndexType.None;
             Reference = reference;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            EnumValues = null;
+            Enumeration = null;
+        }
+        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
+        {
+            Parent = parent;
+            PropertyType = storage;
+            Name = name;
+            SystemReturnType = systemType;
+            EntityReturnType = null;
+            Nullable = nullable;
+            IndexType = indexType;
+            Reference = null;
+            Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
+            Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(null!, "Ad-hoc").AddValues(enumeration);
+        }
+        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
+        {
+            Parent = parent;
+            PropertyType = storage;
+            Name = name;
+            SystemReturnType = systemType;
+            EntityReturnType = null;
+            Nullable = nullable;
+            IndexType = indexType;
+            Reference = null;
+            Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
+            Enumeration = enumeration;
         }
 
         #region Properties
@@ -66,7 +79,17 @@ namespace Blueprint41
         public Entity Parent { get; private set; }
         public PropertyType PropertyType { get; private set; }
         public string Name { get; private set; }
-        public IReadOnlyList<string>? EnumValues { get; private set; }
+        public IReadOnlyList<EnumerationValue>? EnumValues
+        {
+            get
+            {
+                if (Enumeration is null || Enumeration.Values.Count == 0)
+                    return null;
+
+                return Enumeration.Values;
+            }
+        }
+        public Enumeration? Enumeration { get; private set; }
         public Type? SystemReturnType { get; private set; }
         public Type? SystemReturnTypeWithNullability
         {
@@ -247,6 +270,17 @@ namespace Blueprint41
         internal void SetReturnTypeEntity(Entity returnType)
         {
             EntityReturnType = returnType;
+        }
+
+        internal void ConvertToAdhocEnum()
+        {
+            if (Enumeration is null)
+                return;
+
+            if (Enumeration.Values.Count == 0)
+                Enumeration = null;
+            else
+                Enumeration = new Enumeration(null!, "Ad-hoc").AddValues(Enumeration.Values.Select(item => item.Name).ToArray());
         }
 
         #endregion

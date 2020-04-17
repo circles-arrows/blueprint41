@@ -924,10 +924,10 @@ if (!DALModel.IsAbstract)
 		public enum <#= attr.Name #>Enum
 		{
 <#
-			foreach (string value in attr.EnumValues)
+			foreach (var value in attr.EnumValues)
 			{
 #>
-			<#= value #>,
+			<#= value.Name #> = <#= value.Value #>,
 <#
 			}
 #>

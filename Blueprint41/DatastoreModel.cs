@@ -33,6 +33,8 @@ namespace Blueprint41
 
             Entities = new EntityCollection(this);
             Relations = new RelationshipCollection(this);
+            Interfaces = new InterfaceCollection(this);
+            Enumerations = new EnumerationCollection(this);
             FunctionalIds = new FunctionalIdCollection(this);
             SubModels = new SubModelCollection(this);
 
@@ -44,10 +46,13 @@ namespace Blueprint41
 
         public PersistenceProvider PersistenceProvider { get; private set; }
 
-        public EntityCollection Entities { get; private set; }
-        public RelationshipCollection Relations { get; private set; }
+        public EntityCollection       Entities      { get; private set; }
+        public RelationshipCollection Relations     { get; private set; }
+        public InterfaceCollection    Interfaces    { get; private set; }
+        public EnumerationCollection  Enumerations  { get; private set; }
         public FunctionalIdCollection FunctionalIds { get; private set; }
-        public SubModelCollection SubModels { get; private set; }
+        public SubModelCollection     SubModels     { get; private set; }
+        
         public static List<DatastoreModel> RegisteredModels { get; } = new List<DatastoreModel>();
 
         public bool IsUpgraded

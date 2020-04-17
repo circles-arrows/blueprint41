@@ -170,6 +170,18 @@ namespace Blueprint41
 
             return this;
         }
+        public Entity AddProperty(string name, Enumeration enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        {
+            VerifyFromInheritedProperties(name);
+
+            Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            Properties.Add(name, value);
+
+            // StaticData
+            DynamicEntityPropertyAdded(value);
+
+            return this;
+        }
         public Entity AddProperty(string name, Type type, IndexType indexType)
         {
             return AddProperty(name, type, true, indexType);
@@ -612,8 +624,12 @@ namespace Blueprint41
                 if (!Parent.Entities.Any(item => item != entity && item.FunctionalId == entity.FunctionalId))
                     Parent.FunctionalIds.Remove(entity.FunctionalId!.Label);
 
+                foreach (Interface iface in Parent.Interfaces)
+                    iface.Refactor.RemoveEntity(entity);
+
                 foreach (SubModel model in Parent.SubModels)
                     model.RemoveEntityInternal(entity);
+
 
                 Parent.Entities.Remove(entity.Name);
                 Parent.Labels.Remove(entity.Label.Name);

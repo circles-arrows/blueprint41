@@ -748,8 +748,6 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Entities["AccountType"].AddProperty("Unique", typeof(string), IndexType.Unique);
                 Entities["AccountType"].AddProperty("Indexed", typeof(string), IndexType.Indexed);
-
-                Entities["AccountType"].Refactor.ApplyConstraints();
             }
         }
 
