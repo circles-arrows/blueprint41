@@ -630,7 +630,6 @@ namespace Blueprint41
                 foreach (SubModel model in Parent.SubModels)
                     model.RemoveEntityInternal(entity);
 
-
                 Parent.Entities.Remove(entity.Name);
                 Parent.Labels.Remove(entity.Label.Name);
             }

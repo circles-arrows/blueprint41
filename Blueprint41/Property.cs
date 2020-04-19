@@ -58,7 +58,7 @@ namespace Blueprint41
             IndexType = indexType;
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(null!, "Ad-hoc").AddValues(enumeration);
+            Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(enumeration);
         }
         internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
         {
@@ -280,7 +280,7 @@ namespace Blueprint41
             if (Enumeration.Values.Count == 0)
                 Enumeration = null;
             else
-                Enumeration = new Enumeration(null!, "Ad-hoc").AddValues(Enumeration.Values.Select(item => item.Name).ToArray());
+                Enumeration = new Enumeration(Enumeration.Values.Select(item => item.Name));
         }
 
         #endregion

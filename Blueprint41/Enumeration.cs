@@ -15,6 +15,13 @@ namespace Blueprint41
             Name = name;
             Guid = parent?.GenerateGuid(name) ?? Guid.Empty;
         }
+        internal Enumeration(IEnumerable<string> names)
+        {
+            Parent = null!;
+            Name = "Ad-hoc";
+            Guid = Guid.Empty;
+            AddValuesInternal(names.ToArray());
+        }
 
         public DatastoreModel Parent { get; private set; }
         public string Name { get; private set; }
@@ -43,15 +50,19 @@ namespace Blueprint41
             if (Parent is null)
                 throw new InvalidOperationException("You cannot change an 'ad-hoc' enumeration.");
 
-            int value = values.Select(item => item.Value).DefaultIfEmpty(-1).Max(item => item) + 1;
+            AddValuesInternal(names);
+
+            return this;
+        }
+        internal void AddValuesInternal(params string[] names)
+        {
+            int index = values.Select(item => item.Value).DefaultIfEmpty(-1).Max(item => item) + 1;
 
             foreach (string name in names)
             {
-                AddValue(name, value);
-                value++;
+                values.Add(new EnumerationValue(name, index));
+                index++;
             }
-
-            return this;
         }
 
         public IRefactorEnumeration Refactor { get { return this; } }

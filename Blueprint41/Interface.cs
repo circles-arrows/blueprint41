@@ -15,6 +15,14 @@ namespace Blueprint41
             Name = name;
             Guid = parent.GenerateGuid(name);
         }
+        internal Interface(Entity entity)
+        {
+            Parent = null!;
+            Name = "Ad-hoc";
+            Guid = Guid.Empty;
+            
+            entities.Add(entity);
+        }
 
         public DatastoreModel Parent { get; private set; }
         public string Name { get; private set; }
@@ -25,12 +33,15 @@ namespace Blueprint41
 
         public Interface AddEntity(string entity)
         {
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
+
             return AddEntity(Parent.Entities[entity]);
         }
         public Interface AddEntity(Entity entity)
         {
-            if (Name == "Main")
-                throw new InvalidOperationException("You cannot add entities to the 'Main' SubModel.");
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
 
             if (entities.Contains(entity))
                 return this;
@@ -41,6 +52,9 @@ namespace Blueprint41
         }
         public Interface AddEntities(params string[] entities)
         {
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
+
             Entity[] target = new Entity[entities.Length];
             for (int index = 0; index < entities.Length; index++)
                 target[index] = Parent.Entities[entities[index]];
@@ -49,8 +63,8 @@ namespace Blueprint41
         }
         public Interface AddEntities(params Entity[] entities)
         {
-            if (Name == "Main")
-                throw new InvalidOperationException("You cannot add entities to the 'Main' SubModel.");
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
 
             HashSet<Entity> test = new HashSet<Entity>(this.entities);
 
@@ -65,32 +79,95 @@ namespace Blueprint41
 
         void IRefactorInterface.RemoveEntity(string entity)
         {
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
+
             Parent.Entities.Remove(entity);
         }
         void IRefactorInterface.RemoveEntity(Entity entity)
         {
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
+
             Parent.Entities.Remove(entity.Name);
         }
         void IRefactorInterface.RemoveEntities(params string[] entities)
         {
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
+
             foreach (string entity in entities)
                 Parent.Entities.Remove(entity);
         }
         void IRefactorInterface.RemoveEntities(params Entity[] entities)
         {
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
+
             foreach (Entity entity in entities)
                 Parent.Entities.Remove(entity.Name);
         }
 
         void IRefactorInterface.Rename(string name)
         {
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
+
             Parent.Interfaces.Remove(Name);
             Name = name;
             Parent.Interfaces.Add(Name, this);
         }
         void IRefactorInterface.Deprecate()
         {
+            if (Parent is null)
+                throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
+
             Parent.Interfaces.Remove(Name);
+        }
+
+        internal Entity BaseEntity
+        {
+            get
+            {
+                if (Parent is null || entities.Count == 1)
+                    return entities.First();
+
+                if (entities.Count == 0)
+                    throw new InvalidOperationException($"The interface '{Name}' is not implemented by any entity.");
+
+                Entity? e = null;
+                List<Entity>? shared = null;
+                foreach (Entity entity in entities)
+                {
+                    List<Entity> inheritChain = new List<Entity>();
+                    e = entity;
+                    while (e != null)
+                    {
+                        inheritChain.Add(e);
+                        e = e.Inherits;
+                    }
+
+                    if (shared is null)
+                    {
+                        shared = inheritChain;
+                    }
+                    else
+                    {
+                        HashSet<string> inheritedEntities = new HashSet<string>(inheritChain.Select(item => item.Name));
+
+                        for (int index = shared.Count -1; index >= 0; index--)
+                        {
+                            if (!inheritedEntities.Contains(shared[index].Name))
+                                shared.RemoveAt(index);
+                        }
+                    }
+                }
+
+                if (shared is null || shared.Count == 0)
+                    throw new InvalidOperationException($"The entities that implement interface '{Name}' do not share a common base entity. Hint, let all entities inherit from a common base entity similar like how all 'types' inherit from 'object'.");
+
+                return shared.First();
+            }
         }
     }
 }

@@ -14,17 +14,29 @@ namespace Blueprint41
     [DebuggerDisplay("Relationship: {Name}")]
     public class Relationship : IRefactorRelationship, Core.IRelationshipEvents
     {
-        internal Relationship(DatastoreModel parent, string name, string? neo4JRelationshipType, Entity inEntity, Entity outEntity)
+        internal Relationship(DatastoreModel parent, string name, string? neo4JRelationshipType, Entity? inEntity, Interface? inInterface, Entity? outEntity, Interface? outInterface)
         {
+            if (inEntity is null && inInterface is null)
+                throw new ArgumentNullException("You cannot have both the inEntity and the inInterface be empty.");
+
+            if (outEntity is null && outInterface is null)
+                throw new ArgumentNullException("You cannot have both the outEntity and the outInterface be empty.");
+
+            if (inEntity != null && inInterface != null)
+                throw new ArgumentException("You cannot have both the inEntity and the inInterface set at the same time.");
+
+            if (outEntity != null && outInterface != null)
+                throw new ArgumentException("You cannot have both the outEntity and the outInterface set at the same time.");
+
             Parent = parent;
-            RelationshipType =  RelationshipType.None;
-            Name = ComputeAliasName(name, neo4JRelationshipType, OutProperty);
+            RelationshipType      = RelationshipType.None;
+            Name                  = ComputeAliasName(name, neo4JRelationshipType, OutProperty);
             Neo4JRelationshipType = ComputeNeo4JName(name, neo4JRelationshipType, OutProperty);
-            InEntity = inEntity;
-            InProperty = null;
-            OutEntity = outEntity;
-            OutProperty = null;
-            Guid = parent.GenerateGuid(name);
+            InInterface           = inInterface ?? new Interface(inEntity!);
+            InProperty            = null;
+            OutInterface          = outInterface ?? new Interface(outEntity!);
+            OutProperty           = null;
+            Guid                  = parent.GenerateGuid(name);
         }
 
         #region Properties
@@ -34,9 +46,11 @@ namespace Blueprint41
         public string           Neo4JRelationshipType { get; private set; }
         public RelationshipType RelationshipType      { get; private set; }
 
-        public Entity           InEntity              { get; private set; }
+        public Entity           InEntity              { get { return InInterface.BaseEntity; } }
+        public Interface        InInterface           { get; private set; }
         public Property?        InProperty            { get; private set; }
-        public Entity           OutEntity             { get; private set; }
+        public Entity           OutEntity             { get { return OutInterface.BaseEntity; } }
+        public Interface        OutInterface          { get; private set; }
         public Property?        OutProperty           { get; private set; }
 
         public string           CreationDate { get { return "CreationDate"; } }
@@ -207,7 +221,7 @@ namespace Blueprint41
             if (OutProperty != null)
                 OutProperty.SetReturnTypeEntity(target);
 
-            InEntity = target;
+            InInterface = new Interface(target);
         }
         void IRefactorRelationship.SetOutEntity(Entity target, bool allowLosingData)
         {
@@ -247,7 +261,7 @@ namespace Blueprint41
             if (InProperty != null)
                 InProperty.SetReturnTypeEntity(target);
 
-            OutEntity = target;
+            OutInterface = new Interface(target);
         }
 
         void IRefactorRelationship.RemoveTimeDependance()
