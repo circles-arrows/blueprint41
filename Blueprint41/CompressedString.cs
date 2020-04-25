@@ -3,6 +3,7 @@ using System.Data.SqlTypes;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime;
 using System.Text;
 using System.Xml;
 
@@ -844,18 +845,44 @@ namespace System
         }
         private static string Decompress(byte[] gZipBuffer)
         {
-            using (var memoryStream = new MemoryStream())
+            GZipStream? gZipStream;
+            MemoryStream? memoryStream;
+            byte[] buffer;
+            
+            using (memoryStream = new MemoryStream())
             {
                 int dataLength = BitConverter.ToInt32(gZipBuffer, 0);
                 memoryStream.Write(gZipBuffer, 4, gZipBuffer.Length - 4);
 
-                var buffer = new byte[dataLength];
+                try
+                {
+                    buffer = new byte[dataLength];
+                }
+                catch (OutOfMemoryException)
+                {
+                    GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+                    GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+
+                    buffer = new byte[dataLength];
+                }
 
                 memoryStream.Position = 0;
-                using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+                using (gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                 {
                     gZipStream.Read(buffer, 0, buffer.Length);
                 }
+            }
+            memoryStream = null;
+            gZipStream = null;
+
+            try
+            {
+                return Encoding.UTF8.GetString(buffer);
+            }
+            catch (OutOfMemoryException)
+            {
+                GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
 
                 return Encoding.UTF8.GetString(buffer);
             }

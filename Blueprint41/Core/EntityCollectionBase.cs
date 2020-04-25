@@ -181,7 +181,7 @@ namespace Blueprint41.Core
                 Transaction? trans = DbTransaction;
 
                 if (trans is null)
-                    throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
+                    throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); } or you loaded this object in another transaction then you are using now.");
 
                 if (!trans.InTransaction)
                     throw new InvalidOperationException("The transaction was already committed or rolled back.");
