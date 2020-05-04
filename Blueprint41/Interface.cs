@@ -82,14 +82,19 @@ namespace Blueprint41
             if (Parent is null)
                 throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
 
-            Parent.Entities.Remove(entity);
+            int index = entities.FindIndex((e) => e.Name == entity);
+
+            if (index == -1)
+                return;
+
+            entities.RemoveAt(index);
         }
         void IRefactorInterface.RemoveEntity(Entity entity)
         {
             if (Parent is null)
                 throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
 
-            Parent.Entities.Remove(entity.Name);
+            RemoveEntity(entity.Name);
         }
         void IRefactorInterface.RemoveEntities(params string[] entities)
         {
@@ -97,7 +102,7 @@ namespace Blueprint41
                 throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
 
             foreach (string entity in entities)
-                Parent.Entities.Remove(entity);
+                RemoveEntity(entity);
         }
         void IRefactorInterface.RemoveEntities(params Entity[] entities)
         {
@@ -105,7 +110,7 @@ namespace Blueprint41
                 throw new InvalidOperationException("You cannot change an 'ad-hoc' interface.");
 
             foreach (Entity entity in entities)
-                Parent.Entities.Remove(entity.Name);
+                RemoveEntity(entity.Name);
         }
 
         void IRefactorInterface.Rename(string name)
