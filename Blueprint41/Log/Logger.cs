@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
+using System.Collections;
 
 namespace Blueprint41.Log
 {
@@ -66,7 +67,20 @@ namespace Blueprint41.Log
             {
                 if (parameters != null)
                     foreach (var par in parameters)
-                        message = message.Replace("{" + par.Key + "}", Serializer.Serialize(par.Value).Replace("\"", "\'"));
+                    {
+                        if (par.Value is IEnumerable val)
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            foreach (var value in val)
+                            {
+                                sb.Append(Serializer.Serialize(value));
+                                sb.Append(",");
+                            }
+                            message = message.Replace("{" + par.Key + "}", sb.ToString());
+                        }
+                        else
+                            message = message.Replace("{" + par.Key + "}", Serializer.Serialize(par.Value).Replace("\"", "\'"));
+                    }
 
                 if (callerInfo is null)
                     Log(string.Format("{0}\t{1}", TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), message));
