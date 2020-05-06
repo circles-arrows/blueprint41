@@ -12,7 +12,7 @@ namespace Blueprint41.Log
     {
         #region Properties
 
-        private string m_LogDirectory;
+        private string m_LogDirectory = null!;
         public string LogDirectory
         {
             get
@@ -21,7 +21,7 @@ namespace Blueprint41.Log
             }
             set
             {
-                m_LogDirectory = value;
+                m_LogDirectory = value ?? InitialLogDirectory();
                 LogFile = Path.Combine(LogDirectory, string.Concat("Log_", DateTime.Now.ToString("yyyyMMdd_hhmmss"), ".csv"));
             }
         }
@@ -44,9 +44,13 @@ namespace Blueprint41.Log
 
             ThresholdInSeconds = 100 /*1s*/;
             MaxFileSize = 2 * 1024 * 1024;
-            m_LogDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? @"C:\", "TransactionLogs");
+            LogDirectory = InitialLogDirectory();
 
             watcher = new Stopwatch();
+        }
+        private static string InitialLogDirectory()
+        {
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? @"C:\", "TransactionLogs");
         }
 
         internal void Start()
