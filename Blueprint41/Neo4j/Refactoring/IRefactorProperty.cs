@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,14 @@ namespace Blueprint41.Neo4j.Refactoring
     {
         void Rename(string newName);
 
+        [RestrictedTo(PropertyType.Attribute)]
         void Move(Entity target);
         //void Move(string pattern, string newPropertyName);
 
+        [RestrictedTo(PropertyType.Attribute)]
         void Merge(Property target, MergeAlgorithm mergeAlgorithm);
 
-
+        [RestrictedTo(PropertyType.Attribute)]
         void ToCompressedString(int batchSize = 100);
         void Convert(Type target, bool skipConvertionLogic = false);
 
