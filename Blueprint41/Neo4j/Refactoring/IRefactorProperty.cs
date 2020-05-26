@@ -24,13 +24,18 @@ namespace Blueprint41.Neo4j.Refactoring
 
         [RestrictedTo(PropertyType.Attribute)]
         void ToCompressedString(int batchSize = 100);
+
+        [RestrictedTo(PropertyType.Attribute)]
         void Convert(Type target, bool skipConvertionLogic = false);
 
+        [RestrictedTo(PropertyType.Attribute)]
         void SetIndexType(IndexType indexType);
 
         void Deprecate();
 
+        [RestrictedTo(PropertyType.Lookup, PropertyType.Collection)]
         void Reroute(string pattern, string newPropertyName, bool strict = true);
+        [RestrictedTo(PropertyType.Lookup, PropertyType.Collection)]
         void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType = null, bool strict = true);
 
         void ConvertToCollection();
@@ -38,9 +43,13 @@ namespace Blueprint41.Neo4j.Refactoring
         void ConvertToLookup(ConvertAlgorithm conversionAlgorithm);
         void ConvertToLookup(string newName, ConvertAlgorithm conversionAlgorithm);
 
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
         void MakeNullable();
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
         void MakeMandatory();
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
         void MakeMandatory(object defaultValue);
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
         void MakeMandatory(DynamicEntity defaultValue);
     }
 }
