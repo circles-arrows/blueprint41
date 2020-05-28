@@ -164,7 +164,7 @@ namespace Blueprint41.Core
                 return;
             }
 
-            IEnumerable<CollectionItem> items = PersistenceProvider.Load(Parent, this);
+            IEnumerable<CollectionItem> items = RelationshipPersistenceProvider.Load(Parent, this);
             InitialLoad(items);
         }
         internal abstract void InitialLoad(IEnumerable<CollectionItem> items);
@@ -190,6 +190,18 @@ namespace Blueprint41.Core
             }
         }
 
-        internal RelationshipPersistenceProvider PersistenceProvider => RunningTransaction.RelationshipPersistenceProvider;
+        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => DbTransaction?.RelationshipPersistenceProvider ?? PersistenceProvider.CurrentPersistenceProvider.RelationshipPersistenceProvider;
+        private protected void ExecuteAction(RelationshipAction action)
+        {
+            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+                DbTransaction?.Register(action);
+            else
+                action.ExecuteInMemory(this);
+        }
+        private protected void ExecuteAction(LinkedList<RelationshipAction> actions)
+        {
+            foreach (var action in actions)
+                ExecuteAction(action);
+        }
     }
 }

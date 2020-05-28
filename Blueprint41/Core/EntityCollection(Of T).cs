@@ -16,7 +16,8 @@ namespace Blueprint41.Core
     public class EntityCollection<TEntity> : EntityCollectionBase<TEntity>
         where TEntity : class, OGM
     {
-        public EntityCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null) : base(parent, property, eagerLoadLogic) { }
+        public EntityCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null) : base(parent, property, eagerLoadLogic) 
+        { }
 
         #region Manipulation
 
@@ -45,9 +46,10 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                     return;
 
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                DbTransaction?.Register(AddAction(item, null));
+            ExecuteAction(AddAction(item, null));
         }
+
+
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
         {
             LazyLoad();
@@ -69,8 +71,7 @@ namespace Blueprint41.Core
                 actions.AddLast(AddAction(item, null));
             }
 
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                DbTransaction?.Register(actions);
+            ExecuteAction(actions);
         }
         public override bool Contains(TEntity item)
         {
@@ -384,8 +385,7 @@ namespace Blueprint41.Core
 
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                DbTransaction?.Register(new ClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem));
+            ExecuteAction(new ClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem));
         }
 
         #endregion
@@ -396,17 +396,17 @@ namespace Blueprint41.Core
         }
         internal override RelationshipAction RemoveAction(CollectionItem item, DateTime? moment)
         {
-            return new RemoveRelationshipAction(PersistenceProvider, Relationship, InItem(item), OutItem(item));
+            return new RemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
         }
         internal override RelationshipAction AddAction(OGM item, DateTime? moment)
         {
-            return new AddRelationshipAction(PersistenceProvider, Relationship, InItem(item), OutItem(item));
+            return new AddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
         }
         internal override RelationshipAction ClearAction(DateTime? moment)
         {
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            return new ClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem);
+            return new ClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem);
         }
     }
 }

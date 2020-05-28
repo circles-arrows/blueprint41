@@ -471,8 +471,7 @@ namespace Blueprint41.Core
 
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                DbTransaction?.Register(new TimeDependentClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem, moment));
+            ExecuteAction(new TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem, moment));
         }
 
         #endregion
@@ -484,25 +483,25 @@ namespace Blueprint41.Core
         }
         internal override RelationshipAction AddAction(OGM item, DateTime? moment)
         {
-            return new TimeDependentAddRelationshipAction(PersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
+            return new TimeDependentAddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
         }
         internal override RelationshipAction RemoveAction(CollectionItem item, DateTime? moment)
         {
-            return new TimeDependentRemoveRelationshipAction(PersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
+            return new TimeDependentRemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
         }
         internal override RelationshipAction ClearAction(DateTime? moment)
         {
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            return new TimeDependentClearRelationshipsAction(PersistenceProvider, Relationship, inItem, outItem, moment);
+            return new TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem, moment);
         }
         internal RelationshipAction RemoveUnmanagedAction(CollectionItem item, DateTime? startDate)
         {
-            return new TimeDependentRemoveUnmanagedRelationshipAction(PersistenceProvider, Relationship, InItem(item), OutItem(item), startDate);
+            return new TimeDependentRemoveUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate);
         }
         internal RelationshipAction AddUnmanagedAction(OGM item, DateTime? startDate, DateTime? endDate)
         {
-            return new TimeDependentAddUnmanagedRelationshipAction(PersistenceProvider, Relationship, InItem(item), OutItem(item), startDate, endDate);
+            return new TimeDependentAddUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate, endDate);
         }
     }
 }
