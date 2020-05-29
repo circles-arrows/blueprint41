@@ -16,8 +16,7 @@ namespace Blueprint41.Core
     public class EntityCollection<TEntity> : EntityCollectionBase<TEntity>
         where TEntity : class, OGM
     {
-        public EntityCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null) : base(parent, property, eagerLoadLogic) 
-        { }
+        public EntityCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null) : base(parent, property, eagerLoadLogic) { }
 
         #region Manipulation
 
@@ -111,9 +110,7 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                    DbTransaction?.Register(actions);
-
+                ExecuteAction(actions);
                 LazySet();
             }
 
@@ -158,15 +155,13 @@ namespace Blueprint41.Core
                         actions.AddLast(RemoveAction(item, null));
                     });
 
-                    if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                        DbTransaction?.Register(actions);
+                    ExecuteAction(actions);
 
                     return;
                 }
             }
 
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                DbTransaction?.Register(ClearAction(null));
+            ExecuteAction(ClearAction(null));
         }
         internal sealed override bool RemoveRange(IEnumerable<TEntity> items, bool fireEvents)
         {
@@ -207,9 +202,7 @@ namespace Blueprint41.Core
 
             if (actions.Count > 0)
             {
-                if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                    DbTransaction?.Register(actions);
-
+                ExecuteAction(actions);
                 LazySet();
             }
 

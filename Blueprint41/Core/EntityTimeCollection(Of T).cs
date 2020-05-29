@@ -11,497 +11,487 @@ using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41.Core
 {
-    public class EntityTimeCollection<TEntity> : EntityCollectionBase<TEntity>
-        where TEntity : class, OGM
-    {
-        public EntityTimeCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null) : base(parent, property, eagerLoadLogic) { }
+	public class EntityTimeCollection<TEntity> : EntityCollectionBase<TEntity>
+		where TEntity : class, OGM
+	{
+		public EntityTimeCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null) : base(parent, property, eagerLoadLogic) { }
 
-        #region Manipulation
+		#region Manipulation
 
-        public CollectionItem<TEntity> this[int index]
-        {
-            get
-            {
-                LazyLoad();
-                return InnerData[index];
-            }
-        }
+		public CollectionItem<TEntity> this[int index]
+		{
+			get
+			{
+				LazyLoad();
+				return InnerData[index];
+			}
+		}
 
-        private protected override int CountInternal { get { return CountAt(null); } }
-        public int CountAt(DateTime? moment)
-        {
-            LazyLoad();
+		private protected override int CountInternal { get { return CountAt(null); } }
+		public int CountAt(DateTime? moment)
+		{
+			LazyLoad();
 
-            int count = 0;
-            if (!moment.HasValue)
-                moment = RunningTransaction.TransactionDate;
+			int count = 0;
+			if (!moment.HasValue)
+				moment = RunningTransaction.TransactionDate;
 
-            foreach (CollectionItem item in InnerData)
-                if (item.Overlaps(moment.Value))
-                    count++;
+			foreach (CollectionItem item in InnerData)
+				if (item.Overlaps(moment.Value))
+					count++;
 
-            return count;
-        }
-        public int CountAll
-        {
-            get
-            {
-                LazyLoad();
-                return InnerData.Count;
-            }
-        }
-        internal sealed override void Add(TEntity item, bool fireEvents)
-        {
-            Add(item, RunningTransaction.TransactionDate, fireEvents);
-        }
-        internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
-        {
-            AddRange(items, RunningTransaction.TransactionDate, fireEvents);
-        }
-        public void Add(TEntity item, DateTime? moment)
-        {
-            Add(item, moment, true);
-        }
-        internal void Add(TEntity item, DateTime? moment, bool fireEvents)
-        {
-            if (item is null)
-                return;
+			return count;
+		}
+		public int CountAll
+		{
+			get
+			{
+				LazyLoad();
+				return InnerData.Count;
+			}
+		}
+		internal sealed override void Add(TEntity item, bool fireEvents)
+		{
+			Add(item, RunningTransaction.TransactionDate, fireEvents);
+		}
+		internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
+		{
+			AddRange(items, RunningTransaction.TransactionDate, fireEvents);
+		}
+		public void Add(TEntity item, DateTime? moment)
+		{
+			Add(item, moment, true);
+		}
+		internal void Add(TEntity item, DateTime? moment, bool fireEvents)
+		{
+			if (item is null)
+				return;
 
-            LazyLoad();
-            LazySet();
+			LazyLoad();
+			LazySet();
 
-            if (EagerLoadLogic != null)
-                EagerLoadLogic.Invoke(item);
+			if (EagerLoadLogic != null)
+				EagerLoadLogic.Invoke(item);
 
-            if (fireEvents)
-                if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
-                    return;
+			if (fireEvents)
+				if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
+					return;
 
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-            {
-                CollectionItem<TEntity> oldItem = InnerData.FirstOrDefault(item => item.Item.GetKey() == item.Item.GetKey());
-                DbTransaction?.Register(AddAction(item, (oldItem != null) ? oldItem.StartDate : moment));
-            }
-        }
-        internal void AddRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
-        {
-            LazyLoad();
-            LazySet();
+			CollectionItem<TEntity> oldItem = InnerData.FirstOrDefault(item => item.Item.GetKey() == item.Item.GetKey());
+			ExecuteAction(AddAction(item, (oldItem != null) ? oldItem.StartDate : moment));
+		}
+		internal void AddRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
+		{
+			LazyLoad();
+			LazySet();
 
-            LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
-            foreach (var item in items)
-            {
-                if (item is null)
-                    continue;
+			LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
+			foreach (var item in items)
+			{
+				if (item is null)
+					continue;
 
-                if (EagerLoadLogic != null)
-                    EagerLoadLogic.Invoke(item);
+				if (EagerLoadLogic != null)
+					EagerLoadLogic.Invoke(item);
 
-                if (fireEvents)
-                    if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
-                        continue;
+				if (fireEvents)
+					if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
+						continue;
 
-                CollectionItem<TEntity> oldItem = InnerData.FirstOrDefault(item => item.Item.GetKey() == item.Item.GetKey());
-                actions.AddLast(AddAction(item, (oldItem != null) ? oldItem.StartDate : moment));
-            }
+				CollectionItem<TEntity> oldItem = InnerData.FirstOrDefault(item => item.Item.GetKey() == item.Item.GetKey());
+				actions.AddLast(AddAction(item, (oldItem != null) ? oldItem.StartDate : moment));
+			}
 
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                DbTransaction?.Register(actions);
-        }
-        public void AddUnmanaged(TEntity item, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
-        {
-            RunningTransaction.RelationshipPersistenceProvider.AddUnmanaged(Relationship, InItem(item), OutItem(item), startDate, endDate, fullyUnmanaged);
-        }
-        public sealed override bool Contains(TEntity item)
-        {
-            return Contains(item, RunningTransaction.TransactionDate);
-        }
-        public bool Contains(TEntity item, DateTime? moment)
-        {
-            LazyLoad();
+			ExecuteAction(actions);
+		}
+		public void AddUnmanaged(TEntity item, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
+		{
+			RunningTransaction.RelationshipPersistenceProvider.AddUnmanaged(Relationship, InItem(item), OutItem(item), startDate, endDate, fullyUnmanaged);
+		}
+		public sealed override bool Contains(TEntity item)
+		{
+			return Contains(item, RunningTransaction.TransactionDate);
+		}
+		public bool Contains(TEntity item, DateTime? moment)
+		{
+			LazyLoad();
 
-            for (int index = 0; index < InnerData.Count; index++)
-                if (InnerData[index].Item.Equals(item) && (!moment.HasValue || InnerData[index].Overlaps(moment.Value)))
-                    return true;
+			for (int index = 0; index < InnerData.Count; index++)
+				if (InnerData[index].Item.Equals(item) && (!moment.HasValue || InnerData[index].Overlaps(moment.Value)))
+					return true;
 
-            return false;
-        }
-        internal sealed override bool Remove(TEntity item, bool fireEvents)
-        {
-            return Remove(item, RunningTransaction.TransactionDate, fireEvents);
-        }
-        internal sealed override bool RemoveRange(IEnumerable<TEntity> items, bool fireEvents)
-        {
-            return RemoveRange(items, RunningTransaction.TransactionDate, fireEvents);
-        }
-        internal bool RemoveRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
-        {
-            if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
-                throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
+			return false;
+		}
+		internal sealed override bool Remove(TEntity item, bool fireEvents)
+		{
+			return Remove(item, RunningTransaction.TransactionDate, fireEvents);
+		}
+		internal sealed override bool RemoveRange(IEnumerable<TEntity> items, bool fireEvents)
+		{
+			return RemoveRange(items, RunningTransaction.TransactionDate, fireEvents);
+		}
+		internal bool RemoveRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
+		{
+			if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
+				throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
-            LazyLoad();
+			LazyLoad();
 
-            LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
+			LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
 
-            foreach (var item in items)
-            {
-                if (item != null && EagerLoadLogic != null)
-                    EagerLoadLogic.Invoke(item);
+			foreach (var item in items)
+			{
+				if (item != null && EagerLoadLogic != null)
+					EagerLoadLogic.Invoke(item);
 
-                if (fireEvents)
-                {
-                    bool cancel = false;
-                    ForEach(delegate (int index, CollectionItem current)
-                    {
-                        if (current.Item.Equals(item) && (!moment.HasValue || current.EndDate > moment.Value))
-                        {
-                            if (current.Item.Equals(item))
-                                if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), moment, OperationEnum.Remove) ?? false)
-                                    cancel = true;
-                        }
-                    });
-                    if (cancel)
-                        return false;
-                }
+				if (fireEvents)
+				{
+					bool cancel = false;
+					ForEach(delegate (int index, CollectionItem current)
+					{
+						if (current.Item.Equals(item) && (!moment.HasValue || current.EndDate > moment.Value))
+						{
+							if (current.Item.Equals(item))
+								if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), moment, OperationEnum.Remove) ?? false)
+									cancel = true;
+						}
+					});
+					if (cancel)
+						return false;
+				}
 
-                ForEach(delegate (int index, CollectionItem current)
-                {
-                    if (current.Item.Equals(item) && (!moment.HasValue || current.EndDate > moment.Value))
-                    {
-                        ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), moment, OperationEnum.Remove);
-                        actions.AddLast(RemoveAction(current, moment));
-                    }
-                });
-            }
-
-            if (actions.Count > 0)
-            {
-                if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                    DbTransaction?.Register(actions);
-
-                LazySet();
-            }
-            return (actions.Count > 0);
-        }
-        public bool Remove(TEntity item, DateTime? moment)
-        {
-            return Remove(item, moment, true);
-        }
-        internal bool Remove(TEntity item, DateTime? moment, bool fireEvents)
-        {
-            if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
-                throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
-
-            LazyLoad();
-
-            if (item != null && EagerLoadLogic != null)
-                EagerLoadLogic.Invoke(item);
-
-            if (fireEvents)
-            {
-                bool cancel = false;
-	            ForEach(delegate (int index, CollectionItem current)
-                {
-	                if (current.Item.Equals(item) && (!moment.HasValue || current.EndDate > moment.Value))
-    	            {
-        	            if (current.Item.Equals(item))
-            	            if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), moment, OperationEnum.Remove) ?? false)
-                	            cancel = true;
+				ForEach(delegate (int index, CollectionItem current)
+				{
+					if (current.Item.Equals(item) && (!moment.HasValue || current.EndDate > moment.Value))
+					{
+						ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), moment, OperationEnum.Remove);
+						actions.AddLast(RemoveAction(current, moment));
 					}
-                });
-                if (cancel)
-                    return false;
-            }
+				});
+			}
 
-            LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
+			if (actions.Count > 0)
+			{
+				ExecuteAction(actions);
+				LazySet();
+			}
+			return (actions.Count > 0);
+		}
+		public bool Remove(TEntity item, DateTime? moment)
+		{
+			return Remove(item, moment, true);
+		}
+		internal bool Remove(TEntity item, DateTime? moment, bool fireEvents)
+		{
+			if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
+				throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
-            ForEach(delegate (int index, CollectionItem current)
-            {
-                if (current.Item.Equals(item) && (!moment.HasValue || current.EndDate > moment.Value))
-                {
-                    ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), moment, OperationEnum.Remove);
-                    actions.AddLast(RemoveAction(current, moment));
-                }
-            });
+			LazyLoad();
 
-            if (actions.Count > 0)
-            {
-                if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                    DbTransaction?.Register(actions);
+			if (item != null && EagerLoadLogic != null)
+				EagerLoadLogic.Invoke(item);
 
-                LazySet();
-            }
+			if (fireEvents)
+			{
+				bool cancel = false;
+				ForEach(delegate (int index, CollectionItem current)
+				{
+					if (current.Item.Equals(item) && (!moment.HasValue || current.EndDate > moment.Value))
+					{
+						if (current.Item.Equals(item))
+							if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), moment, OperationEnum.Remove) ?? false)
+								cancel = true;
+					}
+				});
+				if (cancel)
+					return false;
+			}
 
-            return (actions.Count > 0);
-        }
-        public void RemoveUmanaged(TEntity item, DateTime? startDate)
-        {
-            RunningTransaction.RelationshipPersistenceProvider.RemoveUnmanaged(Relationship, InItem(item), OutItem(item), startDate);
-        }
-        internal sealed override void Clear(bool fireEvents)
-        {
-            Clear(RunningTransaction.TransactionDate);
-        }
-        public void Clear(DateTime? moment)
-        {
-            Clear(moment, true);
-        }
-        internal void Clear(DateTime? moment, bool fireEvents)
-        {
-            if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
-                throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
+			LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
 
-            LazyLoad();
+			ForEach(delegate (int index, CollectionItem current)
+			{
+				if (current.Item.Equals(item) && (!moment.HasValue || current.EndDate > moment.Value))
+				{
+					ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), moment, OperationEnum.Remove);
+					actions.AddLast(RemoveAction(current, moment));
+				}
+			});
 
-            if (InnerData.Count == 0)
-                return;
+			if (actions.Count > 0)
+			{
+				ExecuteAction(actions);
+				LazySet();
+			}
 
-            LazySet();
+			return (actions.Count > 0);
+		}
+		public void RemoveUmanaged(TEntity item, DateTime? startDate)
+		{
+			RunningTransaction.RelationshipPersistenceProvider.RemoveUnmanaged(Relationship, InItem(item), OutItem(item), startDate);
+		}
+		internal sealed override void Clear(bool fireEvents)
+		{
+			Clear(RunningTransaction.TransactionDate);
+		}
+		public void Clear(DateTime? moment)
+		{
+			Clear(moment, true);
+		}
+		internal void Clear(DateTime? moment, bool fireEvents)
+		{
+			if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
+				throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
-            if (fireEvents)
-            {
-                HashSet<CollectionItem> cancel = new HashSet<CollectionItem>();
-                ForEach(delegate (int index, CollectionItem item)
-                {
-                    if (item is null)
-                        return;
+			LazyLoad();
 
-	                if (EagerLoadLogic != null)
-    	                EagerLoadLogic.Invoke((TEntity)item.Item);
+			if (InnerData.Count == 0)
+				return;
 
-                    if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, item.Item, default(TEntity), moment, (OperationEnum)OperationEnum.Remove) ?? false)
-                        cancel.Add((CollectionItem)item);
-                });
+			LazySet();
 
-                if (cancel.Count != 0)
-                {
-                    LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
+			if (fireEvents)
+			{
+				HashSet<CollectionItem> cancel = new HashSet<CollectionItem>();
+				ForEach(delegate (int index, CollectionItem item)
+				{
+					if (item is null)
+						return;
 
-                    ForEach(delegate (int index, CollectionItem item)
-                    {
-                        if (cancel.Contains(item))
-                            return;
+					if (EagerLoadLogic != null)
+						EagerLoadLogic.Invoke((TEntity)item.Item);
 
-                        actions.AddLast(RemoveAction(item, moment));
-                    });
+					if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, item.Item, default(TEntity), moment, (OperationEnum)OperationEnum.Remove) ?? false)
+						cancel.Add((CollectionItem)item);
+				});
 
-                    if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                        DbTransaction?.Register(actions);
+				if (cancel.Count != 0)
+				{
+					LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
 
-                    return;
-                }
-            }
+					ForEach(delegate (int index, CollectionItem item)
+					{
+						if (cancel.Contains(item))
+							return;
 
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
-                DbTransaction?.Register(ClearAction(moment));
-        }
+						actions.AddLast(RemoveAction(item, moment));
+					});
 
-        sealed protected override IEnumerator<TEntity> GetEnumeratorInternal()
-        {
-            LazyLoad();
-            return new Enumerator(InnerData.GetEnumerator());
-        }
+					ExecuteAction(actions);
 
-        public IEnumerator<CollectionItem<TEntity>> GetEnumerator()
-        {
-            LazyLoad();
-            return InnerData.GetEnumerator();
-        }
+					return;
+				}
+			}
 
-        public IEnumerable<TEntity> Items { get { return InnerData.Select(item => item.Item).Distinct(); } }
+			ExecuteAction(ClearAction(moment));
+		}
 
-        internal class Enumerator : IEnumerator<TEntity>
-        {
-            internal Enumerator(IEnumerator<CollectionItem<TEntity>> enumerator)
-            {
-                this.enumerator = enumerator;
-            }
+		sealed protected override IEnumerator<TEntity> GetEnumeratorInternal()
+		{
+			LazyLoad();
+			return new Enumerator(InnerData.GetEnumerator());
+		}
 
-            private IEnumerator<CollectionItem<TEntity>> enumerator;
+		public IEnumerator<CollectionItem<TEntity>> GetEnumerator()
+		{
+			LazyLoad();
+			return InnerData.GetEnumerator();
+		}
 
-            public TEntity Current
-            {
-                get
-                {
-                    return enumerator.Current.Item;
-                }
-            }
+		public IEnumerable<TEntity> Items { get { return InnerData.Select(item => item.Item).Distinct(); } }
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return Current;
-                }
-            }
+		internal class Enumerator : IEnumerator<TEntity>
+		{
+			internal Enumerator(IEnumerator<CollectionItem<TEntity>> enumerator)
+			{
+				this.enumerator = enumerator;
+			}
 
-            public bool MoveNext()
-            {
-                return enumerator.MoveNext();
-            }
+			private IEnumerator<CollectionItem<TEntity>> enumerator;
 
-            public void Reset()
-            {
-                enumerator.Reset();
-            }
+			public TEntity Current
+			{
+				get
+				{
+					return enumerator.Current.Item;
+				}
+			}
 
-            void IDisposable.Dispose()
-            {
-                enumerator.Dispose();
-            }
-        }
+			object IEnumerator.Current
+			{
+				get
+				{
+					return Current;
+				}
+			}
 
-        #endregion
+			public bool MoveNext()
+			{
+				return enumerator.MoveNext();
+			}
 
-        #region Relationship Action Helpers
+			public void Reset()
+			{
+				enumerator.Reset();
+			}
 
-        internal override void ForEach(Action<int, CollectionItem> action)
-        {
-            LazyLoad();
+			void IDisposable.Dispose()
+			{
+				enumerator.Dispose();
+			}
+		}
 
-            for (int index = InnerData.Count - 1; index >= 0; index--)
-                action.Invoke(index, InnerData[index]);
-        }
-        internal override void Add(CollectionItem item)
-        {
-            InnerData.Add((CollectionItem<TEntity>)item);
-        }
-        internal override CollectionItem GetItem(int index)
-        {
-            return InnerData[index];
-        }
-        internal override void SetItem(int index, CollectionItem item)
-        {
-            InnerData[index] = (CollectionItem<TEntity>)item;
-        }
-        internal override void RemoveAt(int index)
-        {
-            InnerData.RemoveAt(index);
-        }
+		#endregion
 
-        protected override TEntity? GetItem(DateTime? moment)
-        {
-            LazyLoad();
-            if (!moment.HasValue)
-                moment = RunningTransaction.TransactionDate;
+		#region Relationship Action Helpers
 
-            return InnerData.Where(item => item.Overlaps(moment.Value)).Select(item => item.Item).FirstOrDefault();
-        }
-        protected override IEnumerable<CollectionItem<TEntity>> GetItems(DateTime? from, DateTime? till)
-        {
-            LazyLoad();
+		internal override void ForEach(Action<int, CollectionItem> action)
+		{
+			LazyLoad();
 
-            if (from == null && till == null)
-                return InnerData;
+			for (int index = InnerData.Count - 1; index >= 0; index--)
+				action.Invoke(index, InnerData[index]);
+		}
+		internal override void Add(CollectionItem item)
+		{
+			InnerData.Add((CollectionItem<TEntity>)item);
+		}
+		internal override CollectionItem GetItem(int index)
+		{
+			return InnerData[index];
+		}
+		internal override void SetItem(int index, CollectionItem item)
+		{
+			InnerData[index] = (CollectionItem<TEntity>)item;
+		}
+		internal override void RemoveAt(int index)
+		{
+			InnerData.RemoveAt(index);
+		}
 
-            return InnerData.Where(item => item.Overlaps(from, till));
-        }
-        protected override TEntity? GetOriginalItem(DateTime? moment)
-        {
-            LazyLoad();
-            if (!moment.HasValue)
-                moment = RunningTransaction.TransactionDate;
+		protected override TEntity? GetItem(DateTime? moment)
+		{
+			LazyLoad();
+			if (!moment.HasValue)
+				moment = RunningTransaction.TransactionDate;
 
-            return LoadedData.Where(item => item.Overlaps(moment.Value)).Select(item => item.Item).FirstOrDefault();
-        }
-        protected override void SetItem(TEntity? item, DateTime? moment)
-        {
-            LazyLoad();
-            LazySet();
+			return InnerData.Where(item => item.Overlaps(moment.Value)).Select(item => item.Item).FirstOrDefault();
+		}
+		protected override IEnumerable<CollectionItem<TEntity>> GetItems(DateTime? from, DateTime? till)
+		{
+			LazyLoad();
 
-            if (!moment.HasValue)
-                moment = RunningTransaction.TransactionDate;
+			if (from == null && till == null)
+				return InnerData;
 
-            if (item != null && EagerLoadLogic != null)
-                EagerLoadLogic.Invoke(item);
+			return InnerData.Where(item => item.Overlaps(from, till));
+		}
+		protected override TEntity? GetOriginalItem(DateTime? moment)
+		{
+			LazyLoad();
+			if (!moment.HasValue)
+				moment = RunningTransaction.TransactionDate;
 
-            List<CollectionItem<TEntity>> currentItem = InnerData.Where(e => e.Overlaps(moment, null)).ToList();
+			return LoadedData.Where(item => item.Overlaps(moment.Value)).Select(item => item.Item).FirstOrDefault();
+		}
+		protected override void SetItem(TEntity? item, DateTime? moment)
+		{
+			LazyLoad();
+			LazySet();
 
-            if (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null))
-            {
-                if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup)
-                {
-                    OGM? oldForeignValue = (item is null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
-                    if (oldForeignValue != null)
-                        ParentProperty?.ClearLookup(oldForeignValue, null);
+			if (!moment.HasValue)
+				moment = RunningTransaction.TransactionDate;
 
-                    foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
-                        ForeignProperty.ClearLookup(entity, moment);
-                }
+			if (item != null && EagerLoadLogic != null)
+				EagerLoadLogic.Invoke(item);
 
-                if (item == null)
-                {
-                    if (ParentProperty?.PropertyType == PropertyType.Lookup)
-                        Remove(currentItem[0].Item, moment);
+			List<CollectionItem<TEntity>> currentItem = InnerData.Where(e => e.Overlaps(moment, null)).ToList();
 
-                    if (currentItem.Count > 0)
-                        Clear(moment, false);
-                }
-                else
-                {
-                    if (currentItem.Count == 1 && currentItem[0].Item.Equals(item))
-                        return;
+			if (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null))
+			{
+				if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup)
+				{
+					OGM? oldForeignValue = (item is null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
+					if (oldForeignValue != null)
+						ParentProperty?.ClearLookup(oldForeignValue, null);
 
-                    if (ParentProperty?.PropertyType == PropertyType.Lookup && currentItem.Count == 1)
-                        Remove(currentItem[0].Item, moment);
+					foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
+						ForeignProperty.ClearLookup(entity, moment);
+				}
 
-                    if (currentItem.Count > 0)
-                        Clear(moment, false);
+				if (item == null)
+				{
+					if (ParentProperty?.PropertyType == PropertyType.Lookup)
+						Remove(currentItem[0].Item, moment);
 
-                    if (CountAt(moment) == 0)
-                        Add(item, moment, false);
-                }
-            }
-        }
-        protected override bool IsNull(bool isUpdate)
-        {
-            if (!IsLoaded)
-            {
-                if (isUpdate)
-                    return false;
-                else
-                    return true;
-            }
-            return !InnerData.Where(item => item.Overlaps(RunningTransaction.TransactionDate)).Select(item => item.Item).Any();
-        }
-        protected override void ClearLookup(DateTime? moment)
-        {
-            LazyLoad();
-            LazySet();
+					if (currentItem.Count > 0)
+						Clear(moment, false);
+				}
+				else
+				{
+					if (currentItem.Count == 1 && currentItem[0].Item.Equals(item))
+						return;
 
-            OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
-            OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            ExecuteAction(new TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem, moment));
-        }
+					if (ParentProperty?.PropertyType == PropertyType.Lookup && currentItem.Count == 1)
+						Remove(currentItem[0].Item, moment);
 
-        #endregion
+					if (currentItem.Count > 0)
+						Clear(moment, false);
+
+					if (CountAt(moment) == 0)
+						Add(item, moment, false);
+				}
+			}
+		}
+		protected override bool IsNull(bool isUpdate)
+		{
+			if (!IsLoaded)
+			{
+				if (isUpdate)
+					return false;
+				else
+					return true;
+			}
+			return !InnerData.Where(item => item.Overlaps(RunningTransaction.TransactionDate)).Select(item => item.Item).Any();
+		}
+		protected override void ClearLookup(DateTime? moment)
+		{
+			LazyLoad();
+			LazySet();
+
+			OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
+			OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
+			ExecuteAction(new TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem, moment));
+		}
+
+		#endregion
 
 
-        internal override CollectionItem NewCollectionItem(OGM parent, OGM item, DateTime? startDate, DateTime? endDate)
-        {
-            return new CollectionItem<TEntity>(parent, (TEntity)item, startDate, endDate);
-        }
-        internal override RelationshipAction AddAction(OGM item, DateTime? moment)
-        {
-            return new TimeDependentAddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
-        }
-        internal override RelationshipAction RemoveAction(CollectionItem item, DateTime? moment)
-        {
-            return new TimeDependentRemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
-        }
-        internal override RelationshipAction ClearAction(DateTime? moment)
-        {
-            OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
-            OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            return new TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem, moment);
-        }
-        internal RelationshipAction RemoveUnmanagedAction(CollectionItem item, DateTime? startDate)
-        {
-            return new TimeDependentRemoveUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate);
-        }
-        internal RelationshipAction AddUnmanagedAction(OGM item, DateTime? startDate, DateTime? endDate)
-        {
-            return new TimeDependentAddUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate, endDate);
-        }
-    }
+		internal override CollectionItem NewCollectionItem(OGM parent, OGM item, DateTime? startDate, DateTime? endDate)
+		{
+			return new CollectionItem<TEntity>(parent, (TEntity)item, startDate, endDate);
+		}
+		internal override RelationshipAction AddAction(OGM item, DateTime? moment)
+		{
+			return new TimeDependentAddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
+		}
+		internal override RelationshipAction RemoveAction(CollectionItem item, DateTime? moment)
+		{
+			return new TimeDependentRemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
+		}
+		internal override RelationshipAction ClearAction(DateTime? moment)
+		{
+			OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
+			OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
+			return new TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem, moment);
+		}
+		internal RelationshipAction RemoveUnmanagedAction(CollectionItem item, DateTime? startDate)
+		{
+			return new TimeDependentRemoveUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate);
+		}
+		internal RelationshipAction AddUnmanagedAction(OGM item, DateTime? startDate, DateTime? endDate)
+		{
+			return new TimeDependentAddUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate, endDate);
+		}
+	}
 }

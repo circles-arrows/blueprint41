@@ -38,9 +38,13 @@ namespace Blueprint41.Neo4j.Refactoring
         [RestrictedTo(PropertyType.Lookup, PropertyType.Collection)]
         void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType = null, bool strict = true);
 
+		[RestrictedTo(PropertyType.Lookup)]
         void ConvertToCollection();
+		[RestrictedTo(PropertyType.Lookup)]
         void ConvertToCollection(string newName);
+		[RestrictedTo(PropertyType.Lookup)]
         void ConvertToLookup(ConvertAlgorithm conversionAlgorithm);
+		[RestrictedTo(PropertyType.Lookup)]
         void ConvertToLookup(string newName, ConvertAlgorithm conversionAlgorithm);
 
         [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]

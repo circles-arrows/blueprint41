@@ -106,13 +106,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    DbTransaction?.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.ForceDelete;
-                    DbTransaction?.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -131,7 +131,6 @@ namespace Blueprint41.Core
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
             }
         }
-
         public void Delete()
         {
             switch (PersistenceState)
@@ -139,13 +138,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    DbTransaction?.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.Delete;
-                    DbTransaction?.Register(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -162,6 +161,42 @@ namespace Blueprint41.Core
                     throw new InvalidOperationException($"{GetEntity().Name} with key {GetKey()?.ToString() ?? "<NULL>"} couldn't be loaded from the database.");
                 default:
                     throw new NotImplementedException(string.Format("The PersistenceState '{0}' is not yet implemented.", PersistenceState.ToString()));
+            }
+        }
+        private protected void ExecuteAction(ClearRelationshipsAction action)
+        {
+            if (DbTransaction != null)
+            {
+                DbTransaction?.Register(action);
+            }
+            else
+            {
+                foreach (Property property in GetEntity().Properties.Where(item => item.PropertyType != PropertyType.Attribute))
+                {
+                    if (property.ForeignProperty == null)
+                        continue;
+
+                    IEnumerable<OGM> instances;
+                    object value = property.GetValue(this, null);
+                    if (property.PropertyType == PropertyType.Lookup)
+                        instances = new OGM[] { (OGM)value };
+                    else
+                        instances = (IEnumerable<OGM>)value;
+
+                    foreach (OGM instance in instances)
+                    {
+                        if (property.ForeignProperty.PropertyType == PropertyType.Lookup)
+                        {
+                            property.ForeignProperty.SetValue(instance, null);
+                        }
+                        else
+                        {
+                            EntityCollectionBase collection = (EntityCollectionBase)property.ForeignProperty.GetValue(instance, null);
+                            action.ExecuteInMemory(collection);
+                        }
+                    }
+                    property.SetValue(this, null);
+                }
             }
         }
 

@@ -1025,10 +1025,31 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("AliasList(this, \"collect({base})\");\r\n\t\t}\r\n\t\tpublic AsResult As(string aliasName, " +
-                    "out ");
+            this.Write("AliasList(this, \"collect({base})\");\r\n\t\t}\r\n\t\tpublic ");
             
             #line 298 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("Alias Coalesce(");
+            
+            #line 298 "E:\satcom\BS.GBM\trunk core 2.0\code\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("Alias other)\r\n\t\t{\r\n\t\t\treturn new ");
+            
+            #line 300 "E:\satcom\BS.GBM\trunk core 2.0\code\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("Alias(this, \"COALESCE({base}, {0})\", new object[] { other });\r\n\t\t}\r\n\t\tpublic AsRe" +
+                    "sult As(string aliasName, out ");
+            
+            #line 302 "E:\satcom\BS.GBM\trunk core 2.0\code\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default

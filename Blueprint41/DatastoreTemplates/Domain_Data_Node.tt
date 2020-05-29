@@ -295,6 +295,10 @@ namespace <#= Settings.FullQueryNamespace #>
 		{
 			return new <#= DALModel.Name #>AliasList(this, "collect({base})");
 		}
+		public <#= DALModel.Name #>Alias Coalesce(<#= DALModel.Name #>Alias other)
+		{
+			return new <#= DALModel.Name #>Alias(this, "COALESCE({base}, {0})", new object[] { other });
+		}
 		public AsResult As(string aliasName, out <#= DALModel.Name #>Alias alias)
 		{
 			alias = new <#= DALModel.Name #>Alias((<#= DALModel.Name #>Node)Node)
