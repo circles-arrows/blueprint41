@@ -23,7 +23,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class SetDefaultLookupValue : TemplateBase
+    internal partial class SetDefaultLookupValue : SetDefaultLookupValueBase
     {
 #line hidden
         /// <summary>
@@ -93,17 +93,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write("]-(target)\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 20 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
-
-
-	// Template Parameters
-	public Property Property { get; set; }
-	public string	Value	 { get; set; }
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

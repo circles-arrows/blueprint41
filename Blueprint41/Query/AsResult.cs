@@ -19,9 +19,7 @@ namespace Blueprint41.Query
 
         protected internal override void Compile(CompileState state)
         {
-            Result.Compile(state);
-            state.Text.Append(" AS ");
-            state.Text.Append(AliasName);
+            state.Translator.Compile(this, state);
         }
 
         public override Type? GetResultType()

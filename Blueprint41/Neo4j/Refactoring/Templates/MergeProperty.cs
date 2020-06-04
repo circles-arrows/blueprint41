@@ -22,7 +22,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class MergeProperty : TemplateBase
+    internal partial class MergeProperty : MergePropertyBase
     {
 #line hidden
         /// <summary>
@@ -77,19 +77,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write(" = NULL\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
-
-
-	// Template Parameters
-	public Entity ConcreteParent { get; set; }
-	public Property	From { get; set; }
-	public Property	To { get; set; }
-	public MergeAlgorithm MergeAlgorithm { get; set; }
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

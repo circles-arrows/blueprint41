@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using Blueprint41.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -284,5 +285,168 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             }
         }
         #endregion
+    }
+
+    public abstract class TemplateBase<TSelf> : TemplateBase
+        where TSelf : TemplateBase<TSelf>
+    {
+        internal Func<TSelf> CreateInstance { get; set; }
+        internal Action<TSelf> Setup { get; set; }
+        public void Run(bool withTransaction = true)
+        {
+            if (!Parser.ShouldExecute)
+                return;
+
+            if (withTransaction)
+            {
+                using (Transaction.Begin(withTransaction))
+                {
+                    Execute();
+                    Transaction.Commit();
+                }
+            }
+            else
+            {
+                Execute();
+            }
+        }
+        public void RunBatched()
+        {
+            if (!Parser.ShouldExecute)
+                return;
+
+            RawResultStatistics counters;
+            do
+            {
+                using (Transaction.Begin(true))
+                {
+                    TSelf template = CreateInstance();
+                    Setup.Invoke(template);
+
+                    RawResult result = template.Execute();
+                    Transaction.Commit();
+
+                    counters = result.Statistics();
+                }
+            }
+            while (counters.ContainsUpdates);
+        }
+
+        private RawResult Execute()
+        {
+            if (!Parser.ShouldExecute)
+                return null;
+
+            string cypher = TransformText();
+
+            if (OutputParameters.Count == 0)
+                return Transaction.RunningTransaction.Run(cypher);
+            else
+                return Transaction.RunningTransaction.Run(cypher, OutputParameters);
+        }
+    }
+
+    public abstract class ApplyFunctionalIdBase : TemplateBase<ApplyFunctionalIdBase>
+    {
+        public Entity Entity { get; set; }
+        public FunctionalId FunctionalId { get; set; }
+        public bool Full { get; set; }
+    }
+    public abstract class ConvertBase : TemplateBase<ConvertBase>
+    {
+        public Entity Entity { get; set; }
+        public Property Property { get; set; }
+        public string WhereScript { get; set; }
+        public string AssignScript { get; set; }
+    }
+    public abstract class CopyPropertyBase : TemplateBase<CopyPropertyBase>
+    {
+        public Entity Entity { get; set; }
+        public string To { get; set; }
+        public string From { get; set; }
+    }
+    public abstract class CreateIndexBase : TemplateBase<CreateIndexBase>
+    {
+        public Entity Entity { get; set; }
+        public Property Property { get; set; }
+    }
+    public abstract class CreateUniqueConstraintBase : TemplateBase<CreateUniqueConstraintBase>
+    {
+        public Entity Entity { get; set; }
+        public Property Property { get; set; }
+    }
+    public abstract class DropExistConstraintBase : TemplateBase<DropExistConstraintBase>
+    {
+        public Property Property { get; set; }
+    }
+    public abstract class MergePropertyBase : TemplateBase<MergePropertyBase>
+    {
+        public Entity ConcreteParent { get; set; }
+        public Property From { get; set; }
+        public Property To { get; set; }
+        public MergeAlgorithm MergeAlgorithm { get; set; }
+    }
+    public abstract class MergeRelationshipBase : TemplateBase<MergeRelationshipBase>
+    {
+        public Relationship From { get; set; }
+        public Relationship To { get; set; }
+        public MergeAlgorithm MergeAlgorithm { get; set; }
+    }
+    public abstract class RemoveEntityBase : TemplateBase<RemoveEntityBase>
+    {
+        public string Name { get; set; }
+    }
+    public abstract class RemovePropertyBase : TemplateBase<RemovePropertyBase>
+    {
+        public Entity ConcreteParent { get; set; }
+        public string Name { get; set; }
+    }
+    public abstract class RemoveRelationshipBase : TemplateBase<RemoveRelationshipBase>
+    {
+        public string InEntity { get; set; }
+        public string Relation { get; set; }
+        public string OutEntity { get; set; }
+    }
+    public abstract class RenameEntityBase : TemplateBase<RenameEntityBase>
+    {
+        public string OldName { get; set; }
+        public string NewName { get; set; }
+    }
+    public abstract class RenamePropertyBase : TemplateBase<RenamePropertyBase>
+    {
+        public Entity ConcreteParent { get; set; }
+        public Property From { get; set; }
+        public string To { get; set; }
+    }
+    public abstract class RenameRelationshipBase : TemplateBase<RenameRelationshipBase>
+    {
+        public Relationship Relationship { get; set; }
+        public string OldName { get; set; }
+        public string NewName { get; set; }
+    }
+    public abstract class SetCreationDateBase : TemplateBase<SetCreationDateBase>
+    {
+    }
+    public abstract class SetDefaultConstantValueBase : TemplateBase<SetDefaultConstantValueBase>
+    {
+        public Entity Entity { get; set; }
+        public Property Property { get; set; }
+        public object Value { get; set; }
+    }
+    public abstract class SetDefaultLookupValueBase : TemplateBase<SetDefaultLookupValueBase>
+    {
+        public Property Property { get; set; }
+        public string Value { get; set; }
+    }
+    public abstract class SetLabelBase : TemplateBase<SetLabelBase>
+    {
+        public Entity Entity { get; set; }
+        public string Label { get; set; }
+    }
+    public abstract class SetRelationshipPropertyValueBase : TemplateBase<SetRelationshipPropertyValueBase>
+    {
+        public string RelationshipType { get; set; }
+        public string Property { get; set; }
+        public object Value { get; set; }
     }
 }

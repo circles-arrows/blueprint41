@@ -12,7 +12,7 @@ namespace Blueprint41
 {
     public class Parameter
     {
-        static private readonly string CONSTANT_NAME = null!;
+        static internal readonly string CONSTANT_NAME = null!;
 
         #region Operators
 
@@ -242,7 +242,7 @@ namespace Blueprint41
             throw new NotSupportedException();
         }
         [Obsolete("You cannot wrap a result into a constant", true)]
-        internal static Parameter Constant(Litheral value)
+        internal static Parameter Constant(Literal value)
         {
             throw new NotSupportedException();
         }
@@ -265,7 +265,7 @@ namespace Blueprint41
             return p;
         }
 
-        public string Name { get; private set; }
+        public string Name { get; internal set; }
         public object? Value { get; private set; }
         public bool HasValue { get; private set; }
 
@@ -274,20 +274,7 @@ namespace Blueprint41
 
         internal void Compile(CompileState state)
         {
-            if (!state.Parameters.Contains(this))
-                state.Parameters.Add(this);
-
-            if (IsConstant && !state.Values.Contains(this))
-                state.Values.Add(this);
-
-            if (Name == CONSTANT_NAME)
-            {
-                Name = $"param{state.paramSeq}";
-                state.paramSeq++;
-            }
-            state.Text.Append("{");
-            state.Text.Append(Name);
-            state.Text.Append("}");
+            state.Translator.Compile(this, state);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Blueprint41.Neo4j.Refactoring;
 using Blueprint41.Neo4j.Refactoring.Templates;
 using Templates = Blueprint41.Neo4j.Refactoring.Templates;
-using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -302,12 +301,12 @@ namespace Blueprint41
 
                 foreach (var entity in Parent.GetConcreteClasses())
                 {
-                    Parser.ExecuteBatched<RenameProperty>(delegate (RenameProperty template)
+                    Parent.Parent.Templates.RenameProperty(template =>
                     {
                         template.ConcreteParent = entity;
                         template.From = this;
                         template.To = newName;
-                    });
+                    }).RunBatched();
                 }
             }
 
@@ -443,13 +442,13 @@ namespace Blueprint41
 
             foreach (var entity in Parent.GetConcreteClasses())
             {
-                Parser.ExecuteBatched<MergeProperty>(delegate (MergeProperty template)
+                Parent.Parent.Templates.MergeProperty(template =>
                 {
                     template.From = this;
                     template.To = target;
                     template.ConcreteParent = entity;
                     template.MergeAlgorithm = mergeAlgorithm;
-                });
+                }).RunBatched();
             }
         }
 
@@ -467,12 +466,12 @@ namespace Blueprint41
                 if (mergeAlgorithm == MergeAlgorithm.NotApplicable)
                     throw new NotSupportedException("You cannot ignore conflicts on lookup properties.");
 
-            Parser.ExecuteBatched<MergeRelationship>(delegate (MergeRelationship template)
+            Parent.Parent.Templates.MergeRelationship(template =>
             {
                 template.From = this.Relationship;
                 template.To = target.Relationship;
                 template.MergeAlgorithm = mergeAlgorithm;
-            });
+            }).RunBatched();
         }
 
         void IRefactorProperty.ToCompressedString(int batchSize)
@@ -495,8 +494,8 @@ namespace Blueprint41
                     {
                         list = new List<object>();
 
-                        IStatementResult result = Parser.Execute(cypherRead, null);
-                        foreach (IRecord item in result)
+                        RawResult result = Parser.Execute(cypherRead, null);
+                        foreach (RawRecord item in result)
                         {
                             string text = item["Text"].As<string>();
 
@@ -553,13 +552,13 @@ namespace Blueprint41
                 {
                     foreach (var entity in Parent.GetConcreteClasses())
                     {
-                        Parser.ExecuteBatched<Templates.Convert>(delegate (Templates.Convert template)
+                        Parent.Parent.Templates.Convert(template =>
                         {
                             template.Entity = entity;
                             template.Property = this;
                             template.WhereScript = chkScript;
                             template.AssignScript = convScript;
-                        });
+                        }).RunBatched();
                     }
                 }
             }
@@ -615,11 +614,11 @@ namespace Blueprint41
 
                 foreach (var entity in Parent.GetConcreteClasses())
                 {
-                    Parser.ExecuteBatched<RemoveProperty>(delegate (RemoveProperty template)
+                    Parent.Parent.Templates.RemoveProperty(template =>
                     {
                         template.Name = Name;
                         template.ConcreteParent = entity;
-                    });
+                    }).RunBatched();
                 }
             }
             else
@@ -775,7 +774,7 @@ namespace Blueprint41
             if (Parser.ShouldExecute)
             {
                 string cypher = string.Format("MATCH (n:{0}) WHERE n.{1} IS NULL RETURN count(n) as count", Parent.Label.Name, Name);
-                IRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
+                RawRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
                 bool hasNullProperty = record["count"].As<long>() > 0;
                 if (hasNullProperty)
                     throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", Parent.Name, Name));
@@ -793,12 +792,12 @@ namespace Blueprint41
                 Nullable = false;
                 foreach (var entity in Parent.GetConcreteClasses())
                 {
-                    Parser.ExecuteBatched<SetDefaultConstantValue>(delegate (SetDefaultConstantValue template)
+                    Parent.Parent.Templates.SetDefaultConstantValue(template =>
                     {
                         template.Entity = entity;
                         template.Property = this;
                         template.Value = Parent.Parent.PersistenceProvider.ConvertToStoredType(SystemReturnType, defaultValue);
-                    });
+                    }).RunBatched();
                 }
             }
             else
@@ -811,11 +810,11 @@ namespace Blueprint41
 
                 Nullable = false;
 
-                Parser.ExecuteBatched<SetDefaultLookupValue>(delegate (SetDefaultLookupValue template)
+                Parent.Parent.Templates.SetDefaultLookupValue(template =>
                 {
                     template.Property = this;
                     template.Value = (string)defaultValue;
-                });
+                }).RunBatched();
             }
         }
         void IRefactorProperty.MakeMandatory(DynamicEntity defaultValue)
@@ -836,11 +835,11 @@ namespace Blueprint41
 
             Nullable = false;
 
-            Parser.ExecuteBatched<SetDefaultLookupValue>(delegate (SetDefaultLookupValue template)
+            Parent.Parent.Templates.SetDefaultLookupValue(template =>
             {
                 template.Property = this;
                 template.Value = (string?)defaultValue.GetKey();
-            });
+            }).RunBatched();
         }
 
         private class NodePattern

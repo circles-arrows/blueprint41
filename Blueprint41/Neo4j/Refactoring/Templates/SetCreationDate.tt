@@ -1,0 +1,13 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="SetCreationDateBase" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#
+
+    Debug.WriteLine("	executing {0} -> set creation date", this.GetType().Name);
+
+#>
+MATCH ()-[r]->() WHERE NOT EXISTS(r.CreationDate) WITH r LIMIT 10000 SET r.CreationDate = ID(r)

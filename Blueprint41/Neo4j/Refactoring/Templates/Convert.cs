@@ -23,7 +23,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class Convert : TemplateBase
+    internal partial class Convert : ConvertBase
     {
 #line hidden
         /// <summary>
@@ -79,19 +79,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write("\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
-
-
-	// Template Parameters
-	public Entity	Entity	     { get; set; }
-	public Property Property     { get; set; }
-	public string   WhereScript  { get; set; }
-	public string   AssignScript { get; set; }
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

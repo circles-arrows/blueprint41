@@ -1,7 +1,6 @@
 ﻿using Blueprint41.Dynamic;
 using Blueprint41.Neo4j.Refactoring;
 using Blueprint41.Neo4j.Refactoring.Templates;
-using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -454,11 +453,11 @@ namespace Blueprint41
             Name = newName;
             Parent.Entities.Add(Name, this);
 
-            Parser.ExecuteBatched<RenameEntity>(delegate (RenameEntity template)
+            Parent.Templates.RenameEntity(template =>
             {
                 template.OldName = oldLabelName;
                 template.NewName = newName;
-            });
+            }).RunBatched();
         }
 
         void IRefactorEntity.SetDefaultValue(Action<dynamic> values)
@@ -478,12 +477,12 @@ namespace Blueprint41
                 if (property == null)
                     throw new ArgumentException(string.Format("The field '{0}' was not present on entity '{1}'. ", key, Name));
 
-                Parser.ExecuteBatched<SetDefaultConstantValue>(delegate (SetDefaultConstantValue template)
+                Parent.Templates.SetDefaultConstantValue(template =>
                 {
                     template.Entity = this;
                     template.Property = property;
                     template.Value = fields[key];
-                });
+                }).RunBatched();
             }
         }
         void IRefactorEntity.CopyValue(string sourceProperty, string targetProperty)
@@ -506,12 +505,12 @@ namespace Blueprint41
 
             foreach (Entity subClass in GetConcreteClasses())
             {
-                Parser.ExecuteBatched<CopyProperty>(delegate (CopyProperty template)
+                Parent.Templates.CopyProperty(template =>
                 {
                     template.Entity = subClass;
                     template.From = source.Name;
                     template.To = target.Name;
-                });
+                }).RunBatched();
             }
         }
 
@@ -526,11 +525,11 @@ namespace Blueprint41
             {
                 if (baseClass.IsVirtual) continue;
 
-                Parser.ExecuteBatched<SetLabel>(delegate (SetLabel template)
+                Parent.Templates.SetLabel(template =>
                 {
                     template.Entity = this;
                     template.Label = baseClass.Label.Name;
-                });
+                }).RunBatched();
             }
         }
 
@@ -542,11 +541,11 @@ namespace Blueprint41
             {
                 if (property.IndexType == IndexType.Indexed || (property.IndexType == IndexType.Unique && property.Parent.IsAbstract))
                 {
-                    Parser.Execute<CreateIndex>(delegate (CreateIndex template)
+                    Parent.Templates.CreateIndex(template =>
                     {
                         template.Entity = this;
                         template.Property = property;
-                    }, false);
+                    }).Run(false);
                 }
             }
         }
@@ -612,10 +611,10 @@ namespace Blueprint41
             {
                 if (!entity.IsAbstract)
                 {
-                    Parser.ExecuteBatched(delegate (RemoveEntity template)
+                    Parent.Templates.RemoveEntity(template =>
                     {
                         template.Name = entity.Label.Name;
-                    });
+                    }).RunBatched();
                 }
 
                 foreach (var relation in Parent.Relations.Where(item => item.InEntity == entity || item.OutEntity == entity).ToList())
@@ -690,12 +689,12 @@ namespace Blueprint41
 
             foreach (Entity baseClass in this.GetConcreteClasses())
             {
-                Parser.ExecuteBatched(delegate (ApplyFunctionalId template)
+                Parent.Templates.ApplyFunctionalId(template =>
                 {
                     template.Entity = this;
                     template.FunctionalId = functionalId;
                     template.Full = (algorithm == ApplyAlgorithm.ReapplyAll);
-                });
+                }).RunBatched();
             }
         }
 

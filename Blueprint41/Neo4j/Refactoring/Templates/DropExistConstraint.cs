@@ -22,7 +22,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class DropExistConstraint : TemplateBase
+    internal partial class DropExistConstraint : DropExistConstraintBase
     {
 #line hidden
         /// <summary>
@@ -55,17 +55,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write(")\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
-
-
-	// Template Parameters
-	public Property Property { get; set; }
-
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

@@ -22,7 +22,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateIndex.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class CreateIndex : TemplateBase
+    internal partial class CreateIndex : CreateIndexBase
     {
 #line hidden
         /// <summary>
@@ -56,18 +56,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write(")\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateIndex.tt"
-
-
-	// Template Parameters
-	public Entity	Entity	 { get; set; }
-	public Property Property { get; set; }
-
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

@@ -1,4 +1,4 @@
-﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+﻿<#@ template language="C#"  visibility="internal" inherits="RemovePropertyBase" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
@@ -12,9 +12,3 @@
 MATCH (node:<#= ConcreteParent.Label.Name #>) WHERE EXISTS(node.<#= Name #>) 
 WITH node LIMIT 10000 
 SET node.<#= Name #> = NULL
-<#+
-
-	// Template Parameters
-	public Entity ConcreteParent { get; set; }
-	public string	Name { get; set; }
-#>

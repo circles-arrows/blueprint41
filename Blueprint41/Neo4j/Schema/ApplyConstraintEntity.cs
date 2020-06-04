@@ -1,12 +1,9 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Neo4j.Driver.V1;
 
 namespace Blueprint41.Neo4j.Schema
 {
@@ -42,7 +39,7 @@ namespace Blueprint41.Neo4j.Schema
                 List<ApplyConstraintAction> commands = GetCommands(property.IndexType, property.Nullable, IsUnique, IsIndexed, IsMandatory);
 
                 if (commands.Count > 0)
-                    actions.Add(new ApplyConstraintProperty(this, property, commands.ToArray()));
+                    actions.Add(Parent.NewApplyConstraintProperty(this, property, commands.ToArray()));
             }
 
             List<string> propertiesWithIndexOrConstraint = entityIndexes.Select(item => item.Field).Union(entityConstraints.Select(item => item.Field)).Distinct().ToList();
@@ -60,7 +57,7 @@ namespace Blueprint41.Neo4j.Schema
                 List<ApplyConstraintAction> commands = GetCommands(IndexType.None, true, IsUnique, IsIndexed, IsMandatory);
 
                 if (commands.Count > 0)
-                    actions.Add(new ApplyConstraintProperty(this, property, commands.ToArray()));
+                    actions.Add(Parent.NewApplyConstraintProperty(this, property, commands.ToArray()));
             }
 
             return actions;
@@ -132,9 +129,9 @@ namespace Blueprint41.Neo4j.Schema
             return commands;
         }
 
-        private SchemaInfo Parent { get; set; }
-        public Entity Entity { get; private set; }
-        public IReadOnlyList<ApplyConstraintProperty> Actions { get; private set; }
+        protected SchemaInfo Parent { get; set; }
+        public Entity Entity { get; protected set; }
+        public IReadOnlyList<ApplyConstraintProperty> Actions { get; protected set; }
 
         public override string ToString()
         {

@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.Neo4j.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,10 @@ namespace Blueprint41.Query
 {
     public class CompileState
     {
-        internal CompileState(IEnumerable<TypeMapping> typeMappings)
+        internal CompileState(IEnumerable<TypeMapping> typeMappings, QueryTranslator translator)
         {
             TypeMappings = typeMappings;
+            Translator = translator;
         }
 
         public StringBuilder Text = new StringBuilder();
@@ -22,13 +24,14 @@ namespace Blueprint41.Query
         public int paramSeq = 0;
 
         public IEnumerable<TypeMapping> TypeMappings;
+        public QueryTranslator Translator { get; private set; }
         internal string Preview(Action<CompileState> compile, CompileState? state = null)
         {
             string compiled;
 
             if (state == null)
             {
-                CompileState tempState = new CompileState(TypeMappings);
+                CompileState tempState = new CompileState(TypeMappings, Translator);
                 compile.Invoke(tempState);
                 compiled = tempState.Text.ToString();
             }

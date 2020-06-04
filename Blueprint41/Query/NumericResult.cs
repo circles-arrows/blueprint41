@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Neo4j.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -133,9 +134,9 @@ namespace Blueprint41.Query
         #endregion
 
         internal NumericResult(FieldResult field) : base(field) { }
-        public NumericResult(string function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+        public NumericResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
         public NumericResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public NumericResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+        public NumericResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         public QueryCondition In(IEnumerable<long> enumerable)
         {
@@ -143,62 +144,62 @@ namespace Blueprint41.Query
         }
         public NumericResult Sign()
         {
-            return new NumericResult(this, "sign({base})", null, typeof(long));
+            return new NumericResult(this, t => t.FnSign, null, typeof(long));
         }
         public NumericResult Abs()
         {
-            return new NumericResult(this, "abs({base})");
+            return new NumericResult(this, t => t.FnAbs);
         }
         public NumericResult Sum()
         {
-            return new NumericResult(this, "sum({base})");
+            return new NumericResult(this, t => t.FnSum);
         }
         public NumericResult Min()
         {
-            return new NumericResult(this, "min({base})");
+            return new NumericResult(this, t => t.FnMin);
         }
         public NumericResult Max()
         {
-            return new NumericResult(this, "max({base})");
+            return new NumericResult(this, t => t.FnMax);
         }
         public FloatResult Avg()
         {
-            return new FloatResult(this, "avg({base})", null, typeof(Double));
+            return new FloatResult(this, t => t.FnAvg, null, typeof(Double));
         }
         public NumericResult PercentileDisc(decimal percentile)
         {
             if (percentile < 0 || percentile > 1)
                 throw new ArgumentOutOfRangeException("percentile", percentile, $"The value must be between 0 and 1");
 
-            return new NumericResult(this, "percentileDisc({base}, {0})", new object[] { new Litheral(percentile) });
+            return new NumericResult(this, t => t.FnPercentileDisc, new object[] { Parameter.Constant((float)percentile) });
         }
         public FloatResult PercentileCont(decimal percentile)
         {
             if (percentile < 0 || percentile > 1)
                 throw new ArgumentOutOfRangeException("percentile", percentile, $"The value must be between 0 and 1");
 
-            return new FloatResult(this, "percentileCont({base}, {0})", new object[] { new Litheral(percentile) }, typeof(Double));
+            return new FloatResult(this, t => t.FnPercentileCont, new object[] { Parameter.Constant((float)percentile) }, typeof(Double));
         }
         public FloatResult StDev()
         {
-            return new FloatResult(this, "stdev({base})", null, typeof(Double));
+            return new FloatResult(this, t => t.FnStDev, null, typeof(Double));
         }
         public FloatResult StDevP()
         {
-            return new FloatResult(this, "stdevp({base})", null, typeof(Double));
+            return new FloatResult(this, t => t.FnStDevP, null, typeof(Double));
         }
 
         public NumericResult Coalesce(long value)
         {
-            return new NumericResult(this, "coalesce({base}, {0})", new object[] { Parameter.Constant(value) });
+            return new NumericResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
         }
         public NumericResult Coalesce(NumericResult value)
         {
-            return new NumericResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new NumericResult(this, t => t.FnCoalesce, new object[] { value });
         }
         public NumericResult Coalesce(Parameter value)
         {
-            return new NumericResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new NumericResult(this, t => t.FnCoalesce, new object[] { value });
         }
     }
 }

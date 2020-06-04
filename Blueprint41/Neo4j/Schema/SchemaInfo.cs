@@ -1,55 +1,50 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Neo4j.Driver.V1;
+using Blueprint41.Core;
 
 namespace Blueprint41.Neo4j.Schema
 {
     public class SchemaInfo
     {
-        private SchemaInfo(DatastoreModel model)
+        internal SchemaInfo(DatastoreModel model)
         {
             Model = model;
+            Initialize();
         }
-
-        internal static SchemaInfo FromDB(DatastoreModel model)
+        protected virtual void Initialize()
         {
-            SchemaInfo info = new SchemaInfo(model);
-
             using (Transaction.Begin())
             {
-                info.FunctionalIds = LoadData("CALL blueprint41.functionalid.list()", record => new FunctionalIdInfo(record));
-                info.Constraints = LoadData("CALL db.constraints()", record => new ConstraintInfo(record));
-                info.Indexes = LoadData("CALL db.indexes()", record => new IndexInfo(record));
-                info.Labels = LoadSimpleData("CALL db.labels()", "label");
-                info.PropertyKeys = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
-                info.RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
+                FunctionalIds = LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record));
+                Constraints = LoadData("CALL db.constraints()", record => NewConstraintInfo(record));
+                Indexes = LoadData("CALL db.indexes()", record => NewIndexInfo(record));
+                Labels = LoadSimpleData("CALL db.labels()", "label");
+                PropertyKeys = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
+                RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
             }
-            return info;
         }
-        private static IReadOnlyList<string> LoadSimpleData(string procedure, string resultname)
+        protected IReadOnlyList<string> LoadSimpleData(string procedure, string resultname)
         {
             return LoadData<string>(procedure, record => record.Values[resultname].As<string>());
         }
-        private static IReadOnlyList<T> LoadData<T>(string procedure, Func<IRecord, T> processor)
+        protected IReadOnlyList<T> LoadData<T>(string procedure, Func<RawRecord, T> processor)
         {
             bool retry;
-            IReadOnlyList<T> data = null;
+            IReadOnlyList<T>? data = null;
             do
             {
                 try
                 {
                     retry = false;
-                    IStatementResult result = Persistence.Neo4jTransaction.Run(procedure);
+                    RawResult result = Transaction.RunningTransaction.Run(procedure);
                     data = result.Select(processor).ToArray();
                 }
-                catch (ClientException clientException)
+                catch (Exception clientException)
                 {
                     if (!clientException.Message.Contains("is still populating"))
                         throw;
@@ -59,32 +54,32 @@ namespace Blueprint41.Neo4j.Schema
                 }
             } while (retry);
 
-            return data;
+            return data ?? throw new NotSupportedException("Could not load the data.");
         }
 
-        public IReadOnlyList<FunctionalIdInfo> FunctionalIds { get; private set; }
-        public IReadOnlyList<ConstraintInfo> Constraints { get; private set; }
-        public IReadOnlyList<IndexInfo> Indexes { get; private set; }
+        public IReadOnlyList<FunctionalIdInfo> FunctionalIds { get; protected set; } = null!;
+        public IReadOnlyList<ConstraintInfo>   Constraints   { get; protected set; } = null!;
+        public IReadOnlyList<IndexInfo>        Indexes       { get; protected set; } = null!;
 
-        public IReadOnlyList<string> Labels { get; private set; }
-        public IReadOnlyList<string> PropertyKeys { get; private set; }
-        public IReadOnlyList<string> RelationshipTypes { get; private set; }
-        private DatastoreModel Model;
+        public IReadOnlyList<string> Labels            { get; protected set; } = null!;
+        public IReadOnlyList<string> PropertyKeys      { get; protected set; } = null!;
+        public IReadOnlyList<string> RelationshipTypes { get; protected set; } = null!;
+        protected DatastoreModel Model;
 
-        public ApplyConstraintEntity GetConstraintDifferences(Entity entity)
-        {
-            return new ApplyConstraintEntity(this, entity);
-        }
         public IReadOnlyList<ApplyConstraintEntity> GetConstraintDifferences()
         {
             return Model.Entities.Where(entity => !entity.IsVirtual).Select(entity => GetConstraintDifferences(entity)).ToArray();
         }
+        public ApplyConstraintEntity GetConstraintDifferences(Entity entity)
+        {
+            return NewApplyConstraintEntity(entity);
+        }
 
-        private int FindMaxId(FunctionalId functionalId)
+        protected virtual long FindMaxId(FunctionalId functionalId)
         {
             bool first = true;
             string templateNumeric = "MATCH (node:{0}) WHERE toInt(node.Uid) IS NOT NULL WITH toInt(node.Uid) AS decoded RETURN case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId";
-            string templateHash = "MATCH (node:{0}) where node.Uid STARTS WITH '{1}' AND Length(node.Uid) = {2} CALL blueprint41.hashing.decode(replace(node.Uid, '{1}', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId";
+            string templateHash = "MATCH (node:{0}) where node.Uid STARTS WITH '{1}' AND Length(node.Uid) >= {2} CALL blueprint41.hashing.decode(replace(node.Uid, '{1}', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId";
             string actualFidValue = "CALL blueprint41.functionalid.current('{0}') YIELD Sequence as sequence RETURN sequence";
             StringBuilder queryBuilder = new StringBuilder();
             foreach (var entity in Model.Entities.Where(entity => entity.FunctionalId?.Label == functionalId.Label))
@@ -103,7 +98,7 @@ namespace Blueprint41.Neo4j.Schema
 
             if (queryBuilder.Length != 0)
             {
-                var ids = LoadData(queryBuilder.ToString(), record => record.Values["MaxId"].As<int>());
+                var ids = LoadData(queryBuilder.ToString(), record => record.Values["MaxId"].As<long>());
                 if (ids.Count == 0)
                     return 0;
                 else
@@ -120,12 +115,12 @@ namespace Blueprint41.Neo4j.Schema
             List<ApplyFunctionalId> actions = new List<Schema.ApplyFunctionalId>();
             foreach (var inMemory in Model.FunctionalIds)
             {
-                int maxNumber = FindMaxId(inMemory);
-                int startFrom = maxNumber > inMemory.StartFrom ? maxNumber : inMemory.StartFrom;
+                long maxNumber = FindMaxId(inMemory);
+                long startFrom = maxNumber > inMemory.StartFrom ? maxNumber : inMemory.StartFrom;
                 var inDb = FunctionalIds.FirstOrDefault(item => inMemory.Label == item.Label);
                 if (inDb == null)
                 {
-                    actions.Add(new Schema.ApplyFunctionalId(this, inMemory.Label, inMemory.Prefix, startFrom, ApplyFunctionalIdAction.CreateFunctionalId));
+                    actions.Add(NewApplyFunctionalId(inMemory.Label, inMemory.Prefix, startFrom, ApplyFunctionalIdAction.CreateFunctionalId));
                     continue;
                 }
 
@@ -133,8 +128,7 @@ namespace Blueprint41.Neo4j.Schema
                 {
                     startFrom = startFrom > inDb.SequenceNumber ? startFrom : inDb.SequenceNumber;
                     actions.Add(
-                        new Schema.ApplyFunctionalId(
-                            this, 
+                        NewApplyFunctionalId(
                             inDb.Label, 
                             inMemory.Prefix,
                             startFrom, 
@@ -160,13 +154,12 @@ namespace Blueprint41.Neo4j.Schema
                     System.Diagnostics.Debug.WriteLine(diff.ToString());
                     foreach (var query in diff.ToCypher())
                     {
-                        Persistence.Neo4jTransaction.Run(query);
+                        Transaction.RunningTransaction.Run(query);
                     }
                 }
                 Transaction.Commit();
             }
         }
-
         internal void UpdateConstraints()
         {
             using (Transaction.Begin())
@@ -178,12 +171,21 @@ namespace Blueprint41.Neo4j.Schema
                         foreach (var cql in action.ToCypher())
                         {
                             System.Diagnostics.Debug.WriteLine(cql);
-                            Persistence.Neo4jTransaction.Run(cql);
+                            Transaction.RunningTransaction.Run(cql);
                         }
                     }
                 }
                 Transaction.Commit();
             }
         }
+
+        protected virtual FunctionalIdInfo NewFunctionalIdInfo(RawRecord rawRecord) => new FunctionalIdInfo(rawRecord);
+        protected virtual ConstraintInfo   NewConstraintInfo(RawRecord rawRecord)   => new ConstraintInfo(rawRecord);
+        protected virtual IndexInfo        NewIndexInfo(RawRecord rawRecord)        => new IndexInfo(rawRecord);
+
+        protected virtual ApplyConstraintEntity   NewApplyConstraintEntity(Entity entity)                                                                              => new ApplyConstraintEntity(this, entity);
+        protected virtual ApplyFunctionalId       NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);
+        internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, params ApplyConstraintAction[] commands) => new ApplyConstraintProperty(parent, property, commands);
+        internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, params ApplyConstraintAction[] commands)   => new ApplyConstraintProperty(parent, property, commands);
     }
 }

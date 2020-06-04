@@ -1,4 +1,4 @@
-﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+﻿<#@ template language="C#"  visibility="internal" inherits="MergeRelationshipBase" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
@@ -12,10 +12,3 @@
 MATCH (in:<#= From.InEntity.Label.Name #>)-[rel:<#= From.Neo4JRelationshipType #>]-(out:<#= From.OutEntity.Label.Name #>)
 WITH in, rel, out LIMIT 10000
 MERGE (in)-[newRelationship:<#= To.Neo4JRelationshipType #>]->(out) ON CREATE SET newRelationship += rel WITH rel DELETE rel
-<#+
-
-	// Template Parameters
-	public Relationship	From { get; set; }
-	public Relationship	To { get; set; }
-	public MergeAlgorithm MergeAlgorithm { get; set; }
-#>

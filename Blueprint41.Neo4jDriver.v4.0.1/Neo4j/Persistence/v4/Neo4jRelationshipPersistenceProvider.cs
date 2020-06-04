@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Blueprint41.Core;
-using Neo4j.Driver.V1;
 using Blueprint41.Dynamic;
 using Blueprint41.Neo4j.Refactoring;
-using System.Diagnostics.CodeAnalysis;
 
-namespace Blueprint41.Neo4j.Persistence
+namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
-    internal class Neo4JRelationshipPersistenceProvider : RelationshipPersistenceProvider
+    internal class Neo4jRelationshipPersistenceProvider : Void.Neo4jRelationshipPersistenceProvider
     {
-        public Neo4JRelationshipPersistenceProvider(PersistenceProvider factory) : base(factory) { }
+        public Neo4jRelationshipPersistenceProvider(PersistenceProvider factory) : base(factory) { }
 
         private void Checks(Relationship relationship, OGM inItem, OGM outItem)
         {
@@ -40,9 +37,9 @@ namespace Blueprint41.Neo4j.Persistence
                 {
                     string pattern = string.Empty;
                     if (target.Direction == DirectionEnum.In)
-                        pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} = {{key}} RETURN out, rel";
+                        pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} = $key RETURN out, rel";
                     else if (target.Direction == DirectionEnum.Out)
-                        pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} = {{key}} RETURN out, rel";
+                        pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} = $key RETURN out, rel";
 
                     string match = string.Format(pattern,
                        nodeNames[nodeIndex],
@@ -58,16 +55,16 @@ namespace Blueprint41.Neo4j.Persistence
             parameters2.Add("key", parent.GetKey());
 
             List<CollectionItem> items = new List<CollectionItem>();
-            var result = Neo4jTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
+            var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
 
             foreach (var record in result)
             {
-                INode node = record.Values["out"].As<INode>();
+                RawNode node = record.Values["out"].As<RawNode>();
                 if (node is null)
                     continue;
 
                 OGM item = ReadNode(parent, targetEntity, node);
-                IRelationship rel = record.Values["rel"].As<IRelationship>();
+                RawRelationship rel = record.Values["rel"].As<RawRelationship>();
 
                 DateTime? startDate = null;
                 DateTime? endDate = null;
@@ -109,7 +106,7 @@ namespace Blueprint41.Neo4j.Persistence
             else if (target.Direction == DirectionEnum.Out)
                 matchClause = "MATCH ({0})<-[rel:{2}]-({3})";
 
-            string whereClause = " WHERE node.{1} in ({{keys}}) ";
+            string whereClause = " WHERE node.{1} in ($keys) ";
             string returnClause = " RETURN node.{1} as ParentKey, out.{4} as ItemKey ";
             if (target.Relationship.IsTimeDependent)
                 returnClause = $" RETURN node.{{1}} as ParentKey, out.{{4}} as ItemKey, rel.{target.Relationship.StartDate} as StartDate, rel.{target.Relationship.EndDate} as EndDate";
@@ -144,7 +141,7 @@ namespace Blueprint41.Neo4j.Persistence
             if (parents.Any(parent => parent.GetEntity() != target.Parent.GetEntity()))
                 throw new InvalidOperationException("This code should only load collections of the same concrete parent class.");
 
-            var result = Neo4jTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
+            var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
             List<RelationshipIndex> indexCache = new List<RelationshipIndex>();
             foreach (var record in result)
             {
@@ -160,7 +157,7 @@ namespace Blueprint41.Neo4j.Persistence
                 indexCache.Add(new RelationshipIndex(record.Values["ParentKey"].As<object>(), record.Values["ItemKey"].As<object>(), startDate, endDate));
             }
 
-            Dictionary<object, List<INode>> itemsCache = Load(targetEntity, indexCache.Select(r => r.TargetEntityKey));
+            Dictionary<object, List<RawNode>> itemsCache = Load(targetEntity, indexCache.Select(r => r.TargetEntityKey));
 
             List<CollectionItem> items = new List<CollectionItem>();
             foreach (var index in indexCache)
@@ -176,7 +173,7 @@ namespace Blueprint41.Neo4j.Persistence
             return CollectionItemList.Get(items);
         }
 
-        private Dictionary<object, List<INode>> Load(Entity targetEntity, IEnumerable<object> keys)
+        private Dictionary<object, List<RawNode>> Load(Entity targetEntity, IEnumerable<object> keys)
         {
             string[] nodeNames = targetEntity.GetDbNames("node");
 
@@ -184,7 +181,7 @@ namespace Blueprint41.Neo4j.Persistence
             for (int nodeIndex = 0; nodeIndex < nodeNames.Length; nodeIndex++)
             {
                 string match = string.Format(
-                    "MATCH ({0}) WHERE node.{1} in ({{keys}}) RETURN DISTINCT node, node.{1} as key",
+                    "MATCH ({0}) WHERE node.{1} in ($keys) RETURN DISTINCT node, node.{1} as key",
                     nodeNames[nodeIndex],
                     targetEntity.Key.Name
                 );
@@ -193,26 +190,27 @@ namespace Blueprint41.Neo4j.Persistence
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("keys", keys.Distinct().ToList());
-            var result = Neo4jTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
+            var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
 
-            Dictionary<object, List<INode>> retval = new Dictionary<object, List<INode>>();
+            Dictionary<object, List<RawNode>> retval = new Dictionary<object, List<RawNode>>();
             foreach (var record in result)
             {
-                List<INode>? items;
+                List<RawNode>? items;
                 if (!retval.TryGetValue(record.Values["key"].As<object>(), out items))
                 {
-                    items = new List<INode>();
+                    items = new List<RawNode>();
                     retval.Add(record.Values["key"].As<object>(), items);
                 }
-                items.Add(record.Values["node"].As<INode>());
+                items.Add(record.Values["node"].As<RawNode>());
             }
 
             return retval;
         }
-        private OGM ReadNode(OGM parent, Entity targetEntity, INode node)
+        private OGM ReadNode(OGM parent, Entity targetEntity, RawNode node)
         {
-            object? keyObject;
-            node.Properties.TryGetValue(targetEntity.Key?.Name, out keyObject);
+            object? keyObject = null;
+            if (targetEntity.Key != null)
+                node.Properties.TryGetValue(targetEntity.Key.Name, out keyObject);
 
             string? typeName = null;
             if (targetEntity.NodeType != null)
@@ -242,7 +240,9 @@ namespace Blueprint41.Neo4j.Persistence
                         ||
                     item.PersistenceState == PersistenceState.Loaded))
                 {
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
                     item.SetData(node.Properties);
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
                     item.PersistenceState = PersistenceState.Loaded;
                 }
 
@@ -263,7 +263,9 @@ namespace Blueprint41.Neo4j.Persistence
                     else
                         item = new DynamicEntity(targetEntity, Parser.ShouldExecute);
 
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
                     item.SetData(node.Properties);
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
                     item.SetKey(keyObject);
                     item.PersistenceState = PersistenceState.Loaded;
                 }
@@ -280,12 +282,12 @@ namespace Blueprint41.Neo4j.Persistence
         {
             Checks(relationship, inItem, outItem);
 
-            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = {{inKey}} \r\n MATCH (out:{2}) WHERE out.{3} = {{outKey}}",
+            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr.CreationDate = {{{1}}} SET outr += {{node}}", relationship.Neo4JRelationshipType, relationship.CreationDate);
+            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr.CreationDate = ${1} SET outr += $node", relationship.Neo4JRelationshipType, relationship.CreationDate);
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
@@ -303,7 +305,7 @@ namespace Blueprint41.Neo4j.Persistence
             parameters.Add("node", node);
 
             string query = match + "\r\n" + create;
-            IStatementResult result = Neo4jTransaction.Run(query, parameters);
+            RawResult result = Transaction.RunningTransaction.Run(query, parameters);
             //if (result.Summary.Counters.RelationshipsCreated == 0)
             //    throw new ApplicationException($"Unable to create relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
         }
@@ -322,7 +324,7 @@ namespace Blueprint41.Neo4j.Persistence
 
                 // End Current
                 cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and (r.{6} > {{moment}} OR r.{6} IS NULL) AND (r.{5} <={{moment}} OR r.{5} IS NULL) SET r.EndDate = {{moment}}",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and (r.{6} > $moment OR r.{6} IS NULL) AND (r.{5} <= $moment OR r.{5} IS NULL) SET r.EndDate = $moment",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -331,11 +333,11 @@ namespace Blueprint41.Neo4j.Persistence
                     relationship.StartDate,
                     relationship.EndDate);
 
-                Neo4jTransaction.Run(cypher, parameters);
+                Transaction.RunningTransaction.Run(cypher, parameters);
 
                 // Remove Future
                 cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and r.{5} > {{moment}} DELETE r",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and r.{5} > $moment DELETE r",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -343,22 +345,22 @@ namespace Blueprint41.Neo4j.Persistence
                     outItem.GetEntity().Key.Name,
                     relationship.StartDate);
 
-                IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
-                if (result.Summary.Counters.RelationshipsDeleted == 0)
+                RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
+                if (result.Statistics().RelationshipsDeleted == 0)
                     throw new ApplicationException($"Unable to delete time dependent future relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
             }
             else
             {
                 cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} DELETE r",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey DELETE r",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
                     inItem.GetEntity().Key.Name,
                     outItem.GetEntity().Key.Name);
 
-                IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
-                if (result.Summary.Counters.RelationshipsDeleted == 0)
+                RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
+                if (result.Statistics().RelationshipsDeleted == 0)
                     throw new ApplicationException($"Unable to delete relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
             }
         }
@@ -379,7 +381,7 @@ namespace Blueprint41.Neo4j.Persistence
 
                 // End Current
                 string cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = {{key}} and (r.{5} > {{moment}} OR r.{5} IS NULL) AND (r.{4} <={{moment}} OR r.{4} IS NULL) SET r.EndDate = {{moment}}",
+                    match + " WHERE ({2}) and item.{3} = $key and (r.{5} > $moment OR r.{5} IS NULL) AND (r.{4} <= $moment OR r.{4} IS NULL) SET r.EndDate = $moment",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     condition,
@@ -387,19 +389,19 @@ namespace Blueprint41.Neo4j.Persistence
                     relationship.StartDate,
                     relationship.EndDate);
 
-                Neo4jTransaction.Run(cypher, parameters);
+                Transaction.RunningTransaction.Run(cypher, parameters);
 
                 // Remove Future
                 cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = {{key}} and r.{4} > {{moment}} DELETE r",
+                    match + " WHERE ({2}) and item.{3} = $key and r.{4} > $moment DELETE r",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     condition,
                     item.GetEntity().Key.Name,
                     relationship.StartDate);
 
-                Neo4jTransaction.Run(cypher, parameters);
-                //IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
+                Transaction.RunningTransaction.Run(cypher, parameters);
+                //IResult result = trans.Run(cypher, parameters);
                 //if (result.Summary.Counters.RelationshipsDeleted == 0)
                 //    throw new ApplicationException($"Unable to delete all time dependent future relationships '{relationship.Neo4JRelationshipType}' related to {item.GetEntity().Label.Name}({item.GetKey()}).");
 
@@ -407,15 +409,15 @@ namespace Blueprint41.Neo4j.Persistence
             else
             {
                 string cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = {{key}} DELETE r",
+                    match + " WHERE ({2}) and item.{3} = $key DELETE r",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     condition,
                     item.GetEntity().Key.Name);
 
-                Neo4jTransaction.Run(cypher, parameters);
+                Transaction.RunningTransaction.Run(cypher, parameters);
 
-                //IStatementResult result = Neo4jTransaction.Run(cypher, parameters);
+                //IResult result = trans.Run(cypher, parameters);
                 //if (result.Summary.Counters.RelationshipsDeleted == 0)
                 //    throw new ApplicationException($"Unable to remove all relationships '{relationship.Neo4JRelationshipType}' related to {item.GetEntity().Label.Name}({item.GetKey()}).");
             }
@@ -428,7 +430,7 @@ namespace Blueprint41.Neo4j.Persistence
             if (!fullyUnmanaged)
             {
                 string find = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and (r.{5} <= {{endDate}} OR r.{5} IS NULL) AND (r.{6} > {{startDate}} OR r.{6} IS NULL) RETURN min(COALESCE(r.{5}, {{MinDateTime}})) as MinStartDate, max(COALESCE(r.{6}, {{MaxDateTime}})) as MaxEndDate, count(r) as Count",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and (r.{5} <= $endDate OR r.{5} IS NULL) AND (r.{6} > $startDate OR r.{6} IS NULL) RETURN min(COALESCE(r.{5}, $MinDateTime)) as MinStartDate, max(COALESCE(r.{6}, $MaxDateTime)) as MaxEndDate, count(r) as Count",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -445,8 +447,8 @@ namespace Blueprint41.Neo4j.Persistence
                 parameters.Add("MinDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
-                IStatementResult result = Neo4jTransaction.Run(find, parameters);
-                IRecord record = result.FirstOrDefault();
+                RawResult result = Transaction.RunningTransaction.Run(find, parameters);
+                RawRecord record = result.FirstOrDefault();
                 int count = record["Count"].As<int>();
                 if (count > 0)
                 {
@@ -460,7 +462,7 @@ namespace Blueprint41.Neo4j.Persistence
                 }
 
                 string delete = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and (r.{5} <= {{endDate}}) AND (r.{6} > {{startDate}}) DELETE r",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and (r.{5} <= $endDate) AND (r.{6} > $startDate) DELETE r",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -469,15 +471,15 @@ namespace Blueprint41.Neo4j.Persistence
                     relationship.StartDate,
                     relationship.EndDate);
 
-                Neo4jTransaction.Run(delete, parameters);
+                Transaction.RunningTransaction.Run(delete, parameters);
             }
 
-            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = {{inKey}} MATCH (out:{2}) WHERE out.{3} = {{outKey}}",
+            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("CREATE (in)-[outr:{0} {{node}}]->(out)", relationship.Neo4JRelationshipType);
+            string create = string.Format("CREATE (in)-[outr:{0} $node]->(out)", relationship.Neo4JRelationshipType);
 
             Dictionary<string, object> node = new Dictionary<string, object>();
             node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
@@ -493,7 +495,7 @@ namespace Blueprint41.Neo4j.Persistence
             parameters2.Add("node", node);
 
             string query = match + "\r\n" + create;
-            Neo4jTransaction.Run(query, parameters2);
+            Transaction.RunningTransaction.Run(query, parameters2);
         }
         public override void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment)
         {
@@ -503,7 +505,7 @@ namespace Blueprint41.Neo4j.Persistence
                 throw new NotSupportedException("EndCurrentRelationship method is only supported for time dependent relationship.");
 
             string match = string.Format(
-                "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and COALESCE(r.{5}, {{minDateTime}}) = {{moment}} DELETE r",
+                "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and COALESCE(r.{5}, $minDateTime) = $moment DELETE r",
                 inItem.GetEntity().Label.Name,
                 relationship.Neo4JRelationshipType,
                 outItem.GetEntity().Label.Name,
@@ -517,7 +519,7 @@ namespace Blueprint41.Neo4j.Persistence
             parameters.Add("moment", Conversion<DateTime, long>.Convert(moment ?? DateTime.MinValue));
             parameters.Add("minDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
 
-            Neo4jTransaction.Run(match, parameters);
+            Transaction.RunningTransaction.Run(match, parameters);
         }
     }
 }

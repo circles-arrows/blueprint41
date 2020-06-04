@@ -38,6 +38,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.17.0")]
 
 [assembly: InternalsVisibleTo("Blueprint41.Modeller.Compare")]
+[assembly: InternalsVisibleTo("Blueprint41.Neo4jDriver.v1.7.2")]
+[assembly: InternalsVisibleTo("Blueprint41.Neo4jDriver.v4.0.1")]
 
 #region Type Conversions
 

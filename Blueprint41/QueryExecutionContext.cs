@@ -50,7 +50,7 @@ namespace Blueprint41
                     parameters.Add(queryParameter.Key, transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
             }
 
-            var result = Neo4j.Persistence.Neo4jTransaction.Run(CompiledQuery.QueryText, parameters);
+            var result = Transaction.RunningTransaction.Run(CompiledQuery.QueryText, parameters);
             foreach (var row in result)
             {
                 IDictionary<string, object> record = new ExpandoObject();

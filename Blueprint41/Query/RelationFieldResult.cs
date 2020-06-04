@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.Neo4j.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,16 +56,11 @@ namespace Blueprint41.Query
         internal RelationFieldResult(FieldResult field) : base(field) { }
         //public RelationFieldResult(string function, object[] arguments, Type type) : base(function, arguments, type) { }
         public RelationFieldResult(AliasResult alias, string fieldName) : base(alias, fieldName, null, null, typeof(DateTime)) { }
-        public RelationFieldResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+        public RelationFieldResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         protected internal override void Compile(CompileState state)
         {
-            if (!(Alias is null))
-            {
-                Alias.Compile(state);
-                state.Text.Append(".");
-            }
-            state.Text.Append(FieldName);
+            state.Translator.Compile(this, state);
         }
 
         public QueryCondition In(IEnumerable<DateTime> enumerable)
@@ -74,20 +70,19 @@ namespace Blueprint41.Query
 
         public DateTimeResult Coalesce(DateTime value)
         {
-            return new DateTimeResult(this, "coalesce({base}, {0})", new object[] { Parameter.Constant(Conversion<DateTime, long>.Convert(value)) });
+            return new DateTimeResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(Conversion<DateTime, long>.Convert(value)) });
         }
-
         public DateTimeResult Coalesce(RelationFieldResult value)
         {
-            return new DateTimeResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new DateTimeResult(this, t => t.FnCoalesce, new object[] { value });
         }
         public DateTimeResult Coalesce(DateTimeResult value)
         {
-            return new DateTimeResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new DateTimeResult(this, t => t.FnCoalesce, new object[] { value });
         }
         public DateTimeResult Coalesce(Parameter value)
         {
-            return new DateTimeResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new DateTimeResult(this, t => t.FnCoalesce, new object[] { value });
         }
 
         public override Type GetResultType()

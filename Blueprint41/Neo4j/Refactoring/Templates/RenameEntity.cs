@@ -22,7 +22,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class RenameEntity : TemplateBase
+    internal partial class RenameEntity : RenameEntityBase
     {
 #line hidden
         /// <summary>
@@ -63,18 +63,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write("\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
-
-
-	// Template Parameters
-    public string	OldName { get; set; }
-	public string	NewName { get; set; }
-
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

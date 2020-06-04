@@ -1,35 +1,25 @@
-﻿using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence;
-using Blueprint41.Neo4j.Refactoring;
-using Blueprint41.Neo4j.Refactoring.Templates;
-using Blueprint41.Neo4j.Schema;
-using Force.Crc32;
-using Neo4j.Driver.V1;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Dynamic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+
+using Blueprint41.Core;
+using Blueprint41.Neo4j.Schema;
+using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Neo4j.Refactoring;
+using Force.Crc32;
 using model = Blueprint41.Neo4j.Model;
 
 namespace Blueprint41
 {
     public abstract class DatastoreModel : IRefactorGlobal
     {
-        protected DatastoreModel(Type targetDatabase)
+        protected DatastoreModel(PersistenceProvider persistence)
         {
-            PersistenceProvider? tmp = (PersistenceProvider?)Activator.CreateInstance(targetDatabase, true);
-            if (tmp is null)
-                throw new NotSupportedException($"The database provider '{targetDatabase.Name}' is not supported.");
-
-            PersistenceProvider = tmp;
+            PersistenceProvider = persistence;
 
             Entities = new EntityCollection(this);
             Relations = new RelationshipCollection(this);
@@ -327,7 +317,7 @@ namespace Blueprint41
 
         internal SchemaInfo GetSchema()
         {
-            return SchemaInfo.FromDB(this);
+            return PersistenceProvider.GetSchemaInfo(this);
         }
 
         protected IRefactorGlobal Refactor { get { return this; } }
@@ -356,8 +346,7 @@ namespace Blueprint41
             if (!Parser.ShouldExecute)
                 return;
 
-            string cypher = "MATCH ()-[r]->() WHERE NOT EXISTS(r.CreationDate)  WITH r LIMIT 10000 SET r.CreationDate = ID(r)";
-            Parser.ExecuteBatched(cypher, null);
+            Templates.SetCreationDate().RunBatched();
         }
 
         void IRefactorGlobal.ApplyFullTextSearchIndexes()
@@ -366,52 +355,8 @@ namespace Blueprint41
             if (!Parser.ShouldExecute)
                 return;
 
-            ApplyFullTextSearchIndexes();
+            PersistenceProvider.Translator.ApplyFullTextSearchIndexes(Entities);
         }
-
-        public void ApplyFullTextSearchIndexes()
-        {
-            using (Transaction.Begin(true))
-            {
-                Neo4jTransaction.Run("CALL apoc.index.remove('fts')");
-                Transaction.Commit();
-            }
-
-            using (Transaction.Begin(true))
-            {
-                StringBuilder builder = new StringBuilder();
-                builder.AppendLine("CALL apoc.index.addAllNodesExtended('fts',");
-                builder.AppendLine("\t{");
-
-                bool first = true;
-                foreach (var entity in Entities)
-                {
-                    if (entity.FullTextIndexProperties.Count == 0)
-                        continue;
-
-                    if (first)
-                        first = false;
-                    else
-                        builder.AppendLine(",");
-
-                    builder.AppendFormat("\t\t{0}:\t\t\t['", entity.Label.Name);
-                    builder.Append(string.Join("', '", entity.FullTextIndexProperties.Select(item => item.Name)));
-                    builder.Append("']");
-                }
-
-                builder.AppendLine();
-                builder.AppendLine("\t},");
-                builder.AppendLine("\t{");
-                builder.AppendLine("\t\tautoUpdate:true");
-                builder.AppendLine("\t}");
-                builder.AppendLine(")");
-
-                Neo4jTransaction.Run(builder.ToString());
-
-                Transaction.Commit();
-            }
-        }
-
 
         protected DataMigrationScope DataMigration { get; private set; }
         public class DataMigrationScope
@@ -433,6 +378,7 @@ namespace Blueprint41
                 {
                     Transaction.Flush();
                     script.Invoke();
+                    Transaction.Flush();
                 }
 
                 Model.datamigration = false;
@@ -446,8 +392,8 @@ namespace Blueprint41
             /// </summary>
             /// <param name="cypher">The query</param>
             /// <param name="parameters">Any parameters used in the query</param>
-            /// <returns>An IStatementResult object</returns>
-            public IStatementResult ExecuteCypher(string cypher, Dictionary<string, object?>? parameters = null)
+            /// <returns>An ExecuteResult object</returns>
+            public RawResult ExecuteCypher(string cypher, Dictionary<string, object?>? parameters = null)
             {
                 Dictionary<string, object?> convertedParams;
 
@@ -456,12 +402,11 @@ namespace Blueprint41
                 else 
                     convertedParams = parameters.ToDictionary(item => item.Key, item => (item.Value is null) ? null : Model.PersistenceProvider.ConvertToStoredType(item.Value.GetType(), item.Value));
 
-                return Neo4jTransaction.Run(cypher, convertedParams);
+                return Transaction.RunningTransaction.Run(cypher, convertedParams);
             }
 
             #endregion
         }
-
 
         internal void EnsureSchemaMigration([CallerMemberName] string callerMethodName = "")
         {
@@ -508,13 +453,15 @@ namespace Blueprint41
             return new Guid(i1, (ushort)i2, (ushort)(i2 >> 16), i3[0], i3[1], i3[2], i3[3], i4[0], i4[1], i4[2], i4[3]);
         }
         private HashSet<Guid> knownGuids = new HashSet<Guid>();
+
+        internal RefactorTemplates Templates => PersistenceProvider.Templates;
     }
 
     public abstract class DatastoreModel<TSelf> : DatastoreModel
         where TSelf : DatastoreModel<TSelf>, new()
     {
-        protected DatastoreModel() : this(typeof(Neo4JPersistenceProvider)) { }
-        protected DatastoreModel(Type targetDatabase) : base(targetDatabase) { }
+        protected DatastoreModel() : this(PersistenceProvider.CurrentPersistenceProvider) { }
+        protected DatastoreModel(PersistenceProvider persistence) : base(persistence) { }
 
         private static DatastoreModel? model = null;
         public static DatastoreModel Model

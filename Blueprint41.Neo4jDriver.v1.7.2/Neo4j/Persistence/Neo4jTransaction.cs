@@ -2,23 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-
-using Neo4j.Driver.V1;
-using Blueprint41.Log;
 using System.Runtime.CompilerServices;
 
-namespace Blueprint41.Neo4j.Persistence
+using neo4j = Neo4j.Driver.V1;
+
+using Blueprint41.Core;
+using Blueprint41.Log;
+
+namespace Blueprint41.Neo4j.Persistence.Driver.v3
 {
 
-    public class Neo4jTransaction : Transaction
+    public class Neo4jTransaction : Void.Neo4jTransaction
     {
-        internal Neo4jTransaction(IDriver driver, bool withTransaction, TransactionLogger? logger)
+        internal Neo4jTransaction(neo4j.IDriver driver, bool withTransaction, TransactionLogger? logger) : base(withTransaction, logger)
         {
             Driver = driver;
             Session = driver.Session();
-            Logger = logger;
-            WithTransaction = withTransaction;
             StatementRunner = Session;
             if (withTransaction)
             {
@@ -27,61 +26,50 @@ namespace Blueprint41.Neo4j.Persistence
             }
         }
 
-        public static IStatementResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public override RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
-            Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
-            if (trans is null)
-                throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
-
-            if (trans.StatementRunner is null)
+            if (StatementRunner is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
 #if DEBUG
-            trans.Logger?.Start();
+            Logger?.Start();
 #endif
-            IStatementResult results = trans.StatementRunner.Run(cypher);
+            neo4j.IStatementResult results = StatementRunner.Run(cypher);
 #if DEBUG
-            if (trans.Logger != null)
+            if (Logger != null)
             {
                 results.Peek();
-                trans.Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+                Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
 
-            return results;
+            return new Neo4jRawResult(results);
         }
-        public static IStatementResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public override RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
-            Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
-            if (trans is null)
-                throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
-
-            if (trans.StatementRunner is null)
+            if (StatementRunner is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
 #if DEBUG
-            trans.Logger?.Start();
+            Logger?.Start();
 #endif
-            IStatementResult results = trans.StatementRunner.Run(cypher, parameters);
+            neo4j.IStatementResult results = StatementRunner.Run(cypher, parameters);
 
 #if DEBUG
-            if (trans.Logger != null)
+            if (Logger != null)
             {
                 results.Peek();
-                trans.Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+                Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
 
-            return results;
+            return new Neo4jRawResult(results);
         }
 
-        public IDriver Driver { get; set; }
-        public ISession? Session { get; set; }
-        public ITransaction? Transaction { get; set; }
-        public IStatementRunner? StatementRunner { get; set; }
-        internal TransactionLogger? Logger { get; set; }
-
-        private bool WithTransaction;
+        public neo4j.IDriver Driver { get; set; }
+        public neo4j.ISession? Session { get; set; }
+        public neo4j.ITransaction? Transaction { get; set; }
+        public neo4j.IStatementRunner? StatementRunner { get; set; }
 
         protected override void OnCommit()
         {
@@ -134,15 +122,6 @@ namespace Blueprint41.Neo4j.Persistence
             base.FlushPrivate();
         }
 
-        public static void Log(string message)
-        {
-            Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
-            if (trans is null)
-                throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
-
-            trans.Logger?.Log(message);
-        }
-
         protected override void ApplyFunctionalId(FunctionalId functionalId)
         {
             if (functionalId == null)
@@ -154,7 +133,7 @@ namespace Blueprint41.Neo4j.Persistence
             lock (functionalId)
             {
                 string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
-                IStatementResult result = Run(getFidQuery);
+                RawResult result = Run(getFidQuery);
                 long? currentFid = result.FirstOrDefault()?.Values["Sequence"].As<long?>();
                 if (currentFid.HasValue)
                     functionalId.SeenUid(currentFid.Value);

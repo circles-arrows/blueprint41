@@ -35,9 +35,9 @@ namespace Blueprint41.Query
             Right = null;
         }
 
-        private object? Left;
-        private Operator Operator;
-        private object? Right;
+        internal object? Left;
+        internal Operator Operator;
+        internal object? Right;
 
         internal void Compile(CompileState state)
         {

@@ -1,25 +1,27 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Neo4j.Driver.V1;
+using Blueprint41.Core;
 
 namespace Blueprint41.Neo4j.Schema
 {
     public class ConstraintInfo
     {
-        internal ConstraintInfo(IRecord record)
+        internal ConstraintInfo(RawRecord record)
         {
-            Description = record.Values["description"].As<string>();
+            Initialize(record);
+        }
+        protected virtual void Initialize(RawRecord record)
+        {
+            Name = record.Values["description"].As<string>();
             IsUnique = false;
             IsMandatory = false;
 
-            Match uniqueMatch = unique.Match(Description);
-            Match notnullMatch = notnull.Match(Description);
+            Match uniqueMatch = UniqueMatch(Name);
+            Match notnullMatch = NotNullMatch(Name);
             if (!uniqueMatch.Success && !notnullMatch.Success)
                 throw new NotSupportedException("One of the two regular expressions should produce a match...");
 
@@ -29,7 +31,6 @@ namespace Blueprint41.Neo4j.Schema
                 Field = uniqueMatch.Groups["field"].Value;
                 IsUnique = true;
             }
-
             if (notnullMatch.Success)
             {
                 Entity = notnullMatch.Groups["entity"].Value;
@@ -38,15 +39,23 @@ namespace Blueprint41.Neo4j.Schema
             }
         }
 
-        public string Description { get; set; }
+        public string Name { get; protected set; } = null!;
+        public string Entity { get; protected set; } = null!;
+        public string Field { get; protected set; } = null!;
 
-        public string Entity { get; private set; }
-        public string Field { get; private set; }
-
-        public bool IsUnique { get; private set; }
-        public bool IsMandatory { get; private set; }
+        public bool IsUnique { get; protected set; }
+        public bool IsMandatory { get; protected set; }
 
         #region Regex
+
+        internal virtual Match UniqueMatch(string text)
+        {
+            return unique.Match(text);
+        }
+        internal virtual Match NotNullMatch(string text)
+        {
+            return notnull.Match(text);
+        }
 
         private static readonly Regex unique = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *\1\.(?<field>[a-z0-9_]+) *is *unique *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
         private static readonly Regex notnull = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *exists *\( *\1\.(?<field>[a-z0-9_]+) *\) *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);

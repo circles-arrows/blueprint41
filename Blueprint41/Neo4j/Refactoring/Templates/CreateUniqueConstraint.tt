@@ -1,4 +1,4 @@
-﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+﻿<#@ template language="C#"  visibility="internal" inherits="CreateUniqueConstraintBase" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
@@ -10,10 +10,3 @@
     Debug.WriteLine("	executing {0} -> Create unique constraint for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
 #>
 CREATE CONSTRAINT ON (node:<#= Entity.Label.Name #>) ASSERT node.<#= Property.Name #> IS UNIQUE
-<#+
-
-	// Template Parameters
-	public Entity	Entity	 { get; set; }
-	public Property Property { get; set; }
-
-#>

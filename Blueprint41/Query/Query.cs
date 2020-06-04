@@ -26,18 +26,18 @@ namespace Blueprint41.Query
         }
         private Query? Parent;
 
-        private bool Distinct = true;
-        private bool Ascending = true;
-        private PartType Type = PartType.None;
-        private Node[]? Patterns = null;
-        private Result[]? WithResults = null;
-        private AsResult[]? Results = null;
-        private QueryCondition[]? Conditions = null;
-        private FieldResult[]? Fields = null;
-        private AliasResult[]? Aliases = null;
-        Parameter SkipValue = Parameter.Constant(0);
-        Parameter LimitValue = Parameter.Constant(0);
-        private bool UnionWithDuplicates = true;
+        internal bool Distinct = true;
+        internal bool Ascending = true;
+        internal PartType Type = PartType.None;
+        internal Node[]? Patterns = null;
+        internal Result[]? WithResults = null;
+        internal AsResult[]? Results = null;
+        internal QueryCondition[]? Conditions = null;
+        internal FieldResult[]? Fields = null;
+        internal AliasResult[]? Aliases = null;
+        internal bool UnionWithDuplicates = true;
+        internal Parameter SkipValue = Parameter.Constant(0);
+        internal Parameter LimitValue = Parameter.Constant(0);
 
         public CompiledQuery? CompiledQuery { get; private set; }
 
@@ -205,7 +205,7 @@ namespace Blueprint41.Query
         {
             SetType(PartType.Compiled);
 
-            var state = new CompileState(PersistenceProvider.SupportedTypeMappings);
+            var state = new CompileState(PersistenceProvider.SupportedTypeMappings, PersistenceProvider.Translator);
             Query[] parts = GetParts();
             ForEach(parts, state.Text, "\r\n", item => item?.Compile(state));
             CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Results != null).Results ?? new AsResult[0]);
@@ -217,90 +217,7 @@ namespace Blueprint41.Query
         }
         private void Compile(CompileState state)
         {
-            switch (Type)
-            {
-                case PartType.Match:
-                    state.Text.Append("MATCH ");
-                    ForEach(Patterns, state.Text, ", ", item => item?.Compile(state));
-                    break;
-                case PartType.OptionalMatch:
-                    state.Text.Append("OPTIONAL MATCH ");
-                    ForEach(Patterns, state.Text, ", ", item => item?.Compile(state));
-                    break;
-                case PartType.UsingScan:
-                    state.Text.Append("USING SCAN ");
-                    ForEach(Aliases, state.Text, "\r\nUSING SCAN ", item =>
-                    {
-                        if (item.Node is null)
-                            return;
-
-                        item.Compile(state);
-                        state.Text.Append(":" + item.Node.Neo4jLabel);
-                    });
-                    break;
-                case PartType.UsingIndex:
-                    state.Text.Append("USING INDEX ");
-                    ForEach(Fields, state.Text, "\r\nUSING INDEX ", item =>
-                    {
-                        if (item.Alias is null || item.Alias.Node is null)
-                            return;
-
-                        state.Text.Append(string.Format("{0}:{1}({2})", item.Alias.AliasName, item.Alias.Node.Neo4jLabel, item.FieldName));
-                    });
-                    break;
-                case PartType.OrderBy:
-                    state.Text.Append("ORDER BY ");
-                    ForEach(Fields, state.Text, ", ", delegate (FieldResult item)
-                    {
-                        item?.Compile(state);
-                        if (!Ascending)
-                            state.Text.Append(" DESC");
-                    });
-                    break;
-                case PartType.Return:
-                    if (Distinct)
-                        state.Text.Append("RETURN DISTINCT ");
-                    else
-                        state.Text.Append("RETURN ");
-
-                    ForEach(Results, state.Text, ", ", item => item?.Compile(state));
-                    break;
-                case PartType.Where:
-                    state.Text.Append("WHERE ");
-                    ForEach(Conditions, state.Text, " AND ", item => item?.Compile(state));
-                    break;
-                case PartType.Or:
-                    state.Text.Append("OR ");
-                    ForEach(Conditions, state.Text, " AND ", item => item?.Compile(state));
-                    break;
-                case PartType.With:
-                    state.Text.Append("WITH ");
-                    ForEach(WithResults, state.Text, ", ", item => item?.Compile(state));
-                    break;
-                case PartType.Skip:
-                    state.Text.Append("SKIP ");
-                    SkipValue.Compile(state);
-                    break;
-                case PartType.Limit:
-                    state.Text.Append("LIMIT ");
-                    LimitValue.Compile(state);
-                    break;
-                case PartType.UnionMatch:
-                    if (UnionWithDuplicates)
-                        state.Text.Append("UNION ALL ");
-                    else
-                        state.Text.Append("UNION ");
-
-                    state.Text.Append("MATCH ");
-                    ForEach(Patterns, state.Text, ", ", item => item?.Compile(state));
-                    break;
-                case PartType.None:
-                case PartType.Compiled:
-                    // Ignore
-                    break;
-                default:
-                    throw new NotImplementedException($"Compilation for the {Type.ToString()} clause is not supported yet.");
-            }
+            state.Translator.Compile(this, state);
         }
 
         public QueryExecutionContext GetExecutionContext()
@@ -333,19 +250,7 @@ namespace Blueprint41.Query
             return cypherQuery;
         }
 
-        private Query[] GetParts()
-        {
-            LinkedList<Query> parts = new LinkedList<Query>();
-            Query? query = Parent;
-            while (query != null)
-            {
-                parts.AddFirst(query);
-                query = query.Parent;
-            }
-
-            return parts.ToArray();
-        }
-        private void ForEach<T>(T[]? items, StringBuilder sb, string delimiter, Action<T> action)
+        internal void ForEach<T>(T[]? items, StringBuilder sb, string delimiter, Action<T> action)
             where T : notnull
         {
             if (items == null || items.Length == 0)
@@ -363,7 +268,18 @@ namespace Blueprint41.Query
                 action.Invoke(items[index]);
             }
         }
+        private Query[] GetParts()
+        {
+            LinkedList<Query> parts = new LinkedList<Query>();
+            Query? query = Parent;
+            while (query != null)
+            {
+                parts.AddFirst(query);
+                query = query.Parent;
+            }
 
+            return parts.ToArray();
+        }
         private void SetType(PartType type)
         {
             if (Type != PartType.None)
@@ -372,24 +288,25 @@ namespace Blueprint41.Query
             Type = type;
         }
 
-        private enum PartType
-        {
-            Compiled,
-            Match,
-            UsingScan,
-            UsingIndex,
-            None,
-            OptionalMatch,
-            Or,
-            OrderBy,
-            Return,
-            Where,
-            With,
-            Skip,
-            Limit,
-            UnionMatch
-        }
         private string DebuggerDisplay { get => ToString(); }
+    }
+
+    internal enum PartType
+    {
+        Compiled,
+        Match,
+        UsingScan,
+        UsingIndex,
+        None,
+        OptionalMatch,
+        Or,
+        OrderBy,
+        Return,
+        Where,
+        With,
+        Skip,
+        Limit,
+        UnionMatch
     }
 
     #region Interfaces

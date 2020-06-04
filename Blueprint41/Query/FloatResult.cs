@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Neo4j.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -125,8 +126,8 @@ namespace Blueprint41.Query
 
         internal FloatResult(FieldResult field) : base(field) { }
         public FloatResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public FloatResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
-        public FloatResult(string function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
+        public FloatResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+        public FloatResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 
         public QueryCondition In(IEnumerable<double> enumerable)
         {
@@ -135,126 +136,126 @@ namespace Blueprint41.Query
 
         public NumericResult Sign()
         {
-            return new NumericResult(this, "sign({base})", null, typeof(long));
+            return new NumericResult(this, t => t.FnSign, null, typeof(long));
         }
         public FloatResult Abs()
         {
-            return new FloatResult(this, "abs({base})");
+            return new FloatResult(this, t => t.FnAbs);
         }
         public FloatResult Sum()
         {
-            return new FloatResult(this, "sum({base})");
+            return new FloatResult(this, t => t.FnSum);
         }
         public FloatResult Min()
         {
-            return new FloatResult(this, "min({base})");
+            return new FloatResult(this, t => t.FnMin);
         }
         public FloatResult Max()
         {
-            return new FloatResult(this, "max({base})");
+            return new FloatResult(this, t => t.FnMax);
         }
         public FloatResult Avg()
         {
-            return new FloatResult(this, "avg({base})", null, typeof(Double));
+            return new FloatResult(this, t => t.FnAvg, null, typeof(Double));
         }
         public FloatResult PercentileDisc(decimal percentile)
         {
             if (percentile < 0 || percentile > 1)
                 throw new ArgumentOutOfRangeException("percentile", percentile, $"The value must be between 0 and 1");
 
-            return new FloatResult(this, $"percentileDisc({{base}}, {percentile.ToString()})");
+            return new FloatResult(this, t => t.FnPercentileDisc, new object[] { Parameter.Constant((float)percentile) });
         }
         public FloatResult PercentileCont(decimal percentile)
         {
             if (percentile < 0 || percentile > 1)
                 throw new ArgumentOutOfRangeException("percentile", percentile, $"The value must be between 0 and 1");
 
-            return new FloatResult(this, $"percentileCont({{base}}, {percentile.ToString()})", null, typeof(Double));
+            return new FloatResult(this, t => t.FnPercentileCont, new object[] { Parameter.Constant((float)percentile) }, typeof(Double));
         }
         public FloatResult StDev()
         {
-            return new FloatResult(this, "stdev({base})", null, typeof(Double));
+            return new FloatResult(this, t => t.FnStDev, null, typeof(Double));
         }
         public FloatResult StDevP()
         {
-            return new FloatResult(this, "stdevp({base})", null, typeof(Double));
+            return new FloatResult(this, t => t.FnStDevP, null, typeof(Double));
         }
         public NumericResult Round()
         {
-            return new NumericResult(this, "round({base})",null, typeof(long));
+            return new NumericResult(this, t => t.FnRound, null, typeof(long));
         }
         public FloatResult Sqrt()
         {
-            return new FloatResult(this, "sqrt({base})");
+            return new FloatResult(this, t => t.FnSqrt);
         }
         public FloatResult Sin()
         {
-            return new FloatResult(this, "sin({base})");
+            return new FloatResult(this, t => t.FnSin);
         }
         public FloatResult Cos()
         {
-            return new FloatResult(this, "cos({base})");
+            return new FloatResult(this, t => t.FnCos);
         }
         public FloatResult Tan()
         {
-            return new FloatResult(this, "tan({base})");
+            return new FloatResult(this, t => t.FnTan);
         }
         public FloatResult Cot()
         {
-            return new FloatResult(this, "cot({base})");
+            return new FloatResult(this, t => t.FnCot);
         }
         public FloatResult Asin()
         {
-            return new FloatResult(this, "asin({base})");
+            return new FloatResult(this, t => t.FnASin);
         }
         public FloatResult Acos()
         {
-            return new FloatResult(this, "acos({base})");
+            return new FloatResult(this, t => t.FnACos);
         }
         public FloatResult Atan()
         {
-            return new FloatResult(this, "atan({base})");
+            return new FloatResult(this, t => t.FnATan);
         }
         public FloatResult Atan2()
         {
-            return new FloatResult(this, "atan2({base})");
+            return new FloatResult(this, t => t.FnATan2);
         }
         public FloatResult Haversin()
         {
-            return new FloatResult(this, "haversin({base})");
+            return new FloatResult(this, t => t.FnHaversin);
         }
         public FloatResult Degrees()
         {
-            return new FloatResult(this, "degrees({base})");
+            return new FloatResult(this, t => t.FnDegrees);
         }
         public FloatResult Radians()
         {
-            return new FloatResult(this, "radians({base})");
+            return new FloatResult(this, t => t.FnRadians);
         }
         public FloatResult Log10()
         {
-            return new FloatResult(this, "log10({base})");
+            return new FloatResult(this, t => t.FnLog10);
         }
         public FloatResult Log()
         {
-            return new FloatResult(this, "log({base})");
+            return new FloatResult(this, t => t.FnLog);
         }
         public FloatResult Exp()
         {
-            return new FloatResult(this, "exp({base})");
+            return new FloatResult(this, t => t.FnExp);
         }
 
         public FloatResult Coalesce(double value)
         {
-            return new FloatResult(this, "coalesce({base}, {0})", new object[] { Parameter.Constant(value) });
+            return new FloatResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
         }
         public FloatResult Coalesce(MiscResult value)
         {
-            return new FloatResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new FloatResult(this, t => t.FnCoalesce, new object[] { value });
         }
         public FloatResult Coalesce(Parameter value)
         {
-            return new FloatResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new FloatResult(this, t => t.FnCoalesce, new object[] { value });
         }
     }
 }

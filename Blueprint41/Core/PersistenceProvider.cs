@@ -1,9 +1,12 @@
-﻿using Blueprint41.Neo4j.Persistence;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Blueprint41.Neo4j.Model;
+using Blueprint41.Neo4j.Persistence.Void;
+using Blueprint41.Neo4j.Schema;
 
 namespace Blueprint41.Core
 {
@@ -13,6 +16,8 @@ namespace Blueprint41.Core
         {
             NodePersistenceProvider = GetNodePersistenceProvider();
             RelationshipPersistenceProvider = GetRelationshipPersistenceProvider();
+            Templates = GetTemplates();
+            Translator = GetTranslator();
 
             convertToStoredType = new Lazy<Dictionary<Type, Conversion?>>(
             delegate ()
@@ -37,7 +42,7 @@ namespace Blueprint41.Core
 
         public abstract Transaction NewTransaction(bool withTransaction);
 
-        public abstract IEnumerable<TypeMapping> SupportedTypeMappings { get; }
+        public abstract List<TypeMapping> SupportedTypeMappings { get; }
 
         private Lazy<Dictionary<Type, Conversion?>> convertToStoredType;
         internal Dictionary<Type, Conversion?> ConvertToStoredTypeCache { get { return convertToStoredType.Value; } }
@@ -45,8 +50,7 @@ namespace Blueprint41.Core
         private Lazy<Dictionary<Type, Conversion?>> convertFromStoredType;
         internal Dictionary<Type, Conversion?> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
 
-
-        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4JPersistenceProvider(null, null, null, false);
+        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4jPersistenceProvider(null, null, null, false);
 
         public static bool IsNeo4j
         {
@@ -55,7 +59,7 @@ namespace Blueprint41.Core
                 if (CurrentPersistenceProvider == null)
                     return false;
 
-                return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Neo4j.Persistence.Neo4JPersistenceProvider));
+                return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Neo4jPersistenceProvider));
             }
         }
 
@@ -172,6 +176,26 @@ namespace Blueprint41.Core
                 }
             }
         }
+
+        #endregion
+
+        #region Factory: Refactoring Templates
+
+        internal RefactorTemplates Templates { get; private set; }
+        protected virtual RefactorTemplates GetTemplates() => new RefactorTemplates();
+
+        #endregion
+
+        #region Factory: Query Translator
+
+        internal QueryTranslator Translator { get; private set; }
+        protected virtual QueryTranslator GetTranslator() => new QueryTranslator();
+
+        #endregion
+
+        #region Factory: Schema Info
+
+        internal virtual SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new SchemaInfo(datastoreModel);
 
         #endregion
     }

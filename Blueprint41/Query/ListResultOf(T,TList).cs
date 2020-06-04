@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Neo4j.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -13,19 +14,19 @@ namespace Blueprint41.Query
     {
         static ListResult()
         {
-            newResultCtor = new Lazy<Func<AliasResult, string, object[]?, Type?, TResult>>(delegate ()
+            newResultCtor = new Lazy<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, TResult>>(delegate ()
             {
-                var exp = GetExp<TResult>(typeof(AliasResult), typeof(string), typeof(object[]), typeof(Type));
-                return Expression.Lambda<Func<AliasResult, string, object[]?, Type?, TResult>>(exp.body, exp.parameters).Compile();
+                var exp = GetExp<TResult>(typeof(AliasResult), typeof(Func<QueryTranslator, string>), typeof(object[]), typeof(Type));
+                return Expression.Lambda<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, TResult>>(exp.body, exp.parameters).Compile();
             }, true);
-            newListCtor = new Lazy<Func<AliasResult, string, object[]?, Type?, TList>>(delegate ()
+            newListCtor = new Lazy<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, TList>>(delegate ()
             {
-                var exp = GetExp<TList>(typeof(AliasResult), typeof(string), typeof(object[]), typeof(Type));
-                return Expression.Lambda<Func<AliasResult, string, object[]?, Type?, TList>>(exp.body, exp.parameters).Compile();
+                var exp = GetExp<TList>(typeof(AliasResult), typeof(Func<QueryTranslator, string>), typeof(object[]), typeof(Type));
+                return Expression.Lambda<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, TList>>(exp.body, exp.parameters).Compile();
             }, true);
         }
 
-        protected ListResult(AliasResult parent, string function, object[]? arguments = null, Type? type = null): base(parent, function, arguments, type) { }
+        protected ListResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null): base(parent, function, arguments, type) { }
 
         private static (Expression body, ParameterExpression[] parameters) GetExp<T>(params Type[] types)
         {
@@ -46,26 +47,26 @@ namespace Blueprint41.Query
         {
             get
             {
-                return NewResult("{base}[{0}]", new object[] { Parameter.Constant<int>(index) });
+                return NewResult(t => t.FnListGetItem, new object[] { Parameter.Constant<int>(index) });
             }
         }
 
         public TResult Head()
         {
-            return NewResult("HEAD({base})");
+            return NewResult(t => t.FnListHead);
         }
         public TResult Last()
         {
-            return NewResult("LAST({base})");
+            return NewResult(t => t.FnListLast);
         }
         public TList Sort()
         {
-            return NewList("apoc.coll.sort({base})");
+            return NewList(t => t.FnListSort);
         }
 
         public TList Union(StringListResult stringListResult)
         {
-            return NewList("{base} + {0}", new object[] { stringListResult });
+            return NewList(t => t.FnListUnion, new object[] { stringListResult });
         }
 
         //public QueryCondition All(Func<TResult, QueryCondition> condition)
@@ -102,17 +103,17 @@ namespace Blueprint41.Query
             throw new NotSupportedException();
         }
 
-        protected internal TResult NewResult(string function, object[]? arguments = null, Type? type = null)
+        protected internal TResult NewResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
         {
             return newResultCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private static Lazy<Func<AliasResult, string, object[]?, Type?, TResult>>? newResultCtor = null;
+        private static Lazy<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, TResult>>? newResultCtor = null;
 
-        protected internal TList NewList(string function, object[]? arguments = null, Type? type = null)
+        protected internal TList NewList(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
         {
             return newListCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private static Lazy<Func<AliasResult, string, object[]?, Type?, TList>>? newListCtor = null;
+        private static Lazy<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, TList>>? newListCtor = null;
     }
     public abstract partial class ListResult<TList, TResult, TType> : FieldResult
         where TList : ListResult<TList, TResult, TType>
@@ -120,15 +121,15 @@ namespace Blueprint41.Query
     {
         static ListResult()
         {
-            newResultCtor = new Lazy<Func<FieldResult, string, object[]?, Type?, TResult>>(delegate ()
+            newResultCtor = new Lazy<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, TResult>>(delegate ()
             {
-                var exp = GetExp<TResult>(typeof(FieldResult), typeof(string), typeof(object[]), typeof(Type));
-                return Expression.Lambda<Func<FieldResult, string, object[]?, Type?, TResult>>(exp.body, exp.parameters).Compile();
+                var exp = GetExp<TResult>(typeof(FieldResult), typeof(Func<QueryTranslator, string>), typeof(object[]), typeof(Type));
+                return Expression.Lambda<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, TResult>>(exp.body, exp.parameters).Compile();
             }, true);
-            newListCtor = new Lazy<Func<FieldResult, string, object[]?, Type?, TList>>(delegate ()
+            newListCtor = new Lazy<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, TList>>(delegate ()
             {
-                var exp = GetExp<TList>(typeof(FieldResult), typeof(string), typeof(object[]), typeof(Type));
-                return Expression.Lambda<Func<FieldResult, string, object[]?, Type?, TList>>(exp.body, exp.parameters).Compile();
+                var exp = GetExp<TList>(typeof(FieldResult), typeof(Func<QueryTranslator, string>), typeof(object[]), typeof(Type));
+                return Expression.Lambda<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, TList>>(exp.body, exp.parameters).Compile();
             }, true);
         }
         private static (Expression body, ParameterExpression[] parameters) GetExp<T>(params Type[] types)
@@ -145,51 +146,51 @@ namespace Blueprint41.Query
 
             return (body, parameters);
         }
-        protected ListResult(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+        protected ListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
         protected ListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
 
         public TResult this[int index]
         {
             get
             {
-                return NewResult("{base}[{0}]", new object[] { Parameter.Constant<int>(index) });
+                return NewResult(t => t.FnListGetItem, new object[] { Parameter.Constant<int>(index) });
             }
         }
 
         public TResult Head()
         {
-            return NewResult("HEAD({base})");
+            return NewResult(t => t.FnListHead);
         }
         public TResult Last()
         {
-            return NewResult("LAST({base})");
+            return NewResult(t => t.FnListLast);
         }
         public TList Sort()
         {
-            return NewList("apoc.coll.sort({base})");
+            return NewList(t => t.FnListSort);
         }
         public override NumericResult Count()
         {
-            return new NumericResult(this, "size({base})", null, typeof(long));
+            return new NumericResult(this, t => t.FnListSize, null, typeof(long));
         }
 
         public TList Union(StringListResult stringListResult)
         {
-            return NewList("{base} + {0}", new object[] { stringListResult });
+            return NewList(t => t.FnListUnion, new object[] { stringListResult });
         }
 
         public StringResult Reduce(string init, Func<StringResult, TResult, StringResult> logic)
         {
-            StringResult valueField = new StringResult(null!, "value", new object[0], typeof(string));
-            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            StringResult valueField = new StringResult(null!, t => "value", new object[0], typeof(string));
+            TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
             StringResult result = logic.Invoke(valueField, itemField);
 
-            return new StringResult(this, "reduce(value = {0}, item in {base} | {1})", new object[] { Parameter.Constant<string>(init), result }, typeof(string));
+            return new StringResult(this, t => t.FnListReduce, new object[] { Parameter.Constant<string>(init), result }, typeof(string));
         }
 
         public StringResult Join(string separator, Func<TResult, StringResult> logic)
         {
-            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
             StringResult result = logic.Invoke(itemField);
 
             return Reduce("", (value, item) => value.Concat(Parameter.Constant(separator), result).Substring(separator.Length));
@@ -200,10 +201,10 @@ namespace Blueprint41.Query
         }
         public QueryCondition All(Func<TResult, QueryCondition> condition)
         {
-            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
             QueryCondition test = condition.Invoke(itemField);
 
-            return new QueryCondition(new BooleanResult(this, "all(item IN {base} WHERE {0})", new object[] { test }));
+            return new QueryCondition(new BooleanResult(this, t => t.FnListAll, new object[] { test }));
         }
         public QueryCondition Any(TType value)
         {
@@ -211,10 +212,10 @@ namespace Blueprint41.Query
         }
         public QueryCondition Any(Func<TResult, QueryCondition> condition)
         {
-            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
             QueryCondition test = condition.Invoke(itemField);
 
-            return new QueryCondition(new BooleanResult(this, "any(item IN {base} WHERE {0})", new object[] { test }));
+            return new QueryCondition(new BooleanResult(this, t => t.FnListAny, new object[] { test }));
         }
         public QueryCondition None(TType value)
         {
@@ -222,10 +223,10 @@ namespace Blueprint41.Query
         }
         public QueryCondition None(Func<TResult, QueryCondition> condition)
         {
-            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
             QueryCondition test = condition.Invoke(itemField);
 
-            return new QueryCondition(new BooleanResult(this, "none(item IN {base} WHERE {0})", new object[] { test }));
+            return new QueryCondition(new BooleanResult(this, t => t.FnListNone, new object[] { test }));
         }
         public QueryCondition Single(TType value)
         {
@@ -233,22 +234,22 @@ namespace Blueprint41.Query
         }
         public QueryCondition Single(Func<TResult, QueryCondition> condition)
         {
-            TResult itemField = NewResult("item", new object[0], typeof(TType));
+            TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
             QueryCondition test = condition.Invoke(itemField);
 
-            return new QueryCondition(new BooleanResult(itemField, "single(item IN {base} WHERE {0})", new object[] { test }));
+            return new QueryCondition(new BooleanResult(itemField, t => t.FnListSingle, new object[] { test }));
         }
 
-        protected internal TResult NewResult(string function, object[]? arguments = null, Type? type = null)
+        protected internal TResult NewResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
         {
             return newResultCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private static Lazy<Func<FieldResult, string, object[]?, Type?, TResult>>? newResultCtor = null;
+        private static Lazy<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, TResult>>? newResultCtor = null;
 
-        protected internal TList NewList(string function, object[]? arguments = null, Type? type = null)
+        protected internal TList NewList(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
         {
             return newListCtor!.Value.Invoke(this, function, arguments, type);
         }
-        private static Lazy<Func<FieldResult, string, object[]?, Type?, TList>>? newListCtor = null;
+        private static Lazy<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, TList>>? newListCtor = null;
     }
 }

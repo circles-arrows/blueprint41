@@ -1,0 +1,61 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+	var listTypes = new []
+	{
+		( listType: "AliasListResult",    resultType: "AliasResult",    underlyingType: null       ),
+		( listType: "MiscListResult",     resultType: "MiscResult",     underlyingType: "object"   ),
+		( listType: "StringListResult",   resultType: "StringResult",   underlyingType: "string"   ),
+		( listType: "BooleanListResult",  resultType: "BooleanResult",  underlyingType: "bool"     ),
+		( listType: "DateTimeListResult", resultType: "DateTimeResult", underlyingType: "DateTime" ),
+		( listType: "FloatListResult",    resultType: "FloatResult",    underlyingType: "double"   ),
+		( listType: "NumericListResult",  resultType: "NumericResult",  underlyingType: "long"     ),
+	};
+#>
+using Blueprint41.Neo4j.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Blueprint41.Query
+{
+    public partial class AliasListResult : ListResult<AliasListResult, AliasResult>
+    {
+        public AliasListResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type)
+        {
+        }
+    }
+<#
+	foreach ((string listType, string resultType, string underlyingType) in listTypes)
+	{
+        if (underlyingType is null)
+            continue;
+#>
+    public partial class <#= listType #> : ListResult<<#= listType #>, <#= resultType #>, <#= underlyingType ?? "object" #>>
+    {
+        //public <#= listType #>(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+        public <#= listType #>(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+        public <#= listType #>(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
+
+        public AsResult As(string aliasName, out <#= listType #> alias)
+        {
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+
+            alias = new <#= listType #>(aliasResult, null, null, null);
+            return this.As(aliasName);
+        }
+    }
+<#
+    }
+#>
+}

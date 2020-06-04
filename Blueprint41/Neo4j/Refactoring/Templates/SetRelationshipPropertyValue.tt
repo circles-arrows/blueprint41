@@ -1,4 +1,4 @@
-﻿<#@ template language="C#"  visibility="internal" inherits="TemplateBase" #>
+﻿<#@ template language="C#"  visibility="internal" inherits="SetRelationshipPropertyValueBase" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
@@ -14,9 +14,3 @@
     OutputParameters.Add(Property, Value);
 #>
 MATCH ()-[<#= type #>]->() WHERE NOT EXISTS(r.<#= Property #>)  WITH r LIMIT 10000 SET r.<#= Property #> = {<#= Property #>}
-<#+
-    public string	RelationshipType { get; set; }
-    public string	Property { get; set; }
-    public object	Value { get; set; }
-
-#>

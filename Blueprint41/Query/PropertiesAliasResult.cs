@@ -9,9 +9,9 @@ namespace Blueprint41.Query
         public MiscResult Get(FieldResult result, bool withCoalesce = false, Type? type = null)
         {
             if (withCoalesce)
-                return new MiscResult("{0}[COALESCE({1}, '')]", new object[] { this, result }, type ?? typeof(object));
+                return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { this, result }, type ?? typeof(object));
             else
-                return new MiscResult("{0}[{1}]", new object[] { this, result }, type ?? typeof(object));
+                return new MiscResult(t => t.FnGetField, new object[] { this, result }, type ?? typeof(object));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class RemoveProperty : TemplateBase
+    internal partial class RemoveProperty : RemovePropertyBase
     {
 #line hidden
         /// <summary>
@@ -63,17 +63,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write(" = NULL\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
-
-
-	// Template Parameters
-	public Entity ConcreteParent { get; set; }
-	public string	Name { get; set; }
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

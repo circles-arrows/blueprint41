@@ -1,18 +1,15 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Neo4j.Driver.V1;
 
 namespace Blueprint41.Neo4j.Schema
 {
     public class ApplyFunctionalId
     {
-        internal ApplyFunctionalId(SchemaInfo parent, string label, string prefix, int startFrom, ApplyFunctionalIdAction action)
+        internal ApplyFunctionalId(SchemaInfo parent, string label, string prefix, long startFrom, ApplyFunctionalIdAction action)
         {
             Parent = parent;
             Label = label;
@@ -22,13 +19,13 @@ namespace Blueprint41.Neo4j.Schema
         }
 
         private SchemaInfo Parent { get; set; }
-        public string Label { get; private set; }
-        public string Prefix { get; private set; }
-        public int StartFrom { get; private set; }
-        public ApplyFunctionalIdAction Action { get; private set; }
+        public string Label { get; protected set; }
+        public string Prefix { get; protected set; }
+        public long StartFrom { get; protected set; }
+        public ApplyFunctionalIdAction Action { get; protected set; }
 
 
-        internal List<string> ToCypher()
+        internal virtual List<string> ToCypher()
         {
             List<string> queries = new List<string>();
             switch (Action)

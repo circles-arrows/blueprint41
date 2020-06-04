@@ -22,7 +22,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class RenameRelationship : TemplateBase
+    internal partial class RenameRelationship : RenameRelationshipBase
     {
 #line hidden
         /// <summary>
@@ -70,19 +70,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write("]->(out) ON CREATE SET newRelationship += rel WITH rel DELETE rel\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameRelationship.tt"
-
-
-	// Template Parameters
-	public Relationship	Relationship { get; set; }
-    public string	OldName { get; set; }
-	public string	NewName { get; set; }
-
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

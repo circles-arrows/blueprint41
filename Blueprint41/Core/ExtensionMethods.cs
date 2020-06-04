@@ -13,6 +13,7 @@ using Blueprint41;
 using System.Runtime.Serialization.Json;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace System.Linq
 {
@@ -263,6 +264,199 @@ namespace System
         public static IEnumerable<object> NotNull(this IEnumerable self)
         {
             return self.Cast<object?>().Where(item => !(item is null))!;
+        }
+    }
+}
+namespace Blueprint41.Core
+{
+    public static partial class ExtensionMethods
+    {
+        private static readonly TypeInfo EnumerableTypeInfo = typeof(IEnumerable).GetTypeInfo();
+
+        private static readonly TypeInfo DictionaryTypeInfo = typeof(IDictionary).GetTypeInfo();
+
+        [return: NotNullIfNotNull("value")]
+        public static T As<T>(this object value)
+        {
+            if (value == null)
+            {
+                if (default(T) == null)
+                {
+                    return default!;
+                }
+                throw new InvalidCastException($"Unable to cast `null` to `{typeof(T)}`.");
+            }
+            object obj;
+            if ((obj = value) is T)
+            {
+                return (T)obj;
+            }
+
+            if (AsRegistered(value, out T converted))
+                return converted;
+
+            Type type = value.GetType();
+            Type type2 = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+            if (type2 == typeof(string))
+            {
+                return value.ToString().AsItIs<T>();
+            }
+            if (type2 == typeof(short))
+            {
+                return Convert.ToInt16(value).AsItIs<T>();
+            }
+            if (type2 == typeof(int))
+            {
+                return Convert.ToInt32(value).AsItIs<T>();
+            }
+            if (type2 == typeof(long))
+            {
+                return Convert.ToInt64(value).AsItIs<T>();
+            }
+            if (type2 == typeof(float))
+            {
+                return Convert.ToSingle(value, CultureInfo.InvariantCulture).AsItIs<T>();
+            }
+            if (type2 == typeof(double))
+            {
+                return Convert.ToDouble(value, CultureInfo.InvariantCulture).AsItIs<T>();
+            }
+            if (type2 == typeof(sbyte))
+            {
+                return Convert.ToSByte(value).AsItIs<T>();
+            }
+            if (type2 == typeof(ulong))
+            {
+                return Convert.ToUInt64(value).AsItIs<T>();
+            }
+            if (type2 == typeof(uint))
+            {
+                return Convert.ToUInt32(value).AsItIs<T>();
+            }
+            if (type2 == typeof(ushort))
+            {
+                return Convert.ToUInt16(value).AsItIs<T>();
+            }
+            if (type2 == typeof(byte))
+            {
+                return Convert.ToByte(value).AsItIs<T>();
+            }
+            if (type2 == typeof(char))
+            {
+                return Convert.ToChar(value).AsItIs<T>();
+            }
+            if (type2 == typeof(bool))
+            {
+                return Convert.ToBoolean(value).AsItIs<T>();
+            }
+            if (value is IConvertible)
+            {
+                return Convert.ChangeType(value, type2).AsItIs<T>();
+            }
+            TypeInfo typeInfo = type2.GetTypeInfo();
+            IDictionary? dict;
+            if (DictionaryTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (dict = (value as IDictionary)) != null)
+            {
+                return dict.AsDictionary<T>(typeInfo);
+            }
+            IEnumerable? value2;
+            if (EnumerableTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (value2 = (value as IEnumerable)) != null)
+            {
+                return value2.AsList<T>(typeInfo);
+            }
+            throw new InvalidCastException($"Unable to cast object of type `{type}` to type `{typeof(T)}`.");
+        }
+
+        [return: NotNullIfNotNull("value")]
+        internal static T ValueAs<T>(this object value)
+        {
+            return value.As<T>();
+        }
+
+        [return: NotNullIfNotNull("dict")]
+        private static T AsDictionary<T>(this IDictionary dict, TypeInfo typeInfo)
+        {
+            Type[] genericTypeArguments = typeInfo.GenericTypeArguments;
+            IDictionary dictionary = (IDictionary)Activator.CreateInstance(typeof(Dictionary<,>).MakeGenericType(genericTypeArguments));
+            MethodInfo invocableAsMethod = GetInvocableAsMethod(genericTypeArguments[0]);
+            MethodInfo invocableAsMethod2 = GetInvocableAsMethod(genericTypeArguments[1]);
+            IDictionaryEnumerator enumerator = dict.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                dictionary.Add(invocableAsMethod.InvokeStatic(enumerator.Key), invocableAsMethod2.InvokeStatic(enumerator.Value));
+            }
+            return dictionary.AsItIs<T>();
+        }
+
+        [return: NotNullIfNotNull("value")]
+        private static T AsList<T>(this IEnumerable value, TypeInfo typeInfo)
+        {
+            Type[] genericTypeArguments = typeInfo.GenericTypeArguments;
+            IList list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(genericTypeArguments));
+            MethodInfo invocableAsMethod = GetInvocableAsMethod(genericTypeArguments[0]);
+            foreach (object item in value)
+            {
+                list.Add(invocableAsMethod.InvokeStatic(item));
+            }
+            return list.AsItIs<T>();
+        }
+
+        [return: MaybeNull]
+        private static object InvokeStatic(this MethodInfo method, params object[] parameters)
+        {
+            return method.Invoke(null, parameters);
+        }
+
+        private static MethodInfo GetInvocableAsMethod(params Type[] genericParameters)
+        {
+            return typeof(ExtensionMethods).GetRuntimeMethod("As", genericParameters).MakeGenericMethod(genericParameters);
+        }
+
+        [return: NotNullIfNotNull("value")]
+        private static T AsItIs<T>(this object value)
+        {
+            object obj;
+            if ((obj = value) is T)
+            {
+                return (T)obj;
+            }
+            throw new InvalidOperationException($"The expected value `{typeof(T)}` is different from the actual value `{value.GetType()}`");
+        }
+
+        [return: MaybeNull]
+        private static bool AsRegistered<T>(this object instance, [NotNullWhen(true)] out T value)
+        {
+            if (instance is null)
+                throw new NullReferenceException("this");
+
+            if (specificConversions.TryGetValue(typeof(T), out var conversions))
+            {
+                foreach ((Type provider, Func<object, object?> conversion) in conversions)
+                {
+                    object? converted = conversion.Invoke(instance);
+                    if (converted != null)
+                    {
+                        value = (T)converted;
+                        return true;
+                    }
+                }
+            }
+
+            value = default!;
+            return false;
+        }
+
+        private static AtomicDictionary<Type, List<(Type provider, Func<object, object?> conversion)>> specificConversions = new AtomicDictionary<Type, List<(Type provider, Func<object, object?> conversion)>>();
+
+        public static void RegisterAsConversion(Type persistenceProvider, Type type, Func<object, object?> conversion)
+        {
+            List<(Type provider, Func<object, object?> conversion)> conversions;
+            if (type != null)
+            {
+                conversions = specificConversions.TryGetOrAdd(type, key => new List<(Type provider, Func<object, object?> conversion)>());
+                if (!conversions.Any(item => item.provider == persistenceProvider))
+                    conversions.Add((persistenceProvider, conversion));
+            }
         }
     }
 }

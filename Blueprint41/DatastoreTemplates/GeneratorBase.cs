@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.DatastoreTemplates
 {
@@ -12,7 +13,7 @@ namespace Blueprint41.DatastoreTemplates
         public Entity? DALModel { get; set; }
         public Relationship? DALRelation { get; set; }
         public DatastoreModel? Datastore { get; set; }
-        public List<TypeMapping> SupportedTypeMappings { get; set; }
+        public List<TypeMapping> SupportedTypeMappings => Datastore?.PersistenceProvider?.SupportedTypeMappings ?? Neo4jPersistenceProvider.supportedTypeMappings;
 
         public GeneratorSettings? Settings { get; set; }
 
@@ -23,7 +24,6 @@ namespace Blueprint41.DatastoreTemplates
 
         public GeneratorBase()
         {
-            SupportedTypeMappings = Blueprint41.Neo4j.Persistence.Neo4JPersistenceProvider.supportedTypeMappings;
         }
     }
 }

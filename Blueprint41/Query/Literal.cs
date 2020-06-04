@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    internal class Litheral : Result
+    internal class Literal : Result
     {
-        internal Litheral(string text)
+        internal Literal(string text)
         {
             Text = text;
         }
-        internal Litheral(decimal value)
+        internal Literal(decimal value)
         {
             Text = value.ToString();
         }
-        internal Litheral(long value)
+        internal Literal(long value)
         {
             Text = value.ToString();
         }
@@ -25,7 +25,7 @@ namespace Blueprint41.Query
 
         protected internal override void Compile(CompileState state)
         {
-            state.Text.Append(Text);
+            state.Translator.Compile(this, state);
         }
         public override string GetFieldName()
         {

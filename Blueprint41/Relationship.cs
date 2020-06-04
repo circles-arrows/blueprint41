@@ -174,12 +174,12 @@ namespace Blueprint41
 
             if (oldName != Neo4JRelationshipType)
             {
-                Parser.ExecuteBatched<RenameRelationship>(delegate (RenameRelationship template)
+                Parent.Templates.RenameRelationship(template =>
                 {
                     template.Relationship = this;
                     template.OldName = oldName;
                     template.NewName = Neo4JRelationshipType;
-                });
+                }).RunBatched();
             }
         }
 
@@ -201,12 +201,12 @@ namespace Blueprint41
                         continue;
 
                     //delete relations
-                    Parser.ExecuteBatched<RemoveRelationship>(delegate (RemoveRelationship template)
+                    Parent.Templates.RemoveRelationship(template =>
                     {
                         template.InEntity = item.Label.Name;
                         template.Relation = Neo4JRelationshipType;
                         template.OutEntity = OutEntity.Label.Name;
-                    });
+                    }).RunBatched();
                 }
             }
             else if (!InEntity.IsSubsclassOf(target))
@@ -241,12 +241,12 @@ namespace Blueprint41
                         continue;
 
                     //delete relations
-                    Parser.ExecuteBatched<RemoveRelationship>(delegate (RemoveRelationship template)
+                    Parent.Templates.RemoveRelationship(template =>
                     {
                         template.InEntity = InEntity.Label.Name;
                         template.Relation = Neo4JRelationshipType;
                         template.OutEntity = item.Label.Name;
-                    });
+                    }).RunBatched();
                 }
             }
             else if (!OutEntity.IsSubsclassOf(target))
@@ -291,12 +291,12 @@ namespace Blueprint41
         {
             Parent.EnsureSchemaMigration();
 
-            Parser.ExecuteBatched<RemoveRelationship>(delegate (RemoveRelationship template)
+            Parent.Templates.RemoveRelationship(template =>
             {
                 template.InEntity = InEntity.Label.Name;
                 template.Relation = Neo4JRelationshipType;
                 template.OutEntity = OutEntity.Label.Name;
-            });
+            }).RunBatched();
 
             if (this.InProperty != null)
                 this.InEntity.Properties.Remove(this.InProperty.Name);

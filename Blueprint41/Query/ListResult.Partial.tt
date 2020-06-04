@@ -36,7 +36,7 @@ namespace Blueprint41.Query
         //    TResult itemField = NewResult("item", new object[0], <#= type #>);
         //    <#= fieldType #> result = logic.Invoke(itemField);
 		//
-        //    return new <#= listType #>(this, "extract(item in {base} | {0})", new object[] { result }, <#= type #>);
+        //    return new <#= listType #>(this, t => t.FnExtract, new object[] { result }, <#= type #>);
         //}
 <#
 	}
@@ -53,7 +53,7 @@ namespace Blueprint41.Query
             TResult itemField = NewResult("item", new object[0], typeof(TType));
             <#= fieldType #> result = logic.Invoke(itemField);
 
-            return new <#= listType #>(this, "extract(item in {base} | {0})", new object[] { result });
+            return new <#= listType #>(this, t => t.FnExtract, new object[] { result });
         }
 <#
 	}

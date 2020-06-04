@@ -80,54 +80,6 @@ using Blueprint41.TypeConversion;
 
 #endregion
 
-namespace Blueprint41.Neo4j.Persistence
-{
-	#region Provider Type Registration
-
-    public partial class Neo4JPersistenceProvider : PersistenceProvider
-    {
-        public static readonly List<TypeMapping> supportedTypeMappings = new List<TypeMapping>()
-        {
-			// primitives...
-<#
-	foreach (var item in conversions)
-    {
-#>
-            new TypeMapping(typeof(<#= item[0] #>), typeof(<#= item[1] #>), "<#= item[2] #>"),
-<#
-    }
-#>          
-            // lists...
-<#
-	foreach (var item in conversions)
-    {
-#>
-            new TypeMapping(typeof(List<<#= item[0] #>>), typeof(List<object>), "l_<#= item[2] #>"),
-<#
-    }
-#>          
-
-            // dictionaries
-<#
-	foreach (var key in conversions)
-    {
-		if (key[0].EndsWith("?"))
-			continue;
-
-		foreach (var value in conversions)
-		{
-#>
-            new TypeMapping(typeof(Dictionary<<#= key[0] #>, <#= value[0] #>>), typeof(string), "d_<#= key[2] #>_<#= value[2] #>"),
-<#
-		}
-    }
-#>           
-        };
-    }
-
-	#endregion
-}
-
 namespace Blueprint41.TypeConversion
 {
 	#region List<T>

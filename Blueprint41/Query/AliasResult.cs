@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Neo4j.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,18 +12,19 @@ namespace Blueprint41.Query
         private object[] emptyArguments = new object[0];
         protected internal AliasResult()
         {
+            FunctionText = delegate (QueryTranslator t) { return null; };
         }
-        protected AliasResult(AliasResult parent, string function, object[]? arguments = null, Type? type = null)
+        protected AliasResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
         {
             Alias = parent;
             Node = parent.Node;
-            FunctionText = function;
+            FunctionText = function ?? delegate (QueryTranslator t) { return null; };
             FunctionArgs = arguments ?? emptyArguments;
             OverridenReturnType = type;
         }
         public AliasResult? Alias { get; private set; }
-        private string? FunctionText { get; set; }
-        private object[]? FunctionArgs { get; set; }
+        internal Func<QueryTranslator, string?> FunctionText { get; private set; }
+        internal object[]? FunctionArgs { get; private set; }
         private Type? OverridenReturnType { get; set; }
 
 
@@ -57,78 +59,12 @@ namespace Blueprint41.Query
 
         protected internal override void Compile(CompileState state)
         {
-            if (FunctionText == null)
-            {
-                state.Text.Append(AliasName);
-            }
-            else
-            {
-                string[] compiledArgs = FunctionArgs.Select(arg => state.Preview(GetCompile(arg), state)).ToArray();
-                string compiledText = string.Format(FunctionText.Replace("{base}", "{{base}}"), compiledArgs);
-
-                if (Alias is null)
-                {
-                    state.Text.Append(compiledText);
-                }
-                else
-                {
-                    string[] split = compiledText.Split(new string[] { "{base}" }, StringSplitOptions.None);
-                    if (split.Length == 0)
-                        throw new NotSupportedException("Functions have to include compilation of the base they are derived from.");
-
-                    string baseText = state.Preview(Alias.Compile, state);
-                    state.Text.Append(string.Join(baseText, split));
-
-                    //state.Text.Append(split[0]);
-                    //Field.Compile(state);
-                    //state.Text.Append(split[1]);
-                }
-            }
-        }
-
-        private Action<CompileState> GetCompile(object arg)
-        {
-            if (arg == null)
-            {
-                return delegate (CompileState state)
-                {
-                    state.Text.Append("NULL");
-                };
-            }
-            else if (arg is Litheral)
-            {
-                Litheral param = (Litheral)arg;
-                return param.Compile;
-            }
-            else if (arg is Parameter)
-            {
-                Parameter param = (Parameter)arg;
-                return param.Compile;
-            }
-            else if (arg.GetType().IsSubclassOfOrSelf(typeof(FieldResult)))
-            {
-                FieldResult field = (FieldResult)arg;
-                return field.Compile;
-            }
-            else if (arg is QueryCondition)
-            {
-                QueryCondition param = (QueryCondition)arg;
-                return param.Compile;
-            }
-            else if (arg is AliasResult)
-            {
-                AliasResult param = (AliasResult)arg;
-                return param.Compile;
-            }
-            else
-            {
-                throw new NotSupportedException($"Function arguments of type '{arg.GetType().Name}' are not supported.");
-            }
+            state.Translator.Compile(this, state);
         }
 
         public QueryCondition HasLabel(string label)
         {
-            return new QueryCondition(this, Operator.HasLabel, new Litheral(label));
+            return new QueryCondition(this, Operator.HasLabel, new Literal(label));
         }
 
         public QueryCondition Not(QueryCondition condition)
@@ -155,7 +91,7 @@ namespace Blueprint41.Query
             {
                 AliasName = alias
             };
-            return new AsResult(new MiscResult("properties({0})", new object[] { this }, null), alias);
+            return new AsResult(new MiscResult(t => t.FnProperties, new object[] { this }, null), alias);
         }
 
         public override string? GetFieldName()
@@ -173,7 +109,7 @@ namespace Blueprint41.Query
             if (AliasName is null)
                 throw new InvalidOperationException("You cannot use the labels function in this context.");
 
-            return new StringResult(AliasName, null, typeof(string));
+            return new StringResult(t => t.FnParam1, new object[] { Parameter.Constant(AliasName) }, typeof(string));
         }
 
         public virtual IReadOnlyDictionary<string, FieldResult> AliasFields { get { return emptyAliasFields; }  }
@@ -184,7 +120,7 @@ namespace Blueprint41.Query
             if (AliasName is null)
                 throw new InvalidOperationException("You cannot use the labels function in this context.");
 
-            return new StringListResult(null, "LABELS({0})", new object[] { AliasName }, typeof(string));
+            return new StringListResult(null, t => t.FnLabels, new object[] { Parameter.Constant(AliasName) }, typeof(string));
         }
     }
 }

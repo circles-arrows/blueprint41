@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Neo4j.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,89 +74,89 @@ namespace Blueprint41.Query
         #endregion
 
         internal StringResult(FieldResult field) : base(field) { }
-        public StringResult(string function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+        public StringResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
         public StringResult(AliasResult alias, string fieldName, Entity entity, Property property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
-        public StringResult(FieldResult field, string function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+        public StringResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         public StringResult ToUpperCase()
         {
-            return new StringResult(this, "upper({base})");
+            return new StringResult(this, t => t.FnToUpper);
         }
         public StringResult ToLowerCase()
         {
-            return new StringResult(this, "lower({base})");
+            return new StringResult(this, t => t.FnToLower);
         }
         public StringResult Reverse()
         {
-            return new StringResult(this, "reverse({base})");
+            return new StringResult(this, t => t.FnReverse);
         }
         public StringResult Trim()
         {
-            return new StringResult(this, "trim({base})");
+            return new StringResult(this, t => t.FnTrim);
         }
         public StringResult LTrim()
         {
-            return new StringResult(this, "ltrim({base})");
+            return new StringResult(this, t => t.FnLeftTrim);
         }
         public StringResult RTrim()
         {
-            return new StringResult(this, "rtrim({base})");
+            return new StringResult(this, t => t.FnRightTrim);
         }
         public NumericResult Length()
         {
-            return new NumericResult(this, "length({base})", null, typeof(long));
+            return new NumericResult(this, t => t.FnSize, null, typeof(long));
         }
 
         public StringResult Split(string delimiter)
         {
-            return new StringResult(this, "split({base}, {0})", new object[] { Parameter.Constant(delimiter) });
+            return new StringResult(this, t => t.FnSplit, new object[] { Parameter.Constant(delimiter) });
         }
         public StringResult Split(StringResult delimiter)
         {
-            return new StringResult(this, "split({base}, {0})", new object[] { delimiter });
+            return new StringResult(this, t => t.FnSplit, new object[] { delimiter });
         }
         public StringResult Split(Parameter delimiter)
         {
-            return new StringResult(this, "split({base}, {0})", new object[] { delimiter });
+            return new StringResult(this, t => t.FnSplit, new object[] { delimiter });
         }
 
         public StringResult Left(int subLength)
         {
-            return new StringResult(this, "left({base}, {0})", new object[] { Parameter.Constant(subLength) });
+            return new StringResult(this, t => t.FnLeft, new object[] { Parameter.Constant(subLength) });
         }
         public StringResult Left(NumericResult subLength)
         {
-            return new StringResult(this, "left({base}, {0})", new object[] { subLength });
+            return new StringResult(this, t => t.FnLeft, new object[] { subLength });
         }
         public StringResult Left(Parameter subLength)
         {
-            return new StringResult(this, "left({base}, {0})", new object[] { subLength });
+            return new StringResult(this, t => t.FnLeft, new object[] { subLength });
         }
 
         public StringResult Right(int subLength)
         {
-            return new StringResult(this, "right({base}, {0})", new object[] { Parameter.Constant(subLength) });
+            return new StringResult(this, t => t.FnRight, new object[] { Parameter.Constant(subLength) });
         }
         public StringResult Right(NumericResult subLength)
         {
-            return new StringResult(this, "right({base}, {0})", new object[] { subLength });
+            return new StringResult(this, t => t.FnRight, new object[] { subLength });
         }
         public StringResult Right(Parameter subLength)
         {
-            return new StringResult(this, "right({base}, {0})", new object[] { subLength });
+            return new StringResult(this, t => t.FnRight, new object[] { subLength });
         }
 
         public StringResult Substring(int begin)
         {
-            return new StringResult(this, "substring({base}, {0})", new object[] { Parameter.Constant(begin) });
+            return new StringResult(this, t => t.FnSubStringWOutLen, new object[] { Parameter.Constant(begin) });
         }
         public StringResult Substring(NumericResult begin)
         {
-            return new StringResult(this, "substring({base}, {0})", new object[] { begin });
+            return new StringResult(this, t => t.FnSubStringWOutLen, new object[] { begin });
         }
         public StringResult Substring(Parameter begin)
         {
-            return new StringResult(this, "substring({base}, {0})", new object[] { begin });
+            return new StringResult(this, t => t.FnSubStringWOutLen, new object[] { begin });
         }
 
         public QueryCondition In(IEnumerable<string> enumerable)
@@ -165,7 +166,7 @@ namespace Blueprint41.Query
 
         public QueryCondition NotIn(IEnumerable<string> enumerable)
         {
-            return new QueryCondition(new BooleanResult(this, "NOT ({base})"), Operator.In, Parameter.Constant(enumerable.ToArray(), typeof(string)));
+            return new QueryCondition(new BooleanResult(this, t => t.FnNot), Operator.In, Parameter.Constant(enumerable.ToArray(), typeof(string)));
         }
 
         public QueryCondition In(params string[] items)
@@ -175,76 +176,76 @@ namespace Blueprint41.Query
 
         public StringResult Substring(int begin, int subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { Parameter.Constant(begin), Parameter.Constant(subLength) });
+            return new StringResult(this, t => t.FnSubString, new object[] { Parameter.Constant(begin), Parameter.Constant(subLength) });
         }
         public StringResult Substring(NumericResult begin, int subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { begin, Parameter.Constant(subLength) });
+            return new StringResult(this, t => t.FnSubString, new object[] { begin, Parameter.Constant(subLength) });
         }
         public StringResult Substring(Parameter begin, int subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { begin, Parameter.Constant(subLength) });
+            return new StringResult(this, t => t.FnSubString, new object[] { begin, Parameter.Constant(subLength) });
         }
         public StringResult Substring(int begin, NumericResult subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { Parameter.Constant(begin), subLength });
+            return new StringResult(this, t => t.FnSubString, new object[] { Parameter.Constant(begin), subLength });
         }
         public StringResult Substring(NumericResult begin, NumericResult subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { begin, subLength });
+            return new StringResult(this, t => t.FnSubString, new object[] { begin, subLength });
         }
         public StringResult Substring(Parameter begin, NumericResult subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { begin, subLength });
+            return new StringResult(this, t => t.FnSubString, new object[] { begin, subLength });
         }
         public StringResult Substring(int begin, Parameter subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { Parameter.Constant(begin), subLength });
+            return new StringResult(this, t => t.FnSubString, new object[] { Parameter.Constant(begin), subLength });
         }
         public StringResult Substring(NumericResult begin, Parameter subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { begin, subLength });
+            return new StringResult(this, t => t.FnSubString, new object[] { begin, subLength });
         }
         public StringResult Substring(Parameter begin, Parameter subLength)
         {
-            return new StringResult(this, "substring({base}, {0}, {1})", new object[] { begin, subLength });
+            return new StringResult(this, t => t.FnSubString, new object[] { begin, subLength });
         }
 
         public StringResult Replace(string search, string replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { Parameter.Constant(search), Parameter.Constant(replacement) });
+            return new StringResult(this, t => t.FnReplace, new object[] { Parameter.Constant(search), Parameter.Constant(replacement) });
         }
         public StringResult Replace(StringResult search, StringResult replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { search, replacement });
+            return new StringResult(this, t => t.FnReplace, new object[] { search, replacement });
         }
         public StringResult Replace(Parameter search, Parameter replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { search, replacement });
+            return new StringResult(this, t => t.FnReplace, new object[] { search, replacement });
         }
         public StringResult Replace(string search, StringResult replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { Parameter.Constant(search), replacement });
+            return new StringResult(this, t => t.FnReplace, new object[] { Parameter.Constant(search), replacement });
         }
         public StringResult Replace(string search, Parameter replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { Parameter.Constant(search), replacement });
+            return new StringResult(this, t => t.FnReplace, new object[] { Parameter.Constant(search), replacement });
         }
         public StringResult Replace(StringResult search, string replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { search, Parameter.Constant(replacement) });
+            return new StringResult(this, t => t.FnReplace, new object[] { search, Parameter.Constant(replacement) });
         }
         public StringResult Replace(StringResult search, Parameter replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { search, replacement });
+            return new StringResult(this, t => t.FnReplace, new object[] { search, replacement });
         }
         public StringResult Replace(Parameter search, string replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { search, Parameter.Constant(replacement) });
+            return new StringResult(this, t => t.FnReplace, new object[] { search, Parameter.Constant(replacement) });
         }
         public StringResult Replace(Parameter search, StringResult replacement)
         {
-            return new StringResult(this, "replace({base}, {0}, {1})", new object[] { search, replacement });
+            return new StringResult(this, t => t.FnReplace, new object[] { search, replacement });
         }
 
         public QueryCondition StartsWith(string text)
@@ -281,15 +282,15 @@ namespace Blueprint41.Query
             if (value == null)
                 throw new NullReferenceException("value cannot be null");
 
-            return new StringResult(this, "coalesce({base}, {0})", new object[] { Parameter.Constant(value) });
+            return new StringResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
         }
         public StringResult Coalesce(MiscResult value)
         {
-            return new StringResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new StringResult(this, t => t.FnCoalesce, new object[] { value });
         }
         public StringResult Coalesce(Parameter value)
         {
-            return new StringResult(this, "coalesce({base}, {0})", new object[] { value });
+            return new StringResult(this, t => t.FnCoalesce, new object[] { value });
         }
 
         public StringResult Concat(params object[] args)
@@ -297,34 +298,27 @@ namespace Blueprint41.Query
             if (args == null)
                 throw new NullReferenceException("value cannot be null");
 
-            StringBuilder sb = new StringBuilder();
-            sb.Append("{base}");
-
-            int index = 0;
-            object[] parameters = new object[args.Length];
-            foreach (object arg in args)
+            int count = args.Length;
+            object[] parameters = new object[count];
+            for (int index = 0; index < count; index++)
             {
+                object arg = args[index];
                 if (arg is string)
                     parameters[index] = Parameter.Constant<string>((string)arg);
                 else
                     parameters[index] = arg;
-
-                sb.Append(" + {");
-                sb.Append(index);
-                sb.Append("}");
-                index++;
             }
 
-            return new StringResult(this, $"({sb.ToString()})", parameters, typeof(string));
+            return new StringResult(this, t => t.FnConcatMultiple(count), parameters, typeof(string));
         }
 
         public StringResult Min()
         {
-            return new StringResult(this, "min({base})");
+            return new StringResult(this, t => t.FnMin);
         }
         public StringResult Max()
         {
-            return new StringResult(this, "max({base})");
+            return new StringResult(this, t => t.FnMax);
         }
     }
 }

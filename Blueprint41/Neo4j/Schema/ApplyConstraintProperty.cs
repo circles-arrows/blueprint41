@@ -1,12 +1,9 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Neo4j.Driver.V1;
 using System.Diagnostics;
 
 namespace Blueprint41.Neo4j.Schema
@@ -27,16 +24,16 @@ namespace Blueprint41.Neo4j.Schema
             Commands = commands;
         }
 
-        private ApplyConstraintEntity Parent { get; set; }
+        protected ApplyConstraintEntity Parent { get; set; }
 
-        public string Property { get; private set; }
-        public IReadOnlyList<ApplyConstraintAction> Commands { get; private set; }
+        public string Property { get; protected set; }
+        public IReadOnlyList<ApplyConstraintAction> Commands { get; protected set; }
 
         /// <summary>
         /// Turns actions into cypher queries.
         /// </summary>
         /// <returns></returns>
-        internal List<string> ToCypher()
+        internal virtual List<string> ToCypher()
         {
             List<string> commands = new List<string>();
             foreach (var command in Commands)

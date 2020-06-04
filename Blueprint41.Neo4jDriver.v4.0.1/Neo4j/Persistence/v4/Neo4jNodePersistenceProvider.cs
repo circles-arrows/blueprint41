@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Data;
 using System.Text;
-using System.Threading.Tasks;
-
-using Neo4j.Driver.V1;
 
 using Blueprint41.Core;
-using System.Diagnostics;
 using Blueprint41.Query;
-using System.Data;
-using System.Linq.Expressions;
 
-namespace Blueprint41.Neo4j.Persistence
+namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
-    internal class Neo4JNodePersistenceProvider : NodePersistenceProvider
+    internal class Neo4jNodePersistenceProvider : Void.Neo4jNodePersistenceProvider
     {
-        public Neo4JNodePersistenceProvider(PersistenceProvider factory) : base(factory) { }
+        public Neo4jNodePersistenceProvider(PersistenceProvider factory) : base(factory) { }
 
         public override List<T> GetAll<T>(Entity entity)
         {
@@ -32,23 +28,23 @@ namespace Blueprint41.Neo4j.Persistence
             Transaction trans = Transaction.RunningTransaction;
 
             string returnStatement = " RETURN node";
-            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}}", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
+            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
             Dictionary<string, object?>? customState = null;
             var args = item.GetEntity().RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
 
-            var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
+            var result = trans.Run(args.Cypher, args.Parameters);
 
-            IRecord record = result.FirstOrDefault();
+            RawRecord record = result.FirstOrDefault();
             if (record == null)
             {
                 item.PersistenceState = PersistenceState.DoesntExist;
                 return;
             }
 
-            INode loaded = record["node"].As<INode>();
+            RawNode loaded = record["node"].As<RawNode>();
 
             args.Id = loaded.Id;
             args.Labels = loaded.Labels;
@@ -75,19 +71,19 @@ namespace Blueprint41.Neo4j.Persistence
 
             if (entity.RowVersion == null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DELETE node", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key DELETE node", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
-            
-            IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
-            if (result.Summary.Counters.NodesDeleted == 0)
+
+            RawResult result = trans.Run(args.Cypher, args.Parameters);
+            if (result.Statistics().NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeDeleted(trans, args);
@@ -105,19 +101,19 @@ namespace Blueprint41.Neo4j.Persistence
 
             if (entity.RowVersion == null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DETACH DELETE node", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key DETACH DELETE node", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
-            
-            IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
-            if (result.Summary.Counters.NodesDeleted == 0)
+
+            RawResult result = trans.Run(args.Cypher, args.Parameters);
+            if (result.Statistics().NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeDeleted(trans, args);
@@ -136,7 +132,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             IDictionary<string, object?> node = item.GetData();
 
-            string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
+            string create = string.Format("CREATE (inserted:{0} $node) Return inserted", labels);
             if (entity.FunctionalId != null)
             {
                 object? key = item.GetKey();
@@ -146,7 +142,7 @@ namespace Blueprint41.Neo4j.Persistence
                     if (entity.FunctionalId.Format == IdFormat.Numeric)
                         nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
 
-                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
+                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} $node) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
 
                     node.Remove(entity.Key.Name);
                 }
@@ -162,12 +158,12 @@ namespace Blueprint41.Neo4j.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
-            var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
-            IRecord record = result.FirstOrDefault();
+            var result = trans.Run(args.Cypher, args.Parameters);
+            RawRecord record = result.FirstOrDefault();
             if (record == null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
-            INode inserted = record["inserted"].As<INode>();
+            RawNode inserted = record["inserted"].As<RawNode>();
 
             args.Id = inserted.Id;
             args.Labels = inserted.Labels;
@@ -193,12 +189,12 @@ namespace Blueprint41.Neo4j.Persistence
 
             if (entity.RowVersion == null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key SET node = $newValues", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId SET node = $newValues", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
                 item.SetRowVersion(trans.TransactionDate);
             }
 
@@ -208,8 +204,8 @@ namespace Blueprint41.Neo4j.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
 
-            IStatementResult result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
-            if (!result.Summary.Counters.ContainsUpdates)
+            RawResult result = trans.Run(args.Cypher, args.Parameters);
+            if (!result.Statistics().ContainsUpdates)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeUpdated(trans, args);
@@ -226,7 +222,7 @@ namespace Blueprint41.Neo4j.Persistence
             if (functionalId.Format == IdFormat.Numeric)
                 nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", functionalId.Label);
 
-            var result = Neo4jTransaction.Run(nextKey).First();
+            var result = Transaction.RunningTransaction.Run(nextKey).First();
             return result["key"]?.ToString()!;
         }
 
@@ -275,7 +271,7 @@ namespace Blueprint41.Neo4j.Persistence
 
             var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), arguments, ref customState);
 
-            var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
+            var result = trans.Run(args.Cypher, args.Parameters);
             return Load<T>(entity, args, result, trans);
         }
         public override List<T> LoadWhere<T>(Entity entity, ICompiled query, Parameter[] parameters, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
@@ -315,12 +311,12 @@ namespace Blueprint41.Neo4j.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters, ref customState);
 
-            var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
+            var result = trans.Run(args.Cypher, args.Parameters);
 
             return Load<T>(entity, args, result, trans);
         }
 
-        private List<T> Load<T>(Entity entity, NodeEventArgs args, IStatementResult result, Transaction trans)
+        private List<T> Load<T>(Entity entity, NodeEventArgs args, RawResult result, Transaction trans)
             where T : class, OGM
         {
             IReadOnlyList<Entity> concretes = entity.GetConcreteClasses();
@@ -328,7 +324,7 @@ namespace Blueprint41.Neo4j.Persistence
             List<T> items = new List<T>();
             foreach (var record in result)
             {
-                var node = record[0].As<INode>();
+                var node = record[0].As<RawNode>();
                 if (node == null)
                     continue;
 
@@ -436,7 +432,7 @@ namespace Blueprint41.Neo4j.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), null, ref customState);
 
-            var result = Neo4jTransaction.Run(args.Cypher, args.Parameters);
+            var result = trans.Run(args.Cypher, args.Parameters);
             return Load<T>(entity, args, result, trans);
         }
 
@@ -444,9 +440,9 @@ namespace Blueprint41.Neo4j.Persistence
         {
             string pattern;
             if (foreignProperty.Direction == DirectionEnum.In)
-                pattern = "MATCH (node:{0})<-[:{2}]-(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
+                pattern = "MATCH (node:{0})<-[:{2}]-(:{3}) WHERE node.{1} = $key RETURN node LIMIT 1";
             else
-                pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
+                pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = $key RETURN node LIMIT 1";
 
             string match = string.Format(
                 pattern, 
@@ -458,7 +454,7 @@ namespace Blueprint41.Neo4j.Persistence
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
-            var result = Neo4jTransaction.Run(match, parameters);
+            var result = Transaction.RunningTransaction.Run(match, parameters);
             return result.Any();
         }
 

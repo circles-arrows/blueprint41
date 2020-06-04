@@ -33,11 +33,11 @@ namespace Blueprint41.Query
 	{
         public <#= listType #> Collect()
         {
-            return new <#= listType #>(this, "collect({base})");
+            return new <#= listType #>(this, t => t.FnCollect);
         }
         public <#= listType #> CollectDistinct()
         {
-            return new <#= listType #>(this, "collect(distinct {base})");
+            return new <#= listType #>(this, t => t.FnCollectDistinct);
         }
 	}
 <#

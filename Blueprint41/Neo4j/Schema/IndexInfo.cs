@@ -1,18 +1,20 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Neo4j.Driver.V1;
+using Blueprint41.Core;
 
 namespace Blueprint41.Neo4j.Schema
 {
     public class IndexInfo
     {
-        internal IndexInfo(IRecord record)
+        internal IndexInfo(RawRecord record)
+        {
+            Initialize(record);
+        }
+        protected virtual void Initialize(RawRecord record)
         {
             Description = record.Values["description"].As<string>();
             State = record.Values["state"].As<string>();
@@ -39,17 +41,17 @@ namespace Blueprint41.Neo4j.Schema
             Field = results.Groups["field"].Value;
         }
 
-        public string Description { get; private set; }
-        public string State { get; private set; }
-        public string Type { get; private set; }
+        public string Description { get; protected set; } = null!;
+        public string State { get; protected set; } = null!;
+        public string Type { get; protected set; } = null!;
 
-        public string Entity { get; private set; }
-        public string Field { get; private set; }
+        public string Entity { get; protected set; } = null!;
+        public string Field { get; protected set; } = null!;
 
         [Obsolete("Your code should prefer the use of Constraint.IsUnique to check if a field is unique.", true)]
         public bool IsUnique { get { return isUnique; } }
-        private bool isUnique = false;
-        public bool IsIndexed { get; private set; }
+        protected bool isUnique = false;
+        public bool IsIndexed { get; protected set; }
 
         #region Regex
 

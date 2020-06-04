@@ -22,7 +22,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     
     #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    internal partial class SetDefaultConstantValue : TemplateBase
+    internal partial class SetDefaultConstantValue : SetDefaultConstantValueBase
     {
 #line hidden
         /// <summary>
@@ -74,19 +74,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
-
-
-	// Template Parameters
-	public Entity	Entity	 { get; set; }
-	public Property Property { get; set; }
-	public object	Value	 { get; set; }
-
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 using Blueprint41;
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Model;
 using Blueprint41.Query;
 
 namespace <#= Settings.FullQueryNamespace #>
@@ -180,7 +181,7 @@ namespace <#= Settings.FullQueryNamespace #>
 			AliasName = name;
 		}
 
-		private <#= DALModel.Name #>Alias(AliasResult parent, string function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
+		private <#= DALModel.Name #>Alias(AliasResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
 		{
 			Node = parent.Node;
 		}
@@ -283,9 +284,9 @@ namespace <#= Settings.FullQueryNamespace #>
 			public MiscResult Get(FieldResult result, bool withCoalesce = false, Type type = null)
 			{
 				if (withCoalesce)
-					return new MiscResult("{0}[COALESCE({1}, '')]", new object[] { Alias, result }, type ?? typeof(object));
+					return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, result }, type ?? typeof(object));
 				else
-					return new MiscResult("{0}[{1}]", new object[] { Alias, result }, type ?? typeof(object));
+					return new MiscResult(t => t.FnGetField, new object[] { Alias, result }, type ?? typeof(object));
 			}
 		}
 <#
@@ -293,11 +294,15 @@ namespace <#= Settings.FullQueryNamespace #>
 #>
 		new public <#= DALModel.Name #>AliasList Collect()
 		{
-			return new <#= DALModel.Name #>AliasList(this, "collect({base})");
+			return new <#= DALModel.Name #>AliasList(this, t=> t.FnCollect);
+		}
+		new public <#= DALModel.Name #>AliasList CollectDistinct()
+		{
+			return new <#= DALModel.Name #>AliasList(this, t=> t.FnCollectDistinct);
 		}
 		public <#= DALModel.Name #>Alias Coalesce(<#= DALModel.Name #>Alias other)
 		{
-			return new <#= DALModel.Name #>Alias(this, "COALESCE({base}, {0})", new object[] { other });
+			return new <#= DALModel.Name #>Alias(this, t => t.FnCoalesce, new object[] { other });
 		}
 		public AsResult As(string aliasName, out <#= DALModel.Name #>Alias alias)
 		{
@@ -311,7 +316,7 @@ namespace <#= Settings.FullQueryNamespace #>
 
 	public class <#= DALModel.Name #>AliasList : ListResult<<#= DALModel.Name #>AliasList, <#= DALModel.Name #>Alias>
 	{
-		public <#= DALModel.Name #>AliasList(AliasResult parent, string function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
+		public <#= DALModel.Name #>AliasList(AliasResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
 		{
 		}
 	}
