@@ -620,7 +620,7 @@ namespace Blueprint41
                 foreach (var relation in Parent.Relations.Where(item => item.InEntity == entity || item.OutEntity == entity).ToList())
                     relation.Refactor.Deprecate();
 
-                if (!Parent.Entities.Any(item => item != entity && item.FunctionalId == entity.FunctionalId))
+                if (entity.FunctionalId != null && !Parent.Entities.Any(item => item != entity && item.FunctionalId == entity.FunctionalId))
                     Parent.FunctionalIds.Remove(entity.FunctionalId!.Label);
 
                 foreach (Interface iface in Parent.Interfaces)
