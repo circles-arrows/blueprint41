@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public partial class NumericResult : FieldResult
+    public partial class NumericResult
     {
         public static explicit operator NumericResult(RelationFieldResult from)
         {
@@ -122,6 +122,59 @@ namespace Blueprint41.Query
 
         #endregion
 
+        #region Arithmetic
+
+        public static NumericResult operator +(NumericResult left, long right)
+        {
+            return new NumericResult(left, t => t.FnAdd, new[] { Parameter.Constant(right) });
+        }
+        public static NumericResult operator -(NumericResult left, long right)
+        {
+            return new NumericResult(left, t => t.FnSubtract, new[] { Parameter.Constant(right) });
+        }
+        public static NumericResult operator *(NumericResult left, long right)
+        {
+            return new NumericResult(left, t => t.FnMultiply, new[] { Parameter.Constant(right) });
+        }
+        public static NumericResult operator /(NumericResult left, long right)
+        {
+            return new NumericResult(left, t => t.FnDivide, new[] { Parameter.Constant(right) });
+        }
+        public static NumericResult operator %(NumericResult left, long right)
+        {
+            return new NumericResult(left, t => t.FnModulo, new[] { Parameter.Constant(right) });
+        }
+        public static NumericResult operator ^(NumericResult left, long right)
+        {
+            return new NumericResult(left, t => t.FnPower, new[] { Parameter.Constant(right) });
+        }
+
+        public static NumericResult operator +(NumericResult left, NumericResult right)
+        {
+            return new NumericResult(left, t => t.FnAdd, new[] { right });
+        }
+        public static NumericResult operator -(NumericResult left, NumericResult right)
+        {
+            return new NumericResult(left, t => t.FnSubtract, new[] { right });
+        }
+        public static NumericResult operator *(NumericResult left, NumericResult right)
+        {
+            return new NumericResult(left, t => t.FnMultiply, new[] { right });
+        }
+        public static NumericResult operator /(NumericResult left, NumericResult right)
+        {
+            return new NumericResult(left, t => t.FnDivide, new[] { right });
+        }
+        public static NumericResult operator %(NumericResult left, NumericResult right)
+        {
+            return new NumericResult(left, t => t.FnModulo, new[] { right });
+        }
+        public static NumericResult operator ^(NumericResult left, NumericResult right)
+        {
+            return new NumericResult(left, t => t.FnPower, new[] { right });
+        }
+        #endregion
+
         public override bool Equals(object? obj)
         {
             return base.Equals(obj);
@@ -132,11 +185,6 @@ namespace Blueprint41.Query
         }
 
         #endregion
-
-        internal NumericResult(FieldResult field) : base(field) { }
-        public NumericResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
-        public NumericResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public NumericResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         public QueryCondition In(IEnumerable<long> enumerable)
         {
@@ -187,19 +235,6 @@ namespace Blueprint41.Query
         public FloatResult StDevP()
         {
             return new FloatResult(this, t => t.FnStDevP, null, typeof(Double));
-        }
-
-        public NumericResult Coalesce(long value)
-        {
-            return new NumericResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
-        }
-        public NumericResult Coalesce(NumericResult value)
-        {
-            return new NumericResult(this, t => t.FnCoalesce, new object[] { value });
-        }
-        public NumericResult Coalesce(Parameter value)
-        {
-            return new NumericResult(this, t => t.FnCoalesce, new object[] { value });
         }
     }
 }

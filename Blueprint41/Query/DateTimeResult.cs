@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public partial class DateTimeResult : FieldResult
+    public partial class DateTimeResult
     {
         #region Operators
 
@@ -148,29 +148,12 @@ namespace Blueprint41.Query
 
         #endregion
 
-        internal DateTimeResult(FieldResult field) : base(field) { }
-        public DateTimeResult(Func<QueryTranslator, string?>? function, object[] arguments, Type type) : base(function, arguments, type) { }
-        public DateTimeResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public DateTimeResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
-
         public QueryCondition In(IEnumerable<DateTime> enumerable)
         {
             return new QueryCondition(this, Operator.In, Parameter.Constant(enumerable.ToArray(), typeof(DateTime)));
         }
 
-        public DateTimeResult Coalesce(DateTime value)
-        {
-            return new DateTimeResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
-        }
-        public DateTimeResult Coalesce(DateTimeResult value)
-        {
-            return new DateTimeResult(this, t => t.FnCoalesce, new object[] { value });
-        }
         public DateTimeResult Coalesce(RelationFieldResult value)
-        {
-            return new DateTimeResult(this, t => t.FnCoalesce, new object[] { value });
-        }
-        public DateTimeResult Coalesce(Parameter value)
         {
             return new DateTimeResult(this, t => t.FnCoalesce, new object[] { value });
         }

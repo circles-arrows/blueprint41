@@ -31,13 +31,13 @@ namespace Blueprint41.Query
 	{
 		string type = (underlyingType is null) ? "null" : $"typeof({underlyingType})";
 #>
-		//public <#= listType #> Extract(Func<TResult, <#= fieldType #>> logic)
-        //{
-        //    TResult itemField = NewResult("item", new object[0], <#= type #>);
-        //    <#= fieldType #> result = logic.Invoke(itemField);
-		//
-        //    return new <#= listType #>(this, t => t.FnExtract, new object[] { result }, <#= type #>);
-        //}
+		public <#= listType #> Extract(Func<TResult, <#= fieldType #>> logic)
+		{
+			TResult itemField = NewResult(t => "item", new object[0], <#= type #>);
+			<#= fieldType #> result = logic.Invoke(itemField);
+		
+			return new <#= listType #>(this, t => t.FnListExtract, new object[] { result }, <#= type #>);
+		}
 <#
 	}
 #>
@@ -49,12 +49,12 @@ namespace Blueprint41.Query
 	{
 #>
 		public <#= listType #> Extract(Func<TResult, <#= fieldType #>> logic)
-        {
-            TResult itemField = NewResult("item", new object[0], typeof(TType));
-            <#= fieldType #> result = logic.Invoke(itemField);
+		{
+			TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
+			<#= fieldType #> result = logic.Invoke(itemField);
 
-            return new <#= listType #>(this, t => t.FnExtract, new object[] { result });
-        }
+			return new <#= listType #>(this, t => t.FnListExtract, new object[] { result });
+		}
 <#
 	}
 #>

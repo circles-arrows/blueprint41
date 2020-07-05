@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public class RelationFieldResult : FieldResult
+    public class RelationFieldResult : FieldResult, IPlainPrimitiveResult
     {
         public static explicit operator DateTimeResult(RelationFieldResult from)
         {
@@ -54,8 +54,8 @@ namespace Blueprint41.Query
         }
 
         internal RelationFieldResult(FieldResult field) : base(field) { }
-        //public RelationFieldResult(string function, object[] arguments, Type type) : base(function, arguments, type) { }
-        public RelationFieldResult(AliasResult alias, string fieldName) : base(alias, fieldName, null, null, typeof(DateTime)) { }
+        public RelationFieldResult(Func<QueryTranslator, string?>? function, object[] arguments, Type type) : base(function, arguments, type) { }
+        public RelationFieldResult(AliasResult alias, string? fieldName) : base(alias, fieldName, null, null, typeof(DateTime)) { }
         public RelationFieldResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         protected internal override void Compile(CompileState state)
@@ -88,6 +88,21 @@ namespace Blueprint41.Query
         public override Type GetResultType()
         {
             return typeof(DateTime);
+        }
+
+        public AsResult As(string aliasName, out RelationFieldResult alias)
+        {
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+
+            alias = new RelationFieldResult(aliasResult, null);
+            return this.As(aliasName);
+        }
+        AsResult IResult.As<T>(string aliasName, out T alias)
+        {
+            throw new NotSupportedException();
         }
     }
 }

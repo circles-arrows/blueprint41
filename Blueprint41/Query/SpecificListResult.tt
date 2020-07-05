@@ -7,13 +7,18 @@
 <#
 	var listTypes = new []
 	{
-		( listType: "AliasListResult",    resultType: "AliasResult",    underlyingType: null       ),
-		( listType: "MiscListResult",     resultType: "MiscResult",     underlyingType: "object"   ),
-		( listType: "StringListResult",   resultType: "StringResult",   underlyingType: "string"   ),
-		( listType: "BooleanListResult",  resultType: "BooleanResult",  underlyingType: "bool"     ),
-		( listType: "DateTimeListResult", resultType: "DateTimeResult", underlyingType: "DateTime" ),
-		( listType: "FloatListResult",    resultType: "FloatResult",    underlyingType: "double"   ),
-		( listType: "NumericListResult",  resultType: "NumericResult",  underlyingType: "long"     ),
+		( listType: "MiscListResult",           resultType: "MiscResult",         underlyingType: "object"     ),
+		( listType: "StringListResult",         resultType: "StringResult",       underlyingType: "string"     ),
+		( listType: "BooleanListResult",        resultType: "BooleanResult",      underlyingType: "bool"       ),
+		( listType: "DateTimeListResult",       resultType: "DateTimeResult",     underlyingType: "DateTime"   ),
+		( listType: "FloatListResult",          resultType: "FloatResult",        underlyingType: "double"     ),
+		( listType: "NumericListResult",        resultType: "NumericResult",      underlyingType: "long"       ),
+		( listType: "ListOfMiscListResult",     resultType: "MiscListResult",     underlyingType: "object[]"   ),
+		( listType: "ListOfStringListResult",   resultType: "StringListResult",   underlyingType: "string[]"   ),
+		( listType: "ListOfBooleanListResult",  resultType: "BooleanListResult",  underlyingType: "bool[]"     ),
+		( listType: "ListOfDateTimeListResult", resultType: "DateTimeListResult", underlyingType: "DateTime[]" ),
+		( listType: "ListOfFloatListResult",    resultType: "FloatListResult",    underlyingType: "double[]"   ),
+		( listType: "ListOfNumericListResult",  resultType: "NumericListResult",  underlyingType: "long[]"     ),
 	};
 #>
 using Blueprint41.Neo4j.Model;
@@ -26,36 +31,48 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public partial class AliasListResult : ListResult<AliasListResult, AliasResult>
-    {
-        public AliasListResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type)
-        {
-        }
-    }
 <#
 	foreach ((string listType, string resultType, string underlyingType) in listTypes)
 	{
-        if (underlyingType is null)
-            continue;
+		string iface = (listType.StartsWith("ListOf")) ? "IPrimitiveJaggedListResult" : "IPrimitiveListResult";
+
 #>
-    public partial class <#= listType #> : ListResult<<#= listType #>, <#= resultType #>, <#= underlyingType ?? "object" #>>
-    {
-        //public <#= listType #>(FieldResult? parent, string function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-        public <#= listType #>(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-        public <#= listType #>(AliasResult alias, string? fieldName, Entity? entity, Property? property) : base(alias, fieldName, entity, property) { }
+	public partial class <#= listType #> : ListResult<<#= listType #>, <#= resultType #>, <#= underlyingType ?? "object" #>>, <#= iface #>
+	{
+		public <#= listType #>(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
+		public <#= listType #>(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+		public <#= listType #>(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public <#= listType #>(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
-        public AsResult As(string aliasName, out <#= listType #> alias)
-        {
-            AliasResult aliasResult = new AliasResult()
-            {
-                AliasName = aliasName
-            };
+		public AsResult As(string aliasName, out <#= listType #> alias)
+		{
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
 
-            alias = new <#= listType #>(aliasResult, null, null, null);
-            return this.As(aliasName);
-        }
-    }
+			alias = new <#= listType #>(aliasResult, null, null, null, typeof(<#= underlyingType ?? "object" #>));
+			return this.As(aliasName);
+		}
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out <#= listType #> genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
 <#
-    }
+		if (!listType.StartsWith("ListOf"))
+		{
+#>
+		public ListOf<#= listType #> PairsMin()
+		{
+			return new ListOf<#= listType #>(this, t => t.FnPairsMin);
+		}
+<#
+		}
+#>
+	}
+<#
+	}
 #>
 }

@@ -1,0 +1,373 @@
+﻿using Blueprint41.Core;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using query = Blueprint41.Query;
+
+namespace Blueprint41.Query
+{
+    public partial class Query : IUnwindQuery<MiscResult>
+    {
+        public IUnwindQuery<MiscResult> Unwind(MiscListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out MiscResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new MiscResult(aliasResult, null, null, null, typeof(object));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<MiscResult> Unwind(MiscListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<MiscResult> Unwind(MiscListResult list);
+    }
+    public partial class Query : IUnwindQuery<StringResult>
+    {
+        public IUnwindQuery<StringResult> Unwind(StringListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out StringResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new StringResult(aliasResult, null, null, null, typeof(string));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<StringResult> Unwind(StringListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<StringResult> Unwind(StringListResult list);
+    }
+    public partial class Query : IUnwindQuery<BooleanResult>
+    {
+        public IUnwindQuery<BooleanResult> Unwind(BooleanListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out BooleanResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new BooleanResult(aliasResult, null, null, null, typeof(bool));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<BooleanResult> Unwind(BooleanListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<BooleanResult> Unwind(BooleanListResult list);
+    }
+    public partial class Query : IUnwindQuery<DateTimeResult>
+    {
+        public IUnwindQuery<DateTimeResult> Unwind(DateTimeListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out DateTimeResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new DateTimeResult(aliasResult, null, null, null, typeof(DateTime));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<DateTimeResult> Unwind(DateTimeListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<DateTimeResult> Unwind(DateTimeListResult list);
+    }
+    public partial class Query : IUnwindQuery<FloatResult>
+    {
+        public IUnwindQuery<FloatResult> Unwind(FloatListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out FloatResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new FloatResult(aliasResult, null, null, null, typeof(double));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<FloatResult> Unwind(FloatListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<FloatResult> Unwind(FloatListResult list);
+    }
+    public partial class Query : IUnwindQuery<NumericResult>
+    {
+        public IUnwindQuery<NumericResult> Unwind(NumericListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out NumericResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new NumericResult(aliasResult, null, null, null, typeof(long));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<NumericResult> Unwind(NumericListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<NumericResult> Unwind(NumericListResult list);
+    }
+    public partial class Query : IUnwindQuery<MiscListResult>
+    {
+        public IUnwindQuery<MiscListResult> Unwind(ListOfMiscListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out MiscListResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new MiscListResult(aliasResult, null, null, null, typeof(object[]));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<MiscListResult> Unwind(ListOfMiscListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<MiscListResult> Unwind(ListOfMiscListResult list);
+    }
+    public partial class Query : IUnwindQuery<StringListResult>
+    {
+        public IUnwindQuery<StringListResult> Unwind(ListOfStringListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out StringListResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new StringListResult(aliasResult, null, null, null, typeof(string[]));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<StringListResult> Unwind(ListOfStringListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<StringListResult> Unwind(ListOfStringListResult list);
+    }
+    public partial class Query : IUnwindQuery<BooleanListResult>
+    {
+        public IUnwindQuery<BooleanListResult> Unwind(ListOfBooleanListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out BooleanListResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new BooleanListResult(aliasResult, null, null, null, typeof(bool[]));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<BooleanListResult> Unwind(ListOfBooleanListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<BooleanListResult> Unwind(ListOfBooleanListResult list);
+    }
+    public partial class Query : IUnwindQuery<DateTimeListResult>
+    {
+        public IUnwindQuery<DateTimeListResult> Unwind(ListOfDateTimeListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out DateTimeListResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new DateTimeListResult(aliasResult, null, null, null, typeof(DateTime[]));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<DateTimeListResult> Unwind(ListOfDateTimeListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<DateTimeListResult> Unwind(ListOfDateTimeListResult list);
+    }
+    public partial class Query : IUnwindQuery<FloatListResult>
+    {
+        public IUnwindQuery<FloatListResult> Unwind(ListOfFloatListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out FloatListResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new FloatListResult(aliasResult, null, null, null, typeof(double[]));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<FloatListResult> Unwind(ListOfFloatListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<FloatListResult> Unwind(ListOfFloatListResult list);
+    }
+    public partial class Query : IUnwindQuery<NumericListResult>
+    {
+        public IUnwindQuery<NumericListResult> Unwind(ListOfNumericListResult list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out NumericListResult alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new NumericListResult(aliasResult, null, null, null, typeof(long[]));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<NumericListResult> Unwind(ListOfNumericListResult list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<NumericListResult> Unwind(ListOfNumericListResult list);
+    }
+}

@@ -50,6 +50,7 @@ namespace Blueprint41.Query
         }
         protected FieldResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this(null, null, null, null, null, function, arguments, type) { }
         protected FieldResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : this(alias, fieldName, entity, property, null, null, null, null) { OverridenReturnType = overridenReturnType; }
+        protected FieldResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this(alias, null, null, null, null, function, arguments, type) { }
         protected FieldResult(FieldResult? field, Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this(field?.Alias, field?.FieldName, field?.Entity, field?.Property, field, function, arguments, type) { }
         protected FieldResult(FieldResult field)
         {
@@ -123,8 +124,6 @@ namespace Blueprint41.Query
             return new StringListResult(this, t => t.FnAsIs, null, typeof(string));
         }
 
-
-
         protected internal override void Compile(CompileState state)
         {
             state.Translator.Compile(this, state);
@@ -157,15 +156,6 @@ namespace Blueprint41.Query
             return new AsResult(this, aliasName);
         }
 
-        public AsResult As(string aliasName, out AliasResult alias)
-        {
-            alias = new AliasResult()
-            {
-                AliasName = aliasName
-            };
-            return new AsResult(this, aliasName);
-        }
-
         public override string GetFieldName()
         {
             throw new NotSupportedException();
@@ -180,5 +170,40 @@ namespace Blueprint41.Query
 
             return OverridenReturnType;
         }
+    }
+    public class FieldResult<TResult, TResultList, TType> : FieldResult
+        where TResult : IPlainPrimitiveResult
+        where TResultList : IPrimitiveListResult
+    {
+        internal FieldResult(FieldResult field) : base(field) { }
+        public FieldResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+        public FieldResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+        public FieldResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+        public FieldResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+
+        public TResult Coalesce(TType value)
+        {
+            return NewResult(t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
+        }
+        public TResult Coalesce(TResult value)
+        {
+            return NewResult(t => t.FnCoalesce, new object[] { value });
+        }
+        public TResult Coalesce(Parameter value)
+        {
+            return NewResult(t => t.FnCoalesce, new object[] { value });
+        }
+
+        public TResultList Collect()
+        {
+            return NewList(t => t.FnCollect);
+        }
+        public TResultList CollectDistinct()
+        {
+            return NewList(t => t.FnCollectDistinct);
+        }
+
+        private TResult NewResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null) => ResultHelper.Of<TResult>().NewFieldResult((IPrimitiveResult)this, function, arguments, overridenReturnType);
+        private TResultList NewList(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null) => ResultHelper.Of<TResultList>().NewFieldResult((IPrimitiveResult)this, function, arguments, overridenReturnType);
     }
 }

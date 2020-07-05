@@ -7,27 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public partial class MiscResult : FieldResult
+    public partial class MiscResult
     {
-        internal MiscResult(FieldResult field) : base(field) { }
-        public MiscResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
-        public MiscResult(AliasResult alias, string fieldName, Entity entity, Property? property) : base(alias, fieldName, entity, property) { }
-        public MiscResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
-
-        public MiscResult Coalesce(object value)
-        {
-            if (value == null)
-                throw new NullReferenceException("value cannot be null");
-
-            return new MiscResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value, value.GetType()) });
-        }
-        public MiscResult Coalesce(MiscResult value)
-        {
-            return new MiscResult(this, t => t.FnCoalesce, new object[] { value });
-        }
-        public MiscResult Coalesce(Parameter value)
-        {
-            return new MiscResult(this, t => t.FnCoalesce, new object[] { value });
-        }
     }
 }

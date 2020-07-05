@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public partial class StringResult : FieldResult
+    public partial class StringResult
     {
         #region Operators
 
@@ -72,11 +72,6 @@ namespace Blueprint41.Query
         }
 
         #endregion
-
-        internal StringResult(FieldResult field) : base(field) { }
-        public StringResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
-        public StringResult(AliasResult alias, string fieldName, Entity entity, Property property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
-        public StringResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 
         public StringResult ToUpperCase()
         {
@@ -275,22 +270,6 @@ namespace Blueprint41.Query
         public QueryCondition MatchRegex(string text)
         {
             return new QueryCondition(this, Operator.Match, text);
-        }
-
-        public StringResult Coalesce(string value)
-        {
-            if (value == null)
-                throw new NullReferenceException("value cannot be null");
-
-            return new StringResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
-        }
-        public StringResult Coalesce(MiscResult value)
-        {
-            return new StringResult(this, t => t.FnCoalesce, new object[] { value });
-        }
-        public StringResult Coalesce(Parameter value)
-        {
-            return new StringResult(this, t => t.FnCoalesce, new object[] { value });
         }
 
         public StringResult Concat(params object[] args)

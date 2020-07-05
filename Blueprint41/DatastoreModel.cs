@@ -216,9 +216,8 @@ namespace Blueprint41
 
                     Transaction.Commit();
                 }
-
-                SubscribeEventHandlers();
             }
+                SubscribeEventHandlers();
 
             executed = true;
 

@@ -1,0 +1,78 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+	var listTypes = new []
+	{
+		( listType: "AliasListResult",    resultType: "AliasResult",    underlyingType: null       ),
+		( listType: "MiscListResult",     resultType: "MiscResult",     underlyingType: "object"   ),
+		( listType: "StringListResult",   resultType: "StringResult",   underlyingType: "string"   ),
+		( listType: "BooleanListResult",  resultType: "BooleanResult",  underlyingType: "bool"     ),
+		( listType: "DateTimeListResult", resultType: "DateTimeResult", underlyingType: "DateTime" ),
+		( listType: "FloatListResult",    resultType: "FloatResult",    underlyingType: "double"   ),
+		( listType: "NumericListResult",  resultType: "NumericResult",  underlyingType: "long"     ),
+		( listType: "ListOfAliasListResult",    resultType: "AliasListResult",    underlyingType: null       ),
+		( listType: "ListOfMiscListResult",     resultType: "MiscListResult",     underlyingType: "object[]"   ),
+		( listType: "ListOfStringListResult",   resultType: "StringListResult",   underlyingType: "string[]"   ),
+		( listType: "ListOfBooleanListResult",  resultType: "BooleanListResult",  underlyingType: "bool[]"     ),
+		( listType: "ListOfDateTimeListResult", resultType: "DateTimeListResult", underlyingType: "DateTime[]" ),
+		( listType: "ListOfFloatListResult",    resultType: "FloatListResult",    underlyingType: "double[]"   ),
+		( listType: "ListOfNumericListResult",  resultType: "NumericListResult",  underlyingType: "long[]"     ),
+
+	};
+#>
+using Blueprint41.Core;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using query = Blueprint41.Query;
+
+namespace Blueprint41.Query
+{
+<#
+	foreach ((string listType, string resultType, string underlyingType) in listTypes)
+	{
+        if (underlyingType is null)
+            continue;
+#>
+    public partial class Query : IUnwindQuery<<#= resultType #>>
+    {
+        public IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list)
+        {
+            SetType(PartType.Unwind);
+            Fields = new[] { list };
+
+            return this;
+        }
+        public IMatchQuery As(string aliasName, out <#= resultType #> alias)
+        {
+            this.WithResults = new[] { Fields.First().As(aliasName) };
+
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = aliasName
+            };
+            alias = new <#= resultType #>(aliasResult, null, null, null, typeof(<#= underlyingType #>));
+
+            return New;
+        }
+    }
+    public partial interface IOptionalMatchQuery
+    {
+        IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list);
+    }
+    public partial interface IWhereQuery
+    {
+        IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list);
+    }
+<#
+    }
+#>
+}

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public partial class FloatResult : FieldResult
+    public partial class FloatResult
     {
         #region Operators
 
@@ -113,6 +113,58 @@ namespace Blueprint41.Query
 
         #endregion
 
+        #region Arithmetic
+
+        public static FloatResult operator +(FloatResult left, long right)
+        {
+            return new FloatResult(left, t => t.FnAdd, new[] { Parameter.Constant(right) });
+        }
+        public static FloatResult operator -(FloatResult left, long right)
+        {
+            return new FloatResult(left, t => t.FnSubtract, new[] { Parameter.Constant(right) });
+        }
+        public static FloatResult operator *(FloatResult left, long right)
+        {
+            return new FloatResult(left, t => t.FnMultiply, new[] { Parameter.Constant(right) });
+        }
+        public static FloatResult operator /(FloatResult left, long right)
+        {
+            return new FloatResult(left, t => t.FnDivide, new[] { Parameter.Constant(right) });
+        }
+        public static FloatResult operator %(FloatResult left, long right)
+        {
+            return new FloatResult(left, t => t.FnModulo, new[] { Parameter.Constant(right) });
+        }
+        public static FloatResult operator ^(FloatResult left, long right)
+        {
+            return new FloatResult(left, t => t.FnPower, new[] { Parameter.Constant(right) });
+        }
+        public static FloatResult operator +(FloatResult left, FloatResult right)
+        {
+            return new FloatResult(left, t => t.FnAdd, new[] { right });
+        }
+        public static FloatResult operator -(FloatResult left, FloatResult right)
+        {
+            return new FloatResult(left, t => t.FnSubtract, new[] { right });
+        }
+        public static FloatResult operator *(FloatResult left, FloatResult right)
+        {
+            return new FloatResult(left, t => t.FnMultiply, new[] { right });
+        }
+        public static FloatResult operator /(FloatResult left, FloatResult right)
+        {
+            return new FloatResult(left, t => t.FnDivide, new[] { right });
+        }
+        public static FloatResult operator %(FloatResult left, FloatResult right)
+        {
+            return new FloatResult(left, t => t.FnModulo, new[] { right });
+        }
+        public static FloatResult operator ^(FloatResult left, FloatResult right)
+        {
+            return new FloatResult(left, t => t.FnPower, new[] { right });
+        }
+
+        #endregion
         public override bool Equals(object? obj)
         {
             return base.Equals(obj);
@@ -123,11 +175,6 @@ namespace Blueprint41.Query
         }
 
         #endregion
-
-        internal FloatResult(FieldResult field) : base(field) { }
-        public FloatResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public FloatResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
-        public FloatResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 
         public QueryCondition In(IEnumerable<double> enumerable)
         {
@@ -243,19 +290,6 @@ namespace Blueprint41.Query
         public FloatResult Exp()
         {
             return new FloatResult(this, t => t.FnExp);
-        }
-
-        public FloatResult Coalesce(double value)
-        {
-            return new FloatResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
-        }
-        public FloatResult Coalesce(MiscResult value)
-        {
-            return new FloatResult(this, t => t.FnCoalesce, new object[] { value });
-        }
-        public FloatResult Coalesce(Parameter value)
-        {
-            return new FloatResult(this, t => t.FnCoalesce, new object[] { value });
         }
     }
 }

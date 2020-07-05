@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public partial class BooleanResult : FieldResult
+    public partial class BooleanResult
     {
         #region Operator
 
@@ -46,24 +46,6 @@ namespace Blueprint41.Query
         }
 
         #endregion
-
-        internal BooleanResult(FieldResult field) : base(field) { }
-        public BooleanResult(Func<QueryTranslator, string?>? function, object[] arguments, Type type) : base(function, arguments, type) { }
-        public BooleanResult(AliasResult alias, string fieldName, Entity entity, Property property) : base(alias, fieldName, entity, property) { }
-        public BooleanResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
-
-        public BooleanResult Coalesce(bool value)
-        {
-            return new BooleanResult(this, t => t.FnCoalesce, new object[] { Parameter.Constant(value) });
-        }
-        public BooleanResult Coalesce(MiscResult value)
-        {
-            return new BooleanResult(this, t => t.FnCoalesce, new object[] { value });
-        }
-        public BooleanResult Coalesce(Parameter value)
-        {
-            return new BooleanResult(this, t => t.FnCoalesce, new object[] { value });
-        }
 
         public override NumericResult ToInteger()
         {

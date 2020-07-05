@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Query
 {
-    public partial class AliasResult : Result
+	public partial class AliasResult : Result, IPlainAliasResult
     {
         private object[] emptyArguments = new object[0];
         protected internal AliasResult()
@@ -76,7 +76,7 @@ namespace Blueprint41.Query
         {
             return new AsResult(this, aliasName);
         }
-        public AsResult As(string aliasName, out AliasResult alias)
+		public virtual AsResult As(string aliasName, out AliasResult alias)
         {
             alias = new AliasResult()
             {
@@ -120,7 +120,53 @@ namespace Blueprint41.Query
             if (AliasName is null)
                 throw new InvalidOperationException("You cannot use the labels function in this context.");
 
-            return new StringListResult(null, t => t.FnLabels, new object[] { Parameter.Constant(AliasName) }, typeof(string));
+			return new StringListResult(t => t.FnLabels, new object[] { Parameter.Constant(AliasName) }, typeof(string));
         }
+
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out AliasResult genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
+	}
+	public abstract partial class AliasResult<T, TList> : AliasResult
+		where T : AliasResult<T, TList>
+		where TList : ListResult<TList, T>, IAliasListResult
+	{
+		protected internal AliasResult()
+		{
+		}
+		protected AliasResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) { }
+
+		public TList Collect()
+		{
+			return ResultHelper.Of<TList>().NewAliasResult(this, t=> t.FnCollect);
+		}
+		public TList CollectDistinct()
+		{
+			return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnCollectDistinct);
+		}
+		public T Coalesce(T other)
+		{
+			return ResultHelper.Of<T>().NewAliasResult(this, t => t.FnCoalesce, new object[] { other }, null);
+		}
+		public sealed override AsResult As(string aliasName, out AliasResult alias)
+		{
+			AsResult retval = As(aliasName, out T typedAlias);
+			alias = typedAlias;
+			return retval;
+		}
+		public AsResult As(string aliasName, out T alias)
+		{
+			//         alias = new T((<#= DALModel.Name #>Node)Node)
+			//{
+			//             AliasName = aliasName
+			//         };
+			alias = default!;
+
+			return As(aliasName);
+		}
+
     }
 }

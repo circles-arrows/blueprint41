@@ -5,83 +5,158 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
+using Blueprint41.Neo4j.Model;
+
 namespace Blueprint41.Query
 {
-	public partial class AliasResult
+	public partial class MiscResult : FieldResult<MiscResult, MiscListResult, object>, IPlainPrimitiveResult
 	{
-        public AliasListResult Collect()
-        {
-            return new AliasListResult(this, t => t.FnCollect);
-        }
-        public AliasListResult CollectDistinct()
-        {
-            return new AliasListResult(this, t => t.FnCollectDistinct);
-        }
+		internal MiscResult(FieldResult field) : base(field) { }
+		public MiscResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+		public MiscResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+		public MiscResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public MiscResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+
+		public AsResult As(string aliasName, out MiscResult alias)
+		{
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
+
+			alias = new MiscResult(aliasResult, null, null, null, typeof(object));
+			return this.As(aliasName);
+		}
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out MiscResult genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
 	}
-	public partial class MiscResult
+	public partial class StringResult : FieldResult<StringResult, StringListResult, string>, IPlainPrimitiveResult
 	{
-        public MiscListResult Collect()
-        {
-            return new MiscListResult(this, t => t.FnCollect);
-        }
-        public MiscListResult CollectDistinct()
-        {
-            return new MiscListResult(this, t => t.FnCollectDistinct);
-        }
+		internal StringResult(FieldResult field) : base(field) { }
+		public StringResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+		public StringResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+		public StringResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public StringResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+
+		public AsResult As(string aliasName, out StringResult alias)
+		{
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
+
+			alias = new StringResult(aliasResult, null, null, null, typeof(string));
+			return this.As(aliasName);
+		}
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out StringResult genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
 	}
-	public partial class StringResult
+	public partial class BooleanResult : FieldResult<BooleanResult, BooleanListResult, bool>, IPlainPrimitiveResult
 	{
-        public StringListResult Collect()
-        {
-            return new StringListResult(this, t => t.FnCollect);
-        }
-        public StringListResult CollectDistinct()
-        {
-            return new StringListResult(this, t => t.FnCollectDistinct);
-        }
+		internal BooleanResult(FieldResult field) : base(field) { }
+		public BooleanResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+		public BooleanResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+		public BooleanResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public BooleanResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+
+		public AsResult As(string aliasName, out BooleanResult alias)
+		{
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
+
+			alias = new BooleanResult(aliasResult, null, null, null, typeof(bool));
+			return this.As(aliasName);
+		}
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out BooleanResult genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
 	}
-	public partial class BooleanResult
+	public partial class DateTimeResult : FieldResult<DateTimeResult, DateTimeListResult, DateTime>, IPlainPrimitiveResult
 	{
-        public BooleanListResult Collect()
-        {
-            return new BooleanListResult(this, t => t.FnCollect);
-        }
-        public BooleanListResult CollectDistinct()
-        {
-            return new BooleanListResult(this, t => t.FnCollectDistinct);
-        }
+		internal DateTimeResult(FieldResult field) : base(field) { }
+		public DateTimeResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+		public DateTimeResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+		public DateTimeResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public DateTimeResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+
+		public AsResult As(string aliasName, out DateTimeResult alias)
+		{
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
+
+			alias = new DateTimeResult(aliasResult, null, null, null, typeof(DateTime));
+			return this.As(aliasName);
+		}
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out DateTimeResult genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
 	}
-	public partial class DateTimeResult
+	public partial class FloatResult : FieldResult<FloatResult, FloatListResult, double>, IPlainPrimitiveResult
 	{
-        public DateTimeListResult Collect()
-        {
-            return new DateTimeListResult(this, t => t.FnCollect);
-        }
-        public DateTimeListResult CollectDistinct()
-        {
-            return new DateTimeListResult(this, t => t.FnCollectDistinct);
-        }
+		internal FloatResult(FieldResult field) : base(field) { }
+		public FloatResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+		public FloatResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+		public FloatResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public FloatResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+
+		public AsResult As(string aliasName, out FloatResult alias)
+		{
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
+
+			alias = new FloatResult(aliasResult, null, null, null, typeof(double));
+			return this.As(aliasName);
+		}
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out FloatResult genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
 	}
-	public partial class FloatResult
+	public partial class NumericResult : FieldResult<NumericResult, NumericListResult, long>, IPlainPrimitiveResult
 	{
-        public FloatListResult Collect()
-        {
-            return new FloatListResult(this, t => t.FnCollect);
-        }
-        public FloatListResult CollectDistinct()
-        {
-            return new FloatListResult(this, t => t.FnCollectDistinct);
-        }
-	}
-	public partial class NumericResult
-	{
-        public NumericListResult Collect()
-        {
-            return new NumericListResult(this, t => t.FnCollect);
-        }
-        public NumericListResult CollectDistinct()
-        {
-            return new NumericListResult(this, t => t.FnCollectDistinct);
-        }
+		internal NumericResult(FieldResult field) : base(field) { }
+		public NumericResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+		public NumericResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+		public NumericResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public NumericResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+
+		public AsResult As(string aliasName, out NumericResult alias)
+		{
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
+
+			alias = new NumericResult(aliasResult, null, null, null, typeof(long));
+			return this.As(aliasName);
+		}
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out NumericResult genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
 	}
 }

@@ -169,7 +169,7 @@ namespace <#= Settings.FullQueryNamespace #>
 #>
 	}
 
-	public class <#= DALModel.Name #>Alias : AliasResult
+	public class <#= DALModel.Name #>Alias : AliasResult<<#= DALModel.Name #>Alias, <#= DALModel.Name #>ListAlias>
 	{
 		internal <#= DALModel.Name #>Alias(<#= DALModel.Name #>Node parent)
 		{
@@ -292,18 +292,6 @@ namespace <#= Settings.FullQueryNamespace #>
 <#
 	}
 #>
-		new public <#= DALModel.Name #>AliasList Collect()
-		{
-			return new <#= DALModel.Name #>AliasList(this, t=> t.FnCollect);
-		}
-		new public <#= DALModel.Name #>AliasList CollectDistinct()
-		{
-			return new <#= DALModel.Name #>AliasList(this, t=> t.FnCollectDistinct);
-		}
-		public <#= DALModel.Name #>Alias Coalesce(<#= DALModel.Name #>Alias other)
-		{
-			return new <#= DALModel.Name #>Alias(this, t => t.FnCoalesce, new object[] { other });
-		}
 		public AsResult As(string aliasName, out <#= DALModel.Name #>Alias alias)
 		{
 			alias = new <#= DALModel.Name #>Alias((<#= DALModel.Name #>Node)Node)
@@ -314,9 +302,15 @@ namespace <#= Settings.FullQueryNamespace #>
 		}
 	}
 
-	public class <#= DALModel.Name #>AliasList : ListResult<<#= DALModel.Name #>AliasList, <#= DALModel.Name #>Alias>
+	public class <#= DALModel.Name #>ListAlias : ListResult<<#= DALModel.Name #>ListAlias, <#= DALModel.Name #>Alias>, IAliasListResult
 	{
-		public <#= DALModel.Name #>AliasList(AliasResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
+		public <#= DALModel.Name #>ListAlias(AliasResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
+		{
+		}
+	}
+	public class <#= DALModel.Name #>JaggedListAlias : ListResult<<#= DALModel.Name #>JaggedListAlias, <#= DALModel.Name #>ListAlias>, IAliasJaggedListResult
+	{
+		public <#= DALModel.Name #>JaggedListAlias(AliasResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
 		{
 		}
 	}

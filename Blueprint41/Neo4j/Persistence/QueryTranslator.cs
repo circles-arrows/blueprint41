@@ -34,11 +34,7 @@ namespace Blueprint41.Neo4j.Model
                 string[] compiledArgs = field.FunctionArgs.Select(arg => state.Preview(GetCompile(arg), state)).ToArray();
                 string compiledText = string.Format(functionText.Replace("{base}", "{{base}}"), compiledArgs);
 
-                if (field.Field is null)
-                {
-                    state.Text.Append(compiledText);
-                }
-                else
+                if ((object?)field.Field != null)
                 {
                     string[] split = compiledText.Split(new string[] { "{base}" }, StringSplitOptions.None);
                     if (split.Length == 0)
@@ -46,6 +42,19 @@ namespace Blueprint41.Neo4j.Model
 
                     string baseText = state.Preview(field.Field.Compile, state);
                     state.Text.Append(string.Join(baseText, split));
+                }
+                else if ((object?)field.Alias != null)
+                {
+                    string[] split = compiledText.Split(new string[] { "{base}" }, StringSplitOptions.None);
+                    if (split.Length == 0)
+                        throw new NotSupportedException("Functions have to include compilation of the base they are derived from.");
+
+                    string baseText = state.Preview(field.Alias.Compile, state);
+                    state.Text.Append(string.Join(baseText, split));
+                }
+                else
+                {
+                    state.Text.Append(compiledText);
                 }
             }
         }
@@ -67,11 +76,7 @@ namespace Blueprint41.Neo4j.Model
                 string[] compiledArgs = alias.FunctionArgs.Select(arg => state.Preview(GetCompile(arg), state)).ToArray();
                 string compiledText = string.Format(functionText.Replace("{base}", "{{base}}"), compiledArgs);
 
-                if (alias.Alias is null)
-                {
-                    state.Text.Append(compiledText);
-                }
-                else
+                if ((object?)alias.Alias != null)
                 {
                     string[] split = compiledText.Split(new string[] { "{base}" }, StringSplitOptions.None);
                     if (split.Length == 0)
@@ -79,6 +84,10 @@ namespace Blueprint41.Neo4j.Model
 
                     string baseText = state.Preview(alias.Alias.Compile, state);
                     state.Text.Append(string.Join(baseText, split));
+                }
+                else
+                {
+                    state.Text.Append(compiledText);
                 }
             }
         }
@@ -234,6 +243,10 @@ namespace Blueprint41.Neo4j.Model
                     state.Text.Append("OR ");
                     query.ForEach(query.Conditions, state.Text, " AND ", item => item?.Compile(state));
                     break;
+                case PartType.Unwind:
+                    state.Text.Append("UNWIND ");
+                    query.ForEach(query.WithResults, state.Text, ", ", item => item?.Compile(state));
+                    break;
                 case PartType.With:
                     state.Text.Append("WITH ");
                     query.ForEach(query.WithResults, state.Text, ", ", item => item?.Compile(state));
@@ -324,11 +337,15 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnExp                    => "exp({base})";
         public virtual string FnPi                     => "pi()";
         public virtual string FnRand                   => "rand()";
+        public virtual string FnRange                  => "range({0}, {1}, {2})";
         public virtual string FnListGetItem            => "{base}[{0}]";
         public virtual string FnListHead               => "HEAD({base})";
         public virtual string FnListLast               => "LAST({base})";
         public virtual string FnListSort               => "apoc.coll.sort({base})";
+        public virtual string FnListSortNode           => "apoc.coll.sortNodes({base}, \"{0}\")";
+        public virtual string FnListSortNodeDesc       => "apoc.coll.sortNodes({base}, \"^{0}\")";
         public virtual string FnListSize               => "size({base})";
+        public virtual string FnPairsMin               => "apoc.coll.pairsMin({base})";
         public virtual string FnListUnion              => "{base} + {0}";
         public virtual string FnListAll                => "all(item IN {base} WHERE {0})";
         public virtual string FnListAny                => "any(item IN {base} WHERE {0})";
@@ -336,12 +353,21 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnListSingle             => "single(item IN {base} WHERE {0})";
         public virtual string FnListExtract            => "extract(item in {base} | {0})";
         public virtual string FnListReduce             => "reduce(value = {0}, item in {base} | {1})";
+        public virtual string FnListSelect             => "[item in {base} | {0}]";
+        public virtual string FnListSelectWhere        => "[item in {base} WHERE {0}]";
+        public virtual string FnListSelectValueWhere   => "[item in {base} WHERE {0} | {1}]";
         public virtual string FnGetField               => "{0}[{1}]";
         public virtual string FnGetFieldWithCoalesce   => "{0}[COALESCE({1}, '')]";
         public virtual string FnConvertToBoolean       => "CASE WHEN {0} IS NULL THEN NULL WHEN {0} THEN 1 ELSE 0 END";
         public virtual string FnConvertMinOrMaxToNull  => "CASE WHEN {base} = {0} THEN NULL ELSE {base} END";
         public virtual string FnConvertMinAndMaxToNull => "CASE WHEN {base} = {0} OR {base} = {1} THEN NULL ELSE {base} END";
         public virtual string FnCaseWhen               => "CASE WHEN {0} THEN {1} ELSE {2} END";
+        public virtual string FnAdd                    => "({base} + {0})";
+        public virtual string FnSubtract               => "({base} - {0})";
+        public virtual string FnMultiply               => "({base} * {0})";
+        public virtual string FnDivide                 => "({base} / {0})";
+        public virtual string FnModulo                 => "({base} % {0})";
+        public virtual string FnPower                  => "({base} ^ {0})";
         public virtual string FnCaseWhenMultiple(int count)
         {
             StringBuilder sb = new StringBuilder();
@@ -368,13 +394,14 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnConcatMultiple(int count)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("{base}");
+            sb.Append("({base}");
             for (int index = 0; index < count; index++)
             {
                 sb.Append(" + {");
                 sb.Append(index);
                 sb.Append("}");
             }
+            sb.Append(")");
             return sb.ToString();
         }
         public virtual string FnSHA1(int count)

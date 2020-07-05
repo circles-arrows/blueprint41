@@ -102,10 +102,6 @@
       <LastGenOutput>CreateIndex.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
     </None>
-    <None Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint - Copy.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>CreateUniqueConstraint - Copy.cs</LastGenOutput>
-    </None>
     <None Update="Neo4j\Refactoring\Templates\DropExistConstraint.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>DropExistConstraint.cs</LastGenOutput>
@@ -127,10 +123,6 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>MergeProperty.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\MergeRelationship - Copy.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MergeRelationship - Copy.cs</LastGenOutput>
     </None>
     <None Update="Neo4j\Refactoring\Templates\MergeRelationship.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -189,6 +181,10 @@
     <None Update="Query\ListResult.Partial.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ListResult.Partial.cs</LastGenOutput>
+    </None>
+    <None Update="Query\Query.Partial.tt">
+      <LastGenOutput>Query.Partial.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
     </None>
     <None Update="Query\SpecificListResult.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -264,11 +260,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>CreateIndex.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint - Copy.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CreateUniqueConstraint - Copy.tt</DependentUpon>
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\DropExistConstraint.cs">
       <DesignTime>True</DesignTime>
@@ -349,6 +340,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ListResult.Partial.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Query\Query.Partial.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Query.Partial.tt</DependentUpon>
     </Compile>
     <Compile Update="Query\Result.Partial.cs">
       <DesignTime>True</DesignTime>

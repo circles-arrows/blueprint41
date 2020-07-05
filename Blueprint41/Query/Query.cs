@@ -1,5 +1,6 @@
 ﻿using Blueprint41.Core;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,7 +11,7 @@ using query = Blueprint41.Query;
 namespace Blueprint41.Query
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled, IUnionQuery
+    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled, IUnionQuery
     {
         internal Query(PersistenceProvider persistenceProvider)
         {
@@ -303,6 +304,7 @@ namespace Blueprint41.Query
         OrderBy,
         Return,
         Where,
+        Unwind,
         With,
         Skip,
         Limit,
@@ -311,29 +313,33 @@ namespace Blueprint41.Query
 
     #region Interfaces
 
-    public interface IBlankQuery
+    public partial interface IBlankQuery
     {
         IMatchQuery Match(params Node[] patterns);
         IOptionalMatchQuery OptionalMatch(params Node[] patterns);
     }
-    public interface IOptionalMatchQuery : IBlankQuery
+    public partial interface IOptionalMatchQuery : IBlankQuery
     {
         IWithQuery With(params Result[] results);
         IReturnQuery Return(params Result[] results);
         IWhereQuery Where(params QueryCondition[] conditions);
     }
-    public interface IMatchQuery : IOptionalMatchQuery
+    public partial interface IMatchQuery : IOptionalMatchQuery
     {
         IMatchQuery UsingScan(params AliasResult[] aliases);
         IMatchQuery UsingIndex(params FieldResult[] fields);
     }
-    public interface IWhereQuery : IBlankQuery
+    public partial interface IWhereQuery : IBlankQuery
     {
         IWithQuery With(params Result[] results);
         IReturnQuery Return(params Result[] results);
         IWhereQuery Or(params QueryCondition[] conditions);
     }
-    public interface IWithQuery : IMatchQuery
+    public partial interface IUnwindQuery<T>
+    {
+        IMatchQuery As(string aliasName, out T alias);
+    }
+    public partial interface IWithQuery : IMatchQuery
     {
         IWithQuery Skip(Parameter skip);
         IWithQuery Limit(Parameter limit);
@@ -345,7 +351,7 @@ namespace Blueprint41.Query
         IWithQuery Page(Parameter skip, Parameter limit);
     }
 
-    public interface IReturnQuery
+    public partial interface IReturnQuery
     {
         IUnionQuery UnionMatch(bool duplicates = true, params Node[] patterns);
         ISkipQuery Skip(Parameter skip);
@@ -358,28 +364,28 @@ namespace Blueprint41.Query
         ILimitQuery Page(Parameter skip, Parameter limit);
         ICompiled Compile();
     }
-    public interface IUnionQuery: IMatchQuery
+    public partial interface IUnionQuery : IMatchQuery
     {
     }
 
-    public interface ISkipQuery
+    public partial interface ISkipQuery
     {
         ILimitQuery Limit(Parameter limit);
         ILimitQuery Limit(int limit);
         ICompiled Compile();
     }
 
-    public interface ILimitQuery
+    public partial interface ILimitQuery
     {
         ICompiled Compile();
     }
 
-    public interface IPageQuery : ILimitQuery
+    public partial interface IPageQuery : ILimitQuery
     {
 
     }
 
-    public interface IOrderQuery
+    public partial interface IOrderQuery
     {
         ISkipQuery Skip(Parameter skip);
         ILimitQuery Limit(Parameter limit);
@@ -391,7 +397,7 @@ namespace Blueprint41.Query
         ICompiled Compile();
     }
 
-    public interface ICompiled
+    public partial interface ICompiled
     {
         QueryExecutionContext GetExecutionContext();
         CompiledQuery? CompiledQuery { get; }

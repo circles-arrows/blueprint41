@@ -551,7 +551,21 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Alias : AliasResult\r\n\t{\r\n\t\tinternal ");
+            this.Write("Alias : AliasResult<");
+            
+            #line 172 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("Alias, ");
+            
+            #line 172 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("ListAlias>\r\n\t{\r\n\t\tinternal ");
             
             #line 174 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1012,73 +1026,23 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\t\tnew public ");
+            this.Write("\t\tpublic AsResult As(string aliasName, out ");
             
             #line 295 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("AliasList Collect()\r\n\t\t{\r\n\t\t\treturn new ");
+            this.Write("Alias alias)\r\n\t\t{\r\n\t\t\talias = new ");
             
             #line 297 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("AliasList(this, t=> t.FnCollect);\r\n\t\t}\r\n\t\tnew public ");
-            
-            #line 299 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
-            
-            #line default
-            #line hidden
-            this.Write("AliasList CollectDistinct()\r\n\t\t{\r\n\t\t\treturn new ");
-            
-            #line 301 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
-            
-            #line default
-            #line hidden
-            this.Write("AliasList(this, t=> t.FnCollectDistinct);\r\n\t\t}\r\n\t\tpublic ");
-            
-            #line 303 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
-            
-            #line default
-            #line hidden
-            this.Write("Alias Coalesce(");
-            
-            #line 303 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
-            
-            #line default
-            #line hidden
-            this.Write("Alias other)\r\n\t\t{\r\n\t\t\treturn new ");
-            
-            #line 305 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
-            
-            #line default
-            #line hidden
-            this.Write("Alias(this, t => t.FnCoalesce, new object[] { other });\r\n\t\t}\r\n\t\tpublic AsResult A" +
-                    "s(string aliasName, out ");
-            
-            #line 307 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
-            
-            #line default
-            #line hidden
-            this.Write("Alias alias)\r\n\t\t{\r\n\t\t\talias = new ");
-            
-            #line 309 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
-            
-            #line default
-            #line hidden
             this.Write("Alias((");
             
-            #line 309 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            #line 297 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
@@ -1086,39 +1050,69 @@ namespace Blueprint41.DatastoreTemplates
             this.Write("Node)Node)\r\n\t\t\t{\r\n\t\t\t\tAliasName = aliasName\r\n\t\t\t};\r\n\t\t\treturn this.As(aliasName);" +
                     "\r\n\t\t}\r\n\t}\r\n\r\n\tpublic class ");
             
-            #line 317 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            #line 305 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("AliasList : ListResult<");
+            this.Write("ListAlias : ListResult<");
             
-            #line 317 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            #line 305 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("AliasList, ");
+            this.Write("ListAlias, ");
             
-            #line 317 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            #line 305 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Alias>\r\n\t{\r\n\t\tpublic ");
+            this.Write("Alias>, IAliasListResult\r\n\t{\r\n\t\tpublic ");
             
-            #line 319 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            #line 307 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("AliasList(AliasResult parent, Func<QueryTranslator, string> function, object[] ar" +
+            this.Write("ListAlias(AliasResult parent, Func<QueryTranslator, string> function, object[] ar" +
                     "guments = null, Type type = null) : base(parent, function, arguments, type)\r\n\t\t{" +
-                    "\r\n\t\t}\r\n\t}\r\n}\r\n");
+                    "\r\n\t\t}\r\n\t}\r\n\tpublic class ");
+            
+            #line 311 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("JaggedListAlias : ListResult<");
+            
+            #line 311 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("JaggedListAlias, ");
+            
+            #line 311 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("ListAlias>, IAliasJaggedListResult\r\n\t{\r\n\t\tpublic ");
+            
+            #line 313 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write("JaggedListAlias(AliasResult parent, Func<QueryTranslator, string> function, objec" +
+                    "t[] arguments = null, Type type = null) : base(parent, function, arguments, type" +
+                    ")\r\n\t\t{\r\n\t\t}\r\n\t}\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 324 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+        #line 318 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
 
 	private string GetResultType(Type type)

@@ -6,6 +6,11 @@ namespace Blueprint41.Query
 {
     public class PropertiesAliasResult : AliasResult
     {
+        public override AsResult As(string aliasName, out AliasResult alias)
+        {
+            throw new NotSupportedException();
+        }
+
         public MiscResult Get(FieldResult result, bool withCoalesce = false, Type? type = null)
         {
             if (withCoalesce)

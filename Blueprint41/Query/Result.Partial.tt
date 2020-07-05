@@ -7,7 +7,6 @@
 <#
 	var listTypes = new []
 	{
-		( listType: "AliasListResult",    resultType: "AliasResult",    underlyingType: null       ),
 		( listType: "MiscListResult",     resultType: "MiscResult",     underlyingType: "object"   ),
 		( listType: "StringListResult",   resultType: "StringResult",   underlyingType: "string"   ),
 		( listType: "BooleanListResult",  resultType: "BooleanResult",  underlyingType: "bool"     ),
@@ -23,22 +22,38 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
+using Blueprint41.Neo4j.Model;
+
 namespace Blueprint41.Query
 {
 <#
 	foreach ((string listType, string resultType, string underlyingType) in listTypes)
 	{
 #>
-	public partial class <#= resultType #>
+	public partial class <#= resultType #> : FieldResult<<#= resultType #>, <#= listType #>, <#= underlyingType #>>, IPlainPrimitiveResult
 	{
-        public <#= listType #> Collect()
-        {
-            return new <#= listType #>(this, t => t.FnCollect);
-        }
-        public <#= listType #> CollectDistinct()
-        {
-            return new <#= listType #>(this, t => t.FnCollectDistinct);
-        }
+		internal <#= resultType #>(FieldResult field) : base(field) { }
+		public <#= resultType #>(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+		public <#= resultType #>(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+		public <#= resultType #>(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public <#= resultType #>(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
+
+		public AsResult As(string aliasName, out <#= resultType #> alias)
+		{
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
+
+			alias = new <#= resultType #>(aliasResult, null, null, null, typeof(<#= underlyingType #>));
+			return this.As(aliasName);
+		}
+		AsResult IResult.As<T>(string aliasName, out T alias)
+		{
+			AsResult retval = As(aliasName, out <#= resultType #> genericAlias);
+			alias = (T)(object)genericAlias;
+			return retval;
+		}
 	}
 <#
 	}
