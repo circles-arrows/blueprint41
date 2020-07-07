@@ -1,9 +1,11 @@
-﻿using Blueprint41.Neo4j.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Blueprint41.Core;
+using Blueprint41.Neo4j.Model;
 
 namespace Blueprint41.Query
 {
@@ -14,10 +16,14 @@ namespace Blueprint41.Query
         {
             FunctionText = delegate (QueryTranslator t) { return null; };
         }
-        protected AliasResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
-        {
-            Alias = parent;
-            Node = parent.Node;
+
+		protected AliasResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this((AliasResult)null!, function, arguments, type) { }
+		protected AliasResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : this(parent?.Alias!, function, arguments, type) { }
+		protected AliasResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
+		{
+			Alias = alias;
+			AliasName = alias?.AliasName;
+			Node = alias?.Node;
             FunctionText = function ?? delegate (QueryTranslator t) { return null; };
             FunctionArgs = arguments ?? emptyArguments;
             OverridenReturnType = type;
@@ -76,7 +82,7 @@ namespace Blueprint41.Query
         {
             return new AsResult(this, aliasName);
         }
-		public virtual AsResult As(string aliasName, out AliasResult alias)
+		public AsResult As(string aliasName, out AliasResult alias)
         {
             alias = new AliasResult()
             {
@@ -125,8 +131,11 @@ namespace Blueprint41.Query
 
 		AsResult IResult.As<T>(string aliasName, out T alias)
 		{
-			AsResult retval = As(aliasName, out AliasResult genericAlias);
-			alias = (T)(object)genericAlias;
+			if (typeof(T) != this.GetType())
+				throw new NotSupportedException($"The type of the result ({this.GetType().Name}) must match the generic type of As<{typeof(T).Name}>");
+
+			AsResult retval = ResultHelper.Of<T>().As((T)(object)this, aliasName, out T tmp);
+			alias = tmp;
 			return retval;
 		}
 	}
@@ -137,7 +146,10 @@ namespace Blueprint41.Query
 		protected internal AliasResult()
 		{
 		}
-		protected AliasResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) { }
+
+		protected AliasResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+		protected AliasResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+		protected AliasResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 
 		public TList Collect()
 		{
@@ -151,22 +163,5 @@ namespace Blueprint41.Query
 		{
 			return ResultHelper.Of<T>().NewAliasResult(this, t => t.FnCoalesce, new object[] { other }, null);
 		}
-		public sealed override AsResult As(string aliasName, out AliasResult alias)
-		{
-			AsResult retval = As(aliasName, out T typedAlias);
-			alias = typedAlias;
-			return retval;
-		}
-		public AsResult As(string aliasName, out T alias)
-		{
-			//         alias = new T((<#= DALModel.Name #>Node)Node)
-			//{
-			//             AliasName = aliasName
-			//         };
-			alias = default!;
-
-			return As(aliasName);
-		}
-
     }
 }

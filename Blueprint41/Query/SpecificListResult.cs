@@ -31,9 +31,9 @@ namespace Blueprint41.Query
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
-		public ListOfMiscListResult PairsMin()
+		public MiscJaggedListResult PairsMin()
 		{
-			return new ListOfMiscListResult(this, t => t.FnPairsMin);
+			return new MiscJaggedListResult(this, t => t.FnPairsMin);
 		}
 	}
 	public partial class StringListResult : ListResult<StringListResult, StringResult, string>, IPrimitiveListResult
@@ -59,9 +59,9 @@ namespace Blueprint41.Query
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
-		public ListOfStringListResult PairsMin()
+		public StringJaggedListResult PairsMin()
 		{
-			return new ListOfStringListResult(this, t => t.FnPairsMin);
+			return new StringJaggedListResult(this, t => t.FnPairsMin);
 		}
 	}
 	public partial class BooleanListResult : ListResult<BooleanListResult, BooleanResult, bool>, IPrimitiveListResult
@@ -87,9 +87,9 @@ namespace Blueprint41.Query
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
-		public ListOfBooleanListResult PairsMin()
+		public BooleanJaggedListResult PairsMin()
 		{
-			return new ListOfBooleanListResult(this, t => t.FnPairsMin);
+			return new BooleanJaggedListResult(this, t => t.FnPairsMin);
 		}
 	}
 	public partial class DateTimeListResult : ListResult<DateTimeListResult, DateTimeResult, DateTime>, IPrimitiveListResult
@@ -115,9 +115,9 @@ namespace Blueprint41.Query
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
-		public ListOfDateTimeListResult PairsMin()
+		public DateTimeJaggedListResult PairsMin()
 		{
-			return new ListOfDateTimeListResult(this, t => t.FnPairsMin);
+			return new DateTimeJaggedListResult(this, t => t.FnPairsMin);
 		}
 	}
 	public partial class FloatListResult : ListResult<FloatListResult, FloatResult, double>, IPrimitiveListResult
@@ -143,9 +143,9 @@ namespace Blueprint41.Query
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
-		public ListOfFloatListResult PairsMin()
+		public FloatJaggedListResult PairsMin()
 		{
-			return new ListOfFloatListResult(this, t => t.FnPairsMin);
+			return new FloatJaggedListResult(this, t => t.FnPairsMin);
 		}
 	}
 	public partial class NumericListResult : ListResult<NumericListResult, NumericResult, long>, IPrimitiveListResult
@@ -171,151 +171,151 @@ namespace Blueprint41.Query
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
-		public ListOfNumericListResult PairsMin()
+		public NumericJaggedListResult PairsMin()
 		{
-			return new ListOfNumericListResult(this, t => t.FnPairsMin);
+			return new NumericJaggedListResult(this, t => t.FnPairsMin);
 		}
 	}
-	public partial class ListOfMiscListResult : ListResult<ListOfMiscListResult, MiscListResult, object[]>, IPrimitiveJaggedListResult
+	public partial class MiscJaggedListResult : ListResult<MiscJaggedListResult, MiscListResult, object[]>, IPrimitiveListResult
 	{
-		public ListOfMiscListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
-		public ListOfMiscListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-		public ListOfMiscListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public ListOfMiscListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public MiscJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
+		public MiscJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+		public MiscJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public MiscJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
-		public AsResult As(string aliasName, out ListOfMiscListResult alias)
+		public AsResult As(string aliasName, out MiscJaggedListResult alias)
 		{
 			AliasResult aliasResult = new AliasResult()
 			{
 				AliasName = aliasName
 			};
 
-			alias = new ListOfMiscListResult(aliasResult, null, null, null, typeof(object[]));
+			alias = new MiscJaggedListResult(aliasResult, null, null, null, typeof(object[]));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
 		{
-			AsResult retval = As(aliasName, out ListOfMiscListResult genericAlias);
+			AsResult retval = As(aliasName, out MiscJaggedListResult genericAlias);
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
 	}
-	public partial class ListOfStringListResult : ListResult<ListOfStringListResult, StringListResult, string[]>, IPrimitiveJaggedListResult
+	public partial class StringJaggedListResult : ListResult<StringJaggedListResult, StringListResult, string[]>, IPrimitiveListResult
 	{
-		public ListOfStringListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
-		public ListOfStringListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-		public ListOfStringListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public ListOfStringListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public StringJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
+		public StringJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+		public StringJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public StringJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
-		public AsResult As(string aliasName, out ListOfStringListResult alias)
+		public AsResult As(string aliasName, out StringJaggedListResult alias)
 		{
 			AliasResult aliasResult = new AliasResult()
 			{
 				AliasName = aliasName
 			};
 
-			alias = new ListOfStringListResult(aliasResult, null, null, null, typeof(string[]));
+			alias = new StringJaggedListResult(aliasResult, null, null, null, typeof(string[]));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
 		{
-			AsResult retval = As(aliasName, out ListOfStringListResult genericAlias);
+			AsResult retval = As(aliasName, out StringJaggedListResult genericAlias);
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
 	}
-	public partial class ListOfBooleanListResult : ListResult<ListOfBooleanListResult, BooleanListResult, bool[]>, IPrimitiveJaggedListResult
+	public partial class BooleanJaggedListResult : ListResult<BooleanJaggedListResult, BooleanListResult, bool[]>, IPrimitiveListResult
 	{
-		public ListOfBooleanListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
-		public ListOfBooleanListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-		public ListOfBooleanListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public ListOfBooleanListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public BooleanJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
+		public BooleanJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+		public BooleanJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public BooleanJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
-		public AsResult As(string aliasName, out ListOfBooleanListResult alias)
+		public AsResult As(string aliasName, out BooleanJaggedListResult alias)
 		{
 			AliasResult aliasResult = new AliasResult()
 			{
 				AliasName = aliasName
 			};
 
-			alias = new ListOfBooleanListResult(aliasResult, null, null, null, typeof(bool[]));
+			alias = new BooleanJaggedListResult(aliasResult, null, null, null, typeof(bool[]));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
 		{
-			AsResult retval = As(aliasName, out ListOfBooleanListResult genericAlias);
+			AsResult retval = As(aliasName, out BooleanJaggedListResult genericAlias);
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
 	}
-	public partial class ListOfDateTimeListResult : ListResult<ListOfDateTimeListResult, DateTimeListResult, DateTime[]>, IPrimitiveJaggedListResult
+	public partial class DateTimeJaggedListResult : ListResult<DateTimeJaggedListResult, DateTimeListResult, DateTime[]>, IPrimitiveListResult
 	{
-		public ListOfDateTimeListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
-		public ListOfDateTimeListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-		public ListOfDateTimeListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public ListOfDateTimeListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public DateTimeJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
+		public DateTimeJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+		public DateTimeJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public DateTimeJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
-		public AsResult As(string aliasName, out ListOfDateTimeListResult alias)
+		public AsResult As(string aliasName, out DateTimeJaggedListResult alias)
 		{
 			AliasResult aliasResult = new AliasResult()
 			{
 				AliasName = aliasName
 			};
 
-			alias = new ListOfDateTimeListResult(aliasResult, null, null, null, typeof(DateTime[]));
+			alias = new DateTimeJaggedListResult(aliasResult, null, null, null, typeof(DateTime[]));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
 		{
-			AsResult retval = As(aliasName, out ListOfDateTimeListResult genericAlias);
+			AsResult retval = As(aliasName, out DateTimeJaggedListResult genericAlias);
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
 	}
-	public partial class ListOfFloatListResult : ListResult<ListOfFloatListResult, FloatListResult, double[]>, IPrimitiveJaggedListResult
+	public partial class FloatJaggedListResult : ListResult<FloatJaggedListResult, FloatListResult, double[]>, IPrimitiveListResult
 	{
-		public ListOfFloatListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
-		public ListOfFloatListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-		public ListOfFloatListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public ListOfFloatListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public FloatJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
+		public FloatJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+		public FloatJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public FloatJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
-		public AsResult As(string aliasName, out ListOfFloatListResult alias)
+		public AsResult As(string aliasName, out FloatJaggedListResult alias)
 		{
 			AliasResult aliasResult = new AliasResult()
 			{
 				AliasName = aliasName
 			};
 
-			alias = new ListOfFloatListResult(aliasResult, null, null, null, typeof(double[]));
+			alias = new FloatJaggedListResult(aliasResult, null, null, null, typeof(double[]));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
 		{
-			AsResult retval = As(aliasName, out ListOfFloatListResult genericAlias);
+			AsResult retval = As(aliasName, out FloatJaggedListResult genericAlias);
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
 	}
-	public partial class ListOfNumericListResult : ListResult<ListOfNumericListResult, NumericListResult, long[]>, IPrimitiveJaggedListResult
+	public partial class NumericJaggedListResult : ListResult<NumericJaggedListResult, NumericListResult, long[]>, IPrimitiveListResult
 	{
-		public ListOfNumericListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
-		public ListOfNumericListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
-		public ListOfNumericListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public ListOfNumericListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public NumericJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
+		public NumericJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+		public NumericJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
+		public NumericJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
-		public AsResult As(string aliasName, out ListOfNumericListResult alias)
+		public AsResult As(string aliasName, out NumericJaggedListResult alias)
 		{
 			AliasResult aliasResult = new AliasResult()
 			{
 				AliasName = aliasName
 			};
 
-			alias = new ListOfNumericListResult(aliasResult, null, null, null, typeof(long[]));
+			alias = new NumericJaggedListResult(aliasResult, null, null, null, typeof(long[]));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
 		{
-			AsResult retval = As(aliasName, out ListOfNumericListResult genericAlias);
+			AsResult retval = As(aliasName, out NumericJaggedListResult genericAlias);
 			alias = (T)(object)genericAlias;
 			return retval;
 		}

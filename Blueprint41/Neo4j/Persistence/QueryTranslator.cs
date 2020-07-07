@@ -19,7 +19,7 @@ namespace Blueprint41.Neo4j.Model
             string? functionText = field.FunctionText.Invoke(state.Translator);
             if (functionText == null)
             {
-                if (!(field.Alias is null))
+                if ((object?)field.Alias != null)
                 {
                     field.Alias.Compile(state);
                     if (!string.IsNullOrEmpty(field.FieldName))
@@ -27,6 +27,10 @@ namespace Blueprint41.Neo4j.Model
                         state.Text.Append(".");
                         state.Text.Append(field.FieldName);
                     }
+                }
+                else if (!string.IsNullOrEmpty(field.FieldName))
+                {
+                    state.Text.Append(field.FieldName);
                 }
             }
             else
@@ -343,7 +347,6 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnListLast               => "LAST({base})";
         public virtual string FnListSort               => "apoc.coll.sort({base})";
         public virtual string FnListSortNode           => "apoc.coll.sortNodes({base}, \"{0}\")";
-        public virtual string FnListSortNodeDesc       => "apoc.coll.sortNodes({base}, \"^{0}\")";
         public virtual string FnListSize               => "size({base})";
         public virtual string FnPairsMin               => "apoc.coll.pairsMin({base})";
         public virtual string FnListUnion              => "{base} + {0}";

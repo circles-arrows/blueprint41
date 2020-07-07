@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -48,30 +49,65 @@ namespace Blueprint41.Query
         {
             get
             {
-                if (!IsJaggedList)
+                string? type;
+                string? targetType;
+
+                if (IsJaggedList)
                     return null;
 
                 if (itemType is null)
                 {
-                    if (IsPrimitive)
-                    {
-                        
-                    }
-                    if (IsList)
-                    {
+                    targetType = null;
+                    type = Type.Name;
 
+                    if (IsAlias)
+                    {
+                        SearchEnd("Alias", "ListAlias");
+                    }
+                    else if (IsPrimitive)
+                    {
+                        SearchEnd("Result", "ListResult");
+                    }
+                    else if (IsList)
+                    {
+                        SearchEnd("ListAlias", "JaggedListAlias");
+                        SearchEnd("ListResult", "JaggedListResult");
                     }
                     else
                     {
                         throw new NotSupportedException($"You shouldn't end up in this piece of code, please file a bug report for 'NotSupportedException in ResultHelper<{Type.FullName}>.ListType' at: https://github.com/circles-arrows/blueprint41/issues");
                     }
+
+                    if (targetType == null)
+                        throw new NotImplementedException();
+
+                    Type resultHelperType = Type.Assembly.GetType(targetType, true, false);
+                    itemType = ResultHelper.Of(resultHelperType);
                 }
                 return itemType;
+
+                void SearchEnd(string search, string replace) => ComputeTypeName(Type, search, replace, ref targetType);
             }
         }
         protected ResultHelper? listType = null;
         public Type Type { get; protected set; } = null!;
         public Type? UnderlyingType { get; protected set; } = null!;
+
+        static private void ComputeTypeName(Type type, string search, string replace, ref string? targetType)
+        {
+            if (targetType != null)
+                return;
+
+            int index = type.Name.LastIndexOf(search);
+            if (index == -1)
+                return;
+
+            int expectedIndex = type.Name.Length - search.Length;
+            if (index == expectedIndex)
+            {
+                targetType = string.Concat(type.Namespace, ".", type.Name.Substring(0, index), replace);
+            }
+        }
 
         #endregion
 
@@ -126,6 +162,46 @@ namespace Blueprint41.Query
 
             return (body, parameters);
         }
+        protected private static (Expression body, ParameterExpression[] parameters) GetExp<T>(string name, Type ret, params Type[] types)
+        {
+            Type thisType = types.FirstOrDefault();
+            Type[] sigParams = types.Skip(1).ToArray();
+
+            ParameterExpression[] allParams = new ParameterExpression[types.Length];
+            for (int index = 0; index < types.Length; index++)
+                allParams[index] = Expression.Parameter(types[index]);
+
+            ParameterExpression instance = allParams.First();
+            ParameterExpression[] parameters = allParams.Skip(1).ToArray();
+
+            MethodInfo[] methods = typeof(T).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy).Where(item => item.Name == name).ToArray();
+            MethodInfo? method = methods.FirstOrDefault(item => MatchParameters(item.GetParameters(), sigParams));
+
+            if (method is null)
+                throw new ArgumentException($"The method {name} on {typeof(T).Name} is not supported");
+
+            //if (method.DeclaringType != thisType)
+            //    throw new ArgumentException($"The methods first argument {thisType.Name} does not match the type of ResultHelper<{typeof(T).Name} >");
+
+            if (method.ReturnType != ret)
+                throw new ArgumentException($"The methods return type {method.ReturnType.Name} does not match the expected return type {ret.Name}");
+
+            Expression body = Expression.Call(instance, method, parameters);
+
+            return (body, allParams);
+
+            bool MatchParameters(ParameterInfo[] method, Type[] expected)
+            {
+                if (method.Length != expected.Length)
+                    return false;
+
+                for (int index = 0; index < method.Length; index++)
+                    if (method[index].ParameterType != expected[index])
+                        return false;
+
+                return true;
+            }
+        }
 
         #endregion
     }
@@ -146,10 +222,20 @@ namespace Blueprint41.Query
                 var exp = GetExp<T>(typeof(AliasResult), typeof(string), typeof(Entity), typeof(Property), typeof(Type));
                 return Expression.Lambda<Func<AliasResult, string?, Entity?, Property?, Type?, T>>(exp.body, exp.parameters).Compile();
             }, true);
+            newAliasResult2Ctor = new Lazy<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, T>>(delegate ()
+            {
+                var exp = GetExp<T>(typeof(AliasResult), typeof(Func<QueryTranslator, string>), typeof(object[]), typeof(Type));
+                return Expression.Lambda<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, T>>(exp.body, exp.parameters).Compile();
+            }, true);
             newFieldResultCtor = new Lazy<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, T>>(delegate ()
             {
                 var exp = GetExp<T>(typeof(FieldResult), typeof(Func<QueryTranslator, string>), typeof(object[]), typeof(Type));
                 return Expression.Lambda<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, T>>(exp.body, exp.parameters).Compile();
+            }, true);
+            asMethod = new Lazy<AsDelegate<T>>(delegate()
+            {
+                var exp = GetExp<T>("As", typeof(AsResult), typeof(T), typeof(string), typeof(T).MakeByRefType());
+                return Expression.Lambda<AsDelegate<T>>(exp.body, exp.parameters).Compile();
             }, true);
         }
         private ResultHelper()
@@ -174,12 +260,12 @@ namespace Blueprint41.Query
                 nameof(DateTimeListResult)       => typeof(DateTime),
                 nameof(FloatListResult)          => typeof(double), 
                 nameof(NumericListResult)        => typeof(long),   
-                nameof(ListOfMiscListResult)     => typeof(object[]),
-                nameof(ListOfStringListResult)   => typeof(string[]), 
-                nameof(ListOfBooleanListResult)  => typeof(bool[]), 
-                nameof(ListOfDateTimeListResult) => typeof(DateTime[]),
-                nameof(ListOfFloatListResult)    => typeof(double[]),
-                nameof(ListOfNumericListResult)  => typeof(long[]),   
+                nameof(MiscJaggedListResult)     => typeof(object[]),
+                nameof(StringJaggedListResult)   => typeof(string[]),
+                nameof(BooleanJaggedListResult)  => typeof(bool[]),
+                nameof(DateTimeJaggedListResult) => typeof(DateTime[]),
+                nameof(FloatJaggedListResult)    => typeof(double[]),
+                nameof(NumericJaggedListResult)  => typeof(long[]),
                 _                                => null,
             };
         }
@@ -192,10 +278,7 @@ namespace Blueprint41.Query
 
         new public T NewFunctionResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType)
         {
-            if (IsPrimitive)
                 return newFunctionResultCtor!.Value.Invoke(function, arguments, overridenReturnType);
-
-            throw new NotSupportedException();
         }
         protected sealed override IResult NewResultInternal(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType) => NewFunctionResult(function, arguments, overridenReturnType);
         private static Lazy<Func<Func<QueryTranslator, string?>?, object[]?, Type?, T>>? newFunctionResultCtor = null;
@@ -219,14 +302,18 @@ namespace Blueprint41.Query
 
         new public T NewFieldResult(IPrimitiveResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null) 
         {
-            if (IsPrimitive)
                 return newFieldResultCtor!.Value.Invoke((FieldResult)field, function, arguments, overridenReturnType);
-
-            throw new NotSupportedException();
         }
         protected sealed override IResult NewResultInternal(IPrimitiveResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null) => NewFieldResult(field, function, arguments, overridenReturnType);
         private static Lazy<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, T>>? newFieldResultCtor = null;
 
+        public AsResult As(T self, string aliasName, out T alias)
+        {
+            return asMethod!.Value.Invoke(self, aliasName, out alias);
+        }
+        private static Lazy<AsDelegate<T>>? asMethod = null;
+
         #endregion
     }
+    internal delegate AsResult AsDelegate<T>(T self, string aliasName, out T alias);
 }

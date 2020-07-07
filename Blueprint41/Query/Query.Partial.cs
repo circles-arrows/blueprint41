@@ -192,7 +192,7 @@ namespace Blueprint41.Query
     }
     public partial class Query : IUnwindQuery<MiscListResult>
     {
-        public IUnwindQuery<MiscListResult> Unwind(ListOfMiscListResult list)
+        public IUnwindQuery<MiscListResult> Unwind(MiscJaggedListResult list)
         {
             SetType(PartType.Unwind);
             Fields = new[] { list };
@@ -214,15 +214,15 @@ namespace Blueprint41.Query
     }
     public partial interface IOptionalMatchQuery
     {
-        IUnwindQuery<MiscListResult> Unwind(ListOfMiscListResult list);
+        IUnwindQuery<MiscListResult> Unwind(MiscJaggedListResult list);
     }
     public partial interface IWhereQuery
     {
-        IUnwindQuery<MiscListResult> Unwind(ListOfMiscListResult list);
+        IUnwindQuery<MiscListResult> Unwind(MiscJaggedListResult list);
     }
     public partial class Query : IUnwindQuery<StringListResult>
     {
-        public IUnwindQuery<StringListResult> Unwind(ListOfStringListResult list)
+        public IUnwindQuery<StringListResult> Unwind(StringJaggedListResult list)
         {
             SetType(PartType.Unwind);
             Fields = new[] { list };
@@ -244,15 +244,15 @@ namespace Blueprint41.Query
     }
     public partial interface IOptionalMatchQuery
     {
-        IUnwindQuery<StringListResult> Unwind(ListOfStringListResult list);
+        IUnwindQuery<StringListResult> Unwind(StringJaggedListResult list);
     }
     public partial interface IWhereQuery
     {
-        IUnwindQuery<StringListResult> Unwind(ListOfStringListResult list);
+        IUnwindQuery<StringListResult> Unwind(StringJaggedListResult list);
     }
     public partial class Query : IUnwindQuery<BooleanListResult>
     {
-        public IUnwindQuery<BooleanListResult> Unwind(ListOfBooleanListResult list)
+        public IUnwindQuery<BooleanListResult> Unwind(BooleanJaggedListResult list)
         {
             SetType(PartType.Unwind);
             Fields = new[] { list };
@@ -274,15 +274,15 @@ namespace Blueprint41.Query
     }
     public partial interface IOptionalMatchQuery
     {
-        IUnwindQuery<BooleanListResult> Unwind(ListOfBooleanListResult list);
+        IUnwindQuery<BooleanListResult> Unwind(BooleanJaggedListResult list);
     }
     public partial interface IWhereQuery
     {
-        IUnwindQuery<BooleanListResult> Unwind(ListOfBooleanListResult list);
+        IUnwindQuery<BooleanListResult> Unwind(BooleanJaggedListResult list);
     }
     public partial class Query : IUnwindQuery<DateTimeListResult>
     {
-        public IUnwindQuery<DateTimeListResult> Unwind(ListOfDateTimeListResult list)
+        public IUnwindQuery<DateTimeListResult> Unwind(DateTimeJaggedListResult list)
         {
             SetType(PartType.Unwind);
             Fields = new[] { list };
@@ -304,15 +304,15 @@ namespace Blueprint41.Query
     }
     public partial interface IOptionalMatchQuery
     {
-        IUnwindQuery<DateTimeListResult> Unwind(ListOfDateTimeListResult list);
+        IUnwindQuery<DateTimeListResult> Unwind(DateTimeJaggedListResult list);
     }
     public partial interface IWhereQuery
     {
-        IUnwindQuery<DateTimeListResult> Unwind(ListOfDateTimeListResult list);
+        IUnwindQuery<DateTimeListResult> Unwind(DateTimeJaggedListResult list);
     }
     public partial class Query : IUnwindQuery<FloatListResult>
     {
-        public IUnwindQuery<FloatListResult> Unwind(ListOfFloatListResult list)
+        public IUnwindQuery<FloatListResult> Unwind(FloatJaggedListResult list)
         {
             SetType(PartType.Unwind);
             Fields = new[] { list };
@@ -334,15 +334,15 @@ namespace Blueprint41.Query
     }
     public partial interface IOptionalMatchQuery
     {
-        IUnwindQuery<FloatListResult> Unwind(ListOfFloatListResult list);
+        IUnwindQuery<FloatListResult> Unwind(FloatJaggedListResult list);
     }
     public partial interface IWhereQuery
     {
-        IUnwindQuery<FloatListResult> Unwind(ListOfFloatListResult list);
+        IUnwindQuery<FloatListResult> Unwind(FloatJaggedListResult list);
     }
     public partial class Query : IUnwindQuery<NumericListResult>
     {
-        public IUnwindQuery<NumericListResult> Unwind(ListOfNumericListResult list)
+        public IUnwindQuery<NumericListResult> Unwind(NumericJaggedListResult list)
         {
             SetType(PartType.Unwind);
             Fields = new[] { list };
@@ -364,10 +364,10 @@ namespace Blueprint41.Query
     }
     public partial interface IOptionalMatchQuery
     {
-        IUnwindQuery<NumericListResult> Unwind(ListOfNumericListResult list);
+        IUnwindQuery<NumericListResult> Unwind(NumericJaggedListResult list);
     }
     public partial interface IWhereQuery
     {
-        IUnwindQuery<NumericListResult> Unwind(ListOfNumericListResult list);
+        IUnwindQuery<NumericListResult> Unwind(NumericJaggedListResult list);
     }
 }

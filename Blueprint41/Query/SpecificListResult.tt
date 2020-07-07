@@ -13,12 +13,12 @@
 		( listType: "DateTimeListResult",       resultType: "DateTimeResult",     underlyingType: "DateTime"   ),
 		( listType: "FloatListResult",          resultType: "FloatResult",        underlyingType: "double"     ),
 		( listType: "NumericListResult",        resultType: "NumericResult",      underlyingType: "long"       ),
-		( listType: "ListOfMiscListResult",     resultType: "MiscListResult",     underlyingType: "object[]"   ),
-		( listType: "ListOfStringListResult",   resultType: "StringListResult",   underlyingType: "string[]"   ),
-		( listType: "ListOfBooleanListResult",  resultType: "BooleanListResult",  underlyingType: "bool[]"     ),
-		( listType: "ListOfDateTimeListResult", resultType: "DateTimeListResult", underlyingType: "DateTime[]" ),
-		( listType: "ListOfFloatListResult",    resultType: "FloatListResult",    underlyingType: "double[]"   ),
-		( listType: "ListOfNumericListResult",  resultType: "NumericListResult",  underlyingType: "long[]"     ),
+		( listType: "MiscJaggedListResult",     resultType: "MiscListResult",     underlyingType: "object[]"   ),
+		( listType: "StringJaggedListResult",   resultType: "StringListResult",   underlyingType: "string[]"   ),
+		( listType: "BooleanJaggedListResult",  resultType: "BooleanListResult",  underlyingType: "bool[]"     ),
+		( listType: "DateTimeJaggedListResult", resultType: "DateTimeListResult", underlyingType: "DateTime[]" ),
+		( listType: "FloatJaggedListResult",    resultType: "FloatListResult",    underlyingType: "double[]"   ),
+		( listType: "NumericJaggedListResult",  resultType: "NumericListResult",  underlyingType: "long[]"     ),
 	};
 #>
 using Blueprint41.Neo4j.Model;
@@ -61,12 +61,12 @@ namespace Blueprint41.Query
 			return retval;
 		}
 <#
-		if (!listType.StartsWith("ListOf"))
+		if (!listType.EndsWith("JaggedListResult"))
 		{
 #>
-		public ListOf<#= listType #> PairsMin()
+		public <#= listType.Replace("ListResult", "JaggedListResult") #> PairsMin()
 		{
-			return new ListOf<#= listType #>(this, t => t.FnPairsMin);
+			return new <#= listType.Replace("ListResult", "JaggedListResult") #>(this, t => t.FnPairsMin);
 		}
 <#
 		}

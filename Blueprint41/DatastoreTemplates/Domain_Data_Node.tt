@@ -181,9 +181,11 @@ namespace <#= Settings.FullQueryNamespace #>
 			AliasName = name;
 		}
 
-		private <#= DALModel.Name #>Alias(AliasResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
+		private  <#= DALModel.Name #>Alias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+		private  <#= DALModel.Name #>Alias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+		private  <#= DALModel.Name #>Alias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type)
 		{
-			Node = parent.Node;
+			Node = alias.Node;
 		}
 
 		public override IReadOnlyDictionary<string, FieldResult> AliasFields
@@ -304,15 +306,15 @@ namespace <#= Settings.FullQueryNamespace #>
 
 	public class <#= DALModel.Name #>ListAlias : ListResult<<#= DALModel.Name #>ListAlias, <#= DALModel.Name #>Alias>, IAliasListResult
 	{
-		public <#= DALModel.Name #>ListAlias(AliasResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
-		{
-		}
+		private <#= DALModel.Name #>ListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+		private <#= DALModel.Name #>ListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+		private <#= DALModel.Name #>ListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
 	}
 	public class <#= DALModel.Name #>JaggedListAlias : ListResult<<#= DALModel.Name #>JaggedListAlias, <#= DALModel.Name #>ListAlias>, IAliasJaggedListResult
 	{
-		public <#= DALModel.Name #>JaggedListAlias(AliasResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type)
-		{
-		}
+		private <#= DALModel.Name #>JaggedListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+		private <#= DALModel.Name #>JaggedListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+		private <#= DALModel.Name #>JaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
 	}
 }
 <#+

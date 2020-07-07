@@ -1,10 +1,11 @@
-﻿using Blueprint41.Neo4j.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+
+using Blueprint41.Neo4j.Model;
 
 namespace Blueprint41.Query
 {
@@ -12,7 +13,9 @@ namespace Blueprint41.Query
         where TList : ListResult<TList, TResult>, IAliasListResult
         where TResult : AliasResult, IAliasResult
     {
-        protected ListResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null): base(parent, function, arguments, type) { }
+        protected ListResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
+        protected ListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
+        protected ListResult(AliasResult parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 
         public TResult this[int index]
         {
@@ -39,15 +42,16 @@ namespace Blueprint41.Query
         }
         public NumericResult Size()
         {
-            return new NumericResult(t => t.FnSize, null, typeof(long));
+            return new NumericResult(this, t => t.FnSize, null, typeof(long));
         }
-        public TList Sort(Func<AliasResult, FieldResult> field, bool ascending)
+        public TList Sort(Func<AliasResult, string> fieldName, bool ascending)
         {
-            FieldResult fld = field.Invoke(this.Alias!);
+            string fld = fieldName.Invoke(this.Alias!);
+
             if (ascending)
-                return NewList(t => t.FnListSortNode, new[] { fld });
+                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnListSortNode, new[] { new Literal(fld) });
             else
-                return NewList(t => t.FnListSortNodeDesc, new[] { fld });
+                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnListSortNode, new[] { new Literal(string.Concat("^",fld)) });
         }
 
         public TList Union(StringListResult stringListResult)
@@ -161,6 +165,28 @@ namespace Blueprint41.Query
 
             return new StringResult(this, t => t.FnListReduce, new object[] { Parameter.Constant<string>(init), result }, typeof(string));
         }
+        public TList Select(Func<TResult, StringResult> logic, Func<TResult, QueryCondition>? condition = null)
+        {
+            TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
+            StringResult result = logic.Invoke(itemField);
+
+            if (condition != null)
+            {
+                TResult conditionItemField = NewResult(t => "item", new object[0], typeof(TType));
+                QueryCondition test = condition.Invoke(conditionItemField);
+
+                return NewList(t => t.FnListSelectValueWhere, new object[] { test, result }, typeof(TType));
+            }
+            else
+                return NewList(t => t.FnListSelect, new object[] { result }, typeof(TType));
+        }
+        public TList Filter(Func<TResult, QueryCondition> condition)
+        {
+            TResult conditionItemField = NewResult(t => "item", new object[0], typeof(TType));
+            QueryCondition test = condition.Invoke(conditionItemField);
+
+            return NewList(t => t.FnListSelectWhere, new object[] { test }, typeof(TType));
+        }
 
         public IListResult Select<TValue>(Func<TResult, TValue> logic, Func<TResult, QueryCondition>? condition = null)
              where TValue : IResult
@@ -182,13 +208,6 @@ namespace Blueprint41.Query
                 return NewList(t => t.FnListSelect, new object[] { result }, typeof(TType));
 
             IListResult NewList(Func<QueryTranslator, string?> ? function, object[] ? arguments = null, Type ? type = null) => (IListResult)listInfo.NewFieldResult((IPrimitiveResult)this, function, arguments, type);
-        }
-        public TList Filter(Func<TResult, QueryCondition> condition)
-        {
-            TResult conditionItemField = NewResult(t => "item", new object[0], typeof(TType));
-            QueryCondition test = condition.Invoke(conditionItemField);
-
-            return NewList(t => t.FnListSelectWhere, new object[] { test }, typeof(TType));
         }
 
         public StringResult Join(string separator, Func<TResult, StringResult> logic)
