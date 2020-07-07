@@ -22,29 +22,44 @@ namespace Blueprint41.Query
         {
             get
             {
+                string? type;
+                string? targetType;
+
                 if (!IsList)
                     return null;
 
                 if (itemType is null)
                 {
+                    targetType = null;
+                    type = Type.Name;
+
                     if (IsList)
                     {
-
+                        if (IsAlias)
+                            SearchEnd("ListAlias", "Alias");
+                        else if (IsPrimitive)
+                            SearchEnd("ListResult", "Result");
                     }
                     if (IsJaggedList)
                     {
-
+                        if (IsAlias)
+                            SearchEnd("JaggedListAlias", "ListAlias");
+                        else if (IsPrimitive) 
+                            SearchEnd("JaggedListResult", "ListResult");
                     }
-                    else
-                    {
+
+                    if (targetType == null)
                         throw new NotSupportedException($"You shouldn't end up in this piece of code, please file a bug report for 'NotSupportedException in ResultHelper<{Type.FullName}>.ItemType' at: https://github.com/circles-arrows/blueprint41/issues");
-                    }
 
+                    Type resultHelperType = Type.Assembly.GetType(targetType, true, false);
+                    itemType = ResultHelper.Of(resultHelperType);
                 }
                 return itemType;
+
+                void SearchEnd(string search, string replace) => ComputeTypeName(Type, search, replace, ref targetType);
             }
         }
-        public ResultHelper? itemType = null;
+        private ResultHelper? itemType = null;
         public ResultHelper? ListType
         {
             get
@@ -55,7 +70,7 @@ namespace Blueprint41.Query
                 if (IsJaggedList)
                     return null;
 
-                if (itemType is null)
+                if (listType is null)
                 {
                     targetType = null;
                     type = Type.Name;
@@ -70,26 +85,24 @@ namespace Blueprint41.Query
                     }
                     else if (IsList)
                     {
+                        if (IsAlias)
                         SearchEnd("ListAlias", "JaggedListAlias");
+                        else if (IsPrimitive) 
                         SearchEnd("ListResult", "JaggedListResult");
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"You shouldn't end up in this piece of code, please file a bug report for 'NotSupportedException in ResultHelper<{Type.FullName}>.ListType' at: https://github.com/circles-arrows/blueprint41/issues");
                     }
 
                     if (targetType == null)
-                        throw new NotImplementedException();
+                        throw new NotSupportedException($"You shouldn't end up in this piece of code, please file a bug report for 'NotSupportedException in ResultHelper<{Type.FullName}>.ListType' at: https://github.com/circles-arrows/blueprint41/issues");
 
                     Type resultHelperType = Type.Assembly.GetType(targetType, true, false);
-                    itemType = ResultHelper.Of(resultHelperType);
+                    listType = ResultHelper.Of(resultHelperType);
                 }
-                return itemType;
+                return listType;
 
                 void SearchEnd(string search, string replace) => ComputeTypeName(Type, search, replace, ref targetType);
             }
         }
-        protected ResultHelper? listType = null;
+        private ResultHelper? listType = null;
         public Type Type { get; protected set; } = null!;
         public Type? UnderlyingType { get; protected set; } = null!;
 
