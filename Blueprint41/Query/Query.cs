@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Core;
+using Blueprint41.DatastoreTemplates;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +31,8 @@ namespace Blueprint41.Query
         internal bool Distinct = true;
         internal bool Ascending = true;
         internal PartType Type = PartType.None;
+        internal Parameter? SearchWords = null;
+        internal SearchOperator? SearchOperator = null;
         internal Node[]? Patterns = null;
         internal Result[]? WithResults = null;
         internal AsResult[]? Results = null;
@@ -41,6 +44,63 @@ namespace Blueprint41.Query
         internal Parameter LimitValue = Parameter.Constant(0);
 
         public CompiledQuery? CompiledQuery { get; private set; }
+
+        public IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, params FieldResult[] searchFields)
+        {
+            SetType(PartType.Search);
+
+            SearchWords = searchWords;
+            SearchOperator = searchOperator;
+            Patterns = new[] { searchNodeType };
+            Fields = searchFields;
+
+            if ((object?)searchNodeType.NodeAlias == null)
+                throw new ArgumentException($"The searchNodeType does not have an alias. Rewite your query to: {Example()}");
+
+            foreach (FieldResult field in Fields)
+            {
+                if ((object?)field.Alias != searchNodeType.NodeAlias)
+                    throw new ArgumentException($"The searchfield should be retrieved from the searchNodeType it's alias. Rewite your query to: {Example()}");
+
+                if ((object?)field.Alias != searchNodeType.NodeAlias)
+                    throw new ArgumentException($"The searchfield '{field.FieldName}' is not supported for free text searching. Add it to the free text index in an upgrade script.");
+            }
+
+            return New;
+
+            string Example()
+            {
+                return $"Search({SearchWordExample()}, {OperatorExample()}, {NodeTypeExample()}, {SearchFieldExample()}, ...)";
+            }
+            string SearchFieldExample()
+            {
+                return $"{AliasExample()}.{searchFields.FirstOrDefault().FieldName ?? "FieldName"}";
+            }
+            string NodeTypeExample()
+            {
+                return $"node.{searchNodeType.Neo4jLabel}.Alias(out var {AliasExample()})";
+            }
+            string AliasExample()
+            {
+                return searchNodeType.Neo4jLabel.ToCamelCase();
+            }
+            string OperatorExample()
+            {
+                return $"SearchOperator.{searchOperator.ToString()}";
+            }
+            string SearchWordExample()
+            {
+                return $"Parameter.New<string>(\"{searchWords?.Name ?? "SearchWords"}\")";
+            }
+        }
+        public IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, out FloatResult scoreAlias, params FieldResult[] searchFields)
+        {
+            AliasResult scoreResult = new AliasResult();
+            scoreAlias = new FloatResult(scoreResult, null, null, typeof(double));
+            Aliases = new[] { scoreResult };
+
+            return Search(searchWords, searchOperator, searchNodeType, searchFields);
+        }
 
         public IMatchQuery Match(params Node[] patterns)
         {
@@ -295,6 +355,7 @@ namespace Blueprint41.Query
     internal enum PartType
     {
         Compiled,
+        Search,
         Match,
         UsingScan,
         UsingIndex,
@@ -313,12 +374,19 @@ namespace Blueprint41.Query
 
     #region Interfaces
 
-    public partial interface IBlankQuery
+    public partial interface IBlankQuery : ISemiBlankQuery
     {
-        IMatchQuery Match(params Node[] patterns);
-        IOptionalMatchQuery OptionalMatch(params Node[] patterns);
+        IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, params FieldResult[] searchFields);
+        IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, out FloatResult scoreAlias, params FieldResult[] searchFields);
     }
-    public partial interface IOptionalMatchQuery : IBlankQuery
+    public partial interface ISemiBlankQuery
+    {
+        IMatchQuery Match(params Node []
+        patterns);
+        IOptionalMatchQuery OptionalMatch(params Node []
+        patterns);
+    }
+    public partial interface IOptionalMatchQuery : ISemiBlankQuery
     {
         IWithQuery With(params Result[] results);
         IReturnQuery Return(params Result[] results);
@@ -329,7 +397,7 @@ namespace Blueprint41.Query
         IMatchQuery UsingScan(params AliasResult[] aliases);
         IMatchQuery UsingIndex(params FieldResult[] fields);
     }
-    public partial interface IWhereQuery : IBlankQuery
+    public partial interface IWhereQuery : ISemiBlankQuery
     {
         IWithQuery With(params Result[] results);
         IReturnQuery Return(params Result[] results);

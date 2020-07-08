@@ -44,9 +44,9 @@ namespace Blueprint41.Query
         {
             return new NumericResult(this, t => t.FnSize, null, typeof(long));
         }
-        public TList Sort(Func<AliasResult, string> fieldName, bool ascending)
+        public TList Sort(Func<TResult, string> fieldName, bool ascending)
         {
-            string fld = fieldName.Invoke(this.Alias!);
+            string fld = fieldName.Invoke((TResult)this.Alias!);
 
             if (ascending)
                 return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnListSortNode, new[] { new Literal(fld) });

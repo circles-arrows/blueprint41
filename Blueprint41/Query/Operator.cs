@@ -25,7 +25,11 @@ namespace Blueprint41.Query
         Not,
         Boolean
     }
-
+    public enum SearchOperator
+    {
+        And,
+        Or,
+    }
     public static partial class ExtensionMethods
     {
         internal static void Compile(this Operator op, CompileState state, bool rightIsNull)

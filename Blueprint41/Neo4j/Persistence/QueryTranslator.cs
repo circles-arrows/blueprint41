@@ -70,6 +70,9 @@ namespace Blueprint41.Neo4j.Model
         }
         internal virtual void Compile(AliasResult alias, CompileState state)
         {
+            if (alias.AliasName == null)
+                alias.AliasName = string.Format("n{0}", state.patternSeq++);
+
             string? functionText = alias.FunctionText.Invoke(state.Translator);
             if (functionText == null)
             {
@@ -193,6 +196,33 @@ namespace Blueprint41.Neo4j.Model
         {
             switch (query.Type)
             {
+                case PartType.Search:
+
+                    string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
+                    Node node = query.Patterns.First();
+                    AliasResult alias = node.NodeAlias!;
+                    AliasResult? weight = query.Aliases?.FirstOrDefault();
+                    FieldResult[] fields = query.Fields!;
+
+                    List<string> queries = new List<string>();
+                    foreach (var property in fields)
+                        queries.Add(string.Format("({0}.{1}:' + {2} + ')", node.Neo4jLabel, property.FieldName, search));
+
+                    state.Text.Append("CALL apoc.index.search('fts', '");
+                    state.Text.Append(string.Join(" OR ", queries));
+                    state.Text.Append("') YIELD node AS ");
+                    Compile(alias, state);
+                    if ((object?)weight != null)
+                    {
+                        state.Text.Append(", weight AS ");
+                        Compile(weight, state);
+                    }
+                    state.Text.Append(" WHERE (");
+                    Compile(alias, state);
+                    state.Text.Append(":");
+                    state.Text.Append(node.Neo4jLabel);
+                    state.Text.Append(")");
+                    break;
                 case PartType.Match:
                     state.Text.Append("MATCH ");
                     query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
