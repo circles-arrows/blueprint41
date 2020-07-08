@@ -151,7 +151,7 @@ namespace Blueprint41.Query
                 if (!typeof(IResult).IsAssignableFrom(key))
                     return null;
 
-                return (ResultHelper?)Activator.CreateInstance(typeof(ResultHelper<>).MakeGenericType(key));
+                return (ResultHelper?)Activator.CreateInstance(typeof(ResultHelper<>).MakeGenericType(key), true);
             });
 
             if (retval is null)
