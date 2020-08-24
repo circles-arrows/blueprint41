@@ -272,6 +272,16 @@ namespace Blueprint41.Core
     }
     public struct RelationshipEventArgs
     {
+        internal RelationshipEventArgs(EventTypeEnum eventType, Transaction trans)
+            : this()
+        {
+            EventType = eventType;
+            Transaction = trans;
+        }
+
+        public Transaction? Transaction { get; internal set; }
+        public EventTypeEnum EventType { get; private set; }
+
         #region CustomState
 
         private Dictionary<string, object?>? customState;
@@ -309,6 +319,10 @@ namespace Blueprint41.Core
         OnNodeUpdated,
         OnNodeDelete,
         OnNodeDeleted,
+        OnRelationCreate,
+        OnRelationCreated,
+        OnRelationDelete,
+        OnRelationDeleted
     }
     public enum OperationEnum
     {

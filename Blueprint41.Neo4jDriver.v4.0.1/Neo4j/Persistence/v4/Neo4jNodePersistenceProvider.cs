@@ -52,7 +52,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
             args = item.GetEntity().RaiseOnNodeLoaded(trans, args, loaded.Id, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
-
+            
             if (item.PersistenceState == PersistenceState.HasUid || item.PersistenceState == PersistenceState.Loaded)
             {
                 item.SetData(args.Properties!);

@@ -313,9 +313,15 @@ namespace Blueprint41
 
         public Core.IRelationshipEvents Events { get { return this; } }
 
-        internal void RaiseOnRelationCreate(RelationshipEventArgs args)
+        internal RelationshipEventArgs RaiseOnRelationCreate(Transaction trans)
         {
+            RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationCreate, trans);
+            if (!trans.FireGraphEvents)
+                return args;
+
             onRelationCreate?.Invoke(this, args);
+
+            return args;
         }
         bool IRelationshipEvents.HasRegisteredOnRelationCreateHandlers { get { return onRelationCreate != null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationCreate;
@@ -325,9 +331,15 @@ namespace Blueprint41
             remove { onRelationCreate -= value; }
         }
 
-        internal void RaiseOnRelationCreated(RelationshipEventArgs args)
+        internal RelationshipEventArgs RaiseOnRelationCreated(Transaction trans)
         {
+            RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationCreated, trans);
+            if (!trans.FireGraphEvents)
+                return args;
+
             onRelationCreated?.Invoke(this, args);
+
+            return args;
         }
         bool IRelationshipEvents.HasRegisteredOnRelationCreatedHandlers { get { return onRelationCreated != null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationCreated;
@@ -337,9 +349,15 @@ namespace Blueprint41
             remove { onRelationCreated -= value; }
         }
 
-        internal void RaiseOnRelationDelete(RelationshipEventArgs args)
+        internal RelationshipEventArgs RaiseOnRelationDelete(Transaction trans)
         {
+            RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationDelete, trans);
+            if (!trans.FireGraphEvents)
+                return args;
+
             onRelationDelete?.Invoke(this, args);
+
+            return args;
         }
         bool IRelationshipEvents.HasRegisteredOnRelationDeleteHandlers { get { return onRelationDelete != null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationDelete;
@@ -349,9 +367,15 @@ namespace Blueprint41
             remove { onRelationDelete -= value; }
         }
 
-        internal void RaiseOnRelationDeleted(RelationshipEventArgs args)
+        internal RelationshipEventArgs RaiseOnRelationDeleted(Transaction trans)
         {
+            RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationDelete, trans);
+            if (!trans.FireGraphEvents)
+                return args;
+
             onRelationDeleted?.Invoke(this, args);
+      
+            return args;
         }
         bool IRelationshipEvents.HasRegisteredOnRelationDeletedHandlers { get { return onRelationDeleted != null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationDeleted;
