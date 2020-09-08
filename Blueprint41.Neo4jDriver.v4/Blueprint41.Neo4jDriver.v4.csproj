@@ -1,0 +1,109 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Build">
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <RootNamespace>Blueprint41</RootNamespace>
+    <AssemblyName>Blueprint41.Neo4jDriver.v4</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8606;CS8607;CS8609;CS8610;CS8611;CS8612;CS8613;CS8614;CS8615;CS8616;CS8617;CS8618;CS8619;CS8620;CS8621;CS8622;CS8624;CS8625;CS8626;CS8629;CS8631;CS8632;CS8633;CS8634;CS8638;CS8643;CS8644;CS8645;CS8653;CS8654</WarningsAsErrors>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <PackageVersion>1.0.17</PackageVersion>
+    <PackageId>Blueprint41.Neo4jDriver.v4</PackageId>
+    <Title>Blueprint41.Neo4jDriver.v4</Title>
+    <Authors>Circles Arrows Limited</Authors>
+    <Description>Driver needed to connect to Neo4j using Blueprint41</Description>
+    <Copyright>Copyright 2020 (c) Circles Arrows Limited</Copyright>
+    <PackageLicenseUrl>https://github.com/circles-arrows/blueprint41/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
+    <PackageTags>Neo4j Graph Object Mapper</PackageTags>
+    <IncludeSymbols>false</IncludeSymbols>
+    <RepositoryUrl>https://github.com/circles-arrows/blueprint41</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+    
+  <ItemGroup>
+    <PackageReference Include="Neo4j.Driver" Version="4.0.1" />
+    <PackageReference Include="Neo4j.Driver.Simple" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Neo4j\Refactoring\Neo4jPersistenceProvider.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Neo4jPersistenceProvider.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\Neo4jPersistenceProvider.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Neo4jPersistenceProvider.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Neo4j\Refactoring\Neo4jPersistenceProvider.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Neo4jPersistenceProvider.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\Neo4jPersistenceProvider.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Neo4jPersistenceProvider.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Neo4j\Persistence\v4\" />
+    <Folder Include="Neo4j\Schema\v4\" />
+  </ItemGroup>
+
+</Project>
