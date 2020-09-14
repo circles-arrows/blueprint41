@@ -35,9 +35,6 @@
     <Reference Include="Crc32.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=dc0b95cf99bf4e99, processorArchitecture=MSIL">
       <HintPath>..\packages\Crc32.NET.1.2.0\lib\net20\Crc32.NET.dll</HintPath>
     </Reference>
-    <Reference Include="Neo4j.Driver, Version=1.7.180.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Neo4j.Driver.1.7.1\lib\net452\Neo4j.Driver.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -56,6 +53,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Blueprint41.Neo4jDriver.v3\Blueprint41.Neo4jDriver.v3.csproj">
+      <Project>{b294507d-0051-429b-8b91-c28b0bb51857}</Project>
+      <Name>Blueprint41.Neo4jDriver.v3</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Blueprint41\Blueprint41.csproj">
       <Project>{E36B2243-1A2F-4A83-A9CE-E81EDACC5EDC}</Project>
       <Name>Blueprint41</Name>

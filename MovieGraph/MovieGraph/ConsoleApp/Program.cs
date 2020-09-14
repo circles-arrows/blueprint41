@@ -1,10 +1,9 @@
 ﻿using Blueprint41;
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Neo4j.Persistence.Driver.v3;
 using Blueprint41.Query;
 using Domain.Data.Manipulation;
 using MovieGraph.Model;
-using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +15,7 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            PersistenceProvider.CurrentPersistenceProvider = new Neo4JPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neo");
+            PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neo");
 
             // Execute only once
             //CreateMovieGraph();
@@ -73,15 +72,15 @@ namespace ConsoleApp
                     .Return(tomHAlias, m, coActorsAlias, m2, tomCAlias)
                     .Compile();
 
-                IStatementResult records = Neo4jTransaction.Run(query.ToString());
+                RawResult records = Transaction.RunningTransaction.Run(query.ToString());
 
-                foreach (IRecord record in records)
-                {
-                    var tomH = record[0].As<INode>();
-                    var movieWithTom = record[1].As<INode>();
-                    var coActor = record[2].As<INode>();
-                    var movieWithCoActorAndTom = record[3].As<INode>();
-                    var cruise = record[4].As<INode>();
+                foreach (RawRecord record in records)
+                {   
+                    var tomH = record[0].As<RawNode>();
+                    var movieWithTom = record[1].As<RawNode>();
+                    var coActor = record[2].As<RawNode>();
+                    var movieWithCoActorAndTom = record[3].As<RawNode>();
+                    var cruise = record[4].As<RawNode>();
 
                     Debug.Assert(coActorsWithCruise.Contains(coActor.Properties["name"].ToString()));
                     Console.WriteLine($"{tomH.Properties["name"].ToString()} -> {movieWithTom.Properties["title"].ToString()} -> {coActor.Properties["name"].ToString()} <- {movieWithCoActorAndTom.Properties["title"].ToString()} <- {cruise.Properties["name"].ToString()}");
