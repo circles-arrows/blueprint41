@@ -1,9 +1,9 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Neo4j.Persistence.Driver.v3;
 using Blueprint41.Neo4j.Schema;
 using Blueprint41.Query;
 using Blueprint41.UnitTest.Mocks;
-using Neo4j.Driver.V1;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                Transaction.RunningTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
             });
 
             Assert.That(exception.Message, Contains.Substring("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }"));
@@ -45,7 +45,7 @@ namespace Blueprint41.UnitTest.Tests
                 using (Transaction.Begin(true))
                 {
                     // Let us try to create a person entity
-                    Neo4jTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                    Transaction.RunningTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
                     Transaction.Commit();
                 }
             });
@@ -64,14 +64,14 @@ namespace Blueprint41.UnitTest.Tests
                 using (Transaction.Begin(true))
                 {
                     // Let us try to create an entity
-                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
                     Transaction.Commit();
 
                     // This statement should throw invalid operation exception
-                    IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                    IRecord record = result.FirstOrDefault();
-                    INode loaded = record["n"].As<INode>();
+                    RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                    RawRecord record = result.FirstOrDefault();
+                    RawNode loaded = record["n"].As<RawNode>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
                     Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -87,11 +87,11 @@ namespace Blueprint41.UnitTest.Tests
             using (Transaction.Begin(true))
             {
                 // Let us try to create an entity
-                Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
-                INode loaded = record["n"].As<INode>();
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
+                RawNode loaded = record["n"].As<RawNode>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -106,11 +106,11 @@ namespace Blueprint41.UnitTest.Tests
             using (Transaction.Begin(true))
             {
                 // Let us try to create an entity
-                Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
-                INode loaded = record["n"].As<INode>();
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
+                RawNode loaded = record["n"].As<RawNode>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -120,8 +120,8 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
         }
@@ -134,11 +134,11 @@ namespace Blueprint41.UnitTest.Tests
                 using (Transaction.Begin(true))
                 {
                     // Let us try to create an entity
-                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                    IRecord record = result.FirstOrDefault();
-                    INode loaded = record["n"].As<INode>();
+                    RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                    RawRecord record = result.FirstOrDefault();
+                    RawNode loaded = record["n"].As<RawNode>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
                     Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -155,11 +155,11 @@ namespace Blueprint41.UnitTest.Tests
                 using (Transaction.Begin(true))
                 {
                     // Let us try to create an entity
-                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                    IRecord record = result.FirstOrDefault();
-                    INode loaded = record["n"].As<INode>();
+                    RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                    RawRecord record = result.FirstOrDefault();
+                    RawNode loaded = record["n"].As<RawNode>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
                     Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -180,16 +180,16 @@ namespace Blueprint41.UnitTest.Tests
                 using (Transaction.Begin())
                 {
                     // Let us try to create an entity
-                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                     throw new Exception();
                 }
             });
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
-                INode loaded = record["n"].As<INode>();
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
+                RawNode loaded = record["n"].As<RawNode>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -204,15 +204,15 @@ namespace Blueprint41.UnitTest.Tests
                 using (Transaction.Begin(true))
                 {
                     // Let us try to create an entity
-                    Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                     throw new Exception();
                 }
             });
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
         }
@@ -222,11 +222,11 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (Transaction.Begin(true))
             {
-                Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
+                Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
 
-                INode loaded = record["n"].As<INode>();
+                RawNode loaded = record["n"].As<RawNode>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
@@ -235,8 +235,8 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
         }
@@ -246,11 +246,11 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (Transaction.Begin())
             {
-                Neo4jTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
+                Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
 
-                INode loaded = record["n"].As<INode>();
+                RawNode loaded = record["n"].As<RawNode>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
@@ -259,10 +259,10 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-                IStatementResult result = Neo4jTransaction.Run("Match (n:SampleEntity) Return n");
-                IRecord record = result.FirstOrDefault();
+                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
+                RawRecord record = result.FirstOrDefault();
 
-                INode loaded = record["n"].As<INode>();
+                RawNode loaded = record["n"].As<RawNode>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
             }

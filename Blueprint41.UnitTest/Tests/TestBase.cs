@@ -27,7 +27,7 @@ namespace Blueprint41.UnitTest.Tests
             using (Transaction.Begin())
             {
                 string reset = "Match (n) detach delete n";
-                Neo4jTransaction.Run(reset);
+                Transaction.RunningTransaction.Run(reset);
             }
         }
     }

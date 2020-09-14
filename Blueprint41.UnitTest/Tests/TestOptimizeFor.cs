@@ -1,6 +1,7 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
 using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Neo4j.Persistence.Driver.v3;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
@@ -37,7 +38,7 @@ namespace Blueprint41.UnitTest.Tests
             using (Transaction.Begin())
             {
                 string reset = "Match (n) detach delete n";
-                Neo4jTransaction.Run(reset);
+                Transaction.RunningTransaction.Run(reset);
             }
         }
 

@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Neo4jDriver.v3\Blueprint41.Neo4jDriver.v3.csproj" />
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
   </ItemGroup>
 

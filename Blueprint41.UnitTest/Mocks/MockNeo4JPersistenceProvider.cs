@@ -1,13 +1,14 @@
 ﻿using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Neo4j.Persistence.Driver.v3;
 using Neo4j.Driver.V1;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Blueprint41.UnitTest.Mocks
 {
-    public class MockNeo4JPersistenceProvider : Neo4JPersistenceProvider
+    public class MockNeo4JPersistenceProvider : Neo4jPersistenceProvider
     {
         public bool NotNeo4jTransaction { get; set; }
 
@@ -40,6 +41,16 @@ namespace Blueprint41.UnitTest.Mocks
 
     public class NotNeo4jTransaction : Transaction
     {
+        public override RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override RawResult Run(string cypher, Dictionary<string, object> parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void ApplyFunctionalId(FunctionalId functionalId)
         {
 

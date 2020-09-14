@@ -1,4 +1,5 @@
 ﻿using Blueprint41.Neo4j.Persistence;
+using Blueprint41.Neo4j.Persistence.Driver.v3;
 using Neo4j.Driver.V1;
 using Newtonsoft.Json;
 using System;
