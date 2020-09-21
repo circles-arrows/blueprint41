@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <PackageVersion>1.0.17</PackageVersion>
+    <PackageVersion>1.0.18-preview-1</PackageVersion>
     <PackageId>Blueprint41.Neo4jDriver.v3</PackageId>
     <Title>Blueprint41.Neo4jDriver.v3</Title>
     <Authors>Circles Arrows Limited</Authors>
