@@ -15,14 +15,16 @@ namespace Blueprint41.Query
             NodeAlias = null;
             IsReference = false;
             Neo4jLabel = GetNeo4jLabel();
+            Entity = GetEntity();
         }
-        protected internal Node(RELATIONSHIP fromRelationship, DirectionEnum direction, string label)
+        protected internal Node(RELATIONSHIP fromRelationship, DirectionEnum direction, string label, Entity entity)
             : this()
         {
             FromRelationship = fromRelationship;
             Direction = direction;
             FromRelationship.ToNode = this;
             Neo4jLabel = label ?? GetNeo4jLabel();
+            Entity = entity ?? GetEntity();
         }
 
         public RELATIONSHIP? FromRelationship { get; set; }
@@ -30,9 +32,11 @@ namespace Blueprint41.Query
         public DirectionEnum Direction { get; set; }
 
         protected abstract string GetNeo4jLabel();
+        protected abstract Entity GetEntity();
         public string Neo4jLabel { get; private set; }
         public AliasResult? NodeAlias { get; protected set; }
         public bool IsReference { get; protected set; }
+        public Entity Entity { get; private set; }
 
         internal void Compile(CompileState state)
         {

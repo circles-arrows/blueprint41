@@ -18,7 +18,7 @@ namespace Blueprint41.Core
 
 		#region Manipulation
 
-		public CollectionItem<TEntity> this[int index]
+		public CollectionItem<TEntity>? this[int index]
 		{
 			get
 			{
@@ -117,8 +117,9 @@ namespace Blueprint41.Core
 			LazyLoad();
 
 			for (int index = 0; index < InnerData.Count; index++)
-				if (InnerData[index].Item.Equals(item) && (!moment.HasValue || InnerData[index].Overlaps(moment.Value)))
-					return true;
+				if (InnerData[index] != null)
+					if (InnerData[index]!.Item.Equals(item) && (!moment.HasValue || InnerData[index]!.Overlaps(moment.Value)))
+						return true;
 
 			return false;
 		}
@@ -345,18 +346,23 @@ namespace Blueprint41.Core
 
 		#region Relationship Action Helpers
 
+		internal override void EnsureLoaded()
+        {
+			LazyLoad();
+		}
 		internal override void ForEach(Action<int, CollectionItem> action)
 		{
-			LazyLoad();
+			EnsureLoaded();
 
 			for (int index = InnerData.Count - 1; index >= 0; index--)
-				action.Invoke(index, InnerData[index]);
+				if (InnerData[index] != null)
+					action.Invoke(index, InnerData[index]!);
 		}
 		internal override void Add(CollectionItem item)
 		{
 			InnerData.Add((CollectionItem<TEntity>)item);
 		}
-		internal override CollectionItem GetItem(int index)
+		internal override CollectionItem? GetItem(int index)
 		{
 			return InnerData[index];
 		}
@@ -367,6 +373,10 @@ namespace Blueprint41.Core
 		internal override void RemoveAt(int index)
 		{
 			InnerData.RemoveAt(index);
+		}
+		internal override int[] IndexOf(OGM item)
+		{
+			return InnerData.IndexOf((TEntity)item);
 		}
 
 		protected override TEntity? GetItem(DateTime? moment)

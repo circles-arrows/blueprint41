@@ -69,16 +69,22 @@ namespace Blueprint41.Core
             ForEach(action);
         }
 
+        internal abstract void EnsureLoaded();
         internal abstract void Add(CollectionItem item);
-        internal abstract CollectionItem GetItem(int index);
+        internal abstract CollectionItem? GetItem(int index);
         internal abstract void SetItem(int index, CollectionItem item);
         internal abstract void RemoveAt(int index);
+        internal abstract int[] IndexOf(OGM item);
 
+        void IInternalListAccess.EnsureLoaded()
+        {
+            EnsureLoaded();
+        }
         void IInternalListAccess.Add(CollectionItem item)
         {
             Add(item);
         }
-        CollectionItem IInternalListAccess.GetItem(int index)
+        CollectionItem? IInternalListAccess.GetItem(int index)
         {
             return GetItem(index);
         }
@@ -89,6 +95,10 @@ namespace Blueprint41.Core
         void IInternalListAccess.RemoveAt(int index)
         {
             RemoveAt(index);
+        }
+        int[] IInternalListAccess.IndexOf(OGM item)
+        {
+            return IndexOf(item);
         }
 
         internal OGM InItem(CollectionItem item)
@@ -190,13 +200,18 @@ namespace Blueprint41.Core
             }
         }
 
-        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => DbTransaction?.RelationshipPersistenceProvider ?? PersistenceProvider.CurrentPersistenceProvider.RelationshipPersistenceProvider;
+        internal RelationshipPersistenceProvider RelationshipPersistenceProvider =>
+            DbTransaction?.
+            RelationshipPersistenceProvider ??
+                PersistenceProvider.
+                CurrentPersistenceProvider.
+                RelationshipPersistenceProvider;
         private protected void ExecuteAction(RelationshipAction action)
         {
             if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
                 DbTransaction?.Register(action);
-            else
-                action.ExecuteInMemory(this);
+
+            action.ExecuteInMemory(this);
         }
         private protected void ExecuteAction(LinkedList<RelationshipAction> actions)
         {

@@ -32,6 +32,46 @@ namespace Blueprint41.Core
 
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, string.Format("{{0}}.{0} = {{{{key}}}}", Entity.Key.Name), new Parameter[] { new Parameter("key", key) }).FirstOrDefault();
         }
+        internal static OGM? Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
+        {
+            Entity? entity = Entity.Parent.GetEntity(node.Labels);
+            if (entity is null)
+                return null;
+
+            object? key = null;
+            if (!node.Properties.TryGetValue(entity.Key.Name, out key))
+                throw new ArgumentException($"The node does not contain key '{entity.Key.Name}' for entity '{entity.Name}'.");
+
+            if (key is null)
+                throw new ArgumentException($"The node contains null key '{entity.Key.Name}' for entity '{entity.Name}'.");
+
+            Transaction trans = Transaction.RunningTransaction;
+
+            TInterface? instance = (TInterface?)trans.GetEntityByKey(entity.Name, key);
+            if (!(instance is null))
+                return instance;
+
+            instance = (TInterface)entity.Activator();
+            instance.SetKey((TKey)key);
+            OGM ogm = instance as OGM;
+
+            Dictionary<string, object?> properties = (Dictionary<string, object?>)node.Properties;
+            if (cypher != null)
+            {
+                Dictionary<string, object?>? customState = null;
+                NodeEventArgs loadingArgs = entity.RaiseOnNodeLoading(trans, ogm, cypher, parameters, ref customState);
+                NodeEventArgs args = entity.RaiseOnNodeLoaded(trans, loadingArgs, node.Id, node.Labels, properties);
+                properties = args.Properties!;
+            }
+
+            if (instance.PersistenceState == PersistenceState.HasUid || instance.PersistenceState == PersistenceState.Loaded)
+            {
+                ogm.SetData(properties);
+                instance.PersistenceState = (mappingMode == NodeMapping.AsWritableEntity) ? PersistenceState.Loaded : PersistenceState.OutOfScope;
+            }
+
+            return instance;
+        }
 
         public static List<TInterface> GetAll()
         {

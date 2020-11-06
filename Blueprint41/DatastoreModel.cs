@@ -453,6 +453,19 @@ namespace Blueprint41
         }
         private HashSet<Guid> knownGuids = new HashSet<Guid>();
 
+        private AtomicDictionary<string, Entity> entityByLabel = new AtomicDictionary<string, Entity>();
+        internal Entity? GetEntity(IEnumerable<string> labels)
+        {
+            Entity? entity = null;
+            foreach (string label in labels)
+            {
+                entity = entityByLabel.TryGetOrAdd(label, key => Entities.FirstOrDefault(item => item.Label.Name == label));
+                if (!entity.IsAbstract)
+                    return entity;
+            }
+            return null;
+        }
+
         internal RefactorTemplates Templates => PersistenceProvider.Templates;
     }
 
@@ -462,8 +475,8 @@ namespace Blueprint41
         protected DatastoreModel() : this(PersistenceProvider.CurrentPersistenceProvider) { }
         protected DatastoreModel(PersistenceProvider persistence) : base(persistence) { }
 
-        private static DatastoreModel? model = null;
-        public static DatastoreModel Model
+        private static TSelf? model = null;
+        public static TSelf Model
         {
             get
             {
@@ -473,7 +486,7 @@ namespace Blueprint41
                     {
                         if (model == null)
                         {
-                            model = RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
+                            model = (TSelf?)RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
                             if (model == null)
                             {
                                 TSelf m = new TSelf();

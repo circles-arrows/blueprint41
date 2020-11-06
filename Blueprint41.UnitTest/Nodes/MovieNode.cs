@@ -25,7 +25,7 @@ namespace Datastore.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal MovieNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
+		internal MovieNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
 
 		public MovieNode Alias(out MovieAlias alias)
 		{
@@ -40,8 +40,12 @@ namespace Datastore.Query
 			return this;
         }
 
+        protected override Entity GetEntity()
+        {
+            throw new NotImplementedException();
+        }
 
-		public MovieOut Out { get { return new MovieOut(this); } }
+        public MovieOut Out { get { return new MovieOut(this); } }
 		public class MovieOut
 		{
 			private MovieNode Parent;

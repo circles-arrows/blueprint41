@@ -21,9 +21,12 @@ namespace Blueprint41.Core
         protected override void InMemoryLogic(EntityCollectionBase target)
         {
             bool wasAdded = false;
-            target.ForEach(delegate (int index, CollectionItem item)
+
+            int[] indexes = target.IndexOf(target.ForeignItem(this));
+            foreach (int index in indexes)
             {
-                if (item.Item.Equals(target.ForeignItem(this)))
+                CollectionItem? item = target.GetItem(index);
+                if (item != null)
                 {
                     if (item.IsAfter(Moment))
                     {
@@ -35,7 +38,8 @@ namespace Blueprint41.Core
                         wasAdded = true;
                     }
                 }
-            });
+            }
+
             if (!wasAdded)
                 target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this), Moment, null));
         }

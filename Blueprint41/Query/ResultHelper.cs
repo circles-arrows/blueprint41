@@ -103,6 +103,7 @@ namespace Blueprint41.Query
             }
         }
         private ResultHelper? listType = null;
+
         public Type Type { get; protected set; } = null!;
         public Type? UnderlyingType { get; protected set; } = null!;
 
@@ -283,7 +284,8 @@ namespace Blueprint41.Query
             };
         }
 
-        internal static ResultHelper<T> Instance = (ResultHelper<T>)Of(typeof(T));
+        internal static ResultHelper<T> Instance => instance.Value;
+        private static Lazy<ResultHelper<T>> instance = new Lazy<ResultHelper<T>>(() => (ResultHelper<T>)Of(typeof(T)), true);
 
         #endregion
 
@@ -291,6 +293,13 @@ namespace Blueprint41.Query
 
         new public T NewFunctionResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType)
         {
+            List<AliasResult> aliases = arguments.OfType<T>().OfType<AliasResult>().Where(item => item.Entity != null).ToList();
+            if (aliases.Count != 0)
+            {
+                AliasResult? aliasResult = Entity.FindCommonBaseClass(aliases);
+                if ((object?)aliasResult != null)
+                    return newAliasResult2Ctor!.Value.Invoke(aliasResult, function, arguments, overridenReturnType);
+            }
                 return newFunctionResultCtor!.Value.Invoke(function, arguments, overridenReturnType);
         }
         protected sealed override IResult NewResultInternal(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType) => NewFunctionResult(function, arguments, overridenReturnType);

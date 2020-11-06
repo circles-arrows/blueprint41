@@ -47,8 +47,8 @@ namespace Blueprint41
         }
         public Enumeration AddValues(params string[] names)
         {
-            if (Parent is null)
-                throw new InvalidOperationException("You cannot change an 'ad-hoc' enumeration.");
+            //if (Parent is null)
+            //    throw new InvalidOperationException("You cannot change an 'ad-hoc' enumeration.");
 
             AddValuesInternal(names);
 

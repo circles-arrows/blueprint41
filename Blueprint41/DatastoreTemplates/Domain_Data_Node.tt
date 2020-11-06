@@ -11,6 +11,8 @@ using Blueprint41.Core;
 using Blueprint41.Neo4j.Model;
 using Blueprint41.Query;
 
+using m = <#= Settings.FullCRUDNamespace #>;
+
 namespace <#= Settings.FullQueryNamespace #>
 {
 	public partial class Node
@@ -47,13 +49,35 @@ namespace <#= Settings.FullQueryNamespace #>
 #>
 		}
 
+		protected override Entity GetEntity()
+        {
+<#
+	if(DALModel.IsVirtual)
+	{
+#>
+			return null;
+<#
+	}
+	else
+	{
+#>
+			return m.<#= DALModel.Label.Name #>.Entity;
+<#
+	}
+#>
+        }
+
 		internal <#= DALModel.Name #>Node() { }
 		internal <#= DALModel.Name #>Node(<#= DALModel.Name #>Alias alias, bool isReference = false)
 		{
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
+		internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
+		internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction, AliasResult nodeAlias, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity)
+		{
+			NodeAlias = nodeAlias;
+		}
 
 		public <#= DALModel.Name #>Node Alias(out <#= DALModel.Name #>Alias alias)
 		{
@@ -86,7 +110,7 @@ namespace <#= Settings.FullQueryNamespace #>
 			if (FromRelationship == null)
 				throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
-			return new <#= subclass.Name #>Node(FromRelationship, Direction, this.Neo4jLabel);
+			return new <#= subclass.Name #>Node(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
 		}
 
 <#
@@ -97,7 +121,7 @@ namespace <#= Settings.FullQueryNamespace #>
 
 	if (inRelations.Any())
 	{
-#>	
+#>
 		public <#= DALModel.Name #>In  In  { get { return new <#= DALModel.Name #>In(this); } }
 		public class <#= DALModel.Name #>In
 		{
@@ -250,7 +274,7 @@ namespace <#= Settings.FullQueryNamespace #>
 
 				return m_<#= property.Name #>;
 			}
-		} 
+		}
 		private <#= GetResultType(property.SystemReturnType) #> m_<#= property.Name #> = null;
 <#
 	}

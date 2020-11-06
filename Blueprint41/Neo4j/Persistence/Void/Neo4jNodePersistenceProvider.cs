@@ -309,7 +309,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 sb.Append(pageSize);
             }
             Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters, ref customState);
+            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters.ToDictionary(item => item.Key, item => item.Value.value), ref customState);
 
             var result = trans.Run(args.Cypher, args.Parameters);
 
@@ -329,13 +329,15 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     continue;
 
                 var key = node.Properties[entity.Key.Name];
+                if (key == null)
+                    continue;
 
                 Entity? concrete = null;
                 if (entity.IsAbstract)
                 {
                     if (entity.NodeType != null)
                     {
-                        string label = node.Properties[entity.NodeTypeName].As<string>();
+                        string label = node.Properties[entity.NodeTypeName]!.As<string>();
                         concrete = concretes.FirstOrDefault(item => item.Label.Name == label);
                     }
                     if (concrete == null)
@@ -388,6 +390,11 @@ namespace Blueprint41.Neo4j.Persistence.Void
             {
                 text = text.Replace(k, string.Concat("\"", k, "\""));
             }
+
+            text = text.Replace("[", @"\\[")
+                    .Replace("]", @"\\]")
+                    .Replace("(", @"\\(")
+                    .Replace(")", @"\\)");
 
             string search = text.Trim(' ', '(', ')').Replace("  ", " ").Replace(" ", " AND ");
          

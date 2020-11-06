@@ -47,6 +47,43 @@ namespace Blueprint41.Core
 			return item;
 		}
 
+		internal static OGM? Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
+		{
+			object? key = null;
+			if (!node.Properties.TryGetValue(Entity.Key.Name, out key))
+				throw new ArgumentException($"The node does not contain key '{Entity.Key.Name}' for entity '{Entity.Name}'.");
+
+			if (key is null)
+				throw new ArgumentException($"The node contains null key '{Entity.Key.Name}' for entity '{Entity.Name}'.");
+
+			Transaction trans = Transaction.RunningTransaction;
+
+			TWrapper? instance = (TWrapper?)trans.GetEntityByKey(Entity.Name, key);
+			if (!(instance is null))
+				return instance;
+
+			instance = Transaction.Execute(() => new TWrapper(), EventOptions.GraphEvents);
+			instance.SetKey((TKey)key);
+			OGM ogm = instance as OGM;
+
+			Dictionary<string, object?> properties = (Dictionary<string, object?>)node.Properties;
+			if (cypher != null)
+			{
+				Dictionary<string, object?>? customState = null;
+				NodeEventArgs loadingArgs = Entity.RaiseOnNodeLoading(trans, ogm, cypher, parameters, ref customState);
+				NodeEventArgs args = Entity.RaiseOnNodeLoaded(trans, loadingArgs, node.Id, node.Labels, properties);
+				properties = args.Properties!;
+			}
+
+			if (instance.PersistenceState == PersistenceState.HasUid || instance.PersistenceState == PersistenceState.Loaded)
+			{
+				ogm.SetData(properties);
+				instance.PersistenceState = (mappingMode == NodeMapping.AsWritableEntity) ? PersistenceState.Loaded : PersistenceState.OutOfScope;
+			}
+
+			return instance;
+		}
+
 		public static List<TWrapper> GetAll()
 		{
 			return Transaction.RunningTransaction.NodePersistenceProvider.GetAll<TWrapper>(Entity);
@@ -264,7 +301,7 @@ namespace Blueprint41.Core
 		{
 			InnerData.SetKey(key);
 		}
-		
+
 		public static void Delete(TKey key)
 		{
 			TWrapper? wrapper = Lookup(key);
@@ -319,16 +356,16 @@ namespace Blueprint41.Core
 		//{
 		//    return NewData((TKey)key);
 		//}
-	//    internal TData NewData(TKey key)
-	//    {
-	//        TData item = NewData();
+		//internal TData NewData(TKey key)
+		//{
+		//	  TData item = NewData();
+	
+		//	  if (key != null && !key.Equals(default(TKey)))
+		//		  item.SetKey(key);
+	
+		//    return item;
+		//}
 
-	//        if (key != null && !key.Equals(default(TKey)))
-				//item.SetKey(key);
-
-	//        return item;
-	//    }
-		
 		protected void KeySet(Action set)
 		{
 			if (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged)

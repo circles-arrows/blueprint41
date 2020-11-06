@@ -17,7 +17,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out MiscListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -45,7 +45,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out StringListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -73,7 +73,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out BooleanListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -101,7 +101,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out DateTimeListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -129,7 +129,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out FloatListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -157,7 +157,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out NumericListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -185,7 +185,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out MiscJaggedListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -209,7 +209,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out StringJaggedListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -233,7 +233,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out BooleanJaggedListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -257,7 +257,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out DateTimeJaggedListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -281,7 +281,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out FloatJaggedListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -305,7 +305,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out NumericJaggedListResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};

@@ -19,8 +19,8 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 
         public override long Id => Node.Id;
         public override IReadOnlyList<string> Labels => Node.Labels;
-        public override IReadOnlyDictionary<string, object> Properties => Node.Properties;
-        public override object this[string key] => Node[key];
+        public override IReadOnlyDictionary<string, object?> Properties => Node.Properties;
+        public override object? this[string key] => Node[key];
         public override bool Equals(RawNode other) => other is Neo4jRawNode rawOther ? Node.Equals(rawOther.Node) : false;
     }
 }

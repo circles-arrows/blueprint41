@@ -19,7 +19,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out MiscResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -44,7 +44,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out StringResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -69,7 +69,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out BooleanResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -94,7 +94,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out DateTimeResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -119,7 +119,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out FloatResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};
@@ -144,7 +144,7 @@ namespace Blueprint41.Query
 
 		public AsResult As(string aliasName, out NumericResult alias)
 		{
-			AliasResult aliasResult = new AliasResult()
+			AliasResult aliasResult = new AliasResult(this, null)
 			{
 				AliasName = aliasName
 			};

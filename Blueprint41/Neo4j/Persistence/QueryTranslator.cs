@@ -116,7 +116,7 @@ namespace Blueprint41.Neo4j.Model
             if (!state.Parameters.Contains(parameter))
                 state.Parameters.Add(parameter);
 
-            if (parameter.IsConstant && !state.Values.Contains(parameter))
+            if (parameter.HasValue && !state.Values.Contains(parameter))
                 state.Values.Add(parameter);
 
             if (parameter.Name == Parameter.CONSTANT_NAME)
@@ -199,6 +199,8 @@ namespace Blueprint41.Neo4j.Model
                 case PartType.Search:
 
                     string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
+                    search = string.Format("replace({0}, '{1}', '{2}')", search, "]", @"\\]");
+                    search = string.Format("replace({0}, '{1}', '{2}')", search, "[", @"\\[");
                     Node node = query.Patterns.First();
                     AliasResult alias = node.NodeAlias!;
                     AliasResult? weight = query.Aliases?.FirstOrDefault();
@@ -378,8 +380,10 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnListSort               => "apoc.coll.sort({base})";
         public virtual string FnListSortNode           => "apoc.coll.sortNodes({base}, \"{0}\")";
         public virtual string FnListSize               => "size({base})";
+        public virtual string FnPairs                  => "apoc.coll.pairs({base})";
         public virtual string FnPairsMin               => "apoc.coll.pairsMin({base})";
-        public virtual string FnListUnion              => "{base} + {0}";
+        public virtual string FnListUnion              => "apoc.coll.union({base}, {0})";
+        public virtual string FnListUnionAll           => "apoc.coll.unionAll({base}, {0})";
         public virtual string FnListAll                => "all(item IN {base} WHERE {0})";
         public virtual string FnListAny                => "any(item IN {base} WHERE {0})";
         public virtual string FnListNone               => "none(item IN {base} WHERE {0})";
@@ -524,7 +528,7 @@ namespace Blueprint41.Neo4j.Model
                 return false;
 
             RawNode node = record["version"].As<RawNode>();
-            (long major, long minor, long patch) databaseVersion = ((long)node.Properties["Major"], (long)node.Properties["Minor"], (long)node.Properties["Patch"]);
+            (long major, long minor, long patch) databaseVersion = ((long)node.Properties["Major"]!, (long)node.Properties["Minor"]!, (long)node.Properties["Patch"]!);
 
             if (databaseVersion.major < script.Major)
                 return false;

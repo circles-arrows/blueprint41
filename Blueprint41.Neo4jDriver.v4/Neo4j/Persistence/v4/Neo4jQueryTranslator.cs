@@ -14,7 +14,7 @@ namespace Blueprint41.Neo4j.Persistence
             if (!state.Parameters.Contains(parameter))
                 state.Parameters.Add(parameter);
 
-            if (parameter.IsConstant && !state.Values.Contains(parameter))
+            if (parameter.HasValue && !state.Values.Contains(parameter))
                 state.Values.Add(parameter);
 
             if (parameter.Name == Parameter.CONSTANT_NAME)

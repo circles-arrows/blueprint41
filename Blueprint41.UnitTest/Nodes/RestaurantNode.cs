@@ -25,7 +25,7 @@ namespace Datastore.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal RestaurantNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
+		internal RestaurantNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
 
 		public RestaurantNode Alias(out RestaurantAlias alias)
 		{
@@ -40,8 +40,12 @@ namespace Datastore.Query
 			return this;
         }
 
-	
-		public RestaurantIn  In  { get { return new RestaurantIn(this); } }
+        protected override Entity GetEntity()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RestaurantIn  In  { get { return new RestaurantIn(this); } }
 		public class RestaurantIn
 		{
 			private RestaurantNode Parent;

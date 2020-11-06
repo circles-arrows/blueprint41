@@ -322,7 +322,8 @@ namespace Blueprint41.Core
         OnRelationCreate,
         OnRelationCreated,
         OnRelationDelete,
-        OnRelationDeleted
+        OnRelationDeleted,
+        LoadedViaCompiledQuery
     }
     public enum OperationEnum
     {

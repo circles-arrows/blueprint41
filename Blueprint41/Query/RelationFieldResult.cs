@@ -92,7 +92,7 @@ namespace Blueprint41.Query
 
         public AsResult As(string aliasName, out RelationFieldResult alias)
         {
-            AliasResult aliasResult = new AliasResult()
+            AliasResult aliasResult = new AliasResult(this, null)
             {
                 AliasName = aliasName
             };

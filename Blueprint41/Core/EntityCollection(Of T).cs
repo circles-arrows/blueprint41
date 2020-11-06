@@ -16,16 +16,17 @@ namespace Blueprint41.Core
     public class EntityCollection<TEntity> : EntityCollectionBase<TEntity>
         where TEntity : class, OGM
     {
-        public EntityCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null) : base(parent, property, eagerLoadLogic) { }
+        public EntityCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null)
+            : base(parent, property, eagerLoadLogic) { }
 
         #region Manipulation
 
-        public TEntity this[int index]
+        public TEntity? this[int index]
         {
             get
             {
                 LazyLoad();
-                return InnerData[index].Item;
+                return InnerData[index]?.Item;
             }
         }
         private protected override int CountInternal { get { return Count; } }
@@ -47,8 +48,6 @@ namespace Blueprint41.Core
 
             ExecuteAction(AddAction(item, null));
         }
-
-
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
         {
             LazyLoad();
@@ -266,18 +265,23 @@ namespace Blueprint41.Core
 
         #region Relationship Action Helpers
 
+        internal override void EnsureLoaded()
+        {
+            LazyLoad(); 
+        }
         internal override void ForEach(Action<int, CollectionItem> action)
         {
-            LazyLoad();
+            EnsureLoaded();
 
             for (int index = InnerData.Count - 1; index >= 0; index--)
-                action.Invoke(index, InnerData[index]);
+                if (InnerData[index] != null)
+                    action.Invoke(index, InnerData[index]!);
         }
         internal override void Add(CollectionItem item)
         {
             InnerData.Add((CollectionItem<TEntity>)item);
         }
-        internal override CollectionItem GetItem(int index)
+        internal override CollectionItem? GetItem(int index)
         {
             return InnerData[index];
         }
@@ -289,6 +293,10 @@ namespace Blueprint41.Core
         {
             InnerData.RemoveAt(index);
         }
+        internal override int[] IndexOf(OGM item)
+        {
+            return InnerData.IndexOf((TEntity)item);
+        }
 
         protected override TEntity? GetItem(DateTime? moment)
         {
@@ -297,7 +305,7 @@ namespace Blueprint41.Core
             if (InnerData.Count == 0)
                 return default(TEntity);
 
-            return InnerData[0].Item;
+            return InnerData.First().Item;
         }
         protected override IEnumerable<CollectionItem<TEntity>> GetItems(DateTime? from, DateTime? till)
         {

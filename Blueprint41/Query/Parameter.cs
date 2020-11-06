@@ -78,16 +78,26 @@ namespace Blueprint41
 
         #endregion
 
-        private Parameter(string name)
+        private Parameter(string name, Type? type = null)
         {
+            // Normal parameters
             Name = name;
-            IsConstant = (name == CONSTANT_NAME);
+            Type = type;
+            IsConstant = false;
+            Value = null;
+            HasValue = false;
+
+            if (name == CONSTANT_NAME)
+                throw new NotSupportedException("A constant has to always have a 'value', consider calling the other constructor.");
         }
         public Parameter(string name, object? value, Type? type = null)
         {
+            // Constants or Optional parameters (used in Query) or actual value (used during Execution)
             Name = name;
+            Type = type;
             IsConstant = (name == CONSTANT_NAME);
             Value = MaterializeValue(Type, value);
+            HasValue = true;
         }
 
         private static object? MaterializeValue(Type? type, object? value)
@@ -155,36 +165,22 @@ namespace Blueprint41
 
         public static Parameter New<T>(string name)
         {
-            Parameter p = new Parameter(name);
-            p.Value = null;
-            p.HasValue = false;
-            p.Type = typeof(T);
-            return p;
-        }
-        public static Parameter New<T>(string name, T value)
-        {
-            Parameter p = new Parameter(name);
-            p.Type = typeof(T);
-            p.Value = MaterializeValue(p.Type, value);
-            p.HasValue = true;
-            return p;
+            return new Parameter(name, typeof(T));
         }
         public static Parameter New(string name, Type type)
         {
-            Parameter p = new Parameter(name);
-            p.Value = null;
-            p.HasValue = false;
-            p.Type = type;
-            return p;
+            return new Parameter(name, type);
+        }
+        public static Parameter New<T>(string name, T value)
+        {
+            return new Parameter(name, value, typeof(T));
         }
         public static Parameter New(string name, object? value, Type type)
         {
-            Parameter p = new Parameter(name);
-            p.HasValue = !(value is null);
-            p.Type = type;
-            p.Value = MaterializeValue(p.Type, value);
-            return p;
+            return new Parameter(name, value, type);
         }
+
+        #region Internally used for code generation?
 
         [Obsolete("You cannot wrap a parameter into a constant", true)]
         internal static Parameter Constant(Parameter value)
@@ -247,22 +243,16 @@ namespace Blueprint41
             throw new NotSupportedException();
         }
 
+        #endregion
+
         public static Parameter Null => Constant(null, null);
         public static Parameter Constant<T>(T value)
         {
-            Parameter p = new Parameter(CONSTANT_NAME);
-            p.Value = value;
-            p.HasValue = true;
-            p.Type = typeof(T);
-            return p;
+            return new Parameter(CONSTANT_NAME, value, typeof(T));
         }
         public static Parameter Constant(object? value, Type? type)
         {
-            Parameter p = new Parameter(CONSTANT_NAME);
-            p.Value = value;
-            p.HasValue = true;
-            p.Type = type;
-            return p;
+            return new Parameter(CONSTANT_NAME, value, type);
         }
 
         public string Name { get; internal set; }

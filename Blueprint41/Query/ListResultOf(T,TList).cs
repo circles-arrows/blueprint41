@@ -54,9 +54,21 @@ namespace Blueprint41.Query
                 return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnListSortNode, new[] { new Literal(string.Concat("^",fld)) });
         }
 
-        public TList Union(StringListResult stringListResult)
+        public TList Union(TList list)
         {
-            return NewList(t => t.FnListUnion, new object[] { stringListResult });
+            return NewList(t => t.FnListUnion, new object[] { list });
+        }
+        public TList UnionAll(TList list)
+        {
+            return NewList(t => t.FnListUnionAll, new object[] { list });
+        }
+
+        public TList Filter(Func<TResult, QueryCondition> condition)
+        {
+            TResult conditionItemField = NewResult(t => "item", new object[0]);
+            QueryCondition test = condition.Invoke(conditionItemField);
+
+            return NewList(t => t.FnListSelectWhere, new object[] { test });
         }
 
         //public QueryCondition All(Func<TResult, QueryCondition> condition)
@@ -90,7 +102,7 @@ namespace Blueprint41.Query
 
         public AsResult As(string aliasName, out TList alias)
         {
-            AliasResult aliasResult = new AliasResult()
+            AliasResult aliasResult = new AliasResult(this, null)
             {
                 AliasName = aliasName
             };
@@ -152,9 +164,13 @@ namespace Blueprint41.Query
             return new NumericResult(this, t => t.FnListSize, null, typeof(long));
         }
 
-        public TList Union(StringListResult stringListResult)
+        public TList Union(TList list)
         {
-            return NewList(t => t.FnListUnion, new object[] { stringListResult });
+            return NewList(t => t.FnListUnion, new object[] { list });
+        }
+        public TList UnionAll(TList list)
+        {
+            return NewList(t => t.FnListUnionAll, new object[] { list });
         }
 
         public StringResult Reduce(string init, Func<StringResult, TResult, StringResult> logic)
@@ -202,12 +218,21 @@ namespace Blueprint41.Query
                 TResult conditionItemField = NewResult(t => "item", new object[0], typeof(TType));
                 QueryCondition test = condition.Invoke(conditionItemField);
 
-                return NewList(t => t.FnListSelectValueWhere, new object[] { test, result }, typeof(TType));
+                return NewList(t => t.FnListSelectValueWhere, result, new object[] { test, result }, typeof(TType));
             }
             else
-                return NewList(t => t.FnListSelect, new object[] { result }, typeof(TType));
+                return NewList(t => t.FnListSelect, result, new object[] { result }, typeof(TType));
 
-            IListResult NewList(Func<QueryTranslator, string?> ? function, object[] ? arguments = null, Type ? type = null) => (IListResult)listInfo.NewFieldResult((IPrimitiveResult)this, function, arguments, type);
+            IListResult NewList(Func<QueryTranslator, string?> ? function, TValue result, object[] ? arguments = null, Type ? type = null)
+            {
+                var listResult = (IListResult)listInfo.NewFieldResult((IPrimitiveResult)this, function, arguments, type);
+                if (result is AliasResult aliasResult)
+                {
+                    if (listResult is AliasResult listAliasResult)
+                        listAliasResult.Node = aliasResult.Node;
+                }
+                return listResult;
+            }
         }
 
         public StringResult Join(string separator, Func<TResult, StringResult> logic)

@@ -25,9 +25,11 @@ namespace Blueprint41.Core
             DateTime minStartDate = Moment;
             DateTime maxEndDate = EndDate;
 
-            target.ForEach(delegate (int index, CollectionItem item)
+            int[] indexes = target.IndexOf(target.ForeignItem(this));
+            foreach (int index in indexes)
             {
-                if (item.Item.Equals(target.ForeignItem(this)))
+                CollectionItem? item = target.GetItem(index);
+                if (item != null)
                 {
                     if (item.Overlaps(Moment))
                     {
@@ -40,14 +42,9 @@ namespace Blueprint41.Core
                         target.RemoveAt(index);
                     }
                 }
-            });
+            }
 
             target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this), minStartDate, maxEndDate));
         }
     }
-
-    //  |---------------|               |--------------|
-    //            |-------------------------|
-
-    //  |----------------------------------------------|
 }

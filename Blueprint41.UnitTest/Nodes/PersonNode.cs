@@ -25,7 +25,7 @@ namespace Datastore.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal PersonNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
+		internal PersonNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
 
 		public PersonNode Alias(out PersonAlias alias)
 		{
@@ -40,8 +40,12 @@ namespace Datastore.Query
 			return this;
         }
 
-	
-		public PersonIn  In  { get { return new PersonIn(this); } }
+        protected override Entity GetEntity()
+        {
+            throw new NotImplementedException();
+        }
+
+        public PersonIn  In  { get { return new PersonIn(this); } }
 		public class PersonIn
 		{
 			private PersonNode Parent;

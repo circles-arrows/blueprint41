@@ -299,7 +299,8 @@ namespace Blueprint41.Core
             // Effectively make this unusable.. except via reflection...
         }
 
-        protected override TTo Converter(TFrom value)
+        [return: MaybeNull]
+        protected override TTo Converter([AllowNull] TFrom value)
         {
             throw new NotImplementedException();
         }

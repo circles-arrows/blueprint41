@@ -25,7 +25,7 @@ namespace Datastore.Query
 			NodeAlias = alias;
 			IsReference = isReference;
 		}
-		internal CityNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null) : base(relationship, direction, neo4jLabel) { }
+		internal CityNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
 
 		public CityNode Alias(out CityAlias alias)
 		{
@@ -40,8 +40,12 @@ namespace Datastore.Query
 			return this;
         }
 
+        protected override Entity GetEntity()
+        {
+            throw new NotImplementedException();
+        }
 
-		public CityOut Out { get { return new CityOut(this); } }
+        public CityOut Out { get { return new CityOut(this); } }
 		public class CityOut
 		{
 			private CityNode Parent;

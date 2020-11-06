@@ -6,24 +6,55 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Blueprint41.Core;
+
 namespace Blueprint41
 {
-    public sealed class ObservableList<T> : IList<T>, INotifyChanged<T>
+    public interface IObservableList<T> : INotifyChanged<CollectionItem<T>?>, IEnumerable<CollectionItem<T>>
+        where T : class, OGM
     {
-        private List<T> InnerList;
-        public event NotifyChangedEventHandler<T>? BeforeCollectionChanged;
-        public event NotifyChangedEventHandler<T>? CollectionChanged;
+        CollectionItem<T>? this[int index] { get; set; }
+        void Add(CollectionItem<T> item);
+        void Clear();
+        bool Contains(T item);
+        int Count { get; }
+        void CopyTo(CollectionItem<T>[] array, int arrayIndex);
+        int[] IndexOf(T item);
+        bool Remove(T item);
+        void RemoveAt(int index);
+    }
+
+
+    public sealed class ObservableList<T> : IObservableList<T>
+        where T : class, OGM
+    {
+        static private readonly int[] EMPTY_INT_ARRAY = new int[0];
+        private List<CollectionItem<T>?> InnerList;
+        private Dictionary<T, List<int>> InnerDict;
+
+        public event NotifyChangedEventHandler<CollectionItem<T>?>? BeforeCollectionChanged;
+        public event NotifyChangedEventHandler<CollectionItem<T>?>? CollectionChanged;
 
         public ObservableList()
         {
-            InnerList = new List<T>();
+            Count = 0;
+            InnerList = new List<CollectionItem<T>?>();
+            InnerDict = new Dictionary<T, List<int>>();
         }
-        public ObservableList(IEnumerable<T> items)
+        public ObservableList(IEnumerable<CollectionItem<T>> items)
         {
-            InnerList = new List<T>(items);
+            InnerList = new List<CollectionItem<T>?>(items.Where(item => item != null && item.Item != null));
+            Count = InnerList.Count;
+
+            int index = 0;
+            InnerDict = InnerList
+                .Select(item => (Item:item, Index:index++))
+                .Where(item => item.Item?.Item != null)
+                .GroupBy(item => item.Item!.Item)
+                .ToDictionary(item => item.Key, item => item.Select(item2 => item2.Index).ToList());
         }
 
-        public T this[int index]
+        public CollectionItem<T>? this[int index]
         {
             get
             {
@@ -31,77 +62,152 @@ namespace Blueprint41
             }
             set
             {
-                T item = InnerList[index];
+                CollectionItem<T>? oldValue = InnerList[index];
+                CollectionItem<T>? newValue = value;
 
-                if (item is null && value is null)
+                if (oldValue is null && newValue is null)
                     return;
 
-                if (item is null || value is null || !item.Equals(value))
+                if (oldValue is null || newValue is null || !oldValue.Equals(newValue))
                 {
-                    NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Replace, value, InnerList[index], index);
+                    if (!Contains(newValue!))
+                {
+                        NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Replace, newValue, InnerList[index], index);
                     BeforeCollectionChanged?.Invoke(this, eventArgs);
-                    InnerList[index] = value;
+
+                        if (oldValue != null)
+                            RemoveAt(oldValue, index);
+
+                        InnerList[index] = newValue;
                     CollectionChanged?.Invoke(this, eventArgs);
                 }
             }
         }
-        public int Count => InnerList.Count;
-        public bool IsReadOnly => false;
-        public void Add(T item)
+        }
+        public int Count { get; private set; }
+        public void Add(CollectionItem<T> item)
         {
-            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Add, item);
+            if (!Contains(item)) // if Item is already in the list, don't add it again
+        {
+                NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Add, item);
             BeforeCollectionChanged?.Invoke(this, eventArgs);
+                List<int> indexes;
+                if (!InnerDict.TryGetValue(item.Item, out indexes))
+                {
+                    indexes = new List<int>();
+                    InnerDict.Add(item.Item, indexes);
+                }
+                indexes.Add(InnerList.Count);    
             InnerList.Add(item);
+                Count++;
             CollectionChanged?.Invoke(this, eventArgs);
+        }
         }
         public void Clear()
         {
-            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Reset);
+            NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Reset);
             BeforeCollectionChanged?.Invoke(this, eventArgs);
             InnerList.Clear();
+            InnerDict.Clear();
+            Count = 0;
             CollectionChanged?.Invoke(this, eventArgs);
         }
         public bool Contains(T item)
         {
-            return InnerList.Contains(item);
+            if (InnerDict.TryGetValue(item, out List<int> indexes))
+            {
+                foreach (int index in indexes)
+                {
+                    CollectionItem<T>? value = InnerList[index];
+                    if (value != null && value.Equals(item))
+                        return true;
+                }
         }
-        public void CopyTo(T[] array, int arrayIndex)
+            return false;
+        }
+        public bool Contains(CollectionItem<T> item)
+        {
+            if (InnerDict.TryGetValue(item.Item, out List<int> indexes))
+            {
+                foreach (int index in indexes)
+        {
+                    CollectionItem<T>? value = InnerList[index];
+                    if (value != null && value.Equals(item))
+                        return true;
+                }
+        }
+            return false;
+        }
+        public void CopyTo(CollectionItem<T>[] array, int arrayIndex)
         {
             InnerList.CopyTo(array, arrayIndex);
         }
-        public IEnumerator<T> GetEnumerator()
+        public int[] IndexOf(T item)
         {
-            return InnerList.GetEnumerator();
+            if (InnerDict.TryGetValue(item, out List<int> indexes))
+                return indexes.ToArray();
+
+            return EMPTY_INT_ARRAY;
         }
-        public int IndexOf(T item)
-        {
-            return InnerList.IndexOf(item);
-        }
-        public void Insert(int index, T item)
-        {
-            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Add, item, index);
-            BeforeCollectionChanged?.Invoke(this, eventArgs);
-            InnerList.Insert(index, item);
-            CollectionChanged?.Invoke(this, eventArgs);
-        }
+
         public bool Remove(T item)
         {
-            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Remove, item);
-            BeforeCollectionChanged?.Invoke(this, eventArgs);
-            bool result = InnerList.Remove(item);
-            CollectionChanged?.Invoke(this, eventArgs);
+            if (InnerDict.TryGetValue(item, out List<int> indexes))
+            {
+                bool result = false;
+                for (int ptr = indexes.Count - 1; ptr >= 0; ptr--)
+                {
+                    int index = indexes![ptr];
+                    CollectionItem<T>? value = InnerList[index];
+                    if (value != null)
+                    {
+                        result = true;
+                        RemoveAt(value, index, indexes!, ptr);
+                    }
+                }
             return result;
+        }
+            return false;
         }
         public void RemoveAt(int index)
         {
-            NotifyChangedEventArgs<T> eventArgs = new NotifyChangedEventArgs<T>(NotifyCollectionChangedAction.Remove, InnerList[index], index);
+            CollectionItem<T>? item = InnerList[index];
+            if (item != null)
+                RemoveAt(item, index);
+        }
+        private void RemoveAt(CollectionItem<T> item, int index, List<int>? indexes = null, int ptr = 0)
+        {
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
+            NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Remove, item, index);
             BeforeCollectionChanged?.Invoke(this, eventArgs);
-            InnerList.RemoveAt(index);
+
+            InnerList[index] = null;
+            Count--;
+            if (indexes == null)
+            {
+                if (InnerDict.TryGetValue(item.Item, out indexes))
+                    ptr = indexes.IndexOf(index);
+            }
+            if (indexes != null)
+            {
+                indexes.RemoveAt(ptr);
+                if (indexes.Count == 0)
+                    InnerDict.Remove(item.Item);
+                else
+                    InnerDict[item.Item] = indexes;
+            }
             CollectionChanged?.Invoke(this, eventArgs);
+        }
+
+        public IEnumerator<CollectionItem<T>> GetEnumerator()
+        {
+            return InnerList.Where(item => item != null).GetEnumerator()!;
         }
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return InnerList.GetEnumerator();
+            return GetEnumerator();
         }
     }
 }

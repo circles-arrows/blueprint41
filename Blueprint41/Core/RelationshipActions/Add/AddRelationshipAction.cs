@@ -20,12 +20,7 @@ namespace Blueprint41.Core
 
         protected override void InMemoryLogic(EntityCollectionBase target)
         {
-            bool contains = false;
-            target.ForEach(delegate (int index, CollectionItem item)
-            {
-                if (item.Item.Equals(target.ForeignItem(this)))
-                    contains = true;
-            });
+            bool contains = target.IndexOf(target.ForeignItem(this)).Length != 0;
             if (!contains)
                 target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this), null, null));
         }

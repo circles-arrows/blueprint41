@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 using model = Blueprint41.Neo4j.Model;
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
+using System.Linq.Expressions;
+using Blueprint41.Query;
+using System.Reflection;
 
 namespace Blueprint41
 {
@@ -330,7 +333,7 @@ namespace Blueprint41
             return this;
         }
 
-        private FastDictionary<object, DynamicEntity> staticData = new FastDictionary<object, DynamicEntity>();
+        private Dictionary<object, DynamicEntity> staticData = new Dictionary<object, DynamicEntity>();
         public ICollection<DynamicEntity> StaticData { get { return staticData.Values; } }
 
         private string? summary = null;
@@ -1189,6 +1192,163 @@ namespace Blueprint41
                 return GetPropertiesOfBaseTypesAndSelf().FirstOrDefault(item => item.Name.ToLower() == name.ToLower());
             }
         }
+
+
+        internal static Entity? FindCommonBaseClass(List<Entity> entities)
+        {
+            if (entities.Count == 0)
+                return null;
+
+            if (entities.Count == 1)
+                return entities.First();
+
+            Entity? e = null;
+            List<Entity>? shared = null;
+            foreach (Entity entity in entities)
+            {
+                List<Entity> inheritChain = new List<Entity>();
+                e = entity;
+                while (e != null)
+                {
+                    inheritChain.Add(e);
+                    e = e.Inherits;
+                }
+
+                if (shared is null)
+                {
+                    shared = inheritChain;
+                }
+                else
+                {
+                    HashSet<string> inheritedEntities = new HashSet<string>(inheritChain.Select(item => item.Name));
+
+                    for (int index = shared.Count - 1; index >= 0; index--)
+                    {
+                        if (!inheritedEntities.Contains(shared[index].Name))
+                            shared.RemoveAt(index);
+                    }
+                }
+
+                if (shared.Count == 0)
+                    break;
+            }
+
+            if (shared is null || shared.Count == 0)
+                return null;
+
+            return shared.First();
+        }
+        internal static AliasResult? FindCommonBaseClass(List<AliasResult> aliases)
+        {
+            if (aliases.Count == 0)
+                return null;
+
+            if (aliases.Count == 1)
+                return aliases.First();
+
+            AliasResultInfo? e;
+            List<AliasResultInfo>? shared = null;
+            foreach (AliasResultInfo info in aliases.Select(item => new AliasResultInfo(item)))
+            {
+                List<AliasResultInfo> inheritChain = new List<AliasResultInfo>();
+                e = info;
+                while (e != null)
+                {
+                    inheritChain.Add(e);
+                    e = e.Inherits;
+                }
+
+                if (shared is null)
+                {
+                    shared = inheritChain;
+                }
+                else
+                {
+                    if (shared.Last().Distance > inheritChain.Last().Distance)
+                        (shared, inheritChain) = (inheritChain, shared);
+
+                    HashSet<string> inheritedEntities = new HashSet<string>(inheritChain.Select(item => item.Entity.Name));
+                    for (int index = shared.Count - 1; index >= 0; index--)
+                    {
+                        if (!inheritedEntities.Contains(shared[index].Entity.Name))
+                        {
+                            shared.RemoveAt(index);
+                        }
+                    }
+                }
+
+                if (shared.Count == 0)
+                    break;
+            }
+
+            if (shared is null || shared.Count == 0)
+                return null;
+
+            return shared.First().AliasResult;
+        }
+        private class AliasResultInfo
+        {
+            public AliasResultInfo(AliasResult aliasResult)
+            {
+                AliasResult = aliasResult;
+                Entity = aliasResult.Entity!;
+                Distance = 0;
+                Inherits = (aliasResult.Entity?.Inherits == null) ? null : new AliasResultInfo(this);
+            }
+            private AliasResultInfo(AliasResultInfo info)
+            {
+                AliasResult = info.AliasResult;
+                Entity = info.Entity.Inherits!;
+                Distance = info.Distance + 1;
+            }
+
+            public AliasResult AliasResult { get; set; }
+            public Entity Entity { get; set; }
+            public int Distance { get; set; }
+
+            public AliasResultInfo? Inherits { get; set; }
+        }
+
+        internal OGM Activator(EventOptions eventOptions = EventOptions.GraphEvents)
+        {
+            if (IsAbstract)
+                throw new NotSupportedException($"You cannot instantiate the abstract entity {Name}.");
+
+            if (activator is null)
+            {
+                lock(this)
+                {
+                    if (activator is null)
+                        activator = Expression.Lambda<Func<OGM>>(Expression.New(RuntimeReturnType)).Compile();
+                }
+            }
+
+            return Transaction.Execute(() => activator.Invoke(), eventOptions);
+        }
+        private Func<OGM>? activator = null;
+
+        internal OGM? Map(RawNode node, NodeMapping mappingMode)
+        {
+            return Map(node, null!, null!, mappingMode);
+        }
+
+        internal OGM? Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
+        {
+            if(mapMethod == null)
+            {
+                lock (this)
+                {
+                    if (mapMethod == null)
+                    {
+                        MethodInfo? method = RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(RawNode), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                        mapMethod = (method is null) ? null : (Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>)Delegate.CreateDelegate(typeof(Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
+                    }
+                }
+            }
+
+            return mapMethod?.Invoke(node, cypher, parameters, mappingMode);
+        }
+        private Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>? mapMethod = null;
 
         #endregion
     }

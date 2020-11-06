@@ -89,16 +89,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             if (parents.Count() == 0)
                 return new Dictionary<OGM, CollectionItemList>();
 
-            Dictionary<object, OGM> parentDict = new Dictionary<object, OGM>();
-            foreach (OGM parent in parents)
-            {
-                object? key = parent.GetKey();
-                if (key is null)
-                    continue;
-
-                if (!parentDict.ContainsKey(key))
-                    parentDict.Add(key, parent);
-            }
+            HashSet<OGM> parentHashset = new HashSet<OGM>(parents);
 
             string matchClause = string.Empty;
             if (target.Direction == DirectionEnum.In)
@@ -107,9 +98,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 matchClause = "MATCH ({0})<-[rel:{2}]-({3})";
 
             string whereClause = " WHERE node.{1} in ({{keys}}) ";
-            string returnClause = " RETURN node.{1} as ParentKey, out.{4} as ItemKey ";
+            string returnClause = " RETURN node as Parent, out as Item ";
             if (target.Relationship.IsTimeDependent)
-                returnClause = $" RETURN node.{{1}} as ParentKey, out.{{4}} as ItemKey, rel.{target.Relationship.StartDate} as StartDate, rel.{target.Relationship.EndDate} as EndDate";
+                returnClause = $" RETURN node as Parent, out as Item, rel.{target.Relationship.StartDate} as StartDate, rel.{target.Relationship.EndDate} as EndDate";
 
             Entity targetEntity = target.ForeignEntity;
 
@@ -128,8 +119,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                     nodeNames[nodeIndex],
                     target.ParentEntity.Key.Name,
                     target.Relationship.Neo4JRelationshipType,
-                    outNames[outIndex],
-                    targetEntity.Key.Name);
+                        outNames[outIndex]);
 
                     fullMatch.Add(match);
                 }
@@ -141,8 +131,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             if (parents.Any(parent => parent.GetEntity() != target.Parent.GetEntity()))
                 throw new InvalidOperationException("This code should only load collections of the same concrete parent class.");
 
-            var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
-            List<RelationshipIndex> indexCache = new List<RelationshipIndex>();
+            string cypher = string.Join(" UNION ", fullMatch);
+            var result = Transaction.RunningTransaction.Run(cypher, parameters);
+            List<CollectionItem> items = new List<CollectionItem>();
             foreach (var record in result)
             {
                 DateTime? startDate = null;
@@ -153,21 +144,14 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                     startDate = (record.Values["StartDate"] != null) ? Conversion<long, DateTime>.Convert((long)record.Values["StartDate"].As<long>()) : (DateTime?)null;
                     endDate = (record.Values["EndDate"] != null) ? Conversion<long, DateTime>.Convert((long)record.Values["EndDate"].As<long>()) : (DateTime?)null;
                 }
+                OGM? parent = target.Parent.GetEntity().Map(record.Values["Parent"].As<RawNode>(), NodeMapping.AsWritableEntity);
+                OGM? item = targetEntity.Map(record.Values["Item"].As<RawNode>(), NodeMapping.AsWritableEntity);
 
-                indexCache.Add(new RelationshipIndex(record.Values["ParentKey"].As<object>(), record.Values["ItemKey"].As<object>(), startDate, endDate));
-            }
+                if (parent is null || item is null)
+                    throw new NotSupportedException("The cypher query expected to have a parent node and a child node.");
 
-            Dictionary<object, List<RawNode>> itemsCache = Load(targetEntity, indexCache.Select(r => r.TargetEntityKey));
-
-            List<CollectionItem> items = new List<CollectionItem>();
-            foreach (var index in indexCache)
-            {
-                OGM parent = parentDict[index.SourceEntityKey];
-                foreach (var item in itemsCache[index.TargetEntityKey])
-                {
-                    OGM? child = ReadNode(parent, targetEntity, item);
-                    items.Add(target.NewCollectionItem(parent, child, index.StartDate, index.EndDate));
-                }
+                if (parentHashset.Contains(parent))
+                    items.Add(target.NewCollectionItem(parent, item, startDate, endDate));
             }
 
             return CollectionItemList.Get(items);
@@ -296,7 +280,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             parameters.Add("outKey", outItem.GetKey());
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(trans.TransactionDate));
+            parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
             if (timedependent)
             {
                 DateTime startDate = moment.HasValue ? moment.Value : DateTime.MinValue;
@@ -306,9 +290,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             parameters.Add("node", node);
 
+            string query = match + "\r\n" + create;
             relationship.RaiseOnRelationCreate(trans);
 
-            string query = match + "\r\n" + create;
             RawResult result = trans.Run(query, parameters);
 
             relationship.RaiseOnRelationCreated(trans);
@@ -385,6 +369,8 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
         }
         public override void RemoveAll(Relationship relationship, OGM item, DateTime? moment, bool timedependent)
         {
+            Transaction trans = Transaction.RunningTransaction;
+
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
@@ -408,7 +394,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                     relationship.StartDate,
                     relationship.EndDate);
 
-                Transaction.RunningTransaction.Run(cypher, parameters);
+                trans.Run(cypher, parameters);
 
                 // Remove Future
                 cypher = string.Format(
@@ -419,7 +405,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                     item.GetEntity().Key.Name,
                     relationship.StartDate);
 
-                Transaction.RunningTransaction.Run(cypher, parameters);
+                trans.Run(cypher, parameters);
                 //IResult result = trans.Run(cypher, parameters);
                 //if (result.Summary.Counters.RelationshipsDeleted == 0)
                 //    throw new ApplicationException($"Unable to delete all time dependent future relationships '{relationship.Neo4JRelationshipType}' related to {item.GetEntity().Label.Name}({item.GetKey()}).");
@@ -434,7 +420,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                     condition,
                     item.GetEntity().Key.Name);
 
-                Transaction.RunningTransaction.Run(cypher, parameters);
+                trans.Run(cypher, parameters);
 
                 //IResult result = trans.Run(cypher, parameters);
                 //if (result.Summary.Counters.RelationshipsDeleted == 0)
@@ -503,7 +489,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             string create = string.Format("CREATE (in)-[outr:{0} {{node}}]->(out)", relationship.Neo4JRelationshipType);
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(trans.TransactionDate));
+            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
             if (relationship.IsTimeDependent)
             {
                 node.Add(relationship.StartDate, Conversion<DateTime, long>.Convert(startDate ?? DateTime.MinValue));

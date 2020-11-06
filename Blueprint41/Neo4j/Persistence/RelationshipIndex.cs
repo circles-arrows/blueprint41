@@ -6,15 +6,15 @@ namespace Blueprint41.Neo4j.Persistence
 {
     public class RelationshipIndex
     {
-        public RelationshipIndex(object sourceEntityKey, object targetEntityKey, DateTime? startDate, DateTime? endDate)
+        public RelationshipIndex(OGM sourceEntity, OGM targetEntity, DateTime? startDate, DateTime? endDate)
         {
-            SourceEntityKey = sourceEntityKey;
-            TargetEntityKey = targetEntityKey;
+            SourceEntityInstance = sourceEntity;
+            TargetEntityInstance = targetEntity;
             StartDate = startDate;
             EndDate = endDate;
         }
-        public object SourceEntityKey { get; set; }
-        public object TargetEntityKey { get; set; }
+        public OGM SourceEntityInstance { get; set; }
+        public OGM TargetEntityInstance { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
     }

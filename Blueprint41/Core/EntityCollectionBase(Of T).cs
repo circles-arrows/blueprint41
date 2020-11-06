@@ -21,8 +21,8 @@ namespace Blueprint41.Core
 
         protected Action<TEntity>? EagerLoadLogic;
 
-        protected private IList<CollectionItem<TEntity>>? innerData = null;
-        protected IList<CollectionItem<TEntity>> InnerData
+        protected private IObservableList<TEntity>? innerData = null;
+        protected IObservableList<TEntity> InnerData
         {
             get
             {
@@ -32,8 +32,8 @@ namespace Blueprint41.Core
                 return innerData;
             }
         }
-        private IList<CollectionItem<TEntity>>? loadedData = null;
-        protected IList<CollectionItem<TEntity>> LoadedData
+        private IEnumerable<CollectionItem<TEntity>>? loadedData = null;
+        protected IEnumerable<CollectionItem<TEntity>> LoadedData
         {
             get
             {
@@ -53,7 +53,7 @@ namespace Blueprint41.Core
             if (IsLoaded)
                 return;
 
-            ObservableList<CollectionItem<TEntity>> tmp = new ObservableList<CollectionItem<TEntity>>(items);
+            ObservableList<TEntity> tmp = new ObservableList<TEntity>(items);
             tmp.BeforeCollectionChanged += BeforeCollectionChanged;
             innerData = tmp;
             loadedData = tmp;
@@ -64,7 +64,7 @@ namespace Blueprint41.Core
         }
         private void BeforeCollectionChanged(object sender, EventArgs args)
         {
-            ObservableList<CollectionItem<TEntity>> tmp = (ObservableList<CollectionItem<TEntity>>)InnerData;
+            ObservableList<TEntity> tmp = (ObservableList<TEntity>)InnerData;
             tmp.BeforeCollectionChanged -= BeforeCollectionChanged;
             if (ReferenceEquals(InnerData, LoadedData))
                 loadedData = new List<CollectionItem<TEntity>>(InnerData);

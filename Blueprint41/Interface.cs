@@ -134,44 +134,17 @@ namespace Blueprint41
         {
             get
             {
-                if (Parent is null || entities.Count == 1)
+                if (Parent is null)
                     return entities.First();
 
                 if (entities.Count == 0)
                     throw new InvalidOperationException($"The interface '{Name}' is not implemented by any entity.");
 
-                Entity? e = null;
-                List<Entity>? shared = null;
-                foreach (Entity entity in entities)
-                {
-                    List<Entity> inheritChain = new List<Entity>();
-                    e = entity;
-                    while (e != null)
-                    {
-                        inheritChain.Add(e);
-                        e = e.Inherits;
-                    }
-
+                Entity? shared = Entity.FindCommonBaseClass(entities);
                     if (shared is null)
-                    {
-                        shared = inheritChain;
-                    }
-                    else
-                    {
-                        HashSet<string> inheritedEntities = new HashSet<string>(inheritChain.Select(item => item.Name));
-
-                        for (int index = shared.Count -1; index >= 0; index--)
-                        {
-                            if (!inheritedEntities.Contains(shared[index].Name))
-                                shared.RemoveAt(index);
-                        }
-                    }
-                }
-
-                if (shared is null || shared.Count == 0)
                     throw new InvalidOperationException($"The entities that implement interface '{Name}' do not share a common base entity. Hint, let all entities inherit from a common base entity similar like how all 'types' inherit from 'object'.");
 
-                return shared.First();
+                return shared;
             }
         }
     }

@@ -17,9 +17,9 @@ namespace Blueprint41.Query
             FunctionText = delegate (QueryTranslator t) { return null; };
         }
 
-		protected AliasResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this((AliasResult)null!, function, arguments, type) { }
-		protected AliasResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : this(parent?.Alias!, function, arguments, type) { }
-		protected AliasResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
+		protected internal AliasResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this((AliasResult)null!, function, arguments, type) { }
+		protected internal AliasResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : this(parent?.Alias!, function, arguments, type) { }
+		protected internal AliasResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
 		{
 			Alias = alias;
 			AliasName = alias?.AliasName;
@@ -28,11 +28,13 @@ namespace Blueprint41.Query
             FunctionArgs = arguments ?? emptyArguments;
             OverridenReturnType = type;
         }
+
         public AliasResult? Alias { get; private set; }
         internal Func<QueryTranslator, string?> FunctionText { get; private set; }
         internal object[]? FunctionArgs { get; private set; }
         private Type? OverridenReturnType { get; set; }
 
+		public Entity? Entity { get { return Node?.Entity; } }
 
         public static QueryCondition operator ==(AliasResult a, AliasResult b)
         {
@@ -61,7 +63,7 @@ namespace Blueprint41.Query
         }
 
         public string? AliasName { get; protected internal set; }
-        public Node? Node { get; protected set; }
+		public Node? Node { get; protected internal set; }
 
         protected internal override void Compile(CompileState state)
         {
@@ -84,7 +86,7 @@ namespace Blueprint41.Query
         }
 		public AsResult As(string aliasName, out AliasResult alias)
         {
-            alias = new AliasResult()
+			alias = new AliasResult(this, null)
             {
                 AliasName = aliasName,
             };

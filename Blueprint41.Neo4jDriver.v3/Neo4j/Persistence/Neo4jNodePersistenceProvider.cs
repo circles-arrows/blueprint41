@@ -309,7 +309,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 sb.Append(pageSize);
             }
             Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters, ref customState);
+            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters.ToDictionary(item => item.Key, item => item.Value.value), ref customState);
 
             var result = trans.Run(args.Cypher, args.Parameters);
 
@@ -329,17 +329,19 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                     continue;
 
                 var key = node.Properties[entity.Key.Name];
+                if (key == null)
+                    continue;
 
                 Entity? concrete = null;
                 if (entity.IsAbstract)
                 {
                     if (entity.NodeType != null)
                     {
-                        string label = node.Properties[entity.NodeTypeName].As<string>();
+                        string label = node.Properties[entity.NodeTypeName]!.As<string>();
                         concrete = concretes.FirstOrDefault(item => item.Label.Name == label);
                     }
                     if (concrete == null)
-                        concrete = GetEntity(entity.Parent, node.Labels);
+                        concrete = entity.Parent.GetEntity(node.Labels);
                     if (concrete == null)
                         throw new KeyNotFoundException($"Unable to find the concrete class for entity {entity.Name}, labels in DB are: {string.Join(", ", node.Labels)}.");
                 }
@@ -351,7 +353,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
                 if (wrapper == null)
                 {
-                    wrapper = Activator<T>(concrete);
+                    wrapper = (T)concrete.Activator();
                     wrapper.SetKey(key);
                     args.Sender = wrapper;
                     args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
@@ -389,7 +391,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 text = text.Replace(k, string.Concat("\"", k, "\""));
             }
 
-            string search = text.Trim(' ', '(', ')').Replace("  ", " ").Replace(" ", " AND ");
+            text = text.Replace("[", @"\\[")
+                    .Replace("]", @"\\]")
+                    .Replace("(", @"\\(")
+                    .Replace(")", @"\\)");
+
+            string search = text.Trim(' ').Replace("  ", " ").Replace(" ", " AND ");
          
 
             List<string> queries = new List<string>();
@@ -456,47 +463,6 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             var result = Transaction.RunningTransaction.Run(match, parameters);
             return result.Any();
-        }
-
-        static private T Activator<T>(Entity entity)
-        {
-            if (entity.IsAbstract)
-                throw new NotSupportedException($"You cannot instantiate the abstract entity {entity.Name}.");
-
-            Func<OGM> activator = activators.TryGetOrAdd(entity.Name, key =>
-            {
-                Dictionary<string, Func<OGM>> retval = new Dictionary<string, Func<OGM>>();
-
-                foreach (Type type in typeof(T).Assembly.GetTypes())
-                {
-                    if (type.BaseType != null && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(OGM<,,>))
-                    {
-                        OGM instance = (OGM)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
-                        Entity entityInstance = instance.GetEntity();
-                        if (entityInstance.IsAbstract)
-                            continue;
-
-                        retval.Add(entityInstance.Name, Expression.Lambda<Func<OGM>>(Expression.New(type)).Compile());
-                    }
-                }
-                return retval[entity.Name];
-            });
-
-            return (T)Transaction.Execute(() => activator.Invoke(), EventOptions.GraphEvents);
-        }
-        static private AtomicDictionary<string, Func<OGM>> activators = new AtomicDictionary<string, Func<OGM>>();
-
-        static private AtomicDictionary<string, Entity> entityByLabel = new AtomicDictionary<string, Entity>();
-        static private Entity? GetEntity(DatastoreModel datastore, IEnumerable<string> labels)
-        {
-            Entity? entity = null;
-            foreach (string label in labels)
-            {
-                entity = entityByLabel.TryGetOrAdd(label, key => datastore.Entities.FirstOrDefault(item => item.Label.Name == label));
-                if (!entity.IsAbstract)
-                    return entity;
-            }
-            return null;
         }
     }
 }

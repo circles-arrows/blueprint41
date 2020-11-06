@@ -283,6 +283,9 @@ namespace Blueprint41.Query
 
         public QueryExecutionContext GetExecutionContext()
         {
+            if (CompiledQuery is null)
+                throw new InvalidOperationException("You need to call the 'Compile' method before you can get an execution context.");
+
             return new QueryExecutionContext(CompiledQuery);
         }
 

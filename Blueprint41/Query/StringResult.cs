@@ -102,17 +102,17 @@ namespace Blueprint41.Query
             return new NumericResult(this, t => t.FnSize, null, typeof(long));
         }
 
-        public StringResult Split(string delimiter)
+        public StringListResult Split(string delimiter)
         {
-            return new StringResult(this, t => t.FnSplit, new object[] { Parameter.Constant(delimiter) });
+            return new StringListResult(this, t => t.FnSplit, new object[] { Parameter.Constant(delimiter) });
         }
-        public StringResult Split(StringResult delimiter)
+        public StringListResult Split(StringResult delimiter)
         {
-            return new StringResult(this, t => t.FnSplit, new object[] { delimiter });
+            return new StringListResult(this, t => t.FnSplit, new object[] { delimiter });
         }
-        public StringResult Split(Parameter delimiter)
+        public StringListResult Split(Parameter delimiter)
         {
-            return new StringResult(this, t => t.FnSplit, new object[] { delimiter });
+            return new StringListResult(this, t => t.FnSplit, new object[] { delimiter });
         }
 
         public StringResult Left(int subLength)

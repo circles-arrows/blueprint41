@@ -101,6 +101,26 @@ namespace Blueprint41.Core
 
             return converter.Convert(value);
         }
+        public Conversion? GetConverterToStoredType(Type returnType)
+        {
+            if (returnType == null)
+                return null;
+
+            Conversion? converter;
+            ConvertToStoredTypeCache.TryGetValue(returnType, out converter);
+
+            return converter;
+        }
+        public Conversion? GetConverterFromStoredType(Type returnType)
+        {
+            if (returnType == null)
+                return null;
+
+            Conversion? converter;
+            ConvertFromStoredTypeCache.TryGetValue(returnType, out converter);
+
+            return converter;
+        }
 
         public Type? GetStoredType<TReturnType>()
         {

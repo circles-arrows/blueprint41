@@ -15,9 +15,7 @@ namespace Blueprint41.Core
     public class AtomicDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         where TKey : notnull
     {
-        private int readerCount = 0;
-        private int awaitingWrite = 0;
-        private object syncLock = new object();
+        private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
         private readonly IDictionary<TKey, TValue> dictionary;
 
@@ -40,118 +38,107 @@ namespace Blueprint41.Core
 
         public void Read(Action<IDictionary<TKey, TValue>> logic)
         {
-            if (awaitingWrite != 0)
+            _lock.EnterReadLock();
+            try
             {
-                lock (syncLock)
-                    ReadInternal();
+                logic.Invoke(dictionary);
             }
-            else
+            finally
             {
-                ReadInternal();
-            }
-
-            void ReadInternal()
-            {
-                Interlocked.Increment(ref readerCount);
-                try
-                {
-                    logic.Invoke(dictionary);
-                }
-                finally
-                {
-                    Interlocked.Decrement(ref readerCount);
-                }
+                _lock.ExitReadLock();
             }
         }
         public T Read<T>(Func<IDictionary<TKey, TValue>, T> logic)
         {
-            if (awaitingWrite != 0)
+            _lock.EnterReadLock();
+            try
             {
-                lock (syncLock)
-                    return ReadInternal();
+                return logic.Invoke(dictionary);
             }
-            else
+            finally
             {
-                return ReadInternal();
+                _lock.ExitReadLock();
             }
 
-            T ReadInternal()
-            {
-                Interlocked.Increment(ref readerCount);
-                try
-                {
-                    return logic.Invoke(dictionary);
-                }
-                finally
-                {
-                    Interlocked.Decrement(ref readerCount);
-                }
-            }
         }
         public void Write(Action<IDictionary<TKey, TValue>> logic)
         {
-            lock (syncLock)
+            _lock.EnterWriteLock();
+            try
             {
-                Interlocked.Increment(ref awaitingWrite);
-                try
-                {
-                    while (readerCount != 0)
-                        Thread.Yield();
-
-                    logic.Invoke(dictionary);
-                }
-                finally
-                {
-                    Interlocked.Decrement(ref awaitingWrite);
-                }
+                logic.Invoke(dictionary);
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
             }
         }
         public T Write<T>(Func<IDictionary<TKey, TValue>, T> logic)
         {
-            lock (syncLock)
+            _lock.EnterWriteLock();
+            try
             {
-                Interlocked.Increment(ref awaitingWrite);
-                try
-                {
-                    while (readerCount != 0)
-                        Thread.Yield();
-
-                    return logic.Invoke(dictionary);
-                }
-                finally
-                {
-                    Interlocked.Decrement(ref awaitingWrite);
-                }
+                return logic.Invoke(dictionary);
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
             }
         }
         public void ReadOptionalWrite(ReadLogic readLogic, Action<IDictionary<TKey, TValue>> writeLogic)
         {
-            bool executeWrite = false;
-            Read(readDict => readLogic.Invoke(readDict, out executeWrite));
-            if (executeWrite)
+            _lock.EnterUpgradeableReadLock();
+            try
             {
-                Write(delegate (IDictionary<TKey, TValue> writeDict)
+                bool executeWrite = false;
+                readLogic.Invoke(dictionary, out executeWrite);
+                if (executeWrite)
                 {
-                    readLogic.Invoke(writeDict, out executeWrite);
-                    if (executeWrite)
-                        writeLogic.Invoke(writeDict);
-                });
+                    _lock.EnterWriteLock();
+                    try
+                    {
+                        readLogic.Invoke(dictionary, out executeWrite);
+                        if (executeWrite)
+                            writeLogic.Invoke(dictionary);
+                    }
+                    finally
+                    {
+                        _lock.ExitWriteLock();
+                    }
+                }
+            }
+            finally
+            {
+                _lock.ExitUpgradeableReadLock();
             }
         }
         public T ReadOptionalWrite<T>(ReadLogic<T> readLogic, Func<IDictionary<TKey, TValue>, T> writeLogic)
         {
-            bool executeWrite = false;
-            T result = Read(readDict => readLogic.Invoke(readDict, out executeWrite));
-            if (executeWrite)
+            _lock.EnterUpgradeableReadLock();
+            try
             {
-                Write(delegate (IDictionary<TKey, TValue> writeDict)
+                bool executeWrite = false;
+                T result = readLogic.Invoke(dictionary, out executeWrite);
+                if (executeWrite)
                 {
-                    result = readLogic.Invoke(writeDict, out executeWrite);
-                    if (executeWrite)
-                        result = writeLogic.Invoke(writeDict);
-                });
+                    _lock.EnterWriteLock();
+                    try
+                    {
+                        result = readLogic.Invoke(dictionary, out executeWrite);
+                        if (executeWrite)
+                            result = writeLogic.Invoke(dictionary);
+                    }
+                    finally
+                    {
+                        _lock.ExitWriteLock();
+                    }
+                }
+                return result;
             }
-            return result;
+            finally
+            {
+                _lock.ExitUpgradeableReadLock();
+            }
         }
         public delegate void ReadLogic(IDictionary<TKey, TValue> dictionary, out bool executeWrite);
         public delegate T ReadLogic<T>(IDictionary<TKey, TValue> dictionary, out bool executeWrite);
