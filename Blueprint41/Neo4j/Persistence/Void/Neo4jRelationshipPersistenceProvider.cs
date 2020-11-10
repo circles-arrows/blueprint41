@@ -264,6 +264,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
         public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
         {
+            Transaction trans = Transaction.RunningTransaction;
+
             Checks(relationship, inItem, outItem);
 
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = {{inKey}} \r\n MATCH (out:{2}) WHERE out.{3} = {{outKey}}",
@@ -278,7 +280,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             parameters.Add("outKey", outItem.GetKey());
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
+            parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(trans.TransactionDate));
             if (timedependent)
             {
                 DateTime startDate = moment.HasValue ? moment.Value : DateTime.MinValue;
@@ -289,7 +291,12 @@ namespace Blueprint41.Neo4j.Persistence.Void
             parameters.Add("node", node);
 
             string query = match + "\r\n" + create;
-            RawResult result = Transaction.RunningTransaction.Run(query, parameters);
+            relationship.RaiseOnRelationCreate(trans);
+
+            RawResult result = trans.Run(query, parameters);
+
+            relationship.RaiseOnRelationCreated(trans);
+
             //if (result.Summary.Counters.RelationshipsCreated == 0)
             //    throw new ApplicationException($"Unable to create relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
         }
@@ -319,7 +326,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     relationship.StartDate,
                     relationship.EndDate);
 
-                Transaction.RunningTransaction.Run(cypher, parameters);
+                trans.Run(cypher, parameters);
 
                 // Remove Future
                 cypher = string.Format(
@@ -362,6 +369,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         public override void RemoveAll(Relationship relationship, OGM item, DateTime? moment, bool timedependent)
         {
+            Transaction trans = Transaction.RunningTransaction;
+
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
@@ -385,7 +394,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     relationship.StartDate,
                     relationship.EndDate);
 
-                Transaction.RunningTransaction.Run(cypher, parameters);
+                trans.Run(cypher, parameters);
 
                 // Remove Future
                 cypher = string.Format(
@@ -396,7 +405,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     item.GetEntity().Key.Name,
                     relationship.StartDate);
 
-                Transaction.RunningTransaction.Run(cypher, parameters);
+                trans.Run(cypher, parameters);
                 //IResult result = trans.Run(cypher, parameters);
                 //if (result.Summary.Counters.RelationshipsDeleted == 0)
                 //    throw new ApplicationException($"Unable to delete all time dependent future relationships '{relationship.Neo4JRelationshipType}' related to {item.GetEntity().Label.Name}({item.GetKey()}).");
@@ -411,7 +420,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     condition,
                     item.GetEntity().Key.Name);
 
-                Transaction.RunningTransaction.Run(cypher, parameters);
+                trans.Run(cypher, parameters);
 
                 //IResult result = trans.Run(cypher, parameters);
                 //if (result.Summary.Counters.RelationshipsDeleted == 0)
@@ -445,7 +454,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 parameters.Add("MinDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
-                RawResult result = Transaction.RunningTransaction.Run(find, parameters);
+                RawResult result = trans.Run(find, parameters);
                 RawRecord record = result.FirstOrDefault();
                 int count = record["Count"].As<int>();
                 if (count > 0)
@@ -469,7 +478,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     relationship.StartDate,
                     relationship.EndDate);
 
-                Transaction.RunningTransaction.Run(delete, parameters);
+                trans.Run(delete, parameters);
             }
 
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = {{inKey}} MATCH (out:{2}) WHERE out.{3} = {{outKey}}",
@@ -480,7 +489,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             string create = string.Format("CREATE (in)-[outr:{0} {{node}}]->(out)", relationship.Neo4JRelationshipType);
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
+            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(trans.TransactionDate));
             if (relationship.IsTimeDependent)
             {
                 node.Add(relationship.StartDate, Conversion<DateTime, long>.Convert(startDate ?? DateTime.MinValue));
@@ -496,7 +505,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             relationship.RaiseOnRelationCreate(trans);
 
-            Transaction.RunningTransaction.Run(query, parameters2);
+            trans.Run(query, parameters2);
 
             relationship.RaiseOnRelationCreated(trans);
         }
@@ -526,7 +535,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             relationship.RaiseOnRelationDelete(trans);
           
-            Transaction.RunningTransaction.Run(match, parameters);
+            trans.Run(match, parameters);
            
             relationship.RaiseOnRelationDeleted(trans);
         }

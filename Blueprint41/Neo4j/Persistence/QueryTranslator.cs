@@ -197,37 +197,10 @@ namespace Blueprint41.Neo4j.Model
             switch (query.Type)
             {
                 case PartType.Search:
-
-                    string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
-                    search = string.Format("replace({0}, '{1}', '{2}')", search, "]", @"\\]");
-                    search = string.Format("replace({0}, '{1}', '{2}')", search, "[", @"\\[");
-                    Node node = query.Patterns.First();
-                    AliasResult alias = node.NodeAlias!;
-                    AliasResult? weight = query.Aliases?.FirstOrDefault();
-                    FieldResult[] fields = query.Fields!;
-
-                    List<string> queries = new List<string>();
-                    foreach (var property in fields)
-                        queries.Add(string.Format("({0}.{1}:' + {2} + ')", node.Neo4jLabel, property.FieldName, search));
-
-                    state.Text.Append("CALL apoc.index.search('fts', '");
-                    state.Text.Append(string.Join(" OR ", queries));
-                    state.Text.Append("') YIELD node AS ");
-                    Compile(alias, state);
-                    if ((object?)weight != null)
-                    {
-                        state.Text.Append(", weight AS ");
-                        Compile(weight, state);
-                    }
-                    state.Text.Append(" WHERE (");
-                    Compile(alias, state);
-                    state.Text.Append(":");
-                    state.Text.Append(node.Neo4jLabel);
-                    state.Text.Append(")");
+                    SearchTranslation(query, state);
                     break;
                 case PartType.Match:
-                    state.Text.Append("MATCH ");
-                    query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
+                    MatchTranslation(query, state);
                     break;
                 case PartType.OptionalMatch:
                     state.Text.Append("OPTIONAL MATCH ");
@@ -296,13 +269,12 @@ namespace Blueprint41.Neo4j.Model
                     query.LimitValue.Compile(state);
                     break;
                 case PartType.UnionMatch:
-                    if (query.UnionWithDuplicates)
-                        state.Text.Append("UNION ALL ");
-                    else
-                        state.Text.Append("UNION ");
-
-                    state.Text.Append("MATCH ");
-                    query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
+                    UnionTranslation(query, state);
+                    MatchTranslation(query, state);
+                    break;
+                case PartType.UnionSearch:
+                    UnionTranslation(query, state);
+                    SearchTranslation(query, state);
                     break;
                 case PartType.None:
                 case PartType.Compiled:
@@ -310,6 +282,48 @@ namespace Blueprint41.Neo4j.Model
                     break;
                 default:
                     throw new NotImplementedException($"Compilation for the {query.Type.ToString()} clause is not supported yet.");
+            }
+
+            void SearchTranslation(q.Query query, CompileState state)
+            {
+                string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
+                search = string.Format("replace({0}, '{1}', '{2}')", search, "]", @"\\]");
+                search = string.Format("replace({0}, '{1}', '{2}')", search, "[", @"\\[");
+                Node node = query.Patterns.First();
+                AliasResult alias = node.NodeAlias!;
+                AliasResult? weight = query.Aliases?.FirstOrDefault();
+                FieldResult[] fields = query.Fields!;
+
+                List<string> queries = new List<string>();
+                foreach (var property in fields)
+                    queries.Add(string.Format("({0}.{1}:' + {2} + ')", node.Neo4jLabel, property.FieldName, search));
+
+                state.Text.Append("CALL apoc.index.search('fts', '");
+                state.Text.Append(string.Join(" OR ", queries));
+                state.Text.Append("') YIELD node AS ");
+                Compile(alias, state);
+                if ((object?)weight != null)
+                {
+                    state.Text.Append(", weight AS ");
+                    Compile(weight, state);
+                }
+                state.Text.Append(" WHERE (");
+                Compile(alias, state);
+                state.Text.Append(":");
+                state.Text.Append(node.Neo4jLabel);
+                state.Text.Append(")");
+            }
+            void MatchTranslation(q.Query query, CompileState state)
+            {
+                state.Text.Append("MATCH ");
+                query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
+            }
+            void UnionTranslation(q.Query query, CompileState state)
+            {
+                if (query.UnionWithDuplicates)
+                    state.Text.Append("UNION ALL ");
+                else
+                    state.Text.Append("UNION ");
             }
         }
 

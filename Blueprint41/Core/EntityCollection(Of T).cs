@@ -273,7 +273,7 @@ namespace Blueprint41.Core
         {
             EnsureLoaded();
 
-            for (int index = InnerData.Count - 1; index >= 0; index--)
+            for (int index = InnerData.TotalCount - 1; index >= 0; index--)
                 if (InnerData[index] != null)
                     action.Invoke(index, InnerData[index]!);
         }

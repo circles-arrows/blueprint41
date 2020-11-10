@@ -12,7 +12,7 @@ using query = Blueprint41.Query;
 namespace Blueprint41.Query
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled, IUnionQuery
+    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled
     {
         internal Query(PersistenceProvider persistenceProvider)
         {
@@ -171,12 +171,68 @@ namespace Blueprint41.Query
 
             return New;
         }
-        public IUnionQuery UnionMatch(bool duplicates = true, params Node[] patterns)
+        public IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns)
         {
             SetType(PartType.UnionMatch);
             Patterns = patterns;
             UnionWithDuplicates = duplicates;
             return New;
+        }
+        public IBlankQuery UnionSearch(bool duplicates, Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, params FieldResult[] searchFields)
+        {
+            SetType(PartType.UnionSearch);
+            UnionWithDuplicates = duplicates;
+            SearchWords = searchWords;
+            SearchOperator = searchOperator;
+            Patterns = new[] { searchNodeType };
+            Fields = searchFields;
+
+            if ((object?)searchNodeType.NodeAlias == null)
+                throw new ArgumentException($"The searchNodeType does not have an alias. Rewite your query to: {Example()}");
+
+            foreach (FieldResult field in Fields)
+            {
+                if ((object?)field.Alias != searchNodeType.NodeAlias)
+                    throw new ArgumentException($"The searchfield should be retrieved from the searchNodeType it's alias. Rewite your query to: {Example()}");
+
+                if ((object?)field.Alias != searchNodeType.NodeAlias)
+                    throw new ArgumentException($"The searchfield '{field.FieldName}' is not supported for free text searching. Add it to the free text index in an upgrade script.");
+            }
+
+            return New;
+
+            string Example()
+            {
+                return $"Search({SearchWordExample()}, {OperatorExample()}, {NodeTypeExample()}, {SearchFieldExample()}, ...)";
+            }
+            string SearchFieldExample()
+            {
+                return $"{AliasExample()}.{searchFields.FirstOrDefault().FieldName ?? "FieldName"}";
+            }
+            string NodeTypeExample()
+            {
+                return $"node.{searchNodeType.Neo4jLabel}.Alias(out var {AliasExample()})";
+            }
+            string AliasExample()
+            {
+                return searchNodeType.Neo4jLabel.ToCamelCase();
+            }
+            string OperatorExample()
+            {
+                return $"SearchOperator.{searchOperator.ToString()}";
+            }
+            string SearchWordExample()
+            {
+                return $"Parameter.New<string>(\"{searchWords?.Name ?? "SearchWords"}\")";
+            }
+        }
+        public IBlankQuery UnionSearch(bool duplicates, Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, out FloatResult scoreAlias, params FieldResult[] searchFields)
+        {
+            AliasResult scoreResult = new AliasResult();
+            scoreAlias = new FloatResult(scoreResult, null, null, typeof(double));
+            Aliases = new[] { scoreResult };
+
+            return UnionSearch(duplicates, searchWords, searchOperator, searchNodeType, searchFields);
         }
 
         public ISkipQuery Skip(Parameter skip)
@@ -372,7 +428,8 @@ namespace Blueprint41.Query
         With,
         Skip,
         Limit,
-        UnionMatch
+        UnionMatch,
+        UnionSearch,
     }
 
     #region Interfaces
@@ -424,7 +481,9 @@ namespace Blueprint41.Query
 
     public partial interface IReturnQuery
     {
-        IUnionQuery UnionMatch(bool duplicates = true, params Node[] patterns);
+        IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns);
+        IBlankQuery UnionSearch(bool duplicates, Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, params FieldResult[] searchFields);
+        IBlankQuery UnionSearch(bool duplicates, Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, out FloatResult scoreAlias, params FieldResult[] searchFields);
         ISkipQuery Skip(Parameter skip);
         ILimitQuery Limit(Parameter limit);
         ISkipQuery Skip(int skip);
@@ -434,9 +493,6 @@ namespace Blueprint41.Query
         ILimitQuery Page(int skip, int limit);
         ILimitQuery Page(Parameter skip, Parameter limit);
         ICompiled Compile();
-    }
-    public partial interface IUnionQuery : IMatchQuery
-    {
     }
 
     public partial interface ISkipQuery

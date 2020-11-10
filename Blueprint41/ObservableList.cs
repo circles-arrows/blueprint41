@@ -18,6 +18,7 @@ namespace Blueprint41
         void Clear();
         bool Contains(T item);
         int Count { get; }
+        int TotalCount { get; }
         void CopyTo(CollectionItem<T>[] array, int arrayIndex);
         int[] IndexOf(T item);
         bool Remove(T item);
@@ -83,6 +84,14 @@ namespace Blueprint41
                 }
             }
         }
+        }
+
+        public int TotalCount 
+        { 
+            get 
+            {
+                return InnerList.Count;
+            }
         }
         public int Count { get; private set; }
         public void Add(CollectionItem<T> item)

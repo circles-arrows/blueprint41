@@ -116,7 +116,7 @@ namespace Blueprint41.Core
 		{
 			LazyLoad();
 
-			for (int index = 0; index < InnerData.Count; index++)
+			for (int index = 0; index < InnerData.TotalCount; index++)
 				if (InnerData[index] != null)
 					if (InnerData[index]!.Item.Equals(item) && (!moment.HasValue || InnerData[index]!.Overlaps(moment.Value)))
 						return true;
@@ -354,7 +354,7 @@ namespace Blueprint41.Core
 		{
 			EnsureLoaded();
 
-			for (int index = InnerData.Count - 1; index >= 0; index--)
+			for (int index = InnerData.TotalCount - 1; index >= 0; index--)
 				if (InnerData[index] != null)
 					action.Invoke(index, InnerData[index]!);
 		}
