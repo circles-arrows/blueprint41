@@ -239,6 +239,7 @@ namespace Blueprint41.Core
             Cypher = cypher;
             Parameters = parameters;
             CustomState = customState;
+            Labels = new string[0];
         }
         internal NodeEventArgs(EventTypeEnum eventType, NodeEventArgs previous, long id = 0, IReadOnlyList<string>? labels = null, Dictionary<string, object?>? properties = null)
             : this()

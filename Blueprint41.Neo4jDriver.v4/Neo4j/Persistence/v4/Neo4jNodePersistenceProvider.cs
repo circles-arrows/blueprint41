@@ -309,7 +309,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                 sb.Append(pageSize);
             }
             Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters.ToDictionary(item => item.Key, item => item.Value.value), ref customState);
+            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters.ToDictionary(item => item.Key, item => (object?)item.Value.value), ref customState);
 
             var result = trans.Run(args.Cypher, args.Parameters);
 

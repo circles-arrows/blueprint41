@@ -258,7 +258,7 @@ namespace Blueprint41.Core
         protected abstract TTo Converter([AllowNull] TFrom value);
         internal override void RegisterConversion()
         {
-            converterMethod = Converter;
+            converterMethod = Converter!;
         }
 
         #endregion
