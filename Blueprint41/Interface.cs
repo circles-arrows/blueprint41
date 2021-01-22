@@ -141,7 +141,7 @@ namespace Blueprint41
                     throw new InvalidOperationException($"The interface '{Name}' is not implemented by any entity.");
 
                 Entity? shared = Entity.FindCommonBaseClass(entities);
-                    if (shared is null)
+                if (shared is null)
                     throw new InvalidOperationException($"The entities that implement interface '{Name}' do not share a common base entity. Hint, let all entities inherit from a common base entity similar like how all 'types' inherit from 'object'.");
 
                 return shared;

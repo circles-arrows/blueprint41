@@ -72,18 +72,18 @@ namespace Blueprint41
                 if (oldValue is null || newValue is null || !oldValue.Equals(newValue))
                 {
                     if (!Contains(newValue!))
-                {
+                    {
                         NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Replace, newValue, InnerList[index], index);
-                    BeforeCollectionChanged?.Invoke(this, eventArgs);
+                        BeforeCollectionChanged?.Invoke(this, eventArgs);
 
                         if (oldValue != null)
                             RemoveAt(oldValue, index);
 
                         InnerList[index] = newValue;
-                    CollectionChanged?.Invoke(this, eventArgs);
+                        CollectionChanged?.Invoke(this, eventArgs);
+                    }
                 }
             }
-        }
         }
 
         public int TotalCount 
@@ -97,9 +97,9 @@ namespace Blueprint41
         public void Add(CollectionItem<T> item)
         {
             if (!Contains(item)) // if Item is already in the list, don't add it again
-        {
+            {
                 NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Add, item);
-            BeforeCollectionChanged?.Invoke(this, eventArgs);
+                BeforeCollectionChanged?.Invoke(this, eventArgs);
                 List<int> indexes;
                 if (!InnerDict.TryGetValue(item.Item, out indexes))
                 {
@@ -107,10 +107,10 @@ namespace Blueprint41
                     InnerDict.Add(item.Item, indexes);
                 }
                 indexes.Add(InnerList.Count);    
-            InnerList.Add(item);
+                InnerList.Add(item);
                 Count++;
-            CollectionChanged?.Invoke(this, eventArgs);
-        }
+                CollectionChanged?.Invoke(this, eventArgs);
+            }
         }
         public void Clear()
         {
@@ -131,7 +131,7 @@ namespace Blueprint41
                     if (value != null && value.Equals(item))
                         return true;
                 }
-        }
+            }
             return false;
         }
         public bool Contains(CollectionItem<T> item)
@@ -139,12 +139,12 @@ namespace Blueprint41
             if (InnerDict.TryGetValue(item.Item, out List<int> indexes))
             {
                 foreach (int index in indexes)
-        {
+                {
                     CollectionItem<T>? value = InnerList[index];
                     if (value != null && value.Equals(item))
                         return true;
                 }
-        }
+            }
             return false;
         }
         public void CopyTo(CollectionItem<T>[] array, int arrayIndex)
@@ -174,8 +174,8 @@ namespace Blueprint41
                         RemoveAt(value, index, indexes!, ptr);
                     }
                 }
-            return result;
-        }
+                return result;
+            }
             return false;
         }
         public void RemoveAt(int index)

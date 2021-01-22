@@ -58,5 +58,10 @@ namespace Blueprint41.Query
 <#
 	}
 #>
+
+		public override Type? GetResultType()
+        {
+            return typeof(List<TType>);
+        }
 	}
 }

@@ -1088,6 +1088,14 @@ namespace Blueprint41.DatastoreTemplates
 				else
 					return new MiscResult(t => t.FnGetField, new object[] { Alias, result }, type ?? typeof(object));
 			}
+
+			public MiscResult Get(Parameter parameter, bool withCoalesce = false, Type type = null)
+			{
+				if (withCoalesce)
+					return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, parameter }, type ?? typeof(object));
+				else
+					return new MiscResult(t => t.FnGetField, new object[] { Alias, parameter }, type ?? typeof(object));
+			}
 		}
 ");
             

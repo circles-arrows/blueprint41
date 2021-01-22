@@ -42,7 +42,7 @@ namespace Blueprint41
         public EnumerationCollection  Enumerations  { get; private set; }
         public FunctionalIdCollection FunctionalIds { get; private set; }
         public SubModelCollection     SubModels     { get; private set; }
-        
+
         public static List<DatastoreModel> RegisteredModels { get; } = new List<DatastoreModel>();
 
         public bool IsUpgraded
@@ -217,7 +217,7 @@ namespace Blueprint41
                     Transaction.Commit();
                 }
             }
-                SubscribeEventHandlers();
+            SubscribeEventHandlers();
 
             executed = true;
 
@@ -398,7 +398,7 @@ namespace Blueprint41
 
                 if (parameters == null)
                     convertedParams = new Dictionary<string, object?>();
-                else 
+                else
                     convertedParams = parameters.ToDictionary(item => item.Key, item => (item.Value is null) ? null : Model.PersistenceProvider.ConvertToStoredType(item.Value.GetType(), item.Value));
 
                 return Transaction.RunningTransaction.Run(cypher, convertedParams);

@@ -228,8 +228,10 @@ namespace Blueprint41.Core
 
     public struct NodeEventArgs
     {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         internal NodeEventArgs(EventTypeEnum eventType, Transaction trans, OGM? sender, string cypher, Dictionary<string, object?>? parameters, IDictionary<string, object?>? customState)
-            :this()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+            : this()
         {
             EventType = eventType;
             Transaction = trans;

@@ -50,7 +50,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             args.Labels = loaded.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
-            //       turns out the Neo4j driver can deal with it ... for now ... 
+            //       turns out the Neo4j driver can deal with it ... for now ...
             args = item.GetEntity().RaiseOnNodeLoaded(trans, args, loaded.Id, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
 
             if (item.PersistenceState == PersistenceState.HasUid || item.PersistenceState == PersistenceState.Loaded)
@@ -169,7 +169,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             args.Labels = inserted.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
-            //       turns out the Neo4j driver can deal with it ... for now ... 
+            //       turns out the Neo4j driver can deal with it ... for now ...
             args.Properties = (Dictionary<string, object?>)inserted.Properties;
             args = entity.RaiseOnNodeCreated(trans, args, inserted.Id, inserted.Labels, (Dictionary<string, object?>)inserted.Properties);
 
@@ -358,7 +358,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     args.Sender = wrapper;
                     args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
                     wrapper.SetData(args.Properties!);
-                    wrapper.PersistenceState = PersistenceState.Loaded; 
+                    wrapper.PersistenceState = PersistenceState.Loaded;
                 }
                 else
                 {
@@ -397,7 +397,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     .Replace(")", @"\\)");
 
             string search = text.Trim(' ', '(', ')').Replace("  ", " ").Replace(" ", " AND ");
-         
+
 
             List<string> queries = new List<string>();
             foreach (var property in fullTextProperties)
@@ -452,8 +452,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
 
             string match = string.Format(
-                pattern, 
-                item.GetEntity().Label.Name, 
+                pattern,
+                item.GetEntity().Label.Name,
                 item.GetEntity().Key.Name,
                 foreignProperty.Relationship?.Neo4JRelationshipType,
                 foreignProperty.Parent.Label.Name);

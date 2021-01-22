@@ -286,6 +286,14 @@ namespace Blueprint41
 
         #region Refactor Actions
 
+        public void Remove()
+        {
+
+            if (!Parent.Properties.Any(item => item.Name == Name))
+                throw new NotSupportedException($"Property to remove with name '{Name}' does not exist.");
+            // No changes in DB needed for this action!!!
+            Parent.Properties.Remove(Name);
+        }
         public IRefactorProperty Refactor { get { return this; } }
 
         void IRefactorProperty.Rename(string newName)
@@ -859,7 +867,7 @@ namespace Blueprint41
 
                 string next = pattern.Substring(pClose + 1);
 
-                string[] innerPattern = Pattern.TrimStart('(').TrimEnd(')').Split(':');
+                string[] innerPattern = Pattern.TrimStart(new[] { '(' }).TrimEnd(new[] { ')' }).Split(new[] { ':' });
                 if (innerPattern.Length == 0)
                 {
                     EntityAlias = "";
@@ -997,7 +1005,7 @@ namespace Blueprint41
                 else if (Pattern.EndsWith(">"))
                     RelationDirection = DirectionPattern.Right;
 
-                string[] innerPattern = Pattern.TrimStart('<', '-', '[').TrimEnd('>', '-', ']').Split(':');
+                string[] innerPattern = Pattern.TrimStart(new[] { '<', '-', '[' }).TrimEnd(new[] { '>', '-', ']' }).Split(new[] { ':' });
                 if (innerPattern.Length == 0)
                 {
                     RelationAlias = "";

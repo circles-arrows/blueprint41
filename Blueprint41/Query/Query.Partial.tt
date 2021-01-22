@@ -7,13 +7,13 @@
 <#
 	var listTypes = new []
 	{
-		( listType: "AliasListResult",    resultType: "AliasResult",    underlyingType: null       ),
-		( listType: "MiscListResult",     resultType: "MiscResult",     underlyingType: "object"   ),
-		( listType: "StringListResult",   resultType: "StringResult",   underlyingType: "string"   ),
-		( listType: "BooleanListResult",  resultType: "BooleanResult",  underlyingType: "bool"     ),
-		( listType: "DateTimeListResult", resultType: "DateTimeResult", underlyingType: "DateTime" ),
-		( listType: "FloatListResult",    resultType: "FloatResult",    underlyingType: "double"   ),
-		( listType: "NumericListResult",  resultType: "NumericResult",  underlyingType: "long"     ),
+		( listType: "AliasListResult",          resultType: "AliasResult",    underlyingType: null       ),
+		( listType: "MiscListResult",           resultType: "MiscResult",     underlyingType: "object"   ),
+		( listType: "StringListResult",         resultType: "StringResult",   underlyingType: "string"   ),
+		( listType: "BooleanListResult",        resultType: "BooleanResult",  underlyingType: "bool"     ),
+		( listType: "DateTimeListResult",       resultType: "DateTimeResult", underlyingType: "DateTime" ),
+		( listType: "FloatListResult",          resultType: "FloatResult",    underlyingType: "double"   ),
+		( listType: "NumericListResult",        resultType: "NumericResult",  underlyingType: "long"     ),
 		( listType: "AliasJaggedListResult",    resultType: "AliasListResult",    underlyingType: null       ),
 		( listType: "MiscJaggedListResult",     resultType: "MiscListResult",     underlyingType: "object[]"   ),
 		( listType: "StringJaggedListResult",   resultType: "StringListResult",   underlyingType: "string[]"   ),
@@ -39,40 +39,40 @@ namespace Blueprint41.Query
 <#
 	foreach ((string listType, string resultType, string underlyingType) in listTypes)
 	{
-        if (underlyingType is null)
-            continue;
+		if (underlyingType is null)
+			continue;
 #>
-    public partial class Query : IUnwindQuery<<#= resultType #>>
-    {
-        public IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list)
-        {
-            SetType(PartType.Unwind);
-            Fields = new[] { list };
+	public partial class Query : IUnwindQuery<<#= resultType #>>
+	{
+		public IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list)
+		{
+			SetType(PartType.Unwind);
+			Fields = new[] { list };
 
-            return this;
-        }
-        public IMatchQuery As(string aliasName, out <#= resultType #> alias)
-        {
-            this.WithResults = new[] { Fields.First().As(aliasName) };
+			return this;
+		}
+		public IMatchQuery As(string aliasName, out <#= resultType #> alias)
+		{
+			this.WithResults = new[] { Fields.First().As(aliasName) };
 
-            AliasResult aliasResult = new AliasResult()
-            {
-                AliasName = aliasName
-            };
-            alias = new <#= resultType #>(aliasResult, null, null, null, typeof(<#= underlyingType #>));
+			AliasResult aliasResult = new AliasResult()
+			{
+				AliasName = aliasName
+			};
+			alias = new <#= resultType #>(aliasResult, null, null, null, typeof(<#= underlyingType #>));
 
-            return New;
-        }
-    }
-    public partial interface IOptionalMatchQuery
-    {
-        IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list);
-    }
-    public partial interface IWhereQuery
-    {
-        IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list);
-    }
+			return New;
+		}
+	}
+	public partial interface IOptionalMatchQuery
+	{
+		IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list);
+	}
+	public partial interface IWhereQuery
+	{
+		IUnwindQuery<<#= resultType #>> Unwind(<#= listType #> list);
+	}
 <#
-    }
+	}
 #>
 }

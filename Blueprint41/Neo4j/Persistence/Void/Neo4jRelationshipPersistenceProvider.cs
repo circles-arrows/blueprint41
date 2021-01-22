@@ -116,9 +116,9 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 for (int outIndex = 0; outIndex < outNames.Length; outIndex++)
                 {
                     string match = string.Format(string.Concat(matchClause, whereClause, returnClause),
-                    nodeNames[nodeIndex],
-                    target.ParentEntity.Key.Name,
-                    target.Relationship.Neo4JRelationshipType,
+                        nodeNames[nodeIndex],
+                        target.ParentEntity.Key.Name,
+                        target.Relationship.Neo4JRelationshipType,
                         outNames[outIndex]);
 
                     fullMatch.Add(match);
@@ -534,7 +534,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             parameters.Add("minDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
 
             relationship.RaiseOnRelationDelete(trans);
-          
+
             trans.Run(match, parameters);
            
             relationship.RaiseOnRelationDeleted(trans);

@@ -51,7 +51,7 @@ namespace Blueprint41
                 {
                     QueryParameters.Add(parameterName, (value, false));
                 }
-        }
+            }
         }
         public List<dynamic> Execute(NodeMapping nodeMapping = NodeMapping.AsReadOnlyEntity)
         {

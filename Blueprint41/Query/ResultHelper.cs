@@ -86,9 +86,9 @@ namespace Blueprint41.Query
                     else if (IsList)
                     {
                         if (IsAlias)
-                        SearchEnd("ListAlias", "JaggedListAlias");
+                            SearchEnd("ListAlias", "JaggedListAlias");
                         else if (IsPrimitive) 
-                        SearchEnd("ListResult", "JaggedListResult");
+                            SearchEnd("ListResult", "JaggedListResult");
                     }
 
                     if (targetType == null)
@@ -269,11 +269,11 @@ namespace Blueprint41.Query
                 nameof(DateTimeResult)           => typeof(DateTime),
                 nameof(RelationFieldResult)      => typeof(DateTime),
                 nameof(MiscListResult)           => typeof(object),
-                nameof(StringListResult)         => typeof(string),   
-                nameof(BooleanListResult)        => typeof(bool),   
+                nameof(StringListResult)         => typeof(string),
+                nameof(BooleanListResult)        => typeof(bool),
                 nameof(DateTimeListResult)       => typeof(DateTime),
-                nameof(FloatListResult)          => typeof(double), 
-                nameof(NumericListResult)        => typeof(long),   
+                nameof(FloatListResult)          => typeof(double),
+                nameof(NumericListResult)        => typeof(long),
                 nameof(MiscJaggedListResult)     => typeof(object[]),
                 nameof(StringJaggedListResult)   => typeof(string[]),
                 nameof(BooleanJaggedListResult)  => typeof(bool[]),
@@ -300,7 +300,7 @@ namespace Blueprint41.Query
                 if ((object?)aliasResult != null)
                     return newAliasResult2Ctor!.Value.Invoke(aliasResult, function, arguments, overridenReturnType);
             }
-                return newFunctionResultCtor!.Value.Invoke(function, arguments, overridenReturnType);
+            return newFunctionResultCtor!.Value.Invoke(function, arguments, overridenReturnType);
         }
         protected sealed override IResult NewResultInternal(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType) => NewFunctionResult(function, arguments, overridenReturnType);
         private static Lazy<Func<Func<QueryTranslator, string?>?, object[]?, Type?, T>>? newFunctionResultCtor = null;
@@ -322,9 +322,9 @@ namespace Blueprint41.Query
         protected sealed override IResult NewResultInternal(IPlainAliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null) => NewAliasResult(alias, function, arguments, overridenReturnType);
         private static Lazy<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, T>>? newAliasResult2Ctor = null;
 
-        new public T NewFieldResult(IPrimitiveResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null) 
+        new public T NewFieldResult(IPrimitiveResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null)
         {
-                return newFieldResultCtor!.Value.Invoke((FieldResult)field, function, arguments, overridenReturnType);
+            return newFieldResultCtor!.Value.Invoke((FieldResult)field, function, arguments, overridenReturnType);
         }
         protected sealed override IResult NewResultInternal(IPrimitiveResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null) => NewFieldResult(field, function, arguments, overridenReturnType);
         private static Lazy<Func<FieldResult, Func<QueryTranslator, string?>?, object[]?, Type?, T>>? newFieldResultCtor = null;

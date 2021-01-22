@@ -96,5 +96,10 @@ namespace Blueprint41.Query
 
 			return new NumericListResult(this, t => t.FnListExtract, new object[] { result });
 		}
+
+		public override Type? GetResultType()
+        {
+            return typeof(List<TType>);
+        }
 	}
 }
