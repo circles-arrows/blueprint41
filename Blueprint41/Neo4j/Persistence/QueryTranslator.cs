@@ -298,14 +298,10 @@ namespace Blueprint41.Neo4j.Model
                 foreach (var property in fields)
                     queries.Add(string.Format("({0}.{1}:' + {2} + ')", node.Neo4jLabel, property.FieldName, search));
 
-                state.Text.Append("CALL apoc.index.search('fts', '");
-                state.Text.Append(string.Join(" OR ", queries));
-                state.Text.Append("') YIELD node AS ");
-                Compile(alias, state);
+                state.Text.Append(string.Format(FtiSearch, string.Join(" OR ", queries), state.Preview(alias.Compile, state)));
                 if ((object?)weight != null)
                 {
-                    state.Text.Append(", weight AS ");
-                    Compile(weight, state);
+                    state.Text.Append(string.Format(FtiWeight, state.Preview(weight.Compile, state)));
                 }
                 state.Text.Append(" WHERE (");
                 Compile(alias, state);
@@ -464,6 +460,17 @@ namespace Blueprint41.Neo4j.Model
             return $"apoc.util.md5([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
         }
 
+        #endregion
+
+        #region Full Text Indexes
+
+        public virtual string FtiSearch    => "CALL apoc.index.search('fts', '{0}') YIELD node AS {1}";
+        public virtual string FtiWeight    => ", weight AS {0}";
+        public virtual string FtiCreate    => "CALL apoc.index.addAllNodesExtended('fts', {{ {0} }}, {{ autoUpdate:true }})";
+        public virtual string FtiEntity    => "{0}:[{1}]";
+        public virtual string FtiProperty  => "'{0}'";
+        public virtual string FtiSeparator => ", ";
+        public virtual string FtiRemove    => "CALL apoc.index.remove('fts')";
 
         #endregion
 
@@ -494,41 +501,33 @@ namespace Blueprint41.Neo4j.Model
         {
             using (Transaction.Begin(true))
             {
-                Transaction.RunningTransaction.Run("CALL apoc.index.remove('fts')");
+                Transaction.RunningTransaction.Run(FtiRemove);
                 Transaction.Commit();
             }
 
             using (Transaction.Begin(true))
             {
-                StringBuilder builder = new StringBuilder();
-                builder.AppendLine("CALL apoc.index.addAllNodesExtended('fts',");
-                builder.AppendLine("\t{");
+                string indexes = string.Join(
+                        FtiSeparator,
+                        entities.Where(entity => entity.FullTextIndexProperties.Count > 0).Select(entity =>
+                            string.Format(
+                                FtiEntity,
+                                entity.Label.Name,
+                                string.Join(
+                                    FtiSeparator,
+                                    entity.FullTextIndexProperties.Select(item =>
+                                        string.Format(
+                                            FtiProperty, 
+                                            item.Name
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    );
+                string query = string.Format(FtiCreate, indexes);
 
-                bool first = true;
-                foreach (var entity in entities)
-                {
-                    if (entity.FullTextIndexProperties.Count == 0)
-                        continue;
-
-                    if (first)
-                        first = false;
-                    else
-                        builder.AppendLine(",");
-
-                    builder.AppendFormat("\t\t{0}:\t\t\t['", entity.Label.Name);
-                    builder.Append(string.Join("', '", entity.FullTextIndexProperties.Select(item => item.Name)));
-                    builder.Append("']");
-                }
-
-                builder.AppendLine();
-                builder.AppendLine("\t},");
-                builder.AppendLine("\t{");
-                builder.AppendLine("\t\tautoUpdate:true");
-                builder.AppendLine("\t}");
-                builder.AppendLine(")");
-
-                Transaction.RunningTransaction.Run(builder.ToString());
-
+                Transaction.RunningTransaction.Run(query);
                 Transaction.Commit();
             }
         }

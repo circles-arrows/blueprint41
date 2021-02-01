@@ -23,6 +23,10 @@ namespace Blueprint41.Core
         {
             dictionary = new Dictionary<TKey, TValue>();
         }
+        public AtomicDictionary(int capacity)
+        {
+            dictionary = new Dictionary<TKey, TValue>(capacity);
+        }
         public AtomicDictionary(IEqualityComparer<TKey> comparer)
         {
             dictionary = new Dictionary<TKey, TValue>(comparer);
