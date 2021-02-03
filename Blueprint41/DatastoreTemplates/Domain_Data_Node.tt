@@ -31,6 +31,15 @@ namespace <#= Settings.FullQueryNamespace #>
 
 	public partial class <#= DALModel.Name #>Node : Blueprint41.Query.Node
 	{
+        public static implicit operator QueryCondition(<#= DALModel.Name #>Node a)
+        {
+            return new QueryCondition(a);
+        }
+        public static QueryCondition operator !(<#= DALModel.Name #>Node a)
+        {
+            return new QueryCondition(a, true);
+        } 
+
 		protected override string GetNeo4jLabel()
 		{
 <#

@@ -98,6 +98,10 @@ namespace Blueprint41.Neo4j.Model
                 }
             }
         }
+        internal virtual void Compile(PathResult path, CompileState state)
+        {
+            Compile(path.Alias, state);
+        }
         internal virtual void Compile(Literal litheral, CompileState state)
         {
             state.Text.Append(litheral.Text);
@@ -128,69 +132,75 @@ namespace Blueprint41.Neo4j.Model
             state.Text.Append(parameter.Name);
             state.Text.Append("}");
         }
-        internal virtual void Compile(QueryCondition condition, CompileState state)
+        //internal virtual void Compile(QueryCondition condition, CompileState state)
+        //{
+        //    condition.Left = Substitute(state, condition.Left);
+        //    condition.Right = Substitute(state, condition.Right);
+
+        //    if (condition.Operator == Operator.Boolean)
+        //    {
+        //        state.Text.Append("(");
+        //        ((BooleanResult)condition.Left!).Compile(state);
+        //        state.Text.Append(")");
+        //        return;
+        //    }
+
+        //    Type? leftType = GetOperandType(condition.Left);
+        //    Type? rightType = GetOperandType(condition.Right);
+
+        //    if (leftType != null && rightType != null)
+        //    {
+        //        if (leftType != rightType)
+        //        {
+        //            if (condition.Operator == Operator.In)
+        //            {
+        //                if (rightType.GetInterface(nameof(IEnumerable)) == null)
+        //                    state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Right))} should be a collection.");
+
+        //                rightType = GetEnumeratedType(rightType);
+        //            }
+        //            if (GetConversionGroup(leftType, state.TypeMappings) != GetConversionGroup(rightType, state.TypeMappings))
+        //                state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Left))} and {state.Preview(s => CompileOperand(s, condition.Right))} are not compatible.");
+        //        }
+        //    }
+
+        //    state.Text.Append("(");
+        //    if (condition.Operator != Operator.Not)
+        //        CompileOperand(state, condition.Left);
+        //    else
+        //        state.Text.Append("NOT(");
+
+        //    if (condition.Right is Parameter)
+        //    {
+        //        Parameter rightParameter = (Parameter)condition.Right;
+        //        if (rightParameter.IsConstant && rightParameter.Value == null)
+        //        {
+        //            condition.Operator.Compile(state, true);
+        //            CompileOperand(state, null);
+        //        }
+        //        else
+        //        {
+        //            condition.Operator.Compile(state, false);
+        //            CompileOperand(state, condition.Right);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        condition.Operator.Compile(state, condition.Right == null);
+        //        CompileOperand(state, condition.Right);
+        //    }
+
+        //    if (condition.Operator == Operator.Not)
+        //        state.Text.Append(")");
+
+        //    state.Text.Append(")");
+
+        //}
+        internal virtual void Compile(PathNode path, CompileState state)
         {
-            condition.Left = Substitute(state, condition.Left);
-            condition.Right = Substitute(state, condition.Right);
-
-            if (condition.Operator == Operator.Boolean)
-            {
-                state.Text.Append("(");
-                ((BooleanResult)condition.Left!).Compile(state);
-                state.Text.Append(")");
-                return;
-            }
-
-            Type? leftType = GetOperandType(condition.Left);
-            Type? rightType = GetOperandType(condition.Right);
-
-            if (leftType != null && rightType != null)
-            {
-                if (leftType != rightType)
-                {
-                    if (condition.Operator == Operator.In)
-                    {
-                        if (rightType.GetInterface(nameof(IEnumerable)) == null)
-                            state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Right))} should be a collection.");
-
-                        rightType = GetEnumeratedType(rightType);
-                    }
-                    if (GetConversionGroup(leftType, state.TypeMappings) != GetConversionGroup(rightType, state.TypeMappings))
-                        state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Left))} and {state.Preview(s => CompileOperand(s, condition.Right))} are not compatible.");
-                }
-            }
-
-            state.Text.Append("(");
-            if (condition.Operator != Operator.Not)
-                CompileOperand(state, condition.Left);
-            else
-                state.Text.Append("NOT(");
-
-            if (condition.Right is Parameter)
-            {
-                Parameter rightParameter = (Parameter)condition.Right;
-                if (rightParameter.IsConstant && rightParameter.Value == null)
-                {
-                    condition.Operator.Compile(state, true);
-                    CompileOperand(state, null);
-                }
-                else
-                {
-                    condition.Operator.Compile(state, false);
-                    CompileOperand(state, condition.Right);
-                }
-            }
-            else
-            {
-                condition.Operator.Compile(state, condition.Right == null);
-                CompileOperand(state, condition.Right);
-            }
-
-            if (condition.Operator == Operator.Not)
-                state.Text.Append(")");
-
-            state.Text.Append(")");
-
+            Compile(path.NodeAlias!, state);
+            state.Text.Append(" = ");
+            path.Node.Compile(state);
         }
         internal virtual void Compile(q.Query query, CompileState state)
         {
@@ -631,16 +641,16 @@ namespace Blueprint41.Neo4j.Model
             }
             else
             {
-                TypeMapping mapping = state.TypeMappings.FirstOrDefault(item => item.ReturnType == type);
+                state.TypeMappings.TryGetValue(type, out TypeMapping mapping);
                 if (mapping == null)
                     return operand;
 
                 return Parameter.Constant(operand, type);
             }
         }
-        protected string GetConversionGroup(Type type, IEnumerable<TypeMapping> mappings)
+        protected string GetConversionGroup(Type type, IReadOnlyDictionary<Type, TypeMapping> mappings)
         {
-            TypeMapping mapping = mappings.FirstOrDefault(item => item.ReturnType == type);
+            mappings.TryGetValue(type, out TypeMapping mapping);
             if (mapping == null)
                 throw new InvalidOperationException($"An unexpected technical mapping failure while trying to find the conversion for type {type.Name}. Please contact the developer.");
 

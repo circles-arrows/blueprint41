@@ -9,7 +9,9 @@ namespace Blueprint41.Query
         AsResult As(string aliasName);
         AsResult As<T>(string aliasName, out T alias) where T : IResult;
     }
-
+    public interface IPathResult : IResult
+    {
+    }
     public interface IPrimitiveResult : IResult
     {
     }

@@ -34,6 +34,12 @@ namespace Blueprint41.Query
             Operator = Operator.Boolean;
             Right = null;
         }
+        public QueryCondition(Blueprint41.Query.Node node, bool not = false)
+        {
+            Left = string.Empty;
+            Operator = (not) ? Operator.NotPattern : Operator.Pattern;
+            Right = node;
+        }
 
         internal object? Left;
         internal Operator Operator;
@@ -72,10 +78,10 @@ namespace Blueprint41.Query
             }
 
             state.Text.Append("(");
-            if (Operator != Operator.Not)
-                CompileOperand(state, Left);
-            else
+            if (Operator == Operator.Not || Operator == Operator.NotPattern)
                 state.Text.Append("NOT(");
+            else if (Operator != Operator.Pattern)
+                CompileOperand(state, Left);
 
             if (Right is Parameter)
             {
@@ -97,7 +103,7 @@ namespace Blueprint41.Query
                 CompileOperand(state, Right);
             }
 
-            if (Operator == Operator.Not)
+            if (Operator == Operator.Not || Operator == Operator.NotPattern)
                 state.Text.Append(")");
 
             state.Text.Append(")");
@@ -123,9 +129,13 @@ namespace Blueprint41.Query
             {
                 return operand;
             }
+            else if (type.IsSubclassOfOrSelf(typeof(Node)))
+            {
+                return operand;
+            }
             else
             {
-                TypeMapping mapping = state.TypeMappings.FirstOrDefault(item => item.ReturnType == type);
+                state.TypeMappings.TryGetValue(type, out TypeMapping mapping);
                 if (mapping == null)
                     return operand;
 
@@ -163,6 +173,10 @@ namespace Blueprint41.Query
             {
                 return ((Parameter)operand).Type;
             }
+            else if (type.IsSubclassOfOrSelf(typeof(Node)))
+            {
+                return null;
+            }
             else
             {
                 throw new NotSupportedException("The expression is not supported for compilation.");
@@ -192,6 +206,10 @@ namespace Blueprint41.Query
                 {
                     ((Parameter)operand).Compile(state);
                 }
+                else if (type.IsSubclassOfOrSelf(typeof(Node)))
+                {
+                    ((Node)operand).Compile(state, false);
+                }
                 else
                 {
                     state.Errors.Add($"The type {type!.Name} is not supported for compilation.");
@@ -200,9 +218,9 @@ namespace Blueprint41.Query
             }
         }
 
-        private string GetConversionGroup(Type type, IEnumerable<TypeMapping> mappings)
+        private string GetConversionGroup(Type type, IReadOnlyDictionary<Type, TypeMapping> mappings)
         {
-            TypeMapping mapping = mappings.FirstOrDefault(item => item.ReturnType == type);
+            mappings.TryGetValue(type, out TypeMapping mapping);
             if (mapping == null)
                 throw new InvalidOperationException($"An unexpected technical mapping failure while trying to find the conversion for type {type.Name}. Please contact the developer.");
 

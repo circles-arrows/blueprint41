@@ -12,6 +12,11 @@ namespace Blueprint41.Query
     {
         internal CompileState(IEnumerable<TypeMapping> typeMappings, QueryTranslator translator)
         {
+            TypeMappings = typeMappings.ToDictionary(item => item.ReturnType, item => item);
+            Translator = translator;
+        }
+        internal CompileState(IReadOnlyDictionary<Type, TypeMapping> typeMappings, QueryTranslator translator)
+        {
             TypeMappings = typeMappings;
             Translator = translator;
         }
@@ -23,7 +28,7 @@ namespace Blueprint41.Query
         public int patternSeq = 0;
         public int paramSeq = 0;
 
-        public IEnumerable<TypeMapping> TypeMappings;
+        public IReadOnlyDictionary<Type, TypeMapping> TypeMappings;
         public QueryTranslator Translator { get; private set; }
         internal string Preview(Action<CompileState> compile, CompileState? state = null)
         {

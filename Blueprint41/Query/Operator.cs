@@ -23,6 +23,8 @@ namespace Blueprint41.Query
         HasLabel,
         In,
         Not,
+        Pattern,
+        NotPattern,
         Boolean
     }
     public enum SearchOperator
@@ -84,6 +86,8 @@ namespace Blueprint41.Query
                 case Operator.In:
                     state.Text.Append(state.Translator.OpIn);
                     break;
+                case Operator.Pattern:
+                case Operator.NotPattern:
                 case Operator.Not:
                     break;
                 default:

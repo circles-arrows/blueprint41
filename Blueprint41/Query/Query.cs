@@ -408,7 +408,7 @@ namespace Blueprint41.Query
             Type = type;
         }
 
-        private string DebuggerDisplay { get => ToString(); }
+        private string DebuggerDisplay => ToString();
     }
 
     internal enum PartType

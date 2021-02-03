@@ -38,7 +38,31 @@ namespace Blueprint41.Query
         public bool IsReference { get; protected set; }
         public Entity Entity { get; private set; }
 
-        internal void Compile(CompileState state)
+        public PathNode Path(out PathResult alias)
+        {
+            AliasResult aliasResult = new AliasResult()
+            {
+                Node = this,
+            };
+            alias = new PathResult(aliasResult, null);
+            return new PathNode(this, aliasResult);
+        }
+        public PathNode Path(out PathResult alias, string name)
+        {
+            AliasResult aliasResult = new AliasResult()
+            {
+                AliasName = name,
+                Node = this,
+            };
+            alias = new PathResult(aliasResult, null);
+            return new PathNode(this, aliasResult); ;
+        }
+
+        internal virtual void Compile(CompileState state)
+        {
+            Compile(state, false);
+        }
+        internal void Compile(CompileState state, bool suppressAliases)
         {
             //find the root
             Node root = this;
@@ -56,7 +80,7 @@ namespace Blueprint41.Query
                     if (current.IsReference || current.Neo4jLabel == null)
                         state.Text.AppendFormat("({0})", current.NodeAlias.AliasName);
                     else
-                        state.Text.AppendFormat("({0}:{1})", current.NodeAlias.AliasName, current.Neo4jLabel);
+                        state.Text.AppendFormat("({0}:{1})", (suppressAliases) ? "" : current.NodeAlias.AliasName, current.Neo4jLabel);
                 }
                 else
                 {
@@ -75,7 +99,7 @@ namespace Blueprint41.Query
                 }
                 else
                     break;
-                
+
             } while (true);
         }
 
