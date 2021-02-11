@@ -19,7 +19,7 @@ namespace <#= Settings.FullQueryNamespace #>
 	{
 <#
 	Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
-	if(DALModel.IsVirtual)
+	if (DALModel.IsVirtual)
 	{
 #>
 		[Obsolete("This entity is virtual, consider making entity <#= DALModel.Name #> concrete or use another entity as your starting point.", true)]
@@ -43,7 +43,7 @@ namespace <#= Settings.FullQueryNamespace #>
 		protected override string GetNeo4jLabel()
 		{
 <#
-	if(DALModel.IsVirtual)
+	if (DALModel.IsVirtual)
 	{
 #>
 			return null;
@@ -61,7 +61,7 @@ namespace <#= Settings.FullQueryNamespace #>
 		protected override Entity GetEntity()
         {
 <#
-	if(DALModel.IsVirtual)
+	if (DALModel.IsVirtual)
 	{
 #>
 			return null;
@@ -88,18 +88,65 @@ namespace <#= Settings.FullQueryNamespace #>
 			NodeAlias = nodeAlias;
 		}
 
+<#
+	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType != null && (p.SystemReturnType == typeof(string) || p.SystemReturnType.IsPrimitive)).OrderBy(p => p.Name).ToList();
+#>
+        public <#= DALModel.Name #>Node Where(<#= string.Join(", ", properties.Select(p => $"InlineCondition<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
+        {
+            Lazy<<#= DALModel.Name #>Alias> alias = new Lazy<<#= DALModel.Name #>Alias>(delegate()
+            {
+                this.Alias(out var a);
+                return a;
+            });
+            List<QueryCondition> conditions = new List<QueryCondition>();
+<#
+	foreach (var p in properties)
+	{
+#>
+
+            if (<#= p.Name #>.HasValue)
+			{
+                if (<#= p.Name #>.Parameter is null)
+					conditions.Add(alias.Value.<#= p.Name #> == <#= p.Name #>.Value);
+                else
+					conditions.Add(alias.Value.<#= p.Name #> == <#= p.Name #>.Parameter);
+			}
+<#
+	}
+#>
+
+            InlineConditions = conditions.ToArray();
+
+            return this;
+        }
+
 		public <#= DALModel.Name #>Node Alias(out <#= DALModel.Name #>Alias alias)
-		{
-			alias = new <#= DALModel.Name #>Alias(this);
-			NodeAlias = alias;
-			return this;
-		}
+        {
+            if (NodeAlias is <#= DALModel.Name #>Alias a)
+            {
+                alias = a;
+            }
+            else
+            {
+                alias = new <#= DALModel.Name #>Alias(this);
+                NodeAlias = alias;
+            }
+            return this;
+        }
 		public <#= DALModel.Name #>Node Alias(out <#= DALModel.Name #>Alias alias, string name)
-		{
-			alias = new <#= DALModel.Name #>Alias(this, name);
-			NodeAlias = alias;
-			return this;
-		}
+        {
+            if (NodeAlias is <#= DALModel.Name #>Alias a)
+            {
+                a.SetAlias(name);
+                alias = a;
+            }
+            else
+            {
+                alias = new <#= DALModel.Name #>Alias(this, name);
+                NodeAlias = alias;
+            }
+            return this;
+        }
 
 		public <#= DALModel.Name #>Node UseExistingAlias(AliasResult alias)
 		{
@@ -213,6 +260,7 @@ namespace <#= Settings.FullQueryNamespace #>
 			Node = parent;
 			AliasName = name;
 		}
+		internal void SetAlias(string name) => AliasName = name;
 
 		private  <#= DALModel.Name #>Alias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
 		private  <#= DALModel.Name #>Alias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }

@@ -132,8 +132,13 @@ namespace Blueprint41.Query
         }
         public IWithQuery With(params Result[] results)
         {
+            return With(true, results);
+        }
+        public IWithQuery With(bool distinct, params Result[] results)
+        {
             SetType(PartType.With);
             WithResults = results;
+            Distinct = distinct;
 
             return New;
         }
@@ -145,7 +150,7 @@ namespace Blueprint41.Query
         {
             SetType(PartType.Return);
             int index = 0;
-            Distinct = true;
+            Distinct = distinct;
             Results = results.Select(delegate (Result item)
             {
                 index++;
@@ -449,7 +454,9 @@ namespace Blueprint41.Query
     public partial interface IOptionalMatchQuery : ISemiBlankQuery
     {
         IWithQuery With(params Result[] results);
+        IWithQuery With(bool distinct, params Result[] results);
         IReturnQuery Return(params Result[] results);
+        IReturnQuery Return(bool distinct, params Result[] results);
         IWhereQuery Where(params QueryCondition[] conditions);
     }
     public partial interface IMatchQuery : IOptionalMatchQuery
@@ -460,7 +467,9 @@ namespace Blueprint41.Query
     public partial interface IWhereQuery : ISemiBlankQuery
     {
         IWithQuery With(params Result[] results);
+        IWithQuery With(bool distinct, params Result[] results);
         IReturnQuery Return(params Result[] results);
+        IReturnQuery Return(bool distinct, params Result[] results);
         IWhereQuery Or(params QueryCondition[] conditions);
     }
     public partial interface IUnwindQuery<T>

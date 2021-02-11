@@ -132,70 +132,180 @@ namespace Blueprint41.Neo4j.Model
             state.Text.Append(parameter.Name);
             state.Text.Append("}");
         }
-        //internal virtual void Compile(QueryCondition condition, CompileState state)
-        //{
-        //    condition.Left = Substitute(state, condition.Left);
-        //    condition.Right = Substitute(state, condition.Right);
+        internal virtual void Compile(QueryCondition condition, CompileState state)
+        {
+            condition.Left = Substitute(state, condition.Left);
+            condition.Right = Substitute(state, condition.Right);
 
-        //    if (condition.Operator == Operator.Boolean)
-        //    {
-        //        state.Text.Append("(");
-        //        ((BooleanResult)condition.Left!).Compile(state);
-        //        state.Text.Append(")");
-        //        return;
-        //    }
+            if (condition.Operator == Operator.Boolean)
+            {
+                state.Text.Append("(");
+                ((BooleanResult)condition.Left!).Compile(state);
+                state.Text.Append(")");
+                return;
+            }
 
-        //    Type? leftType = GetOperandType(condition.Left);
-        //    Type? rightType = GetOperandType(condition.Right);
+            Type? leftType = GetOperandType(condition.Left);
+            Type? rightType = GetOperandType(condition.Right);
 
-        //    if (leftType != null && rightType != null)
-        //    {
-        //        if (leftType != rightType)
-        //        {
-        //            if (condition.Operator == Operator.In)
-        //            {
-        //                if (rightType.GetInterface(nameof(IEnumerable)) == null)
-        //                    state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Right))} should be a collection.");
+            if (leftType != null && rightType != null)
+            {
+                if (leftType != rightType)
+                {
+                    if (condition.Operator == Operator.In)
+                    {
+                        if (rightType.GetInterface(nameof(IEnumerable)) == null)
+                            state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Right))} should be a collection.");
 
-        //                rightType = GetEnumeratedType(rightType);
-        //            }
-        //            if (GetConversionGroup(leftType, state.TypeMappings) != GetConversionGroup(rightType, state.TypeMappings))
-        //                state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Left))} and {state.Preview(s => CompileOperand(s, condition.Right))} are not compatible.");
-        //        }
-        //    }
+                        rightType = GetEnumeratedType(rightType);
+                    }
+                    if (GetConversionGroup(leftType, state.TypeMappings) != GetConversionGroup(rightType, state.TypeMappings))
+                        state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Left))} and {state.Preview(s => CompileOperand(s, condition.Right))} are not compatible.");
+                }
+            }
 
-        //    state.Text.Append("(");
-        //    if (condition.Operator != Operator.Not)
-        //        CompileOperand(state, condition.Left);
-        //    else
-        //        state.Text.Append("NOT(");
+            state.Text.Append("(");
+            if (condition.Operator == Operator.Not || condition.Operator == Operator.NotPattern)
+                state.Text.Append("NOT(");
+            else if (condition.Operator != Operator.Pattern)
+                CompileOperand(state, condition.Left);
 
-        //    if (condition.Right is Parameter)
-        //    {
-        //        Parameter rightParameter = (Parameter)condition.Right;
-        //        if (rightParameter.IsConstant && rightParameter.Value == null)
-        //        {
-        //            condition.Operator.Compile(state, true);
-        //            CompileOperand(state, null);
-        //        }
-        //        else
-        //        {
-        //            condition.Operator.Compile(state, false);
-        //            CompileOperand(state, condition.Right);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        condition.Operator.Compile(state, condition.Right == null);
-        //        CompileOperand(state, condition.Right);
-        //    }
+            if (condition.Right is Parameter)
+            {
+                Parameter rightParameter = (Parameter)condition.Right;
+                if (rightParameter.IsConstant && rightParameter.Value == null)
+                {
+                    condition.Operator.Compile(state, true);
+                    CompileOperand(state, null);
+                }
+                else
+                {
+                    condition.Operator.Compile(state, false);
+                    CompileOperand(state, condition.Right);
+                }
+            }
+            else
+            {
+                condition.Operator.Compile(state, condition.Right == null);
+                CompileOperand(state, condition.Right);
+            }
 
-        //    if (condition.Operator == Operator.Not)
-        //        state.Text.Append(")");
+            if (condition.Operator == Operator.Not || condition.Operator == Operator.NotPattern)
+                state.Text.Append(")");
 
-        //    state.Text.Append(")");
+            state.Text.Append(")");
+        }
+        internal virtual void Compile(Node node, CompileState state, bool suppressAliases)
+        {
+            //find the root
+            Node root = node;
+            while (root.FromRelationship != null)
+                root = root.FromRelationship.FromNode;
 
-        //}
+            Node? current = root;
+            do
+            {
+                GetDirection(current, state.Text);
+                if (!(current.NodeAlias is null))
+                {
+                    if (current.NodeAlias.AliasName == null)
+                        current.NodeAlias.AliasName = string.Format("n{0}", state.patternSeq++);
+
+                    if (current.IsReference || current.Neo4jLabel == null)
+                    {
+                        state.Text.Append("(");
+                        state.Text.Append(current.NodeAlias.AliasName);
+                        state.Text.Append(")");
+                    }
+                    else
+                    {
+                        state.Text.Append("(");
+                        if (!suppressAliases)
+                            state.Text.Append(current.NodeAlias.AliasName);
+                        state.Text.Append(":");
+                        state.Text.Append(current.Neo4jLabel);
+                        InlineConditions(current, state);
+                        state.Text.Append(")");
+                    }
+                }
+                else
+                {
+                    if (current.Neo4jLabel == null)
+                    {
+                        state.Text.Append("()");
+                    }
+                    else
+                    {
+                        state.Text.Append("(");
+                        state.Text.Append(":");
+                        state.Text.Append(current.Neo4jLabel);
+                        InlineConditions(current, state);
+                        state.Text.Append(")");
+
+                    }
+                }
+
+                if (current.ToRelationship != null)
+                {
+                    current.ToRelationship.Compile(state);
+                    current = current.ToRelationship.ToNode;
+                    if (current is null)
+                        break;
+                }
+                else
+                    break;
+
+            } while (true);
+
+            void GetDirection(Node node, StringBuilder sb)
+            {
+                if (node.FromRelationship == null)
+                    return;
+
+                switch (node.Direction)
+                {
+                    case DirectionEnum.In:
+                        sb.Append("-");
+                        break;
+                    case DirectionEnum.Out:
+                        sb.Append("->");
+                        break;
+                    case DirectionEnum.None:
+                        sb.Append("-");
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+            void InlineConditions(Node current, CompileState state)
+            {
+                if (current.InlineConditions != null && current.InlineConditions.Length != 0)
+                {
+                    state.Text.Append(" { ");
+
+                    bool isFirst = true;
+                    foreach (var condition in current.InlineConditions)
+                    {
+                        if (isFirst)
+                            isFirst = false;
+                        else
+                            state.Text.Append(", ");
+
+                        FieldResult? field = condition.Left as FieldResult;
+                        if (field is null)
+                            continue;
+
+                        object? value = Substitute(state, condition.Right);
+
+                        state.Text.Append(field.FieldName);
+                        state.Text.Append(": ");
+                        CompileOperand(state, value);
+                    }
+
+                    state.Text.Append(" }");
+                }
+            }
+        }
         internal virtual void Compile(PathNode path, CompileState state)
         {
             Compile(path.NodeAlias!, state);
@@ -267,7 +377,10 @@ namespace Blueprint41.Neo4j.Model
                     query.ForEach(query.WithResults, state.Text, ", ", item => item?.Compile(state));
                     break;
                 case PartType.With:
-                    state.Text.Append("WITH ");
+                    if (query.Distinct)
+                        state.Text.Append("WITH DISTINCT ");
+                    else
+                        state.Text.Append("WITH ");
                     query.ForEach(query.WithResults, state.Text, ", ", item => item?.Compile(state));
                     break;
                 case PartType.Skip:
@@ -639,6 +752,10 @@ namespace Blueprint41.Neo4j.Model
             {
                 return operand;
             }
+            else if (type.IsSubclassOfOrSelf(typeof(Node)))
+            {
+                return operand;
+            }
             else
             {
                 state.TypeMappings.TryGetValue(type, out TypeMapping mapping);
@@ -646,6 +763,34 @@ namespace Blueprint41.Neo4j.Model
                     return operand;
 
                 return Parameter.Constant(operand, type);
+            }
+        }
+        protected Type? GetOperandType(object? operand)
+        {
+            if (operand == null)
+                return null;
+
+            Type type = operand.GetType();
+
+            if (type.IsSubclassOfOrSelf(typeof(Result)))
+            {
+                return ((Result)operand).GetResultType();
+            }
+            else if (type.IsSubclassOfOrSelf(typeof(QueryCondition)))
+            {
+                return null;
+            }
+            else if (type.IsSubclassOfOrSelf(typeof(Parameter)))
+            {
+                return ((Parameter)operand).Type;
+            }
+            else if (type.IsSubclassOfOrSelf(typeof(Node)))
+            {
+                return null;
+            }
+            else
+            {
+                throw new NotSupportedException("The expression is not supported for compilation.");
             }
         }
         protected string GetConversionGroup(Type type, IReadOnlyDictionary<Type, TypeMapping> mappings)
@@ -667,30 +812,7 @@ namespace Blueprint41.Neo4j.Model
 
             return result ?? type;
         }
-        protected Type? GetOperandType(object? operand)
-        {
-            if (operand == null)
-                return null;
 
-            Type type = operand.GetType();
-
-            if (type.IsSubclassOfOrSelf(typeof(Result)))
-            {
-                return ((Result)operand).GetResultType();
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(QueryCondition)))
-            {
-                return null;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Parameter)))
-            {
-                return ((Parameter)operand).Type;
-            }
-            else
-            {
-                throw new NotSupportedException("The expression is not supported for compilation.");
-            }
-        }
         protected void CompileOperand(CompileState state, object? operand)
         {
             if (operand is null)
@@ -713,6 +835,10 @@ namespace Blueprint41.Neo4j.Model
                 else if (type.IsSubclassOfOrSelf(typeof(Parameter)))
                 {
                     ((Parameter)operand).Compile(state);
+                }
+                else if (type.IsSubclassOfOrSelf(typeof(Node)))
+                {
+                    ((Node)operand).Compile(state, false);
                 }
                 else
                 {

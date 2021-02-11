@@ -161,6 +161,16 @@ namespace Blueprint41.Query
 		{
 			return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnCollectDistinct);
 		}
+
+		public NumericResult Count()
+		{
+			return new NumericResult(this, t => t.FnCount);
+		}
+		public NumericResult CountDistinct()
+		{
+			return new NumericResult(this, t => t.FnCountDistinct);
+		}
+
 		public T Coalesce(T other)
 		{
 			return ResultHelper.Of<T>().NewAliasResult(this, t => t.FnCoalesce, new object[] { other }, null);

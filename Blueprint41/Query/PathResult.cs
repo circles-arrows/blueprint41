@@ -63,7 +63,7 @@ namespace Blueprint41.Query
         {
             Node = node ?? throw new ArgumentNullException(nameof(node));
             NodeAlias = alias ?? throw new ArgumentNullException(nameof(alias));
-            IsReference = true;
+            IsReference = node.IsReference;
         }
         public Node Node { get; protected internal set; }
 

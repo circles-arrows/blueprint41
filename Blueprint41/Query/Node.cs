@@ -13,6 +13,7 @@ namespace Blueprint41.Query
         protected Node()
         {
             NodeAlias = null;
+            InlineConditions = null;
             IsReference = false;
             Neo4jLabel = GetNeo4jLabel();
             Entity = GetEntity();
@@ -35,6 +36,7 @@ namespace Blueprint41.Query
         protected abstract Entity GetEntity();
         public string Neo4jLabel { get; private set; }
         public AliasResult? NodeAlias { get; protected set; }
+        public QueryCondition[]? InlineConditions { get; protected set; }
         public bool IsReference { get; protected set; }
         public Entity Entity { get; private set; }
 
@@ -64,64 +66,7 @@ namespace Blueprint41.Query
         }
         internal void Compile(CompileState state, bool suppressAliases)
         {
-            //find the root
-            Node root = this;
-            while (root.FromRelationship != null)
-                root = root.FromRelationship.FromNode;
-
-            Node? current = root;
-            do
-            {
-                GetDirection(current, state.Text);
-                if (!(current.NodeAlias is null))
-                {
-                    if (current.NodeAlias.AliasName == null)
-                        current.NodeAlias.AliasName = string.Format("n{0}", state.patternSeq++);
-                    if (current.IsReference || current.Neo4jLabel == null)
-                        state.Text.AppendFormat("({0})", current.NodeAlias.AliasName);
-                    else
-                        state.Text.AppendFormat("({0}:{1})", (suppressAliases) ? "" : current.NodeAlias.AliasName, current.Neo4jLabel);
-                }
-                else
-                {
-                    if (current.Neo4jLabel == null)
-                        state.Text.AppendFormat("()");
-                    else
-                        state.Text.AppendFormat("(:{0})", current.Neo4jLabel);
-                }
-
-                if (current.ToRelationship != null)
-                {
-                    current.ToRelationship.Compile(state);
-                    current = current.ToRelationship.ToNode;
-                    if (current is null)
-                        break;
-                }
-                else
-                    break;
-
-            } while (true);
-        }
-
-        private void GetDirection(Node node, StringBuilder sb)
-        {
-            if (node.FromRelationship == null)
-                return;
-
-            switch (node.Direction)
-            {
-                case DirectionEnum.In:
-                    sb.Append("-");
-                    break;
-                case DirectionEnum.Out:
-                    sb.Append("->");
-                    break;
-                case DirectionEnum.None:
-                    sb.Append("-");
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+            state.Translator.Compile(this, state, suppressAliases);
         }
     }
 }
