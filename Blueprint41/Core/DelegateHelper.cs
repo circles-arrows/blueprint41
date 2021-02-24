@@ -31,7 +31,7 @@ namespace Blueprint41.Core
         /// <summary>
         ///   Holds the expressions for the parameters when creating delegates.
         /// </summary>
-        struct ParameterConversionExpressions
+        private struct ParameterConversionExpressions
         {
             public IEnumerable<ParameterExpression> OriginalParameters;
             public IEnumerable<Expression> ConvertedParameters;
@@ -41,7 +41,7 @@ namespace Blueprint41.Core
         /// <summary>
         ///   The name of the Invoke method of a Delegate.
         /// </summary>
-        const string InvokeMethod = "Invoke";
+        private const string InvokeMethod = "Invoke";
 
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Blueprint41.Core
 
                         // Create method call.
                         Expression methodCall = Expression.Call(
-                            instance == null ? null : Expression.Constant(instance),
+                            instance is null ? null : Expression.Constant(instance),
                             method,
                             delegateParameterExpressions.ConvertedParameters);
 
@@ -196,7 +196,7 @@ namespace Blueprint41.Core
         /// <param name = "toCreateTypes">The types of the parameters of the delegate to create.</param>
         /// <param name = "toWrapTypes">The types of the parameters of the call to wrap.</param>
         /// <returns>An object containing the delegate expressions.</returns>
-        static ParameterConversionExpressions CreateParameterConversionExpressions(
+        private static ParameterConversionExpressions CreateParameterConversionExpressions(
             IEnumerable<Type> toCreateTypes,
             IEnumerable<Type> toWrapTypes)
         {
@@ -218,7 +218,7 @@ namespace Blueprint41.Core
         /// <param name="expression">The expression of which the result needs to be converted.</param>
         /// <param name="toType">The type to which the result needs to be converted.</param>
         /// <returns>An expression which converts the given expression to the desired type.</returns>
-        static Expression ConvertOrWrapDelegate(Expression expression, Type toType)
+        private static Expression ConvertOrWrapDelegate(Expression expression, Type toType)
         {
             Expression convertedExpression;
             Type fromType = expression.Type;
@@ -254,7 +254,7 @@ namespace Blueprint41.Core
             return convertedExpression;
         }
 
-        static bool CanConvertTo(this Type fromType, Type targetType, bool sameHierarchy = true, bool switchVariance = false)
+        private static bool CanConvertTo(this Type fromType, Type targetType, bool sameHierarchy = true, bool switchVariance = false)
         {
             Func<Type, Type, bool> covarianceCheck = sameHierarchy
                 ? (Func<Type, Type, bool>)IsInHierarchy
@@ -345,7 +345,7 @@ namespace Blueprint41.Core
             {
                 // Traverse across the type, and all it's base types.
                 Type? baseType = source;
-                while (baseType != null && baseType != typeof(object))
+                while (baseType is not null && baseType != typeof(object))
                 {
                     Type rawCurrent = baseType.IsGenericType ? baseType.GetGenericTypeDefinition() : baseType;
                     if (rawType == rawCurrent)
@@ -365,7 +365,7 @@ namespace Blueprint41.Core
         }
         public static bool ImplementsInterface(this Type source, Type interfaceType)
         {
-            return source.GetInterface(interfaceType.ToString()) != null;
+            return source.GetInterface(interfaceType.ToString()) is not null;
         }
         public static bool IsInHierarchy(this Type source, Type type)
         {

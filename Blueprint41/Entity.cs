@@ -40,7 +40,7 @@ namespace Blueprint41
             Parent.Labels.New(label);
             Label = Parent.Labels[label];
 
-            if (inherits?.FunctionalId != null && functionalId != null)
+            if (inherits?.FunctionalId is not null && functionalId is not null)
                 throw new InvalidOperationException($"The entity '{name}' already inherited a functional id '{(inherits?.FunctionalId ?? functionalId).Prefix} ({(inherits?.FunctionalId ?? functionalId).Label})', you cannot assign another one.");
 
             this.functionalId = functionalId;
@@ -55,13 +55,13 @@ namespace Blueprint41
         static private FunctionalId? GetFunctionalId(DatastoreModel parent, string name, string label, string? prefix)
         {
             FunctionalId? functionalId = null;
-            if (prefix != null)
+            if (prefix is not null)
             {
                 if (string.IsNullOrWhiteSpace(prefix))
                     throw new NotSupportedException($"The prefix cannot be empty or blank for entity '{name}'.");
 
                 functionalId = parent.FunctionalIds.FirstOrDefault(item => item.Label == label);
-                if (functionalId == null)
+                if (functionalId is null)
                     functionalId = parent.FunctionalIds.New(label, prefix);
             }
             return functionalId;
@@ -89,7 +89,7 @@ namespace Blueprint41
         {
             get
             {
-                if (functionalId == null && !IsAbstract)
+                if (functionalId is null && !IsAbstract)
                     functionalId = FindFunctionalId();
 
                 return functionalId;
@@ -97,9 +97,9 @@ namespace Blueprint41
                 FunctionalId? FindFunctionalId()
                 {
                     Entity? entity = this.Inherits;
-                    while(entity != null)
+                    while(entity is not null)
                     {
-                        if (entity.functionalId != null)
+                        if (entity.functionalId is not null)
                             return entity.functionalId;
 
                         entity = entity.Inherits;
@@ -268,7 +268,7 @@ namespace Blueprint41
         {
             get
             {
-                return ((object)NodeType == null) ? "NodeType" : NodeType.Name;
+                return (NodeType is null) ? "NodeType" : NodeType.Name;
             }
         }
         private Lazy<Property> rowVersion;
@@ -402,7 +402,7 @@ namespace Blueprint41
         private void VerifyFromInheritedProperties(string propertyName, bool excludeThis = false)
         {
             Entity? item = this;
-            while (item != null && item.Name != "Neo4jBase")
+            while (item is not null && item.Name != "Neo4jBase")
             {
                 if (excludeThis && item == this)
                 {
@@ -477,7 +477,7 @@ namespace Blueprint41
             foreach (string key in fields.Keys)
             {
                 Property property = GetPropertiesOfBaseTypesAndSelf().FirstOrDefault(item => item.Name == key);
-                if (property == null)
+                if (property is null)
                     throw new ArgumentException(string.Format("The field '{0}' was not present on entity '{1}'. ", key, Name));
 
                 Parent.Templates.SetDefaultConstantValue(template =>
@@ -574,7 +574,7 @@ namespace Blueprint41
         {
             Parent.EnsureSchemaMigration();
 
-            if (key == null)
+            if (key is null)
                 throw new ArgumentNullException("key");
 
             if (!Key.SystemReturnType!.IsAssignableFrom(key.GetType()))
@@ -593,7 +593,7 @@ namespace Blueprint41
         {
             Parent.EnsureSchemaMigration();
 
-            if (key == null)
+            if (key is null)
                 throw new ArgumentNullException("key");
 
             if (!Key.SystemReturnType!.IsAssignableFrom(key.GetType()))
@@ -623,7 +623,7 @@ namespace Blueprint41
                 foreach (var relation in Parent.Relations.Where(item => item.InEntity == entity || item.OutEntity == entity).ToList())
                     relation.Refactor.Deprecate();
 
-                if (entity.FunctionalId != null && !Parent.Entities.Any(item => item != entity && item.FunctionalId == entity.FunctionalId))
+                if (entity.FunctionalId is not null && !Parent.Entities.Any(item => item != entity && item.FunctionalId == entity.FunctionalId))
                     Parent.FunctionalIds.Remove(entity.FunctionalId!.Label);
 
                 foreach (Interface iface in Parent.Interfaces)
@@ -642,11 +642,11 @@ namespace Blueprint41
             Parent.EnsureSchemaMigration();
 
             Entity? originalParent = this.Inherits;
-            if (originalParent != null)
+            if (originalParent is not null)
             {
                 bool hasMandatoryProperty = false;
                 Entity? newParent = newParentEntity;
-                while (newParent != null && newParent != originalParent)
+                while (newParent is not null && newParent != originalParent)
                 {
                     if (newParent.Properties.Any(prop => !prop.Nullable))
                         hasMandatoryProperty = true;
@@ -654,7 +654,7 @@ namespace Blueprint41
                     newParent = newParent.Inherits;
                 }
 
-                if (newParent == null)
+                if (newParent is null)
                     throw new NotSupportedException();
 
                 if (hasMandatoryProperty)
@@ -669,7 +669,7 @@ namespace Blueprint41
         {
             Parent.EnsureSchemaMigration();
 
-            if (Inherits?.FunctionalId != null)
+            if (Inherits?.FunctionalId is not null)
                 throw new InvalidOperationException($"The entity '{Name}' does not have a functional id, but inherited it '{Inherits.FunctionalId.Prefix} ({Inherits.FunctionalId.Label})', you cannot assign another one.");
 
             this.functionalId = null;
@@ -680,7 +680,7 @@ namespace Blueprint41
         {
             Parent.EnsureSchemaMigration();
 
-            if (Inherits?.FunctionalId != null)
+            if (Inherits?.FunctionalId is not null)
                 throw new InvalidOperationException($"The entity '{Name}' already inherited a functional id '{Inherits.FunctionalId.Prefix} ({Inherits.FunctionalId.Label})', you cannot assign another one.");
 
             this.functionalId = functionalId;
@@ -773,7 +773,7 @@ namespace Blueprint41
 
             onNew?.Invoke(sender, args);
         }
-        bool IEntityEvents.HasRegisteredOnNewHandlers { get { return onNew != null; } }
+        bool IEntityEvents.HasRegisteredOnNewHandlers { get { return onNew is not null; } }
         private EventHandler<EntityEventArgs>? onNew;
         event EventHandler<EntityEventArgs> IEntityEvents.OnNew
         {
@@ -789,7 +789,7 @@ namespace Blueprint41
 
             onSave?.Invoke(sender, args);
         }
-        bool IEntityEvents.HasRegisteredOnSaveHandlers { get { return onSave != null; } }
+        bool IEntityEvents.HasRegisteredOnSaveHandlers { get { return onSave is not null; } }
         private EventHandler<EntityEventArgs>? onSave;
         event EventHandler<EntityEventArgs> IEntityEvents.OnSave
         {
@@ -805,7 +805,7 @@ namespace Blueprint41
 
             onDelete?.Invoke(sender, args);
         }
-        bool IEntityEvents.HasRegisteredOnDeleteHandlers { get { return onDelete != null; } }
+        bool IEntityEvents.HasRegisteredOnDeleteHandlers { get { return onDelete is not null; } }
         private EventHandler<EntityEventArgs>? onDelete;
         event EventHandler<EntityEventArgs> IEntityEvents.OnDelete
         {
@@ -823,7 +823,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeLoadingHandlers { get { return onNodeLoading != null; } }
+        bool IEntityEvents.HasRegisteredOnNodeLoadingHandlers { get { return onNodeLoading is not null; } }
         private EventHandler<NodeEventArgs>? onNodeLoading;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeLoading
         {
@@ -841,7 +841,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeLoadedHandlers { get { return onNodeLoaded != null; } }
+        bool IEntityEvents.HasRegisteredOnNodeLoadedHandlers { get { return onNodeLoaded is not null; } }
         private EventHandler<NodeEventArgs>? onNodeLoaded;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeLoaded
         {
@@ -859,7 +859,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnBatchFinishedHandlers { get { return onBatchFinished != null; } }
+        bool IEntityEvents.HasRegisteredOnBatchFinishedHandlers { get { return onBatchFinished is not null; } }
         private EventHandler<NodeEventArgs>? onBatchFinished;
         event EventHandler<NodeEventArgs> IEntityEvents.OnBatchFinished
         {
@@ -877,7 +877,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeCreateHandlers { get { return onNodeCreate != null; } }
+        bool IEntityEvents.HasRegisteredOnNodeCreateHandlers { get { return onNodeCreate is not null; } }
         private EventHandler<NodeEventArgs>? onNodeCreate;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeCreate
         {
@@ -895,7 +895,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeCreatedHandlers { get { return onNodeCreated != null; } }
+        bool IEntityEvents.HasRegisteredOnNodeCreatedHandlers { get { return onNodeCreated is not null; } }
         private EventHandler<NodeEventArgs>? onNodeCreated;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeCreated
         {
@@ -913,7 +913,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeUpdateHandlers { get { return onNodeUpdate != null; } }
+        bool IEntityEvents.HasRegisteredOnNodeUpdateHandlers { get { return onNodeUpdate is not null; } }
         private EventHandler<NodeEventArgs>? onNodeUpdate;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeUpdate
         {
@@ -931,7 +931,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeUpdatedHandlers { get { return onNodeUpdated != null; } }
+        bool IEntityEvents.HasRegisteredOnNodeUpdatedHandlers { get { return onNodeUpdated is not null; } }
         private EventHandler<NodeEventArgs>? onNodeUpdated;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeUpdated
         {
@@ -949,7 +949,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeDeleteHandlers { get { return onNodeDelete != null; } }
+        bool IEntityEvents.HasRegisteredOnNodeDeleteHandlers { get { return onNodeDelete is not null; } }
         private EventHandler<NodeEventArgs>? onNodeDelete;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeDelete
         {
@@ -967,7 +967,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeDeletedHandlers { get { return onNodeDeleted != null; } }
+        bool IEntityEvents.HasRegisteredOnNodeDeletedHandlers { get { return onNodeDeleted is not null; } }
         private EventHandler<NodeEventArgs>? onNodeDeleted;
         event EventHandler<NodeEventArgs> IEntityEvents.OnNodeDeleted
         {
@@ -1014,7 +1014,7 @@ namespace Blueprint41
 
         private static void WalkBaseTypes(Entity? item, Action<Entity> action)
         {
-            while (item != null)
+            while (item is not null)
             {
                 action.Invoke(item);
                 item = item.Inherits;
@@ -1022,7 +1022,7 @@ namespace Blueprint41
         }
         private static void WalkBaseTypes(Entity? item, Func<Entity, bool> action)
         {
-            while (item != null)
+            while (item is not null)
             {
                 if (action.Invoke(item))
                     return;
@@ -1180,7 +1180,7 @@ namespace Blueprint41
         {
             if (Parent.IsUpgraded)
             {
-                if (namedPropertiesOfBaseTypesAndSelf == null)
+                if (namedPropertiesOfBaseTypesAndSelf is null)
                     namedPropertiesOfBaseTypesAndSelf = GetPropertiesOfBaseTypesAndSelf().ToDictionary(key => key.Name.ToLower(), value => value);
 
                 Property? foundProperty;
@@ -1208,7 +1208,7 @@ namespace Blueprint41
             {
                 List<Entity> inheritChain = new List<Entity>();
                 e = entity;
-                while (e != null)
+                while (e is not null)
                 {
                     inheritChain.Add(e);
                     e = e.Inherits;
@@ -1252,7 +1252,7 @@ namespace Blueprint41
             {
                 List<AliasResultInfo> inheritChain = new List<AliasResultInfo>();
                 e = info;
-                while (e != null)
+                while (e is not null)
                 {
                     inheritChain.Add(e);
                     e = e.Inherits;
@@ -1293,7 +1293,7 @@ namespace Blueprint41
                 AliasResult = aliasResult;
                 Entity = aliasResult.Entity!;
                 Distance = 0;
-                Inherits = (aliasResult.Entity?.Inherits == null) ? null : new AliasResultInfo(this);
+                Inherits = (aliasResult.Entity?.Inherits is null) ? null : new AliasResultInfo(this);
             }
             private AliasResultInfo(AliasResultInfo info)
             {
@@ -1334,11 +1334,11 @@ namespace Blueprint41
 
         internal OGM? Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
         {
-            if(mapMethod == null)
+            if(mapMethod is null)
             {
                 lock (this)
                 {
-                    if (mapMethod == null)
+                    if (mapMethod is null)
                     {
                         MethodInfo? method = RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(RawNode), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
                         mapMethod = (method is null) ? null : (Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>)Delegate.CreateDelegate(typeof(Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);

@@ -22,10 +22,10 @@ namespace Blueprint41
             if (outEntity is null && outInterface is null)
                 throw new ArgumentNullException("You cannot have both the outEntity and the outInterface be empty.");
 
-            if (inEntity != null && inInterface != null)
+            if (inEntity is not null && inInterface is not null)
                 throw new ArgumentException("You cannot have both the inEntity and the inInterface set at the same time.");
 
-            if (outEntity != null && outInterface != null)
+            if (outEntity is not null && outInterface is not null)
                 throw new ArgumentException("You cannot have both the outEntity and the outInterface set at the same time.");
 
             Parent = parent;
@@ -88,7 +88,7 @@ namespace Blueprint41
 
         public Relationship SetInProperty(string name, PropertyType type, bool nullable = true)
         {
-            if (InProperty != null)
+            if (InProperty is not null)
                 throw new InvalidOperationException("There is already an in property defined.");
 
             switch (type)
@@ -113,7 +113,7 @@ namespace Blueprint41
         }
         public Relationship SetOutProperty(string name, PropertyType type, bool nullable = true)
         {
-            if (OutProperty != null)
+            if (OutProperty is not null)
                 throw new InvalidOperationException("There is already an in property defined.");
 
             switch (type)
@@ -166,7 +166,7 @@ namespace Blueprint41
 
             Parent.EnsureSchemaMigration();
 
-            if (newNeo4JRelationshipType == null)
+            if (newNeo4JRelationshipType is null)
                 newNeo4JRelationshipType = newName;
 
             string oldName = Neo4JRelationshipType;
@@ -212,13 +212,13 @@ namespace Blueprint41
             else if (!InEntity.IsSubsclassOf(target))
                 throw new ArgumentException(string.Format("Target {0} is not a base or sub type of {1}. Consider using 'Reroute'.", target.Name, InEntity.Name), "baseType");
 
-            if (InProperty != null)
+            if (InProperty is not null)
             {
                 InEntity.Properties.Remove(InProperty.Name);
                 target.Properties.Add(InProperty.Name, InProperty);
                 InProperty.SetParentEntity(target);
             }
-            if (OutProperty != null)
+            if (OutProperty is not null)
                 OutProperty.SetReturnTypeEntity(target);
 
             InInterface = new Interface(target);
@@ -252,13 +252,13 @@ namespace Blueprint41
             else if (!OutEntity.IsSubsclassOf(target))
                 throw new ArgumentException(string.Format("Target {0} is not a base or sub type of {1}. Consider using 'Reroute'.", target.Name, OutEntity.Name), "baseType");
 
-            if (OutProperty != null)
+            if (OutProperty is not null)
             {
                 OutEntity.Properties.Remove(OutProperty.Name);
                 target.Properties.Add(OutProperty.Name, OutProperty);
                 OutProperty.SetParentEntity(target);
             }
-            if (InProperty != null)
+            if (InProperty is not null)
                 InProperty.SetReturnTypeEntity(target);
 
             OutInterface = new Interface(target);
@@ -298,10 +298,10 @@ namespace Blueprint41
                 template.OutEntity = OutEntity.Label.Name;
             }).RunBatched();
 
-            if (this.InProperty != null)
+            if (this.InProperty is not null)
                 this.InEntity.Properties.Remove(this.InProperty.Name);
 
-            if (this.OutProperty != null)
+            if (this.OutProperty is not null)
                 this.OutEntity.Properties.Remove(this.OutProperty.Name);
 
             Parent.Relations.Remove(Name);
@@ -323,7 +323,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IRelationshipEvents.HasRegisteredOnRelationCreateHandlers { get { return onRelationCreate != null; } }
+        bool IRelationshipEvents.HasRegisteredOnRelationCreateHandlers { get { return onRelationCreate is not null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationCreate;
         event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreate
         {
@@ -341,7 +341,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IRelationshipEvents.HasRegisteredOnRelationCreatedHandlers { get { return onRelationCreated != null; } }
+        bool IRelationshipEvents.HasRegisteredOnRelationCreatedHandlers { get { return onRelationCreated is not null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationCreated;
         event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreated
         {
@@ -359,7 +359,7 @@ namespace Blueprint41
 
             return args;
         }
-        bool IRelationshipEvents.HasRegisteredOnRelationDeleteHandlers { get { return onRelationDelete != null; } }
+        bool IRelationshipEvents.HasRegisteredOnRelationDeleteHandlers { get { return onRelationDelete is not null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationDelete;
         event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDelete
         {
@@ -377,7 +377,7 @@ namespace Blueprint41
       
             return args;
         }
-        bool IRelationshipEvents.HasRegisteredOnRelationDeletedHandlers { get { return onRelationDeleted != null; } }
+        bool IRelationshipEvents.HasRegisteredOnRelationDeletedHandlers { get { return onRelationDeleted is not null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationDeleted;
         event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDeleted
         {

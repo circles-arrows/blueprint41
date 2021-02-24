@@ -31,10 +31,10 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v4
         public override string TransformText()
         {
             
-            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
 
 
-    Debug.WriteLine("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value == null) ? "<NULL>" : Value.ToString());
+    Debug.WriteLine("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
 
 	// Setup Cypher Parameters
 	OutputParameters.Add(Property.Name, Value);
@@ -45,28 +45,28 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v4
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(") WHERE NOT EXISTS(node.");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(") WITH node LIMIT 10000 SET node.");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = $");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default

@@ -10,10 +10,10 @@ namespace Blueprint41.Core
     {
         protected CollectionItem(OGM parent, OGM item, DateTime? startDate, DateTime? endDate)
         {
-            if (parent == null)
+            if (parent is null)
                 throw new ArgumentNullException("parent");
 
-            if (item == null)
+            if (item is null)
                 throw new ArgumentNullException("item");
 
             Parent = parent;
@@ -101,7 +101,7 @@ namespace Blueprint41.Core
         public CollectionItem(OGM parent, TEntity item, DateTime? startDate, DateTime? endDate)
             : base(parent, item, startDate, endDate)
         {
-            if (item == null)
+            if (item is null)
                 throw new ArgumentNullException("item");
 
             Item = item;

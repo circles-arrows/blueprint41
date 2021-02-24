@@ -67,7 +67,7 @@ namespace Blueprint41.Core
 			OGM ogm = instance as OGM;
 
 			Dictionary<string, object?> properties = (Dictionary<string, object?>)node.Properties;
-			if (cypher != null)
+			if (cypher is not null)
 			{
 				Dictionary<string, object?>? customState = null;
 				NodeEventArgs loadingArgs = Entity.RaiseOnNodeLoading(trans, ogm, cypher, parameters, ref customState);
@@ -149,7 +149,7 @@ namespace Blueprint41.Core
 
 			get
 			{
-				if (entity == null)
+				if (entity is null)
 					Instance.GetEntity();
 
 				return entity!;
@@ -201,10 +201,10 @@ namespace Blueprint41.Core
 		}
 		internal protected override bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment = null)
 		{
-			if (previousValue == null && assignValue == null)
+			if (previousValue is null && assignValue is null)
 				return false;
 
-			if (previousValue != null && previousValue.Equals(assignValue))
+			if (previousValue is not null && previousValue.Equals(assignValue))
 				return false;
 
 			if (property.PropertyType == PropertyType.Attribute && previousValue is IList)
@@ -253,7 +253,7 @@ namespace Blueprint41.Core
 				return object.ReferenceEquals(this, other);
 
 			object? otherKey = other.GetKey();
-			if (otherKey == null)
+			if (otherKey is null)
 				return object.ReferenceEquals(this, other);
 
 			return key.Equals(otherKey);
@@ -360,7 +360,7 @@ namespace Blueprint41.Core
 		//{
 		//	  TData item = NewData();
 	
-		//	  if (key != null && !key.Equals(default(TKey)))
+		//	  if (key is not null && !key.Equals(default(TKey)))
 		//		  item.SetKey(key);
 	
 		//    return item;
@@ -374,7 +374,7 @@ namespace Blueprint41.Core
 			if (InnerData.HasKey)
 				throw new InvalidOperationException("You cannot set the key multiple times.");
 
-			if (set != null)
+			if (set is not null)
 				set.Invoke();
 
 			RunningTransaction.Register(Entity.Name, this);
@@ -411,12 +411,12 @@ namespace Blueprint41.Core
 
 		private static void InitializeStoredQueries()
 		{
-			if (StoredQueries != null && IsInitialized)
+			if (StoredQueries is not null && IsInitialized)
 				return;
 
 			lock (typeof(TWrapper))
 			{
-				if (StoredQueries == null)
+				if (StoredQueries is null)
 				{
 					StoredQueries = new AtomicDictionary<string, ICompiled>();
 					Instance.RegisterGeneratedStoredQueries();

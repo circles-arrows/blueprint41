@@ -14,13 +14,13 @@ namespace Blueprint41.Core
 
         public void Initialize(OGM parent)
         {
-            if (wrapper != null)
+            if (wrapper is not null)
                 throw new NotSupportedException("You should not call this method... Leave it to the professionals... Greetzz from the A Team.");
 
             wrapper = parent;
             InitializeCollections();
 
-            if (wrapper.GetEntity().InheritedUnidentifiedProperties() != null)
+            if (wrapper.GetEntity().InheritedUnidentifiedProperties() is not null)
                 UnidentifiedProperties = new UnidentifiedPropertyCollection(Wrapper);
         }
         protected abstract void InitializeCollections();
@@ -54,7 +54,7 @@ namespace Blueprint41.Core
                     foreach (Property property in entity.GetPropertiesOfBaseTypesAndSelf())
                     {
                         PropertyInfo info = infos.FirstOrDefault(item => item.Name == property.Name);
-                        if (info == null)
+                        if (info is null)
                             throw new MissingFieldException("The field {0} does not exist, please regenerate the data access classes.");
 
                         if (!typeof(EntityCollectionBase).IsAssignableFrom(info.PropertyType) && !typeof(OGM).IsAssignableFrom(info.PropertyType))
@@ -68,10 +68,10 @@ namespace Blueprint41.Core
 
         public virtual void MapFrom(IReadOnlyDictionary<string, object?> properties)
         {
-            bool hasUnidentifiedProperties = (Wrapper.GetEntity().InheritedUnidentifiedProperties() != null);
+            bool hasUnidentifiedProperties = (Wrapper.GetEntity().InheritedUnidentifiedProperties() is not null);
             if (hasUnidentifiedProperties)
             {
-                if (UnidentifiedProperties == null)
+                if (UnidentifiedProperties is null)
                     UnidentifiedProperties = new UnidentifiedPropertyCollection(Wrapper);
                 else 
                     UnidentifiedProperties.ClearInternal();
@@ -82,7 +82,7 @@ namespace Blueprint41.Core
                 if (PropertyDetails.TryGetValue(property.Key, out info))
                     info.SetValue(this, property.Value);
                 else
-                    if (UnidentifiedProperties != null)
+                    if (UnidentifiedProperties is not null)
                         UnidentifiedProperties.AddInternal(property.Key, property.Value);
             }
         }
@@ -94,13 +94,13 @@ namespace Blueprint41.Core
             foreach (PropertyDetail info in PropertyDetails.Values)
             {
                 object? value = info.GetValue(this);
-                if (value != null)
+                if (value is not null)
                 {
                     dictionary.Add(info.PropertyName, info.GetValue(this));
                 }
             }
 
-            if (UnidentifiedProperties != null)
+            if (UnidentifiedProperties is not null)
                 UnidentifiedProperties.ForEachInternal(item => dictionary.Add(item));
 
             return dictionary;
@@ -116,7 +116,7 @@ namespace Blueprint41.Core
             }
             else
             {
-                if (UnidentifiedProperties != null)
+                if (UnidentifiedProperties is not null)
                 {
                     object? value;
                     if (UnidentifiedProperties.TryGetValue(propertyName, out value))
@@ -151,7 +151,7 @@ namespace Blueprint41.Core
 
             private Func<Data, object?> BuildGetAccessor(PropertyInfo propertyInfo)
             {
-                if (Mapping == null)
+                if (Mapping is null)
                     return delegate (Data d)
                     {
                         throw new NotSupportedException(string.Format("The property type '{0}' is not supported by the storage provider.", propertyInfo.PropertyType.Name));
@@ -171,7 +171,7 @@ namespace Blueprint41.Core
             {
                 MethodInfo? method = propertyInfo.GetSetMethod(true);
 
-                if (Mapping == null || method is null)
+                if (Mapping is null || method is null)
                     return delegate (Data d, object? o)
                     {
                         throw new NotSupportedException(string.Format("The property type '{0}' is not supported by the storage provider.", propertyInfo.PropertyType.Name));

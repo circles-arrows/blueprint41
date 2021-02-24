@@ -274,7 +274,7 @@ namespace Blueprint41.Query
 
         public StringResult Concat(params object[] args)
         {
-            if (args == null)
+            if (args is null)
                 throw new NullReferenceException("value cannot be null");
 
             int count = args.Length;

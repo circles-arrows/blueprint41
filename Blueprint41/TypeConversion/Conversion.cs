@@ -47,7 +47,7 @@ namespace Blueprint41.Core
             Conversion? converter = toCache.TryGetOrAdd(toType, key =>
             {
                 converter = registeredConverters.FirstOrDefault(item => item.FromType == fromType && item.ToType == toType);
-                if (converter == null)
+                if (converter is null)
                 {
                     Type genericConversionType = typeof(ConversionInstance<,>).MakeGenericType(fromType, toType);
                     converter = (Conversion)Activator.CreateInstance(genericConversionType, true)!;

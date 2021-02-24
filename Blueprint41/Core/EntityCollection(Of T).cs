@@ -39,7 +39,7 @@ namespace Blueprint41.Core
             LazyLoad();
             LazySet();
 
-            if (EagerLoadLogic != null)
+            if (EagerLoadLogic is not null)
                 EagerLoadLogic.Invoke(item);
 
             if (fireEvents)
@@ -59,7 +59,7 @@ namespace Blueprint41.Core
                 if (item is null)
                     continue;
 
-                if (EagerLoadLogic != null)
+                if (EagerLoadLogic is not null)
                     EagerLoadLogic.Invoke(item);
 
                 if (fireEvents)
@@ -78,12 +78,12 @@ namespace Blueprint41.Core
         }
         internal sealed override bool Remove(TEntity item, bool fireEvents)
         {
-            if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
+            if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
             LazyLoad();
 
-            if (item != null && EagerLoadLogic != null)
+            if (item is not null && EagerLoadLogic is not null)
                 EagerLoadLogic.Invoke(item);
 
             if (fireEvents)
@@ -117,7 +117,7 @@ namespace Blueprint41.Core
         }
         internal sealed override void Clear(bool fireEvents)
         {
-            if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
+            if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
             LazyLoad();
@@ -135,7 +135,7 @@ namespace Blueprint41.Core
                     if (item is null)
                         return;
 
-                    if (EagerLoadLogic != null)
+                    if (EagerLoadLogic is not null)
                         EagerLoadLogic.Invoke((TEntity)item.Item);
 
                     if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, item.Item, default(TEntity), null , (OperationEnum)OperationEnum.Remove) ?? false)
@@ -168,7 +168,7 @@ namespace Blueprint41.Core
         }
         internal bool RemoveRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
         {
-            if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
+            if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
             LazyLoad();
@@ -176,7 +176,7 @@ namespace Blueprint41.Core
             LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
             foreach (var item in items)
             {
-                if (item != null && EagerLoadLogic != null)
+                if (item is not null && EagerLoadLogic is not null)
                     EagerLoadLogic.Invoke(item);
 
                 if (fireEvents)
@@ -274,7 +274,7 @@ namespace Blueprint41.Core
             EnsureLoaded();
 
             for (int index = InnerData.TotalCount - 1; index >= 0; index--)
-                if (InnerData[index] != null)
+                if (InnerData[index] is not null)
                     action.Invoke(index, InnerData[index]!);
         }
         internal override void Add(CollectionItem item)
@@ -325,24 +325,24 @@ namespace Blueprint41.Core
             LazyLoad();
             LazySet();
 
-            if (item != null && EagerLoadLogic != null)
+            if (item is not null && EagerLoadLogic is not null)
                 EagerLoadLogic.Invoke(item);
 
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
 
             if (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null))
             {
-                if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup)
+                if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
-                    OGM? oldForeignValue = (item == null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
-                    if (oldForeignValue != null)
+                    OGM? oldForeignValue = (item is null) ? null : (OGM)ForeignProperty.GetValue(item, moment);
+                    if (oldForeignValue is not null)
                         ParentProperty?.ClearLookup(oldForeignValue, null);
 
                     foreach (TEntity entity in currentItem.Select(iitem => iitem.Item).Distinct())
                         ForeignProperty.ClearLookup(entity, null);
                 }
 
-                if (item == null)
+                if (item is null)
                 {
                     if (currentItem.Count > 0)
                     {

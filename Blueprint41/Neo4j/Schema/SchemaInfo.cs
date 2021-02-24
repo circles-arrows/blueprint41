@@ -118,7 +118,7 @@ namespace Blueprint41.Neo4j.Schema
                 long maxNumber = FindMaxId(inMemory);
                 long startFrom = maxNumber > inMemory.StartFrom ? maxNumber : inMemory.StartFrom;
                 var inDb = FunctionalIds.FirstOrDefault(item => inMemory.Label == item.Label);
-                if (inDb == null)
+                if (inDb is null)
                 {
                     actions.Add(NewApplyFunctionalId(inMemory.Label, inMemory.Prefix, startFrom, ApplyFunctionalIdAction.CreateFunctionalId));
                     continue;
@@ -139,7 +139,7 @@ namespace Blueprint41.Neo4j.Schema
             foreach (var inDb in FunctionalIds)
             {
                 var inMemory = Model.FunctionalIds.FirstOrDefault(item => inDb.Label == item.Label);
-                if(inMemory == null)
+                if(inMemory is null)
                     actions.Add(new Schema.ApplyFunctionalId(this, inDb.Label, inDb.Prefix, inDb.SequenceNumber, ApplyFunctionalIdAction.DeleteFunctionalId));
             }
 

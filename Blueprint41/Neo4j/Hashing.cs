@@ -51,7 +51,7 @@ namespace Blueprint41
         }
         public static long DecodeIdentifier(string value, bool throws = true)
         {
-            if ((object)value == null)
+            if (value is null)
             {
                 if (throws)
                     throw new ArgumentNullException("The identifier is invalid");

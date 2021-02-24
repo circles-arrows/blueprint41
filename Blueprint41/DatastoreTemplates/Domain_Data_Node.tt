@@ -89,7 +89,7 @@ namespace <#= Settings.FullQueryNamespace #>
 		}
 
 <#
-	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType != null && (p.SystemReturnType == typeof(string) || p.SystemReturnType.IsPrimitive)).OrderBy(p => p.Name).ToList();
+	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && (p.SystemReturnType == typeof(string) || p.SystemReturnType.IsPrimitive)).OrderBy(p => p.Name).ToList();
 #>
         public <#= DALModel.Name #>Node Where(<#= string.Join(", ", properties.Select(p => $"InlineCondition<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
         {
@@ -160,10 +160,10 @@ namespace <#= Settings.FullQueryNamespace #>
 #>
 		public <#= subclass.Name #>Node CastTo<#= subclass.Name #>()
 		{
-			if (this.Neo4jLabel == null)
+			if (this.Neo4jLabel is null)
 				throw new InvalidOperationException("Casting is not supported for virtual entities.");
 
-			if (FromRelationship == null)
+			if (FromRelationship is null)
 				throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
 			return new <#= subclass.Name #>Node(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
@@ -273,9 +273,9 @@ namespace <#= Settings.FullQueryNamespace #>
 		{
 			get
 			{
-				if (m_AliasFields == null)
+				if (m_AliasFields is null)
 				{
-					m_AliasFields = <#= inheritedUnidentifiedProp == null ? "" : "new UnidentifiedPropertiesAliasDictionary(" #>new Dictionary<string, FieldResult>()
+					m_AliasFields = <#= inheritedUnidentifiedProp is null ? "" : "new UnidentifiedPropertiesAliasDictionary(" #>new Dictionary<string, FieldResult>()
 					{
 <#
 	foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
@@ -287,7 +287,7 @@ namespace <#= Settings.FullQueryNamespace #>
 <#
 	}
 #>
-					}<#= inheritedUnidentifiedProp == null ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)") #>;
+					}<#= inheritedUnidentifiedProp is null ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)") #>;
 				}
 				return m_AliasFields;
 			}
@@ -326,7 +326,7 @@ namespace <#= Settings.FullQueryNamespace #>
 		{
 			get
 			{
-				if ((object)m_<#= property.Name #> == null)
+				if (m_<#= property.Name #> is null)
 					m_<#= property.Name #> = (<#= GetResultType(property.SystemReturnType) #>)AliasFields["<#= property.Name #>"];
 
 				return m_<#= property.Name #>;
@@ -336,14 +336,14 @@ namespace <#= Settings.FullQueryNamespace #>
 <#
 	}
 
-	if (inheritedUnidentifiedProp != null)
+	if (inheritedUnidentifiedProp is not null)
 	{
 #>
 		public UnidentifiedProperties <#= inheritedUnidentifiedProp.UnidentifiedProperties #>
 		{
 			get
 			{
-				if ((object)m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> == null)
+				if (m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> is null)
 					m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]);
 
 				return m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #>;

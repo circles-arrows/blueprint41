@@ -44,7 +44,7 @@ namespace Blueprint41.Core
             {
                 for (int index = list.Count - 1; index >= 0; index--)
                 {
-                    if (list[index] == null)
+                    if (list[index] is null)
                         list.RemoveAt(index);
                 }
             }

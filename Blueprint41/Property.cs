@@ -94,7 +94,7 @@ namespace Blueprint41
         {
             get
             {
-                if (SystemReturnType == null)
+                if (SystemReturnType is null)
                     return null;
 
                 if (!Nullable)
@@ -121,7 +121,7 @@ namespace Blueprint41
         {
             get
             {
-                if (innerReturnType == null)
+                if (innerReturnType is null)
                 {
 
                     StringBuilder sb = new StringBuilder();
@@ -134,9 +134,9 @@ namespace Blueprint41
                             sb.Append("EntityCollection<");
                     }
 
-                    if (SystemReturnType != null)
+                    if (SystemReturnType is not null)
                         sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
-                    else if (EntityReturnType != null)
+                    else if (EntityReturnType is not null)
                         sb.Append(EntityReturnType.ClassName);
                     else
                         sb.Append(Reference!.InnerReturnType);
@@ -156,7 +156,7 @@ namespace Blueprint41
         {
             get
             {
-                if (outerReturnType == null)
+                if (outerReturnType is null)
                 {
 
                     StringBuilder sb = new StringBuilder();
@@ -169,11 +169,11 @@ namespace Blueprint41
                             sb.Append("EntityCollection<");
                     }
 
-                    if (SystemReturnType == typeof(string) && EnumValues != null)
+                    if (SystemReturnType == typeof(string) && EnumValues is not null)
                         sb.Append($"{this.Parent.Name}.{this.Name}Enum" + (this.Nullable ? "?" : ""));
-                    else if (SystemReturnType != null)
+                    else if (SystemReturnType is not null)
                         sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
-                    else if (EntityReturnType != null)
+                    else if (EntityReturnType is not null)
                         sb.Append(EntityReturnType.ClassName);
                     else
                         sb.Append(Reference!.OuterReturnType);
@@ -193,7 +193,7 @@ namespace Blueprint41
         {
             get
             {
-                if (outerReturnTypeReadOnly == null)
+                if (outerReturnTypeReadOnly is null)
                 {
 
                     StringBuilder sb = new StringBuilder();
@@ -203,11 +203,11 @@ namespace Blueprint41
                         sb.Append("IEnumerable<");
                     }
 
-                    if (SystemReturnType == typeof(string) && EnumValues != null)
+                    if (SystemReturnType == typeof(string) && EnumValues is not null)
                         sb.Append($"{this.Parent.Name}.{this.Name}Enum" + (this.Nullable ? "?" : ""));
-                    else if (SystemReturnType != null)
+                    else if (SystemReturnType is not null)
                         sb.Append(SystemReturnType.ToCSharp() + (this.Nullable && this.SystemReturnType.IsValueType ? "?" : ""));
-                    else if (EntityReturnType != null)
+                    else if (EntityReturnType is not null)
                         sb.Append(EntityReturnType.ClassName);
                     else
                         sb.Append(Reference!.OuterReturnTypeReadOnly);
@@ -229,7 +229,7 @@ namespace Blueprint41
         {
             get
             {
-                if (Relationship == null)
+                if (Relationship is null)
                     return null;
 
                 switch (Direction)
@@ -247,7 +247,7 @@ namespace Blueprint41
         {
             get
             {
-                if (Relationship == null)
+                if (Relationship is null)
                     return null;
 
                 switch (Direction)
@@ -549,11 +549,11 @@ namespace Blueprint41
                 Type? toDb = Parent.Parent.PersistenceProvider.GetStoredType(to);
 
                 string chkScript, convScript;
-                (_, _, chkScript, convScript) = specificConvertTabel.FirstOrDefault(item => item.fromType == from && (item.toType == null || item.toType == to));
-                if (chkScript == null || convScript == null)
-                    (_, _, chkScript, convScript) = genericConvertTabel.FirstOrDefault(item => item.fromType == fromDb && (item.toType == null || item.toType == toDb));
+                (_, _, chkScript, convScript) = specificConvertTabel.FirstOrDefault(item => item.fromType == from && (item.toType is null || item.toType == to));
+                if (chkScript is null || convScript is null)
+                    (_, _, chkScript, convScript) = genericConvertTabel.FirstOrDefault(item => item.fromType == fromDb && (item.toType is null || item.toType == toDb));
 
-                if (chkScript == null || convScript == null || chkScript == NOT_SUPPORTED || convScript == NOT_SUPPORTED)
+                if (chkScript is null || convScript is null || chkScript == NOT_SUPPORTED || convScript == NOT_SUPPORTED)
                     throw new NotSupportedException($"A refactor conversion from '{from.Name}' to '{to.Name}' is not supported.");
 
                 if (chkScript != NO_SCRIPT && convScript != NO_SCRIPT)
@@ -656,7 +656,7 @@ namespace Blueprint41
 
         void IRefactorProperty.Reroute(string pattern, string newPropertyName, bool strict)
         {
-            if (Relationship == null || EntityReturnType is null)
+            if (Relationship is null || EntityReturnType is null)
                 throw new NotSupportedException("This operation can only be done on an relationship property");
 
             Reroute(pattern, newPropertyName, Relationship.Name, Relationship.Neo4JRelationshipType, strict);
@@ -669,7 +669,7 @@ namespace Blueprint41
         {
             Parent.Parent.EnsureSchemaMigration();
 
-            if (Relationship == null || EntityReturnType is null)
+            if (Relationship is null || EntityReturnType is null)
                 throw new NotSupportedException("This operation can only be done on an relationship property");
 
             if (string.IsNullOrWhiteSpace(pattern))
@@ -708,9 +708,9 @@ namespace Blueprint41
             this.Name = newPropertyName;
 
             Relationship rel = Parent.Parent.Relations.New(inEntity, outEntity, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName);
-            if (inProperty != null)
+            if (inProperty is not null)
                 rel.SetInProperty(inProperty.Name, inProperty.PropertyType, inProperty.Nullable);
-            if (outProperty != null)
+            if (outProperty is not null)
                 rel.SetOutProperty(outProperty.Name, outProperty.PropertyType, outProperty.Nullable);
 
             // StaticData
@@ -813,7 +813,7 @@ namespace Blueprint41
                 if (PropertyType == PropertyType.Collection || ForeignEntity is null)
                     throw new NotSupportedException("A collection cannot be made mandatory.");
 
-                if (defaultValue == null || defaultValue.GetType() != ForeignEntity.Key?.SystemReturnType)
+                if (defaultValue is null || defaultValue.GetType() != ForeignEntity.Key?.SystemReturnType)
                     throw new ArgumentException("The supplied default value does not match the type of the entity its primary key field.");
 
                 Nullable = false;
@@ -932,7 +932,7 @@ namespace Blueprint41
                  if (EntityAlias == "from" && Entity != fromEntity)
                     throw new FormatException($"The property return type is '{fromEntity.Name}' while the pattern is (from:{EntityName})");
 
-                if (Next != null)
+                if (Next is not null)
                     Next.ValidateRecursive(fromEntity, this, strict);
             }
             internal int HasAlias(string alias)
@@ -951,14 +951,14 @@ namespace Blueprint41
             {
                 if (Entity is null)
                 {
-                    if (Next == null)
+                    if (Next is null)
                         return $"({EntityAlias})";
 
                     return $"({EntityAlias})";
                 }
                 else
                 {
-                    if (Next == null)
+                    if (Next is null)
                         return $"({EntityAlias}:{Entity.Label.Name})";
 
                     return $"({EntityAlias}:{Entity.Label.Name}){Next.Compile()}";
@@ -1052,10 +1052,10 @@ namespace Blueprint41
                 if (RelationAlias != "")
                     throw new FormatException("A relationship cannot have an alias");
 
-                if (Next == null)
+                if (Next is null)
                     throw new FormatException($"The pattern cannot end in a relationship");
 
-                if (Relation == null)
+                if (Relation is null)
                 {
                     bool found = false;
                     foreach (Relationship relation in node.Entity.GetRelationshipsRecursive())
@@ -1089,14 +1089,14 @@ namespace Blueprint41
             #endregion
             public string Compile()
             {
-                if (Next == null)
+                if (Next is null)
                     throw new FormatException($"The pattern cannot end in a relationship");
 
                 return $"{(RelationDirection == DirectionPattern.Left ? "<" : "")}-[{Relation?.Neo4JRelationshipType ?? ""}]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}{Next.Compile()}";
             }
             public Entity GetToEntity()
             {
-                if (Next == null)
+                if (Next is null)
                     throw new FormatException($"The pattern cannot end in a relationship");
 
                 return Next.GetToEntity();
@@ -1175,11 +1175,11 @@ namespace Blueprint41
         {
             if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
             {
-                if (getValueWithMoment == null)
+                if (getValueWithMoment is null)
                 {
                     lock (this)
                     {
-                        if (getValueWithMoment == null)
+                        if (getValueWithMoment is null)
                         {
                             string name = string.Concat("Get", Name);
                             MethodInfo? method = Parent.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
@@ -1194,11 +1194,11 @@ namespace Blueprint41
             }
             else
             {
-                if (getValue == null)
+                if (getValue is null)
                 {
                     lock (this)
                     {
-                        if (getValue == null)
+                        if (getValue is null)
                         {
                             MethodInfo? method = Parent.RuntimeReturnType!.GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
                             if (method is null)
@@ -1218,11 +1218,11 @@ namespace Blueprint41
         {
             if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
             {
-                if (setValueWithMoment == null)
+                if (setValueWithMoment is null)
                 {
                     lock (this)
                     {
-                        if (setValueWithMoment == null)
+                        if (setValueWithMoment is null)
                         {
                             string name = string.Concat("Set", Name);
                             MethodInfo? method = Parent.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
@@ -1237,11 +1237,11 @@ namespace Blueprint41
             }
             else
             {
-                if (setValue == null)
+                if (setValue is null)
                 {
                     lock (this)
                     {
-                        if (setValue == null)
+                        if (setValue is null)
                         {
                             MethodInfo? method = Parent.RuntimeReturnType!.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
                             if (method is null)
@@ -1302,7 +1302,7 @@ namespace Blueprint41
             OGMImpl? otherSender;
             bool canceled = false;
 
-            if (ForeignProperty != null)
+            if (ForeignProperty is not null)
             {
                 otherSender = previousValue as OGMImpl;
 
@@ -1310,7 +1310,7 @@ namespace Blueprint41
                     if (RaiseOther(otherSender, ForeignProperty, sender, null, OperationEnum.Remove))
                         canceled = true;
 
-                if (assignedValue != null)
+                if (assignedValue is not null)
                 {
                     otherSender = ForeignProperty.GetValue((OGM)assignedValue, moment) as OGMImpl;
                     if (operation == OperationEnum.Set || operation == OperationEnum.Remove)
@@ -1337,7 +1337,7 @@ namespace Blueprint41
 
             bool RaiseMain(OGMImpl target, T oldValue, T newValue, OperationEnum op)
             {
-                if (target == null)
+                if (target is null)
                     return false;
 
                 PropertyEventArgs args = PropertyEventArgs.CreateInstance(EventTypeEnum.OnPropertyChange, target, this, oldValue, newValue, moment ?? trans.TransactionDate, op, trans);
@@ -1348,13 +1348,13 @@ namespace Blueprint41
             }
             bool RaiseOther(OGMImpl? target, Property? property, object? oldValue, object? newValue, OperationEnum op)
             {
-                if (target == null || property == null)
+                if (target is null || property is null)
                     return false;
 
                 if (property.PropertyType == PropertyType.Lookup)
                 {
                     op = OperationEnum.Set;
-                    if (oldValue == null)
+                    if (oldValue is null)
                         oldValue = property.GetValue(target, moment);
                 }
 
@@ -1369,7 +1369,7 @@ namespace Blueprint41
         {
             get
             {
-                return onChange != null || ForeignProperty?.onChange != null;
+                return onChange is not null || ForeignProperty?.onChange is not null;
             }
         }
         private EventHandler<PropertyEventArgs>? onChange;

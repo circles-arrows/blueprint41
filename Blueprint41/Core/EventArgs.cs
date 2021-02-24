@@ -236,7 +236,7 @@ namespace Blueprint41.Core
             EventType = eventType;
             Transaction = trans;
             Sender = sender;
-            IsBatch = (sender == null);
+            IsBatch = (sender is null);
             Id = 0;
             Cypher = cypher;
             Parameters = parameters;

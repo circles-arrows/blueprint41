@@ -232,7 +232,7 @@ namespace System
         [return: MaybeNull]
         public static T FromJson<T>(this string self)
         {
-            if (self == null)
+            if (self is null)
                 return default!;
 
             using (MemoryStream reader = new MemoryStream(Encoding.UTF8.GetBytes(self)))
@@ -278,9 +278,9 @@ namespace Blueprint41.Core
         [return: NotNullIfNotNull("value")]
         public static T As<T>(this object value)
         {
-            if (value == null)
+            if (value is null)
             {
-                if (default(T) == null)
+                if (default(T) is null)
                 {
                     return default!;
                 }
@@ -355,12 +355,12 @@ namespace Blueprint41.Core
             }
             TypeInfo typeInfo = type2.GetTypeInfo();
             IDictionary? dict;
-            if (DictionaryTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (dict = (value as IDictionary)) != null)
+            if (DictionaryTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (dict = (value as IDictionary)) is not null)
             {
                 return dict.AsDictionary<T>(typeInfo);
             }
             IEnumerable? value2;
-            if (EnumerableTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (value2 = (value as IEnumerable)) != null)
+            if (EnumerableTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (value2 = (value as IEnumerable)) is not null)
             {
                 return value2.AsList<T>(typeInfo);
             }
@@ -434,7 +434,7 @@ namespace Blueprint41.Core
                 foreach ((Type provider, Func<object, object?> conversion) in conversions)
                 {
                     object? converted = conversion.Invoke(instance);
-                    if (converted != null)
+                    if (converted is not null)
                     {
                         value = (T)converted;
                         return true;
@@ -451,7 +451,7 @@ namespace Blueprint41.Core
         public static void RegisterAsConversion(Type persistenceProvider, Type type, Func<object, object?> conversion)
         {
             List<(Type provider, Func<object, object?> conversion)> conversions;
-            if (type != null)
+            if (type is not null)
             {
                 conversions = specificConversions.TryGetOrAdd(type, key => new List<(Type provider, Func<object, object?> conversion)>());
                 if (!conversions.Any(item => item.provider == persistenceProvider))

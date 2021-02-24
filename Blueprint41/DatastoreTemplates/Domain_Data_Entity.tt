@@ -1,6 +1,5 @@
 ﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
 <#@ output extension=".cs" #>
-<#@ Assembly Name="System.Core" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Text" #>
@@ -26,7 +25,7 @@ if (!DALModel.IsAbstract)
 {
 	string baseTypes = string.Join(", ", DALModel.GetBaseTypes().Select(x => x.ClassName));
 #>
-	public interface I<#= DALModel.Name #>OriginalData<#= DALModel.Inherits == null ? "" : string.Concat(" : I", DALModel.Inherits.Name, "OriginalData") #>
+	public interface I<#= DALModel.Name #>OriginalData<#= DALModel.Inherits is null ? "" : string.Concat(" : I", DALModel.Inherits.Name, "OriginalData") #>
 	{
 <#
 	foreach (Property attr in DALModel.Properties)
@@ -42,7 +41,7 @@ if (!DALModel.IsAbstract)
 #>
 		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
 <#
-			if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
+			if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
 			{
 				foreach (Entity concrete in attr.EntityReturnType.GetSubclasses())
 				{
@@ -189,7 +188,7 @@ if (!DALModel.IsAbstract)
 
 		public override string ToString()
 		{
-			return $"<#= DALModel.ClassName #> => <#= string.Join(", ", DALModel.GetPropertiesOfBaseTypesAndSelf().Where(x => x.SystemReturnType != null).Select(x => x.Nullable ? string.Format("{0} : {{this.{0}?.ToString() ?? \"null\"}}", x.Name) : string.Format("{0} : {{this.{0}}}", x.Name))) #>";
+			return $"<#= DALModel.ClassName #> => <#= string.Join(", ", DALModel.GetPropertiesOfBaseTypesAndSelf().Where(x => x.SystemReturnType is not null).Select(x => x.Nullable ? string.Format("{0} : {{this.{0}?.ToString() ?? \"null\"}}", x.Name) : string.Format("{0} : {{this.{0}}}", x.Name))) #>";
 		}
 
 		public override int GetHashCode()
@@ -202,7 +201,7 @@ if (!DALModel.IsAbstract)
 			base.LazySet();
 			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
 			{
-				if ((object)InnerData == (object)OriginalData)
+				if (ReferenceEquals(InnerData, OriginalData))
 					OriginalData = new <#= DALModel.ClassName #>Data(InnerData);
 			}
 		}
@@ -216,7 +215,6 @@ if (!DALModel.IsAbstract)
 		{
 			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
 <#
 	foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
 	{
@@ -228,13 +226,13 @@ if (!DALModel.IsAbstract)
 			if (attr.IsRowVersion)
 				continue;
 
-			if(attr.IsKey && DALModel.FunctionalId != null)
+			if(attr.IsKey && DALModel.FunctionalId is not null)
 				continue;
 
-			if (attr.Nullable == false && attr.PropertyType == PropertyType.Attribute)
+			if (attr.Nullable == false && attr.PropertyType == PropertyType.Attribute && !attr.SystemReturnType.IsValueType)
 			{
 #>
-			if (InnerData.<#= attr.Name #> == null)
+			if (InnerData.<#= attr.Name #> is null)
 				throw new PersistenceException(string.Format("Cannot save <#= DALModel.ClassName #> with key '{0}' because the <#= attr.Name #> cannot be null.", this.<#= DALModel.Key.Name #>?.ToString() ?? "<null>"));
 <#
 			}
@@ -258,7 +256,6 @@ if (!DALModel.IsAbstract)
 		}
 	}
 #>
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -266,7 +263,7 @@ if (!DALModel.IsAbstract)
 <#
 	foreach (var relationship in Datastore.Relations)
 	{
-		 if(DALModel.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty != null && relationship.OutProperty.Nullable == false)
+		 if(DALModel.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty is not null && relationship.OutProperty.Nullable == false)
 		 {
 			 foreach (var entity in relationship.OutEntity.GetSubclassesOrSelf())
 			 {
@@ -280,7 +277,7 @@ if (!DALModel.IsAbstract)
 <#
 			}
 		 }
-		 if(DALModel.IsSelfOrSubclassOf(relationship.OutEntity) && relationship.InProperty != null && relationship.InProperty.Nullable == false)
+		 if(DALModel.IsSelfOrSubclassOf(relationship.OutEntity) && relationship.InProperty is not null && relationship.InProperty.Nullable == false)
 		 {
 			foreach (var entity in relationship.InEntity.GetSubclassesOrSelf())
 			{
@@ -321,7 +318,7 @@ if (!DALModel.IsAbstract)
 	}
 #>
 <#		
-	if (inheritedUnidentifiedProp != null)
+	if (inheritedUnidentifiedProp is not null)
 	{
 #>
 				UnidentifiedProperties = new UnidentifiedPropertyCollection(data.UnidentifiedProperties);
@@ -344,13 +341,13 @@ if (!DALModel.IsAbstract)
 		{
 			if (attr.PropertyType == PropertyType.Collection || attr.PropertyType == PropertyType.Lookup)
 			{
-				if (attr.ForeignProperty != null && attr.ForeignProperty.PropertyType == PropertyType.Lookup)
+				if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Lookup)
 				{
 #>
 				<#= attr.Name #> = new <#= attr.InnerReturnType #>(Wrapper, Members.<#= attr.Name #>, item => { if (<#= string.Join(" || ", attr.ForeignEntity.GetConcreteClasses().Select(item => string.Concat("Members.", attr.Name, ".Events.HasRegisteredChangeHandlers"))) #>) { object loadHack = item.<#= attr.ForeignProperty.Name #>; } });
 <#
 				}
-				else if (attr.ForeignProperty != null && attr.ForeignProperty.PropertyType == PropertyType.Collection)
+				else if (attr.ForeignProperty is not null && attr.ForeignProperty.PropertyType == PropertyType.Collection)
 				{
 					string countMethod = (attr.Relationship.IsTimeDependent) ? "CountAll" : "Count";
 #>
@@ -369,7 +366,7 @@ if (!DALModel.IsAbstract)
 #>
 			}
 <#
-	if((object)DALModel.NodeType == null)
+	if (DALModel.NodeType is null)
 	{
 #>
 			public string <#= DALModel.NodeTypeName #> { get; private set; }
@@ -381,7 +378,7 @@ if (!DALModel.IsAbstract)
 
 			#endregion
 <#
-	if (inheritedUnidentifiedProp == null)
+	if (inheritedUnidentifiedProp is null)
 	{
 #>
 			#region Map Data
@@ -400,7 +397,7 @@ if (!DALModel.IsAbstract)
 				{
 					string value = null; 
 					Core.TypeMapping mapping = SupportedTypeMappings.FirstOrDefault(item => item.ReturnType == attr.SystemReturnType);
-					if (mapping == null)
+					if (mapping is null)
 					{
 						value = "null";
 						issues.Add(attr.Name, new MappingIssue(attr.Name) { ReturnType = attr.SystemReturnType, IsNullable = attr.Nullable });
@@ -442,7 +439,7 @@ if (!DALModel.IsAbstract)
 				{
 					string value = null; 
 					Core.TypeMapping mapping = SupportedTypeMappings.FirstOrDefault(item => item.ReturnType == attr.SystemReturnType);
-					if (mapping == null)
+					if (mapping is null)
 					{
 						value = "null; // NotSupportedMapping";
 
@@ -471,7 +468,7 @@ if (!DALModel.IsAbstract)
 			else if (issue.MapTo)
 				arrow = "<----";
 
-			if (arrow == null)
+			if (arrow is null)
 			{
 				Log("Mapping for property {0}, type {1} is not supported for Neo4j",
 					issue.PropertyName,
@@ -556,7 +553,7 @@ if (!DALModel.IsAbstract)
 #>
 		public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { return InnerData.<#= attr.Name #>; } }
 <#
-				if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
+				if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
 				{
 					foreach (Entity concrete in attr.EntityReturnType.GetSubclasses())
 					{
@@ -566,7 +563,7 @@ if (!DALModel.IsAbstract)
 <#
 					}
 				}
-				if (attr.ForeignProperty != null)
+				if (attr.ForeignProperty is not null)
 				{
 #>
 		private void Clear<#= attr.Name #>(DateTime? moment)
@@ -612,7 +609,7 @@ if (!DALModel.IsAbstract)
 <#
 				}
 
-				if (attr.ForeignProperty != null)
+				if (attr.ForeignProperty is not null)
 				{
 #>
 		private void Clear<#= attr.Name #>(DateTime? moment)
@@ -624,7 +621,7 @@ if (!DALModel.IsAbstract)
 			}
 			else
 			{
-				if (attr.EnumValues != null)
+				if (attr.EnumValues is not null)
 				{
 					if (attr.Nullable)
 					{
@@ -653,7 +650,7 @@ if (!DALModel.IsAbstract)
 <#
 	}
 
-	if (inheritedUnidentifiedProp != null)
+	if (inheritedUnidentifiedProp is not null)
 	{
 #>
 		#region Member for UnidentifiedProperties
@@ -666,7 +663,7 @@ if (!DALModel.IsAbstract)
 #>
 
 <#
-	if((object)DALModel.NodeType == null)
+	if (DALModel.NodeType is null)
 	{
 #>
 		#region Virtual Node Type
@@ -687,11 +684,11 @@ if (!DALModel.IsAbstract)
 		{
 			get
 			{
-				if (members == null)
+				if (members is null)
 				{
 					lock (typeof(<#= DALModel.ClassName #>))
 					{
-						if (members == null)
+						if (members is null)
 							members = new <#= DALModel.ClassName #>Members();
 					}
 				}
@@ -728,11 +725,11 @@ if (!DALModel.IsAbstract)
 		{
 			get
 			{
-				if (fullTextMembers == null)
+				if (fullTextMembers is null)
 				{
 					lock (typeof(<#= DALModel.ClassName #>))
 					{
-						if (fullTextMembers == null)
+						if (fullTextMembers is null)
 							fullTextMembers = new <#= DALModel.ClassName #>FullTextMembers();
 					}
 				}
@@ -756,11 +753,11 @@ if (!DALModel.IsAbstract)
 
 		sealed public override Entity GetEntity()
 		{
-			if (entity == null)
+			if (entity is null)
 			{
 				lock (typeof(<#= DALModel.ClassName #>))
 				{
-					if (entity == null)
+					if (entity is null)
 						entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
 				}
 			}
@@ -772,11 +769,11 @@ if (!DALModel.IsAbstract)
 		{
 			get
 			{
-				if (events == null)
+				if (events is null)
 				{
 					lock (typeof(<#= DALModel.ClassName #>))
 					{
-						if (events == null)
+						if (events is null)
 							events = new <#= DALModel.ClassName #>Events();
 					}
 				}
@@ -820,7 +817,7 @@ if (!DALModel.IsAbstract)
 					lock (this)
 					{
 						<#= evnt.ToCamelCase() #> -= value;
-						if (<#= evnt.ToCamelCase() #> == null && <#= evnt.ToCamelCase() #>IsRegistered)
+						if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
 						{
 							Entity.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
 							<#= evnt.ToCamelCase() #>IsRegistered = false;
@@ -832,7 +829,7 @@ if (!DALModel.IsAbstract)
 			private void <#= evnt.ToCamelCase() #>Proxy(object sender, EntityEventArgs args)
 			{
 				EventHandler<<#= DALModel.ClassName #>, EntityEventArgs> handler = <#= evnt.ToCamelCase() #>;
-				if ((object)handler != null)
+				if (handler is not null)
 					handler.Invoke((<#= DALModel.ClassName #>)sender, args);
 			}
 
@@ -878,7 +875,7 @@ if (!DALModel.IsAbstract)
 						lock (typeof(OnPropertyChange))
 						{
 							<#= evnt.ToCamelCase() #> -= value;
-							if (<#= evnt.ToCamelCase() #> == null && <#= evnt.ToCamelCase() #>IsRegistered)
+							if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
 							{
 								Members.<#= attr.Name #>.Events.OnChange -= <#= evnt.ToCamelCase() #>Proxy;
 								<#= evnt.ToCamelCase() #>IsRegistered = false;
@@ -890,7 +887,7 @@ if (!DALModel.IsAbstract)
 				private static void <#= evnt.ToCamelCase() #>Proxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<<#= DALModel.ClassName #>, PropertyEventArgs> handler = <#= evnt.ToCamelCase() #>;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((<#= DALModel.ClassName #>)sender, args);
 				}
 
@@ -907,7 +904,7 @@ if (!DALModel.IsAbstract)
 
 		#endregion
 <#
-	var enumProperties = DALModel.Properties.Where(item => item.EnumValues != null).ToList();
+	var enumProperties = DALModel.Properties.Where(item => item.EnumValues is not null).ToList();
 
 	if (enumProperties.Count != 0)
 	{
@@ -918,7 +915,7 @@ if (!DALModel.IsAbstract)
 <#
 		foreach (Property attr in enumProperties)
 		{
-			if (attr.EnumValues == null)
+			if (attr.EnumValues is null)
 				continue;
 #>
 		public enum <#= attr.Name #>Enum
@@ -960,7 +957,7 @@ if (!DALModel.IsAbstract)
 
 			List<TypeSafeStaticData> values = DALModel.StaticData.Select(item => new TypeSafeStaticData(property.Name, item)).ToList();
 
-			if (values.Where(item => item.SafeValue != null && item.KeyValue != null).Select(item => item.SafeValue).Distinct().Count() != values.Count)
+			if (values.Where(item => item.SafeValue is not null && item.KeyValue is not null).Select(item => item.SafeValue).Distinct().Count() != values.Count)
 				continue;
 #>
 			/// <summary>
@@ -1027,7 +1024,7 @@ if (!DALModel.IsAbstract)
 #>
 		<#= attr.OuterReturnTypeReadOnly  #> I<#= inherited.Name #>OriginalData.<#= attr.Name #> { get { return OriginalData.<#= attr.Name #>.OriginalData; } }
 <#
-				if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
+				if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
 				{
 					foreach (Entity concrete in attr.EntityReturnType.GetSubclasses())
 					{
@@ -1055,7 +1052,7 @@ if (!DALModel.IsAbstract)
 			}
 			else
 			{
-				if (attr.EnumValues != null)
+				if (attr.EnumValues is not null)
 				{
 					if (attr.Nullable)
 					{
@@ -1086,7 +1083,7 @@ if (!DALModel.IsAbstract)
 #>
 		#endregion
 <#
-	if (inheritedUnidentifiedProp != null)
+	if (inheritedUnidentifiedProp is not null)
 	{
 #>
 		
@@ -1123,14 +1120,14 @@ private struct TypeSafeStaticData
 	public TypeSafeStaticData(string propertName, Blueprint41.Dynamic.DynamicEntity item)
 	{
 		PropertyName = propertName;
-		KeyValue = (item == null || item.GetKey() == null) ? null : item.GetKey().ToString();
+		KeyValue = (item is null || item.GetKey() is null) ? null : item.GetKey().ToString();
 		SafeValue = null;
 		OriginalValue = null;
 
 		object value = null;
-		if (item != null && item.TryGetMember(propertName, out value))
+		if (item is not null && item.TryGetMember(propertName, out value))
 		{
-			if (value != null)
+			if (value is not null)
 			{	
 				OriginalValue = value.ToString();			
 				SafeValue = SafeCSharpName(value.ToString());

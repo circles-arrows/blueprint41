@@ -16,7 +16,7 @@ namespace Blueprint41.Neo4j.Refactoring
 
         private static RawResult PrivateExecute(string cypher, Dictionary<string, object> parameters)
         {
-            if (parameters == null || parameters.Count == 0)
+            if (parameters is null || parameters.Count == 0)
                 return Transaction.RunningTransaction.Run(cypher);
             else
                 return Transaction.RunningTransaction.Run(cypher, parameters);

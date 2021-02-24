@@ -38,7 +38,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             var result = trans.Run(args.Cypher, args.Parameters);
 
             RawRecord record = result.FirstOrDefault();
-            if (record == null)
+            if (record is null)
             {
                 item.PersistenceState = PersistenceState.DoesntExist;
                 return;
@@ -69,7 +69,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
-            if (entity.RowVersion == null)
+            if (entity.RowVersion is null)
             {
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DELETE node", entity.Label.Name, entity.Key.Name);
             }
@@ -99,7 +99,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
-            if (entity.RowVersion == null)
+            if (entity.RowVersion is null)
             {
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DETACH DELETE node", entity.Label.Name, entity.Key.Name);
             }
@@ -127,13 +127,13 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             string labels = string.Join(":", entity.GetBaseTypesAndSelf().Where(x => x.IsVirtual == false).Select(x => x.Label.Name));
 
-            if (entity.RowVersion != null)
+            if (entity.RowVersion is not null)
                 item.SetRowVersion(trans.TransactionDate);
 
             IDictionary<string, object?> node = item.GetData();
 
             string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
-            if (entity.FunctionalId != null)
+            if (entity.FunctionalId is not null)
             {
                 object? key = item.GetKey();
                 if (key is null)
@@ -160,7 +160,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             var result = trans.Run(args.Cypher, args.Parameters);
             RawRecord record = result.FirstOrDefault();
-            if (record == null)
+            if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
             RawNode inserted = record["inserted"].As<RawNode>();
@@ -187,7 +187,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
-            if (entity.RowVersion == null)
+            if (entity.RowVersion is null)
             {
                 match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name);
             }
@@ -215,7 +215,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
         public override string NextFunctionID(FunctionalId functionalId)
         {
-            if (functionalId == null)
+            if (functionalId is null)
                 throw new ArgumentNullException("functionalId");
 
             string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", functionalId.Label);
@@ -243,10 +243,10 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             sb.Append(" RETURN node");
 
-            if (orderBy != null && orderBy.Length != 0)
+            if (orderBy is not null && orderBy.Length != 0)
             {
                 Property odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
-                if (odd != null)
+                if (odd is not null)
                     throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2)'.", odd.Name, odd.Parent.Name, entity.Name));
 
                 sb.Append(" ORDER BY ");
@@ -265,7 +265,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             Dictionary<string, object?>? customState = null;
             Dictionary<string, object?> arguments = new Dictionary<string, object?>();
-            if (parameters != null)
+            if (parameters is not null)
                 foreach (Parameter parameter in parameters)
                     arguments.Add(parameter.Name, parameter.Value);
 
@@ -289,10 +289,10 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             StringBuilder sb = new StringBuilder();
             sb.Append(context.CompiledQuery.QueryText);
-            if (orderBy != null && orderBy.Length != 0)
+            if (orderBy is not null && orderBy.Length != 0)
             {
                 Property odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
-                if (odd != null)
+                if (odd is not null)
                     throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2}'.", odd.Name, odd.Parent.Name, entity.Name));
 
                 sb.Append(" ORDER BY ");
@@ -325,24 +325,24 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             foreach (var record in result)
             {
                 var node = record[0].As<RawNode>();
-                if (node == null)
+                if (node is null)
                     continue;
 
                 var key = node.Properties[entity.Key.Name];
-                if (key == null)
+                if (key is null)
                     continue;
 
                 Entity? concrete = null;
                 if (entity.IsAbstract)
                 {
-                    if (entity.NodeType != null)
+                    if (entity.NodeType is not null)
                     {
                         string label = node.Properties[entity.NodeTypeName]!.As<string>();
                         concrete = concretes.FirstOrDefault(item => item.Label.Name == label);
                     }
-                    if (concrete == null)
+                    if (concrete is null)
                         concrete = entity.Parent.GetEntity(node.Labels);
-                    if (concrete == null)
+                    if (concrete is null)
                         throw new KeyNotFoundException($"Unable to find the concrete class for entity {entity.Name}, labels in DB are: {string.Join(", ", node.Labels)}.");
                 }
                 else
@@ -351,7 +351,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 }
 
                 T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
-                if (wrapper == null)
+                if (wrapper is null)
                 {
                     wrapper = (T)concrete.Activator();
                     wrapper.SetKey(key);
@@ -416,10 +416,10 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             sb.Append(entity.Label.Name);
             sb.Append(") RETURN DISTINCT node");
 
-            if (orderBy != null && orderBy.Length != 0)
+            if (orderBy is not null && orderBy.Length != 0)
             {
                 Property odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
-                if (odd != null)
+                if (odd is not null)
                     throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2)'.", odd.Name, odd.Parent.Name, entity.Name));
 
                 sb.Append(" ORDER BY ");

@@ -65,7 +65,7 @@ namespace Blueprint41.Log
             watcher.Stop();
             if (watcher.ElapsedMilliseconds >= ThresholdInSeconds)
             {
-                if (parameters != null)
+                if (parameters is not null)
                     foreach (var par in parameters)
                     {
                         if (par.Value is IEnumerable val)

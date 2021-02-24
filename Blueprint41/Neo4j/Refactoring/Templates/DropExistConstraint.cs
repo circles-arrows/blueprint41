@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
 
     Debug.WriteLine("	executing {0} -> DROP CONSTRAINT ON for {1}.{2}", this.GetType().Name, Property.Parent.Label.Name, Property.Name);
 
@@ -40,14 +40,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("DROP CONSTRAINT ON (node:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
+            #line 10 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Parent.Label.Name));
             
             #line default
             #line hidden
             this.Write(") ASSERT exists(node.");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
+            #line 10 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default

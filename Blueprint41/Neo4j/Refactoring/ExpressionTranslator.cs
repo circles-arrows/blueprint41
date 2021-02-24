@@ -213,11 +213,11 @@
 //        {
 //            IQueryable q = c.Value as IQueryable;
 
-//            if (q == null && c.Value == null)
+//            if (q is null && c.Value is null)
 //            {
 //                sb.Append("NULL");
 //            }
-//            else if (q == null)
+//            else if (q is null)
 //            {
 //                switch (Type.GetTypeCode(c.Value.GetType()))
 //                {
@@ -251,7 +251,7 @@
 
 //        protected override Expression VisitMember(MemberExpression m)
 //        {
-//            if (m.Expression != null && m.Expression.NodeType == ExpressionType.Parameter)
+//            if (m.Expression is not null && m.Expression.NodeType == ExpressionType.Parameter)
 //            {
 //                sb.Append(m.Member.Name);
 //                return m;
@@ -262,7 +262,7 @@
 
 //        protected bool IsNullConstant(Expression exp)
 //        {
-//            return (exp.NodeType == ExpressionType.Constant && ((ConstantExpression)exp).Value == null);
+//            return (exp.NodeType == ExpressionType.Constant && ((ConstantExpression)exp).Value is null);
 //        }
 
 //        private bool ParseOrderByExpression(MethodCallExpression expression, string order)
@@ -273,7 +273,7 @@
 //            lambdaExpression = (LambdaExpression)Evaluator.PartialEval(lambdaExpression);
 
 //            MemberExpression body = lambdaExpression.Body as MemberExpression;
-//            if (body != null)
+//            if (body is not null)
 //            {
 //                if (string.IsNullOrEmpty(_orderBy))
 //                {

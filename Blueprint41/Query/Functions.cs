@@ -121,7 +121,7 @@ namespace Blueprint41.Query
         }
         private static object WrapIfNull(object value)
         {
-            if ((object)value == null)
+            if (value is null)
                 return Parameter.Null;
 
             return value;

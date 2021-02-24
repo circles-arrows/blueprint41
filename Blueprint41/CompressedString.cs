@@ -778,7 +778,7 @@ namespace System
                     if ((qualifierState == false) || (string.Compare(nextStr, delimiter, ignoreCase) == 0))
                         qualifierState = !(qualifierState);
                 }
-                else if (!(qualifierState) && (delimiter != null) && (string.Compare(input.Substring(i, delimiter.Length), delimiter, ignoreCase) == 0))
+                else if (!(qualifierState) && (delimiter is not null) && (string.Compare(input.Substring(i, delimiter.Length), delimiter, ignoreCase) == 0))
                 {
                     values.Add(input.Substring(startIndex, i - startIndex));
                     startIndex = i + 1;
@@ -809,7 +809,7 @@ namespace System
                 {
                     qualifierState = !(qualifierState);
                 }
-                else if (!(qualifierState) && (delimiter != null) && (string.Compare(input.Substring(i, delimiter.Length), delimiter, ignoreCase) == 0))
+                else if (!(qualifierState) && (delimiter is not null) && (string.Compare(input.Substring(i, delimiter.Length), delimiter, ignoreCase) == 0))
                 {
                     values.Add(input.Substring(startIndex, i - startIndex));
                     startIndex = i + 1;

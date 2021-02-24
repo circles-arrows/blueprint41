@@ -28,12 +28,12 @@ namespace Blueprint41.Core
                 bool processItem = false;
                 if (target.Direction == DirectionEnum.Out)
                 {
-                    if ((OutItem != null && item.Parent.Equals(OutItem)) || (InItem != null && item.Item.Equals(InItem)))
+                    if ((OutItem is not null && item.Parent.Equals(OutItem)) || (InItem is not null && item.Item.Equals(InItem)))
                         processItem = true;
                 }
                 else if(target.Direction == DirectionEnum.In)
                 {
-                    if ((InItem != null && item.Parent.Equals(InItem)) || (OutItem != null && item.Item.Equals(OutItem)))
+                    if ((InItem is not null && item.Parent.Equals(InItem)) || (OutItem is not null && item.Item.Equals(OutItem)))
                         processItem = true;
                 }
                 else

@@ -46,7 +46,7 @@ namespace Blueprint41.Core
         {
             t.<#= baseClass #> template = <#= name #>();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }

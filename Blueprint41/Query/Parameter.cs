@@ -120,7 +120,7 @@ namespace Blueprint41
                         {
                             Type? iface = null;
                             Type? search = type;
-                            while (search != null && iface == null)
+                            while (search is not null && iface is null)
                             {
                                 foreach (Type item in search.GetInterfaces())
                                 {
@@ -133,7 +133,7 @@ namespace Blueprint41
                                 search = search.BaseType;
                             }
 
-                            if (iface != null)
+                            if (iface is not null)
                             {
                                 Type typeT = iface.GenericTypeArguments[0];
                                 MethodInfo? methodInfo = typeof(Parameter).GetMethod(nameof(FromEnumerator), BindingFlags.NonPublic | BindingFlags.Static)?.MakeGenericMethod(typeT);
@@ -143,7 +143,7 @@ namespace Blueprint41
                         }
 
                         // we could "return value;" here, but we're going to make sure we don't need to scan interfaces in the future anymore.
-                        if (retval == null)
+                        if (retval is null)
                             retval = delegate (object v) { return v; };
 
                         return retval;

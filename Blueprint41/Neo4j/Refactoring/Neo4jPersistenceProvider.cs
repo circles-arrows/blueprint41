@@ -22,7 +22,7 @@ namespace Blueprint41.Core
         {
             t.ApplyFunctionalIdBase template = ApplyFunctionalId();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -41,7 +41,7 @@ namespace Blueprint41.Core
         {
             t.ConvertBase template = Convert();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -60,7 +60,7 @@ namespace Blueprint41.Core
         {
             t.CopyPropertyBase template = CopyProperty();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -79,7 +79,7 @@ namespace Blueprint41.Core
         {
             t.CreateIndexBase template = CreateIndex();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -98,7 +98,7 @@ namespace Blueprint41.Core
         {
             t.CreateUniqueConstraintBase template = CreateUniqueConstraint();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -117,7 +117,7 @@ namespace Blueprint41.Core
         {
             t.DropExistConstraintBase template = DropExistConstraint();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -136,7 +136,7 @@ namespace Blueprint41.Core
         {
             t.MergePropertyBase template = MergeProperty();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -155,7 +155,7 @@ namespace Blueprint41.Core
         {
             t.MergeRelationshipBase template = MergeRelationship();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -174,7 +174,7 @@ namespace Blueprint41.Core
         {
             t.RemoveEntityBase template = RemoveEntity();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -193,7 +193,7 @@ namespace Blueprint41.Core
         {
             t.RemovePropertyBase template = RemoveProperty();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -212,7 +212,7 @@ namespace Blueprint41.Core
         {
             t.RemoveRelationshipBase template = RemoveRelationship();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -231,7 +231,7 @@ namespace Blueprint41.Core
         {
             t.RenameEntityBase template = RenameEntity();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -250,7 +250,7 @@ namespace Blueprint41.Core
         {
             t.RenamePropertyBase template = RenameProperty();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -269,7 +269,7 @@ namespace Blueprint41.Core
         {
             t.RenameRelationshipBase template = RenameRelationship();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -288,7 +288,7 @@ namespace Blueprint41.Core
         {
             t.SetCreationDateBase template = SetCreationDate();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -307,7 +307,7 @@ namespace Blueprint41.Core
         {
             t.SetDefaultConstantValueBase template = SetDefaultConstantValue();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -326,7 +326,7 @@ namespace Blueprint41.Core
         {
             t.SetDefaultLookupValueBase template = SetDefaultLookupValue();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -345,7 +345,7 @@ namespace Blueprint41.Core
         {
             t.SetLabelBase template = SetLabel();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }
@@ -364,7 +364,7 @@ namespace Blueprint41.Core
         {
             t.SetRelationshipPropertyValueBase template = SetRelationshipPropertyValue();
             template.Setup = setup;
-            if (setup != null)
+            if (setup is not null)
                 setup.Invoke(template);
             return template;
         }

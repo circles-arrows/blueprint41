@@ -76,7 +76,7 @@ namespace Blueprint41
             foreach (MethodInfo info in GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
             {
                 VersionAttribute? attr = info.GetCustomAttribute<VersionAttribute>();
-                if (attr != null)
+                if (attr is not null)
                 {
                     Action method = (Action)Delegate.CreateDelegate(typeof(Action), this, info);
                     scripts.Add(new UpgradeScript(method, attr.Major, attr.Minor, attr.Patch, info.Name));
@@ -239,11 +239,11 @@ namespace Blueprint41
                 {
                     StackFrame? frame = stack.GetFrame(frameIndex);
                     MethodBase? method = frame?.GetMethod();
-                    if (method == null)
+                    if (method is null)
                         continue;
 
                     VersionAttribute? attr = method.GetCustomAttribute<VersionAttribute>();
-                    if (attr != null)
+                    if (attr is not null)
                     {
                         line = frame?.GetFileLineNumber() ?? 0;
                         break;
@@ -373,7 +373,7 @@ namespace Blueprint41
 
                 Model.datamigration = true;
 
-                if (script != null && Parser.ShouldExecute)
+                if (script is not null && Parser.ShouldExecute)
                 {
                     Transaction.Flush();
                     script.Invoke();
@@ -396,7 +396,7 @@ namespace Blueprint41
             {
                 Dictionary<string, object?> convertedParams;
 
-                if (parameters == null)
+                if (parameters is null)
                     convertedParams = new Dictionary<string, object?>();
                 else
                     convertedParams = parameters.ToDictionary(item => item.Key, item => (item.Value is null) ? null : Model.PersistenceProvider.ConvertToStoredType(item.Value.GetType(), item.Value));
@@ -480,14 +480,14 @@ namespace Blueprint41
         {
             get
             {
-                if (model == null)
+                if (model is null)
                 {
                     lock (typeof(TSelf))
                     {
-                        if (model == null)
+                        if (model is null)
                         {
                             model = (TSelf?)RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
-                            if (model == null)
+                            if (model is null)
                             {
                                 TSelf m = new TSelf();
                                 m.Execute(false);

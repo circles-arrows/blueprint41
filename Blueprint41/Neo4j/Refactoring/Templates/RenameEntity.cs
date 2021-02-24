@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
 
 
     Debug.WriteLine("	executing {0} -> Rename entity from {1} to {2}", this.GetType().Name, OldName, NewName);
@@ -41,21 +41,21 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH (n:");
             
-            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OldName));
             
             #line default
             #line hidden
             this.Write(") WITH n LIMIT 10000 SET n:");
             
-            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NewName));
             
             #line default
             #line hidden
             this.Write(" REMOVE n:");
             
-            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OldName));
             
             #line default

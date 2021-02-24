@@ -182,7 +182,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             
             #line default
             #line hidden
-            this.Write(" == null && ");
+            this.Write(" is null && ");
             
             #line 66 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
@@ -239,8 +239,8 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             
             #line default
             #line hidden
-            this.Write(";\r\n\t\t\t\t\tif ((object)handler != null)\r\n\t\t\t\t\t\thandler.Invoke((Entity)sender, args);" +
-                    "\r\n\t\t\t\t}\r\n\r\n\t\t\t\t#endregion\r\n");
+            this.Write(";\r\n\t\t\t\t\tif (handler is not null)\r\n\t\t\t\t\t\thandler.Invoke((Entity)sender, args);\r\n\t\t" +
+                    "\t\t}\r\n\r\n\t\t\t\t#endregion\r\n");
             
             #line 83 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 
@@ -398,7 +398,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             
             #line default
             #line hidden
-            this.Write(" == null && ");
+            this.Write(" is null && ");
             
             #line 136 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(evnt.ToCamelCase()));
@@ -455,8 +455,8 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             
             #line default
             #line hidden
-            this.Write(";\r\n\t\t\t\t\tif ((object)handler != null)\r\n\t\t\t\t\t\thandler.Invoke((Relationship)sender, " +
-                    "args);\r\n\t\t\t\t}\r\n\r\n\t\t\t\t#endregion\r\n");
+            this.Write(";\r\n\t\t\t\t\tif (handler is not null)\r\n\t\t\t\t\t\thandler.Invoke((Relationship)sender, args" +
+                    ");\r\n\t\t\t\t}\r\n\r\n\t\t\t\t#endregion\r\n");
             
             #line 153 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
 

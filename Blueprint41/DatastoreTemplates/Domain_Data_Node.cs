@@ -235,7 +235,7 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 91 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType != null && (p.SystemReturnType == typeof(string) || p.SystemReturnType.IsPrimitive)).OrderBy(p => p.Name).ToList();
+	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && (p.SystemReturnType == typeof(string) || p.SystemReturnType.IsPrimitive)).OrderBy(p => p.Name).ToList();
 
             
             #line default
@@ -427,10 +427,10 @@ namespace Blueprint41.DatastoreTemplates
             #line hidden
             this.Write(@"()
 		{
-			if (this.Neo4jLabel == null)
+			if (this.Neo4jLabel is null)
 				throw new InvalidOperationException(""Casting is not supported for virtual entities."");
 
-			if (FromRelationship == null)
+			if (FromRelationship is null)
 				throw new InvalidOperationException(""Please use the right type immediately, casting is only support after you have match through a relationship."");
 
 			return new ");
@@ -818,12 +818,12 @@ namespace Blueprint41.DatastoreTemplates
 		{
 			get
 			{
-				if (m_AliasFields == null)
+				if (m_AliasFields is null)
 				{
 					m_AliasFields = ");
             
             #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp == null ? "" : "new UnidentifiedPropertiesAliasDictionary("));
+            this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp is null ? "" : "new UnidentifiedPropertiesAliasDictionary("));
             
             #line default
             #line hidden
@@ -907,7 +907,7 @@ namespace Blueprint41.DatastoreTemplates
             this.Write("\t\t\t\t\t}");
             
             #line 290 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp == null ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)")));
+            this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp is null ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)")));
             
             #line default
             #line hidden
@@ -1085,14 +1085,14 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif ((object)m_");
+            this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif (m_");
             
             #line 329 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
             
             #line default
             #line hidden
-            this.Write(" == null)\r\n\t\t\t\t\tm_");
+            this.Write(" is null)\r\n\t\t\t\t\tm_");
             
             #line 330 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
@@ -1140,7 +1140,7 @@ namespace Blueprint41.DatastoreTemplates
 
 	}
 
-	if (inheritedUnidentifiedProp != null)
+	if (inheritedUnidentifiedProp is not null)
 	{
 
             
@@ -1153,14 +1153,14 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif ((object)m_");
+            this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif (m_");
             
             #line 346 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.UnidentifiedProperties));
             
             #line default
             #line hidden
-            this.Write(" == null)\r\n\t\t\t\t\tm_");
+            this.Write(" is null)\r\n\t\t\t\t\tm_");
             
             #line 347 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.UnidentifiedProperties));

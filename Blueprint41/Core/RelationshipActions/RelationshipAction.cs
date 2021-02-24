@@ -29,7 +29,7 @@ namespace Blueprint41.Core
             if (!target.IsLoaded)
                 return;
 
-            if (Relationship != null)
+            if (Relationship is not null)
             {
                 if (Relationship.Name != target.Relationship.Name)
                     return;
@@ -45,13 +45,13 @@ namespace Blueprint41.Core
                 if (target.ParentEntity == entity)
                 {
                     shouldRun = true;
-                    if (target.ForeignProperty != null && !target.ForeignProperty.Nullable)
+                    if (target.ForeignProperty is not null && !target.ForeignProperty.Nullable)
                         return;
                 }
                 if (target.ForeignEntity == entity)
                 {
                     shouldRun = true;
-                    if (target.ParentProperty != null && !target.ParentProperty.Nullable)
+                    if (target.ParentProperty is not null && !target.ParentProperty.Nullable)
                         return;
                 }
                 if (!shouldRun)
@@ -63,7 +63,7 @@ namespace Blueprint41.Core
 
         public void ExecuteInDatastore()
         {
-            if (Relationship != null)
+            if (Relationship is not null)
             {
                 InDatastoreLogic(Relationship);
             }
@@ -76,13 +76,13 @@ namespace Blueprint41.Core
                     if (entity.IsSelfOrSubclassOf(relationship.InEntity))
                     {
                         shouldRun = true;
-                        if (relationship.OutProperty != null && !relationship.OutProperty.Nullable)
+                        if (relationship.OutProperty is not null && !relationship.OutProperty.Nullable)
                             continue;
                     }
                     if (entity.IsSelfOrSubclassOf(relationship.OutEntity))
                     {
                         shouldRun = true;
-                        if (relationship.InProperty != null && !relationship.InProperty.Nullable)
+                        if (relationship.InProperty is not null && !relationship.InProperty.Nullable)
                             continue;
                     }
                     if (!shouldRun)

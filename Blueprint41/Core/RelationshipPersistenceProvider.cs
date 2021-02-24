@@ -41,7 +41,7 @@ namespace Blueprint41.Core
                 CollectionItemList? current = null;
                 foreach (CollectionItem item in sorted)
                 {
-                    if (current == null || current.Parent != item.Parent)
+                    if (current is null || current.Parent != item.Parent)
                     {
                         current = new CollectionItemList(item.Parent);
                         result.Add(current.Parent, current);

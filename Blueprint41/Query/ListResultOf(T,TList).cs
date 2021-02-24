@@ -186,7 +186,7 @@ namespace Blueprint41.Query
             TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
             StringResult result = logic.Invoke(itemField);
 
-            if (condition != null)
+            if (condition is not null)
             {
                 TResult conditionItemField = NewResult(t => "item", new object[0], typeof(TType));
                 QueryCondition test = condition.Invoke(conditionItemField);
@@ -213,7 +213,7 @@ namespace Blueprint41.Query
             TResult itemField = NewResult(t => "item", new object[0], typeof(TType));
             TValue result = logic.Invoke(itemField);
 
-            if (condition != null)
+            if (condition is not null)
             {
                 TResult conditionItemField = NewResult(t => "item", new object[0], typeof(TType));
                 QueryCondition test = condition.Invoke(conditionItemField);

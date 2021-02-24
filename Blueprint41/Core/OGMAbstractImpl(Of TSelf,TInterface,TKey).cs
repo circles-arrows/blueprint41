@@ -27,7 +27,7 @@ namespace Blueprint41.Core
             if (Entity.Key.IndexType != IndexType.Unique)
                 throw new NotSupportedException("The key is not marked unique for the abstract base type, please load the entity via its concrete sub type instead.");
 
-            if (key == null)
+            if (key is null)
                 return default;
 
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, string.Format("{{0}}.{0} = {{{{key}}}}", Entity.Key.Name), new Parameter[] { new Parameter("key", key) }).FirstOrDefault();
@@ -56,7 +56,7 @@ namespace Blueprint41.Core
             OGM ogm = instance as OGM;
 
             Dictionary<string, object?> properties = (Dictionary<string, object?>)node.Properties;
-            if (cypher != null)
+            if (cypher is not null)
             {
                 Dictionary<string, object?>? customState = null;
                 NodeEventArgs loadingArgs = entity.RaiseOnNodeLoading(trans, ogm, cypher, parameters, ref customState);
@@ -173,7 +173,7 @@ namespace Blueprint41.Core
 
             lock (typeof(TInterface))
             {
-                if (StoredQueries == null)
+                if (StoredQueries is null)
                 {
                     StoredQueries = new AtomicDictionary<string, ICompiled>();
                     Instance.RegisterGeneratedStoredQueries();

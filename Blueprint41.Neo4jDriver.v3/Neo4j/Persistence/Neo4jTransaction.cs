@@ -17,13 +17,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
         internal Neo4jTransaction(neo4j.IDriver driver, bool withTransaction, TransactionLogger? logger) : base(withTransaction, logger)
         {
             Driver = driver;
-            Session = driver.Session();
-            StatementRunner = Session;
-            if (withTransaction)
-            {
-                Transaction = Session.BeginTransaction();
-                StatementRunner = Transaction;
-            }
+            Initialize();
         }
 
         public override RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
@@ -36,7 +30,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 #endif
             neo4j.IStatementResult results = StatementRunner.Run(cypher);
 #if DEBUG
-            if (Logger != null)
+            if (Logger is not null)
             {
                 results.Peek();
                 Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
@@ -56,7 +50,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             neo4j.IStatementResult results = StatementRunner.Run(cypher, parameters);
 
 #if DEBUG
-            if (Logger != null)
+            if (Logger is not null)
             {
                 results.Peek();
                 Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
@@ -71,6 +65,17 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
         public neo4j.ITransaction? Transaction { get; set; }
         public neo4j.IStatementRunner? StatementRunner { get; set; }
 
+        private void Initialize()
+        {
+            Session = Driver.Session();
+            StatementRunner = Session;
+            if (WithTransaction)
+            {
+                Transaction = Session.BeginTransaction();
+                StatementRunner = Transaction;
+            }
+        }
+
         protected override void OnCommit()
         {
             if (Session is null)
@@ -78,7 +83,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             if (WithTransaction)
             {
-                if (Transaction != null)
+                if (Transaction is not null)
                 {
                     Transaction.Success();
                     Transaction.Dispose();
@@ -106,6 +111,19 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             StatementRunner = null;
             Session = null;
         }
+        protected override void OnRetry()
+        {
+            if (WithTransaction)
+                Transaction?.Failure();
+
+            if (Session is not null)
+                Session.Dispose();
+
+            StatementRunner = null;
+            Session = null;
+
+            Initialize();
+        }
 
         protected override void FlushPrivate()
         {
@@ -124,7 +142,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
         protected override void ApplyFunctionalId(FunctionalId functionalId)
         {
-            if (functionalId == null)
+            if (functionalId is null)
                 return;
 
             if (functionalId.wasApplied || functionalId.highestSeenId == -1)

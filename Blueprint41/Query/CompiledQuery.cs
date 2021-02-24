@@ -24,7 +24,7 @@ namespace Blueprint41.Query
             ResultColumns = resultColumns;
             ResultColumnTypeByName = resultColumns.ToDictionary(key => key.GetFieldName()!, item => item.GetResultType());
             CompiledResultColumns = resultColumns
-                .Where(item => item.GetFieldName() != null)
+                .Where(item => item.GetFieldName() is not null)
                 .Select(item => new FieldInfo(Transaction.RunningTransaction, item))
                 .ToList();
             Errors = new List<string>(state.Errors);
@@ -46,7 +46,7 @@ namespace Blueprint41.Query
 
             foreach (var queryParameter in this.ConstantValues)
             {
-                if (queryParameter.Value == null)
+                if (queryParameter.Value is null)
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), null);
                 else
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
@@ -76,7 +76,7 @@ namespace Blueprint41.Query
 
                 Entity? entity = null;
                 MethodInfo? getEntityMethod = ResultType.GetProperty("Entity")?.GetGetMethod();
-                if (getEntityMethod != null)
+                if (getEntityMethod is not null)
                     entity = getEntityMethod.Invoke(field.Result, null) as Entity;
 
                 MethodInfo? method = (entity is null) ? null : entity!.RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(RawNode), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);

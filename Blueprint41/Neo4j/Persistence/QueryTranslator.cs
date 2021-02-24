@@ -17,9 +17,9 @@ namespace Blueprint41.Neo4j.Model
         internal virtual void Compile(FieldResult field, CompileState state)
         {
             string? functionText = field.FunctionText.Invoke(state.Translator);
-            if (functionText == null)
+            if (functionText is null)
             {
-                if ((object?)field.Alias != null)
+                if ((object?)field.Alias is not null)
                 {
                     field.Alias.Compile(state);
                     if (!string.IsNullOrEmpty(field.FieldName))
@@ -38,7 +38,7 @@ namespace Blueprint41.Neo4j.Model
                 string[] compiledArgs = field.FunctionArgs.Select(arg => state.Preview(GetCompile(arg), state)).ToArray();
                 string compiledText = string.Format(functionText.Replace("{base}", "{{base}}"), compiledArgs);
 
-                if ((object?)field.Field != null)
+                if ((object?)field.Field is not null)
                 {
                     string[] split = compiledText.Split(new string[] { "{base}" }, StringSplitOptions.None);
                     if (split.Length == 0)
@@ -47,7 +47,7 @@ namespace Blueprint41.Neo4j.Model
                     string baseText = state.Preview(field.Field.Compile, state);
                     state.Text.Append(string.Join(baseText, split));
                 }
-                else if ((object?)field.Alias != null)
+                else if ((object?)field.Alias is not null)
                 {
                     string[] split = compiledText.Split(new string[] { "{base}" }, StringSplitOptions.None);
                     if (split.Length == 0)
@@ -70,11 +70,11 @@ namespace Blueprint41.Neo4j.Model
         }
         internal virtual void Compile(AliasResult alias, CompileState state)
         {
-            if (alias.AliasName == null)
+            if (alias.AliasName is null)
                 alias.AliasName = string.Format("n{0}", state.patternSeq++);
 
             string? functionText = alias.FunctionText.Invoke(state.Translator);
-            if (functionText == null)
+            if (functionText is null)
             {
                 state.Text.Append(alias.AliasName);
             }
@@ -83,7 +83,7 @@ namespace Blueprint41.Neo4j.Model
                 string[] compiledArgs = alias.FunctionArgs.Select(arg => state.Preview(GetCompile(arg), state)).ToArray();
                 string compiledText = string.Format(functionText.Replace("{base}", "{{base}}"), compiledArgs);
 
-                if ((object?)alias.Alias != null)
+                if ((object?)alias.Alias is not null)
                 {
                     string[] split = compiledText.Split(new string[] { "{base}" }, StringSplitOptions.None);
                     if (split.Length == 0)
@@ -148,13 +148,13 @@ namespace Blueprint41.Neo4j.Model
             Type? leftType = GetOperandType(condition.Left);
             Type? rightType = GetOperandType(condition.Right);
 
-            if (leftType != null && rightType != null)
+            if (leftType is not null && rightType is not null)
             {
                 if (leftType != rightType)
                 {
                     if (condition.Operator == Operator.In)
                     {
-                        if (rightType.GetInterface(nameof(IEnumerable)) == null)
+                        if (rightType.GetInterface(nameof(IEnumerable)) is null)
                             state.Errors.Add($"The types of the fields {state.Preview(s => CompileOperand(s, condition.Right))} should be a collection.");
 
                         rightType = GetEnumeratedType(rightType);
@@ -173,7 +173,7 @@ namespace Blueprint41.Neo4j.Model
             if (condition.Right is Parameter)
             {
                 Parameter rightParameter = (Parameter)condition.Right;
-                if (rightParameter.IsConstant && rightParameter.Value == null)
+                if (rightParameter.IsConstant && rightParameter.Value is null)
                 {
                     condition.Operator.Compile(state, true);
                     CompileOperand(state, null);
@@ -186,7 +186,7 @@ namespace Blueprint41.Neo4j.Model
             }
             else
             {
-                condition.Operator.Compile(state, condition.Right == null);
+                condition.Operator.Compile(state, condition.Right is null);
                 CompileOperand(state, condition.Right);
             }
 
@@ -199,7 +199,7 @@ namespace Blueprint41.Neo4j.Model
         {
             //find the root
             Node root = node;
-            while (root.FromRelationship != null)
+            while (root.FromRelationship is not null)
                 root = root.FromRelationship.FromNode;
 
             Node? current = root;
@@ -208,10 +208,10 @@ namespace Blueprint41.Neo4j.Model
                 GetDirection(current, state.Text);
                 if (!(current.NodeAlias is null))
                 {
-                    if (current.NodeAlias.AliasName == null)
+                    if (current.NodeAlias.AliasName is null)
                         current.NodeAlias.AliasName = string.Format("n{0}", state.patternSeq++);
 
-                    if (current.IsReference || current.Neo4jLabel == null)
+                    if (current.IsReference || current.Neo4jLabel is null)
                     {
                         state.Text.Append("(");
                         state.Text.Append(current.NodeAlias.AliasName);
@@ -230,7 +230,7 @@ namespace Blueprint41.Neo4j.Model
                 }
                 else
                 {
-                    if (current.Neo4jLabel == null)
+                    if (current.Neo4jLabel is null)
                     {
                         state.Text.Append("()");
                     }
@@ -245,7 +245,7 @@ namespace Blueprint41.Neo4j.Model
                     }
                 }
 
-                if (current.ToRelationship != null)
+                if (current.ToRelationship is not null)
                 {
                     current.ToRelationship.Compile(state);
                     current = current.ToRelationship.ToNode;
@@ -259,7 +259,7 @@ namespace Blueprint41.Neo4j.Model
 
             void GetDirection(Node node, StringBuilder sb)
             {
-                if (node.FromRelationship == null)
+                if (node.FromRelationship is null)
                     return;
 
                 switch (node.Direction)
@@ -279,7 +279,7 @@ namespace Blueprint41.Neo4j.Model
             }
             void InlineConditions(Node current, CompileState state)
             {
-                if (current.InlineConditions != null && current.InlineConditions.Length != 0)
+                if (current.InlineConditions is not null && current.InlineConditions.Length != 0)
                 {
                     state.Text.Append(" { ");
 
@@ -422,7 +422,7 @@ namespace Blueprint41.Neo4j.Model
                     queries.Add(string.Format("({0}.{1}:' + {2} + ')", node.Neo4jLabel, property.FieldName, search));
 
                 state.Text.Append(string.Format(FtiSearch, string.Join(" OR ", queries), state.Preview(alias.Compile, state)));
-                if ((object?)weight != null)
+                if ((object?)weight is not null)
                 {
                     state.Text.Append(string.Format(FtiWeight, state.Preview(weight.Compile, state)));
                 }
@@ -660,7 +660,7 @@ namespace Blueprint41.Neo4j.Model
             var result = Transaction.RunningTransaction.Run(query);
 
             RawRecord record = result.FirstOrDefault();
-            if (record == null)
+            if (record is null)
                 return false;
 
             RawNode node = record["version"].As<RawNode>();
@@ -706,11 +706,11 @@ namespace Blueprint41.Neo4j.Model
             var result = Transaction.RunningTransaction.Run(query);
 
             RawRecord record = result.FirstOrDefault();
-            if (record == null)
+            if (record is null)
                 return true;
 
             DateTime? lastRun = Conversion<long?, DateTime?>.Convert(record["LastRun"].As<long?>());
-            if (lastRun == null)
+            if (lastRun is null)
                 return true;
 
             if (DateTime.UtcNow.Subtract(lastRun.Value).TotalHours >= 12)
@@ -735,7 +735,7 @@ namespace Blueprint41.Neo4j.Model
 
         protected object? Substitute(CompileState state, object? operand)
         {
-            if (operand == null)
+            if (operand is null)
                 return null;
 
             Type type = operand.GetType();
@@ -759,7 +759,7 @@ namespace Blueprint41.Neo4j.Model
             else
             {
                 state.TypeMappings.TryGetValue(type, out TypeMapping mapping);
-                if (mapping == null)
+                if (mapping is null)
                     return operand;
 
                 return Parameter.Constant(operand, type);
@@ -767,7 +767,7 @@ namespace Blueprint41.Neo4j.Model
         }
         protected Type? GetOperandType(object? operand)
         {
-            if (operand == null)
+            if (operand is null)
                 return null;
 
             Type type = operand.GetType();
@@ -796,7 +796,7 @@ namespace Blueprint41.Neo4j.Model
         protected string GetConversionGroup(Type type, IReadOnlyDictionary<Type, TypeMapping> mappings)
         {
             mappings.TryGetValue(type, out TypeMapping mapping);
-            if (mapping == null)
+            if (mapping is null)
                 throw new InvalidOperationException($"An unexpected technical mapping failure while trying to find the conversion for type {type.Name}. Please contact the developer.");
 
             return mapping.ComparisonGroup;
@@ -849,7 +849,7 @@ namespace Blueprint41.Neo4j.Model
         }
         protected Action<CompileState> GetCompile(object? arg)
         {
-            if (arg == null)
+            if (arg is null)
             {
                 return delegate (CompileState state)
                 {

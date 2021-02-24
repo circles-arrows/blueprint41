@@ -33,7 +33,7 @@ namespace Blueprint41
         public void SetParameter(string parameterName, object? value)
         {
             Transaction transaction = Transaction.RunningTransaction;
-            if (value == null)
+            if (value is null)
                 AddOrSet(null);
             else
                 AddOrSet(transaction.PersistenceProviderFactory.ConvertToStoredType(value.GetType(), value));
@@ -61,7 +61,7 @@ namespace Blueprint41
             Dictionary<string, object?> parameters = new Dictionary<string, object?>(QueryParameters.Count);
             foreach (KeyValuePair<string, (object? value, bool isConstant)> queryParameter in QueryParameters)
             {
-                if (queryParameter.Value.value == null)
+                if (queryParameter.Value.value is null)
                     parameters.Add(queryParameter.Key, null);
                 else
                     parameters.Add(queryParameter.Key, transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value.value));
@@ -74,10 +74,10 @@ namespace Blueprint41
                 foreach (var field in CompiledQuery.CompiledResultColumns)
                 {
                     object? value;
-                    if (row.Values.TryGetValue(field.FieldName, out value) && value != null)
+                    if (row.Values.TryGetValue(field.FieldName, out value) && value is not null)
                     {
                         object? target = (field.ConvertMethod is null) ? value : field.ConvertMethod.Invoke(value);
-                        if (target != null)
+                        if (target is not null)
                         {
                             if (field.Info.IsAlias)
                             {
@@ -90,7 +90,7 @@ namespace Blueprint41
                                 {
                                     List<object?>? nodeList = ((List<object?>?)target);
                                     IList? newList = null;
-                                    if (nodeList != null)
+                                    if (nodeList is not null)
                                     {
                                         newList = (field.MapMethod is null || field.NewList is null || nodeMapping == NodeMapping.AsRawResult) ? new List<RawResult>(nodeList.Count) : field.NewList.Invoke(nodeList.Count);
 
@@ -114,7 +114,7 @@ namespace Blueprint41
                                 {
                                     List<List<object?>?>? jaggedNodeList = ((List<List<object?>?>?)target);
                                     IList? newJaggedList = null;
-                                    if (jaggedNodeList != null)
+                                    if (jaggedNodeList is not null)
                                     {
                                         newJaggedList = (field.MapMethod is null || field.NewList is null || field.NewJaggedList is null || nodeMapping == NodeMapping.AsRawResult) ? new List<List<RawResult?>?>(jaggedNodeList.Count) : field.NewJaggedList.Invoke(jaggedNodeList.Count);
 
@@ -174,7 +174,7 @@ namespace Blueprint41
 
             foreach (KeyValuePair<string, (object? value, bool isConstant)> queryParameter in QueryParameters)
             {
-                if (queryParameter.Value.value == null)
+                if (queryParameter.Value.value is null)
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Key), null);
                 else
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Key), transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value.value));

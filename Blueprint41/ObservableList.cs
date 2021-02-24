@@ -44,13 +44,13 @@ namespace Blueprint41
         }
         public ObservableList(IEnumerable<CollectionItem<T>> items)
         {
-            InnerList = new List<CollectionItem<T>?>(items.Where(item => item != null && item.Item != null));
+            InnerList = new List<CollectionItem<T>?>(items.Where(item => item is not null && item.Item is not null));
             Count = InnerList.Count;
 
             int index = 0;
             InnerDict = InnerList
                 .Select(item => (Item:item, Index:index++))
-                .Where(item => item.Item?.Item != null)
+                .Where(item => item.Item?.Item is not null)
                 .GroupBy(item => item.Item!.Item)
                 .ToDictionary(item => item.Key, item => item.Select(item2 => item2.Index).ToList());
         }
@@ -76,7 +76,7 @@ namespace Blueprint41
                         NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Replace, newValue, InnerList[index], index);
                         BeforeCollectionChanged?.Invoke(this, eventArgs);
 
-                        if (oldValue != null)
+                        if (oldValue is not null)
                             RemoveAt(oldValue, index);
 
                         InnerList[index] = newValue;
@@ -128,7 +128,7 @@ namespace Blueprint41
                 foreach (int index in indexes)
                 {
                     CollectionItem<T>? value = InnerList[index];
-                    if (value != null && value.Equals(item))
+                    if (value is not null && value.Equals(item))
                         return true;
                 }
             }
@@ -141,7 +141,7 @@ namespace Blueprint41
                 foreach (int index in indexes)
                 {
                     CollectionItem<T>? value = InnerList[index];
-                    if (value != null && value.Equals(item))
+                    if (value is not null && value.Equals(item))
                         return true;
                 }
             }
@@ -168,7 +168,7 @@ namespace Blueprint41
                 {
                     int index = indexes![ptr];
                     CollectionItem<T>? value = InnerList[index];
-                    if (value != null)
+                    if (value is not null)
                     {
                         result = true;
                         RemoveAt(value, index, indexes!, ptr);
@@ -181,7 +181,7 @@ namespace Blueprint41
         public void RemoveAt(int index)
         {
             CollectionItem<T>? item = InnerList[index];
-            if (item != null)
+            if (item is not null)
                 RemoveAt(item, index);
         }
         private void RemoveAt(CollectionItem<T> item, int index, List<int>? indexes = null, int ptr = 0)
@@ -194,12 +194,12 @@ namespace Blueprint41
 
             InnerList[index] = null;
             Count--;
-            if (indexes == null)
+            if (indexes is null)
             {
                 if (InnerDict.TryGetValue(item.Item, out indexes))
                     ptr = indexes.IndexOf(index);
             }
-            if (indexes != null)
+            if (indexes is not null)
             {
                 indexes.RemoveAt(ptr);
                 if (indexes.Count == 0)
@@ -212,7 +212,7 @@ namespace Blueprint41
 
         public IEnumerator<CollectionItem<T>> GetEnumerator()
         {
-            return InnerList.Where(item => item != null).GetEnumerator()!;
+            return InnerList.Where(item => item is not null).GetEnumerator()!;
         }
         IEnumerator IEnumerable.GetEnumerator()
         {

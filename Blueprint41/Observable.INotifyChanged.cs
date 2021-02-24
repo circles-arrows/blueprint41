@@ -83,7 +83,7 @@ namespace System.Collections.Specialized
             }
             if (action == NotifyCollectionChangedAction.Reset)
             {
-                if (changedItems != null)
+                if (changedItems is not null)
                 {
                     throw new ArgumentException("ResetActionRequiresNullItem", "action");
                 }
@@ -92,7 +92,7 @@ namespace System.Collections.Specialized
             }
             else
             {
-                if (changedItems == null)
+                if (changedItems is null)
                 {
                     throw new ArgumentNullException("changedItems");
                 }
@@ -131,7 +131,7 @@ namespace System.Collections.Specialized
                 }, -1);
                 return;
             }
-            if (changedItem != null)
+            if (changedItem is not null)
             {
                 throw new ArgumentException("ResetActionRequiresNullItem", "action");
             }
@@ -165,11 +165,11 @@ namespace System.Collections.Specialized
             {
                 throw new ArgumentException(string.Format(ERROR_MESSAGE, nameof(NotifyCollectionChangedAction.Replace)), "action");
             }
-            if (newItems == null)
+            if (newItems is null)
             {
                 throw new ArgumentNullException("newItems");
             }
-            if (oldItems == null)
+            if (oldItems is null)
             {
                 throw new ArgumentNullException("oldItems");
             }
@@ -208,7 +208,7 @@ namespace System.Collections.Specialized
             }
             if (action == NotifyCollectionChangedAction.Reset)
             {
-                if (changedItems != null)
+                if (changedItems is not null)
                 {
                     throw new ArgumentException("ResetActionRequiresNullItem", "action");
                 }
@@ -221,7 +221,7 @@ namespace System.Collections.Specialized
             }
             else
             {
-                if (changedItems == null)
+                if (changedItems is null)
                 {
                     throw new ArgumentNullException("changedItems");
                 }
@@ -267,7 +267,7 @@ namespace System.Collections.Specialized
                 }, index);
                 return;
             }
-            if (changedItem != null)
+            if (changedItem is not null)
             {
                 throw new ArgumentException("ResetActionRequiresNullItem", "action");
             }
@@ -340,11 +340,11 @@ namespace System.Collections.Specialized
             {
                 throw new ArgumentException(string.Format(ERROR_MESSAGE, nameof(NotifyCollectionChangedAction.Replace)), "action");
             }
-            if (newItems == null)
+            if (newItems is null)
             {
                 throw new ArgumentNullException("newItems");
             }
-            if (oldItems == null)
+            if (oldItems is null)
             {
                 throw new ArgumentNullException("oldItems");
             }

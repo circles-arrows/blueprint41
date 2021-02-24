@@ -27,12 +27,12 @@ namespace Blueprint41.Core
             {
                 if (target.Direction == DirectionEnum.Out)
                 {
-                    if ((OutItem != null && item.Parent.Equals(OutItem)) || (InItem != null && item.Item.Equals(InItem)))
+                    if ((OutItem is not null && item.Parent.Equals(OutItem)) || (InItem is not null && item.Item.Equals(InItem)))
                         target.RemoveAt(index);
                 }
                 else if (target.Direction == DirectionEnum.In)
                 {
-                    if ((InItem != null && item.Parent.Equals(InItem)) || (OutItem != null && item.Item.Equals(OutItem)))
+                    if ((InItem is not null && item.Parent.Equals(InItem)) || (OutItem is not null && item.Item.Equals(OutItem)))
                         target.RemoveAt(index);
                 }
                 else

@@ -48,7 +48,7 @@ namespace Blueprint41
             trans.Mode = mode;
             trans.FireEvents = EventOptions.AllEvents;
 
-            if (transactions == null)
+            if (transactions is null)
                 transactions = new Stack<Transaction>();
 
             transactions.Push(trans);
@@ -70,8 +70,11 @@ namespace Blueprint41
                 if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                     continue;
 
-                if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded)
+                if (HasChanges(entity))
                 {
+                    if(!beforeCommitEntityState.ContainsKey(entity))
+                        beforeCommitEntityState.Add(entity, entity.PersistenceState);
+
                     entity.GetEntity().RaiseOnSave((OGMImpl)entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
                         item.Flush();
@@ -80,51 +83,47 @@ namespace Blueprint41
 
             if (!DisableForeignKeyChecks)
             {
-                foreach (var entitySet in registeredEntities.Values)
-                {
-                    foreach (OGM entity in entitySet.Values)
-                    {
-                        if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
-                            continue;
-
-
-                        if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded)
-                            entity.ValidateSave();
-                    }
-                }
-
-            }
-
-            foreach (var entitySet in registeredEntities.Values)
-            {
-                foreach (OGM entity in entitySet.Values)
+                foreach (OGM entity in entities)
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
 
-                    if (entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded)
-                        entity.Save();
+
+                    if (HasChanges(entity))
+                        entity.ValidateSave();
                 }
             }
 
-            if (actions != null)
+            foreach (OGM entity in entities)
+            {
+                if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                    continue;
+
+                if (HasChanges(entity))
+                    entity.Save();
+            }
+
+            if (actions is not null)
             {
                 foreach (var action in actions)
                 {
                     action.ExecuteInDatastore();
-                }
+                    forRetry.AddLast(action);
+                }                
                 actions.Clear();
             }
 
-            foreach (var entitySet in registeredEntities.Values)
+            foreach (OGM entity in entities)
             {
-                foreach (OGM entity in entitySet.Values)
-                {
-                    if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
-                        continue;
+                if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                    continue;
 
-                    if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
-                        entity.ValidateDelete();
+                if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
+                {
+                    if (!beforeCommitEntityState.ContainsKey(entity))
+                        beforeCommitEntityState.Add(entity, entity.PersistenceState);
+
+                    entity.ValidateDelete();
                 }
             }
 
@@ -142,9 +141,14 @@ namespace Blueprint41
                         Dictionary<object, OGM>? cache; 
                         if (!(key is null) && entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
                             cache.Remove(key);
-                        entitySet.Remove(entity);
+                        //entitySet.Remove(entity);
                     }
                 }
+            }
+
+            static bool HasChanges(OGM entity)
+            {
+                return entity.PersistenceState != PersistenceState.New && entity.PersistenceState != PersistenceState.Delete && entity.PersistenceState != PersistenceState.HasUid && entity.PersistenceState != PersistenceState.DoesntExist && entity.PersistenceState != PersistenceState.ForceDelete && entity.PersistenceState != PersistenceState.Loaded;
             }
         }
         public static void Flush()
@@ -156,10 +160,42 @@ namespace Blueprint41
         public static void Commit()
         {
             Transaction trans = RunningTransaction;
+            bool repeat = false;
+            do {
+                try
+                {
+                    repeat = false;
+                    trans.FlushPrivate();
+                    trans.ApplyFunctionalIds();
+                    trans.OnCommit();
+                }
+                catch (Exception e)
+                {
+                    if (e.Message.ToLowerInvariant().Contains("can't acquire ExclusiveLock".ToLowerInvariant()))
+                    {
+                        repeat = true;
 
-            trans.FlushPrivate();
-            trans.ApplyFunctionalIds();
-            trans.OnCommit();
+                        trans.actions.Clear();
+                        foreach (var item in trans.forRetry)
+                        {
+                            trans.actions.AddLast(item);
+                        }
+                        trans.forRetry.Clear();
+
+                        foreach (OGMImpl entity in trans.registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OGMImpl).ToList())
+                        {
+                            if (trans.beforeCommitEntityState.TryGetValue(entity, out var state))
+                                entity.PersistenceState = state;
+                        }
+                        trans.beforeCommitEntityState.Clear();
+
+                        trans.OnRetry();
+                    }
+                    else
+                        throw e;
+                }
+            }while (repeat);
+
             trans.Invalidate();
             trans.InTransaction = false;
         }
@@ -175,9 +211,9 @@ namespace Blueprint41
         {
             get
             {
-                if (transaction == null)
+                if (transaction is null)
                 {
-                    if (transactions == null || transactions.Count == 0)
+                    if (transactions is null || transactions.Count == 0)
                         return null;
 
                     transaction = transactions.Peek();
@@ -191,7 +227,7 @@ namespace Blueprint41
             {
                 Transaction? trans = Current;
 
-                if (trans == null)
+                if (trans is null)
                     throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
 
                 if (!trans.InTransaction)
@@ -209,13 +245,14 @@ namespace Blueprint41
 
         protected void ApplyFunctionalIds()
         {
-            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item=> item != null))
+            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item=> item is not null))
             {
                 ApplyFunctionalId(functionalId);
             }
         }
         protected virtual void OnCommit() { }
         protected virtual void OnRollback() { }
+        protected virtual void OnRetry() { }
 
         #endregion
 
@@ -240,7 +277,7 @@ namespace Blueprint41
                 if (InTransaction)
                     Rollback();
 
-                if (transactions != null)
+                if (transactions is not null)
                 {
                     if (transactions.Count > 0)
                         transactions.Pop();
@@ -265,13 +302,13 @@ namespace Blueprint41
         #endregion
 
         #region Registration
-
+        private Dictionary<OGM, PersistenceState> beforeCommitEntityState = new Dictionary<OGM, PersistenceState>();
         private Dictionary<string, Dictionary<OGM, OGM>> registeredEntities = new Dictionary<string, Dictionary<OGM, OGM>>(50);
         private Dictionary<string, Dictionary<string, HashSet<Core.EntityCollectionBase>>> registeredCollections = new Dictionary<string, Dictionary<string, HashSet<Core.EntityCollectionBase>>>(100);
 
         internal void Register(OGM item)
         {
-            if (item == null)
+            if (item is null)
                 return;
 
             item.Transaction = this;
@@ -324,7 +361,7 @@ namespace Blueprint41
 
         internal void Register(Core.EntityCollectionBase item)
         {
-            if (item == null)
+            if (item is null)
                 return;
 
             item.DbTransaction = this;
@@ -356,6 +393,8 @@ namespace Blueprint41
 
         private void Invalidate()
         {
+            forRetry.Clear();
+
             foreach (OGM item in registeredEntities.Values.SelectMany(item => item.Values))
             {
                 item.PersistenceState = PersistenceState.OutOfScope;
@@ -393,6 +432,7 @@ namespace Blueprint41
         #region Action Distribution
 
         private LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
+        private LinkedList<RelationshipAction> forRetry = new LinkedList<RelationshipAction>();
 
         internal void Register(RelationshipAction action)
         {
@@ -418,7 +458,7 @@ namespace Blueprint41
 
         internal void LoadAll(Core.EntityCollectionBase collection)
         {
-            if (collection == null)
+            if (collection is null)
                 return;
 
             string relationshipName = collection.Relationship.Name;

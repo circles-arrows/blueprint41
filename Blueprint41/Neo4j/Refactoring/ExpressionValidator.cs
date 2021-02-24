@@ -93,7 +93,7 @@
 //            public override Expression Visit(Expression exp)
 //            {
 
-//                if (exp == null)
+//                if (exp is null)
 //                {
 
 //                    return null;
@@ -179,7 +179,7 @@
 //            public override Expression Visit(Expression expression)
 //            {
 
-//                if (expression != null)
+//                if (expression is not null)
 //                {
 
 //                    bool saveCannotBeEvaluated = this.cannotBeEvaluated;

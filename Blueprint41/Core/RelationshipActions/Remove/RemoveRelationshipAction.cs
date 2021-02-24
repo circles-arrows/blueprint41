@@ -24,7 +24,7 @@ namespace Blueprint41.Core
             foreach (int index in indexes)
             {
                 CollectionItem? item = target.GetItem(index);
-                if (item != null)
+                if (item is not null)
                 {
                     target.RemoveAt(index);
                 }

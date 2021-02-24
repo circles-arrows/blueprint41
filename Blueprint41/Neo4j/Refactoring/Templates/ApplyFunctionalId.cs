@@ -32,7 +32,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 9 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
+            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
 
     Debug.WriteLine("	executing {0} -> Apply FunctionalId on entity {1}", this.GetType().Name, Entity.Label.Name);
 
@@ -41,14 +41,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")\r\n");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
  if(! this.Full) 
    {
 
@@ -57,14 +57,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("WHERE NOT node.Uid STARTS WITH \'");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionalId.Prefix));
             
             #line default
             #line hidden
             this.Write("\'\r\n");
             
-            #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
  }
 
             
@@ -72,7 +72,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("WITH node limit 10000 \r\nCALL blueprint41.functionalid.next(\'");
             
-            #line 20 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
+            #line 19 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\ApplyFunctionalId.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionalId.Label));
             
             #line default

@@ -44,7 +44,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                 results = StatementRunner.Run(cypher);
 
 #if DEBUG
-            if (Logger != null)
+            if (Logger is not null)
             {
                 results.Peek();
                 Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
@@ -68,7 +68,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                 results = StatementRunner.Run(cypher, parameters);
 
 #if DEBUG
-            if (Logger != null)
+            if (Logger is not null)
             {
                 results.Peek();
                 Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
@@ -82,7 +82,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         {
             string rewritten = cypher;
 
-            if (parameters != null && cypher.Contains("{"))
+            if (parameters is not null && cypher.Contains("{"))
                 foreach (string name in parameters.Keys)
                     rewritten = rewritten.Replace(string.Concat("{",name ,"}"), string.Concat("$", name));
 
@@ -115,7 +115,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 
             if (WithTransaction)
             {
-                if (Transaction != null)
+                if (Transaction is not null)
                 {
                     Transaction.Commit();
                     Transaction.Dispose();
@@ -160,7 +160,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         }
         protected override void ApplyFunctionalId(FunctionalId functionalId)
         {
-            if (functionalId == null)
+            if (functionalId is null)
                 return;
 
             if (functionalId.wasApplied || functionalId.highestSeenId == -1)

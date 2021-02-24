@@ -27,7 +27,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             get
             {
-                if ((this.generationEnvironmentField == null))
+                if ((this.generationEnvironmentField is null))
                 {
                     this.generationEnvironmentField = new global::System.Text.StringBuilder();
                 }
@@ -45,7 +45,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             get
             {
-                if ((this.errorsField == null))
+                if ((this.errorsField is null))
                 {
                     this.errorsField = new global::System.CodeDom.Compiler.CompilerErrorCollection();
                 }
@@ -59,7 +59,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             get
             {
-                if ((this.indentLengthsField == null))
+                if ((this.indentLengthsField is null))
                 {
                     this.indentLengthsField = new global::System.Collections.Generic.List<int>();
                 }
@@ -181,7 +181,7 @@ namespace Blueprint41.DatastoreTemplates
         /// </summary>
         public void PushIndent(string indent)
         {
-            if ((indent == null))
+            if ((indent is null))
             {
                 throw new global::System.ArgumentNullException("indent");
             }
@@ -233,7 +233,7 @@ namespace Blueprint41.DatastoreTemplates
                 }
                 set
                 {
-                    if ((value != null))
+                    if ((value is not null))
                     {
                         this.formatProviderField = value;
                     }
@@ -244,14 +244,14 @@ namespace Blueprint41.DatastoreTemplates
             /// </summary>
             public string? ToStringWithCulture(object objectToConvert)
             {
-                if ((objectToConvert == null))
+                if ((objectToConvert is null))
                 {
                     throw new global::System.ArgumentNullException("objectToConvert");
                 }
                 System.Type t = objectToConvert.GetType();
                 System.Reflection.MethodInfo? method = t.GetMethod("ToString", new System.Type[] {
                             typeof(System.IFormatProvider)});
-                if ((method == null))
+                if ((method is null))
                 {
                     return objectToConvert.ToString();
                 }

@@ -40,7 +40,7 @@ namespace Blueprint41
 
         private static Serializer GetSerializer(Type? type)
         {
-            if (type == null)
+            if (type is null)
                 type = typeof(object);
 
             return cache.TryGetOrAdd(type, key =>
@@ -53,7 +53,7 @@ namespace Blueprint41
     }
     internal class Serializer<T> : Serializer
     {
-        static DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T), settings);
+        private static DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T), settings);
 
         protected sealed override string SerializeInternal(object? value)
         {

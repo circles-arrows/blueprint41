@@ -122,7 +122,7 @@ namespace Blueprint41.Core
         }
         public void DeleteDeep(bool force = false)
         {
-            //if (ForeignProperty != null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
+            //if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
             //    throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty.Relationship.Neo4JRelationshipType, ForeignEntity.Name));
 
             LazyLoad();

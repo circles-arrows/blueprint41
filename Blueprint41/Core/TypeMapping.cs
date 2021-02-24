@@ -24,7 +24,7 @@ namespace Blueprint41.Core
         {
             get
             {
-                if (PersistedType == null) return "";
+                if (PersistedType is null) return "";
                 return PersistedType.ToCSharp();
             }
         }
@@ -42,7 +42,7 @@ namespace Blueprint41.Core
         private MethodInfo? getConverter = null;
         public MethodInfo GetGetConverter()
         {
-            if (getConverter == null)
+            if (getConverter is null)
                 getConverter = typeof(Conversion<,>).MakeGenericType(new Type[] { ReturnType, PersistedType }).GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert");
 
             return getConverter;
@@ -51,7 +51,7 @@ namespace Blueprint41.Core
         private MethodInfo? setConverter = null;
         public MethodInfo GetSetConverter()
         {
-            if (setConverter == null)
+            if (setConverter is null)
                 setConverter = typeof(Conversion<,>).MakeGenericType(new Type[] { PersistedType, ReturnType }).GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert");
 
             return setConverter;

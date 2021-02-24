@@ -26,7 +26,7 @@ namespace Blueprint41.Neo4j.Schema
 
             foreach (Property property in properties)
             {
-                if (property.SystemReturnType == null)
+                if (property.SystemReturnType is null)
                     continue;
 
                 IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field == property.Name);
@@ -43,7 +43,7 @@ namespace Blueprint41.Neo4j.Schema
             }
 
             List<string> propertiesWithIndexOrConstraint = entityIndexes.Select(item => item.Field).Union(entityConstraints.Select(item => item.Field)).Distinct().ToList();
-            List<string> propertiesThatAreAllowedToHaveIndexOrConstraint = properties.Where(property => property.SystemReturnType != null).Select(item => item.Name).ToList();
+            List<string> propertiesThatAreAllowedToHaveIndexOrConstraint = properties.Where(property => property.SystemReturnType is not null).Select(item => item.Name).ToList();
 
             foreach (string property in propertiesWithIndexOrConstraint.Where(item => !propertiesThatAreAllowedToHaveIndexOrConstraint.Contains(item)))
             {

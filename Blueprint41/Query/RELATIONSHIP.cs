@@ -17,14 +17,14 @@ namespace Blueprint41.Query
 
         protected void Repeat(int minHops, int maxHops)
         {
-            if (repeat == null)
+            if (repeat is null)
                 repeat = new Repeat();
 
             repeat.MinHops = minHops;
             repeat.MaxHops = maxHops;
         }
 
-        public abstract AliasResult RelationshipAlias { get; protected set; }
+        public abstract AliasResult? RelationshipAlias { get; protected set; }
 
         protected internal RELATIONSHIP(Node fromNode, DirectionEnum direction)
         {
@@ -37,10 +37,10 @@ namespace Blueprint41.Query
 
         internal void Compile(CompileState state)
         {
-            string repeatPattern = (repeat == null) ? string.Empty : $"*{repeat.MinHops}..{repeat.MaxHops}";
+            string repeatPattern = (repeat is null) ? string.Empty : $"*{repeat.MinHops}..{repeat.MaxHops}";
 
             GetDirection(this, state.Text);
-            if ((object)RelationshipAlias != null)
+            if (RelationshipAlias is not null)
             {
                 RelationshipAlias.AliasName = $"r{state.patternSeq++}";
                 state.Text.Append($"[{RelationshipAlias.AliasName}:{NEO4J_TYPE}{repeatPattern}]");

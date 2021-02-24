@@ -165,7 +165,7 @@ namespace Blueprint41.Core
         }
         private protected void ExecuteAction(ClearRelationshipsAction action)
         {
-            if (DbTransaction != null)
+            if (DbTransaction is not null)
             {
                 DbTransaction?.Register(action);
             }
@@ -173,7 +173,7 @@ namespace Blueprint41.Core
             {
                 foreach (Property property in GetEntity().Properties.Where(item => item.PropertyType != PropertyType.Attribute))
                 {
-                    if (property.ForeignProperty == null)
+                    if (property.ForeignProperty is null)
                         continue;
 
                     IEnumerable<OGM> instances;
@@ -230,7 +230,7 @@ namespace Blueprint41.Core
         public virtual void SetRowVersion(DateTime? value)
         {
             Entity entity = GetEntity();
-            if (entity.RowVersion == null)
+            if (entity.RowVersion is null)
                 throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
 
             entity.RowVersion.SetValue(this, value ?? DateTime.MinValue);
@@ -238,7 +238,7 @@ namespace Blueprint41.Core
         internal protected virtual DateTime GetRowVersion()
         {
             Entity entity = GetEntity();
-            if (entity.RowVersion == null)
+            if (entity.RowVersion is null)
                 throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
 
             return (DateTime?)entity.RowVersion.GetValue(this) ?? DateTime.MinValue;
@@ -252,7 +252,7 @@ namespace Blueprint41.Core
             {
                 Transaction? trans = DbTransaction;
 
-                if (trans == null)
+                if (trans is null)
                     throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
 
                 if (!trans.InTransaction)
@@ -268,7 +268,7 @@ namespace Blueprint41.Core
         {
             get
             {
-                if (persistenceProvider == null)
+                if (persistenceProvider is null)
                     persistenceProvider = GetEntity().Parent.PersistenceProvider;
 
                 return persistenceProvider;
@@ -348,7 +348,7 @@ namespace Blueprint41.Core
         protected TEnum? Parse<TEnum>(string self)
             where TEnum : struct
         {
-            if ((object)self == null)
+            if (self is null)
                 return null;
 
             TEnum result;

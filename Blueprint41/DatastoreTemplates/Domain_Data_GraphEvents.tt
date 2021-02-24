@@ -63,7 +63,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
 						lock (Entity)
 						{
 							<#= evnt.ToCamelCase() #> -= value;
-							if (<#= evnt.ToCamelCase() #> == null && <#= evnt.ToCamelCase() #>IsRegistered)
+							if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
 							{
 								Entity.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
 								<#= evnt.ToCamelCase() #>IsRegistered = false;
@@ -75,7 +75,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
 				private static void <#= evnt.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
 				{
 					EventHandler<Entity, <#= eventargs #>> handler = <#= evnt.ToCamelCase() #>;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -133,7 +133,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
 						lock (Relationship)
 						{
 							<#= evnt.ToCamelCase() #> -= value;
-							if (<#= evnt.ToCamelCase() #> == null && <#= evnt.ToCamelCase() #>IsRegistered)
+							if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
 							{
 								Relationship.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
 								<#= evnt.ToCamelCase() #>IsRegistered = false;
@@ -145,7 +145,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
 				private static void <#= evnt.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
 				{
 					EventHandler<Relationship, <#= eventargs #>> handler = <#= evnt.ToCamelCase() #>;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 

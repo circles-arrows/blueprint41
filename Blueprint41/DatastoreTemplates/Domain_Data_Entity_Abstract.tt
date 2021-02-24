@@ -1,7 +1,5 @@
 ﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
 <#@ output extension=".cs" #>
-<#@ Assembly Name="System.Core" #>
-<#@ Assembly Name="System.Windows.Forms" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Diagnostics" #>
@@ -25,7 +23,7 @@ namespace <#= Settings.FullCRUDNamespace #>
 if (DALModel.IsAbstract)
 {
 #>
-	public interface I<#= DALModel.Name #>OriginalData<#= DALModel.Inherits == null ? "" : string.Concat(" : I", DALModel.Inherits.Name, "OriginalData") #>
+	public interface I<#= DALModel.Name #>OriginalData<#= DALModel.Inherits is null ? "" : string.Concat(" : I", DALModel.Inherits.Name, "OriginalData") #>
 	{
 <#
 	foreach (Property attr in DALModel.Properties)
@@ -41,7 +39,7 @@ if (DALModel.IsAbstract)
 #>
 		<#= attr.OuterReturnTypeReadOnly  #> <#= attr.Name #> { get; }
 <#
-			if (attr.EntityReturnType != null && attr.EntityReturnType.IsAbstract)
+			if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
 			{
 				foreach (Entity concrete in attr.EntityReturnType.GetSubclasses())
 				{
@@ -92,7 +90,7 @@ if (DALModel.IsAbstract)
 	public partial interface <#= DALModel.ClassName #> : OGM<#= string.Join("", DALModel.GetBaseTypes().Where(item => item.IsAbstract).Select(item => string.Concat(", ", item.ClassName)).ToArray()) #>
 	{
 <#
-	if((object)DALModel.NodeType == null && DALModel.GetBaseTypes().Count == 0)
+	if (DALModel.NodeType is null && DALModel.GetBaseTypes().Count == 0)
 	{
 #>
 		string <#= DALModel.NodeTypeName #> { get; }
@@ -136,7 +134,7 @@ if (DALModel.IsAbstract)
 	}
 #>
 
-		<#= DALModel.Inherits == null ? "" : "new " #>I<#= DALModel.Name #>OriginalData OriginalVersion { get; }
+		<#= DALModel.Inherits is null ? "" : "new " #>I<#= DALModel.Name #>OriginalData OriginalVersion { get; }
 	}
 
 	public partial class <#= DALModel.Name #> : OGMAbstractImpl<<#= DALModel.Name #>, <#= DALModel.ClassName #>, <#= DALModel.Key.SystemReturnType #>>
@@ -198,11 +196,11 @@ if (DALModel.IsAbstract)
 		{
 			get
 			{
-				if (members == null)
+				if (members is null)
 				{
 					lock (typeof(<#= DALModel.ClassName #>))
 					{
-						if (members == null)
+						if (members is null)
 							members = new <#= DALModel.ClassName #>Members();
 					}
 				}
@@ -234,7 +232,7 @@ if (DALModel.IsAbstract)
 #>
 		}
 <#
-	var enumProperties = DALModel.Properties.Where(item => item.EnumValues != null).ToList();
+	var enumProperties = DALModel.Properties.Where(item => item.EnumValues is not null).ToList();
 
 	if (enumProperties.Count != 0)
 	{
@@ -245,7 +243,7 @@ if (DALModel.IsAbstract)
 <#
 		foreach (Property attr in enumProperties)
 		{
-			if (attr.EnumValues == null)
+			if (attr.EnumValues is null)
 				continue;
 #>
 		public enum <#= attr.Name #>Enum
@@ -270,11 +268,11 @@ if (DALModel.IsAbstract)
 
 		sealed public override Entity GetEntity()
 		{
-			if (entity == null)
+			if (entity is null)
 			{
 				lock (typeof(<#= DALModel.ClassName #>))
 				{
-					if (entity == null)
+					if (entity is null)
 						entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
 				}
 			}

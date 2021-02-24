@@ -15,7 +15,7 @@ namespace Blueprint41.DatastoreTemplates
         public static GeneratorResult Execute<T>(GeneratorSettings? settings = null)
             where T : DatastoreModel<T>, new()
         {
-            if (settings == null)
+            if (settings is null)
                 throw new ArgumentNullException("settings");
 
             DatastoreModel model = new T();

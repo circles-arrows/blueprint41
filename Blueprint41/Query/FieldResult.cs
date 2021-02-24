@@ -162,10 +162,10 @@ namespace Blueprint41.Query
         }
         public override Type? GetResultType()
         {
-            if (OverridenReturnType == null && !(Field is null))
+            if (OverridenReturnType is null && !(Field is null))
                 return Field.GetResultType();
 
-            if (OverridenReturnType == null && !(Property is null))
+            if (OverridenReturnType is null && !(Property is null))
                 return Property.SystemReturnType;
 
             return OverridenReturnType;

@@ -34,7 +34,7 @@ namespace Blueprint41.Query
         {
             string compiled;
 
-            if (state == null)
+            if (state is null)
             {
                 CompileState tempState = new CompileState(TypeMappings, Translator);
                 compile.Invoke(tempState);

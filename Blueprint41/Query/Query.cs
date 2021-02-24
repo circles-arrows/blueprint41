@@ -54,7 +54,7 @@ namespace Blueprint41.Query
             Patterns = new[] { searchNodeType };
             Fields = searchFields;
 
-            if ((object?)searchNodeType.NodeAlias == null)
+            if ((object?)searchNodeType.NodeAlias is null)
                 throw new ArgumentException($"The searchNodeType does not have an alias. Rewite your query to: {Example()}");
 
             foreach (FieldResult field in Fields)
@@ -192,7 +192,7 @@ namespace Blueprint41.Query
             Patterns = new[] { searchNodeType };
             Fields = searchFields;
 
-            if ((object?)searchNodeType.NodeAlias == null)
+            if ((object?)searchNodeType.NodeAlias is null)
                 throw new ArgumentException($"The searchNodeType does not have an alias. Rewite your query to: {Example()}");
 
             foreach (FieldResult field in Fields)
@@ -330,7 +330,7 @@ namespace Blueprint41.Query
             var state = new CompileState(PersistenceProvider.SupportedTypeMappings, PersistenceProvider.Translator);
             Query[] parts = GetParts();
             ForEach(parts, state.Text, "\r\n", item => item?.Compile(state));
-            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Results != null).Results ?? new AsResult[0]);
+            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Results is not null).Results ?? new AsResult[0]);
 
             if (CompiledQuery.Errors.Count > 0)
                 throw new QueryException(CompiledQuery);
@@ -352,7 +352,7 @@ namespace Blueprint41.Query
 
         public override string ToString()
         {
-            if (CompiledQuery == null)
+            if (CompiledQuery is null)
                 return string.Empty;
 
             Transaction transaction = Transaction.RunningTransaction;
@@ -361,7 +361,7 @@ namespace Blueprint41.Query
 
             foreach (var queryParameter in CompiledQuery.ConstantValues)
             {
-                if (queryParameter.Value == null)
+                if (queryParameter.Value is null)
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), null);
                 else
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Name), transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
@@ -378,7 +378,7 @@ namespace Blueprint41.Query
         internal void ForEach<T>(T[]? items, StringBuilder sb, string delimiter, Action<T> action)
             where T : notnull
         {
-            if (items == null || items.Length == 0)
+            if (items is null || items.Length == 0)
                 return;
 
             bool first = true;
@@ -397,7 +397,7 @@ namespace Blueprint41.Query
         {
             LinkedList<Query> parts = new LinkedList<Query>();
             Query? query = Parent;
-            while (query != null)
+            while (query is not null)
             {
                 parts.AddFirst(query);
                 query = query.Parent;

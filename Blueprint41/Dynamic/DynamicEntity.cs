@@ -29,7 +29,7 @@ namespace Blueprint41.Dynamic
             foreach (Property item in entity.GetPropertiesOfBaseTypesAndSelf())
                 RefactorActionPropertyAdded(item);
 
-            if (initialize == null)
+            if (initialize is null)
                 return;
 
             Dictionary<string, object?> values = initialize.GetType().GetProperties().ToDictionary(x => x.Name, x => (object?)x.GetValue(initialize, null));
@@ -51,9 +51,9 @@ namespace Blueprint41.Dynamic
                         continue; // or throw that you cannot delete the collection and should call the Clear method instead?
 
                     IEnumerable<DynamicEntity>? input = init.Value as IEnumerable<DynamicEntity>;
-                    if (input == null)
+                    if (input is null)
                         input = (init.Value as IEnumerable<object>)?.Cast<DynamicEntity>();
-                    if (input == null)
+                    if (input is null)
                         throw new InvalidCastException("should be a collection of DynamicEntity");
 
                     object? member;
@@ -263,7 +263,7 @@ namespace Blueprint41.Dynamic
             else
                 LazySet();
 
-            if (value == null)
+            if (value is null)
             {
                 if (DynamicEntityValues.ContainsKey(name))
                     DynamicEntityValues.Remove(name);
@@ -393,7 +393,7 @@ namespace Blueprint41.Dynamic
                     if (attr.IsRowVersion)
                         continue;
 
-                    if (attr.IsKey && DynamicEntityType.FunctionalId != null)
+                    if (attr.IsKey && DynamicEntityType.FunctionalId is not null)
                         continue;
 
                     if (attr.Nullable == false && attr.PropertyType == PropertyType.Attribute)
@@ -419,12 +419,12 @@ namespace Blueprint41.Dynamic
             object? key = GetKey();
             foreach (var relationship in DynamicEntityType.Parent.Relations)
             {
-                if (DynamicEntityType.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty != null && relationship.OutProperty.Nullable == false)
+                if (DynamicEntityType.IsSelfOrSubclassOf(relationship.InEntity) && relationship.OutProperty is not null && relationship.OutProperty.Nullable == false)
                 {
                     if (RelationshipExists(relationship.OutProperty, this))
                         throw new PersistenceException(string.Format("Cannot delete {0} with key '{1}' because it is participating in a {2} relationship.", DynamicEntityType.Name, key, relationship.Neo4JRelationshipType));
                 }
-                if (DynamicEntityType.IsSelfOrSubclassOf(relationship.OutEntity) && relationship.InProperty != null && relationship.InProperty.Nullable == false)
+                if (DynamicEntityType.IsSelfOrSubclassOf(relationship.OutEntity) && relationship.InProperty is not null && relationship.InProperty.Nullable == false)
                 {
                     if (RelationshipExists(relationship.InProperty, this))
                         throw new PersistenceException(string.Format("Cannot delete {0} with key '{1}' because it is participating in a {2} relationship.", DynamicEntityType.Name, key, relationship.Neo4JRelationshipType));
@@ -444,7 +444,7 @@ namespace Blueprint41.Dynamic
 
             DynamicEntityValues.TryGetValue(DynamicEntityType.Key.Name, out object? key);
 
-            if (DbTransaction == null)
+            if (DbTransaction is null)
             {
                 Conversion? converter;
                 if (!PersistenceProvider.ConvertToStoredTypeCache.TryGetValue(DynamicEntityType.Key.SystemReturnType!, out converter))
@@ -478,7 +478,7 @@ namespace Blueprint41.Dynamic
         void OGM.SetRowVersion(DateTime? value)
         {
             Entity entity = GetEntity();
-            if (entity.RowVersion == null)
+            if (entity.RowVersion is null)
                 throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
 
             if (!TrySetMember(entity.RowVersion.Name, value ?? DateTime.MinValue))
@@ -487,7 +487,7 @@ namespace Blueprint41.Dynamic
         DateTime OGM.GetRowVersion()
         {
             Entity entity = GetEntity();
-            if (entity.RowVersion == null)
+            if (entity.RowVersion is null)
                 throw new InvalidOperationException($"The entity '{entity.Name}' does not have a row version field set.");
 
             object? result;
@@ -642,7 +642,7 @@ namespace Blueprint41.Dynamic
         }
         private protected void ExecuteAction(ClearRelationshipsAction action)
         {
-            if (DbTransaction != null)
+            if (DbTransaction is not null)
             {
                 DbTransaction?.Register(action);
             }
@@ -650,7 +650,7 @@ namespace Blueprint41.Dynamic
             {
                 foreach (Property property in GetEntity().Properties.Where(item => item.PropertyType != PropertyType.Attribute))
                 {
-                    if (property.ForeignProperty == null)
+                    if (property.ForeignProperty is null)
                         continue;
 
                     IEnumerable<OGM> instances;
@@ -721,7 +721,7 @@ namespace Blueprint41.Dynamic
             {
                 Transaction? trans = DbTransaction;
 
-                if (trans == null)
+                if (trans is null)
                     throw new InvalidOperationException("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }");
 
                 if (!trans.InTransaction)
@@ -737,7 +737,7 @@ namespace Blueprint41.Dynamic
             get
             {
                 object? key = ((OGM)this).GetKey();
-                return (key != null);
+                return (key is not null);
             }
         }
 
@@ -748,7 +748,7 @@ namespace Blueprint41.Dynamic
 
         public static dynamic? Load(Entity entity, object? key)
         {
-            if (key == null)
+            if (key is null)
                 return null;
 
             DynamicEntity? item = Lookup(entity, key);
@@ -764,11 +764,11 @@ namespace Blueprint41.Dynamic
         }
         public static dynamic? Lookup(Entity entity, object? key)
         {
-            if (key == null)
+            if (key is null)
                 return null;
 
             DynamicEntity? instance = (DynamicEntity?)Transaction.RunningTransaction.GetEntityByKey(entity.Name, key);
-            if (instance != null)
+            if (instance is not null)
                 return instance;
 
             DynamicEntity item = new DynamicEntity(entity, Parser.ShouldExecute);
@@ -779,7 +779,7 @@ namespace Blueprint41.Dynamic
         public static void Delete(Entity entity, object key)
         {
             DynamicEntity? item = Load(entity, key);
-            if (item == null || (Parser.ShouldExecute && entity.ContainsStaticData))
+            if (item is null || (Parser.ShouldExecute && entity.ContainsStaticData))
                 return;
 
             item.Delete();

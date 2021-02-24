@@ -14,7 +14,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
         private void Checks(Relationship relationship, OGM inItem, OGM outItem)
         {
-            if (inItem.GetKey() == null || outItem.GetKey() == null)
+            if (inItem.GetKey() is null || outItem.GetKey() is null)
                 throw new NotImplementedException("Entity should have key to participate in relationships.");
 
             if (inItem.PersistenceState == PersistenceState.New || outItem.PersistenceState == PersistenceState.New)
@@ -141,8 +141,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
                 if (target.Relationship.IsTimeDependent)
                 {
-                    startDate = (record.Values["StartDate"] != null) ? Conversion<long, DateTime>.Convert((long)record.Values["StartDate"].As<long>()) : (DateTime?)null;
-                    endDate = (record.Values["EndDate"] != null) ? Conversion<long, DateTime>.Convert((long)record.Values["EndDate"].As<long>()) : (DateTime?)null;
+                    startDate = (record.Values["StartDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record.Values["StartDate"].As<long>()) : (DateTime?)null;
+                    endDate = (record.Values["EndDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record.Values["EndDate"].As<long>()) : (DateTime?)null;
                 }
                 OGM? parent = target.Parent.GetEntity().Map(record.Values["Parent"].As<RawNode>(), NodeMapping.AsWritableEntity);
                 OGM? item = targetEntity.Map(record.Values["Item"].As<RawNode>(), NodeMapping.AsWritableEntity);
@@ -193,18 +193,18 @@ namespace Blueprint41.Neo4j.Persistence.Void
         private OGM ReadNode(OGM parent, Entity targetEntity, RawNode node)
         {
             object? keyObject = null;
-            if (targetEntity.Key != null)
+            if (targetEntity.Key is not null)
                 node.Properties.TryGetValue(targetEntity.Key.Name, out keyObject);
 
             string? typeName = null;
-            if (targetEntity.NodeType != null)
+            if (targetEntity.NodeType is not null)
             {
                 object? nodeType;
                 if (node.Properties.TryGetValue(targetEntity.NodeType.Name, out nodeType))
                     typeName = nodeType as string;
             }
 
-            if (typeName == null)
+            if (typeName is null)
             {
                 if (!targetEntity.IsAbstract)
                     typeName = targetEntity.Name;
@@ -212,14 +212,14 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     typeName = targetEntity.GetConcreteClasses().Where(e => node.Labels.Contains(e.Label.Name)).Select(e => e.Name).FirstOrDefault();
             }
 
-            if (typeName == null)
+            if (typeName is null)
                 throw new NotSupportedException("The concrete type of the node could not be determined.");
 
             OGM? item = null;
-            if (keyObject != null)
+            if (keyObject is not null)
             {
                 item = Transaction.RunningTransaction.GetEntityByKey(typeName, keyObject);
-                if (item != null &&
+                if (item is not null &&
                     (item.PersistenceState == PersistenceState.HasUid
                         ||
                     item.PersistenceState == PersistenceState.Loaded))
@@ -230,14 +230,14 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     item.PersistenceState = PersistenceState.Loaded;
                 }
 
-                if (item == null)
+                if (item is null)
                 {
                     if (targetEntity.Parent.IsUpgraded)
                     {
                         Type type = typeCache.TryGetOrAdd(typeName, key =>
                         {
                             type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
-                            if (type == null)
+                            if (type is null)
                                 throw new NotSupportedException();
 
                             return type;

@@ -21,7 +21,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 {
                     lock (typeof(Neo4jPersistenceProvider))
                     {
-                        if (driver == null)
+                        if (driver is null)
                             driver = GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password));
                     }
                 }

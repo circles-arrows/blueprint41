@@ -23,11 +23,11 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                 {
                     lock (typeof(Neo4jPersistenceProvider))
                     {
-                        if (driver == null)
+                        if (driver is null)
                         {
                             driver = GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password));
 
-                            if (Database != null)
+                            if (Database is not null)
                                 using (Transaction.Begin())
                                     Transaction.RunningTransaction.Run($":use {Database}");
                         }

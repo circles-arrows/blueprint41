@@ -23,7 +23,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
         {
 #if DEBUG
             Logger?.Start();
-            if (Logger != null)
+            if (Logger is not null)
                 Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
 #endif
 
@@ -33,7 +33,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
         {
 #if DEBUG
             Logger?.Start();
-            if (Logger != null)
+            if (Logger is not null)
             {
                 Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
@@ -69,7 +69,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
         protected override void ApplyFunctionalId(FunctionalId functionalId)
         {
-            if (functionalId == null)
+            if (functionalId is null)
                 return;
 
             if (functionalId.wasApplied || functionalId.highestSeenId == -1)

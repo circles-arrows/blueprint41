@@ -56,7 +56,7 @@ namespace Blueprint41.Core
         {
             get
             {
-                if (CurrentPersistenceProvider == null)
+                if (CurrentPersistenceProvider is null)
                     return false;
 
                 return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Neo4jPersistenceProvider));
@@ -71,7 +71,7 @@ namespace Blueprint41.Core
         }
         public object? ConvertToStoredType(Type returnType, object? value)
         {
-            if (returnType == null)
+            if (returnType is null)
                 return value;
 
             Conversion? converter;
@@ -89,7 +89,7 @@ namespace Blueprint41.Core
         }
         public object? ConvertFromStoredType(Type returnType, object? value)
         {
-            if (returnType == null)
+            if (returnType is null)
                 return value;
 
             Conversion? converter;
@@ -103,7 +103,7 @@ namespace Blueprint41.Core
         }
         public Conversion? GetConverterToStoredType(Type returnType)
         {
-            if (returnType == null)
+            if (returnType is null)
                 return null;
 
             Conversion? converter;
@@ -113,7 +113,7 @@ namespace Blueprint41.Core
         }
         public Conversion? GetConverterFromStoredType(Type returnType)
         {
-            if (returnType == null)
+            if (returnType is null)
                 return null;
 
             Conversion? converter;
@@ -145,7 +145,7 @@ namespace Blueprint41.Core
             {
                 Initialize(factory);
 
-                if (Converter == null)
+                if (Converter is null)
                     return value;
 
                 return Converter.Convert(value);
@@ -175,7 +175,7 @@ namespace Blueprint41.Core
             {
                 Initialize(factory);
 
-                if (Converter == null)
+                if (Converter is null)
                     return value;
 
                 return Converter.Convert(value);

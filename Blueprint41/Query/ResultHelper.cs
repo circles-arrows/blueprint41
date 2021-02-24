@@ -48,7 +48,7 @@ namespace Blueprint41.Query
                             SearchEnd("JaggedListResult", "ListResult");
                     }
 
-                    if (targetType == null)
+                    if (targetType is null)
                         throw new NotSupportedException($"You shouldn't end up in this piece of code, please file a bug report for 'NotSupportedException in ResultHelper<{Type.FullName}>.ItemType' at: https://github.com/circles-arrows/blueprint41/issues");
 
                     Type resultHelperType = Type.Assembly.GetType(targetType, true, false);
@@ -91,7 +91,7 @@ namespace Blueprint41.Query
                             SearchEnd("ListResult", "JaggedListResult");
                     }
 
-                    if (targetType == null)
+                    if (targetType is null)
                         throw new NotSupportedException($"You shouldn't end up in this piece of code, please file a bug report for 'NotSupportedException in ResultHelper<{Type.FullName}>.ListType' at: https://github.com/circles-arrows/blueprint41/issues");
 
                     Type resultHelperType = Type.Assembly.GetType(targetType, true, false);
@@ -109,7 +109,7 @@ namespace Blueprint41.Query
 
         static private void ComputeTypeName(Type type, string search, string replace, ref string? targetType)
         {
-            if (targetType != null)
+            if (targetType is not null)
                 return;
 
             int index = type.Name.LastIndexOf(search);
@@ -293,11 +293,11 @@ namespace Blueprint41.Query
 
         new public T NewFunctionResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType)
         {
-            List<AliasResult> aliases = arguments.OfType<T>().OfType<AliasResult>().Where(item => item.Entity != null).ToList();
+            List<AliasResult> aliases = arguments.OfType<T>().OfType<AliasResult>().Where(item => item.Entity is not null).ToList();
             if (aliases.Count != 0)
             {
                 AliasResult? aliasResult = Entity.FindCommonBaseClass(aliases);
-                if ((object?)aliasResult != null)
+                if ((object?)aliasResult is not null)
                     return newAliasResult2Ctor!.Value.Invoke(aliasResult, function, arguments, overridenReturnType);
             }
             return newFunctionResultCtor!.Value.Invoke(function, arguments, overridenReturnType);

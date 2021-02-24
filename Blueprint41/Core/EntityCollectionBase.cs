@@ -103,42 +103,42 @@ namespace Blueprint41.Core
 
         internal OGM InItem(CollectionItem item)
         {
-            if (ForeignProperty != null && ForeignProperty.Direction == DirectionEnum.In)
+            if (ForeignProperty is not null && ForeignProperty.Direction == DirectionEnum.In)
                 return item.Item as OGM;
 
             return Parent;
         }
         internal OGM InItem(OGM foreign)
         {
-            if (ForeignProperty != null && ForeignProperty.Direction == DirectionEnum.In)
+            if (ForeignProperty is not null && ForeignProperty.Direction == DirectionEnum.In)
                 return foreign;
 
             return Parent;
         }
         internal OGM OutItem(CollectionItem item)
         {
-            if (ForeignProperty == null || ForeignProperty.Direction == DirectionEnum.Out)
+            if (ForeignProperty is null || ForeignProperty.Direction == DirectionEnum.Out)
                 return item.Item as OGM;
 
             return Parent;
         }
         internal OGM OutItem(OGM foreign)
         {
-            if (ForeignProperty == null || ForeignProperty.Direction == DirectionEnum.Out)
+            if (ForeignProperty is null || ForeignProperty.Direction == DirectionEnum.Out)
                 return foreign;
 
             return Parent;
         }
         internal OGM ParentItem(RelationshipAction action)
         {
-            if (ForeignProperty == null || ForeignProperty.Direction == DirectionEnum.Out)
+            if (ForeignProperty is null || ForeignProperty.Direction == DirectionEnum.Out)
                 return action.InItem;
 
             return action.OutItem;
         }
         internal OGM ForeignItem(RelationshipAction action)
         {
-            if (ForeignProperty != null && ForeignProperty.Direction == DirectionEnum.In)
+            if (ForeignProperty is not null && ForeignProperty.Direction == DirectionEnum.In)
                 return action.InItem;
 
             return action.OutItem;
@@ -155,7 +155,7 @@ namespace Blueprint41.Core
         internal abstract CollectionItem NewCollectionItem(OGM parent, OGM item, DateTime? startDate, DateTime? endDate);
 
 
-        static readonly List<CollectionItem> empty = new List<CollectionItem>();
+        private static readonly List<CollectionItem> empty = new List<CollectionItem>();
         protected virtual void LazyLoad()
         {
             if (IsLoaded)

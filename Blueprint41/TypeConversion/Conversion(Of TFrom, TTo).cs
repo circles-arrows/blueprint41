@@ -35,7 +35,7 @@ namespace Blueprint41.Core
                         Register();
 
                         // Nullable version of existing non-nullable conversion
-                        if (converterMethod == null)
+                        if (converterMethod is null)
                         {
                             Type fromType = typeof(TFrom);
                             bool fromIsNullable = false;
@@ -73,7 +73,7 @@ namespace Blueprint41.Core
 
                         // Basic cast conversion
                         MethodInfo op_Impl_Expl = IsCastable();
-                        if (converterMethod == null && op_Impl_Expl != null)
+                        if (converterMethod is null && op_Impl_Expl is not null)
                         {
                             ParameterExpression fromParam = Expression.Parameter(typeof(TFrom), "value");
                             ParameterExpression toParam = Expression.Parameter(typeof(TTo));
@@ -82,7 +82,7 @@ namespace Blueprint41.Core
                         }
 
                         // IConvertable
-                        if (converterMethod == null && typeof(TFrom).GetTypeInfo().ImplementedInterfaces.Any(item => item == typeof(IConvertible)))
+                        if (converterMethod is null && typeof(TFrom).GetTypeInfo().ImplementedInterfaces.Any(item => item == typeof(IConvertible)))
                             converterMethod = delegate (TFrom value) { return (TTo)System.Convert.ChangeType(value, typeof(TTo))!; };
 
                         isInitialized = true;
@@ -197,7 +197,7 @@ namespace Blueprint41.Core
                     {
                         foreach (Assembly assembly in GetAssemblies())
                         {
-                            if (assembly == null)
+                            if (assembly is null)
                                 continue;
 
                             foreach (ConversionAttribute attribute in assembly.GetCustomAttributes<ConversionAttribute>())
@@ -270,7 +270,7 @@ namespace Blueprint41.Core
         {
             Initialize();
 
-            if (converterMethod != null)
+            if (converterMethod is not null)
                 return converterMethod.Invoke(value!);
 
             throw new InvalidCastException(string.Format("Conversion from '{0}' to '{1}' is not supported.", typeof(TFrom).Name, typeof(TTo).Name));
@@ -279,7 +279,7 @@ namespace Blueprint41.Core
         {
             Initialize();
 
-            return (converterMethod != null);
+            return (converterMethod is not null);
         }
         internal override bool IsValidConversion()
         {
