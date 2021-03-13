@@ -53,7 +53,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out <#= resultType #> alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
