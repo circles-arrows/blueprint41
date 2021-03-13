@@ -45,7 +45,8 @@ namespace Blueprint41.Query
 				AliasName = aliasName
 			};
 
-			alias = new <#= resultType #>(aliasResult, null, null, null, typeof(<#= underlyingType #>));
+			alias = new <#= resultType #>(aliasResult, null, null, null, this.GetResultType() ?? typeof(<#= underlyingType #>));
+			//alias = new <#= resultType #>(aliasResult, null, null, null, typeof(<#= underlyingType #>));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)

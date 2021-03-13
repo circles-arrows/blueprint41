@@ -21,7 +21,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out MiscResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -51,7 +51,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out StringResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -81,7 +81,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out BooleanResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -111,7 +111,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out DateTimeResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -141,7 +141,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out FloatResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -171,7 +171,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out NumericResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -201,7 +201,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out MiscListResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -231,7 +231,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out StringListResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -261,7 +261,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out BooleanListResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -291,7 +291,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out DateTimeListResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -321,7 +321,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out FloatListResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{
@@ -351,7 +351,7 @@ namespace Blueprint41.Query
 		}
 		public IMatchQuery As(string aliasName, out NumericListResult alias)
 		{
-			this.WithResults = new[] { Fields.First().As(aliasName) };
+			this.Results = new[] { Fields.First().As(aliasName) };
 
 			AliasResult aliasResult = new AliasResult()
 			{

@@ -6,7 +6,7 @@ using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Neo4j.Refactoring;
 
-namespace Blueprint41.Neo4j.Persistence.Driver.v3
+namespace Blueprint41.Neo4j.Persistence.v3
 {
     internal class Neo4jRelationshipPersistenceProvider : Void.Neo4jRelationshipPersistenceProvider
     {
@@ -37,9 +37,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 {
                     string pattern = string.Empty;
                     if (target.Direction == DirectionEnum.In)
-                        pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} = {{key}} RETURN out, rel";
+                        pattern = "MATCH ({0})-[rel:{2}]->({3}) WHERE node.{1} = $key RETURN out, rel";
                     else if (target.Direction == DirectionEnum.Out)
-                        pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} = {{key}} RETURN out, rel";
+                        pattern = "MATCH ({0})<-[rel:{2}]-({3}) WHERE node.{1} = $key RETURN out, rel";
 
                     string match = string.Format(pattern,
                        nodeNames[nodeIndex],
@@ -97,7 +97,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             else if (target.Direction == DirectionEnum.Out)
                 matchClause = "MATCH ({0})<-[rel:{2}]-({3})";
 
-            string whereClause = " WHERE node.{1} in ({{keys}}) ";
+            string whereClause = " WHERE node.{1} in ($keys) ";
             string returnClause = " RETURN node as Parent, out as Item ";
             if (target.Relationship.IsTimeDependent)
                 returnClause = $" RETURN node as Parent, out as Item, rel.{target.Relationship.StartDate} as StartDate, rel.{target.Relationship.EndDate} as EndDate";
@@ -165,7 +165,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             for (int nodeIndex = 0; nodeIndex < nodeNames.Length; nodeIndex++)
             {
                 string match = string.Format(
-                    "MATCH ({0}) WHERE node.{1} in ({{keys}}) RETURN DISTINCT node, node.{1} as key",
+                    "MATCH ({0}) WHERE node.{1} in ($keys) RETURN DISTINCT node, node.{1} as key",
                     nodeNames[nodeIndex],
                     targetEntity.Key.Name
                 );
@@ -268,12 +268,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             Checks(relationship, inItem, outItem);
 
-            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = {{inKey}} \r\n MATCH (out:{2}) WHERE out.{3} = {{outKey}}",
+            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr.CreationDate = {{{1}}} SET outr += {{node}}", relationship.Neo4JRelationshipType, relationship.CreationDate);
+            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr.CreationDate = ${1} SET outr += $node", relationship.Neo4JRelationshipType, relationship.CreationDate);
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
@@ -317,7 +317,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
                 // End Current
                 cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and (r.{6} > {{moment}} OR r.{6} IS NULL) AND (r.{5} <={{moment}} OR r.{5} IS NULL) SET r.EndDate = {{moment}}",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and (r.{6} > $moment OR r.{6} IS NULL) AND (r.{5} <= $moment OR r.{5} IS NULL) SET r.EndDate = $moment",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -330,7 +330,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
                 // Remove Future
                 cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and r.{5} > {{moment}} DELETE r",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and r.{5} > $moment DELETE r",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -350,7 +350,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             else
             {
                 cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} DELETE r",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey DELETE r",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -386,7 +386,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
                 // End Current
                 string cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = {{key}} and (r.{5} > {{moment}} OR r.{5} IS NULL) AND (r.{4} <={{moment}} OR r.{4} IS NULL) SET r.EndDate = {{moment}}",
+                    match + " WHERE ({2}) and item.{3} = $key and (r.{5} > $moment OR r.{5} IS NULL) AND (r.{4} <= $moment OR r.{4} IS NULL) SET r.EndDate = $moment",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     condition,
@@ -398,7 +398,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
                 // Remove Future
                 cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = {{key}} and r.{4} > {{moment}} DELETE r",
+                    match + " WHERE ({2}) and item.{3} = $key and r.{4} > $moment DELETE r",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     condition,
@@ -414,7 +414,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             else
             {
                 string cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = {{key}} DELETE r",
+                    match + " WHERE ({2}) and item.{3} = $key DELETE r",
                     item.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     condition,
@@ -431,13 +431,13 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
         public override void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
         {
             Transaction trans = Transaction.RunningTransaction;
-           
+
             Checks(relationship, inItem, outItem);
 
             if (!fullyUnmanaged)
             {
                 string find = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and (r.{5} <= {{endDate}} OR r.{5} IS NULL) AND (r.{6} > {{startDate}} OR r.{6} IS NULL) RETURN min(COALESCE(r.{5}, {{MinDateTime}})) as MinStartDate, max(COALESCE(r.{6}, {{MaxDateTime}})) as MaxEndDate, count(r) as Count",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and (r.{5} <= $endDate OR r.{5} IS NULL) AND (r.{6} > $startDate OR r.{6} IS NULL) RETURN min(COALESCE(r.{5}, $MinDateTime)) as MinStartDate, max(COALESCE(r.{6}, $MaxDateTime)) as MaxEndDate, count(r) as Count",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -469,7 +469,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 }
 
                 string delete = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and (r.{5} <= {{endDate}}) AND (r.{6} > {{startDate}}) DELETE r",
+                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and (r.{5} <= $endDate) AND (r.{6} > $startDate) DELETE r",
                     inItem.GetEntity().Label.Name,
                     relationship.Neo4JRelationshipType,
                     outItem.GetEntity().Label.Name,
@@ -481,12 +481,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                 trans.Run(delete, parameters);
             }
 
-            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = {{inKey}} MATCH (out:{2}) WHERE out.{3} = {{outKey}}",
+            string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("CREATE (in)-[outr:{0} {{node}}]->(out)", relationship.Neo4JRelationshipType);
+            string create = string.Format("CREATE (in)-[outr:{0} $node]->(out)", relationship.Neo4JRelationshipType);
 
             Dictionary<string, object> node = new Dictionary<string, object>();
             node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
@@ -502,7 +502,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             parameters2.Add("node", node);
 
             string query = match + "\r\n" + create;
-            
+
             relationship.RaiseOnRelationCreate(trans);
 
             trans.Run(query, parameters2);
@@ -512,14 +512,14 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
         public override void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment)
         {
             Transaction trans = Transaction.RunningTransaction;
-         
+
             Checks(relationship, inItem, outItem);
 
             if (relationship.IsTimeDependent == false)
                 throw new NotSupportedException("EndCurrentRelationship method is only supported for time dependent relationship.");
 
             string match = string.Format(
-                "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = {{inKey}} and out.{4} = {{outKey}} and COALESCE(r.{5}, {{minDateTime}}) = {{moment}} DELETE r",
+                "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and COALESCE(r.{5}, $minDateTime) = $moment DELETE r",
                 inItem.GetEntity().Label.Name,
                 relationship.Neo4JRelationshipType,
                 outItem.GetEntity().Label.Name,
@@ -537,7 +537,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             trans.Run(match, parameters);
 
-            relationship.RaiseOnRelationDeleted(trans);    
+            relationship.RaiseOnRelationDeleted(trans);
         }
     }
 }

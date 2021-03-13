@@ -24,11 +24,3 @@ namespace Blueprint41.Core
         }
     }
 }
-
-namespace Blueprint41.Neo4j.Persistence.Driver.v4
-{
-    public partial class Neo4jPersistenceProvider : Void.Neo4jPersistenceProvider
-    {
-        protected override RefactorTemplates GetTemplates() => new RefactorTemplates_v4();
-    }
-}

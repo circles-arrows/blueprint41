@@ -14,11 +14,6 @@ namespace Blueprint41.Core
     {
         protected PersistenceProvider()
         {
-            NodePersistenceProvider = GetNodePersistenceProvider();
-            RelationshipPersistenceProvider = GetRelationshipPersistenceProvider();
-            Templates = GetTemplates();
-            Translator = GetTranslator();
-
             convertToStoredType = new Lazy<Dictionary<Type, Conversion?>>(
             delegate ()
             {
@@ -34,12 +29,8 @@ namespace Blueprint41.Core
             }, true);
         }
 
-        internal NodePersistenceProvider NodePersistenceProvider { get; private set; }
-        internal RelationshipPersistenceProvider RelationshipPersistenceProvider { get; private set; }
-
-        private protected abstract NodePersistenceProvider GetNodePersistenceProvider();
-        private protected abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider();
-
+        internal NodePersistenceProvider NodePersistenceProvider => Translator.GetNodePersistenceProvider(this);
+        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => Translator.GetRelationshipPersistenceProvider(this);
         public abstract Transaction NewTransaction(bool withTransaction);
 
         public abstract List<TypeMapping> SupportedTypeMappings { get; }
@@ -201,21 +192,19 @@ namespace Blueprint41.Core
 
         #region Factory: Refactoring Templates
 
-        internal RefactorTemplates Templates { get; private set; }
-        protected virtual RefactorTemplates GetTemplates() => new RefactorTemplates();
+        internal RefactorTemplates Templates => Translator.GetTemplates();
 
         #endregion
 
         #region Factory: Query Translator
 
-        internal QueryTranslator Translator { get; private set; }
-        protected virtual QueryTranslator GetTranslator() => new QueryTranslator();
-
+        internal abstract QueryTranslator Translator { get; }
+        
         #endregion
 
         #region Factory: Schema Info
 
-        internal virtual SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new SchemaInfo(datastoreModel);
+        internal SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => Translator.GetSchemaInfo(datastoreModel);
 
         #endregion
     }

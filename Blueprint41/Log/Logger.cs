@@ -33,14 +33,17 @@ namespace Blueprint41.Log
 
         public string LogFile { get; private set; }
 
+        private Action<string>? LogMethod { get; set; }
+
         private Stopwatch watcher;
 
         private readonly object FileLock = new object();
 
         #endregion
 
-        public TransactionLogger()
+        public TransactionLogger(Action<string>? logger = null)
         {
+            LogMethod = logger;
             LogFile = string.Empty;
 
             ThresholdInSeconds = 100 /*1s*/;
@@ -91,6 +94,12 @@ namespace Blueprint41.Log
 
         internal void Log(string message)
         {
+            if (LogMethod is not null)
+            {
+                LogMethod.Invoke(message);
+                return;
+            }
+
             if (!Directory.Exists(LogDirectory))
                 Directory.CreateDirectory(LogDirectory);
 

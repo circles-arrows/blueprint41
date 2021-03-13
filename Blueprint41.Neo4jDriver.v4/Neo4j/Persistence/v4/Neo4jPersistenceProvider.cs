@@ -14,6 +14,8 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
     public partial class Neo4jPersistenceProvider : Void.Neo4jPersistenceProvider
     {
+        private const int DEFAULT_READWRITESIZE = 65536;
+        private const int DEFAULT_READWRITESIZE_MAX = 655360;
         private IDriver? driver = null;
         public IDriver Driver
         {
@@ -25,7 +27,16 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                     {
                         if (driver is null)
                         {
-                            driver = GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password));
+                            driver = GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password), 
+                                o =>
+                                {
+                                    o.WithFetchSize(Config.Infinite);
+                                    o.WithDefaultReadBufferSize(DEFAULT_READWRITESIZE);
+                                    o.WithDefaultWriteBufferSize(DEFAULT_READWRITESIZE);
+                                    o.WithMaxReadBufferSize(DEFAULT_READWRITESIZE_MAX);
+                                    o.WithMaxWriteBufferSize(DEFAULT_READWRITESIZE_MAX);
+                                }
+                            );
 
                             if (Database is not null)
                                 using (Transaction.Begin())
@@ -37,32 +48,24 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             }
         }
 
-        public bool? RewriteOldParams { get; private set; }
-
         private Neo4jPersistenceProvider() : this(null, null, null, false) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, bool withLogging = false, bool rewriteOldParams = false) : this(uri, username, password, null, withLogging, rewriteOldParams) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string? database, bool withLogging = false, bool rewriteOldParams = false) : base(uri, username, password, database, withLogging)
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, bool withLogging = false) : this(uri, username, password, null, withLogging) { }
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string? database, bool withLogging = false) : base(uri, username, password, database, withLogging)
         {
-            RewriteOldParams = rewriteOldParams;
-
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode),         from => from is INode         item ? new Neo4jRawNode(item)         : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
         }
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, Action<string> logger) : this(uri, username, password, null, logger) { }
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string? database, Action<string> logger) : base(uri, username, password, database, logger)
+        {
+            Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
+            Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
+        }
 
-        private protected override NodePersistenceProvider GetNodePersistenceProvider()
-        {
-            return new Neo4jNodePersistenceProvider(this);
-        }
-        private protected override RelationshipPersistenceProvider GetRelationshipPersistenceProvider()
-        {
-            return new Neo4jRelationshipPersistenceProvider(this);
-        }
+
         public override Transaction NewTransaction(bool withTransaction)
         {
-            return new Neo4jTransaction(Driver, withTransaction, RewriteOldParams ?? false, TransactionLogger);
+            return new Neo4jTransaction(this, withTransaction, TransactionLogger);
         }
-
-        protected override QueryTranslator GetTranslator() => new Neo4jQueryTranslator();
-        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.v4.SchemaInfo_v4(datastoreModel);
     }
 }

@@ -5,10 +5,10 @@ using System.Text;
 
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Model;
+using Blueprint41.Neo4j.Schema;
 using Blueprint41.Query;
-using Neo4j.Driver;
 
-namespace Blueprint41.Neo4j.Persistence
+namespace Blueprint41.Neo4j.Persistence.v4
 {
     internal class Neo4jQueryTranslator : QueryTranslator
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Persistence
                     Transaction.RunningTransaction.Run(FtiRemove);
                     Transaction.Commit();
                 }
-                catch (ClientException ex)
+                catch (Exception ex)
                 {
                     if (!ex.Message.StartsWith("Failed to invoke procedure `db.index.fulltext.drop`: Caused by: java.lang.IllegalArgumentException: No index found with the name"))
                         throw;
@@ -68,48 +68,13 @@ namespace Blueprint41.Neo4j.Persistence
 
         #endregion
 
-        internal override void Compile(Parameter parameter, CompileState state)
-        {
-            if (!state.Parameters.Contains(parameter))
-                state.Parameters.Add(parameter);
+        #region
 
-            if (parameter.HasValue && !state.Values.Contains(parameter))
-                state.Values.Add(parameter);
+        internal override NodePersistenceProvider GetNodePersistenceProvider(PersistenceProvider persistenceProvider) => new v3.Neo4jNodePersistenceProvider(persistenceProvider);
+        internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider(PersistenceProvider persistenceProvider) => new v3.Neo4jRelationshipPersistenceProvider(persistenceProvider);
+        internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v4();
+        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.v4.SchemaInfo_v4(datastoreModel);
 
-            if (parameter.Name == Parameter.CONSTANT_NAME)
-            {
-                parameter.Name = $"param{state.paramSeq}";
-                state.paramSeq++;
-            }
-            state.Text.Append("$");
-            state.Text.Append(parameter.Name);
-        }
-        internal override void CommitScript(DatastoreModel.UpgradeScript script)
-        {
-            // write version nr
-            string create = "MERGE (n:RefactorVersion) ON CREATE SET n = $node ON MATCH SET n = $node";
-
-            Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add("Major", script.Major);
-            node.Add("Minor", script.Minor);
-            node.Add("Patch", script.Patch);
-            node.Add("LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow));
-
-            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
-            parameters.Add("node", node);
-
-            Transaction.RunningTransaction.Run(create, parameters);
-            Transaction.Commit();
-        }
-        internal override void SetLastRun()
-        {
-            // write version nr
-            string query = "MATCH (n:RefactorVersion) SET n.LastRun = $LastRun";
-
-            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
-            parameters.Add("LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow));
-
-            Transaction.RunningTransaction.Run(query, parameters);
-        }
+        #endregion
     }
 }

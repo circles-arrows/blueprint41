@@ -6,6 +6,7 @@ using System.Text;
 
 using Blueprint41.Core;
 using Blueprint41.Log;
+using Blueprint41.Neo4j.Model;
 
 namespace Blueprint41.Neo4j.Persistence.Void
 {
@@ -29,16 +30,72 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Database = database;
             TransactionLogger = (withLogging) ? new TransactionLogger() : null;
         }
-
-        private protected override NodePersistenceProvider GetNodePersistenceProvider()
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, Action<string> logger) : this(uri, username, password, null, logger) { }
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string? database, Action<string> logger) : base()
         {
-            return new Neo4jNodePersistenceProvider(this);
+            Uri = uri;
+            Username = username;
+            Password = password;
+            Database = database;
+            TransactionLogger = (logger is not null) ? new TransactionLogger(logger) : null;
         }
 
-        private protected override RelationshipPersistenceProvider GetRelationshipPersistenceProvider()
+        public string Version { get; private set; } = "0.0.0";
+        public int Major { get; private set; } = 0;
+        public int Minor { get; private set; } = 0;
+        public int Revision { get; private set; } = 0;
+        public bool IsEnterpriseEdition { get; private set; } = false;
+
+        internal override QueryTranslator Translator
         {
-            return new Neo4jRelationshipPersistenceProvider(this);
+            get
+            {
+                if (translator is null)
+                {
+                    lock (this)
+                    {
+                        if (translator is null)
+                        {
+                            if (this.GetType() == typeof(Void.Neo4jPersistenceProvider))
+                                return voidTranslator;
+
+                            if (Uri is null && Username is null && Password is null)
+                                return voidTranslator;
+
+                            using (Transaction.Begin())
+                            {
+                                RawResult? result = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition");
+                                var record = result.First();
+
+                                Version = record["version"].As<string>();
+                                IsEnterpriseEdition = (record["edition"].As<string>().ToLowerInvariant() == "enterprise");
+
+                                string[] parts = Version.Split('.');
+                                Major = int.Parse(parts[0]);
+                                Minor = int.Parse(parts[1]);
+                                Revision = int.Parse(parts[2]);
+                            }
+
+                            if (Major == 3)
+                            {
+                                translator = new v3.Neo4jQueryTranslator();
+                            }
+                            else if (Major == 4)
+                            {
+                                translator = new v4.Neo4jQueryTranslator();
+                            }
+                            else
+                            {
+                                throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.");
+                            }
+                        }
+                    }
+                }
+                return translator;
+            }
         }
+        private QueryTranslator? translator = null;
+        private static readonly QueryTranslator voidTranslator = new Void.Neo4jQueryTranslator();
 
         public override Transaction NewTransaction(bool withTransaction)
         {

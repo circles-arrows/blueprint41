@@ -14,13 +14,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v4
     using System.Collections.Generic;
     using System.Diagnostics;
     using Blueprint41;
+    using Blueprint41.Neo4j.Refactoring.Templates;
     using System;
     
     /// <summary>
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
+    #line 1 "C:\_SatCom\BS.GBM\trunk core 2.0\code\Blueprint41\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     internal partial class SetRelationshipPropertyValue : SetRelationshipPropertyValueBase
     {
@@ -31,7 +32,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v4
         public override string TransformText()
         {
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
+            #line 8 "C:\_SatCom\BS.GBM\trunk core 2.0\code\Blueprint41\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
 
 
     string relationship = string.IsNullOrWhiteSpace(RelationshipType) ? "All Relationships" : RelationshipType;
@@ -45,28 +46,28 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v4
             #line hidden
             this.Write("MATCH ()-[");
             
-            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
+            #line 16 "C:\_SatCom\BS.GBM\trunk core 2.0\code\Blueprint41\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(type));
             
             #line default
             #line hidden
             this.Write("]->() WHERE NOT EXISTS(r.");
             
-            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
+            #line 16 "C:\_SatCom\BS.GBM\trunk core 2.0\code\Blueprint41\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default
             #line hidden
             this.Write(")  WITH r LIMIT 10000 SET r.");
             
-            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
+            #line 16 "C:\_SatCom\BS.GBM\trunk core 2.0\code\Blueprint41\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default
             #line hidden
             this.Write(" = $");
             
-            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Neo4jDriver.v4\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
+            #line 16 "C:\_SatCom\BS.GBM\trunk core 2.0\code\Blueprint41\Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default

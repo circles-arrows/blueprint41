@@ -48,7 +48,6 @@
     
   <ItemGroup>
     <PackageReference Include="Neo4j.Driver" Version="4.2.0" />
-    <PackageReference Include="Neo4j.Driver.Simple" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,54 +55,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Neo4j\Refactoring\Neo4jPersistenceProvider.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Neo4jPersistenceProvider.cs</LastGenOutput>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\Neo4jPersistenceProvider.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Neo4jPersistenceProvider.cs</LastGenOutput>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Neo4j\Refactoring\Neo4jPersistenceProvider.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Neo4jPersistenceProvider.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\Neo4jPersistenceProvider.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Neo4jPersistenceProvider.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Neo4j\Persistence\v4\" />
-    <Folder Include="Neo4j\Schema\v4\" />
   </ItemGroup>
 
 </Project>

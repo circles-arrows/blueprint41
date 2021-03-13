@@ -19,7 +19,7 @@ namespace Blueprint41.Query
             return new QueryCondition(a, Operator.Or, b);
         }
 
-        internal QueryCondition(object left, Operator op, object right)
+        public QueryCondition(object left, Operator op, object right)
         {
             if (op == Operator.Boolean && (left as BooleanResult) is null)
                 throw new InvalidOperationException("The left side of an boolean operator must be of type BooleanResult");

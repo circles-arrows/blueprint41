@@ -69,8 +69,8 @@ namespace Blueprint41
 
         void IRefactorEnumeration.RemoveValue(string name)
         {
-            if (Parent is null)
-                throw new InvalidOperationException("You cannot change an 'ad-hoc' enumeration.");
+            //if (Parent is null)
+            //    throw new InvalidOperationException("You cannot change an 'ad-hoc' enumeration.");
 
             values.RemoveAll(item => item.Name == name);
         }

@@ -20,8 +20,6 @@ namespace Blueprint41
 
             PersistenceProvider factory = PersistenceProvider.CurrentPersistenceProvider;
             PersistenceProviderFactory = factory;
-            NodePersistenceProvider = factory.NodePersistenceProvider;
-            RelationshipPersistenceProvider = factory.RelationshipPersistenceProvider;
         }
 
         #region Transaction Logic
@@ -61,7 +59,7 @@ namespace Blueprint41
         public abstract RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
 
         protected abstract void ApplyFunctionalId(FunctionalId functionalId);
-        // Flush is private for now, until RelationshipActions will have their own persistence state. 
+        // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushPrivate()
         {
             List<OGM> entities = registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OGMImpl).ToList();
@@ -83,24 +81,31 @@ namespace Blueprint41
 
             if (!DisableForeignKeyChecks)
             {
-                foreach (OGM entity in entities)
+                // TODO: check why entities is missing entities when using new code
+                foreach (var entitySet in registeredEntities.Values)
+                {
+                    foreach (OGM entity in entitySet.Values)
+                    {
+                        if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                            continue;
+
+
+                        if (HasChanges(entity))
+                            entity.ValidateSave();
+                    }
+                }
+            }
+
+            foreach (var entitySet in registeredEntities.Values)
+            {
+                foreach (OGM entity in entitySet.Values)
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
 
-
                     if (HasChanges(entity))
-                        entity.ValidateSave();
+                        entity.Save();
                 }
-            }
-
-            foreach (OGM entity in entities)
-            {
-                if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
-                    continue;
-
-                if (HasChanges(entity))
-                    entity.Save();
             }
 
             if (actions is not null)
@@ -109,21 +114,24 @@ namespace Blueprint41
                 {
                     action.ExecuteInDatastore();
                     forRetry.AddLast(action);
-                }                
+                }
                 actions.Clear();
             }
 
-            foreach (OGM entity in entities)
+            foreach (var entitySet in registeredEntities.Values)
             {
-                if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
-                    continue;
-
-                if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
+                foreach (OGM entity in entitySet.Values)
                 {
-                    if (!beforeCommitEntityState.ContainsKey(entity))
-                        beforeCommitEntityState.Add(entity, entity.PersistenceState);
+                    if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                        continue;
 
-                    entity.ValidateDelete();
+                    if (entity.PersistenceState == PersistenceState.Delete || entity.PersistenceState == PersistenceState.ForceDelete)
+                    {
+                        if (!beforeCommitEntityState.ContainsKey(entity))
+                            beforeCommitEntityState.Add(entity, entity.PersistenceState);
+
+                        entity.ValidateDelete();
+                    }
                 }
             }
 
@@ -138,7 +146,7 @@ namespace Blueprint41
                     {
                         entity.Save();
                         object? key = entity.GetKey();
-                        Dictionary<object, OGM>? cache; 
+                        Dictionary<object, OGM>? cache;
                         if (!(key is null) && entitiesByKey.TryGetValue(entity.GetEntity().Name, out cache))
                             cache.Remove(key);
                         //entitySet.Remove(entity);
@@ -505,8 +513,8 @@ namespace Blueprint41
         #region PersistenceProviderFactory
 
         public PersistenceProvider PersistenceProviderFactory { get; private set; }
-        internal NodePersistenceProvider NodePersistenceProvider { get; private set; }
-        internal RelationshipPersistenceProvider RelationshipPersistenceProvider { get; private set; }
+        internal NodePersistenceProvider NodePersistenceProvider => PersistenceProviderFactory.NodePersistenceProvider;
+        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => PersistenceProviderFactory.RelationshipPersistenceProvider;
 
         #endregion
 

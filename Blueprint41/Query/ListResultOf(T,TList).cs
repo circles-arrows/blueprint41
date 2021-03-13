@@ -287,7 +287,7 @@ namespace Blueprint41.Query
             return new QueryCondition(new BooleanResult(itemField, t => t.FnListSingle, new object[] { test }));
         }
 
-        protected internal TResult NewResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) => ResultHelper.Of<TResult>().NewFieldResult((IPrimitiveResult)this, function, arguments, type);
+        protected internal TResult NewResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) => ResultHelper.Of<TResult>().NewFieldResult((IPrimitiveResult)this, function, arguments, type ?? typeof(TType));
         protected internal TList NewList(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) => ResultHelper.Of<TList>().NewFieldResult((IPrimitiveResult)this, function, arguments, type);
     }
 }

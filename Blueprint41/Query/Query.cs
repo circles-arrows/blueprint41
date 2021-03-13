@@ -12,8 +12,8 @@ using query = Blueprint41.Query;
 namespace Blueprint41.Query
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled
-    {
+    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, IModifyQuery, IMergeQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled
+    { 
         internal Query(PersistenceProvider persistenceProvider)
         {
             PersistenceProvider = persistenceProvider;
@@ -29,13 +29,17 @@ namespace Blueprint41.Query
         private Query? Parent;
 
         internal bool Distinct = true;
+        internal bool SetAdd = false;
+        internal bool SetFunctionalId = false;
+        internal bool Detach = false;
         internal bool Ascending = true;
         internal PartType Type = PartType.None;
         internal Parameter? SearchWords = null;
         internal SearchOperator? SearchOperator = null;
         internal Node[]? Patterns = null;
-        internal Result[]? WithResults = null;
-        internal AsResult[]? Results = null;
+        internal Assignment[]? Assignments = null;
+        internal Result[]? Results = null;
+        internal AsResult[]? AsResults = null;
         internal QueryCondition[]? Conditions = null;
         internal FieldResult[]? Fields = null;
         internal AliasResult[]? Aliases = null;
@@ -137,7 +141,7 @@ namespace Blueprint41.Query
         public IWithQuery With(bool distinct, params Result[] results)
         {
             SetType(PartType.With);
-            WithResults = results;
+            Results = results;
             Distinct = distinct;
 
             return New;
@@ -151,7 +155,7 @@ namespace Blueprint41.Query
             SetType(PartType.Return);
             int index = 0;
             Distinct = distinct;
-            Results = results.Select(delegate (Result item)
+            AsResults = results.Select(delegate (Result item)
             {
                 index++;
                 if (item is AsResult)
@@ -162,6 +166,65 @@ namespace Blueprint41.Query
 
             return New;
         }
+
+        public IModifyQuery Create(params Node[] nodes)
+        {
+            SetType(PartType.Create);
+            Patterns = nodes;
+
+            return New;
+        }
+        public IMergeQuery Merge(params Node[] nodes)
+        {
+            SetType(PartType.Merge);
+            Patterns = nodes;
+
+            return New;
+        }
+        public IModifyQuery Set(Assignment[] assignments, bool add = false, bool setFunctionalId = false)
+        {
+            SetType(PartType.Set);
+            Assignments = assignments;
+            SetAdd = add;
+            SetFunctionalId = setFunctionalId;
+
+            return New;
+        }
+        public IModifyQuery Delete(params Result[] delete)
+        {
+            SetType(PartType.Delete);
+            Detach = false;
+            Results = delete;
+
+            return New;
+        }
+        public IModifyQuery Delete(bool detach, params Result[] delete)
+        {
+            SetType(PartType.Delete);
+            Detach = detach;
+            Results = delete;
+
+            return New;
+        }
+        public IMergeQuery OnCreateSet(Assignment[] assignments, bool add = false, bool setFunctionalId = false)
+        {
+            SetType(PartType.OnCreate);
+            Assignments = assignments;
+            SetAdd = add;
+            SetFunctionalId = setFunctionalId;
+
+            return New;
+        }
+        public IMergeQuery OnMatchSet(Assignment[] assignments, bool add = false, bool setFunctionalId = false)
+        {
+            SetType(PartType.OnMatch);
+            Assignments = assignments;
+            SetAdd = add;
+            SetFunctionalId = setFunctionalId;
+
+            return New;
+        }
+
         public IWhereQuery Where(params QueryCondition[] conditions)
         {
             SetType(PartType.Where);
@@ -330,7 +393,7 @@ namespace Blueprint41.Query
             var state = new CompileState(PersistenceProvider.SupportedTypeMappings, PersistenceProvider.Translator);
             Query[] parts = GetParts();
             ForEach(parts, state.Text, "\r\n", item => item?.Compile(state));
-            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Results is not null).Results ?? new AsResult[0]);
+            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.AsResults is not null).AsResults ?? new AsResult[0]);
 
             if (CompiledQuery.Errors.Count > 0)
                 throw new QueryException(CompiledQuery);
@@ -428,6 +491,12 @@ namespace Blueprint41.Query
         Or,
         OrderBy,
         Return,
+        Create,
+        Merge,
+        OnCreate,
+        OnMatch,
+        Set,
+        Delete,
         Where,
         Unwind,
         With,
@@ -451,12 +520,10 @@ namespace Blueprint41.Query
         IOptionalMatchQuery OptionalMatch(params Node []
         patterns);
     }
-    public partial interface IOptionalMatchQuery : ISemiBlankQuery
+    public partial interface IOptionalMatchQuery : ISemiBlankQuery, IModifyQuery
     {
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
-        IReturnQuery Return(params Result[] results);
-        IReturnQuery Return(bool distinct, params Result[] results);
         IWhereQuery Where(params QueryCondition[] conditions);
     }
     public partial interface IMatchQuery : IOptionalMatchQuery
@@ -464,12 +531,10 @@ namespace Blueprint41.Query
         IMatchQuery UsingScan(params AliasResult[] aliases);
         IMatchQuery UsingIndex(params FieldResult[] fields);
     }
-    public partial interface IWhereQuery : ISemiBlankQuery
+    public partial interface IWhereQuery : ISemiBlankQuery, IModifyQuery
     {
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
-        IReturnQuery Return(params Result[] results);
-        IReturnQuery Return(bool distinct, params Result[] results);
         IWhereQuery Or(params QueryCondition[] conditions);
     }
     public partial interface IUnwindQuery<T>
@@ -487,7 +552,6 @@ namespace Blueprint41.Query
         IWithQuery Page(int skip, int limit);
         IWithQuery Page(Parameter skip, Parameter limit);
     }
-
     public partial interface IReturnQuery
     {
         IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns);
@@ -503,24 +567,20 @@ namespace Blueprint41.Query
         ILimitQuery Page(Parameter skip, Parameter limit);
         ICompiled Compile();
     }
-
     public partial interface ISkipQuery
     {
         ILimitQuery Limit(Parameter limit);
         ILimitQuery Limit(int limit);
         ICompiled Compile();
     }
-
     public partial interface ILimitQuery
     {
         ICompiled Compile();
     }
-
     public partial interface IPageQuery : ILimitQuery
     {
 
     }
-
     public partial interface IOrderQuery
     {
         ISkipQuery Skip(Parameter skip);
@@ -531,6 +591,22 @@ namespace Blueprint41.Query
         ILimitQuery Page(Parameter skip, Parameter limit);
 
         ICompiled Compile();
+    }
+
+    public partial interface IModifyQuery
+    {
+        IModifyQuery Create(params Node[] nodes);
+        IMergeQuery Merge(params Node[] nodes);
+        IModifyQuery Set(Assignment[] assignments, bool add = false, bool setFunctionalId = false);
+        IModifyQuery Delete(params Result[] delete);
+        IModifyQuery Delete(bool detach, params Result[] delete);
+        IReturnQuery Return(params Result[] results);
+        IReturnQuery Return(bool distinct, params Result[] results);
+    }
+    public partial interface IMergeQuery : IModifyQuery
+    {
+        IMergeQuery OnCreateSet(Assignment[] assignments, bool add = false, bool setFunctionalId = false);
+        IMergeQuery OnMatchSet(Assignment[] assignments, bool add = false, bool setFunctionalId = false);
     }
 
     public partial interface ICompiled

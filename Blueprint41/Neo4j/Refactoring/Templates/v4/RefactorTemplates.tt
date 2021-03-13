@@ -6,7 +6,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <#
-    string version = "v3";
+    string version = "v4";
 #>
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace Blueprint41.Core
     public class RefactorTemplates_<#= version #> : RefactorTemplates
     {
 <#
-    foreach (string path in Directory.EnumerateFiles(Path.Combine(Path.GetDirectoryName(Host.TemplateFile), "Templates", version), "*.tt"))
+    foreach (string path in Directory.EnumerateFiles(Path.GetDirectoryName(Host.TemplateFile), "*.tt"))
     {
         string baseClass = "TemplateBase";
         string content = File.ReadAllText(path);
@@ -36,6 +36,9 @@ namespace Blueprint41.Core
 
         string filename = Path.GetFileName(path);
         string name = Path.GetFileNameWithoutExtension(path);
+
+        if (name == "RefactorTemplates")
+            continue;
 #>
         public override t.<#= baseClass #> <#= name #>()
         {
@@ -46,13 +49,5 @@ namespace Blueprint41.Core
 <#
     }
 #>
-    }
-}
-
-namespace Blueprint41.Neo4j.Persistence.Driver.<#= version #>
-{
-    public partial class Neo4jPersistenceProvider : Void.Neo4jPersistenceProvider
-    {
-        protected override RefactorTemplates GetTemplates() => new RefactorTemplates_<#= version #>();
     }
 }

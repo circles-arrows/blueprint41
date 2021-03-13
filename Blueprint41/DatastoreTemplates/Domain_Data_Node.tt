@@ -75,6 +75,20 @@ namespace <#= Settings.FullQueryNamespace #>
 	}
 #>
         }
+<#
+	if (DALModel.FunctionalId is not null)
+	{
+#>
+		public FunctionalId FunctionalId
+        {
+            get
+            {
+                return m.Invoice.Entity.FunctionalId;
+            }
+        }
+<#
+	}
+#>
 
 		internal <#= DALModel.Name #>Node() { }
 		internal <#= DALModel.Name #>Node(<#= DALModel.Name #>Alias alias, bool isReference = false)
@@ -91,7 +105,7 @@ namespace <#= Settings.FullQueryNamespace #>
 <#
 	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && (p.SystemReturnType == typeof(string) || p.SystemReturnType.IsPrimitive)).OrderBy(p => p.Name).ToList();
 #>
-        public <#= DALModel.Name #>Node Where(<#= string.Join(", ", properties.Select(p => $"InlineCondition<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
+        public <#= DALModel.Name #>Node Where(<#= string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
         {
             Lazy<<#= DALModel.Name #>Alias> alias = new Lazy<<#= DALModel.Name #>Alias>(delegate()
             {
@@ -103,14 +117,7 @@ namespace <#= Settings.FullQueryNamespace #>
 	foreach (var p in properties)
 	{
 #>
-
-            if (<#= p.Name #>.HasValue)
-			{
-                if (<#= p.Name #>.Parameter is null)
-					conditions.Add(alias.Value.<#= p.Name #> == <#= p.Name #>.Value);
-                else
-					conditions.Add(alias.Value.<#= p.Name #> == <#= p.Name #>.Parameter);
-			}
+            if (<#= p.Name #>.HasValue) conditions.Add(new QueryCondition(alias.Value.<#= p.Name #>, Operator.Equals, ((IValue)<#= p.Name #>).GetValue()));
 <#
 	}
 #>
@@ -268,6 +275,22 @@ namespace <#= Settings.FullQueryNamespace #>
 		{
 			Node = alias.Node;
 		}
+
+		public Assignment[] Assign(<#= string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
+        {
+            List<Assignment> assignments = new List<Assignment>();
+<#
+	foreach (var p in properties)
+	{
+#>
+			if (<#= p.Name #>.HasValue) assignments.Add(new Assignment(this.<#= p.Name #>, <#= p.Name #>));
+<#
+	}
+#>
+            
+            return assignments.ToArray();
+        }
+
 
 		public override IReadOnlyDictionary<string, FieldResult> AliasFields
 		{

@@ -8,7 +8,7 @@ using System.Text;
 using Blueprint41.Core;
 using Blueprint41.Query;
 
-namespace Blueprint41.Neo4j.Persistence.Driver.v3
+namespace Blueprint41.Neo4j.Persistence.v3
 {
     internal class Neo4jNodePersistenceProvider : Void.Neo4jNodePersistenceProvider
     {
@@ -28,7 +28,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             Transaction trans = Transaction.RunningTransaction;
 
             string returnStatement = " RETURN node";
-            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}}", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
+            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
@@ -71,12 +71,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             if (entity.RowVersion is null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DELETE node", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key DELETE node", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
             Dictionary<string, object?>? customState = null;
@@ -101,12 +101,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             if (entity.RowVersion is null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DETACH DELETE node", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key DETACH DELETE node", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
             Dictionary<string, object?>? customState = null;
@@ -132,7 +132,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             IDictionary<string, object?> node = item.GetData();
 
-            string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
+            string create = string.Format("CREATE (inserted:{0} $node) Return inserted", labels);
             if (entity.FunctionalId is not null)
             {
                 object? key = item.GetKey();
@@ -142,7 +142,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
                     if (entity.FunctionalId.Format == IdFormat.Numeric)
                         nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
 
-                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
+                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} $node) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
 
                     node.Remove(entity.Key.Name);
                 }
@@ -189,12 +189,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             if (entity.RowVersion is null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key SET node = $newValues", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId SET node = $newValues", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
                 item.SetRowVersion(trans.TransactionDate);
             }
 
@@ -447,9 +447,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
         {
             string pattern;
             if (foreignProperty.Direction == DirectionEnum.In)
-                pattern = "MATCH (node:{0})<-[:{2}]-(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
+                pattern = "MATCH (node:{0})<-[:{2}]-(:{3}) WHERE node.{1} = $key RETURN node LIMIT 1";
             else
-                pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
+                pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = $key RETURN node LIMIT 1";
 
             string match = string.Format(
                 pattern, 

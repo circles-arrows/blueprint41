@@ -359,6 +359,9 @@ namespace Blueprint41
         public Entity HasStaticData(bool containsStaticData = true)
         {
             this.containsStaticData = containsStaticData;
+            if (!containsStaticData)
+                staticData.Clear();
+
             return this;
         }
 

@@ -18,7 +18,8 @@ namespace Blueprint41.Query
 		}
 
 		protected internal AliasResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this((AliasResult)null!, function, arguments, type) { }
-		protected internal AliasResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : this(parent?.Alias!, function, arguments, type) { }
+		protected internal AliasResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : this(parent?.Alias!, function, arguments, type ?? parent?.GetResultType()) { }
+		//protected internal AliasResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : this(parent?.Alias!, function, arguments, type) { }
 		protected internal AliasResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)
 		{
 			Alias = alias;
@@ -164,11 +165,11 @@ namespace Blueprint41.Query
 
 		public NumericResult Count()
 		{
-			return new NumericResult(this, t => t.FnCount);
+			return new NumericResult(this, t => t.FnCount, null, typeof(long));
 		}
 		public NumericResult CountDistinct()
 		{
-			return new NumericResult(this, t => t.FnCountDistinct);
+			return new NumericResult(this, t => t.FnCountDistinct, null, typeof(long));
 		}
 
 		public T Coalesce(T other)

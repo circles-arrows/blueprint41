@@ -35,15 +35,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
         }
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, Action<string> logger) : base(uri, username, password, null, logger)
+        {
+            Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
+            Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
+        }
 
-        private protected override NodePersistenceProvider GetNodePersistenceProvider()
-        {
-            return new Neo4jNodePersistenceProvider(this);
-        }
-        private protected override RelationshipPersistenceProvider GetRelationshipPersistenceProvider()
-        {
-            return new Neo4jRelationshipPersistenceProvider(this);
-        }
         public override Transaction NewTransaction(bool withTransaction)
         {
             return new Neo4jTransaction(Driver, withTransaction, TransactionLogger);

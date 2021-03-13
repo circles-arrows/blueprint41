@@ -191,9 +191,29 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("        }\r\n\r\n\t\tinternal ");
+            this.Write("        }\r\n");
             
             #line 79 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+
+	if (DALModel.FunctionalId is not null)
+	{
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\tpublic FunctionalId FunctionalId\r\n        {\r\n            get\r\n            {\r\n  " +
+                    "              return m.Invoice.Entity.FunctionalId;\r\n            }\r\n        }\r\n");
+            
+            #line 79 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+
+	}
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n\t\tinternal ");
+            
+            #line 80 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
@@ -250,7 +270,7 @@ namespace Blueprint41.DatastoreTemplates
             this.Write("Node Where(");
             
             #line 94 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(", ", properties.Select(p => $"InlineCondition<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default"))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default"))));
             
             #line default
             #line hidden
@@ -280,51 +300,30 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\r\n            if (");
+            this.Write("            if (");
             
             #line 107 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
             
             #line default
             #line hidden
-            this.Write(".HasValue)\r\n\t\t\t{\r\n                if (");
+            this.Write(".HasValue) conditions.Add(new QueryCondition(alias.Value.");
             
             #line 109 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
             
             #line default
             #line hidden
-            this.Write(".Parameter is null)\r\n\t\t\t\t\tconditions.Add(alias.Value.");
+            this.Write(", Operator.Equals, ((IValue)");
             
             #line 110 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
             
             #line default
             #line hidden
-            this.Write(" == ");
+            this.Write(").GetValue()));\r\n");
             
             #line 110 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
-            
-            #line default
-            #line hidden
-            this.Write(".Value);\r\n                else\r\n\t\t\t\t\tconditions.Add(alias.Value.");
-            
-            #line 112 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
-            
-            #line default
-            #line hidden
-            this.Write(" == ");
-            
-            #line 112 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
-            
-            #line default
-            #line hidden
-            this.Write(".Parameter);\r\n\t\t\t}\r\n");
-            
-            #line 114 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
 	}
 
@@ -809,18 +808,59 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write(@"Alias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type)
-		{
-			Node = alias.Node;
-		}
+            this.Write("Alias(AliasResult alias, Func<QueryTranslator, string> function, object[] argumen" +
+                    "ts = null, Type type = null) : base(alias, function, arguments, type)\r\n\t\t{\r\n\t\t\tN" +
+                    "ode = alias.Node;\r\n\t\t}\r\n\r\n\t\tpublic Assignment[] Assign(");
+            
+            #line 267 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default"))));
+            
+            #line default
+            #line hidden
+            this.Write(")\r\n        {\r\n            List<Assignment> assignments = new List<Assignment>();\r" +
+                    "\n");
+            
+            #line 267 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-		public override IReadOnlyDictionary<string, FieldResult> AliasFields
-		{
-			get
-			{
-				if (m_AliasFields is null)
-				{
-					m_AliasFields = ");
+	foreach (var p in properties)
+	{
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\tif (");
+            
+            #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
+            
+            #line default
+            #line hidden
+            this.Write(".HasValue) assignments.Add(new Assignment(this.");
+            
+            #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
+            
+            #line default
+            #line hidden
+            this.Write(", ");
+            
+            #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
+            
+            #line default
+            #line hidden
+            this.Write("));\r\n");
+            
+            #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+
+	}
+
+            
+            #line default
+            #line hidden
+            this.Write("            \r\n            return assignments.ToArray();\r\n        }\r\n\r\n\r\n\t\tpublic " +
+                    "override IReadOnlyDictionary<string, FieldResult> AliasFields\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{" +
+                    "\r\n\t\t\t\tif (m_AliasFields is null)\r\n\t\t\t\t{\r\n\t\t\t\t\tm_AliasFields = ");
             
             #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp is null ? "" : "new UnidentifiedPropertiesAliasDictionary("));

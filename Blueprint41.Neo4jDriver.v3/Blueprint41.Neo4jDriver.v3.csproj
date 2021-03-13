@@ -45,6 +45,12 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Neo4j\Schema\**" />
+    <EmbeddedResource Remove="Neo4j\Schema\**" />
+    <None Remove="Neo4j\Schema\**" />
+  </ItemGroup>
     
   <ItemGroup>
     <PackageReference Include="Neo4j.Driver" Version="1.7.2" />
@@ -55,27 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Neo4j\Refactoring\Templates\v3\" />
-    <Folder Include="Neo4j\Schema\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Neo4j\Refactoring\Neo4jPersistenceProvider.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Neo4jPersistenceProvider.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Neo4j\Refactoring\Neo4jPersistenceProvider.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Neo4jPersistenceProvider.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

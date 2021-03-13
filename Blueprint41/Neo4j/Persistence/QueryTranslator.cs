@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Schema;
 using Blueprint41.Query;
 using q = Blueprint41.Query;
 
 namespace Blueprint41.Neo4j.Model
 {
-    public class QueryTranslator
+    public abstract class QueryTranslator
     {
         #region Compile Query Parts
 
@@ -128,9 +129,8 @@ namespace Blueprint41.Neo4j.Model
                 parameter.Name = $"param{state.paramSeq}";
                 state.paramSeq++;
             }
-            state.Text.Append("{");
+            state.Text.Append("$");
             state.Text.Append(parameter.Name);
-            state.Text.Append("}");
         }
         internal virtual void Compile(QueryCondition condition, CompileState state)
         {
@@ -312,6 +312,17 @@ namespace Blueprint41.Neo4j.Model
             state.Text.Append(" = ");
             path.Node.Compile(state);
         }
+        internal virtual void Compile(Assignment assignment, CompileState state, bool add)
+        {
+            assignment.Field.Compile(state);
+
+            if (add)
+                state.Text.Append(" += ");
+            else
+                state.Text.Append(" = ");
+
+            CompileOperand(state, assignment.Value.GetValue());
+        }
         internal virtual void Compile(q.Query query, CompileState state)
         {
             switch (query.Type)
@@ -361,7 +372,33 @@ namespace Blueprint41.Neo4j.Model
                         state.Text.Append("RETURN DISTINCT ");
                     else
                         state.Text.Append("RETURN ");
-
+                    query.ForEach(query.AsResults, state.Text, ", ", item => item?.Compile(state));
+                    break;
+                case PartType.Create:
+                    state.Text.Append("CREATE ");
+                    query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
+                    break;
+                case PartType.Merge:
+                    state.Text.Append("MERGE ");
+                    query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
+                    break;
+                case PartType.OnCreate:
+                    state.Text.Append("ON CREATE SET ");
+                    query.ForEach(query.Assignments, state.Text, ", ", item => item?.Compile(state, query.SetAdd));
+                    break;
+                case PartType.OnMatch:
+                    state.Text.Append("ON MATCH SET ");
+                    query.ForEach(query.Assignments, state.Text, ", ", item => item?.Compile(state, query.SetAdd));
+                    break;
+                case PartType.Set:
+                    state.Text.Append("SET ");
+                    query.ForEach(query.Assignments, state.Text, ", ", item => item?.Compile(state, query.SetAdd));
+                    break;
+                case PartType.Delete:
+                    if (query.Detach)
+                        state.Text.Append("DETACH DELETE ");
+                    else
+                        state.Text.Append("DELETE ");
                     query.ForEach(query.Results, state.Text, ", ", item => item?.Compile(state));
                     break;
                 case PartType.Where:
@@ -374,14 +411,14 @@ namespace Blueprint41.Neo4j.Model
                     break;
                 case PartType.Unwind:
                     state.Text.Append("UNWIND ");
-                    query.ForEach(query.WithResults, state.Text, ", ", item => item?.Compile(state));
+                    query.ForEach(query.Results, state.Text, ", ", item => item?.Compile(state));
                     break;
                 case PartType.With:
                     if (query.Distinct)
                         state.Text.Append("WITH DISTINCT ");
                     else
                         state.Text.Append("WITH ");
-                    query.ForEach(query.WithResults, state.Text, ", ", item => item?.Compile(state));
+                    query.ForEach(query.Results, state.Text, ", ", item => item?.Compile(state));
                     break;
                 case PartType.Skip:
                     state.Text.Append("SKIP ");
@@ -618,6 +655,15 @@ namespace Blueprint41.Neo4j.Model
 
         #endregion
 
+        #region
+
+        internal abstract NodePersistenceProvider GetNodePersistenceProvider(PersistenceProvider persistenceProvider);
+        internal abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider(PersistenceProvider persistenceProvider);
+        internal abstract SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel);
+        internal abstract RefactorTemplates GetTemplates();
+
+        #endregion
+
         #region Upgrade Script Parser
 
         internal virtual void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
@@ -640,7 +686,7 @@ namespace Blueprint41.Neo4j.Model
                                     FtiSeparator,
                                     entity.FullTextIndexProperties.Select(item =>
                                         string.Format(
-                                            FtiProperty, 
+                                            FtiProperty,
                                             item.Name
                                         )
                                     )
@@ -686,7 +732,7 @@ namespace Blueprint41.Neo4j.Model
         internal virtual void CommitScript(DatastoreModel.UpgradeScript script)
         {
             // write version nr
-            string create = "MERGE (n:RefactorVersion) ON CREATE SET n = {node} ON MATCH SET n = {node}";
+            string create = "MERGE (n:RefactorVersion) ON CREATE SET n = $node ON MATCH SET n = $node";
 
             Dictionary<string, object> node = new Dictionary<string, object>();
             node.Add("Major", script.Major);
@@ -721,7 +767,7 @@ namespace Blueprint41.Neo4j.Model
         internal virtual void SetLastRun()
         {
             // write version nr
-            string query = "MATCH (n:RefactorVersion) SET n.LastRun = {LastRun}";
+            string query = "MATCH (n:RefactorVersion) SET n.LastRun = $LastRun";
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow));

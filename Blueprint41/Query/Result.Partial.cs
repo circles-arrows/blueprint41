@@ -24,7 +24,8 @@ namespace Blueprint41.Query
 				AliasName = aliasName
 			};
 
-			alias = new MiscResult(aliasResult, null, null, null, typeof(object));
+			alias = new MiscResult(aliasResult, null, null, null, this.GetResultType() ?? typeof(object));
+			//alias = new MiscResult(aliasResult, null, null, null, typeof(object));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
@@ -49,7 +50,8 @@ namespace Blueprint41.Query
 				AliasName = aliasName
 			};
 
-			alias = new StringResult(aliasResult, null, null, null, typeof(string));
+			alias = new StringResult(aliasResult, null, null, null, this.GetResultType() ?? typeof(string));
+			//alias = new StringResult(aliasResult, null, null, null, typeof(string));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
@@ -74,7 +76,8 @@ namespace Blueprint41.Query
 				AliasName = aliasName
 			};
 
-			alias = new BooleanResult(aliasResult, null, null, null, typeof(bool));
+			alias = new BooleanResult(aliasResult, null, null, null, this.GetResultType() ?? typeof(bool));
+			//alias = new BooleanResult(aliasResult, null, null, null, typeof(bool));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
@@ -99,7 +102,8 @@ namespace Blueprint41.Query
 				AliasName = aliasName
 			};
 
-			alias = new DateTimeResult(aliasResult, null, null, null, typeof(DateTime));
+			alias = new DateTimeResult(aliasResult, null, null, null, this.GetResultType() ?? typeof(DateTime));
+			//alias = new DateTimeResult(aliasResult, null, null, null, typeof(DateTime));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
@@ -124,7 +128,8 @@ namespace Blueprint41.Query
 				AliasName = aliasName
 			};
 
-			alias = new FloatResult(aliasResult, null, null, null, typeof(double));
+			alias = new FloatResult(aliasResult, null, null, null, this.GetResultType() ?? typeof(double));
+			//alias = new FloatResult(aliasResult, null, null, null, typeof(double));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)
@@ -149,7 +154,8 @@ namespace Blueprint41.Query
 				AliasName = aliasName
 			};
 
-			alias = new NumericResult(aliasResult, null, null, null, typeof(long));
+			alias = new NumericResult(aliasResult, null, null, null, this.GetResultType() ?? typeof(long));
+			//alias = new NumericResult(aliasResult, null, null, null, typeof(long));
 			return this.As(aliasName);
 		}
 		AsResult IResult.As<T>(string aliasName, out T alias)

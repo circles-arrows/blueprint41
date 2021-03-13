@@ -5,28 +5,20 @@ using System.Text;
 using System.Runtime.CompilerServices;
 
 using neo4j = Neo4j.Driver;
-using static Neo4j.Driver.DriverExtensions;
 
 using Blueprint41.Core;
 using Blueprint41.Log;
-using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
 
     public class Neo4jTransaction : Void.Neo4jTransaction
     {
-        internal Neo4jTransaction(neo4j.IDriver driver, bool withTransaction, bool withRewrite, TransactionLogger? logger) : base(withTransaction, logger)
+        internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool withTransaction, TransactionLogger? logger) : base(withTransaction, logger)
         {
-            Driver = driver;
-            Session = driver.Session();
-            StatementRunner = Session;
-            if (withTransaction)
-            {
-                Transaction = Session.BeginTransaction();
-                StatementRunner = Transaction;
-            }
-            WithRewrite = withRewrite;
+            Provider = provider;
+            Initialize();
         }
 
         public override RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
@@ -37,16 +29,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 #if DEBUG
             Logger?.Start();
 #endif
-            neo4j.IResult results;
-            if (WithRewrite)
-                results = StatementRunner.Run(RewriteOldParams(cypher, null));
-            else
-                results = StatementRunner.Run(cypher);
+            Task<neo4j.IResultCursor> results = StatementRunner.RunAsync(cypher);
 
 #if DEBUG
             if (Logger is not null)
             {
-                results.Peek();
+                results.Result.PeekAsync().Wait();
                 Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
@@ -61,16 +49,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 #if DEBUG
             Logger?.Start();
 #endif
-            neo4j.IResult results;
-            if (WithRewrite)
-                results = StatementRunner.Run(RewriteOldParams(cypher, parameters), parameters);
-            else
-                results = StatementRunner.Run(cypher, parameters);
+            Task<neo4j.IResultCursor> results = StatementRunner.RunAsync(cypher, parameters);
 
 #if DEBUG
             if (Logger is not null)
             {
-                results.Peek();
+                results.Result.PeekAsync().Wait();
                 Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
@@ -78,35 +62,28 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             return new Neo4jRawResult(results);
         }
 
-        public string RewriteOldParams(string cypher, Dictionary<string, object?>? parameters)
+        public Neo4jPersistenceProvider Provider { get; set; }
+        public neo4j.IAsyncSession? Session { get; set; }
+        public neo4j.IAsyncTransaction? Transaction { get; set; }
+        public neo4j.IAsyncQueryRunner? StatementRunner { get; set; }
+
+        private void Initialize()
         {
-            string rewritten = cypher;
-
-            if (parameters is not null && cypher.Contains("{"))
-                foreach (string name in parameters.Keys)
-                    rewritten = rewritten.Replace(string.Concat("{",name ,"}"), string.Concat("$", name));
-
-            if (rewritten != cypher)
+            Session = Provider.Driver.AsyncSession(c =>
             {
-                Debug.WriteLine("##### OLD STYLE CYPHER QUERY #####");
-                Debug.WriteLine(cypher);
-                Debug.WriteLine(new StackTrace().ToString());
-            }
-            else if (cypher.Contains("{"))
-            {
-                Debug.WriteLine("##### REWRITE OF CYPHER QUERY POSSIBLY FAILED, DID YOU FORGET TO SEND THE PARAMETERS? #####");
-                Debug.WriteLine(cypher);
-                Debug.WriteLine(new StackTrace().ToString());
-            }
+                if(Provider.Database is not null)
+                    c.WithDatabase(Provider.Database);
 
-            return rewritten;
+                c.WithFetchSize(neo4j.Config.Infinite);
+            });
+
+            StatementRunner = Session;
+            if (WithTransaction)
+            {
+                Transaction = Session.BeginTransactionAsync().Result;
+                StatementRunner = Transaction;
+            }
         }
-
-        public neo4j.IDriver Driver { get; set; }
-        public neo4j.ISession? Session { get; set; }
-        public neo4j.ITransaction? Transaction { get; set; }
-        public neo4j.IQueryRunner? StatementRunner { get; set; }
-        public bool WithRewrite { get; set; }
 
         protected override void OnCommit()
         {
@@ -117,13 +94,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             {
                 if (Transaction is not null)
                 {
-                    Transaction.Commit();
-                    Transaction.Dispose();
+                    Transaction.CommitAsync().Wait();
                 }
             }
 
             if (!(Session is null))
-                Session.Dispose();
+                Session.CloseAsync().Wait();
 
             Transaction = null;
             StatementRunner = null;
@@ -135,13 +111,26 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
             if (WithTransaction)
-                Transaction?.Rollback();
+                Transaction?.RollbackAsync().Wait();
 
             if (!(Session is null))
-                Session.Dispose();
+                Session.CloseAsync();
 
             StatementRunner = null;
             Session = null;
+        }
+        protected override void OnRetry()
+        {
+            if (WithTransaction)
+                Transaction?.RollbackAsync().Wait();
+
+            if (Session is not null)
+                Session.CloseAsync().Wait();
+
+            StatementRunner = null;
+            Session = null;
+
+            Initialize();
         }
 
         protected override void FlushPrivate()
@@ -151,34 +140,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 
             if (!WithTransaction)
             {
-                Transaction = Session.BeginTransaction();
+                Transaction = Session.BeginTransactionAsync().Result;
                 StatementRunner = Transaction;
                 WithTransaction = true;
             }
 
             base.FlushPrivate();
-        }
-        protected override void ApplyFunctionalId(FunctionalId functionalId)
-        {
-            if (functionalId is null)
-                return;
-
-            if (functionalId.wasApplied || functionalId.highestSeenId == -1)
-                return;
-
-            lock (functionalId)
-            {
-                string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
-                RawResult result = Run(getFidQuery);
-                long? currentFid = result.FirstOrDefault()?.Values["Sequence"].As<long?>();
-                if (currentFid.HasValue)
-                    functionalId.SeenUid(currentFid.Value);
-
-                string setFidQuery = $"CALL blueprint41.functionalid.setSequenceNumber('{functionalId.Label}', {functionalId.highestSeenId}, {(functionalId.Format == IdFormat.Numeric).ToString().ToLowerInvariant()})";
-                Run(setFidQuery);
-                functionalId.wasApplied = true;
-                functionalId.highestSeenId = -1;
-            }
         }
     }
 }
