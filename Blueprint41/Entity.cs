@@ -575,13 +575,15 @@ namespace Blueprint41
         }
         dynamic? IRefactorEntity.MatchNode(object key)
         {
-            Parent.EnsureSchemaMigration();
+            Parent.EnsureSchemaMigration();            
 
             if (key is null)
                 throw new ArgumentNullException("key");
 
             if (!Key.SystemReturnType!.IsAssignableFrom(key.GetType()))
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
+
+            key = PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(Key.SystemReturnType!, key) ?? key;
 
             DynamicEntity value;
             if (!staticData.TryGetValue(key, out value))
@@ -601,6 +603,8 @@ namespace Blueprint41
 
             if (!Key.SystemReturnType!.IsAssignableFrom(key.GetType()))
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
+
+            key = PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(Key.SystemReturnType!, key) ?? key;
 
             if (!staticData.Remove(key))
                 throw new ArgumentOutOfRangeException($"Only statically created data (via the upgrade script) can be deleted here.");
