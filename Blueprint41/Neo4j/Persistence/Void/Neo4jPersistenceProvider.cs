@@ -46,6 +46,18 @@ namespace Blueprint41.Neo4j.Persistence.Void
         public int Revision { get; private set; } = 0;
         public bool IsEnterpriseEdition { get; private set; } = false;
 
+        public bool HasFunction(string function)
+        {
+            return functions.Contains(function);
+        }
+        private HashSet<string> functions = new HashSet<string>();
+
+        public bool HasProcedure(string procedure)
+        {
+            return procedures.Contains(procedure);
+        }
+        private HashSet<string> procedures = new HashSet<string>();
+
         internal override QueryTranslator Translator
         {
             get
@@ -57,15 +69,15 @@ namespace Blueprint41.Neo4j.Persistence.Void
                         if (translator is null)
                         {
                             if (this.GetType() == typeof(Void.Neo4jPersistenceProvider))
-                                return voidTranslator;
+                                return GetVoidTranslator();
 
                             if (Uri is null && Username is null && Password is null)
-                                return voidTranslator;
+                                return GetVoidTranslator();
 
                             using (Transaction.Begin())
                             {
-                                RawResult? result = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition");
-                                var record = result.First();
+                                RawResult? components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition");
+                                var record = components.First();
 
                                 Version = record["version"].As<string>();
                                 IsEnterpriseEdition = (record["edition"].As<string>().ToLowerInvariant() == "enterprise");
@@ -74,15 +86,18 @@ namespace Blueprint41.Neo4j.Persistence.Void
                                 Major = int.Parse(parts[0]);
                                 Minor = int.Parse(parts[1]);
                                 Revision = int.Parse(parts[2]);
+
+                                functions = new HashSet<string>(Transaction.RunningTransaction.Run("call dbms.functions() yield name return name").Select(item => item.Values["name"].As<string>()));
+                                procedures = new HashSet<string>(Transaction.RunningTransaction.Run("call dbms.procedures() yield name as name").Select(item => item.Values["name"].As<string>()));
                             }
 
                             if (Major == 3)
                             {
-                                translator = new v3.Neo4jQueryTranslator();
+                                translator = new v3.Neo4jQueryTranslator(this);
                             }
                             else if (Major == 4)
                             {
-                                translator = new v4.Neo4jQueryTranslator();
+                                translator = new v4.Neo4jQueryTranslator(this);
                             }
                             else
                             {
@@ -95,11 +110,19 @@ namespace Blueprint41.Neo4j.Persistence.Void
             }
         }
         private QueryTranslator? translator = null;
-        private static readonly QueryTranslator voidTranslator = new Void.Neo4jQueryTranslator();
-
-        public override Transaction NewTransaction(bool withTransaction)
+        private QueryTranslator GetVoidTranslator()
         {
-            return new Neo4jTransaction(withTransaction, TransactionLogger);
+            if (voidTranslator is null)
+                lock (typeof(PersistenceProvider))
+                    voidTranslator ??= new Void.Neo4jQueryTranslator(this);
+
+            return voidTranslator;
+        }
+        private static QueryTranslator? voidTranslator = null;
+
+        public override Transaction NewTransaction(bool readWriteMode)
+        {
+            return new Neo4jTransaction(readWriteMode, TransactionLogger);
         }
 
         public override List<TypeMapping> SupportedTypeMappings

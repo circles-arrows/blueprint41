@@ -23,11 +23,11 @@ namespace Blueprint41.Neo4j.Persistence.v3
             return LoadWhere<T>(entity, string.Empty, null, page, pageSize, ascending, orderBy);
         }
 
-        public override void Load(OGM item)
+        public override void Load(OGM item, bool locked = false)
         {
             Transaction trans = Transaction.RunningTransaction;
 
-            string returnStatement = " RETURN node";
+            string returnStatement = (locked) ? " WITH COLLECT(node) AS nodes CALL apoc.lock.nodes(nodes) RETURN HEAD(nodes) AS node" : " RETURN node";
             string match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
@@ -358,7 +358,7 @@ namespace Blueprint41.Neo4j.Persistence.v3
                     args.Sender = wrapper;
                     args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
                     wrapper.SetData(args.Properties!);
-                    wrapper.PersistenceState = PersistenceState.Loaded; 
+                    wrapper.PersistenceState = PersistenceState.Loaded;
                 }
                 else
                 {
@@ -452,8 +452,8 @@ namespace Blueprint41.Neo4j.Persistence.v3
                 pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = $key RETURN node LIMIT 1";
 
             string match = string.Format(
-                pattern, 
-                item.GetEntity().Label.Name, 
+                pattern,
+                item.GetEntity().Label.Name,
                 item.GetEntity().Key.Name,
                 foreignProperty.Relationship?.Neo4JRelationshipType,
                 foreignProperty.Parent.Label.Name);

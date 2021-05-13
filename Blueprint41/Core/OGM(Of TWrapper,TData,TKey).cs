@@ -15,17 +15,18 @@ namespace Blueprint41.Core
 	{
 		protected OGM() : base() { }
 
-		public static TWrapper? Load(TKey key)
+		public static TWrapper? Load(TKey key) => Load(key, false);
+		public static TWrapper? Load(TKey key, bool locked)
 		{
-			if (key is null)
-				return null;
+			if (key is null && locked)
+				throw new ArgumentNullException(nameof(key), "The key cannot be null when trying to acquire a lock.");
 
 			TWrapper? item = Lookup(key);
 			if (item is null)
 				return null;
 
-			if (item.PersistenceState != PersistenceState.DoesntExist)
-				item.LazyGet();
+			if (locked || item.PersistenceState != PersistenceState.DoesntExist)
+				item.LazyGet(locked);
 
 			if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
 				return item;
@@ -38,7 +39,7 @@ namespace Blueprint41.Core
 				return null;
 
 			TWrapper? instance = (TWrapper?)Transaction.RunningTransaction.GetEntityByKey(Entity.Name, key);
-			if (!(instance is null))
+			if (instance is not null)
 				return instance;
 
 			TWrapper item = Transaction.Execute(() => new TWrapper(), EventOptions.GraphEvents);
@@ -158,15 +159,17 @@ namespace Blueprint41.Core
 
 		internal static readonly TWrapper Instance = (TWrapper)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(TWrapper));
 
-		internal protected override void LazyGet()
+		internal protected override void LazyGet(bool locked = false)
 		{
 			switch (PersistenceState)
 			{
 				case PersistenceState.New:
 				case PersistenceState.NewAndChanged:
+					if (locked)
+						PersistenceProvider.NodePersistenceProvider.Load(this, locked);
 					break;
 				case PersistenceState.HasUid:
-					PersistenceProvider.NodePersistenceProvider.Load(this);
+					PersistenceProvider.NodePersistenceProvider.Load(this, locked);
 					break;
 				case PersistenceState.Loaded:
 				case PersistenceState.LoadedAndChanged:
@@ -174,6 +177,8 @@ namespace Blueprint41.Core
 				case PersistenceState.Persisted:
 				case PersistenceState.Delete:
 				case PersistenceState.ForceDelete:
+					if (locked)
+						PersistenceProvider.NodePersistenceProvider.Load(this, locked);
 					break;
 				case PersistenceState.Deleted:
 					throw new InvalidOperationException("The object has been deleted, you cannot make changes to it anymore.");

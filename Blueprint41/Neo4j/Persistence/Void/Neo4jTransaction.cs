@@ -13,10 +13,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
     public class Neo4jTransaction : Transaction
     {
-        internal Neo4jTransaction(bool withTransaction, TransactionLogger? logger)
+        internal Neo4jTransaction(bool readWriteMode, TransactionLogger? logger)
         {
             Logger = logger;
-            WithTransaction = withTransaction;
+            ReadWriteMode = readWriteMode;
         }
 
         public override RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
@@ -44,7 +44,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
         protected internal TransactionLogger? Logger { get; private set; }
 
-        protected bool WithTransaction { get; set; }
+        protected bool ReadWriteMode { get; set; }
 
         protected override void OnCommit()
         {

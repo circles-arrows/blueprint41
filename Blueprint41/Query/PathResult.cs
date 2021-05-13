@@ -28,7 +28,7 @@ namespace Blueprint41.Query
 
         public NumericResult Lenght()
         {
-            return new NumericResult(Alias, t => t.FnSize, null, typeof(long));
+            return new NumericResult(Alias, t => t.FnLength, null, typeof(long));
         }
 
         public AsResult As(string aliasName)

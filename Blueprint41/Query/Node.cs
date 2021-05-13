@@ -37,6 +37,7 @@ namespace Blueprint41.Query
         public string Neo4jLabel { get; private set; }
         public AliasResult? NodeAlias { get; protected set; }
         public QueryCondition[]? InlineConditions { get; protected set; }
+        public Assignment[]? InlineAssignments { get; protected set; }
         public bool IsReference { get; protected set; }
         public Entity Entity { get; private set; }
 

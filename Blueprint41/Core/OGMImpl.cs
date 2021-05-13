@@ -304,7 +304,7 @@ namespace Blueprint41.Core
             return key.Equals(otherKey);
         }
 
-        internal protected abstract void LazyGet();
+        internal protected abstract void LazyGet(bool locked = false);
         internal protected abstract void LazySet();
         internal protected virtual bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment = null)
         {

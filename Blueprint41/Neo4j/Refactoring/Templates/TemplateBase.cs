@@ -324,9 +324,8 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
                     Setup.Invoke(template);
 
                     RawResult result = template.Execute();
-                    Transaction.Commit();
-
                     counters = result.Statistics();
+                    Transaction.Commit();
                 }
             }
             while (counters.ContainsUpdates);

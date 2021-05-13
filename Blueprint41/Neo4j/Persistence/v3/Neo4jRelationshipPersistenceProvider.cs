@@ -14,7 +14,7 @@ namespace Blueprint41.Neo4j.Persistence.v3
 
         private void Checks(Relationship relationship, OGM inItem, OGM outItem)
         {
-            if (inItem.GetKey() == null || outItem.GetKey() is null)
+            if (inItem.GetKey() is null || outItem.GetKey() is null)
                 throw new NotImplementedException("Entity should have key to participate in relationships.");
 
             if (inItem.PersistenceState == PersistenceState.New || outItem.PersistenceState == PersistenceState.New)
@@ -116,9 +116,9 @@ namespace Blueprint41.Neo4j.Persistence.v3
                 for (int outIndex = 0; outIndex < outNames.Length; outIndex++)
                 {
                     string match = string.Format(string.Concat(matchClause, whereClause, returnClause),
-                    nodeNames[nodeIndex],
-                    target.ParentEntity.Key.Name,
-                    target.Relationship.Neo4JRelationshipType,
+                        nodeNames[nodeIndex],
+                        target.ParentEntity.Key.Name,
+                        target.Relationship.Neo4JRelationshipType,
                         outNames[outIndex]);
 
                     fullMatch.Add(match);

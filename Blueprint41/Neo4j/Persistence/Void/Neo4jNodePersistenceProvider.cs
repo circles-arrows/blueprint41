@@ -23,12 +23,12 @@ namespace Blueprint41.Neo4j.Persistence.Void
             return LoadWhere<T>(entity, string.Empty, null, page, pageSize, ascending, orderBy);
         }
 
-        public override void Load(OGM item)
+        public override void Load(OGM item, bool locked = false)
         {
             Transaction trans = Transaction.RunningTransaction;
 
-            string returnStatement = " RETURN node";
-            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}}", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
+            string returnStatement = (locked) ? " WITH COLLECT(node) AS nodes CALL apoc.lock.nodes(nodes) RETURN HEAD(nodes) AS node" : " RETURN node";
+            string match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key", item.GetEntity().Label.Name, item.GetEntity().Key.Name);
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
@@ -50,7 +50,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             args.Labels = loaded.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
-            //       turns out the Neo4j driver can deal with it ... for now ...
+            //       turns out the Neo4j driver can deal with it ... for now ... 
             args = item.GetEntity().RaiseOnNodeLoaded(trans, args, loaded.Id, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
 
             if (item.PersistenceState == PersistenceState.HasUid || item.PersistenceState == PersistenceState.Loaded)
@@ -71,12 +71,12 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             if (entity.RowVersion is null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DELETE node", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key DELETE node", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
             Dictionary<string, object?>? customState = null;
@@ -101,12 +101,12 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             if (entity.RowVersion is null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} DETACH DELETE node", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key DETACH DELETE node", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId DETACH DELETE node", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
             }
 
             Dictionary<string, object?>? customState = null;
@@ -132,7 +132,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             IDictionary<string, object?> node = item.GetData();
 
-            string create = string.Format("CREATE (inserted:{0} {{node}}) Return inserted", labels);
+            string create = string.Format("CREATE (inserted:{0} $node) Return inserted", labels);
             if (entity.FunctionalId is not null)
             {
                 object? key = item.GetKey();
@@ -142,7 +142,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     if (entity.FunctionalId.Format == IdFormat.Numeric)
                         nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
 
-                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} {{node}}) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
+                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} $node) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
 
                     node.Remove(entity.Key.Name);
                 }
@@ -169,7 +169,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             args.Labels = inserted.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
-            //       turns out the Neo4j driver can deal with it ... for now ...
+            //       turns out the Neo4j driver can deal with it ... for now ... 
             args.Properties = (Dictionary<string, object?>)inserted.Properties;
             args = entity.RaiseOnNodeCreated(trans, args, inserted.Id, inserted.Labels, (Dictionary<string, object?>)inserted.Properties);
 
@@ -189,12 +189,12 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             if (entity.RowVersion is null)
             {
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key SET node = $newValues", entity.Label.Name, entity.Key.Name);
             }
             else
             {
                 parameters.Add("lockId", Conversion<DateTime, long>.Convert(item.GetRowVersion()));
-                match = string.Format("MATCH (node:{0}) WHERE node.{1} = {{key}} AND node.{2} = {{lockId}} SET node = {{newValues}}", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
+                match = string.Format("MATCH (node:{0}) WHERE node.{1} = $key AND node.{2} = $lockId SET node = $newValues", entity.Label.Name, entity.Key.Name, entity.RowVersion.Name);
                 item.SetRowVersion(trans.TransactionDate);
             }
 
@@ -341,7 +341,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                         concrete = concretes.FirstOrDefault(item => item.Label.Name == label);
                     }
                     if (concrete is null)
-                        concrete = GetEntity(entity.Parent, node.Labels);
+                        concrete = entity.Parent.GetEntity(node.Labels);
                     if (concrete is null)
                         throw new KeyNotFoundException($"Unable to find the concrete class for entity {entity.Name}, labels in DB are: {string.Join(", ", node.Labels)}.");
                 }
@@ -353,7 +353,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 T? wrapper = (T?)Transaction.RunningTransaction.GetEntityByKey(concrete.Name, key);
                 if (wrapper is null)
                 {
-                    wrapper = Activator<T>(concrete);
+                    wrapper = (T)concrete.Activator();
                     wrapper.SetKey(key);
                     args.Sender = wrapper;
                     args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
@@ -396,8 +396,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     .Replace("(", @"\\(")
                     .Replace(")", @"\\)");
 
-            string search = text.Trim(' ', '(', ')').Replace("  ", " ").Replace(" ", " AND ");
-
+            string search = text.Trim(' ').Replace("  ", " ").Replace(" ", " AND ");
+         
 
             List<string> queries = new List<string>();
             foreach (var property in fullTextProperties)
@@ -447,9 +447,9 @@ namespace Blueprint41.Neo4j.Persistence.Void
         {
             string pattern;
             if (foreignProperty.Direction == DirectionEnum.In)
-                pattern = "MATCH (node:{0})<-[:{2}]-(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
+                pattern = "MATCH (node:{0})<-[:{2}]-(:{3}) WHERE node.{1} = $key RETURN node LIMIT 1";
             else
-                pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = {{key}} RETURN node LIMIT 1";
+                pattern = "MATCH (node:{0})-[:{2}]->(:{3}) WHERE node.{1} = $key RETURN node LIMIT 1";
 
             string match = string.Format(
                 pattern,
@@ -463,47 +463,6 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             var result = Transaction.RunningTransaction.Run(match, parameters);
             return result.Any();
-        }
-
-        static private T Activator<T>(Entity entity)
-        {
-            if (entity.IsAbstract)
-                throw new NotSupportedException($"You cannot instantiate the abstract entity {entity.Name}.");
-
-            Func<OGM> activator = activators.TryGetOrAdd(entity.Name, key =>
-            {
-                Dictionary<string, Func<OGM>> retval = new Dictionary<string, Func<OGM>>();
-
-                foreach (Type type in typeof(T).Assembly.GetTypes())
-                {
-                    if (type.BaseType is not null && type.BaseType.IsGenericType && type.BaseType.GetGenericTypeDefinition() == typeof(OGM<,,>))
-                    {
-                        OGM instance = (OGM)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
-                        Entity entityInstance = instance.GetEntity();
-                        if (entityInstance.IsAbstract)
-                            continue;
-
-                        retval.Add(entityInstance.Name, Expression.Lambda<Func<OGM>>(Expression.New(type)).Compile());
-                    }
-                }
-                return retval[entity.Name];
-            });
-
-            return (T)Transaction.Execute(() => activator.Invoke(), EventOptions.GraphEvents);
-        }
-        static private AtomicDictionary<string, Func<OGM>> activators = new AtomicDictionary<string, Func<OGM>>();
-
-        static private AtomicDictionary<string, Entity> entityByLabel = new AtomicDictionary<string, Entity>();
-        static private Entity? GetEntity(DatastoreModel datastore, IEnumerable<string> labels)
-        {
-            Entity? entity = null;
-            foreach (string label in labels)
-            {
-                entity = entityByLabel.TryGetOrAdd(label, key => datastore.Entities.FirstOrDefault(item => item.Label.Name == label));
-                if (!entity.IsAbstract)
-                    return entity;
-            }
-            return null;
         }
     }
 }

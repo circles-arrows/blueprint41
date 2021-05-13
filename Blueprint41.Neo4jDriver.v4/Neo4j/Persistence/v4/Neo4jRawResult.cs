@@ -19,8 +19,38 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             TaskResult = taskResult;
         }
         private Task<IResultCursor> TaskResult;
-        private IResultCursor? Result;
-        private RawRecordCursorEnumerator? Enumerator;
+
+        private IResultCursor? Result
+        {
+            get
+            {
+                ConsumeResult();
+                return m_Result!;
+            }
+        }
+        private IResultCursor? m_Result;
+
+        private RawRecordEnumerator<IRecord> Enumerator
+        {
+            get
+            {
+                ConsumeResult();
+                m_Enumerator = new RawRecordEnumerator<IRecord>(Result.ToListAsync().GetTaskResult().GetEnumerator(), item => new Neo4jRawRecord(item));
+                return m_Enumerator!;
+            }
+        }
+        private RawRecordEnumerator<IRecord>? m_Enumerator;
+
+        private IResultSummary ResultSummary
+        {
+            get
+            {
+                ConsumeResult();
+                m_ResultSummary = Result!.ConsumeAsync().GetTaskResult();
+                return m_ResultSummary!;
+            }
+        }
+        private IResultSummary? m_ResultSummary;
 
         public override IReadOnlyList<string> Keys
         {
@@ -30,25 +60,15 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                 return Result!.Current.Keys;
             }
         }
+
         public override RawRecord Peek()
         {
-            ConsumeResult();
-            return Enumerator!.Current;
+            return Enumerator.Current;
         }
         public override IEnumerator<RawRecord> GetEnumerator()
         {
-            ConsumeResult();
-            return Enumerator!;
-        }
-
-        public IResultSummary ResultSummary
-        {
-            get 
-            {
-                ConsumeResult();
-                return Enumerator!.ResultSummary ?? Result!.ConsumeAsync().Result;
-            }
-        }
+            return Enumerator;
+        }        
 
         public override RawResultStatistics Statistics()
         {
@@ -56,40 +76,36 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         }
         public override List<RawResultNotification> Notifications()
         {
-            
             return ResultSummary.Notifications.Select(item => (RawResultNotification)new Neo4jRawResultNotifications(item)).ToList();
         }
         public override void Consume() { }
 
         private void ConsumeResult()
         {
-            if (Result is null)
-            {
-                Result = TaskResult.Result;
-                Enumerator = new RawRecordCursorEnumerator(Result, item => new Neo4jRawRecord(item));
-            }
+            if (m_Result is null)
+                m_Result = TaskResult.GetTaskResult();
         }
 
-        protected class RawRecordCursorEnumerator : IEnumerator<RawRecord>
-        {
-            public RawRecordCursorEnumerator(IResultCursor cursor, Func<IRecord, RawRecord> converter)
-            {
-                Enumerator = cursor;
-                Converter = converter;
-                ResultSummary = null;
-            }
-            private IResultCursor Enumerator;
-            private Func<IRecord, RawRecord> Converter;
-            public IResultSummary? ResultSummary { get; private set; }
+        //protected class RawRecordCursorEnumerator : IEnumerator<RawRecord>
+        //{
+        //    public RawRecordCursorEnumerator(IResultCursor cursor, Func<IRecord, RawRecord> converter)
+        //    {
+        //        Enumerator = cursor;
+        //        Converter = converter;
+        //        ResultSummary = null;
+        //    }
+        //    private IResultCursor Enumerator;
+        //    private Func<IRecord, RawRecord> Converter;
+        //    public IResultSummary? ResultSummary { get; private set; }
 
-            public RawRecord Current => Converter.Invoke(Enumerator.Current);
-            object IEnumerator.Current => Converter.Invoke(Enumerator.Current);
-            public void Dispose()
-            {
-                ResultSummary = Enumerator.ConsumeAsync().Result;
-            }
-            public bool MoveNext() => Enumerator.FetchAsync().Result;
-            public void Reset() => throw new NotImplementedException();
-        }
+        //    public RawRecord Current => Converter.Invoke(Enumerator.Current);
+        //    object IEnumerator.Current => Converter.Invoke(Enumerator.Current);
+        //    public void Dispose()
+        //    {
+        //        ResultSummary = Enumerator.ConsumeAsync().GetTaskResult();
+        //    }
+        //    public bool MoveNext() => Enumerator.FetchAsync().GetTaskResult();
+        //    public void Reset() => throw new NotImplementedException();
+        //}
     }
 }

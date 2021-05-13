@@ -175,17 +175,45 @@ namespace Blueprint41
             foreach (KeyValuePair<string, (object? value, bool isConstant)> queryParameter in QueryParameters)
             {
                 if (queryParameter.Value.value is null)
+                {
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Key), null);
+                    parameterValues.Add(string.Format("${0}", queryParameter.Key), null);
+                }
                 else
+                {
                     parameterValues.Add(string.Format("{{{0}}}", queryParameter.Key), transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value.value));
+                    parameterValues.Add(string.Format("${0}", queryParameter.Key), transaction.PersistenceProviderFactory.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value.value));
+                }
             }
 
             foreach (KeyValuePair<string, object?> queryParam in parameterValues)
             {
-                string? paramValue = queryParam.Value?.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value?.ToString();
-                cypherQuery = cypherQuery.Replace(queryParam.Key, paramValue);
+                if (queryParam.Value is null)
+                    continue;
+
+                cypherQuery = cypherQuery.Replace(queryParam.Key, ToNeo4jParam(queryParam.Value));
             }
             return cypherQuery;
+        }
+
+        private string ToNeo4jParam(object value)
+        {
+            Type type = value.GetType();
+            if (type == typeof(string))
+                return  string.Format("'{0}'", value.ToString());
+
+            if (value is IEnumerable enumerable)
+            {
+                List<string> items = new List<string>();
+                foreach (var item in enumerable)
+                {
+                    items.Add(ToNeo4jParam(item));
+                }
+
+                return $"[{string.Join(", ", items)}]";
+            }
+            
+            return value.ToString();
         }
         private string DebuggerDisplay { get => ToString(); }
     }

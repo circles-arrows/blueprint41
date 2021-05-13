@@ -30,7 +30,7 @@ namespace Blueprint41.Core
             if (key is null)
                 return default;
 
-            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, string.Format("{{0}}.{0} = {{{{key}}}}", Entity.Key.Name), new Parameter[] { new Parameter("key", key) }).FirstOrDefault();
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, string.Format("{{0}}.{0} = $key", Entity.Key.Name), new Parameter[] { new Parameter("key", key) }).FirstOrDefault();
         }
         internal static OGM? Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
         {

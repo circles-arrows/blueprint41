@@ -26,22 +26,22 @@ namespace Blueprint41
 
         public static Transaction Begin()
         {
-            return Begin(false, OptimizeFor.PartialSubGraphAccess);
+            return Begin(true, OptimizeFor.PartialSubGraphAccess);
         }
-        public static Transaction Begin(bool withTransaction)
+        public static Transaction Begin(bool readWriteMode)
         {
-            return Begin(withTransaction, OptimizeFor.PartialSubGraphAccess);
+            return Begin(readWriteMode, OptimizeFor.PartialSubGraphAccess);
         }
         public static Transaction Begin(OptimizeFor mode)
         {
-            return Begin(false, mode);
+            return Begin(true, mode);
         }
-        public static Transaction Begin(bool withTransaction, OptimizeFor mode)
+        public static Transaction Begin(bool readWriteMode, OptimizeFor mode)
         {
             if (PersistenceProvider.CurrentPersistenceProvider is null)
                 throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
 
-            Transaction trans = PersistenceProvider.CurrentPersistenceProvider.NewTransaction(withTransaction);
+            Transaction trans = PersistenceProvider.CurrentPersistenceProvider.NewTransaction(readWriteMode);
             trans.TransactionDate = DateTime.UtcNow;
             trans.Mode = mode;
             trans.FireEvents = EventOptions.AllEvents;
@@ -389,7 +389,6 @@ namespace Blueprint41
             if (!properties.TryGetValue(propertyName, out values))
             {
                 values = new HashSet<Core.EntityCollectionBase>();
-                values.SetCapacity(1000);
                 properties.Add(propertyName, values);
             }
 
@@ -460,7 +459,8 @@ namespace Blueprint41
         }
         private void Distribute(RelationshipAction action)
         {
-            foreach (Core.EntityCollectionBase collection in registeredCollections.SelectMany(item => item.Value).SelectMany(item => item.Value))
+            List<EntityCollectionBase>? collections = registeredCollections.SelectMany(item => item.Value).SelectMany(item => item.Value).ToList();
+            foreach (Core.EntityCollectionBase collection in collections)
                 action.ExecuteInMemory(collection);
         }
 
@@ -481,31 +481,34 @@ namespace Blueprint41
             string propertyName = string.Concat(collection.Parent.GetEntity().Name, ".", collection.ParentProperty?.Name ?? "NonExisting");
 
             HashSet<Core.EntityCollectionBase>? values;
-            if (!properties.TryGetValue(propertyName, out values))
-                return;
-
-            List<Core.EntityCollectionBase> collections = values.Where(item => !item.IsLoaded).ToList();
-
-            const int chunkSize = 10000;
-            int initialSize = Math.Min(chunkSize, collections.Count);
-            foreach (var chunk in collections.Chunks(chunkSize))
+            if (properties.TryGetValue(propertyName, out values))
             {
-                List<OGM> parents = new List<OGM>(initialSize);
-                foreach (Core.EntityCollectionBase item in chunk)
-                    if(item.Parent.PersistenceState != PersistenceState.New && item.Parent.PersistenceState != PersistenceState.NewAndChanged)
-                        parents.Add(item.Parent);
+                List<Core.EntityCollectionBase> collections = values.Where(item => !item.IsLoaded).ToList();
 
-                Dictionary<OGM, CollectionItemList> allItems = RelationshipPersistenceProvider.Load(parents, collection);
-
-                foreach (Core.EntityCollectionBase item in chunk)
+                const int chunkSize = 10000;
+                int initialSize = Math.Min(chunkSize, collections.Count);
+                foreach (var chunk in collections.Chunks(chunkSize))
                 {
-                    CollectionItemList? items = null;
-                    if(allItems.TryGetValue(item.Parent, out items))
-                        item.InitialLoad(items.Items);
-                    else
-                        item.InitialLoad(new List<CollectionItem>());
+                    List<OGM> parents = new List<OGM>(initialSize);
+                    foreach (Core.EntityCollectionBase item in chunk)
+                        if (item.Parent.PersistenceState != PersistenceState.New && item.Parent.PersistenceState != PersistenceState.NewAndChanged)
+                            parents.Add(item.Parent);
+
+                    Dictionary<OGM, CollectionItemList> allItems = RelationshipPersistenceProvider.Load(parents, collection);
+
+                    foreach (Core.EntityCollectionBase item in chunk)
+                    {
+                        CollectionItemList? items = null;
+                        if (allItems.TryGetValue(item.Parent, out items))
+                            item.InitialLoad(items.Items);
+                        else
+                            item.InitialLoad(new List<CollectionItem>());
+                    }
                 }
             }
+
+            if (!collection.IsLoaded)
+                collection.InitialLoad(new List<CollectionItem>());
         }
 
         #endregion

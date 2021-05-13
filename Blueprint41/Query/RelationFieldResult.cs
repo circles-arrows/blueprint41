@@ -43,6 +43,14 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(left, Operator.NotEquals, right);
         }
+        public static QueryCondition operator >=(RelationFieldResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.GreaterOrEqual, right);
+        }
+        public static QueryCondition operator <=(RelationFieldResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.LessOrEqual, right);
+        }
 
         public override bool Equals(object? obj)
         {

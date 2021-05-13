@@ -14,9 +14,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
     public class Neo4jTransaction : Void.Neo4jTransaction
     {
-        internal Neo4jTransaction(neo4j.IDriver driver, bool withTransaction, TransactionLogger? logger) : base(withTransaction, logger)
+        internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
         {
-            Driver = driver;
+            Provider = provider;
             Initialize();
         }
 
@@ -60,20 +60,18 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             return new Neo4jRawResult(results);
         }
 
-        public neo4j.IDriver Driver { get; set; }
+        public Neo4jPersistenceProvider Provider { get; set; }
         public neo4j.ISession? Session { get; set; }
         public neo4j.ITransaction? Transaction { get; set; }
         public neo4j.IStatementRunner? StatementRunner { get; set; }
 
         private void Initialize()
         {
-            Session = Driver.Session();
-            StatementRunner = Session;
-            if (WithTransaction)
-            {
-                Transaction = Session.BeginTransaction();
-                StatementRunner = Transaction;
-            }
+            neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
+
+            Session = Provider.Driver.Session(accessMode);
+            Transaction = Session.BeginTransaction();
+            StatementRunner = Transaction;
         }
 
         protected override void OnCommit()
@@ -81,60 +79,48 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            if (WithTransaction)
+            if (Transaction is not null)
             {
-                if (Transaction is not null)
-                {
-                    Transaction.Success();
-                    Transaction.Dispose();
-                }
+                Transaction.Success();
+                Transaction.Dispose();
             }
 
-            if (!(Session is null))
-                Session.Dispose();
-
-            Transaction = null;
-            StatementRunner = null;
-            Session = null;
+            CloseSession();
         }
         protected override void OnRollback()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            if (WithTransaction)
+            if (Transaction is not null)
                 Transaction?.Failure();
 
-            if (!(Session is null))
-                Session.Dispose();
-
-            StatementRunner = null;
-            Session = null;
+            CloseSession();
         }
         protected override void OnRetry()
         {
-            if (WithTransaction)
-                Transaction?.Failure();
-
+            OnRollback();
+            Initialize();
+        }
+        private void CloseSession()
+        {
             if (Session is not null)
                 Session.Dispose();
 
+            Transaction = null;
             StatementRunner = null;
             Session = null;
-
-            Initialize();
         }
-
         protected override void FlushPrivate()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            if (!WithTransaction)
+            if (!ReadWriteMode)
             {
-                Transaction = Session.BeginTransaction();
-                StatementRunner = Transaction;
-                WithTransaction = true;
+                ReadWriteMode = true;
+                OnCommit();
+                Initialize();
             }
 
             base.FlushPrivate();

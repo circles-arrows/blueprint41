@@ -29,8 +29,8 @@ namespace Blueprint41.Core
             }, true);
         }
 
-        internal NodePersistenceProvider NodePersistenceProvider => Translator.GetNodePersistenceProvider(this);
-        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => Translator.GetRelationshipPersistenceProvider(this);
+        internal NodePersistenceProvider NodePersistenceProvider => Translator.GetNodePersistenceProvider();
+        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => Translator.GetRelationshipPersistenceProvider();
         public abstract Transaction NewTransaction(bool withTransaction);
 
         public abstract List<TypeMapping> SupportedTypeMappings { get; }
@@ -42,6 +42,7 @@ namespace Blueprint41.Core
         internal Dictionary<Type, Conversion?> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
 
         public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4jPersistenceProvider(null, null, null, false);
+        public static bool IsConfigured => (((Neo4jPersistenceProvider)CurrentPersistenceProvider).Uri is not null); 
 
         public static bool IsNeo4j
         {

@@ -18,13 +18,13 @@ namespace Blueprint41.Neo4j.Schema
         {
             Label = record.Values["Label"].As<string>();
             Prefix = record.Values["Prefix"].As<string>();
-            SequenceNumber = (int)record.Values["Sequence"].As<long>();
+            SequenceNumber = record.Values["Sequence"].As<long>();
             SequenceHash = record.Values["Uid"].As<string>();
         }
 
         public string Label { get; protected set; } = null!;
         public string Prefix { get; protected set; } = null!;
-        public int SequenceNumber { get; protected set; }
+        public long SequenceNumber { get; protected set; }
         public string SequenceHash { get; protected set; } = null!;
 
     }

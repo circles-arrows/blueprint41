@@ -34,6 +34,13 @@ namespace Blueprint41.Query
             Operator = Operator.Boolean;
             Right = null;
         }
+        public QueryCondition(string literal)
+        {
+            Left = new Literal(literal);
+            Operator = Operator.Boolean;
+            Right = null;
+        }
+
         public QueryCondition(Blueprint41.Query.Node node, bool not = false)
         {
             Left = string.Empty;

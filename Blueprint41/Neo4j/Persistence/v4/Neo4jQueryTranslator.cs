@@ -12,6 +12,8 @@ namespace Blueprint41.Neo4j.Persistence.v4
 {
     internal class Neo4jQueryTranslator : QueryTranslator
     {
+        internal Neo4jQueryTranslator(PersistenceProvider persistenceProvider) : base(persistenceProvider) { }
+
         #region Full Text Indexes
 
         public override string FtiSearch    => "CALL db.index.fulltext.queryNodes(\"fts\", \"{0}\") YIELD node AS {1}";
@@ -70,8 +72,8 @@ namespace Blueprint41.Neo4j.Persistence.v4
 
         #region
 
-        internal override NodePersistenceProvider GetNodePersistenceProvider(PersistenceProvider persistenceProvider) => new v3.Neo4jNodePersistenceProvider(persistenceProvider);
-        internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider(PersistenceProvider persistenceProvider) => new v3.Neo4jRelationshipPersistenceProvider(persistenceProvider);
+        internal override NodePersistenceProvider GetNodePersistenceProvider() => new v3.Neo4jNodePersistenceProvider(PersistenceProvider);
+        internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider() => new v3.Neo4jRelationshipPersistenceProvider(PersistenceProvider);
         internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v4();
         internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.v4.SchemaInfo_v4(datastoreModel);
 

@@ -6,7 +6,6 @@ namespace Blueprint41.Query
 {
     public static class Functions
     {
-
         public static Parameter NULL { get { return null!; } }
         public static FloatResult Pi()
         {

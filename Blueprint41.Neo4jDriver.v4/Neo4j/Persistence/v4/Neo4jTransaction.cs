@@ -15,7 +15,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 
     public class Neo4jTransaction : Void.Neo4jTransaction
     {
-        internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool withTransaction, TransactionLogger? logger) : base(withTransaction, logger)
+        internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
         {
             Provider = provider;
             Initialize();
@@ -34,7 +34,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 #if DEBUG
             if (Logger is not null)
             {
-                results.Result.PeekAsync().Wait();
+                results.GetTaskResult().PeekAsync().Wait();
                 Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
@@ -54,7 +54,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 #if DEBUG
             if (Logger is not null)
             {
-                results.Result.PeekAsync().Wait();
+                results.GetTaskResult().PeekAsync().Wait();
                 Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
@@ -69,20 +69,19 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 
         private void Initialize()
         {
+            neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
+
             Session = Provider.Driver.AsyncSession(c =>
             {
                 if(Provider.Database is not null)
                     c.WithDatabase(Provider.Database);
 
                 c.WithFetchSize(neo4j.Config.Infinite);
+                c.WithDefaultAccessMode(accessMode); 
             });
 
-            StatementRunner = Session;
-            if (WithTransaction)
-            {
-                Transaction = Session.BeginTransactionAsync().Result;
-                StatementRunner = Transaction;
-            }
+            Transaction = Session.BeginTransactionAsync().GetTaskResult();
+            StatementRunner = Transaction;
         }
 
         protected override void OnCommit()
@@ -90,47 +89,34 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            if (WithTransaction)
-            {
-                if (Transaction is not null)
-                {
-                    Transaction.CommitAsync().Wait();
-                }
-            }
+            if (Transaction is not null)
+                Transaction.CommitAsync().Wait();
 
-            if (!(Session is null))
-                Session.CloseAsync().Wait();
-
-            Transaction = null;
-            StatementRunner = null;
-            Session = null;
+            CloseSession();
         }
         protected override void OnRollback()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            if (WithTransaction)
+            if (Transaction is not null)
                 Transaction?.RollbackAsync().Wait();
 
-            if (!(Session is null))
-                Session.CloseAsync();
-
-            StatementRunner = null;
-            Session = null;
+            CloseSession();
         }
         protected override void OnRetry()
         {
-            if (WithTransaction)
-                Transaction?.RollbackAsync().Wait();
-
+            OnRollback();
+            Initialize();
+        }
+        private void CloseSession()
+        {
             if (Session is not null)
                 Session.CloseAsync().Wait();
 
+            Transaction = null;
             StatementRunner = null;
             Session = null;
-
-            Initialize();
         }
 
         protected override void FlushPrivate()
@@ -138,11 +124,11 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            if (!WithTransaction)
+            if (!ReadWriteMode)
             {
-                Transaction = Session.BeginTransactionAsync().Result;
-                StatementRunner = Transaction;
-                WithTransaction = true;
+                ReadWriteMode = true;
+                OnCommit();
+                Initialize();
             }
 
             base.FlushPrivate();

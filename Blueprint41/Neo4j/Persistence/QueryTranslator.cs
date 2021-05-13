@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Schema;
 using Blueprint41.Query;
 using q = Blueprint41.Query;
@@ -13,6 +14,11 @@ namespace Blueprint41.Neo4j.Model
 {
     public abstract class QueryTranslator
     {
+        protected QueryTranslator(PersistenceProvider persistenceProvider)
+        {
+            PersistenceProvider = persistenceProvider;
+        }
+
         #region Compile Query Parts
 
         internal virtual void Compile(FieldResult field, CompileState state)
@@ -63,7 +69,7 @@ namespace Blueprint41.Neo4j.Model
                 }
             }
         }
-        internal virtual void Compile(AsResult result , CompileState state)
+        internal virtual void Compile(AsResult result, CompileState state)
         {
             result.Result.Compile(state);
             state.Text.Append(" AS ");
@@ -107,6 +113,19 @@ namespace Blueprint41.Neo4j.Model
         {
             state.Text.Append(litheral.Text);
         }
+        internal virtual void Compile(FunctionalId functionalId, CompileState state)
+        {
+            if (PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.Major < 4)
+                throw new NotSupportedException("Setting functional-id's on (batch) queries is not supported for Neo4j versions before v4.0.0");
+
+            if (!HasBlueprint41FunctionalidFnNext.Value || !HasBlueprint41FunctionalidFnNextNumeric.Value)
+                throw new NotSupportedException("Setting functional-id's on (batch) queries is not supported if the Blueprint41 plug-in is not installed or a lower version than 'blueprint41-4.0.2.jar'.");
+
+            if (functionalId.Format == IdFormat.Hash)
+                state.Text.Append($"blueprint41.functionalid.fnNext('{functionalId.Label}')");
+            else
+                state.Text.Append($"blueprint41.functionalid.fnNextNumeric('{functionalId.Label}')");
+        }
         internal virtual void Compile(RelationFieldResult field, CompileState state)
         {
             if (!(field.Alias is null))
@@ -140,7 +159,15 @@ namespace Blueprint41.Neo4j.Model
             if (condition.Operator == Operator.Boolean)
             {
                 state.Text.Append("(");
-                ((BooleanResult)condition.Left!).Compile(state);
+                switch (condition.Left)
+                {
+                    case BooleanResult boolean:
+                        boolean.Compile(state);
+                        break;
+                    case Literal literal:
+                        literal.Compile(state);
+                        break;
+                }
                 state.Text.Append(")");
                 return;
             }
@@ -506,7 +533,8 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnRightTrim              => "rtrim({base})";
         public virtual string FnCount                  => "count({base})";
         public virtual string FnCountDistinct          => "count(DISTINCT {base})";
-        public virtual string FnSize                   => "length({base})";
+        public virtual string FnSize                   => "size({base})";
+        public virtual string FnLength                 => "length({base})";
         public virtual string FnSplit                  => "split({base}, {0})";
         public virtual string FnLeft                   => "left({base}, {0})";
         public virtual string FnRight                  => "right({base}, {0})";
@@ -655,10 +683,11 @@ namespace Blueprint41.Neo4j.Model
 
         #endregion
 
-        #region
+        #region PersistenceProvider
 
-        internal abstract NodePersistenceProvider GetNodePersistenceProvider(PersistenceProvider persistenceProvider);
-        internal abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider(PersistenceProvider persistenceProvider);
+        internal PersistenceProvider PersistenceProvider { get; private set; }
+        internal abstract NodePersistenceProvider GetNodePersistenceProvider();
+        internal abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider();
         internal abstract SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel);
         internal abstract RefactorTemplates GetTemplates();
 
@@ -802,6 +831,10 @@ namespace Blueprint41.Neo4j.Model
             {
                 return operand;
             }
+            else if (type.IsSubclassOfOrSelf(typeof(FunctionalId)))
+            {
+                return operand;
+            }
             else
             {
                 state.TypeMappings.TryGetValue(type, out TypeMapping mapping);
@@ -833,6 +866,10 @@ namespace Blueprint41.Neo4j.Model
             else if (type.IsSubclassOfOrSelf(typeof(Node)))
             {
                 return null;
+            }
+            else if (type.IsSubclassOfOrSelf(typeof(FunctionalId)))
+            {
+                return typeof(string);
             }
             else
             {
@@ -886,6 +923,10 @@ namespace Blueprint41.Neo4j.Model
                 {
                     ((Node)operand).Compile(state, false);
                 }
+                else if (type.IsSubclassOfOrSelf(typeof(FunctionalId)))
+                {
+                    Compile((FunctionalId)operand, state);
+                }
                 else
                 {
                     state.Errors.Add($"The type {type!.Name} is not supported for compilation.");
@@ -927,10 +968,41 @@ namespace Blueprint41.Neo4j.Model
                 AliasResult param = (AliasResult)arg;
                 return param.Compile;
             }
+            else if (arg is FunctionalId)
+            {
+                return delegate (CompileState state)
+                {
+                    Compile((FunctionalId)arg, state);
+                };
+            }
             else
             {
                 throw new NotSupportedException($"Function arguments of type '{arg.GetType().Name}' are not supported.");
             }
+        }
+
+        #endregion
+
+        #region Support for Functions & Procedures
+
+        internal Lazy<bool> HasBlueprint41FunctionalidFnNext => GetFunction("blueprint41.functionalid.fnNext");
+        internal Lazy<bool> HasBlueprint41FunctionalidFnNextNumeric => GetFunction("blueprint41.functionalid.fnNextNumeric");
+
+        private Lazy<bool> GetFunction(string function)
+        {
+            return new Lazy<bool>(delegate ()
+            {
+                Neo4jPersistenceProvider? neo4j = PersistenceProvider as Neo4jPersistenceProvider;
+                return neo4j?.HasFunction(function) ?? false;
+            }, true);
+        }
+        private Lazy<bool> GetProcedure(string procedure)
+        {
+            return new Lazy<bool>(delegate ()
+            {
+                Neo4jPersistenceProvider? neo4j = PersistenceProvider as Neo4jPersistenceProvider;
+                return neo4j?.HasProcedure(procedure) ?? false;
+            }, true);
         }
 
         #endregion

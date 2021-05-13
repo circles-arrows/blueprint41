@@ -558,7 +558,7 @@ namespace Blueprint41
 
         dynamic IRefactorEntity.CreateNode(object node)
         {
-            Parent.EnsureSchemaMigration();
+            //Parent.EnsureSchemaMigration();
 
             DynamicEntity entity = new DynamicEntity(this, Parser.ShouldExecute, node);
 
@@ -566,16 +566,19 @@ namespace Blueprint41
             if (key is null)
                 return entity;
 
-            if (staticData.ContainsKey(key))
-                throw new PersistenceException(string.Format("A static entity with the same key already exists."));
+            if (!Parent.IsDataMigration)
+            {
+                if (staticData.ContainsKey(key))
+                    throw new PersistenceException(string.Format("A static entity with the same key already exists."));
 
-            staticData.Add(key, entity);
+                staticData.Add(key, entity);
+            }
 
             return entity;
         }
         dynamic? IRefactorEntity.MatchNode(object key)
         {
-            Parent.EnsureSchemaMigration();            
+            //Parent.EnsureSchemaMigration();
 
             if (key is null)
                 throw new ArgumentNullException("key");
@@ -584,6 +587,9 @@ namespace Blueprint41
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
 
             key = PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(Key.SystemReturnType!, key) ?? key;
+
+            if (Parent.IsDataMigration)
+                return DynamicEntity.Load(this, key);
 
             DynamicEntity value;
             if (!staticData.TryGetValue(key, out value))
@@ -596,7 +602,7 @@ namespace Blueprint41
         }
         void IRefactorEntity.DeleteNode(object key)
         {
-            Parent.EnsureSchemaMigration();
+            //Parent.EnsureSchemaMigration();
 
             if (key is null)
                 throw new ArgumentNullException("key");
@@ -605,6 +611,9 @@ namespace Blueprint41
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
 
             key = PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(Key.SystemReturnType!, key) ?? key;
+
+            if (Parent.IsDataMigration)
+                DynamicEntity.Delete(this, key);
 
             if (!staticData.Remove(key))
                 throw new ArgumentOutOfRangeException($"Only statically created data (via the upgrade script) can be deleted here.");

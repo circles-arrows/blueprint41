@@ -28,6 +28,7 @@ namespace Blueprint41.Query
         }
         private Query? Parent;
 
+        internal bool Last = false;
         internal bool Distinct = true;
         internal bool SetAdd = false;
         internal bool SetFunctionalId = false;
@@ -163,6 +164,7 @@ namespace Blueprint41.Query
                 else
                     return new AsResult(item, string.Concat("Column", index));
             }).ToArray();
+            Last = true;
 
             return New;
         }
@@ -171,6 +173,7 @@ namespace Blueprint41.Query
         {
             SetType(PartType.Create);
             Patterns = nodes;
+            Last = true;
 
             return New;
         }
@@ -178,6 +181,7 @@ namespace Blueprint41.Query
         {
             SetType(PartType.Merge);
             Patterns = nodes;
+            Last = true;
 
             return New;
         }
@@ -187,6 +191,7 @@ namespace Blueprint41.Query
             Assignments = assignments;
             SetAdd = add;
             SetFunctionalId = setFunctionalId;
+            Last = true;
 
             return New;
         }
@@ -195,6 +200,7 @@ namespace Blueprint41.Query
             SetType(PartType.Delete);
             Detach = false;
             Results = delete;
+            Last = true;
 
             return New;
         }
@@ -203,6 +209,7 @@ namespace Blueprint41.Query
             SetType(PartType.Delete);
             Detach = detach;
             Results = delete;
+            Last = true;
 
             return New;
         }
@@ -212,6 +219,7 @@ namespace Blueprint41.Query
             Assignments = assignments;
             SetAdd = add;
             SetFunctionalId = setFunctionalId;
+            Last = true;
 
             return New;
         }
@@ -221,6 +229,7 @@ namespace Blueprint41.Query
             Assignments = assignments;
             SetAdd = add;
             SetFunctionalId = setFunctionalId;
+            Last = true;
 
             return New;
         }
@@ -393,7 +402,7 @@ namespace Blueprint41.Query
             var state = new CompileState(PersistenceProvider.SupportedTypeMappings, PersistenceProvider.Translator);
             Query[] parts = GetParts();
             ForEach(parts, state.Text, "\r\n", item => item?.Compile(state));
-            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.AsResults is not null).AsResults ?? new AsResult[0]);
+            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Last).AsResults ?? new AsResult[0]);
 
             if (CompiledQuery.Errors.Count > 0)
                 throw new QueryException(CompiledQuery);
@@ -602,6 +611,7 @@ namespace Blueprint41.Query
         IModifyQuery Delete(bool detach, params Result[] delete);
         IReturnQuery Return(params Result[] results);
         IReturnQuery Return(bool distinct, params Result[] results);
+        ICompiled Compile();
     }
     public partial interface IMergeQuery : IModifyQuery
     {

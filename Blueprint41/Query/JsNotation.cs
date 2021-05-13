@@ -32,8 +32,10 @@ namespace Blueprint41.Query
     }
     public struct JsNotation<T> : IValue
     {
-        public Parameter Parameter;
-        public T Value;
+        public Parameter? Parameter;
+        public FieldResult? FieldResult;
+        public FunctionalId? FunctionalId;
+        public T? Value;
         public bool HasValue;
 
         object IValue.GetValue()
@@ -41,13 +43,10 @@ namespace Blueprint41.Query
             if (!HasValue)
                 throw new NotSupportedException("No value set.");
 
-            if (Parameter is not null)
-                return Parameter;
-            else
-                return Parameter.Constant(Value);
+            return Parameter ?? FieldResult ?? FunctionalId ?? (object)Parameter.Constant(Value);
         }
 
-        public static implicit operator JsNotation<T>(T value)
+        public static implicit operator JsNotation<T>(T? value)
         {
             return new JsNotation<T>() { Value = value, HasValue = true };
         }
@@ -57,13 +56,11 @@ namespace Blueprint41.Query
         }
         public static implicit operator JsNotation<T>(FieldResult field)
         {
-            throw new NotImplementedException();
-            return new JsNotation<T>() { Parameter = null!, HasValue = true };
+            return new JsNotation<T>() { FieldResult = field, HasValue = true };
         }
-        public static implicit operator JsNotation<T>(FunctionalId parameter)
+        public static implicit operator JsNotation<T>(FunctionalId functionalId)
         {
-            throw new NotImplementedException();
-            return new JsNotation<T>() { Parameter = null!, HasValue = true };
+            return new JsNotation<T>() { FunctionalId = functionalId, HasValue = true };
         }
     }
 }

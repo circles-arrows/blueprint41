@@ -107,6 +107,9 @@ namespace <#= Settings.FullQueryNamespace #>
 #>
         public <#= DALModel.Name #>Node Where(<#= string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
         {
+            if (InlineConditions is not null || InlineAssignments is not null)
+                throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
+
             Lazy<<#= DALModel.Name #>Alias> alias = new Lazy<<#= DALModel.Name #>Alias>(delegate()
             {
                 this.Alias(out var a);
@@ -123,6 +126,30 @@ namespace <#= Settings.FullQueryNamespace #>
 #>
 
             InlineConditions = conditions.ToArray();
+
+            return this;
+        }
+        public <#= DALModel.Name #>Node Assign(<#= string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
+        {
+            if (InlineConditions is not null || InlineAssignments is not null)
+                throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
+
+            Lazy<<#= DALModel.Name #>Alias> alias = new Lazy<<#= DALModel.Name #>Alias>(delegate()
+            {
+                this.Alias(out var a);
+                return a;
+            });
+            List<Assignment> assignments = new List<Assignment>();
+<#
+	foreach (var p in properties)
+	{
+#>
+            if (<#= p.Name #>.HasValue) assignments.Add(new Assignment(alias.Value.<#= p.Name #>, <#= p.Name #>));
+<#
+	}
+#>
+
+            InlineAssignments = assignments.ToArray();
 
             return this;
         }
