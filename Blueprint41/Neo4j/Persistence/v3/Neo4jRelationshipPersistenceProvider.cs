@@ -326,7 +326,7 @@ namespace Blueprint41.Neo4j.Persistence.v3
                     relationship.StartDate,
                     relationship.EndDate);
 
-                trans.Run(cypher, parameters);
+                RawResult updateResult = trans.Run(cypher, parameters);
 
                 // Remove Future
                 cypher = string.Format(
@@ -340,11 +340,11 @@ namespace Blueprint41.Neo4j.Persistence.v3
 
                 relationship.RaiseOnRelationDelete(trans);
 
-                RawResult result = trans.Run(cypher, parameters);
+                RawResult deleteResult = trans.Run(cypher, parameters);
 
                 relationship.RaiseOnRelationDeleted(trans);
 
-                if (result.Statistics().RelationshipsDeleted == 0)
+                if (deleteResult.Statistics().RelationshipsDeleted == 0 && updateResult.Statistics().PropertiesSet == 0)
                     throw new ApplicationException($"Unable to delete time dependent future relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
             }
             else

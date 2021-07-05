@@ -26,20 +26,15 @@ namespace Blueprint41.Neo4j.Persistence.v4
 
         internal override void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
         {
-            using (Transaction.Begin(true))
+            try
             {
-                try
+                using (Transaction.Begin(true))
                 {
                     Transaction.RunningTransaction.Run(FtiRemove);
                     Transaction.Commit();
                 }
-                catch (Exception ex)
-                {
-                    if (!ex.Message.StartsWith("Failed to invoke procedure `db.index.fulltext.drop`: Caused by: java.lang.IllegalArgumentException: No index found with the name"))
-                        throw;
-                    // there's no procedure to check for full text indexes
-                }
             }
+            catch { }
 
             using (Transaction.Begin(true))
             {

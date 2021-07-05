@@ -46,6 +46,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
         protected bool ReadWriteMode { get; set; }
 
+        protected override void Initialize()
+        {
+            isDisposed = false;
+        }
         protected override void OnCommit()
         {
         }

@@ -65,13 +65,14 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
         public neo4j.ITransaction? Transaction { get; set; }
         public neo4j.IStatementRunner? StatementRunner { get; set; }
 
-        private void Initialize()
+        protected override void Initialize()
         {
             neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
 
             Session = Provider.Driver.Session(accessMode);
             Transaction = Session.BeginTransaction();
             StatementRunner = Transaction;
+            base.Initialize();
         }
 
         protected override void OnCommit()

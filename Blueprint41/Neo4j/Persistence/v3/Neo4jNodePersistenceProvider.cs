@@ -7,6 +7,7 @@ using System.Text;
 
 using Blueprint41.Core;
 using Blueprint41.Query;
+using Blueprint41.Neo4j.Model;
 
 namespace Blueprint41.Neo4j.Persistence.v3
 {
@@ -132,18 +133,17 @@ namespace Blueprint41.Neo4j.Persistence.v3
 
             IDictionary<string, object?> node = item.GetData();
 
-            string create = string.Format("CREATE (inserted:{0} $node) Return inserted", labels);
+            string? create = null;
             if (entity.FunctionalId is not null)
             {
                 object? key = item.GetKey();
                 if (key is null)
                 {
-                    string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", entity.FunctionalId.Label);
-                    if (entity.FunctionalId.Format == IdFormat.Numeric)
-                        nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", entity.FunctionalId.Label);
-
-                    create = nextKey + "\r\n" + string.Format("CREATE (inserted:{0} $node) SET inserted.{1} = key Return inserted", labels, entity.Key.Name);
-
+                    create = string.Concat(
+                    		NextFunctionalIdQuery(entity.FunctionalId),
+                    		"\r\n",
+                    		string.Format("CREATE (inserted:{0} $node) SET inserted.{1} = key Return inserted", labels, entity.Key.Name)
+                    	);
                     node.Remove(entity.Key.Name);
                 }
                 else
@@ -151,6 +151,9 @@ namespace Blueprint41.Neo4j.Persistence.v3
                     entity.FunctionalId.SeenUid(key.ToString()!);
                 }
             }
+
+            if (create is null)
+                create = string.Format("CREATE (inserted:{0} $node) Return inserted", labels);
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("node", node);
@@ -218,12 +221,19 @@ namespace Blueprint41.Neo4j.Persistence.v3
             if (functionalId is null)
                 throw new ArgumentNullException("functionalId");
 
-            string nextKey = string.Format("CALL blueprint41.functionalid.next('{0}') YIELD value as key", functionalId.Label);
-            if (functionalId.Format == IdFormat.Numeric)
-                nextKey = string.Format("CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key", functionalId.Label);
-
-            var result = Transaction.RunningTransaction.Run(nextKey).First();
+            var result = Transaction.RunningTransaction.Run(NextFunctionalIdQuery(functionalId)).First();
             return result["key"]?.ToString()!;
+        }
+        private string NextFunctionalIdQuery(FunctionalId functionalId)
+        {
+            QueryTranslator t = PersistenceProviderFactory.Translator;
+
+            if (functionalId.Guid == Guid.Empty)
+                return t.CallUuidCreate;
+            if (functionalId.Format == IdFormat.Hash)
+                return string.Format(t.CallFunctionalIdNextHash, functionalId.Label);
+            else
+                return string.Format(t.CallFunctionalIdNextNumeric, functionalId.Label);
         }
 
         public override List<T> LoadWhere<T>(Entity entity, string conditions, Parameter[]? parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)

@@ -78,7 +78,7 @@ namespace Blueprint41.Core
 					return;
 
 			CollectionItem<TEntity> oldItem = InnerData.FirstOrDefault(item => item.Item.GetKey() == item.Item.GetKey());
-			ExecuteAction(AddAction(item, (oldItem is not null) ? oldItem.StartDate : moment));
+			ExecuteAction(AddAction(item, (oldItem is not null) ? oldItem.EndDate : moment));
 		}
 		internal void AddRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
 		{
@@ -99,7 +99,7 @@ namespace Blueprint41.Core
 						continue;
 
 				CollectionItem<TEntity> oldItem = InnerData.FirstOrDefault(item => item.Item.GetKey() == item.Item.GetKey());
-				actions.AddLast(AddAction(item, (oldItem is not null) ? oldItem.StartDate : moment));
+				actions.AddLast(AddAction(item, (oldItem is not null) ? oldItem.EndDate : moment));
 			}
 
 			ExecuteAction(actions);

@@ -58,6 +58,7 @@ namespace Blueprint41
         public abstract RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
         public abstract RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
 
+        protected abstract void Initialize();
         protected abstract void ApplyFunctionalId(FunctionalId functionalId);
         // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushPrivate()
@@ -276,36 +277,45 @@ namespace Blueprint41
 
         #region IDisposable Support
 
-        private bool isDisposed = false;
+        protected bool isDisposed = true;
 
         public void Dispose()
         {
             if (!isDisposed)
             {
-                if (InTransaction)
-                    Rollback();
-
-                if (transactions is not null)
+                try
                 {
-                    if (transactions.Count > 0)
-                        transactions.Pop();
-
-                    if (transactions.Count == 0)
-                        transactions = null;
+                    if (InTransaction)
+                        Rollback();
                 }
+                finally
+                {
+                    if (transactions is not null)
+                    {
+                        if (transactions.Count > 0)
+                            transactions.Pop();
 
-                transaction = null;
+                        if (transactions.Count == 0)
+                            transactions = null;
+                    }
 
-                GC.SuppressFinalize(this);
-                isDisposed = true;
+                    transaction = null;
+
+                    if (IsDebug.Value)
+                        GC.SuppressFinalize(this);
+
+                    isDisposed = true;
+                }
             }
         }
 
         ~Transaction()
         {
-            if (!isDisposed)
+            if (IsDebug.Value && !isDisposed)
                 throw new InvalidOperationException("The transaction should be used with the using command: using (Transaction.Begin()) { ... Transaction.Commit(); }");
         }
+        private readonly Lazy<bool> IsDebug = new Lazy<bool>(() => System.Diagnostics.Debugger.IsAttached, true);
+
 
         #endregion
 

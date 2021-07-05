@@ -14,7 +14,7 @@ namespace Blueprint41
             Prefix = prefix;
             Format = format;
             StartFrom = startFrom < 0 ? 0 : startFrom;
-            Guid = parent.GenerateGuid(label);
+            Guid = parent?.GenerateGuid(label) ?? Guid.Empty;
         }
 
         #region Properties
@@ -65,6 +65,7 @@ namespace Blueprint41
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.NextFunctionID(this);
         }
+
         #endregion
     }
 }

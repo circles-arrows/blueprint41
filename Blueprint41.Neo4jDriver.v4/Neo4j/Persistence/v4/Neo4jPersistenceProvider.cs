@@ -14,6 +14,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
     public partial class Neo4jPersistenceProvider : Void.Neo4jPersistenceProvider
     {
+        private const int MAX_CONNECTION_POOL_SIZE = 400;
         private const int DEFAULT_READWRITESIZE = 65536;
         private const int DEFAULT_READWRITESIZE_MAX = 655360;
         private IDriver? driver = null;
@@ -31,6 +32,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                                 o =>
                                 {
                                     o.WithFetchSize(Config.Infinite);
+                                    o.WithMaxConnectionPoolSize(MAX_CONNECTION_POOL_SIZE);
                                     o.WithDefaultReadBufferSize(DEFAULT_READWRITESIZE);
                                     o.WithDefaultWriteBufferSize(DEFAULT_READWRITESIZE);
                                     o.WithMaxReadBufferSize(DEFAULT_READWRITESIZE_MAX);

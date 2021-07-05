@@ -18,8 +18,9 @@ namespace Blueprint41.Neo4j.Persistence.v3
 
         internal override NodePersistenceProvider GetNodePersistenceProvider() => new Neo4jNodePersistenceProvider(PersistenceProvider);
         internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider() => new Neo4jRelationshipPersistenceProvider(PersistenceProvider);
-        internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v4();
+
         internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new SchemaInfo(datastoreModel);
+        internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v4();
 
         #endregion
     }

@@ -9,7 +9,10 @@ namespace Blueprint41
 {
     public class FunctionalIdCollection : Core.CollectionBase<FunctionalId, DatastoreModel>
     {
-        internal FunctionalIdCollection(DatastoreModel parent) : base(parent) { }
+        internal FunctionalIdCollection(DatastoreModel parent) : base(parent)
+        {
+            UUID = new FunctionalId(null!, "Guid", null!, 0, 0);
+        }
 
         private FunctionalId? m_Default = null;
         public FunctionalId? Default
@@ -25,6 +28,8 @@ namespace Blueprint41
                 m_Default = value;
             }
         }
+
+        public FunctionalId UUID { get; private set; }
 
         public FunctionalId New(Entity entity, string prefix, IdFormat format = IdFormat.Hash, int startFrom = 0)
         {

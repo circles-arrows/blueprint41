@@ -67,7 +67,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         public neo4j.IAsyncTransaction? Transaction { get; set; }
         public neo4j.IAsyncQueryRunner? StatementRunner { get; set; }
 
-        private void Initialize()
+        protected override void Initialize()
         {
             neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
 
@@ -82,6 +82,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 
             Transaction = Session.BeginTransactionAsync().GetTaskResult();
             StatementRunner = Transaction;
+            base.Initialize();
         }
 
         protected override void OnCommit()

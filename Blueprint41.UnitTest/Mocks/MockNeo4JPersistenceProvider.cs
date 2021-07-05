@@ -55,5 +55,9 @@ namespace Blueprint41.UnitTest.Mocks
         {
 
         }
+
+        protected override void Initialize()
+        {
+        }
     }
 }

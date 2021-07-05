@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Blueprint41.Query
 {
     public static class Functions
     {
         public static Parameter NULL { get { return null!; } }
+        public static StringResult NewGuid()
+        {
+            return new StringResult(t => t.FnUuidCreate, null, typeof(string));
+        }
         public static FloatResult Pi()
         {
             return new FloatResult(t => t.FnPi, null, typeof(Double));
@@ -54,6 +58,17 @@ namespace Blueprint41.Query
         public static NumericListResult Range(NumericResult start, NumericResult end, NumericResult step)
         {
             return new NumericListResult(t => t.FnRange, new object[] { start, end, step }, typeof(int));
+        }
+        public static StringResult NodeType(AliasResult alias)
+        {
+            if (alias is null)
+                throw new ArgumentNullException(nameof(alias));
+
+            if (alias.Node is null)
+                throw new ArgumentException("The alias is not bound to an Entity.");
+
+            Parameter concreteLabels = Parameter.Constant(alias.Node.Entity.GetConcreteClasses().Select(y => y.Label.Name).Distinct().ToList());
+            return new StringResult(alias, t => "HEAD(apoc.coll.intersection(LABELS({base}), {0}))", new object[] { concreteLabels }, typeof(string));
         }
 
         public static T CaseWhen<T>(QueryCondition condition, Parameter @then, Parameter @else)

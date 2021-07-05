@@ -166,10 +166,10 @@ namespace Blueprint41.Core
         public void Remove(IEnumerable<TKey> keys) => Write(dict => keys.ForEach(key => dict.Remove(key)));
         public void Clear() => Write(dict => dict.Clear());
 
-        public ICollection<TKey> Keys => Read(dict => dict.Keys);
-        public ICollection<TValue> Values => Read(dict => dict.Values);
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Read(dict => dict.GetEnumerator());
-        IEnumerator IEnumerable.GetEnumerator() => Read(dict => dict.GetEnumerator());
+        public ICollection<TKey> Keys => Read(dict => dict.Keys.ToList());
+        public ICollection<TValue> Values => Read(dict => dict.Values.ToList());
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Read(dict => dict.ToList().GetEnumerator());
+        IEnumerator IEnumerable.GetEnumerator() => Read(dict => dict.ToList().GetEnumerator());
 
         public bool TryGetValue(TKey key, out TValue value)
         {
@@ -182,6 +182,22 @@ namespace Blueprint41.Core
             });
 
             return retval;
+        }
+        public bool TryAdd(TKey key, TValue value)
+        {
+            bool added = false;
+
+            ReadOptionalWrite(delegate (IDictionary<TKey, TValue> dictRead, out bool executeWrite)
+            {
+                executeWrite = !dictRead.ContainsKey(key);
+
+            }, delegate (IDictionary<TKey, TValue> dictWrite)
+            {
+                dictWrite.Add(key, value);
+                added = true;
+            });
+
+            return added;
         }
         public TValue TryGetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
         {

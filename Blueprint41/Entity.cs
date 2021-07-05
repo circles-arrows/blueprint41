@@ -586,8 +586,6 @@ namespace Blueprint41
             if (!Key.SystemReturnType!.IsAssignableFrom(key.GetType()))
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
 
-            key = PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(Key.SystemReturnType!, key) ?? key;
-
             if (Parent.IsDataMigration)
                 return DynamicEntity.Load(this, key);
 
@@ -609,8 +607,6 @@ namespace Blueprint41
 
             if (!Key.SystemReturnType!.IsAssignableFrom(key.GetType()))
                 throw new InvalidCastException(string.Format("The key for entity '{0}' is of type '{1}', but the supplied key is of type '{2}'.", Name, Key.SystemReturnType.Name, key.GetType().Name));
-
-            key = PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(Key.SystemReturnType!, key) ?? key;
 
             if (Parent.IsDataMigration)
                 DynamicEntity.Delete(this, key);

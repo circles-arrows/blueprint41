@@ -250,6 +250,26 @@ namespace System
         {
             return self.Cast<object?>().Where(item => !(item is null))!;
         }
+
+        //public static T GetTaskResult<T>(this Task<T> self) => self.GetAwaiter().GetResult();
+        public static T GetTaskResult<T>(this Task<T> self) => AsyncHelper.RunSync(() => self);
+
+        public static Task Continue(this Task self, Action callback)
+        {
+            return self.ContinueWith(task => callback.Invoke());
+        }
+        public static Task<TReturn> Continue<TReturn>(this Task self, Func<TReturn> callback)
+        {
+            return self.ContinueWith(task => callback.Invoke());
+        }
+        public static Task Continue<T>(this Task<T> self, Action<T> callback)
+        {
+            return self.ContinueWith(task => callback.Invoke(task.GetAwaiter().GetResult()));
+        }
+        public static Task<TReturn> Continue<T, TReturn>(this Task<T> self, Func<T, TReturn> callback)
+        {
+            return self.ContinueWith(task => callback.Invoke(task.GetAwaiter().GetResult()));
+        }
     }
 }
 namespace Blueprint41.Core

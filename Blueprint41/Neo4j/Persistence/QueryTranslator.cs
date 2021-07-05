@@ -121,10 +121,12 @@ namespace Blueprint41.Neo4j.Model
             if (!HasBlueprint41FunctionalidFnNext.Value || !HasBlueprint41FunctionalidFnNextNumeric.Value)
                 throw new NotSupportedException("Setting functional-id's on (batch) queries is not supported if the Blueprint41 plug-in is not installed or a lower version than 'blueprint41-4.0.2.jar'.");
 
+            if (functionalId.Guid == Guid.Empty)
+                state.Text.Append(FnUuidCreate);
             if (functionalId.Format == IdFormat.Hash)
-                state.Text.Append($"blueprint41.functionalid.fnNext('{functionalId.Label}')");
+                state.Text.AppendFormat(FnFunctionalIdNextHash, functionalId.Label);
             else
-                state.Text.Append($"blueprint41.functionalid.fnNextNumeric('{functionalId.Label}')");
+                state.Text.AppendFormat(FnFunctionalIdNextNumeric, functionalId.Label);
         }
         internal virtual void Compile(RelationFieldResult field, CompileState state)
         {
@@ -514,95 +516,101 @@ namespace Blueprint41.Neo4j.Model
 
         #region Compile Functions
 
-        public virtual string FnParam1                 => "{0}";
-        public virtual string FnAsIs                   => "{base}";
-        public virtual string FnToBoolean              => "toBoolean({base})";
-        public virtual string FnToInteger              => "toInteger({base})";
-        public virtual string FnToFloat                => "toFloat({base})";
-        public virtual string FnToString               => "toString({base})";
-        public virtual string FnExists                 => "exists({base})";
-        public virtual string FnNot                    => "NOT ({base})";
-        public virtual string FnCollect                => "collect({base})";
-        public virtual string FnCollectDistinct        => "collect(distinct {base})";
-        public virtual string FnCoalesce               => "coalesce({base}, {0})";
-        public virtual string FnToUpper                => "upper({base})";
-        public virtual string FnToLower                => "lower({base})";
-        public virtual string FnReverse                => "reverse({base})";
-        public virtual string FnTrim                   => "trim({base})";
-        public virtual string FnLeftTrim               => "ltrim({base})";
-        public virtual string FnRightTrim              => "rtrim({base})";
-        public virtual string FnCount                  => "count({base})";
-        public virtual string FnCountDistinct          => "count(DISTINCT {base})";
-        public virtual string FnSize                   => "size({base})";
-        public virtual string FnLength                 => "length({base})";
-        public virtual string FnSplit                  => "split({base}, {0})";
-        public virtual string FnLeft                   => "left({base}, {0})";
-        public virtual string FnRight                  => "right({base}, {0})";
-        public virtual string FnSubStringWOutLen       => "substring({base}, {0})";
-        public virtual string FnSubString              => "substring({base}, {0}, {1})";
-        public virtual string FnReplace                => "replace({base}, {0}, {1})";
-        public virtual string FnMin                    => "min({base})";
-        public virtual string FnMax                    => "max({base})";
-        public virtual string FnProperties             => "properties({0})";
-        public virtual string FnLabels                 => "LABELS({0})";
-        public virtual string FnSign                   => "sign({base})";
-        public virtual string FnAbs                    => "abs({base})";
-        public virtual string FnSum                    => "sum({base})";
-        public virtual string FnAvg                    => "avg({base})";
-        public virtual string FnPercentileDisc         => "percentileDisc({base}, {0})";
-        public virtual string FnPercentileCont         => "percentileCont({base}, {0})";
-        public virtual string FnStDev                  => "stdev({base})";
-        public virtual string FnStDevP                 => "stdevp({base})";
-        public virtual string FnRound                  => "round({base})";
-        public virtual string FnSqrt                   => "sqrt({base})";
-        public virtual string FnSin                    => "sin({base})";
-        public virtual string FnASin                   => "asin({base})";
-        public virtual string FnCos                    => "cos({base})";
-        public virtual string FnACos                   => "acos({base})";
-        public virtual string FnTan                    => "tan({base})";
-        public virtual string FnATan                   => "atan({base})";
-        public virtual string FnATan2                  => "atan2({base})";
-        public virtual string FnCot                    => "cot({base})";
-        public virtual string FnHaversin               => "haversin({base})";
-        public virtual string FnDegrees                => "degrees({base})";
-        public virtual string FnRadians                => "radians({base})";
-        public virtual string FnLog10                  => "log10({base})";
-        public virtual string FnLog                    => "log({base})";
-        public virtual string FnExp                    => "exp({base})";
-        public virtual string FnPi                     => "pi()";
-        public virtual string FnRand                   => "rand()";
-        public virtual string FnRange                  => "range({0}, {1}, {2})";
-        public virtual string FnListGetItem            => "{base}[{0}]";
-        public virtual string FnListHead               => "HEAD({base})";
-        public virtual string FnListLast               => "LAST({base})";
-        public virtual string FnListSort               => "apoc.coll.sort({base})";
-        public virtual string FnListSortNode           => "apoc.coll.sortNodes({base}, \"{0}\")";
-        public virtual string FnListSize               => "size({base})";
-        public virtual string FnPairs                  => "apoc.coll.pairs({base})";
-        public virtual string FnPairsMin               => "apoc.coll.pairsMin({base})";
-        public virtual string FnListUnion              => "apoc.coll.union({base}, {0})";
-        public virtual string FnListUnionAll           => "apoc.coll.unionAll({base}, {0})";
-        public virtual string FnListAll                => "all(item IN {base} WHERE {0})";
-        public virtual string FnListAny                => "any(item IN {base} WHERE {0})";
-        public virtual string FnListNone               => "none(item IN {base} WHERE {0})";
-        public virtual string FnListSingle             => "single(item IN {base} WHERE {0})";
-        public virtual string FnListExtract            => "extract(item in {base} | {0})";
-        public virtual string FnListReduce             => "reduce(value = {0}, item in {base} | {1})";
-        public virtual string FnListSelect             => "[item in {base} | {0}]";
-        public virtual string FnListSelectWhere        => "[item in {base} WHERE {0}]";
-        public virtual string FnListSelectValueWhere   => "[item in {base} WHERE {0} | {1}]";
-        public virtual string FnGetField               => "{0}[{1}]";
-        public virtual string FnGetFieldWithCoalesce   => "{0}[COALESCE({1}, '')]";
-        public virtual string FnConvertToBoolean       => "CASE WHEN {0} IS NULL THEN NULL WHEN {0} THEN 1 ELSE 0 END";
-        public virtual string FnConvertMinOrMaxToNull  => "CASE WHEN {base} = {0} THEN NULL ELSE {base} END";
-        public virtual string FnConvertMinAndMaxToNull => "CASE WHEN {base} = {0} OR {base} = {1} THEN NULL ELSE {base} END";
-        public virtual string FnCaseWhen               => "CASE WHEN {0} THEN {1} ELSE {2} END";
-        public virtual string FnAdd                    => "({base} + {0})";
-        public virtual string FnSubtract               => "({base} - {0})";
-        public virtual string FnMultiply               => "({base} * {0})";
-        public virtual string FnDivide                 => "({base} / {0})";
-        public virtual string FnModulo                 => "({base} % {0})";
-        public virtual string FnPower                  => "({base} ^ {0})";
+        public virtual string FnParam1                    => "{0}";
+        public virtual string FnAsIs                      => "{base}";
+        public virtual string FnToBoolean                 => "toBoolean({base})";
+        public virtual string FnToInteger                 => "toInteger({base})";
+        public virtual string FnToFloat                   => "toFloat({base})";
+        public virtual string FnToString                  => "toString({base})";
+        public virtual string FnExists                    => "exists({base})";
+        public virtual string FnNot                       => "NOT ({base})";
+        public virtual string FnCollect                   => "collect({base})";
+        public virtual string FnCollectDistinct           => "collect(distinct {base})";
+        public virtual string FnCoalesce                  => "coalesce({base}, {0})";
+        public virtual string FnToUpper                   => "upper({base})";
+        public virtual string FnToLower                   => "lower({base})";
+        public virtual string FnReverse                   => "reverse({base})";
+        public virtual string FnTrim                      => "trim({base})";
+        public virtual string FnLeftTrim                  => "ltrim({base})";
+        public virtual string FnRightTrim                 => "rtrim({base})";
+        public virtual string FnCount                     => "count({base})";
+        public virtual string FnCountDistinct             => "count(DISTINCT {base})";
+        public virtual string FnSize                      => "size({base})";
+        public virtual string FnListSize                  => "size({base})";
+        public virtual string FnLength                    => "length({base})";
+        public virtual string FnSplit                     => "split({base}, {0})";
+        public virtual string FnLeft                      => "left({base}, {0})";
+        public virtual string FnRight                     => "right({base}, {0})";
+        public virtual string FnSubStringWOutLen          => "substring({base}, {0})";
+        public virtual string FnSubString                 => "substring({base}, {0}, {1})";
+        public virtual string FnReplace                   => "replace({base}, {0}, {1})";
+        public virtual string FnMin                       => "min({base})";
+        public virtual string FnMax                       => "max({base})";
+        public virtual string FnProperties                => "properties({0})";
+        public virtual string FnLabels                    => "LABELS({0})";
+        public virtual string FnSign                      => "sign({base})";
+        public virtual string FnAbs                       => "abs({base})";
+        public virtual string FnSum                       => "sum({base})";
+        public virtual string FnAvg                       => "avg({base})";
+        public virtual string FnPercentileDisc            => "percentileDisc({base}, {0})";
+        public virtual string FnPercentileCont            => "percentileCont({base}, {0})";
+        public virtual string FnStDev                     => "stdev({base})";
+        public virtual string FnStDevP                    => "stdevp({base})";
+        public virtual string FnRound                     => "round({base})";
+        public virtual string FnSqrt                      => "sqrt({base})";
+        public virtual string FnSin                       => "sin({base})";
+        public virtual string FnASin                      => "asin({base})";
+        public virtual string FnCos                       => "cos({base})";
+        public virtual string FnACos                      => "acos({base})";
+        public virtual string FnTan                       => "tan({base})";
+        public virtual string FnATan                      => "atan({base})";
+        public virtual string FnATan2                     => "atan2({base})";
+        public virtual string FnCot                       => "cot({base})";
+        public virtual string FnHaversin                  => "haversin({base})";
+        public virtual string FnDegrees                   => "degrees({base})";
+        public virtual string FnRadians                   => "radians({base})";
+        public virtual string FnLog10                     => "log10({base})";
+        public virtual string FnLog                       => "log({base})";
+        public virtual string FnExp                       => "exp({base})";
+        public virtual string FnPi                        => "pi()";
+        public virtual string FnRand                      => "rand()";
+        public virtual string FnRange                     => "range({0}, {1}, {2})";
+        public virtual string FnListGetItem               => "{base}[{0}]";
+        public virtual string FnListHead                  => "HEAD({base})";
+        public virtual string FnListLast                  => "LAST({base})";
+        public virtual string FnUuidCreate                => "apoc.create.uuid()";
+        public virtual string FnFunctionalIdNextHash      => "blueprint41.functionalid.fnNext('{0}')";
+        public virtual string FnFunctionalIdNextNumeric   => "blueprint41.functionalid.fnNextNumeric('{0}')";
+        public virtual string CallUuidCreate              => "WITH apoc.create.uuid() as key";
+        public virtual string CallFunctionalIdNextHash    => "CALL blueprint41.functionalid.next('{0}') YIELD value as key";
+        public virtual string CallFunctionalIdNextNumeric => "CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key";
+        public virtual string FnListSort                  => "apoc.coll.sort({base})";
+        public virtual string FnListSortNode              => "apoc.coll.sortNodes({base}, \"{0}\")";
+        public virtual string FnPairs                     => "apoc.coll.pairs({base})";
+        public virtual string FnPairsMin                  => "apoc.coll.pairsMin({base})";
+        public virtual string FnListUnion                 => "apoc.coll.union({base}, {0})";
+        public virtual string FnListUnionAll              => "apoc.coll.unionAll({base}, {0})";
+        public virtual string FnListAll                   => "all(item IN {base} WHERE {0})";
+        public virtual string FnListAny                   => "any(item IN {base} WHERE {0})";
+        public virtual string FnListNone                  => "none(item IN {base} WHERE {0})";
+        public virtual string FnListSingle                => "single(item IN {base} WHERE {0})";
+        public virtual string FnListExtract               => "extract(item in {base} | {0})";
+        public virtual string FnListReduce                => "reduce(value = {0}, item in {base} | {1})";
+        public virtual string FnListSelect                => "[item in {base} | {0}]";
+        public virtual string FnListSelectWhere           => "[item in {base} WHERE {0}]";
+        public virtual string FnListSelectValueWhere      => "[item in {base} WHERE {0} | {1}]";
+        public virtual string FnGetField                  => "{0}[{1}]";
+        public virtual string FnGetFieldWithCoalesce      => "{0}[COALESCE({1}, '')]";
+        public virtual string FnConvertToBoolean          => "CASE WHEN {0} IS NULL THEN NULL WHEN {0} THEN 1 ELSE 0 END";
+        public virtual string FnConvertMinOrMaxToNull     => "CASE WHEN {base} = {0} THEN NULL ELSE {base} END";
+        public virtual string FnConvertMinAndMaxToNull    => "CASE WHEN {base} = {0} OR {base} = {1} THEN NULL ELSE {base} END";
+        public virtual string FnCaseWhen                  => "CASE WHEN {0} THEN {1} ELSE {2} END";
+        public virtual string FnAdd                       => "({base} + {0})";
+        public virtual string FnSubtract                  => "({base} - {0})";
+        public virtual string FnMultiply                  => "({base} * {0})";
+        public virtual string FnDivide                    => "({base} / {0})";
+        public virtual string FnModulo                    => "({base} % {0})";
+        public virtual string FnPower                     => "({base} ^ {0})";
         public virtual string FnCaseWhenMultiple(int count)
         {
             StringBuilder sb = new StringBuilder();
@@ -697,11 +705,15 @@ namespace Blueprint41.Neo4j.Model
 
         internal virtual void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
         {
-            using (Transaction.Begin(true))
+            try
             {
-                Transaction.RunningTransaction.Run(FtiRemove);
-                Transaction.Commit();
+                using (Transaction.Begin(true))
+                {
+                    Transaction.RunningTransaction.Run(FtiRemove);
+                    Transaction.Commit();
+                }
             }
+            catch { }
 
             using (Transaction.Begin(true))
             {
