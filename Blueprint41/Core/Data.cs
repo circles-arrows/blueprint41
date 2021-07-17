@@ -130,7 +130,7 @@ namespace Blueprint41.Core
             return null;
         }
 
-        internal PersistenceState PersistenceState = PersistenceState.New;
+        public PersistenceState PersistenceState = PersistenceState.New;
 
         protected class PropertyDetail
         {
