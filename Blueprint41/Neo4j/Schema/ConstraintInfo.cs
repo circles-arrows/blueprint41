@@ -68,18 +68,17 @@ namespace Blueprint41.Neo4j.Schema
         }
 
         private static readonly Regex unique_old = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *\1\.(?<field>[a-z0-9_]+) *is *unique *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        private static readonly Regex notnull_old = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *exists *\( *\1\.(?<field>[a-z0-9_]+) *\) *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
-     
         private static readonly Regex unique = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *\( *\1\.(?<field>[a-z0-9_]+) *\) *is *unique *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        private static readonly Regex notnull_old = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *exists *\( *\1\.(?<field>[a-z0-9_]+) *\) *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
         private static readonly Regex notnull = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *\( *\1\.(?<field>[a-z0-9_]+) *\) *is *not *null *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
 
         // description
         // -----------
-        //  CONSTRAINT ON ( genre:Genre ) ASSERT (genre.Uid) IS NOT NULL
 
-        // CONSTRAINT ON ( account:Account ) ASSERT account.Uid IS UNIQUE
-        // CONSTRAINT ON (account:Account ) ASSERT exists(account.Uid)
+        // old: CONSTRAINT ON ( account:Account ) ASSERT account.Uid IS UNIQUE
+        // new: CONSTRAINT ON ( account:Account ) ASSERT (account.Uid) IS UNIQUE
+        // old: CONSTRAINT ON (account:Account ) ASSERT exists(account.Uid)
+        // new: CONSTRAINT ON ( account:Account ) ASSERT (account.Uid) IS NOT NULL
 
         /*
             CREATE CONSTRAINT ON (n:Person) ASSERT n.name IS UNIQUE;

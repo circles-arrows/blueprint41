@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     internal partial class RenameProperty : RenamePropertyBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 7 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
 
 
     Debug.WriteLine("	executing {0} -> Rename property from {1} to {2}", this.GetType().Name, From.Name, To);
@@ -41,35 +41,35 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 11 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ConcreteParent.Label.Name));
             
             #line default
             #line hidden
             this.Write(") WHERE EXISTS(node.");
             
-            #line 11 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
             #line hidden
             this.Write(") \r\nWITH node LIMIT 10000 \r\nSET node.");
             
-            #line 13 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To));
             
             #line default
             #line hidden
             this.Write(" = node.");
             
-            #line 13 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
             #line hidden
             this.Write("\r\nSET node.");
             
-            #line 14 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
