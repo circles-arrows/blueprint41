@@ -203,7 +203,8 @@ namespace Blueprint41
                     else
                         throw e;
                 }
-            }while (repeat);
+            }
+            while (repeat);
 
             trans.Invalidate();
             trans.InTransaction = false;

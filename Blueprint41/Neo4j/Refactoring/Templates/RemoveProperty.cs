@@ -53,14 +53,13 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write(") \r\nWITH node LIMIT 10000 \r\nSET node.");
+            this.Write(") WITH node LIMIT 10000 REMOVE node.");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default
             #line hidden
-            this.Write(" = NULL\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

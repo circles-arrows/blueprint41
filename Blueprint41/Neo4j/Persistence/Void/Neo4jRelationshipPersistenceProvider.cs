@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Text;
 using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Neo4j.Refactoring;
@@ -12,12 +12,26 @@ namespace Blueprint41.Neo4j.Persistence.Void
     {
         public Neo4jRelationshipPersistenceProvider(PersistenceProvider factory) : base(factory) { }
 
-        private void Checks(Relationship relationship, OGM inItem, OGM outItem)
+        private void Checks(Relationship relationship, OGM? inItem, OGM? outItem)
         {
-            if (inItem.GetKey() is null || outItem.GetKey() is null)
+            if (inItem is null && outItem is null)
+                throw new NotImplementedException("At least one entity should exist when clearing relationships.");
+
+            if (inItem is not null)
+                Checks(relationship.InEntity, inItem);
+
+            if (outItem is not null)
+                Checks(relationship.OutEntity, outItem);
+        }
+        private void Checks(Entity entity, OGM item)
+        {
+            //if (!item.GetEntity().IsSelfOrSubclassOf(entity))
+            //    throw new NotImplementedException($"{item.GetEntity().Name} should inherit {entity.Name}.");
+
+            if (item.GetKey() is null)
                 throw new NotImplementedException("Entity should have key to participate in relationships.");
 
-            if (inItem.PersistenceState == PersistenceState.New || outItem.PersistenceState == PersistenceState.New)
+            if (item.PersistenceState == PersistenceState.New)
                 throw new NotImplementedException("New entities should be saved first before it can participate in relationships.");
         }
 
@@ -268,6 +282,15 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             Checks(relationship, inItem, outItem);
 
+            if (timedependent)
+                Add(trans, relationship, inItem, outItem, moment ?? Conversion.MinDateTime);
+            else
+                Add(trans, relationship, inItem, outItem);
+
+            relationship.RaiseOnRelationCreated(trans);
+        }
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem)
+        {
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
                 inItem.GetEntity().Key.Name,
@@ -281,12 +304,6 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             Dictionary<string, object> node = new Dictionary<string, object>();
             parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
-            if (timedependent)
-            {
-                DateTime startDate = moment.HasValue ? moment.Value : DateTime.MinValue;
-                node.Add(relationship.StartDate, Conversion<DateTime, long>.Convert(startDate));
-                node.Add(relationship.EndDate, Conversion<DateTime, long>.Convert(DateTime.MaxValue));
-            }
 
             parameters.Add("node", node);
 
@@ -294,138 +311,141 @@ namespace Blueprint41.Neo4j.Persistence.Void
             relationship.RaiseOnRelationCreate(trans);
 
             RawResult result = trans.Run(query, parameters);
-
-            relationship.RaiseOnRelationCreated(trans);
-
-            //if (result.Summary.Counters.RelationshipsCreated == 0)
-            //    throw new ApplicationException($"Unable to create relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
         }
-        public override void Remove(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, DateTime moment) 
+        {
+            // Expected behavior time dependent relationship:
+            // ----------------------------------------------
+            //
+            // Match existing relation where in & out item
+            //      IsAfter -> Remove relation
+            //      OverlapsOrIsAttached -> Set relation.EndDate to Conversion.MaxEndDate
+            //
+            // if (result.Statistics().PropertiesSet == 0)  <--- this needs to be executed in the same statement
+            //      Add relation
+
+            Entity inEntity = inItem.GetEntity();
+            Entity outEntity = outItem.GetEntity();
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }})-[rel:{relationship.Neo4JRelationshipType}]->(out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
+            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) >= $moment");
+            sb.AppendLine("DELETE rel");
+            string delete = sb.ToString();
+
+            sb.Clear();
+            sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }})-[rel:{relationship.Neo4JRelationshipType}]->(out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
+            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment");
+            sb.AppendLine("SET rel.EndDate = $max");
+            string update = sb.ToString();
+
+            sb.Clear();
+            sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}), (out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
+            sb.AppendLine($"OPTIONAL MATCH (in)-[rel:{relationship.Neo4JRelationshipType}]->(out)");
+            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment");
+            sb.AppendLine("WITH in, out, rel");
+            sb.AppendLine("WHERE rel is null");
+            sb.AppendLine($"CREATE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out) SET outr.CreationDate = $create SET outr += $node");
+            string create = sb.ToString();
+
+            Dictionary<string, object> node = new Dictionary<string, object>();
+            node.Add(relationship.StartDate, Conversion<DateTime, long>.Convert(moment));
+            node.Add(relationship.EndDate, Conversion.MaxDateTimeInMS);
+
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
+            parameters.Add("inKey", inItem.GetKey());
+            parameters.Add("outKey", outItem.GetKey());
+            parameters.Add("create", Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
+            parameters.Add("min", Conversion.MinDateTimeInMS);
+            parameters.Add("max", Conversion.MaxDateTimeInMS);
+            parameters.Add("moment", Conversion<DateTime, long>.Convert(moment));
+            parameters.Add("node", node);
+
+            relationship.RaiseOnRelationCreate(trans);
+
+            RawResult deleteResult = trans.Run(delete, parameters);
+            RawResult updateResult = trans.Run(update, parameters);
+            RawResult createResult = trans.Run(create, parameters);
+
+            if (updateResult.Statistics().PropertiesSet > 0 && createResult.Statistics().RelationshipsCreated > 0)
+                throw new InvalidOperationException(); // TODO: Make the error better...
+        }
+
+        public override void Remove(Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment, bool timedependent)
         {
             Transaction trans = Transaction.RunningTransaction;
 
             Checks(relationship, inItem, outItem);
 
+            if (timedependent)
+                Remove(trans, relationship, inItem, outItem, moment ?? Conversion.MinDateTime);
+            else
+                Remove(trans, relationship, inItem, outItem);
+
+            relationship.RaiseOnRelationDeleted(trans);
+        }
+        protected virtual void Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem)
+        {
             string cypher;
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
-            parameters.Add("inKey", inItem.GetKey());
-            parameters.Add("outKey", outItem.GetKey());
+            if (inItem is not null)
+                parameters.Add("inKey", inItem!.GetKey());
+            if (outItem is not null) 
+                parameters.Add("outKey", outItem!.GetKey());
 
-            if (timedependent)
-            {
-                parameters.Add("moment", Conversion<DateTime, long>.Convert(moment ?? DateTime.MinValue));
+            Entity? inEntity = inItem?.GetEntity();
+            Entity? outEntity = outItem?.GetEntity();
 
-                // End Current
-                cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and (r.{6} > $moment OR r.{6} IS NULL) AND (r.{5} <= $moment OR r.{5} IS NULL) SET r.EndDate = $moment",
-                    inItem.GetEntity().Label.Name,
-                    relationship.Neo4JRelationshipType,
-                    outItem.GetEntity().Label.Name,
-                    inItem.GetEntity().Key.Name,
-                    outItem.GetEntity().Key.Name,
-                    relationship.StartDate,
-                    relationship.EndDate);
+            string inLabel = (inEntity is null) ? "in" : $"in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}";
+            string outLabel = (outEntity is null) ? "out" : $"out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }}";
 
-                trans.Run(cypher, parameters);
+            cypher = $"MATCH ({inLabel})-[r:{relationship.Neo4JRelationshipType}]->({outLabel}) DELETE r";
 
-                // Remove Future
-                cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey and r.{5} > $moment DELETE r",
-                    inItem.GetEntity().Label.Name,
-                    relationship.Neo4JRelationshipType,
-                    outItem.GetEntity().Label.Name,
-                    inItem.GetEntity().Key.Name,
-                    outItem.GetEntity().Key.Name,
-                    relationship.StartDate);
+            relationship.RaiseOnRelationDelete(trans);
 
-                relationship.RaiseOnRelationDelete(trans);
-
-                RawResult result = trans.Run(cypher, parameters);
-
-                relationship.RaiseOnRelationDeleted(trans);
-
-                if (result.Statistics().RelationshipsDeleted == 0)
-                    throw new ApplicationException($"Unable to delete time dependent future relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
-            }
-            else
-            {
-                cypher = string.Format(
-                    "MATCH (in:{0})-[r:{1}]->(out:{2}) WHERE in.{3} = $inKey and out.{4} = $outKey DELETE r",
-                    inItem.GetEntity().Label.Name,
-                    relationship.Neo4JRelationshipType,
-                    outItem.GetEntity().Label.Name,
-                    inItem.GetEntity().Key.Name,
-                    outItem.GetEntity().Key.Name);
-
-                relationship.RaiseOnRelationDelete(trans);
-
-                RawResult result = trans.Run(cypher, parameters);
-
-                relationship.RaiseOnRelationDeleted(trans);
-
-                if (result.Statistics().RelationshipsDeleted == 0)
-                    throw new ApplicationException($"Unable to delete relationship '{relationship.Neo4JRelationshipType}' between {inItem.GetEntity().Label.Name}({inItem.GetKey()}) and {outItem.GetEntity().Label.Name}({outItem.GetKey()})");
-            }
+            RawResult result = trans.Run(cypher, parameters);
         }
-        public override void RemoveAll(Relationship relationship, OGM item, DateTime? moment, bool timedependent)
+        protected virtual void Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem, DateTime moment)
         {
-            Transaction trans = Transaction.RunningTransaction;
+            // Expected behavior time dependent relationship:
+            // ----------------------------------------------
+            //
+            // Match existing relation where in & out item (omit the check for the item which is null, Remove will be used to execute RemoveAll)
+            //      IsAfter -> Remove relation
+            //      Overlaps -> Set relation.EndDate to "moment"
+
+            Entity? inEntity = inItem?.GetEntity();
+            Entity? outEntity = outItem?.GetEntity();
+
+            string inLabel = (inEntity is null) ? "in" : $"in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}";
+            string outLabel = (outEntity is null) ? "out" : $"out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }}";
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"MATCH ({inLabel})-[rel:{relationship.Neo4JRelationshipType}]->({outLabel})");
+            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) >= $moment");
+            sb.AppendLine("DELETE rel");
+            string delete = sb.ToString();
+
+            sb.Clear();
+            sb.AppendLine($"MATCH ({inLabel})-[rel:{relationship.Neo4JRelationshipType}]->({outLabel})");
+            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment");
+            sb.AppendLine("SET rel.EndDate = $moment");
+            string update = sb.ToString();
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
-            parameters.Add("key", item.GetKey());
+            if (inItem is not null)
+                parameters.Add("inKey", inItem!.GetKey());
+            if (outItem is not null)
+                parameters.Add("outKey", outItem!.GetKey());
 
-            DirectionEnum direction = relationship.ComputeDirection(item.GetEntity());
-            string match = (direction == DirectionEnum.Out) ? "MATCH (item:{0})<-[r:{1}]-(out)" : "MATCH (item:{0})-[r:{1}]->(out)";
-            Entity outEntity = (direction == DirectionEnum.Out) ? relationship.InEntity : relationship.OutEntity;
+            parameters.Add("min", Conversion.MinDateTimeInMS);
+            parameters.Add("max", Conversion.MaxDateTimeInMS);
+            parameters.Add("moment", Conversion<DateTime, long>.Convert(moment));
 
-            string condition = string.Join(" OR ", outEntity.GetDbNames("out"));
+            relationship.RaiseOnRelationCreate(trans);
 
-            if (timedependent)
-            {
-                parameters.Add("moment", Conversion<DateTime, long>.Convert(moment ?? DateTime.MinValue));
-
-                // End Current
-                string cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = $key and (r.{5} > $moment OR r.{5} IS NULL) AND (r.{4} <= $moment OR r.{4} IS NULL) SET r.EndDate = $moment",
-                    item.GetEntity().Label.Name,
-                    relationship.Neo4JRelationshipType,
-                    condition,
-                    item.GetEntity().Key.Name,
-                    relationship.StartDate,
-                    relationship.EndDate);
-
-                trans.Run(cypher, parameters);
-
-                // Remove Future
-                cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = $key and r.{4} > $moment DELETE r",
-                    item.GetEntity().Label.Name,
-                    relationship.Neo4JRelationshipType,
-                    condition,
-                    item.GetEntity().Key.Name,
-                    relationship.StartDate);
-
-                trans.Run(cypher, parameters);
-                //IResult result = trans.Run(cypher, parameters);
-                //if (result.Summary.Counters.RelationshipsDeleted == 0)
-                //    throw new ApplicationException($"Unable to delete all time dependent future relationships '{relationship.Neo4JRelationshipType}' related to {item.GetEntity().Label.Name}({item.GetKey()}).");
-
-            }
-            else
-            {
-                string cypher = string.Format(
-                    match + " WHERE ({2}) and item.{3} = $key DELETE r",
-                    item.GetEntity().Label.Name,
-                    relationship.Neo4JRelationshipType,
-                    condition,
-                    item.GetEntity().Key.Name);
-
-                trans.Run(cypher, parameters);
-
-                //IResult result = trans.Run(cypher, parameters);
-                //if (result.Summary.Counters.RelationshipsDeleted == 0)
-                //    throw new ApplicationException($"Unable to remove all relationships '{relationship.Neo4JRelationshipType}' related to {item.GetEntity().Label.Name}({item.GetKey()}).");
-            }
+            RawResult deleteResult = trans.Run(delete, parameters);
+            RawResult updateResult = trans.Run(update, parameters);
         }
 
         public override void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
@@ -509,13 +529,13 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        public override void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment)
+        public override void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate)
         {
             Transaction trans = Transaction.RunningTransaction;
 
             Checks(relationship, inItem, outItem);
 
-            if (relationship.IsTimeDependent == false)
+            if (!relationship.IsTimeDependent)
                 throw new NotSupportedException("EndCurrentRelationship method is only supported for time dependent relationship.");
 
             string match = string.Format(
@@ -530,7 +550,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
-            parameters.Add("moment", Conversion<DateTime, long>.Convert(moment ?? DateTime.MinValue));
+            parameters.Add("moment", Conversion<DateTime, long>.Convert(startDate ?? DateTime.MinValue));
             parameters.Add("minDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
 
             relationship.RaiseOnRelationDelete(trans);

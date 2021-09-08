@@ -578,8 +578,8 @@ if (!DALModel.IsAbstract)
 				if (attr.Relationship.IsTimeDependent)
 				{
 #>
-		public <#= attr.OuterReturnType #> <#= attr.Name #> { get { return Get<#= attr.Name #>(); } set { Set<#= attr.Name #>(value); } }
-		public <#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime? moment = null)
+		public <#= attr.OuterReturnType #> <#= attr.Name #> { get { return Get<#= attr.Name #>(Transaction.RunningTransaction.TransactionDate); } set { Set<#= attr.Name #>(value, Transaction.RunningTransaction.TransactionDate); } }
+		public <#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime moment)
 		{
 			return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItem(moment);
 		}
@@ -587,9 +587,9 @@ if (!DALModel.IsAbstract)
 		{
 			return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(from, till);
 		}
-		public void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment = null)
+		public void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment)
 		{
-			if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItem(moment), value, moment))
+			if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), value, moment))
 				((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(value, moment);
 		}
 <#

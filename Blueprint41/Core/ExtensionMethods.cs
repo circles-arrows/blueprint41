@@ -202,6 +202,11 @@ namespace System
 {
     public static partial class ExtensionMethods
     {
+        public static bool IsMin(this DateTime self) => (Conversion.MinDateTime - self).TotalDays >= -1;
+        public static bool IsMin(this DateTime? self) => (self.HasValue) ? IsMin(self) : true;
+        public static bool IsMax(this DateTime self) => (Conversion.MaxDateTime - self).TotalDays <= 1;
+        public static bool IsMax(this DateTime? self) => (self.HasValue) ? IsMax(self) : true;
+
         public static string? ToJson<T>(this T self)
         {
             if (self is null)

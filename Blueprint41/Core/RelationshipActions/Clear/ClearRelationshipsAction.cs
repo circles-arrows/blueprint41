@@ -8,17 +8,22 @@ namespace Blueprint41.Core
 {
     internal class ClearRelationshipsAction : RelationshipAction
     {
-        internal ClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship? relationship, OGM? inItem, OGM? outItem)
-            : base(persistenceProvider, relationship, inItem!, outItem!){}
+        internal ClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, OGM item)
+            : base(persistenceProvider, null, item, item) { }
 
-        new public OGM? InItem => base.InItem;
-        new public OGM? OutItem => base.OutItem;
-
-        protected override bool ActsOnSpecificParent() { return false; }
-        
         protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.RemoveAll(relationship, (InItem ?? OutItem)!, null, false);
+            Entity entity = InItem!.GetEntity();
+            if (entity.IsSelfOrSubclassOf(relationship.InEntity))
+            {
+                if (relationship.OutProperty is null || relationship.OutProperty.Nullable || relationship.OutProperty.PropertyType == PropertyType.Collection)
+                    PersistenceProvider.Remove(relationship, InItem, (OGM?)null, null, false);
+            }
+            if (entity.IsSelfOrSubclassOf(relationship.OutEntity))
+            {
+                if (relationship.InProperty is null || relationship.InProperty.Nullable || relationship.InProperty.PropertyType == PropertyType.Collection)
+                    PersistenceProvider.Remove(relationship, (OGM?)null, OutItem, null, false);
+            }
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)

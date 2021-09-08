@@ -583,13 +583,13 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.ForceDelete;
-                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -615,13 +615,13 @@ namespace Blueprint41.Dynamic
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.Delete;
-                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:

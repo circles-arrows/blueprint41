@@ -12,7 +12,7 @@ namespace Blueprint41.Core
 {
     public abstract class EntityCollectionBase : IItteratable<CollectionItem>, IInternalListAccess
     {
-        public EntityCollectionBase(OGM parent, Property property)
+        protected EntityCollectionBase(OGM parent, Property property)
         {
             if (property.Relationship is null)
                 throw new NotSupportedException("The property is not a relationship property.");
@@ -129,14 +129,14 @@ namespace Blueprint41.Core
 
             return Parent;
         }
-        internal OGM ParentItem(RelationshipAction action)
+        internal OGM? ParentItem(RelationshipAction action)
         {
             if (ForeignProperty is null || ForeignProperty.Direction == DirectionEnum.Out)
                 return action.InItem;
 
             return action.OutItem;
         }
-        internal OGM ForeignItem(RelationshipAction action)
+        internal OGM? ForeignItem(RelationshipAction action)
         {
             if (ForeignProperty is not null && ForeignProperty.Direction == DirectionEnum.In)
                 return action.InItem;
@@ -144,7 +144,7 @@ namespace Blueprint41.Core
             return action.OutItem;
         }
 
-        internal abstract RelationshipAction RemoveAction(CollectionItem item, DateTime? moment);
+        internal abstract RelationshipAction RemoveAction(OGM item, DateTime? moment);
         internal abstract RelationshipAction AddAction(OGM item, DateTime? moment);
         internal abstract RelationshipAction ClearAction(DateTime? moment);
 
@@ -153,7 +153,6 @@ namespace Blueprint41.Core
         #region Persistence
 
         internal abstract CollectionItem NewCollectionItem(OGM parent, OGM item, DateTime? startDate, DateTime? endDate);
-
 
         private static readonly List<CollectionItem> empty = new List<CollectionItem>();
         protected virtual void LazyLoad()
@@ -210,8 +209,6 @@ namespace Blueprint41.Core
         {
             if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
                 DbTransaction?.Register(action);
-
-            action.ExecuteInMemory(this);
         }
         private protected void ExecuteAction(LinkedList<RelationshipAction> actions)
         {

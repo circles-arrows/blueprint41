@@ -77,7 +77,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                     c.WithDatabase(Provider.Database);
 
                 c.WithFetchSize(neo4j.Config.Infinite);
-                c.WithDefaultAccessMode(accessMode); 
+                c.WithDefaultAccessMode(accessMode);
             });
 
             Transaction = Session.BeginTransactionAsync().GetTaskResult();

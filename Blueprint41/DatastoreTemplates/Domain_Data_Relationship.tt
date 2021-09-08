@@ -195,21 +195,24 @@ public partial class <#= DALRelation.Name #>_REL : RELATIONSHIP, IFromIn_<#= DAL
 		internal <#= DALRelation.Name #>_ALIAS(<#= DALRelation.Name #>_REL parent)
 		{
 			Parent = parent;
+
+			CreationDate = new RelationFieldResult(this, "CreationDate");
 <#
 	if (DALRelation.IsTimeDependent)
 	{
 #>
-			StartDate = new RelationFieldResult(this, "StartDate");
-			EndDate   = new RelationFieldResult(this, "EndDate");
+			StartDate    = new RelationFieldResult(this, "StartDate");
+			EndDate      = new RelationFieldResult(this, "EndDate");
 <#
 	}
 #>
 		}
+
+		public RelationFieldResult CreationDate { get; private set; } 
 <#
 	if (DALRelation.IsTimeDependent)
 	{
 #>
-
 		public RelationFieldResult StartDate { get; private set; } 
 		public RelationFieldResult EndDate   { get; private set; } 
 <#

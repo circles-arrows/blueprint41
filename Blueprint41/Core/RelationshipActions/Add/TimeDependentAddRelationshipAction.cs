@@ -13,16 +13,15 @@ namespace Blueprint41.Core
         {
         }
 
-        protected override void InDatastoreLogic(Relationship Relationship)
+        protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.Add(Relationship, InItem, OutItem, Moment, true);
+            PersistenceProvider.Add(relationship, InItem!, OutItem!, Moment, true);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)
         {
-            bool wasAdded = false;
-
-            int[] indexes = target.IndexOf(target.ForeignItem(this));
+            bool wasUpdated = false;
+            int[] indexes = target.IndexOf(target.ForeignItem(this)!);
             foreach (int index in indexes)
             {
                 CollectionItem? item = target.GetItem(index);
@@ -32,16 +31,15 @@ namespace Blueprint41.Core
                     {
                         target.RemoveAt(index);
                     }
-                    else if (item.Overlaps(Moment))
+                    else if (item.OverlapsOrIsAttached(Moment))
                     {
                         target.SetItem(index, target.NewCollectionItem(target.Parent, item.Item, item.StartDate, null));
-                        wasAdded = true;
+                        wasUpdated = true;
                     }
                 }
             }
-
-            if (!wasAdded)
-                target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this), Moment, null));
+            if (!wasUpdated)
+                target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this)!, Moment, null));
         }
     }
 }

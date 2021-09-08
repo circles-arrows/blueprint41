@@ -13,14 +13,14 @@ namespace Blueprint41.Core
         {
         }
 
-        protected override void InDatastoreLogic(Relationship Relationship)
+        protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.RemoveUnmanaged(Relationship, InItem, OutItem, Moment);
+            PersistenceProvider.RemoveUnmanaged(relationship, InItem!, OutItem!, Moment);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)
         {
-            int[] indexes = target.IndexOf(target.ForeignItem(this));
+            int[] indexes = target.IndexOf(target.ForeignItem(this)!);
             foreach (int index in indexes)
             {
                 CollectionItem? item = target.GetItem(index);

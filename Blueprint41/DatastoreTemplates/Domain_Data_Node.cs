@@ -202,7 +202,14 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("\t\tpublic FunctionalId FunctionalId\r\n        {\r\n            get\r\n            {\r\n  " +
-                    "              return m.Invoice.Entity.FunctionalId;\r\n            }\r\n        }\r\n");
+                    "              return m.");
+            
+            #line 86 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write(".Entity.FunctionalId;\r\n            }\r\n        }\r\n");
             
             #line 89 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 

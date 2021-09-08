@@ -8,6 +8,4 @@
 
     Debug.WriteLine("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, ConcreteParent.Label.Name, Name);
 #>
-MATCH (node:<#= ConcreteParent.Label.Name #>) WHERE EXISTS(node.<#= Name #>) 
-WITH node LIMIT 10000 
-SET node.<#= Name #> = NULL
+MATCH (node:<#= ConcreteParent.Label.Name #>) WHERE EXISTS(node.<#= Name #>) WITH node LIMIT 10000 REMOVE node.<#= Name #>

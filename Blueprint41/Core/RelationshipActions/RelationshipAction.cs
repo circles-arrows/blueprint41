@@ -8,7 +8,7 @@ namespace Blueprint41.Core
 {
     internal abstract class RelationshipAction
     {
-        protected RelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship? relationship, OGM inItem, OGM outItem)
+        protected RelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship? relationship, OGM? inItem, OGM? outItem)
         {
             Relationship = relationship;
             InItem = inItem;
@@ -19,45 +19,28 @@ namespace Blueprint41.Core
         public RelationshipPersistenceProvider PersistenceProvider { get; internal set; }
 
         private Relationship? Relationship { get; set; }
-        public OGM InItem { get; private set; }
-        public OGM OutItem { get; private set; }
-
-        protected virtual bool ActsOnSpecificParent() { return true; }
+        public OGM? InItem { get; private set; }
+        public OGM? OutItem { get; private set; }
+        public bool IsExecutedInMemory { get; set; } = false;
 
         public void ExecuteInMemory(Core.EntityCollectionBase target)
         {
             if (!target.IsLoaded)
                 return;
 
-            if (Relationship is not null)
-            {
-                if (Relationship.Name != target.Relationship.Name)
-                    return;
+            //if (IsExecutedInMemory)
+            //    return;
 
-                if (ActsOnSpecificParent())
-                    if (target.Parent != target.ParentItem(this))
-                        return;
-            }
-            else
-            {
-                Entity entity = InItem.GetEntity();
-                bool shouldRun = false;
-                if (target.ParentEntity == entity)
-                {
-                    shouldRun = true;
-                    if (target.ForeignProperty is not null && !target.ForeignProperty.Nullable)
-                        return;
-                }
-                if (target.ForeignEntity == entity)
-                {
-                    shouldRun = true;
-                    if (target.ParentProperty is not null && !target.ParentProperty.Nullable)
-                        return;
-                }
-                if (!shouldRun)
-                    return;
-            }
+            if (Relationship is not null && Relationship.Name != target.Relationship.Name)
+                return;
+
+            OGM? parent = target.ParentItem(this);
+            if (parent is not null && target.Parent != parent)
+                return;
+
             InMemoryLogic(target);
+
+            IsExecutedInMemory = true;
         }
         protected abstract void InMemoryLogic(Core.EntityCollectionBase target);
 
@@ -69,26 +52,24 @@ namespace Blueprint41.Core
             }
             else
             {
-                Entity entity = InItem.GetEntity();
-                foreach (var relationship in entity.Parent.Relations)
-                {
-                    bool shouldRun = false;
-                    if (entity.IsSelfOrSubclassOf(relationship.InEntity))
-                    {
-                        shouldRun = true;
-                        if (relationship.OutProperty is not null && !relationship.OutProperty.Nullable)
-                            continue;
-                    }
-                    if (entity.IsSelfOrSubclassOf(relationship.OutEntity))
-                    {
-                        shouldRun = true;
-                        if (relationship.InProperty is not null && !relationship.InProperty.Nullable)
-                            continue;
-                    }
-                    if (!shouldRun)
-                        continue;
+                /*
+                         Parent Nullable       0 to Many
+                    (Account)-[HAS_EXTERNAL_REF]->(ExternalReference)
 
-                    InDatastoreLogic(relationship);
+                         0 to Many      NOT NULL
+                    (Account)-[HAS_PARENT]-(Account)
+
+                Transaction:
+                    - Delete Account
+                    - Delete External References
+                    - Commit
+                 */
+
+                Entity? entity = InItem?.GetEntity();
+                if (entity is not null)
+                {
+                    foreach (var relationship in entity.Parent.Relations)
+                        InDatastoreLogic(relationship);
                 }
             }
         }

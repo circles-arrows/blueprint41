@@ -375,9 +375,11 @@ namespace Blueprint41
 
                 if (script is not null && Parser.ShouldExecute)
                 {
-                    Transaction.Flush();
-                    script.Invoke();
-                    Transaction.Flush();
+                    using (Transaction.Begin(true))
+                    {
+                        script.Invoke();
+                        Transaction.Commit();
+                    }
                 }
 
                 Model.datamigration = false;

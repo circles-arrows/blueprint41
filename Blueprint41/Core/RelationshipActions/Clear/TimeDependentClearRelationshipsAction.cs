@@ -8,39 +8,44 @@ namespace Blueprint41.Core
 {
     internal class TimeDependentClearRelationshipsAction : TimeDependentRelationshipAction
     {
-        internal TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment)
-            : base(persistenceProvider, relationship, inItem!, outItem!, moment){}
-
-        new public OGM? InItem => base.InItem; 
-        new public OGM? OutItem => base.OutItem;
-
-        protected override bool ActsOnSpecificParent() { return false; }
+        internal TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM item, DateTime? moment)
+            : base(persistenceProvider, relationship, item, item, moment){}
 
         protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.RemoveAll(relationship, (InItem ?? OutItem)!, Moment, true);
+            Entity entity = InItem!.GetEntity();
+            if (entity.IsSelfOrSubclassOf(relationship.InEntity))
+            {
+                if (relationship.OutProperty is null || relationship.OutProperty.Nullable || relationship.OutProperty.PropertyType == PropertyType.Collection)
+                    PersistenceProvider.Remove(relationship, InItem, (OGM?)null, Moment, true);
+            }
+            if (entity.IsSelfOrSubclassOf(relationship.OutEntity))
+            {
+                if (relationship.InProperty is null || relationship.InProperty.Nullable || relationship.InProperty.PropertyType == PropertyType.Collection)
+                    PersistenceProvider.Remove(relationship, (OGM?)null, OutItem, Moment, true);
+            }
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)
         {
             target.ForEach(delegate (int index, CollectionItem item)
             {
-                bool processItem = false;
                 if (target.Direction == DirectionEnum.Out)
                 {
                     if ((OutItem is not null && item.Parent.Equals(OutItem)) || (InItem is not null && item.Item.Equals(InItem)))
-                        processItem = true;
+                        Remove();
                 }
-                else if(target.Direction == DirectionEnum.In)
+                else if (target.Direction == DirectionEnum.In)
                 {
                     if ((InItem is not null && item.Parent.Equals(InItem)) || (OutItem is not null && item.Item.Equals(OutItem)))
-                        processItem = true;
+                        Remove();
                 }
                 else
                 {
                     throw new NotSupportedException("Please contact developer.");
                 }
-                if (processItem)
+
+                void Remove()
                 {
                     if (item.IsAfter(Moment))
                     {

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Blueprint41.TypeConversion;
+
 namespace Blueprint41.Core
 {
     public abstract class CollectionItem
@@ -18,30 +20,48 @@ namespace Blueprint41.Core
 
             Parent = parent;
             Item = item;
-            StartDate = startDate;
-            EndDate = endDate;
+            StartDate = startDate ?? Conversion.MinDateTime;
+            EndDate = endDate ?? Conversion.MaxDateTime;
         }
 
         public OGM Parent { get; private set; }
         public OGM Item { get; private set; }
-        public DateTime? StartDate { get; private set; }
-        public DateTime? EndDate { get; internal set; }
+        public DateTime StartDate { get; private set; }
+        public DateTime EndDate { get; internal set; }
 
         public bool IsBefore(DateTime moment)
         {
-            return (EndDate.HasValue && EndDate <= moment);
+            return EndDate < moment;
         }
         public bool Overlaps(DateTime moment)
         {
-            return ((!StartDate.HasValue || StartDate <= moment)) && (!EndDate.HasValue || EndDate > moment);
+            return (StartDate <= moment && EndDate > moment);
+        }
+        public bool OverlapsOrIsAttached(DateTime moment)
+        {
+            return (StartDate <= moment && EndDate >= moment);
         }
         public bool Overlaps(DateTime? start, DateTime? end)
         {
-            return ((!StartDate.HasValue || !end.HasValue || StartDate <= end)) && (!EndDate.HasValue || !start.HasValue || EndDate > start);
+            DateTime s = start ?? Conversion.MinDateTime;
+            DateTime e = end ?? Conversion.MaxDateTime;
+            return (StartDate <= e && EndDate > s);
         }
         public bool IsAfter(DateTime moment)
         {
-            return (!StartDate.HasValue || StartDate.HasValue && StartDate > moment);
+            return StartDate >= moment;
+        }
+        internal bool IsAttached(DateTime? start, DateTime? end)
+        {
+            DateTime s = start ?? Conversion.MinDateTime;
+            DateTime e = end ?? Conversion.MaxDateTime;
+            return (EndDate == s || StartDate == e);
+        }
+        internal bool OverlapsOrIsAttached(DateTime? start, DateTime? end)
+        {
+            DateTime s = start ?? Conversion.MinDateTime;
+            DateTime e = end ?? Conversion.MaxDateTime;
+            return (StartDate <= e && EndDate >= s);
         }
 
         public override int GetHashCode()
@@ -49,39 +69,13 @@ namespace Blueprint41.Core
             return
                 (Parent?.GetHashCode() ?? 0) ^
                 (Item?.GetHashCode() ?? 0) ^
-                (StartDate?.GetHashCode() ?? 0) ^
-                (EndDate?.GetHashCode() ?? 0);
+                (StartDate.GetHashCode()) ^
+                (EndDate.GetHashCode());
         }
-
         public override bool Equals(object? obj)
         {
             CollectionItem? other = obj as CollectionItem;
             if (other is null)
-                return false;
-
-            if (!this.StartDate.HasValue && !other.StartDate.HasValue && !this.EndDate.HasValue && !other.EndDate.HasValue)
-                return other.Parent.Equals(this.Parent) && other.Item.Equals(this.Item);
-
-            if (!this.StartDate.HasValue && !other.StartDate.HasValue)
-            {
-                if (!this.EndDate.HasValue || !other.EndDate.HasValue)
-                    return false;
-
-                return other.Parent.Equals(this.Parent) && other.Item.Equals(this.Item) && other.EndDate.Equals(this.EndDate);
-            }
-
-            if (!this.EndDate.HasValue && !other.EndDate.HasValue)
-            {
-                if (!this.StartDate.HasValue || !other.StartDate.HasValue)
-                    return false;
-
-                return other.Parent.Equals(this.Parent) && other.Item.Equals(this.Item) && other.StartDate.Equals(this.StartDate);
-            }
-
-            if (!this.StartDate.HasValue || !other.StartDate.HasValue)
-                return false;
-
-            if (!this.EndDate.HasValue || !other.EndDate.HasValue)
                 return false;
 
             return

@@ -83,7 +83,7 @@ namespace <#= Settings.FullQueryNamespace #>
         {
             get
             {
-                return m.Invoice.Entity.FunctionalId;
+                return m.<#= DALModel.Name #>.Entity.FunctionalId;
             }
         }
 <#

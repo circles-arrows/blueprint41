@@ -73,13 +73,16 @@ namespace Blueprint41
                 {
                     if (!Contains(newValue!))
                     {
-                        NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Replace, newValue, InnerList[index], index);
+                        NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Replace, newValue, oldValue, index);
                         BeforeCollectionChanged?.Invoke(this, eventArgs);
 
                         if (oldValue is not null)
                             RemoveAt(oldValue, index);
 
                         InnerList[index] = newValue;
+                        if (newValue is not null)
+                            AddIndex(newValue.Item, index);
+
                         CollectionChanged?.Invoke(this, eventArgs);
                     }
                 }
@@ -94,19 +97,24 @@ namespace Blueprint41
             }
         }
         public int Count { get; private set; }
+
+        private void AddIndex(T item, int index)
+        {
+            List<int> indexes;
+            if (!InnerDict.TryGetValue(item, out indexes))
+            {
+                indexes = new List<int>();
+                InnerDict.Add(item, indexes);
+            }
+            indexes.Add(index);
+        }
         public void Add(CollectionItem<T> item)
         {
             if (!Contains(item)) // if Item is already in the list, don't add it again
             {
                 NotifyChangedEventArgs<CollectionItem<T>?> eventArgs = new NotifyChangedEventArgs<CollectionItem<T>?>(NotifyCollectionChangedAction.Add, item);
                 BeforeCollectionChanged?.Invoke(this, eventArgs);
-                List<int> indexes;
-                if (!InnerDict.TryGetValue(item.Item, out indexes))
-                {
-                    indexes = new List<int>();
-                    InnerDict.Add(item.Item, indexes);
-                }
-                indexes.Add(InnerList.Count);    
+                AddIndex(item.Item, InnerList.Count);
                 InnerList.Add(item);
                 Count++;
                 CollectionChanged?.Invoke(this, eventArgs);

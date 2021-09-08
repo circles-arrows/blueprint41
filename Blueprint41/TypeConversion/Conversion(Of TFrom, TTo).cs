@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
+using Blueprint41.TypeConversion;
+
 namespace Blueprint41.Core
 {
     public abstract class Conversion<TFrom, TTo> : Conversion

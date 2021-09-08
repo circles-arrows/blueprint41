@@ -13,16 +13,16 @@ namespace Blueprint41.Core
         {
         }
 
-        protected override void InDatastoreLogic(Relationship Relationship)
+        protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.Add(Relationship, InItem, OutItem, null, false);
+            PersistenceProvider.Add(relationship, InItem!, OutItem!, null, false);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)
         {
-            bool contains = target.IndexOf(target.ForeignItem(this)).Length != 0;
+            bool contains = target.IndexOf(target.ForeignItem(this)!).Length != 0;
             if (!contains)
-                target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this), null, null));
+                target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this)!, null, null));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Blueprint41.Core
     public abstract class EntityCollectionBase<TEntity> : EntityCollectionBase, ICollection<TEntity>, ILookupHelper<TEntity>
         where TEntity : class, OGM
     {
-        public EntityCollectionBase(OGM parent, Property property, Action<TEntity>? eagerLoadLogic) : base(parent, property)
+        protected EntityCollectionBase(OGM parent, Property property, Action<TEntity>? eagerLoadLogic) : base(parent, property)
         {
             EagerLoadLogic = eagerLoadLogic;
         }
@@ -90,28 +90,28 @@ namespace Blueprint41.Core
         {
             Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
-        internal abstract void Add(TEntity item, bool fireEvent);
+        internal abstract void Add(TEntity item, bool fireEvents);
         public void AddRange(IEnumerable<TEntity> items)
         {
             AddRange(items, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
-        internal abstract void AddRange(IEnumerable<TEntity> items, bool fireEvent);
+        internal abstract void AddRange(IEnumerable<TEntity> items, bool fireEvents);
         public abstract bool Contains(TEntity item);
-        public bool Remove(TEntity item)
+        public void Remove(TEntity item)
         {
-            return Remove(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
+            Remove(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
-        internal abstract bool Remove(TEntity item, bool fireEvent);
-        public bool RemoveRange(IEnumerable<TEntity> items)
+        internal abstract void Remove(TEntity item, bool fireEvents);
+        public void RemoveRange(IEnumerable<TEntity> items)
         {
-            return RemoveRange(items, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
+            RemoveRange(items, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
-        internal abstract bool RemoveRange(IEnumerable<TEntity> item, bool fireEvent);
+        internal abstract void RemoveRange(IEnumerable<TEntity> items, bool fireEvents);
         public void Clear()
         {
             Clear(typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
-        internal abstract void Clear(bool fireEvent);
+        internal abstract void Clear(bool fireEvents);
         public void Delete(TEntity item, bool force = false)
         {
             LazyLoad();
@@ -190,6 +190,12 @@ namespace Blueprint41.Core
         void ILookupHelper<TEntity>.ClearLookup(DateTime? moment)
         {
             ClearLookup(moment);
+        }
+
+        bool ICollection<TEntity>.Remove(TEntity item)
+        {
+            Remove(item);
+            return true;
         }
     }
 }

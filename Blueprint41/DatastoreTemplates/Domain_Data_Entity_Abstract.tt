@@ -114,8 +114,8 @@ if (DALModel.IsAbstract)
 			if (attr.PropertyType == PropertyType.Lookup && attr.Relationship.IsTimeDependent)
 			{
 #>
-		<#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime? moment = null);
-		void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment = null);
+		<#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime moment);
+		void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment);
 <#
 			}
 		}

@@ -31,12 +31,12 @@ namespace Blueprint41.Core
         }
         private protected override int CountInternal { get { return Count; } }
         public int Count { get { LazyLoad(); return InnerData.Count; } }
+
         internal sealed override void Add(TEntity item, bool fireEvents)
         {
             if (item is null)
                 return;
 
-            LazyLoad();
             LazySet();
 
             if (EagerLoadLogic is not null)
@@ -50,11 +50,10 @@ namespace Blueprint41.Core
         }
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
         {
-            LazyLoad();
             LazySet();
 
             LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
-            foreach (var item in items)
+            foreach (TEntity? item in items)
             {
                 if (item is null)
                     continue;
@@ -76,56 +75,34 @@ namespace Blueprint41.Core
             LazyLoad();
             return InnerData.Contains(new CollectionItem<TEntity>(this.Parent, item));
         }
-        internal sealed override bool Remove(TEntity item, bool fireEvents)
+        internal sealed override void Remove(TEntity item, bool fireEvents)
         {
             if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
-            LazyLoad();
+            if (item is null)
+                return;
 
-            if (item is not null && EagerLoadLogic is not null)
+            LazySet();
+
+            if (EagerLoadLogic is not null)
                 EagerLoadLogic.Invoke(item);
 
             if (fireEvents)
-            {
-                bool cancel = false;
-                ForEach(delegate (int index, CollectionItem current)
-                {
-                    if (current.Item.Equals(item))
-                        if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), null, OperationEnum.Remove) ?? false)
-                            cancel = true;
-                });
-                if (cancel)
-                    return false;
-            }
+                if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false)
+                    return;
 
-            LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
-
-            ForEach(delegate (int index, CollectionItem current)
-            {
-                if (current.Item.Equals(item))
-                    actions.AddLast(RemoveAction(current, null));
-            });
-
-            if (actions.Count > 0)
-            {
-                ExecuteAction(actions);
-                LazySet();
-            }
-
-            return (actions.Count > 0);
+            ExecuteAction(RemoveAction(item, null));
         }
         internal sealed override void Clear(bool fireEvents)
         {
             if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
-            LazyLoad();
-
+            LazySet();
+            
             if (InnerData.Count == 0)
                 return;
-
-            LazySet();
 
             if (fireEvents)
             {
@@ -151,7 +128,7 @@ namespace Blueprint41.Core
                         if (cancel.Contains(item))
                             return;
 
-                        actions.AddLast(RemoveAction(item, null));
+                        actions.AddLast(RemoveAction(item.Item, null));
                     });
 
                     ExecuteAction(actions);
@@ -162,50 +139,33 @@ namespace Blueprint41.Core
 
             ExecuteAction(ClearAction(null));
         }
-        internal sealed override bool RemoveRange(IEnumerable<TEntity> items, bool fireEvents)
+        internal sealed override void RemoveRange(IEnumerable<TEntity> items, bool fireEvents)
         {
-            return RemoveRange(items, RunningTransaction.TransactionDate, fireEvents);
+            RemoveRange(items, RunningTransaction.TransactionDate, fireEvents);
         }
-        internal bool RemoveRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
+        internal void RemoveRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
         {
             if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup && !ForeignProperty.Nullable)
                 throw new PersistenceException(string.Format("Due to a nullability constraint, you cannot delete {0} relationships directly. Consider removing the {1} objects instead.", ParentProperty?.Relationship?.Neo4JRelationshipType, ForeignEntity.Name));
 
-            LazyLoad();
+            LazySet();
 
-            LinkedList<RelationshipAction> actions = new LinkedList<RelationshipAction>();
-            foreach (var item in items)
+            foreach (TEntity? item in items)
             {
-                if (item is not null && EagerLoadLogic is not null)
-                    EagerLoadLogic.Invoke(item);
+                if (item is null)
+                    continue;
 
                 if (fireEvents)
                 {
-                    bool cancel = false;
-                    ForEach(delegate (int index, CollectionItem current)
-                    {
-                        if (current.Item.Equals(item))
-                            if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, current.Item, default(TEntity), null, OperationEnum.Remove) ?? false)
-                                cancel = true;
-                    });
-                    if (cancel)
-                        return false;
+
+                    if (!(ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false))
+                        ExecuteAction(RemoveAction(item, null));
                 }
-
-                ForEach(delegate (int index, CollectionItem current)
+                else
                 {
-                    if (current.Item.Equals(item))
-                        actions.AddLast(RemoveAction(current, null));
-                });
+                    ExecuteAction(RemoveAction(item, null));
+                }
             }
-
-            if (actions.Count > 0)
-            {
-                ExecuteAction(actions);
-                LazySet();
-            }
-
-            return (actions.Count > 0);
         }
 
 
@@ -300,6 +260,9 @@ namespace Blueprint41.Core
 
         protected override TEntity? GetItem(DateTime? moment)
         {
+            if (ParentProperty?.PropertyType != PropertyType.Lookup)
+                throw new NotSupportedException("You cannot use GetItem on a property thats not a lookup.");
+
             LazyLoad();
 
             if (InnerData.Count == 0)
@@ -313,6 +276,9 @@ namespace Blueprint41.Core
         }
         protected override TEntity? GetOriginalItem(DateTime? moment)
         {
+            if (ParentProperty?.PropertyType != PropertyType.Lookup)
+                throw new NotSupportedException("You cannot use GetOriginalItem on a property thats not a lookup.");
+
             LazyLoad();
 
             if (LoadedData.Count() == 0)
@@ -322,14 +288,15 @@ namespace Blueprint41.Core
         }
         protected override void SetItem(TEntity? item, DateTime? moment)
         {
-            LazyLoad();
+            if (ParentProperty?.PropertyType != PropertyType.Lookup)
+                throw new NotSupportedException("You cannot use SetItem on a property thats not a lookup.");
+
             LazySet();
 
             if (item is not null && EagerLoadLogic is not null)
                 EagerLoadLogic.Invoke(item);
 
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
-
             if (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null))
             {
                 if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
@@ -381,12 +348,8 @@ namespace Blueprint41.Core
         }
         protected override void ClearLookup(DateTime? moment)
         {
-            LazyLoad();
             LazySet();
-
-            OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
-            OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            ExecuteAction(new ClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem));
+            ExecuteAction(ClearAction(moment));
         }
 
         #endregion
@@ -395,7 +358,7 @@ namespace Blueprint41.Core
         {
             return new CollectionItem<TEntity>(parent, (TEntity)item, startDate, endDate);
         }
-        internal override RelationshipAction RemoveAction(CollectionItem item, DateTime? moment)
+        internal override RelationshipAction RemoveAction(OGM item, DateTime? moment)
         {
             return new RemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
         }
@@ -407,7 +370,10 @@ namespace Blueprint41.Core
         {
             OGM? inItem = (Direction == DirectionEnum.In) ? Parent : null;
             OGM? outItem = (Direction == DirectionEnum.Out) ? Parent : null;
-            return new ClearRelationshipsAction(RelationshipPersistenceProvider, Relationship, inItem, outItem);
+
+            // ClearRelationshipsAction removes ALL relationships from an Entity, we only need to remove all relationships from a collection.
+            // Difference being ALL relationships in ALL directions vs. 1 relationship in 1 direction!!!
+            return new RemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, inItem, outItem);
         }
     }
 }

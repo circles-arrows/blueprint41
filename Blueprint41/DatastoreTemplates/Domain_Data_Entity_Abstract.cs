@@ -381,7 +381,7 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("(DateTime? moment = null);\r\n\t\tvoid Set");
+            this.Write("(DateTime moment);\r\n\t\tvoid Set");
             
             #line 118 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
@@ -395,7 +395,7 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(" value, DateTime? moment = null);\r\n");
+            this.Write(" value, DateTime? moment);\r\n");
             
             #line 119 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 

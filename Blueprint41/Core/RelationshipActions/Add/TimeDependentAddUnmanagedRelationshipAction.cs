@@ -15,9 +15,9 @@ namespace Blueprint41.Core
             EndDate = (endDate.HasValue) ? endDate.Value : DateTime.MaxValue;
         }
 
-        protected override void InDatastoreLogic(Relationship Relationship)
+        protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.AddUnmanaged(Relationship, InItem, OutItem, Moment, EndDate);
+            PersistenceProvider.AddUnmanaged(relationship, InItem!, OutItem!, Moment, EndDate);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)
@@ -25,7 +25,7 @@ namespace Blueprint41.Core
             DateTime minStartDate = Moment;
             DateTime maxEndDate = EndDate;
 
-            int[] indexes = target.IndexOf(target.ForeignItem(this));
+            int[] indexes = target.IndexOf(target.ForeignItem(this)!);
             foreach (int index in indexes)
             {
                 CollectionItem? item = target.GetItem(index);
@@ -34,17 +34,17 @@ namespace Blueprint41.Core
                     if (item.Overlaps(Moment))
                     {
                         if (minStartDate > item.StartDate)
-                            minStartDate = item.StartDate ?? DateTime.MinValue;
+                            minStartDate = item.StartDate;
 
                         if (maxEndDate < item.EndDate)
-                            maxEndDate = item.EndDate ?? DateTime.MaxValue;
+                            maxEndDate = item.EndDate;
 
                         target.RemoveAt(index);
                     }
                 }
             }
 
-            target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this), minStartDate, maxEndDate));
+            target.Add(target.NewCollectionItem(target.Parent, target.ForeignItem(this)!, minStartDate, maxEndDate));
         }
     }
 }

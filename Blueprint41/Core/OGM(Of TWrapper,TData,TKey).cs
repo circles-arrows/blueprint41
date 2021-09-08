@@ -204,7 +204,8 @@ namespace Blueprint41.Core
 			else if (PersistenceState == PersistenceState.Loaded)
 				PersistenceState = PersistenceState.LoadedAndChanged;
 		}
-		internal protected override bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment = null)
+		internal protected bool LazySet<T>(Property property, T previousValue, T assignValue) => LazySet<T>(property, previousValue, assignValue, Transaction.RunningTransaction.TransactionDate);
+		internal protected override bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment)
 		{
 			if (previousValue is null && assignValue is null)
 				return false;
@@ -237,6 +238,23 @@ namespace Blueprint41.Core
 			}
 
 			if (base.LazySet(property, previousValue, assignValue, moment))
+				return false;
+
+			LazySet();
+			return true;
+		}
+		internal protected override bool LazySet<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
+		{
+			if (!previousValues.Any() && assignValue is null)
+				return false;
+
+			if (previousValues.Take(2).Count() == 1 && previousValues.First().Item.Equals(assignValue) && (previousValues.First().StartDate.IsMin() || previousValues.First().StartDate <= moment) && previousValues.First().EndDate.IsMax())
+				return false;
+
+			if (property.PropertyType == PropertyType.Attribute)
+				throw new NotSupportedException("Don't use this overload for attributes.");
+
+			if (base.LazySet(property, previousValues!, assignValue, moment))
 				return false;
 
 			LazySet();

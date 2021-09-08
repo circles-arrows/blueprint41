@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.TypeConversion;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,17 +9,13 @@ namespace Blueprint41.Core
 {
     internal abstract class TimeDependentRelationshipAction : RelationshipAction
     {
-        internal TimeDependentRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? moment)
+        internal TimeDependentRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment)
             : base(persistenceProvider, relationship, inItem, outItem)
         {
-
-            // WATCH OUT!!!!
-            // you cannot set a NULL datetime to DateTime.MinValue, the default is to have actions happen at the TransactionDate!!!
-            Moment = (moment.HasValue) ? moment.Value : Transaction.RunningTransaction.TransactionDate;
+            // WATCH OUT: null should be interpreted as "since forever", if TransactionDate was intended please pass that instead when constructing this object.
+            Moment = (moment.HasValue) ? moment.Value : Conversion.MinDateTime;
         }
 
-        //static private readonly DateTime MinDateTime = DateTime.MinValue; 
-
-        public DateTime Moment { get; private set; }
+        public DateTime Moment { get; protected set; }
     }
 }

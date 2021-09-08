@@ -784,9 +784,10 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("_REL parent)\r\n\t\t{\r\n\t\t\tParent = parent;\r\n");
+            this.Write("_REL parent)\r\n\t\t{\r\n\t\t\tParent = parent;\r\n\r\n\t\t\tCreationDate = new RelationFieldResu" +
+                    "lt(this, \"CreationDate\");\r\n");
             
-            #line 198 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            #line 200 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
 
 	if (DALRelation.IsTimeDependent)
 	{
@@ -794,19 +795,19 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\t\t\tStartDate = new RelationFieldResult(this, \"StartDate\");\r\n\t\t\tEndDate   = new Re" +
-                    "lationFieldResult(this, \"EndDate\");\r\n");
+            this.Write("\t\t\tStartDate    = new RelationFieldResult(this, \"StartDate\");\r\n\t\t\tEndDate      = " +
+                    "new RelationFieldResult(this, \"EndDate\");\r\n");
             
-            #line 204 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            #line 206 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
 
 	}
 
             
             #line default
             #line hidden
-            this.Write("\t\t}\r\n");
+            this.Write("\t\t}\r\n\r\n\t\tpublic RelationFieldResult CreationDate { get; private set; } \r\n");
             
-            #line 208 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            #line 212 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
 
 	if (DALRelation.IsTimeDependent)
 	{
@@ -814,10 +815,10 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\r\n\t\tpublic RelationFieldResult StartDate { get; private set; } \r\n\t\tpublic Relatio" +
-                    "nFieldResult EndDate   { get; private set; } \r\n");
+            this.Write("\t\tpublic RelationFieldResult StartDate { get; private set; } \r\n\t\tpublic RelationF" +
+                    "ieldResult EndDate   { get; private set; } \r\n");
             
-            #line 215 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            #line 218 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
 
 	}
 

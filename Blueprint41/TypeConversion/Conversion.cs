@@ -11,6 +11,43 @@ namespace Blueprint41.Core
 {
     public abstract class Conversion
     {
+        #region DateTime Specific
+
+        internal const long MaxDateTimeInMS = 253402300800000;
+        internal const long MinDateTimeInMS = -62135596800000;
+
+        public static readonly DateTime MinDateTime = FromTimeInMS(MinDateTimeInMS);
+        public static readonly DateTime MaxDateTime = FromTimeInMS(MaxDateTimeInMS);
+
+        private protected static DateTime FromTimeInMS(long value)
+        {
+            long ticks = (value >= MaxDateTimeInMS) ? (MaxDateTimeInMS * 10000L) - 1 : value * 10000L;
+            ticks = (value <= MinDateTimeInMS) ? unchecked((MinDateTimeInMS * 10000L)) : ticks;
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Add(new TimeSpan(ticks)).ToUniversalTime();
+        }
+        private protected static long ToTimeInMS(DateTime value)
+        {
+            //if date is not utc convert to utc.
+            DateTime utcTime = value.Kind != DateTimeKind.Utc ? value.ToUniversalTime() : value;
+
+            //return value.Ticks;
+            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return (long)utcTime.Subtract(dt).TotalMilliseconds;
+        }
+
+        protected static DateTime FixDateTime(DateTime value)
+        {
+            if (value.IsMin())
+                return MinDateTime;
+
+            if (value.IsMax())
+                return MaxDateTime;
+
+            return value;
+        }
+
+        #endregion
+
         public abstract Type FromType { get; }
         public abstract Type ToType { get; }
 

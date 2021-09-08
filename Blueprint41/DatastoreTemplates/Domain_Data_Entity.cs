@@ -1846,14 +1846,14 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("(); } set { Set");
+            this.Write("(Transaction.RunningTransaction.TransactionDate); } set { Set");
             
             #line 581 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
-            this.Write("(value); } }\r\n\t\tpublic ");
+            this.Write("(value, Transaction.RunningTransaction.TransactionDate); } }\r\n\t\tpublic ");
             
             #line 582 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
@@ -1867,7 +1867,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("(DateTime? moment = null)\r\n\t\t{\r\n\t\t\treturn ((ILookupHelper<");
+            this.Write("(DateTime moment)\r\n\t\t{\r\n\t\t\treturn ((ILookupHelper<");
             
             #line 584 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
@@ -1923,7 +1923,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(" value, DateTime? moment = null)\r\n\t\t{\r\n\t\t\tif (LazySet(Members.");
+            this.Write(" value, DateTime? moment)\r\n\t\t{\r\n\t\t\tif (LazySet(Members.");
             
             #line 592 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
@@ -1944,7 +1944,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(").GetItem(moment), value, moment))\r\n\t\t\t\t((ILookupHelper<");
+            this.Write(").GetItems(moment, null), value, moment))\r\n\t\t\t\t((ILookupHelper<");
             
             #line 593 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));

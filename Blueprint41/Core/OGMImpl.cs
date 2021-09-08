@@ -106,13 +106,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.ForceDelete;
-                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -138,13 +138,13 @@ namespace Blueprint41.Core
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
                     PersistenceState = PersistenceState.Deleted;
-                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.Delete;
-                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, null, this, this));
+                    ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.Delete:
                 case PersistenceState.ForceDelete:
@@ -306,8 +306,16 @@ namespace Blueprint41.Core
 
         internal protected abstract void LazyGet(bool locked = false);
         internal protected abstract void LazySet();
-        internal protected virtual bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment = null)
+        internal protected virtual bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment)
         {
+            return property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set);
+        }
+        internal protected virtual bool LazySet<T>(Property property, IEnumerable<CollectionItem<T>> previousValues, T assignValue, DateTime? moment)
+            where T : OGM
+        {
+            CollectionItem<T>? prevColItem = previousValues.FirstOrDefault(item => item.Overlaps(moment ?? Conversion.MinDateTime));
+            T? previousValue = (prevColItem is null) ? default : prevColItem.Item;
+
             return property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set);
         }
 

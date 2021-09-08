@@ -8,31 +8,52 @@ namespace Blueprint41.Core
 {
     internal class TimeDependentRemoveRelationshipAction : TimeDependentRelationshipAction
     {
-        internal TimeDependentRemoveRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? moment)
+        internal TimeDependentRemoveRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment)
             : base(persistenceProvider, relationship, inItem, outItem, moment)
         {
         }
 
-        protected override void InDatastoreLogic(Relationship Relationship)
+        protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.Remove(Relationship, InItem, OutItem, Moment, true);
+            PersistenceProvider.Remove(relationship, InItem, OutItem, Moment, true);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)
         {
-            int[] indexes = target.IndexOf(target.ForeignItem(this));
-            foreach (int index in indexes)
+            OGM? foreignItem = target.ForeignItem(this);
+            if (foreignItem is null)
             {
-                CollectionItem? item = target.GetItem(index);
-                if (item is not null)
+                target.ForEach((index, item) =>
                 {
-                    if (item.IsAfter(Moment))
+                    if (item is not null)
                     {
-                        target.RemoveAt(index);
+                        if (item.IsAfter(Moment))
+                        {
+                            target.RemoveAt(index);
+                        }
+                        else if (item.Overlaps(Moment))
+                        {
+                            target.SetItem(index, target.NewCollectionItem(target.Parent, item.Item, item.StartDate, Moment));
+                        }
                     }
-                    else if (item.Overlaps(Moment))
+                });
+            }
+            else
+            {
+                int[] indexes = target.IndexOf(foreignItem);
+                foreach (int index in indexes)
+                {
+                    CollectionItem? item = target.GetItem(index);
+                    if (item is not null)
                     {
-                        target.SetItem(index, target.NewCollectionItem(target.Parent, item.Item, item.StartDate, Moment));
+                        if (item.IsAfter(Moment))
+                        {
+                            target.RemoveAt(index);
+                        }
+                        else if (item.Overlaps(Moment))
+                        {
+                            target.SetItem(index, target.NewCollectionItem(target.Parent, item.Item, item.StartDate, Moment));
+                        }
                     }
                 }
             }
