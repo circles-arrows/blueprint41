@@ -17,11 +17,12 @@ namespace Blueprint41.Neo4j.Schema.v4
         {
             using (Transaction.Begin())
             {
-                FunctionalIds = LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record));
-                Constraints = LoadData("CALL db.constraints()", record => NewConstraintInfo(record));
-                Indexes = LoadData("CALL db.indexes()", record => NewIndexInfo(record));
-                Labels = LoadSimpleData("CALL db.labels()", "label");
-                PropertyKeys = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
+                bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
+                FunctionalIds     = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
+                Constraints       = LoadData("CALL db.constraints()", record => NewConstraintInfo(record));
+                Indexes           = LoadData("CALL db.indexes()", record => NewIndexInfo(record));
+                Labels            = LoadSimpleData("CALL db.labels()", "label");
+                PropertyKeys      = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
                 RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
             }
         }
@@ -60,7 +61,7 @@ namespace Blueprint41.Neo4j.Schema.v4
                 return LoadData(string.Format(actualFidValue, functionalId.Label), record => record.Values["sequence"].As<int?>()).FirstOrDefault() ?? 0;
             }
         }
-        protected override ConstraintInfo   NewConstraintInfo(RawRecord rawRecord)   => new ConstraintInfo_v4(rawRecord);
+        protected override ConstraintInfo   NewConstraintInfo(RawRecord rawRecord)   => new ConstraintInfo(rawRecord);
         protected override IndexInfo        NewIndexInfo(RawRecord rawRecord)        => new IndexInfo_v4(rawRecord);
 
         internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, params ApplyConstraintAction[] commands) => new ApplyConstraintProperty_v4(parent, property, commands);

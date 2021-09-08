@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema
 {
@@ -20,11 +21,13 @@ namespace Blueprint41.Neo4j.Schema
         {
             using (Transaction.Begin())
             {
-                FunctionalIds = LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record));
-                Constraints = LoadData("CALL db.constraints()", record => NewConstraintInfo(record));
-                Indexes = LoadData("CALL db.indexes()", record => NewIndexInfo(record));
-                Labels = LoadSimpleData("CALL db.labels()", "label");
-                PropertyKeys = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
+                bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
+
+                FunctionalIds     = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
+                Constraints       = LoadData("CALL db.constraints()", record => NewConstraintInfo(record));
+                Indexes           = LoadData("CALL db.indexes()", record => NewIndexInfo(record));
+                Labels            = LoadSimpleData("CALL db.labels()", "label");
+                PropertyKeys      = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
                 RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
             }
         }

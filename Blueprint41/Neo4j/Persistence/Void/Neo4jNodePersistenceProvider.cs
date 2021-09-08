@@ -148,7 +148,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 }
                 else
                 {
-                    entity.FunctionalId.SeenUid(key.ToString()!);
+                    if (entity.FunctionalId.Label != "Guid")
+                        entity.FunctionalId.SeenUid(key.ToString()!);
                 }
             }
 

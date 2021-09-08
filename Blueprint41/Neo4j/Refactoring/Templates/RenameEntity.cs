@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+    #line 1 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     internal partial class RenameEntity : RenameEntityBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+            #line 7 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
 
 
     Debug.WriteLine("	executing {0} -> Rename entity from {1} to {2}", this.GetType().Name, OldName, NewName);
@@ -41,21 +41,21 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line hidden
             this.Write("MATCH (n:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+            #line 11 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OldName));
             
             #line default
             #line hidden
             this.Write(") WITH n LIMIT 10000 SET n:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+            #line 11 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NewName));
             
             #line default
             #line hidden
             this.Write(" REMOVE n:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+            #line 11 "D:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OldName));
             
             #line default

@@ -20,7 +20,7 @@ namespace Blueprint41.DatastoreTemplates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+    #line 1 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class Domain_Data_Entity_Abstract : GeneratorBase
     {
@@ -34,21 +34,21 @@ namespace Blueprint41.DatastoreTemplates
                     "g Blueprint41;\r\nusing Blueprint41.Core;\r\nusing Blueprint41.Query;\r\nusing Bluepri" +
                     "nt41.DatastoreTemplates;\r\nusing q = ");
             
-            #line 18 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 18 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullQueryNamespace));
             
             #line default
             #line hidden
             this.Write(";\r\n\r\nnamespace ");
             
-            #line 20 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 20 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullCRUDNamespace));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n");
             
-            #line 22 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 22 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 if (DALModel.IsAbstract)
 {
@@ -58,21 +58,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\tpublic interface I");
             
-            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 26 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData");
             
-            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 26 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Inherits is null ? "" : string.Concat(" : I", DALModel.Inherits.Name, "OriginalData")));
             
             #line default
             #line hidden
             this.Write("\r\n\t{\r\n");
             
-            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 28 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	foreach (Property attr in DALModel.Properties)
 	{
@@ -84,21 +84,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 34 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 34 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 34 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 34 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n");
             
-            #line 35 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 35 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		}
 		else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
@@ -109,21 +109,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 40 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 40 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 40 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 40 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n");
             
-            #line 41 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 41 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 			if (attr.EntityReturnType is not null && attr.EntityReturnType.IsAbstract)
 			{
@@ -136,28 +136,28 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 48 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 48 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concreteOuterType));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 48 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 48 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("_");
             
-            #line 48 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 48 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(concrete.Name));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n");
             
-            #line 49 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 49 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 				}
 			}
@@ -172,21 +172,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 58 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 58 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 58 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 58 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n");
             
-            #line 59 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 59 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 			}
 			else
@@ -197,21 +197,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 64 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 64 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 64 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 64 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n");
             
-            #line 65 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 65 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 			}
 		}
@@ -223,21 +223,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 71 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 71 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnTypeReadOnly));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 71 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 71 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n");
             
-            #line 72 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 72 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		}
 	}
@@ -251,14 +251,14 @@ if (DALModel.IsAbstract)
             this.Write("\t\t\r\n\t\t#region Member for UnidentifiedProperties\r\n\r\n\t\tIDictionary<string, object> " +
                     "");
             
-            #line 82 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 82 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.UnidentifiedProperties));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n\r\n\t\t#endregion\r\n");
             
-            #line 85 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 85 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	}
 
@@ -267,21 +267,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t}\r\n\r\n\tpublic partial interface ");
             
-            #line 90 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 90 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(" : OGM");
             
-            #line 90 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 90 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Join("", DALModel.GetBaseTypes().Where(item => item.IsAbstract).Select(item => string.Concat(", ", item.ClassName)).ToArray())));
             
             #line default
             #line hidden
             this.Write("\r\n\t{\r\n");
             
-            #line 92 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 92 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	if (DALModel.NodeType is null && DALModel.GetBaseTypes().Count == 0)
 	{
@@ -291,14 +291,14 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\tstring ");
             
-            #line 96 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 96 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.NodeTypeName));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n");
             
-            #line 97 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 97 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	}
 
@@ -312,21 +312,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 105 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 105 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 105 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 105 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n");
             
-            #line 106 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 106 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		}
 		else
@@ -338,28 +338,28 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 112 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 112 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 112 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 112 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { ");
             
-            #line 112 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 112 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(accessors));
             
             #line default
             #line hidden
             this.Write(" }\r\n");
             
-            #line 113 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 113 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 			if (attr.PropertyType == PropertyType.Lookup && attr.Relationship.IsTimeDependent)
 			{
@@ -369,35 +369,35 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t");
             
-            #line 117 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 117 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
             
             #line default
             #line hidden
             this.Write(" Get");
             
-            #line 117 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 117 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("(DateTime moment);\r\n\t\tvoid Set");
             
-            #line 118 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 118 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 118 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 118 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
             
             #line default
             #line hidden
             this.Write(" value, DateTime? moment);\r\n");
             
-            #line 119 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 119 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 			}
 		}
@@ -412,14 +412,14 @@ if (DALModel.IsAbstract)
             this.Write("\t\t\r\n\t\t#region Member for UnidentifiedProperties\r\n\r\n\t\tIDictionary<string, object> " +
                     "");
             
-            #line 130 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 130 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.UnidentifiedProperties));
             
             #line default
             #line hidden
             this.Write(" { get; }\r\n\r\n\t\t#endregion\r\n");
             
-            #line 133 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 133 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	}
 
@@ -428,49 +428,49 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n\t\t");
             
-            #line 137 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 137 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Inherits is null ? "" : "new "));
             
             #line default
             #line hidden
             this.Write("I");
             
-            #line 137 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 137 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("OriginalData OriginalVersion { get; }\r\n\t}\r\n\r\n\tpublic partial class ");
             
-            #line 140 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 140 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write(" : OGMAbstractImpl<");
             
-            #line 140 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 140 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 140 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 140 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 140 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 140 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.SystemReturnType));
             
             #line default
             #line hidden
             this.Write(">\r\n\t{\r\n\t\t#region Initialize\r\n\r\n\t\tstatic ");
             
-            #line 144 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 144 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
@@ -478,7 +478,7 @@ if (DALModel.IsAbstract)
             this.Write("()\r\n\t\t{\r\n\t\t\tRegister.Types();\r\n\t\t}\r\n\r\n\t\tprotected override void RegisterGenerated" +
                     "StoredQueries()\r\n\t\t{\r\n");
             
-            #line 151 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 151 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	if (!DALModel.IsVirtual)
 	{
@@ -489,21 +489,21 @@ if (DALModel.IsAbstract)
             this.Write("\t\t\t#region LoadByKeys\r\n\t\t\t\r\n\t\t\tRegisterQuery(nameof(LoadByKeys), (query, alias) =" +
                     "> query.\r\n\t\t\t\tWhere(alias.");
             
-            #line 158 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 158 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.Name));
             
             #line default
             #line hidden
             this.Write(".In(Parameter.New<");
             
-            #line 158 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 158 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.SystemReturnType));
             
             #line default
             #line hidden
             this.Write(">(Param0))));\r\n\r\n\t\t\t#endregion\r\n\r\n");
             
-            #line 162 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 162 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		foreach (Property attr in DALModel.Properties)
 		{
@@ -515,28 +515,28 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n\t\t\t#region LoadBy");
             
-            #line 169 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 169 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n\t\t\tRegisterQuery(nameof(LoadBy");
             
-            #line 171 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 171 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("), (query, alias) => query.\r\n\t\t\t\tWhere(alias.");
             
-            #line 172 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 172 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" == Parameter.New<string>(Param0)));\r\n\r\n\t\t\t#endregion\r\n");
             
-            #line 175 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 175 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		}
 	}
@@ -546,7 +546,7 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t\tAdditionalGeneratedStoredQueries();\r\n\t\t}\r\n");
             
-            #line 181 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 181 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	foreach (Property attr in DALModel.Properties)
 	{
@@ -558,42 +558,42 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\tpublic static ");
             
-            #line 187 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 187 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write(" LoadBy");
             
-            #line 187 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 187 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("(string ");
             
-            #line 187 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 187 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n\t\t{\r\n\t\t\treturn FromQuery(nameof(LoadBy");
             
-            #line 189 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 189 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("), new Parameter(Param0, ");
             
-            #line 189 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 189 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")).FirstOrDefault();\r\n\t\t}\r\n");
             
-            #line 191 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 191 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	}
 
@@ -602,7 +602,7 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\tpartial void AdditionalGeneratedStoredQueries();\r\n");
             
-            #line 195 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 195 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	if (!DALModel.IsVirtual)
 	{
@@ -612,49 +612,49 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t\r\n\t\tpublic static Dictionary<");
             
-            #line 200 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 200 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.SystemReturnType));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 200 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 200 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("> LoadByKeys(IEnumerable<");
             
-            #line 200 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 200 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.SystemReturnType));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 200 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 200 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n\t\t{\r\n\t\t\treturn FromQuery(nameof(LoadByKeys), new Parameter(Param0, ");
             
-            #line 202 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(".ToArray(), typeof(");
             
-            #line 202 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.SystemReturnType));
             
             #line default
             #line hidden
             this.Write("))).ToDictionary(item=> item.");
             
-            #line 202 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 202 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.Name));
             
             #line default
@@ -662,14 +662,14 @@ if (DALModel.IsAbstract)
             this.Write(", item => item);\r\n\t\t}\r\n\r\n\t\tprotected static void RegisterQuery(string name, Func<" +
                     "IMatchQuery, q.");
             
-            #line 205 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 205 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("Alias, IWhereQuery> query)\r\n\t\t{\r\n\t\t\tq.");
             
-            #line 207 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 207 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
@@ -677,7 +677,7 @@ if (DALModel.IsAbstract)
             this.Write("Alias alias;\r\n\r\n\t\t\tIMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery" +
                     ".Match(q.Node.");
             
-            #line 209 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 209 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
@@ -686,7 +686,7 @@ if (DALModel.IsAbstract)
                     "\t\tICompiled compiled = partial.Return(alias).Compile();\r\n\r\n\t\t\tRegisterQuery(name" +
                     ", compiled);\r\n\t\t}\r\n");
             
-            #line 215 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 215 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	}
 
@@ -695,14 +695,14 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n\t\t#endregion\r\n\r\n\t\tprivate static ");
             
-            #line 221 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 221 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("Members members = null;\r\n\t\tpublic static ");
             
-            #line 222 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 222 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
@@ -710,35 +710,35 @@ if (DALModel.IsAbstract)
             this.Write("Members Members\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif (members is null)\r\n\t\t\t\t{\r\n\t\t\t\t\tlock (t" +
                     "ypeof(");
             
-            #line 228 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 228 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("))\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tif (members is null)\r\n\t\t\t\t\t\t\tmembers = new ");
             
-            #line 231 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 231 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("Members();\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n\t\t\t\treturn members;\r\n\t\t\t}\r\n\t\t}\r\n\t\tpublic class ");
             
-            #line 237 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 237 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("Members\r\n\t\t{\r\n\t\t\tinternal ");
             
-            #line 239 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 239 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("Members() { }\r\n\r\n");
             
-            #line 241 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 241 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	foreach (Entity inherited in DALModel.GetBaseTypesAndSelf())
 	{
@@ -748,14 +748,14 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t\t#region Members for interface I");
             
-            #line 245 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 245 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("\r\n\r\n");
             
-            #line 247 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 247 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		foreach (Property attr in inherited.Properties)
 		{
@@ -765,35 +765,35 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t\tpublic Property ");
             
-            #line 251 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 251 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get; } = ");
             
-            #line 251 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 251 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
             
             #line default
             #line hidden
             this.Write(".Model.Entities[\"");
             
-            #line 251 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 251 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inherited.Name));
             
             #line default
             #line hidden
             this.Write("\"].Properties[\"");
             
-            #line 251 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 251 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("\"];\r\n");
             
-            #line 252 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 252 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		}
 
@@ -802,7 +802,7 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t\t#endregion\r\n\r\n");
             
-            #line 257 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 257 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	}
 
@@ -811,7 +811,7 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t}\r\n");
             
-            #line 261 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 261 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	var enumProperties = DALModel.Properties.Where(item => item.EnumValues is not null).ToList();
 
@@ -823,7 +823,7 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\r\n\t\t#region Enumerations\r\n\r\n");
             
-            #line 270 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 270 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		foreach (Property attr in enumProperties)
 		{
@@ -835,14 +835,14 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\tpublic enum ");
             
-            #line 276 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 276 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("Enum\r\n\t\t{\r\n");
             
-            #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 278 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 			foreach (var value in attr.EnumValues)
 			{
@@ -852,21 +852,21 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t\t");
             
-            #line 282 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 282 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(value.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 282 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 282 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(value.Value));
             
             #line default
             #line hidden
             this.Write(",\r\n");
             
-            #line 283 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 283 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 			}
 
@@ -875,7 +875,7 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t}\r\n\r\n");
             
-            #line 288 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 288 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 		}
 
@@ -884,7 +884,7 @@ if (DALModel.IsAbstract)
             #line hidden
             this.Write("\t\t#endregion\r\n");
             
-            #line 292 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 292 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 	}
 
@@ -894,28 +894,28 @@ if (DALModel.IsAbstract)
             this.Write("\r\n\t\tsealed public override Entity GetEntity()\r\n\t\t{\r\n\t\t\tif (entity is null)\r\n\t\t\t{\r" +
                     "\n\t\t\t\tlock (typeof(");
             
-            #line 300 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 300 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("))\r\n\t\t\t\t{\r\n\t\t\t\t\tif (entity is null)\r\n\t\t\t\t\t\tentity = ");
             
-            #line 303 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 303 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
             
             #line default
             #line hidden
             this.Write(".Model.Entities[\"");
             
-            #line 303 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 303 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("\"];\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t\treturn entity;\r\n\t\t}\r\n\t}\r\n");
             
-            #line 309 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
+            #line 309 "D:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
 
 }
 

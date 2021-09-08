@@ -43,7 +43,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
         public string Version { get; private set; } = "0.0.0";
         public int Major { get; private set; } = 0;
         public int Minor { get; private set; } = 0;
-        public int Revision { get; private set; } = 0;
+        public int? Revision { get; private set; } = null;
+        public bool IsAura { get; set; } = false;
         public bool IsEnterpriseEdition { get; private set; } = false;
 
         public bool HasFunction(string function)
@@ -84,8 +85,17 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
                                 string[] parts = Version.Split('.');
                                 Major = int.Parse(parts[0]);
-                                Minor = int.Parse(parts[1]);
-                                Revision = int.Parse(parts[2]);
+
+                                if (parts[1].ToLower().Contains("-aura"))
+                                {
+                                    parts[1] = parts[1].Replace("-aura", "");
+                                    IsAura = true;
+                                }
+                                
+                                Minor = int.Parse(parts[1]);                                
+
+                                if (parts.Length > 2)
+                                    Revision = int.Parse(parts[2]);
 
                                 functions = new HashSet<string>(Transaction.RunningTransaction.Run("call dbms.functions() yield name return name").Select(item => item.Values["name"].As<string>()));
                                 procedures = new HashSet<string>(Transaction.RunningTransaction.Run("call dbms.procedures() yield name as name").Select(item => item.Values["name"].As<string>()));
