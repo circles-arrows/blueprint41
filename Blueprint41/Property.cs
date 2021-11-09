@@ -849,6 +849,37 @@ namespace Blueprint41
                 template.Value = (string?)defaultValue.GetKey();
             }).RunBatched();
         }
+        void IRefactorProperty.SetDefaultValue(object defaultValue)
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            if (PropertyType == PropertyType.Attribute && !(SystemReturnType is null))
+            {
+                foreach (var entity in Parent.GetConcreteClasses())
+                {
+                    Parent.Parent.Templates.SetDefaultConstantValue(template =>
+                    {
+                        template.Entity = entity;
+                        template.Property = this;
+                        template.Value = Parent.Parent.PersistenceProvider.ConvertToStoredType(SystemReturnType, defaultValue);
+                    }).RunBatched();
+                }
+            }
+            else
+            {
+                if (PropertyType == PropertyType.Collection || ForeignEntity is null)
+                    throw new NotSupportedException("A collection cannot have default value.");
+
+                if (defaultValue is null || defaultValue.GetType() != ForeignEntity.Key?.SystemReturnType)
+                    throw new ArgumentException("The supplied default value does not match the type of the entity its primary key field.");
+
+                Parent.Parent.Templates.SetDefaultLookupValue(template =>
+                {
+                    template.Property = this;
+                    template.Value = (string)defaultValue;
+                }).RunBatched();
+            }
+        }
 
         private class NodePattern
         {

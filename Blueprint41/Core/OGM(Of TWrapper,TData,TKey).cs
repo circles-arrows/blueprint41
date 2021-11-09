@@ -192,16 +192,14 @@ namespace Blueprint41.Core
 		}
 		internal protected override void LazySet()
 		{
-			if (PersistenceState == PersistenceState.Persisted && DbTransaction != Transaction.RunningTransaction)
-					throw new InvalidOperationException("This object was already flushed to the data store.");
-			else if (PersistenceState == PersistenceState.OutOfScope)
+			if (PersistenceState == PersistenceState.OutOfScope)
 				throw new InvalidOperationException("The transaction for this object has already ended.");
 
 			LazyGet();
 
 			if (PersistenceState == PersistenceState.New)
 				PersistenceState = PersistenceState.NewAndChanged;
-			else if (PersistenceState == PersistenceState.Loaded)
+			else if (PersistenceState == PersistenceState.Loaded || PersistenceState == PersistenceState.Persisted)
 				PersistenceState = PersistenceState.LoadedAndChanged;
 		}
 		internal protected bool LazySet<T>(Property property, T previousValue, T assignValue) => LazySet<T>(property, previousValue, assignValue, Transaction.RunningTransaction.TransactionDate);

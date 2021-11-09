@@ -248,6 +248,24 @@ namespace Blueprint41.Query
 
             return New;
         }
+        public IWhereQuery And(params QueryCondition[] conditions)
+        {
+            if (Parent is null || (Parent.Type != PartType.Where && Parent.Type != PartType.Or))
+                throw new InvalidOperationException("You can only And if you did Where clause before.");
+
+            int len = (Parent.Conditions?.Length ?? 0);
+
+            QueryCondition[] newArray = new QueryCondition[conditions.Length + len];
+            if(Parent.Conditions is not null)
+                Parent.Conditions.CopyTo(newArray, 0);
+
+            conditions.CopyTo(newArray, len);
+
+            Parent.Conditions = newArray;
+
+            return this;
+        }
+
         public IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns)
         {
             SetType(PartType.UnionMatch);
@@ -545,6 +563,7 @@ namespace Blueprint41.Query
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
         IWhereQuery Or(params QueryCondition[] conditions);
+        IWhereQuery And(params QueryCondition[] conditions);
     }
     public partial interface IUnwindQuery<T>
     {

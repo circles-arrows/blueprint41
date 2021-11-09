@@ -21,7 +21,7 @@ namespace Blueprint41.Neo4j.Schema
         {
             using (Transaction.Begin())
             {
-                bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
+                bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41Plugin.Value;
 
                 FunctionalIds     = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
                 Constraints       = LoadData("CALL db.constraints()", record => NewConstraintInfo(record));

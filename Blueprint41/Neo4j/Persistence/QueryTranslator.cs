@@ -584,6 +584,7 @@ namespace Blueprint41.Neo4j.Model
         public virtual string CallUuidCreate              => "WITH apoc.create.uuid() as key";
         public virtual string CallFunctionalIdNextHash    => "CALL blueprint41.functionalid.next('{0}') YIELD value as key";
         public virtual string CallFunctionalIdNextNumeric => "CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key";
+        public virtual string FnListFlatten               => "apoc.coll.flatten({base})";
         public virtual string FnListSort                  => "apoc.coll.sort({base})";
         public virtual string FnListSortNode              => "apoc.coll.sortNodes({base}, \"{0}\")";
         public virtual string FnPairs                     => "apoc.coll.pairs({base})";
@@ -997,6 +998,7 @@ namespace Blueprint41.Neo4j.Model
 
         #region Support for Functions & Procedures
 
+        internal Lazy<bool> HasBlueprint41Plugin => GetProcedure("blueprint41.functionalid.list");
         internal Lazy<bool> HasBlueprint41FunctionalidFnNext => GetFunction("blueprint41.functionalid.fnNext");
         internal Lazy<bool> HasBlueprint41FunctionalidFnNextNumeric => GetFunction("blueprint41.functionalid.fnNextNumeric");
 

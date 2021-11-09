@@ -251,6 +251,14 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(this, Operator.StartsWith, param);
         }
+        public QueryCondition NotStartsWith(string text)
+        {
+            return new QueryCondition(new BooleanResult(this, t => t.FnNot), Operator.StartsWith, text);
+        }
+        public QueryCondition NotStartsWith(Parameter param)
+        {
+            return new QueryCondition(new BooleanResult(this, t => t.FnNot), Operator.StartsWith, param);
+        }
         public QueryCondition EndsWith(string text)
         {
             return new QueryCondition(this, Operator.EndsWith, text);
@@ -266,6 +274,14 @@ namespace Blueprint41.Query
         public QueryCondition Contains(Parameter param)
         {
             return new QueryCondition(this, Operator.Contains, param);
+        }
+        public QueryCondition NotContains(string text)
+        {
+            return new QueryCondition(new BooleanResult(this, t => t.FnNot), Operator.Contains, text);
+        }
+        public QueryCondition NotContains(Parameter param)
+        {
+            return new QueryCondition(new BooleanResult(this, t => t.FnNot), Operator.Contains, param);
         }
         public QueryCondition MatchRegex(string text)
         {

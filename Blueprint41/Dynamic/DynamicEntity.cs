@@ -513,16 +513,14 @@ namespace Blueprint41.Dynamic
 
         private void LazySet()
         {
-            if (PersistenceState == PersistenceState.Persisted && DbTransaction != Transaction.RunningTransaction)
-                throw new InvalidOperationException("This object was already flushed to the data store.");
-            else if (PersistenceState == PersistenceState.OutOfScope)
+            if (PersistenceState == PersistenceState.OutOfScope)
                 throw new InvalidOperationException("The transaction for this object has already ended.");
 
             LazyGet();
 
             if (PersistenceState == PersistenceState.New)
                 PersistenceState = PersistenceState.NewAndChanged;
-            else if (PersistenceState == PersistenceState.Loaded)
+            else if (PersistenceState == PersistenceState.Loaded || PersistenceState == PersistenceState.Persisted)
                 PersistenceState = PersistenceState.LoadedAndChanged;
         }
 
@@ -587,6 +585,7 @@ namespace Blueprint41.Dynamic
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
+                case PersistenceState.Persisted:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.ForceDelete;
                     ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
@@ -596,10 +595,6 @@ namespace Blueprint41.Dynamic
                     break;
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
-                case PersistenceState.Persisted:
-                    if (DbTransaction != Transaction.RunningTransaction)
-                        throw new InvalidOperationException("This object was already flushed to the data store.");
-                    break;
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
@@ -619,6 +614,7 @@ namespace Blueprint41.Dynamic
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
+                case PersistenceState.Persisted:
                 case PersistenceState.LoadedAndChanged:
                     PersistenceState = PersistenceState.Delete;
                     ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
@@ -628,10 +624,6 @@ namespace Blueprint41.Dynamic
                     break;
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
-                case PersistenceState.Persisted:
-                    if (DbTransaction != Transaction.RunningTransaction)
-                        throw new InvalidOperationException("This object was already flushed to the data store.");
-                    break;
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:

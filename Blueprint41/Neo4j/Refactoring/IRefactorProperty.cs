@@ -55,5 +55,7 @@ namespace Blueprint41.Neo4j.Refactoring
         void MakeMandatory(object defaultValue);
         [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
         void MakeMandatory(DynamicEntity defaultValue);
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
+        void SetDefaultValue(object defaultValue);
     }
 }

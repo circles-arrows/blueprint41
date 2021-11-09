@@ -159,6 +159,18 @@ namespace Blueprint41.Query
         {
             return NewList(t => t.FnListSort);
         }
+        public TList Flatten()
+        {
+            return NewList(t => t.FnListFlatten);
+        }
+        public TList Collect()
+        {
+            return NewList(t => t.FnCollect);
+        }
+        public TList CollectDistinct()
+        {
+            return NewList(t => t.FnCollectDistinct);
+        }
         public override NumericResult Count()
         {
             return new NumericResult(this, t => t.FnListSize, null, typeof(long));

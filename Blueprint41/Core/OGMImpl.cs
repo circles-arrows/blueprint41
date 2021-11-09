@@ -91,8 +91,6 @@ namespace Blueprint41.Core
 
         void OGM.Delete(bool force)
         {
-            GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
-
             if (force)
                 ForceDelete();
             else
@@ -105,12 +103,15 @@ namespace Blueprint41.Core
             {
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
+                    GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
                     PersistenceState = PersistenceState.Deleted;
                     ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
+                case PersistenceState.Persisted:
                 case PersistenceState.LoadedAndChanged:
+                    GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
                     PersistenceState = PersistenceState.ForceDelete;
                     ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
@@ -119,10 +120,6 @@ namespace Blueprint41.Core
                     break;
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
-                case PersistenceState.Persisted:
-                    if (DbTransaction != Transaction.RunningTransaction)
-                        throw new InvalidOperationException("This object was already flushed to the data store.");
-                    break;
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
@@ -137,12 +134,15 @@ namespace Blueprint41.Core
             {
                 case PersistenceState.New:
                 case PersistenceState.NewAndChanged:
+                    GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
                     PersistenceState = PersistenceState.Deleted;
                     ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
                 case PersistenceState.HasUid:
                 case PersistenceState.Loaded:
+                case PersistenceState.Persisted:
                 case PersistenceState.LoadedAndChanged:
+                    GetEntity().RaiseOnDelete(this, Transaction.RunningTransaction);
                     PersistenceState = PersistenceState.Delete;
                     ExecuteAction(new ClearRelationshipsAction(RunningTransaction.RelationshipPersistenceProvider, this));
                     break;
@@ -151,10 +151,6 @@ namespace Blueprint41.Core
                     break;
                 case PersistenceState.OutOfScope:
                     throw new InvalidOperationException("The transaction for this object has already ended.");
-                case PersistenceState.Persisted:
-                    if (DbTransaction != Transaction.RunningTransaction)
-                        throw new InvalidOperationException("This object was already flushed to the data store.");
-                    break;
                 case PersistenceState.Error:
                     throw new InvalidOperationException("The object suffered an unexpected failure.");
                 case PersistenceState.DoesntExist:
