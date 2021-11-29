@@ -14,15 +14,18 @@ namespace Blueprint41
             Parent = parent;
             Name = name;
             Guid = parent?.GenerateGuid(name) ?? Guid.Empty;
+            PropertyReference = null!;
         }
-        internal Enumeration(IEnumerable<string> names)
+        internal Enumeration(Property property, IEnumerable<string> names)
         {
             Parent = null!;
             Name = "Ad-hoc";
             Guid = Guid.Empty;
+            PropertyReference = property;
             AddValuesInternal(names.ToArray());
         }
 
+        public Property PropertyReference { get; internal set; }
         public DatastoreModel Parent { get; private set; }
         public string Name { get; private set; }
         public Guid Guid { get; private set; }

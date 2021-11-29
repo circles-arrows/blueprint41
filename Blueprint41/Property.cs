@@ -57,7 +57,7 @@ namespace Blueprint41
             IndexType = indexType;
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
-            Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(enumeration);
+            Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(this, enumeration);
         }
         internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
         {
@@ -71,6 +71,7 @@ namespace Blueprint41
             Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = enumeration;
+            Enumeration.PropertyReference = this;
         }
 
         #region Properties
@@ -279,7 +280,7 @@ namespace Blueprint41
             if (Enumeration.Values.Count == 0)
                 Enumeration = null;
             else
-                Enumeration = new Enumeration(Enumeration.Values.Select(item => item.Name));
+                Enumeration = new Enumeration(this, Enumeration.Values.Select(item => item.Name));
         }
 
         #endregion
@@ -362,10 +363,12 @@ namespace Blueprint41
             if (PropertyType != PropertyType.Attribute)
                 throw new NotSupportedException("Consider using the refactor action 'SetInEntity' or 'SetOutEntity' on the relationship.");
 
-            if (!Parent.IsSubsclassOf(target))
-                throw new ArgumentException(string.Format("Target {0} is not a base type of {1}", target.Name, Parent.Name), "baseType");
+            // TODO: This is not true... If we move the property to a base type, it should be checked the property is at least nullable
+            if (!Parent.IsSubsclassOf(target) && !target.IsSubsclassOf(Parent))
+                throw new ArgumentException(string.Format("Target {0} is not a base-type or sub-type of {1}", target.Name, Parent.Name), "baseType");
 
             // No changes in DB needed for this action!!!
+            // TODO: This is not true... If we move the property to a sub type, we should delete the content for the base types that do not inherit the sub-type
 
             Parent.Properties.Remove(Name);
             target.Properties.Add(Name, this);
@@ -652,7 +655,6 @@ namespace Blueprint41
             IndexType = indexType;
             // commit to db is automatic after any script ran during upgrade...
         }
-
 
         void IRefactorProperty.Reroute(string pattern, string newPropertyName, bool strict)
         {
