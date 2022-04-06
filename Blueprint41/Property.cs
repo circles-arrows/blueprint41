@@ -283,6 +283,23 @@ namespace Blueprint41
                 Enumeration = new Enumeration(this, Enumeration.Values.Select(item => item.Name));
         }
 
+        private object? m_MandatoryDefaultValue;
+
+        public object? MandatoryDefaultValue
+        {
+            get
+            {
+                if (!Nullable)
+                    return m_MandatoryDefaultValue;
+
+                return null;
+            }
+            set
+            {
+                m_MandatoryDefaultValue = value;
+            }
+        }
+
         #endregion
 
         #region Refactor Actions
