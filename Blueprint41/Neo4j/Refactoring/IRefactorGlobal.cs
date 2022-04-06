@@ -20,5 +20,8 @@ namespace Blueprint41.Neo4j.Refactoring
         void ApplyConstraints();
         void SetCreationDate();
         void ApplyFullTextSearchIndexes();
+        void ApplyFullTextSearchIndexes(bool shouldRun);
+
+        bool HasFullTextSearchIndexes();
     }
 }

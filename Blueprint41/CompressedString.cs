@@ -831,13 +831,18 @@ namespace System
             var memoryStream = new MemoryStream();
             using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))
             {
-                gZipStream.Write(buffer, 0, buffer.Length);
+                gZipStream.Write(buffer, 0, buffer.Length);                
+                gZipStream.Flush();
             }
 
             memoryStream.Position = 0;
 
             var compressedData = new byte[memoryStream.Length + 4];
-            memoryStream.Read(compressedData, 4, (int)memoryStream.Length);
+            int bytesRead = 0;
+            while (bytesRead < memoryStream.Length)
+            {
+                bytesRead += memoryStream.Read(compressedData, bytesRead + 4, (int)memoryStream.Length - bytesRead);
+            }
 
             Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, compressedData, 0, 4);
 
@@ -848,11 +853,12 @@ namespace System
             GZipStream? gZipStream;
             MemoryStream? memoryStream;
             byte[] buffer;
-            
+
             using (memoryStream = new MemoryStream())
             {
                 int dataLength = BitConverter.ToInt32(gZipBuffer, 0);
                 memoryStream.Write(gZipBuffer, 4, gZipBuffer.Length - 4);
+                memoryStream.Flush();
 
                 try
                 {
@@ -869,7 +875,11 @@ namespace System
                 memoryStream.Position = 0;
                 using (gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
                 {
-                    gZipStream.Read(buffer, 0, buffer.Length);
+                    int bytesRead = 0;
+                    while (bytesRead < buffer.Length)
+                    {
+                        bytesRead += gZipStream.Read(buffer, bytesRead, buffer.Length - bytesRead);
+                    }
                 }
             }
             memoryStream = null;

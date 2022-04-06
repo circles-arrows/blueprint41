@@ -12,10 +12,20 @@ namespace Blueprint41.Query
     {
         public static QueryCondition operator &(QueryCondition a, QueryCondition b)
         {
+            if (a is null)
+                return b;
+            else if (b is null)
+                return a;
+
             return new QueryCondition(a, Operator.And, b);
         }
         public static QueryCondition operator |(QueryCondition a, QueryCondition b)
         {
+            if (a is null)
+                return b;
+            else if (b is null)
+                return a;
+
             return new QueryCondition(a, Operator.Or, b);
         }
 
@@ -23,7 +33,7 @@ namespace Blueprint41.Query
         {
             if (op == Operator.Boolean && (left as BooleanResult) is null)
                 throw new InvalidOperationException("The left side of an boolean operator must be of type BooleanResult");
-                    
+
             Left = left;
             Operator = op;
             Right = right;

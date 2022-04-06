@@ -66,11 +66,7 @@ namespace Blueprint41.Core
 
         public override int GetHashCode()
         {
-            return
-                (Parent?.GetHashCode() ?? 0) ^
-                (Item?.GetHashCode() ?? 0) ^
-                (StartDate.GetHashCode()) ^
-                (EndDate.GetHashCode());
+            return HashCode.Combine(Parent, Item, StartDate, EndDate);
         }
         public override bool Equals(object? obj)
         {

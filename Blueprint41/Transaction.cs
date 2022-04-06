@@ -83,7 +83,7 @@ namespace Blueprint41
             if (!DisableForeignKeyChecks)
             {
                 // TODO: check why entities is missing entities when using new code
-                foreach (var entitySet in registeredEntities.Values)
+                foreach (var entitySet in registeredEntities.Values.ToList())
                 {
                     foreach (OGM entity in entitySet.Values)
                     {
@@ -180,7 +180,7 @@ namespace Blueprint41
                 }
                 catch (Exception e)
                 {
-                    if (e.Message.ToLowerInvariant().Contains("can't acquire ExclusiveLock".ToLowerInvariant()))
+                    if (e.Message.ToLowerInvariant().Contains("can't acquire ExclusiveLock".ToLowerInvariant()) || e.Message.ToLowerInvariant().Contains("can't acquire UpdateLock".ToLowerInvariant()))
                     {
                         repeat = true;
 

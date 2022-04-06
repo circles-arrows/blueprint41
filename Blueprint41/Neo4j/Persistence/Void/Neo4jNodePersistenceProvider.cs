@@ -133,17 +133,16 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             IDictionary<string, object?> node = item.GetData();
 
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
+            parameters.Add("node", node);
+
             string? create = null;
+            object? key = item.GetKey();
             if (entity.FunctionalId is not null)
             {
-                object? key = item.GetKey();
                 if (key is null)
                 {
-                    create = string.Concat(
-                    		NextFunctionalIdQuery(entity.FunctionalId),
-                    		"\r\n",
-                    		string.Format("CREATE (inserted:{0} $node) SET inserted.{1} = key Return inserted", labels, entity.Key.Name)
-                    	);
+                    create = $"{NextFunctionalIdQuery(entity.FunctionalId)} MERGE (inserted:{labels} {{ {entity.Key.Name}: key}}) ON CREATE SET inserted += $node ON MATCH SET inserted = $node, inserted.{entity.Key.Name} = key RETURN inserted";
                     node.Remove(entity.Key.Name);
                 }
                 else
@@ -154,10 +153,14 @@ namespace Blueprint41.Neo4j.Persistence.Void
             }
 
             if (create is null)
-                create = string.Format("CREATE (inserted:{0} $node) Return inserted", labels);
+            {
+                if (key is null)
+                    throw new NotSupportedException("You have to specify the key value if no functional Id was defined.");
 
-            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
-            parameters.Add("node", node);
+                parameters.Add("key", key);
+
+                create = $"MERGE (inserted:{labels} {{ {entity.Key.Name}: $key}}) ON CREATE SET inserted = $node ON MATCH SET inserted = $node RETURN inserted";
+            }
 
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
@@ -421,11 +424,23 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("CALL apoc.index.search('fts', '");
-            sb.Append(string.Join(" OR ", queries));
-            sb.Append("') YIELD node WHERE (node:");
-            sb.Append(entity.Label.Name);
-            sb.Append(") RETURN DISTINCT node");
+            Neo4jPersistenceProvider persistenceProvider = PersistenceProviderFactory as Neo4jPersistenceProvider ?? throw new NotSupportedException("Expected Neo4jPersistenceProvider");
+            if (persistenceProvider.Major < 4)
+            {
+                sb.Append("CALL apoc.index.search('fts', '");
+                sb.Append(string.Join(" OR ", queries));
+                sb.Append("') YIELD node WHERE (node:");
+                sb.Append(entity.Label.Name);
+                sb.Append(") RETURN DISTINCT node");
+            }
+            else
+            {
+                sb.Append("CALL db.index.fulltext.queryNodes('fts', '\"");
+                sb.Append(search);
+                sb.Append("\"') YIELD node WHERE (node:");
+                sb.Append(entity.Label.Name);
+                sb.Append(") RETURN DISTINCT node");
+            }
 
             if (orderBy is not null && orderBy.Length != 0)
             {

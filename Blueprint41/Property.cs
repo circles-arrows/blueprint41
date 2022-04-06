@@ -374,6 +374,20 @@ namespace Blueprint41
             target.Properties.Add(Name, this);
             this.Parent = target;
         }
+        void IRefactorProperty.MoveToSubClasses()
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            if (PropertyType != PropertyType.Attribute)
+                throw new NotSupportedException("Consider using the refactor action 'SetInEntity' or 'SetOutEntity' on the relationship.");
+
+            Parent.Properties.Remove(Name);
+            foreach (var subClass in Parent.GetSubclasses())
+            {
+                subClass.Properties.Add(Name, this);
+                this.Parent = subClass;
+            }
+        }
         //void IRefactorProperty.Move(string pattern, string newPropertyName)
         //{
         //    throw new NotImplementedException();
@@ -808,6 +822,8 @@ namespace Blueprint41
                         template.Property = this;
                         template.Value = Parent.Parent.PersistenceProvider.ConvertToStoredType(SystemReturnType, defaultValue);
                     }).RunBatched();
+
+                    MandatoryDefaultValue = defaultValue;
                 }
             }
             else
@@ -825,6 +841,8 @@ namespace Blueprint41
                     template.Property = this;
                     template.Value = (string)defaultValue;
                 }).RunBatched();
+
+                MandatoryDefaultValue = defaultValue;
             }
         }
         void IRefactorProperty.MakeMandatory(DynamicEntity defaultValue)

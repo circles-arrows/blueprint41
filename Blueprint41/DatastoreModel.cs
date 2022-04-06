@@ -222,6 +222,9 @@ namespace Blueprint41
             executed = true;
 
 #pragma warning restore CS0618 // Type or member is obsolete
+
+            bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
+            Refactor.ApplyFullTextSearchIndexes(shouldRun);
         }
 
         private void RunScriptChecked(UpgradeScript script)
@@ -301,13 +304,7 @@ namespace Blueprint41
 
             public override int GetHashCode()
             {
-                return Patch.GetHashCode() ^ ROL(Minor.GetHashCode(), 10) ^ ROL(Major.GetHashCode(), 20) ^ Name.GetHashCode();
-
-                int ROL(int value, int bits)
-                {
-                    uint val = (uint)value;
-                    return (int)((val << bits) | (val >> (32 - bits)));
-                }
+                return HashCode.Combine(Patch, Minor, Major, Name);
             }
         }
 
@@ -350,11 +347,21 @@ namespace Blueprint41
 
         void IRefactorGlobal.ApplyFullTextSearchIndexes()
         {
+            Refactor.ApplyFullTextSearchIndexes(false);
+        }
+
+        void IRefactorGlobal.ApplyFullTextSearchIndexes(bool shouldRun)
+        {
             EnsureSchemaMigration();
-            if (!Parser.ShouldExecute)
+            if (!Parser.ShouldExecute && !shouldRun)
                 return;
 
             PersistenceProvider.Translator.ApplyFullTextSearchIndexes(Entities);
+        }
+
+        bool IRefactorGlobal.HasFullTextSearchIndexes()
+        {
+            return PersistenceProvider.Translator.HasFullTextSearchIndexes();
         }
 
         protected DataMigrationScope DataMigration { get; private set; }

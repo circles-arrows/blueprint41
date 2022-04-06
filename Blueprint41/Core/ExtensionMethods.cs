@@ -10,10 +10,10 @@ using Blueprint41.Core;
 using System.Reflection;
 using System.Collections.ObjectModel;
 using Blueprint41;
-using System.Runtime.Serialization.Json;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq.Expressions;
 
 namespace System.Linq
 {
@@ -212,11 +212,7 @@ namespace System
             if (self is null)
                 return null;
 
-            using (MemoryStream writer = new MemoryStream())
-            {
-                Cache<T>.JsonSerializer.WriteObject(writer, self);
-                return Encoding.UTF8.GetString(writer.ToArray());
-            }
+            return Serializer.Serialize(self);
         }
         
         [return: MaybeNull]
@@ -225,10 +221,7 @@ namespace System
             if (self is null)
                 return default!;
 
-            using (MemoryStream reader = new MemoryStream(Encoding.UTF8.GetBytes(self)))
-            {
-                return (T)Cache<T>.JsonSerializer.ReadObject(reader);
-            }
+            return Serializer.Deserialize<T>(self);
         }
 
         [return: MaybeNull]
@@ -238,11 +231,6 @@ namespace System
                 return default!;
 
             return FromJson<T>(self.Value);
-        }
-
-        private class Cache<T>
-        {
-            public static DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(T));
         }
 
         public static IEnumerable<T> NotNull<T>(this IEnumerable<T?> self)
@@ -275,6 +263,37 @@ namespace System
         {
             return self.ContinueWith(task => callback.Invoke(task.GetAwaiter().GetResult()));
         }
+
+        public static string? GetAsyncTaskDescription(this Task task)
+        {
+            Delegate? action = getActionDelegate.Value.Invoke(task);
+            if (action is null)
+                return null;
+
+            return SanitizeName(action.Method.Name, action.Method.ReturnType.Name);
+
+            static string? SanitizeName(string name, string returns)
+            {
+                if (name.First() != '<')
+                    return null;
+
+                int index = name.IndexOf('>');
+                if (index == -1)
+                    return null;
+
+                return $"async callback from method '{name.Substring(1, index - 1)}', returning type '{returns}'.";
+            }
+        }
+        private static Lazy<Func<Task, Delegate?>> getActionDelegate = new Lazy<Func<Task, Delegate?>>(delegate ()
+        {
+            FieldInfo field = typeof(Task).GetField("m_action", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            ParameterExpression parameter = Expression.Parameter(typeof(Task), "task");
+            Expression accessField = Expression.Field(parameter, field);
+
+            return Expression.Lambda<Func<Task, Delegate?>>(accessField, parameter).Compile();
+
+        }, true);
     }
 }
 namespace Blueprint41.Core

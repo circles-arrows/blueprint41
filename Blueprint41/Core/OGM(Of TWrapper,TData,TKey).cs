@@ -312,10 +312,11 @@ namespace Blueprint41.Core
 	{
 		protected OGM() : base()
 		{
-			OriginalData = InnerData = new TData();
+			InnerData = new TData();
 			InnerData.Initialize(this);
 			PersistenceState = PersistenceState.New;
 			GetEntity().RaiseOnNew(this, Transaction.RunningTransaction);
+			OriginalData = InnerData;
 		}
 
 		sealed internal override void SetKey(TKey key)
@@ -380,10 +381,10 @@ namespace Blueprint41.Core
 		//internal TData NewData(TKey key)
 		//{
 		//	  TData item = NewData();
-	
+
 		//	  if (key is not null && !key.Equals(default(TKey)))
 		//		  item.SetKey(key);
-	
+
 		//    return item;
 		//}
 

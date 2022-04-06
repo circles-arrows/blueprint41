@@ -120,17 +120,17 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
                 this.GenerationEnvironment.Append(this.currentIndentField);
                 this.endsWithNewline = false;
             }
-            // Check if the current text ends with a newline
-            if (textToAppend.EndsWith(global::System.Environment.NewLine, global::System.StringComparison.CurrentCulture))
-            {
-                this.endsWithNewline = true;
-            }
             // This is an optimization. If the current indent is "", then we don't have to do any
             // of the more complex stuff further down.
             if ((this.currentIndentField.Length == 0))
             {
                 this.GenerationEnvironment.Append(textToAppend);
                 return;
+            }
+            // Check if the current text ends with a newline
+            if (textToAppend.EndsWith(global::System.Environment.NewLine, global::System.StringComparison.CurrentCulture))
+            {
+                this.endsWithNewline = true;
             }
             // Everywhere there is a newline in the text, add an indent after it
             textToAppend = textToAppend.Replace(global::System.Environment.NewLine, (global::System.Environment.NewLine + this.currentIndentField));

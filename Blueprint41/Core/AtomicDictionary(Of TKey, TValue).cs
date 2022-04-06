@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Threading;
 
@@ -15,28 +14,33 @@ namespace Blueprint41.Core
     public class AtomicDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         where TKey : notnull
     {
-        private ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private readonly ReaderWriterLockSlim _lock;
 
         private readonly IDictionary<TKey, TValue> dictionary;
 
-        public AtomicDictionary()
+        public AtomicDictionary(bool supportRecursion = false)
         {
+            _lock = new ReaderWriterLockSlim(supportRecursion ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion);
             dictionary = new Dictionary<TKey, TValue>();
         }
-        public AtomicDictionary(int capacity)
+        public AtomicDictionary(int capacity, bool supportRecursion = false)
         {
+            _lock = new ReaderWriterLockSlim(supportRecursion ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion);
             dictionary = new Dictionary<TKey, TValue>(capacity);
         }
-        public AtomicDictionary(IEqualityComparer<TKey> comparer)
+        public AtomicDictionary(IEqualityComparer<TKey> comparer, bool supportRecursion = false)
         {
+            _lock = new ReaderWriterLockSlim(supportRecursion ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion);
             dictionary = new Dictionary<TKey, TValue>(comparer);
         }
-        public AtomicDictionary(IDictionary<TKey, TValue> dictionary)
+        public AtomicDictionary(IDictionary<TKey, TValue> dictionary, bool supportRecursion = false)
         {
+            _lock = new ReaderWriterLockSlim(supportRecursion ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion);
             this.dictionary = new Dictionary<TKey, TValue>(dictionary);
         }
-        public AtomicDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
+        public AtomicDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer, bool supportRecursion = false)
         {
+            _lock = new ReaderWriterLockSlim(supportRecursion ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion);
             this.dictionary = new Dictionary<TKey, TValue>(dictionary, comparer);
         }
 
@@ -233,5 +237,8 @@ namespace Blueprint41.Core
             if (!dict.ContainsKey(kvp.Key))
                 dict.Add(kvp.Key, kvp.Value);
         }
+
+        public KeyValuePair<TKey, TValue>[] ToArray() => Read(dict => dict.ToArray());
+        public List<KeyValuePair<TKey, TValue>> ToList() => Read(dict => dict.ToList());
     }
 }

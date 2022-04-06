@@ -6,25 +6,22 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Blueprint41
 {
     internal abstract class Serializer
     {
-        static internal DataContractJsonSerializerSettings settings = new DataContractJsonSerializerSettings()
-        {
-            EmitTypeInformation = EmitTypeInformation.AsNeeded,
-            UseSimpleDictionaryFormat = true,
-            DateTimeFormat = new DateTimeFormat(@"yyyy-MM-dd\THH:mm:ss.fff\Z"),
-            KnownTypes = new[]
+        internal static Lazy<JsonSerializerOptions> serializeOptions = new Lazy<JsonSerializerOptions>(
+            delegate () 
             {
-                typeof(List<object>),
-                typeof(List<string>),
-                typeof(Dictionary<object, object>),
-                typeof(Dictionary<string, object>),
-                typeof(byte[]),
-            },
-        };
+                JsonSerializerOptions option = new JsonSerializerOptions();
+                option.Converters.Add(new DictionaryConverter());
+                return option;
+            }, 
+            false
+        );
             
         protected abstract string SerializeInternal(object? value);
         protected abstract object? DeserializeInternal(string value);
@@ -53,7 +50,7 @@ namespace Blueprint41
     }
     internal class Serializer<T> : Serializer
     {
-        private static DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T), settings);
+        private static DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
 
         protected sealed override string SerializeInternal(object? value)
         {
@@ -68,11 +65,15 @@ namespace Blueprint41
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                serializer.WriteObject(ms, value);
+                JsonSerializer.Serialize(ms, value); //Serialize with default converter
                 ms.Position = 0;
                 using (StreamReader sr = new StreamReader(ms, Encoding.UTF8))
                 {
                     return sr.ReadToEnd();
+                    //var retval = sr.ReadToEnd();
+                    //if (retval.Contains("Certus_Configuration"))
+                    //    System.Diagnostics.Debugger.Break();
+                    //return retval;
                 }
             }
         }
@@ -80,7 +81,10 @@ namespace Blueprint41
         {
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(value)))
             {
-                return (T)serializer.ReadObject(ms);
+                if(value.TrimStart().StartsWith("["))
+                    return (T)serializer.ReadObject(ms);
+                else
+                    return JsonSerializer.Deserialize<T>(ms)!;
             }
         }
     }

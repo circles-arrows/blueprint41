@@ -269,6 +269,10 @@ namespace Blueprint41.Query
         {
             return Any(item => item == Parameter.Constant(value));
         }
+        public QueryCondition Any(Parameter parameter)
+        {
+            return Any(item => item == parameter);
+        }
         public QueryCondition Any(Func<TResult, QueryCondition> condition)
         {
             TResult itemField = NewResult(t => "item", new object[0], typeof(TType));

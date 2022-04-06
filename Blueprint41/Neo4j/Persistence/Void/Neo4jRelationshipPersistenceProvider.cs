@@ -393,12 +393,12 @@ namespace Blueprint41.Neo4j.Persistence.Void
             if (outItem is not null) 
                 parameters.Add("outKey", outItem!.GetKey());
 
-            Entity? inEntity = inItem?.GetEntity();
-            Entity? outEntity = outItem?.GetEntity();
+            Entity inEntity = inItem?.GetEntity() ?? relationship.InEntity;
+            Entity outEntity = outItem?.GetEntity() ?? relationship.OutEntity;
 
-            string inLabel = (inEntity is null) ? "in" : $"in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}";
-            string outLabel = (outEntity is null) ? "out" : $"out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }}";
-
+            string inLabel = (inItem is null) ? $"in:{inEntity.Label.Name}" : $"in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}";
+            string outLabel = (outItem is null) ? $"out:{outEntity.Label.Name}" : $"out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }}";
+            
             cypher = $"MATCH ({inLabel})-[r:{relationship.Neo4JRelationshipType}]->({outLabel}) DELETE r";
 
             relationship.RaiseOnRelationDelete(trans);
@@ -414,11 +414,11 @@ namespace Blueprint41.Neo4j.Persistence.Void
             //      IsAfter -> Remove relation
             //      Overlaps -> Set relation.EndDate to "moment"
 
-            Entity? inEntity = inItem?.GetEntity();
-            Entity? outEntity = outItem?.GetEntity();
+            Entity inEntity = inItem?.GetEntity() ?? relationship.InEntity;
+            Entity outEntity = outItem?.GetEntity() ?? relationship.OutEntity;
 
-            string inLabel = (inEntity is null) ? "in" : $"in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}";
-            string outLabel = (outEntity is null) ? "out" : $"out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }}";
+            string inLabel = (inItem is null) ? $"in:{inEntity.Label.Name}" : $"in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}";
+            string outLabel = (outItem is null) ? $"out:{outEntity.Label.Name}" : $"out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }}";
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"MATCH ({inLabel})-[rel:{relationship.Neo4JRelationshipType}]->({outLabel})");

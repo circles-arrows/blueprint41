@@ -98,6 +98,49 @@ if (!DALModel.IsAbstract)
 			Register.Types();
 		}
 
+<#
+		if(DALModel.Properties.Any(item => item.MandatoryDefaultValue is not null))
+		{
+#>
+		public <#= DALModel.ClassName #>() : base()
+		{
+<#
+		foreach(Property attr in DALModel.Properties.Where(item => item.PropertyType == PropertyType.Attribute && item.MandatoryDefaultValue is not null && !string.IsNullOrEmpty(item.MandatoryDefaultValue.ToString())))
+		{
+			if(attr.EnumValues is null)
+			{
+				if(attr.SystemReturnType == typeof(string))
+				{
+#>
+			<#= attr.Name #> = "<#= attr.MandatoryDefaultValue.ToString() #>";
+<#
+				}
+				else if(attr.SystemReturnType == typeof(bool))
+				{
+#>
+			<#= attr.Name #> = <#= attr.MandatoryDefaultValue.ToString().ToLower() #>;
+<#
+				}
+				else if(attr.SystemReturnType == attr.MandatoryDefaultValue.GetType())
+				{
+#>
+			<#= attr.Name #> = <#= attr.MandatoryDefaultValue.ToString() #>;
+<#
+				}
+			}
+			else
+			{
+#>
+			<#= attr.Name #> = <#= attr.Parent.Name #>.<#= attr.Name #>Enum.<#= attr.MandatoryDefaultValue #>;
+<#
+			}
+		}
+#>
+		}
+<#
+		}
+#>
+
 		protected override void RegisterGeneratedStoredQueries()
 		{
 			#region LoadByKeys

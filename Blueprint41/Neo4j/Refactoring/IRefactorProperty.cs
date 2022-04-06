@@ -18,6 +18,8 @@ namespace Blueprint41.Neo4j.Refactoring
         [RestrictedTo(PropertyType.Attribute)]
         void Move(Entity target);
         //void Move(string pattern, string newPropertyName);
+        [RestrictedTo(PropertyType.Attribute)]
+        void MoveToSubClasses();
 
         [RestrictedTo(PropertyType.Attribute)]
         void Merge(Property target, MergeAlgorithm mergeAlgorithm);

@@ -37,6 +37,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                                     o.WithDefaultWriteBufferSize(DEFAULT_READWRITESIZE);
                                     o.WithMaxReadBufferSize(DEFAULT_READWRITESIZE_MAX);
                                     o.WithMaxWriteBufferSize(DEFAULT_READWRITESIZE_MAX);
+                                    o.WithMaxTransactionRetryTime(TimeSpan.Zero);
                                 }
                             );
 

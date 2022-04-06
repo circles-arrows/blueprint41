@@ -47,7 +47,7 @@
   </PropertyGroup>
     
   <ItemGroup>
-    <PackageReference Include="Neo4j.Driver" Version="4.3.1" />
+    <PackageReference Include="Neo4j.Driver" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>

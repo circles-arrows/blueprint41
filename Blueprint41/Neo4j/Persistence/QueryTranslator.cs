@@ -472,32 +472,6 @@ namespace Blueprint41.Neo4j.Model
                 default:
                     throw new NotImplementedException($"Compilation for the {query.Type.ToString()} clause is not supported yet.");
             }
-
-            void SearchTranslation(q.Query query, CompileState state)
-            {
-                string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
-                search = string.Format("replace({0}, '{1}', '{2}')", search, "]", @"\\]");
-                search = string.Format("replace({0}, '{1}', '{2}')", search, "[", @"\\[");
-                Node node = query.Patterns.First();
-                AliasResult alias = node.NodeAlias!;
-                AliasResult? weight = query.Aliases?.FirstOrDefault();
-                FieldResult[] fields = query.Fields!;
-
-                List<string> queries = new List<string>();
-                foreach (var property in fields)
-                    queries.Add(string.Format("({0}.{1}:' + {2} + ')", node.Neo4jLabel, property.FieldName, search));
-
-                state.Text.Append(string.Format(FtiSearch, string.Join(" OR ", queries), state.Preview(alias.Compile, state)));
-                if ((object?)weight is not null)
-                {
-                    state.Text.Append(string.Format(FtiWeight, state.Preview(weight.Compile, state)));
-                }
-                state.Text.Append(" WHERE (");
-                Compile(alias, state);
-                state.Text.Append(":");
-                state.Text.Append(node.Neo4jLabel);
-                state.Text.Append(")");
-            }
             void MatchTranslation(q.Query query, CompileState state)
             {
                 state.Text.Append("MATCH ");
@@ -510,6 +484,32 @@ namespace Blueprint41.Neo4j.Model
                 else
                     state.Text.Append("UNION ");
             }
+        }
+
+        internal protected virtual void SearchTranslation(q.Query query, CompileState state)
+        {
+            string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
+            search = string.Format("replace({0}, '{1}', '{2}')", search, "]", @"\\]");
+            search = string.Format("replace({0}, '{1}', '{2}')", search, "[", @"\\[");
+            Node node = query.Patterns.First();
+            AliasResult alias = node.NodeAlias!;
+            AliasResult? weight = query.Aliases?.FirstOrDefault();
+            FieldResult[] fields = query.Fields!;
+
+            List<string> queries = new List<string>();
+            foreach (var property in fields)
+                queries.Add(string.Format("({0}.{1}:' + {2} + ')", node.Neo4jLabel, property.FieldName, search));
+
+            state.Text.Append(string.Format(FtiSearch, string.Join(" OR ", queries), state.Preview(alias.Compile, state)));
+            if ((object?)weight is not null)
+            {
+                state.Text.Append(string.Format(FtiWeight, state.Preview(weight.Compile, state)));
+            }
+            state.Text.Append(" WHERE (");
+            Compile(alias, state);
+            state.Text.Append(":");
+            state.Text.Append(node.Neo4jLabel);
+            state.Text.Append(")");
         }
 
         #endregion
@@ -668,7 +668,7 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FtiProperty  => "'{0}'";
         public virtual string FtiSeparator => ", ";
         public virtual string FtiRemove    => "CALL apoc.index.remove('fts')";
-
+        public virtual string FtiList      => "CALL apoc.index.list() YIELD type, name, config";
         #endregion
 
         #region Compile Operators
@@ -704,6 +704,14 @@ namespace Blueprint41.Neo4j.Model
 
         #region Upgrade Script Parser
 
+        internal virtual bool HasFullTextSearchIndexes()
+        {
+            using (Transaction.Begin(true))
+            {
+                var result = Transaction.RunningTransaction.Run(FtiList);
+                return result.Count() > 0;
+            }
+        }
         internal virtual void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
         {
             try

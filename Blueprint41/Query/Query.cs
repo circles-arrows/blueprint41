@@ -59,6 +59,9 @@ namespace Blueprint41.Query
             Patterns = new[] { searchNodeType };
             Fields = searchFields;
 
+            if(searchNodeType.Entity.FullTextIndexProperties.Count == 0)
+                throw new ArgumentException($"The searchNodeType '{searchNodeType.Entity.Name}' is not part of the full text index.");
+
             if ((object?)searchNodeType.NodeAlias is null)
                 throw new ArgumentException($"The searchNodeType does not have an alias. Rewite your query to: {Example()}");
 
@@ -281,6 +284,9 @@ namespace Blueprint41.Query
             SearchOperator = searchOperator;
             Patterns = new[] { searchNodeType };
             Fields = searchFields;
+
+            if (searchNodeType.Entity.FullTextIndexProperties.Count == 0)
+                throw new ArgumentException($"The searchNodeType '{searchNodeType.Entity.Name}' is not part of the full text index.");
 
             if ((object?)searchNodeType.NodeAlias is null)
                 throw new ArgumentException($"The searchNodeType does not have an alias. Rewite your query to: {Example()}");

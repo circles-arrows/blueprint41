@@ -325,6 +325,4 @@ namespace Blueprint41.DatastoreTemplates
                 .Replace("&apos;", "'");
         }
     }
-
-
 }

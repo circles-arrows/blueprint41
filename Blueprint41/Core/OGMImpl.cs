@@ -278,7 +278,7 @@ namespace Blueprint41.Core
             if (key is null)
                 return base.GetHashCode();
 
-            return GetEntity().Name.GetHashCode() ^ key.GetHashCode();
+            return HashCode.Combine(GetEntity().Name, key);
         }
         public override bool Equals(object? obj)
         {

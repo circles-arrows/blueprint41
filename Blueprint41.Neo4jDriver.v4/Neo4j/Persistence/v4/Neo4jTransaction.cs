@@ -34,7 +34,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 #if DEBUG
             if (Logger is not null)
             {
-                results.GetTaskResult().PeekAsync().Wait();
+                AsyncHelper.RunSync(() => results.GetTaskResult().PeekAsync());
                 Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
@@ -54,7 +54,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 #if DEBUG
             if (Logger is not null)
             {
-                results.GetTaskResult().PeekAsync().Wait();
+                AsyncHelper.RunSync(() => results.GetTaskResult().PeekAsync());
                 Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
@@ -80,7 +80,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                 c.WithDefaultAccessMode(accessMode);
             });
 
-            Transaction = Session.BeginTransactionAsync().GetTaskResult();
+            Transaction = AsyncHelper.RunSync(() => Session.BeginTransactionAsync());
             StatementRunner = Transaction;
             base.Initialize();
         }
@@ -90,8 +90,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            if (Transaction is not null)
-                Transaction.CommitAsync().Wait();
+            neo4j.IAsyncTransaction? t = Transaction;
+            if (t is not null)
+                AsyncHelper.RunSync(() => t.CommitAsync());
 
             CloseSession();
         }
@@ -100,8 +101,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            if (Transaction is not null)
-                Transaction?.RollbackAsync().Wait();
+            neo4j.IAsyncTransaction? t = Transaction;
+            if (t is not null)
+                AsyncHelper.RunSync(() => t.RollbackAsync());
 
             CloseSession();
         }
@@ -113,7 +115,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         private void CloseSession()
         {
             if (Session is not null)
-                Session.CloseAsync().Wait();
+                AsyncHelper.RunSync(() => Session.CloseAsync());
 
             Transaction = null;
             StatementRunner = null;

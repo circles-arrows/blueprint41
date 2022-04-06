@@ -8,33 +8,71 @@ using Blueprint41.Neo4j.Model;
 using Blueprint41.Neo4j.Schema;
 using Blueprint41.Query;
 
+using q = Blueprint41.Query;
+
 namespace Blueprint41.Neo4j.Persistence.v4
 {
     internal class Neo4jQueryTranslator : QueryTranslator
     {
         internal Neo4jQueryTranslator(PersistenceProvider persistenceProvider) : base(persistenceProvider) { }
 
+        #region Compile Query Parts
+
+        protected internal override void SearchTranslation(q.Query query, CompileState state)
+        {
+            string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
+            search = string.Format("replace({0}, '{1}', '{2}')", search, "]", @"\\]");
+            search = string.Format("replace({0}, '{1}', '{2}')", search, "[", @"\\[");
+            Node node = query.Patterns.First();
+            AliasResult alias = node.NodeAlias!;
+            AliasResult? weight = query.Aliases?.FirstOrDefault();
+
+            state.Text.Append(string.Format(FtiSearch, search, state.Preview(alias.Compile, state)));
+            if ((object?)weight is not null)
+            {
+                state.Text.Append(string.Format(FtiWeight, state.Preview(weight.Compile, state)));
+            }
+
+            state.Text.Append(" WHERE (");
+            Compile(alias, state);
+            state.Text.Append(":");
+            state.Text.Append(node.Neo4jLabel);
+            state.Text.Append(")");
+        }
+
+        #endregion
+
+        #region Compile Functions
+        public override string FnToUpper => "toUpper({base})";
+        public override string FnToLower => "toLower({base})";
+        public override string FnListExtract => "[item in {base} | {0}]";
+
+        #endregion
+
         #region Full Text Indexes
 
-        public override string FtiSearch    => "CALL db.index.fulltext.queryNodes(\"fts\", \"{0}\") YIELD node AS {1}";
+        public override string FtiSearch    => "CALL db.index.fulltext.queryNodes(\"fts\", {0}) YIELD node AS {1}";
         public override string FtiWeight    => ", score AS {0}";
         public override string FtiCreate    => "CALL db.index.fulltext.createNodeIndex(\"fts\", [ {0} ], [ {1} ])";
         public override string FtiEntity    => "\"{0}\"";
         public override string FtiProperty  => "\"{0}\"";
         public override string FtiSeparator => ", ";
         public override string FtiRemove    => "CALL db.index.fulltext.drop(\"fts\")";
-
+        public override string FtiList      => "SHOW FULLTEXT INDEXES";
         internal override void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
         {
-            try
+            if (HasFullTextSearchIndexes())
             {
-                using (Transaction.Begin(true))
+                try
                 {
-                    Transaction.RunningTransaction.Run(FtiRemove);
-                    Transaction.Commit();
+                    using (Transaction.Begin(true))
+                    {
+                        Transaction.RunningTransaction.Run(FtiRemove);
+                        Transaction.Commit();
+                    }
                 }
+                catch { }
             }
-            catch { }
 
             using (Transaction.Begin(true))
             {
