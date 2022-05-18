@@ -50,16 +50,15 @@ namespace Blueprint41.Neo4j.Persistence.Void
         {
             isDisposed = false;
         }
-        protected override void OnCommit()
+        protected override void CommitInternal()
+        {
+            RaiseOnCommit(this);
+        }
+        protected override void RollbackInternal()
         {
         }
-        protected override void OnRollback()
+        protected override void RetryInternal()
         {
-        }
-
-        protected override void FlushPrivate()
-        {
-            base.FlushPrivate();
         }
 
         public static void Log(string message)

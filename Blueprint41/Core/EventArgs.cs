@@ -23,6 +23,21 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Core
 {
+    public sealed class TransactionEventArgs
+    {
+        private TransactionEventArgs(EventTypeEnum eventType, Transaction sender)
+        {
+            Transaction = sender;
+            EventType = eventType;
+        }
+
+        public Transaction? Transaction { get; private set; }
+        public EventTypeEnum EventType { get; private set; }
+
+        internal static TransactionEventArgs CreateInstance(EventTypeEnum eventType, Transaction trans) => new TransactionEventArgs(eventType, trans);
+
+        public Type SenderType => typeof(Transaction);
+    }
     public abstract class EntityEventArgs
     {
         protected EntityEventArgs(OGMImpl sender)
@@ -313,6 +328,7 @@ namespace Blueprint41.Core
         OnPropertyChange,
         OnSave,
         OnDelete,
+        OnCommit,
         OnNodeLoading,
         OnNodeLoaded,
         OnBatchFinished,

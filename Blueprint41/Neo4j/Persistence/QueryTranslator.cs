@@ -465,6 +465,13 @@ namespace Blueprint41.Neo4j.Model
                     UnionTranslation(query, state);
                     SearchTranslation(query, state);
                     break;
+                case PartType.CallSubquery:
+                    state.Text.Append("CALL {");
+                    state.Text.AppendLine();
+                    query.SubQueryPart?.CompileParts(state);
+                    state.Text.AppendLine();
+                    state.Text.Append("}");
+                    break;
                 case PartType.None:
                 case PartType.Compiled:
                     // Ignore
@@ -474,6 +481,9 @@ namespace Blueprint41.Neo4j.Model
             }
             void MatchTranslation(q.Query query, CompileState state)
             {
+                if (query.Patterns is null || query.Patterns.Length == 0)
+                    return;
+
                 state.Text.Append("MATCH ");
                 query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
             }

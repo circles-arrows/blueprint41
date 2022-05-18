@@ -29,17 +29,18 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 #if DEBUG
             Logger?.Start();
 #endif
-            Task<neo4j.IResultCursor> results = StatementRunner.RunAsync(cypher);
+            neo4j.IResultCursor results = Provider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
 
 #if DEBUG
             if (Logger is not null)
             {
-                AsyncHelper.RunSync(() => results.GetTaskResult().PeekAsync());
+                Provider.TaskScheduler.RunBlocking(() => results.PeekAsync(), "Peek the Result");
                 Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
 
-            return new Neo4jRawResult(results);
+            //DebugQueryString(cypher, null);
+            return new Neo4jRawResult(Provider.TaskScheduler, results);
         }
         public override RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
@@ -49,17 +50,18 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 #if DEBUG
             Logger?.Start();
 #endif
-            Task<neo4j.IResultCursor> results = StatementRunner.RunAsync(cypher, parameters);
+            neo4j.IResultCursor results = Provider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher, parameters), cypher);
 
 #if DEBUG
             if (Logger is not null)
             {
-                AsyncHelper.RunSync(() => results.GetTaskResult().PeekAsync());
+                Provider.TaskScheduler.RunBlocking(() => results.PeekAsync(), "Peek the Result");
                 Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
             }
 #endif
 
-            return new Neo4jRawResult(results);
+            //DebugQueryString(cypher, parameters);
+            return new Neo4jRawResult(Provider.TaskScheduler, results);
         }
 
         public Neo4jPersistenceProvider Provider { get; set; }
@@ -73,56 +75,60 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 
             Session = Provider.Driver.AsyncSession(c =>
             {
-                if(Provider.Database is not null)
+                if (Provider.Database is not null)
                     c.WithDatabase(Provider.Database);
 
                 c.WithFetchSize(neo4j.Config.Infinite);
                 c.WithDefaultAccessMode(accessMode);
             });
 
-            Transaction = AsyncHelper.RunSync(() => Session.BeginTransactionAsync());
+            Transaction = Provider.TaskScheduler.RunBlocking(() => Session.BeginTransactionAsync(), "Begin Transaction");
+
             StatementRunner = Transaction;
             base.Initialize();
         }
 
-        protected override void OnCommit()
+        protected override void CommitInternal()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
             neo4j.IAsyncTransaction? t = Transaction;
             if (t is not null)
-                AsyncHelper.RunSync(() => t.CommitAsync());
+                Provider.TaskScheduler.RunBlocking(() => t.CommitAsync(), "Commit Transaction");
+            RaiseOnCommit(this);
 
             CloseSession();
         }
-        protected override void OnRollback()
+        protected override void RollbackInternal()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
             neo4j.IAsyncTransaction? t = Transaction;
             if (t is not null)
-                AsyncHelper.RunSync(() => t.RollbackAsync());
+                Provider.TaskScheduler.RunBlocking(() => t.RollbackAsync(), "Rollback Transaction");
 
             CloseSession();
         }
-        protected override void OnRetry()
+        protected override void RetryInternal()
         {
-            OnRollback();
+            RollbackInternal();
             Initialize();
         }
         private void CloseSession()
         {
             if (Session is not null)
-                AsyncHelper.RunSync(() => Session.CloseAsync());
+                Provider.TaskScheduler.RunBlocking(() => Session.CloseAsync(), "Close Session");
+
+            Provider.TaskScheduler.ClearHistory();
 
             Transaction = null;
             StatementRunner = null;
             Session = null;
         }
 
-        protected override void FlushPrivate()
+        protected override void FlushInternal()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
@@ -130,11 +136,25 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             if (!ReadWriteMode)
             {
                 ReadWriteMode = true;
-                OnCommit();
+                CommitInternal();
                 Initialize();
             }
 
-            base.FlushPrivate();
+            base.FlushInternal();
+
+            Provider.TaskScheduler.ClearHistory();
+        }
+        public void DebugQueryString(string cypherQuery, Dictionary<string, object?>? parameterValues = null)
+        {
+            if (parameterValues is not null)
+            {
+                foreach (var queryParam in parameterValues)
+                {
+                    object paramValue = queryParam.Value?.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value?.ToString() ?? "NULL";
+                    cypherQuery = cypherQuery.Replace(queryParam.Key, paramValue.ToString());
+                }
+            }
+            System.Diagnostics.Debug.WriteLine(cypherQuery);
         }
     }
 }

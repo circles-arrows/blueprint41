@@ -186,7 +186,7 @@ namespace Blueprint41
                 }
             }
 
-            foreach (KeyValuePair<string, object?> queryParam in parameterValues)
+            foreach (KeyValuePair<string, object?> queryParam in parameterValues.OrderByDescending(item => item.Key.Length))
             {
                 if (queryParam.Value is null)
                     continue;

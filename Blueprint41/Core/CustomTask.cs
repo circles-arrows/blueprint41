@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Core
 {
-    public class CustomTask
+    public sealed class CustomTask
     {
         internal CustomTask(Task task, string? description, List<CustomTask>? waitsFor = null)
         {
@@ -78,7 +78,7 @@ namespace Blueprint41.Core
         private TimeSpan delay = TimeSpan.Zero;
 
         public bool Completed(bool recursive = true) => Task.Completed(recursive);
-        public void Wait(bool recursive = true) => Task.Wait(recursive);
+        public void Wait(bool recursive = true) => Task.WaitEx(recursive);
 
         public static CustomTask? Current
         {

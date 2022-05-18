@@ -61,7 +61,7 @@ namespace Blueprint41
         protected abstract void Initialize();
         protected abstract void ApplyFunctionalId(FunctionalId functionalId);
         // Flush is private for now, until RelationshipActions will have their own persistence state.
-        protected virtual void FlushPrivate()
+        protected virtual void FlushInternal()
         {
             List<OGM> entities = registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OGMImpl).ToList();
             foreach (OGMImpl entity in entities)
@@ -80,12 +80,12 @@ namespace Blueprint41
                 }
             }
 
+            List<KeyValuePair<string, Dictionary<OGM, OGM>>> sortedItems = registeredEntities.OrderBy(item => item.Key).ToList(); // key is entity name
             if (!DisableForeignKeyChecks)
             {
-                // TODO: check why entities is missing entities when using new code
-                foreach (var entitySet in registeredEntities.Values.ToList())
+                foreach (var entitySet in sortedItems)
                 {
-                    foreach (OGM entity in entitySet.Values)
+                    foreach (OGM entity in entitySet.Value.Values.OrderBy(item => item.GetKey()))
                     {
                         if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                             continue;
@@ -97,9 +97,9 @@ namespace Blueprint41
                 }
             }
 
-            foreach (var entitySet in registeredEntities.Values)
+            foreach (var entitySet in sortedItems)
             {
-                foreach (OGM entity in entitySet.Values)
+                foreach (OGM entity in entitySet.Value.Values.OrderBy(item => item.GetKey()))
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
@@ -119,9 +119,9 @@ namespace Blueprint41
                 actions.Clear();
             }
 
-            foreach (var entitySet in registeredEntities.Values)
+            foreach (var entitySet in sortedItems)
             {
-                foreach (OGM entity in entitySet.Values)
+                foreach (OGM entity in entitySet.Value.Values.OrderBy(item => item.GetKey()))
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
@@ -136,9 +136,9 @@ namespace Blueprint41
                 }
             }
 
-            foreach (var entitySet in registeredEntities.Values)
+            foreach (var entitySet in sortedItems)
             {
-                foreach (OGM entity in entitySet.Values.ToList())
+                foreach (OGM entity in entitySet.Value.Values.OrderBy(item => item.GetKey()))
                 {
                     if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                         continue;
@@ -164,7 +164,7 @@ namespace Blueprint41
         {
             Transaction trans = RunningTransaction;
 
-            trans.FlushPrivate();
+            trans.FlushInternal();
         }
         public static void Commit()
         {
@@ -174,9 +174,9 @@ namespace Blueprint41
                 try
                 {
                     repeat = false;
-                    trans.FlushPrivate();
+                    trans.FlushInternal();
                     trans.ApplyFunctionalIds();
-                    trans.OnCommit();
+                    trans.CommitInternal();
                 }
                 catch (Exception e)
                 {
@@ -198,7 +198,7 @@ namespace Blueprint41
                         }
                         trans.beforeCommitEntityState.Clear();
 
-                        trans.OnRetry();
+                        trans.RetryInternal();
                     }
                     else
                         throw e;
@@ -213,7 +213,7 @@ namespace Blueprint41
         {
             Transaction trans = RunningTransaction;
 
-            trans.OnRollback();
+            trans.RollbackInternal();
             trans.Invalidate();
             trans.InTransaction = false;
         }
@@ -260,9 +260,9 @@ namespace Blueprint41
                 ApplyFunctionalId(functionalId);
             }
         }
-        protected virtual void OnCommit() { }
-        protected virtual void OnRollback() { }
-        protected virtual void OnRetry() { }
+        protected abstract void CommitInternal();
+        protected abstract void RollbackInternal();
+        protected abstract void RetryInternal();
 
         #endregion
 
@@ -542,6 +542,14 @@ namespace Blueprint41
             }
         }
 
+        public static Query.ICallSubquery CompiledSubQuery
+        {
+            get
+            {
+                return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
+            }
+        }
+
         #endregion
 
         #region Events
@@ -586,6 +594,42 @@ namespace Blueprint41
 
         internal bool FireEntityEvents { get { return (FireEvents & EventOptions.EntityEvents) == EventOptions.EntityEvents; } }
         internal bool FireGraphEvents { get { return (FireEvents & EventOptions.GraphEvents) == EventOptions.GraphEvents; } }
+
+        internal void RaiseOnCommit(Transaction trans)
+        {
+            TransactionEventArgs args = TransactionEventArgs.CreateInstance(EventTypeEnum.OnCommit, trans);
+            if (!trans.FireEntityEvents)
+                return;
+
+            onCommit?.Invoke(trans, args);
+            
+            // Wipe custom-state so the garbage collection can collect it. If anyone thinks this causes a bug for them, feel free to remove this line of code :o)
+            customState = null;
+        }
+        public bool HasRegisteredOnCommitHandlers { get { return onCommit is not null; } }
+        private EventHandler<TransactionEventArgs>? onCommit;
+        public event EventHandler<TransactionEventArgs> OnCommit
+        {
+            add { onCommit += value; }
+            remove { onCommit -= value; }
+        }
+
+        private Dictionary<string, object?>? customState = null;
+        public IDictionary<string, object?> CustomState
+        {
+            get
+            {
+                if (customState is null)
+                {
+                    lock (this)
+                    {
+                        if (customState is null)
+                            customState = new Dictionary<string, object?>();
+                    }
+                }
+                return customState;
+            }
+        }
 
         #endregion
     }

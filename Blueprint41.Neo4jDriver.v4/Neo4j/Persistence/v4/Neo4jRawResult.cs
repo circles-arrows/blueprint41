@@ -14,11 +14,13 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
     internal class Neo4jRawResult : RawResult
     {
-        internal Neo4jRawResult(Task<IResultCursor> taskResult)
+        internal Neo4jRawResult(CustomTaskScheduler scheduler, IResultCursor taskResult)
         {
+            Scheduler = scheduler;
             TaskResult = taskResult;
         }
-        private Task<IResultCursor> TaskResult;
+        private CustomTaskScheduler Scheduler;
+        private IResultCursor TaskResult;
 
         private IResultCursor? Result
         {
@@ -34,8 +36,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         {
             get
             {
-                ConsumeResult();
-                m_Enumerator = new RawRecordEnumerator<IRecord>(Result.ToListAsync().GetTaskResult().GetEnumerator(), item => new Neo4jRawRecord(item));
+                m_Enumerator = new RawRecordEnumerator<IRecord>(Scheduler.RunBlocking(() => Result.ToListAsync(), "Convert Result to Result List").GetEnumerator(), item => new Neo4jRawRecord(item));
                 return m_Enumerator!;
             }
         }
@@ -45,8 +46,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         {
             get
             {
-                ConsumeResult();
-                m_ResultSummary = Result!.ConsumeAsync().GetTaskResult();
+                m_ResultSummary = Scheduler.RunBlocking(() => Result!.ConsumeAsync(), "Consume result to get statistics");
                 return m_ResultSummary!;
             }
         }
@@ -83,7 +83,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         private void ConsumeResult()
         {
             if (m_Result is null)
-                m_Result = TaskResult.GetTaskResult();
+                m_Result = TaskResult;
         }
 
         //protected class RawRecordCursorEnumerator : IEnumerator<RawRecord>

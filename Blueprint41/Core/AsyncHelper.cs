@@ -16,6 +16,7 @@ namespace Blueprint41.Core
                          TaskContinuationOptions.None,
                          TaskScheduler.Default);
 
+        [Obsolete("Please stop using this and consider using the CustomTaskScheduler instead", true)]
         public static TResult RunSync<TResult>(Func<Task<TResult>> func)
         {
             return _myTaskFactory
@@ -25,6 +26,7 @@ namespace Blueprint41.Core
               .GetResult();
         }
 
+        [Obsolete("Please stop using this and consider using the CustomTaskScheduler instead", true)]
         public static void RunSync(Func<Task> func)
         {
             _myTaskFactory
@@ -60,33 +62,40 @@ namespace Blueprint41.Core
                     if (!recursive)
                         return true;
 
-                    Task? result = GetInnerTask(task);
-                    if (result is null)
-                        return true;
+                    bool isCompleted = true;
+                    OnSubTask(task, subTask =>
+                    {
+                        if (isCompleted && !subTask.Completed(recursive))
+                            isCompleted = false;
+                    });
 
-                    return Completed(result, recursive);
+                    return isCompleted;
                 default:
                     throw new NotSupportedException($"Task status '{task.Status}' is not supported.");
             }
         }
-        public static void Wait(this Task task, bool recursive = true)
+        public static T WaitEx<T>(this T task, bool recursive = true)
+            where T :Task
         {
             task.Wait();
 
-            if (!recursive)
-                return;
+            if (recursive)
+                OnSubTask(task, subTask => WaitEx(subTask, recursive));
 
-            Task? result = GetInnerTask(task);
-            if (result is not null)
-                Wait(result, recursive);
+            return task;
         }
-        public static void Wait(this IEnumerable<Task> tasks, bool includeSubTasks = true)
+        public static void WaitEx(this IEnumerable<Task> tasks, bool recursive = true)
         {
             foreach (Task task in tasks)
             {
-                if (task is not null && !task.Completed(includeSubTasks))
-                    task.Wait(includeSubTasks);
+                if (task is not null)
+                    task.WaitEx(recursive);
             }
+        }
+        public static T ResultEx<T>(this Task<T> task)
+        {
+            task.WaitEx();
+            return task.Result;
         }
 
         public static void OnSubTask(this Task task, Action<Task> action)

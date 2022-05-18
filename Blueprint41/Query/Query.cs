@@ -12,7 +12,7 @@ using query = Blueprint41.Query;
 namespace Blueprint41.Query
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, IModifyQuery, IMergeQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICompiled
+    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, IModifyQuery, IMergeQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICallSubquery, ICallSubqueryMatch, ICompiled
     { 
         internal Query(PersistenceProvider persistenceProvider)
         {
@@ -47,8 +47,10 @@ namespace Blueprint41.Query
         internal bool UnionWithDuplicates = true;
         internal Parameter SkipValue = Parameter.Constant(0);
         internal Parameter LimitValue = Parameter.Constant(0);
+        internal Query? SubQueryPart;
 
         public CompiledQuery? CompiledQuery { get; private set; }
+        Query ICompiled.Query { get { return this; } }
 
         public IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, params FieldResult[] searchFields)
         {
@@ -415,6 +417,24 @@ namespace Blueprint41.Query
             return New;
         }
 
+        IWithQuery ICallSubquery.With(params Result[] results)
+        {
+            return With(false, results);
+        }
+        public ICallSubqueryMatch CallSubQuery(Func<ICallSubquery, IReturnQuery> pattern)
+        {
+            SetType(PartType.CallSubquery);
+            SubQueryPart = (Query)pattern.Invoke(new Query(PersistenceProvider));
+
+            return New;
+        }
+        public ICallSubqueryMatch CallSubQuery(ICompiled compiled)
+        {
+            SetType(PartType.CallSubquery);
+            SubQueryPart = compiled.Query;
+
+            return New;
+        }
 
         private Query New { get { return new Query(this); } }
 
@@ -424,8 +444,8 @@ namespace Blueprint41.Query
             SetType(PartType.Compiled);
 
             var state = new CompileState(PersistenceProvider.SupportedTypeMappings, PersistenceProvider.Translator);
-            Query[] parts = GetParts();
-            ForEach(parts, state.Text, "\r\n", item => item?.Compile(state));
+
+            Query[] parts = CompileParts(state);
             CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Last).AsResults ?? new AsResult[0]);
 
             if (CompiledQuery.Errors.Count > 0)
@@ -433,7 +453,15 @@ namespace Blueprint41.Query
 
             return this;
         }
-        private void Compile(CompileState state)
+        internal Query[] CompileParts(CompileState state)
+        {
+            Query[] parts = GetParts();
+            ForEach(parts, state.Text, "\r\n", item => item?.Compile(state));
+
+            return parts;
+        }
+
+        internal void Compile(CompileState state)
         {
             state.Translator.Compile(this, state);
         }
@@ -442,6 +470,9 @@ namespace Blueprint41.Query
         {
             if (CompiledQuery is null)
                 throw new InvalidOperationException("You need to call the 'Compile' method before you can get an execution context.");
+
+            if(CompiledQuery.QueryText.StartsWith("WITH "))
+                throw new InvalidOperationException("Sub query should be called within a main query.");
 
             return new QueryExecutionContext(CompiledQuery);
         }
@@ -537,6 +568,7 @@ namespace Blueprint41.Query
         Limit,
         UnionMatch,
         UnionSearch,
+        CallSubquery
     }
 
     #region Interfaces
@@ -548,10 +580,10 @@ namespace Blueprint41.Query
     }
     public partial interface ISemiBlankQuery
     {
-        IMatchQuery Match(params Node []
-        patterns);
-        IOptionalMatchQuery OptionalMatch(params Node []
-        patterns);
+        IMatchQuery Match(params Node[] patterns);
+        IOptionalMatchQuery OptionalMatch(params Node[] patterns);
+        ICallSubqueryMatch CallSubQuery(Func<ICallSubquery, IReturnQuery> query);
+        ICallSubqueryMatch CallSubQuery(ICompiled compiled);
     }
     public partial interface IOptionalMatchQuery : ISemiBlankQuery, IModifyQuery
     {
@@ -571,10 +603,10 @@ namespace Blueprint41.Query
         IWhereQuery Or(params QueryCondition[] conditions);
         IWhereQuery And(params QueryCondition[] conditions);
     }
-    public partial interface IUnwindQuery<T>
-    {
-        IMatchQuery As(string aliasName, out T alias);
-    }
+    //public partial interface IUnwindQuery<T>
+    //{
+    //    IMatchQuery As(string aliasName, out T alias);
+    //}
     public partial interface IWithQuery : IMatchQuery
     {
         IWithQuery Skip(Parameter skip);
@@ -615,6 +647,21 @@ namespace Blueprint41.Query
     {
 
     }
+
+    public interface ICallSubquery
+    {
+        IWithQuery With(params Result[] results);
+
+        IMatchQuery Match(params Node[] patterns);
+    }
+    
+    public partial interface ICallSubqueryMatch : ISemiBlankQuery, IModifyQuery
+    {
+        IWithQuery With(params Result[] results);
+        IWithQuery With(bool distinct, params Result[] results);
+        IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns);
+    }
+
     public partial interface IOrderQuery
     {
         ISkipQuery Skip(Parameter skip);
@@ -648,6 +695,7 @@ namespace Blueprint41.Query
     {
         QueryExecutionContext GetExecutionContext();
         CompiledQuery? CompiledQuery { get; }
+        Query Query { get; }
         string ToString();
     }
 

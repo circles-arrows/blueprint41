@@ -70,5 +70,42 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         {
             return new Neo4jTransaction(this, withTransaction, TransactionLogger);
         }
+
+        internal CustomTaskScheduler TaskScheduler
+        {
+            get
+            {
+                if (taskScheduler is null)
+                {
+                    lock (sync)
+                    {
+                        if (taskScheduler is null)
+                        {
+                            CustomTaskQueueOptions main = new CustomTaskQueueOptions(10, 50);
+                            CustomTaskQueueOptions sub = new CustomTaskQueueOptions(20, 100);
+                            taskScheduler = new CustomThreadSafeTaskScheduler(main, sub);
+                        }
+                    }
+                }
+
+                return taskScheduler;
+            }
+        }
+        private CustomTaskScheduler? taskScheduler = null;
+        private static object sync = new object();
+
+        public Neo4jPersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue) => ConfigureTaskScheduler(mainQueue, CustomTaskQueueOptions.Disabled);
+        public Neo4jPersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue, CustomTaskQueueOptions subQueue)
+        {
+            lock (sync)
+            {
+                if (taskScheduler is not null)
+                    throw new InvalidOperationException("You can only configure the TaskScheduler during initialization of Blueprint41.");
+
+                taskScheduler = new CustomThreadSafeTaskScheduler(mainQueue, subQueue);
+            }
+
+            return this;
+        }
     }
 }

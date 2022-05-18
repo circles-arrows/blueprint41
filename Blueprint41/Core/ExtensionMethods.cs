@@ -244,8 +244,8 @@ namespace System
             return self.Cast<object?>().Where(item => !(item is null))!;
         }
 
-        //public static T GetTaskResult<T>(this Task<T> self) => self.GetAwaiter().GetResult();
-        public static T GetTaskResult<T>(this Task<T> self) => AsyncHelper.RunSync(() => self);
+        public static T GetTaskResult<T>(this Task<T> self) => self.WaitEx().ResultEx();
+        //public static T GetTaskResult<T>(this Task<T> self) => AsyncHelper.RunSync(() => self);
 
         public static Task Continue(this Task self, Action callback)
         {

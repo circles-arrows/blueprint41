@@ -16,6 +16,7 @@ namespace Blueprint41.Core
             RunningTask = null;
 
             Thread = new Thread(ExecuteTasks);
+            Thread.Name = $"{queue.Options.QueueType} Runner {Id}";
             Thread.Start();
         }
 

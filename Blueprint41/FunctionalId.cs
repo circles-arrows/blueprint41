@@ -26,7 +26,17 @@ namespace Blueprint41
         public Guid Guid { get; private set; }
 
         #endregion
-
+        public void SetPrefix(DatastoreModel.DataMigrationScope DataMigration, string prefix)
+        {
+            Prefix = prefix;
+            DataMigration.Run(delegate ()
+            {
+                DataMigration.ExecuteCypher(
+                       $@"MATCH (fi:FunctionalId)
+                        WHERE fi.Label='{Label}'
+                        SET fi.Prefix='{Prefix}'");
+            });
+        }
         #region FunctionalId max value cache & apply
 
         internal bool wasApplied = true;

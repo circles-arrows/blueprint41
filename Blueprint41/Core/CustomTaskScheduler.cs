@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Blueprint41.Core
 {
-    public sealed class CustomTaskScheduler : TaskScheduler, IDisposable
+    public class CustomTaskScheduler : TaskScheduler, IDisposable
     {
         private readonly TaskFactory taskFactory;
 
@@ -66,13 +66,13 @@ namespace Blueprint41.Core
         internal void ExecuteTask(Task task) => TryExecuteTask(task);
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void RegisterTask(Task task)
+        internal virtual void RegisterTask(Task task)
         {
             if (task != null)
                 CreateTask(task);
         }
 
-        private CustomTask CreateTask(Task task)
+        protected CustomTask CreateTask(Task task)
         {
             return history.TryGetOrAdd(task, delegate (Task key)
             {
@@ -100,21 +100,17 @@ namespace Blueprint41.Core
             return false;
         }
 
-        public void RunBlocking(Action work, string description)
+        public virtual void RunBlocking(Func<Task> work, string description)
         {
-            RunBlocking(RunAsync(work, description));
-        }
-        public void RunBlocking(Task task)
-        {
+            var task = RunAsync(work, description).Unwrap();
+
             CustomTask customTask = CreateTask(task);
             customTask.Wait(true);
         }
-        public TResult RunBlocking<TResult>(Func<TResult> work, string description)
+        public virtual TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description)
         {
-            return RunBlocking(RunAsync(work, description));
-        }
-        public TResult RunBlocking<TResult>(Task<TResult> task)
-        {
+            var task = RunAsync(work, description).Unwrap();
+
             CustomTask customTask = CreateTask(task);
             customTask.Wait(true);
 
@@ -126,6 +122,7 @@ namespace Blueprint41.Core
 #pragma warning disable S2696 // Instance members should not write to "static" fields
             taskDescription = description;
             Task task = taskFactory.StartNew(work);
+            QueueTask(task);
             if (taskDescription is not null)
                 taskDescription = null;
 #pragma warning restore S2696 // But here we can because its not static it's ThreadStatic
@@ -137,6 +134,7 @@ namespace Blueprint41.Core
 #pragma warning disable S2696 // Instance members should not write to "static" fields
             taskDescription = description;
             Task<TResult> task = taskFactory.StartNew(work);
+            QueueTask(task);
             if (taskDescription is not null)
                 taskDescription = null;
 #pragma warning restore S2696 // But here we can because its not static it's ThreadStatic
@@ -146,7 +144,7 @@ namespace Blueprint41.Core
         [ThreadStatic]
         static private string? taskDescription;
 
-        public void Wait(bool includeSubTasks = true, bool clearHistory = true)
+        public virtual void Wait(bool includeSubTasks = true, bool clearHistory = true)
         {
             if (!includeSubTasks)
                 clearHistory = false;
@@ -156,7 +154,7 @@ namespace Blueprint41.Core
             {
                 KeyValuePair<Task, CustomTask>[] items = history.ToArray();
 
-                items.Skip(skip).Select(item => item.Value.Task).Wait(includeSubTasks);
+                items.Skip(skip).Select(item => item.Value.Task).WaitEx(includeSubTasks);
 
                 skip = items.Length;
             }
@@ -169,6 +167,14 @@ namespace Blueprint41.Core
             else
             {
                 head = history.Count;
+            }
+        }
+        public virtual void ClearHistory(bool onlyIfSubtasksAreAlsoCompleted = false)
+        {
+            foreach (KeyValuePair<Task, CustomTask> task in history.ToArray())
+            {
+                if (task.Key.Completed(onlyIfSubtasksAreAlsoCompleted))
+                    history.Remove(task.Key);
             }
         }
 
@@ -205,5 +211,17 @@ namespace Blueprint41.Core
         private bool isDisposed;
 
         #endregion
+    }
+    public class CustomThreadSafeTaskScheduler : CustomTaskScheduler
+    {
+        public CustomThreadSafeTaskScheduler(CustomTaskQueueOptions? mainQueue = null, CustomTaskQueueOptions? subQueue = null) : base(mainQueue, subQueue) { }
+
+        public override void Wait(bool includeSubTasks = true, bool clearHistory = true)
+        {
+            base.Wait(includeSubTasks, false);
+
+            if (clearHistory)
+                ClearHistory();
+        }
     }
 }

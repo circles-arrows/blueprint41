@@ -75,7 +75,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             base.Initialize();
         }
 
-        protected override void OnCommit()
+        protected override void CommitInternal()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
@@ -83,12 +83,13 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             if (Transaction is not null)
             {
                 Transaction.Success();
+                RaiseOnCommit(this);
                 Transaction.Dispose();
             }
 
             CloseSession();
         }
-        protected override void OnRollback()
+        protected override void RollbackInternal()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
@@ -98,9 +99,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
             CloseSession();
         }
-        protected override void OnRetry()
+        protected override void RetryInternal()
         {
-            OnRollback();
+            RollbackInternal();
             Initialize();
         }
         private void CloseSession()
@@ -112,7 +113,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             StatementRunner = null;
             Session = null;
         }
-        protected override void FlushPrivate()
+        protected override void FlushInternal()
         {
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
@@ -120,11 +121,11 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             if (!ReadWriteMode)
             {
                 ReadWriteMode = true;
-                OnCommit();
+                CommitInternal();
                 Initialize();
             }
 
-            base.FlushPrivate();
+            base.FlushInternal();
         }
     }
 }
