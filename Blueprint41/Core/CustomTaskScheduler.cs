@@ -58,7 +58,7 @@ namespace Blueprint41.Core
                     }
                 }
 
-                taskDescription = null;
+                taskDescription.Value = null;
             }
         }
 
@@ -86,7 +86,7 @@ namespace Blueprint41.Core
 
                 if (CustomTask.Current is null)
                 {
-                    return new CustomTask(key, taskDescription, antecedents);
+                    return new CustomTask(key, taskDescription.Value, antecedents);
                 }
                 else
                 {
@@ -120,11 +120,11 @@ namespace Blueprint41.Core
         public Task RunAsync(Action work, string description)
         {
 #pragma warning disable S2696 // Instance members should not write to "static" fields
-            taskDescription = description;
+            taskDescription.Value = description;
             Task task = taskFactory.StartNew(work);
             QueueTask(task);
-            if (taskDescription is not null)
-                taskDescription = null;
+            if (taskDescription.Value is not null)
+                taskDescription.Value = null;
 #pragma warning restore S2696 // But here we can because its not static it's ThreadStatic
 
             return task;
@@ -132,17 +132,17 @@ namespace Blueprint41.Core
         public Task<TResult> RunAsync<TResult>(Func<TResult> work, string description)
         {
 #pragma warning disable S2696 // Instance members should not write to "static" fields
-            taskDescription = description;
+            taskDescription.Value = description;
             Task<TResult> task = taskFactory.StartNew(work);
             QueueTask(task);
-            if (taskDescription is not null)
-                taskDescription = null;
+            if (taskDescription.Value is not null)
+                taskDescription.Value = null;
 #pragma warning restore S2696 // But here we can because its not static it's ThreadStatic
 
             return task;
         }
-        [ThreadStatic]
-        static private string? taskDescription;
+        
+        static private AsyncLocal<string?> taskDescription = new AsyncLocal<string?>();
 
         public virtual void Wait(bool includeSubTasks = true, bool clearHistory = true)
         {

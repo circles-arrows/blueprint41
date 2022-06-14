@@ -17,7 +17,6 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
         internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
         {
             Provider = provider;
-            Initialize();
         }
 
         public override RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
@@ -83,7 +82,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             if (Transaction is not null)
             {
                 Transaction.Success();
-                RaiseOnCommit(this);
+                RaiseOnCommit();
                 Transaction.Dispose();
             }
 

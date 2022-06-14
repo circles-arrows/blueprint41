@@ -328,6 +328,7 @@ namespace Blueprint41.Core
         OnPropertyChange,
         OnSave,
         OnDelete,
+        OnBegin,
         OnCommit,
         OnNodeLoading,
         OnNodeLoaded,

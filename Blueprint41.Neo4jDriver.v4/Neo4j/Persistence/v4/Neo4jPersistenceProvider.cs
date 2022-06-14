@@ -80,11 +80,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
         }
 
-
-        public override Transaction NewTransaction(bool withTransaction)
-        {
-            return new Neo4jTransaction(this, withTransaction, TransactionLogger);
-        }
+        public override Transaction NewTransaction(bool readWriteMode) => new Neo4jTransaction(this, readWriteMode, TransactionLogger);
+        public override Bookmark FromToken(string consistencyToken)    => Neo4jBookmark.FromTokenInternal(consistencyToken);
+        public override string ToToken(Bookmark consistency)           => Neo4jBookmark.ToTokenInternal(consistency);
 
         internal CustomTaskScheduler TaskScheduler
         {

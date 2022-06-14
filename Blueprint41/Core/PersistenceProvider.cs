@@ -32,6 +32,8 @@ namespace Blueprint41.Core
         internal NodePersistenceProvider NodePersistenceProvider => Translator.GetNodePersistenceProvider();
         internal RelationshipPersistenceProvider RelationshipPersistenceProvider => Translator.GetRelationshipPersistenceProvider();
         public abstract Transaction NewTransaction(bool withTransaction);
+        public virtual string ToToken(Bookmark consistency) => string.Empty;
+        public virtual Bookmark FromToken(string consistencyToken) => Bookmark.NullBookmark;
 
         public abstract List<TypeMapping> SupportedTypeMappings { get; }
 

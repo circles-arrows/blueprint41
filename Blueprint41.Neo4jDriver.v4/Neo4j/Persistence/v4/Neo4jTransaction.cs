@@ -18,7 +18,27 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
         {
             Provider = provider;
-            Initialize();
+        }
+
+        public override Transaction WithConsistency(string consistencyToken)
+        {
+            if (string.IsNullOrEmpty(consistencyToken))
+                return this;
+
+            return WithConsistency(PersistenceProvider.CurrentPersistenceProvider.FromToken(consistencyToken));
+        }
+        public override Transaction WithConsistency(Bookmark consistency)
+        {
+            Neo4jBookmark? neo4JConsistency = consistency as Neo4jBookmark;
+            if (neo4JConsistency is not null && consistency != Bookmark.NullBookmark)
+            {
+                if (Consistency is null)
+                    Consistency = new List<Neo4jBookmark>();
+
+                Consistency.Add(neo4JConsistency);
+            }
+
+            return this;
         }
 
         public override RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
@@ -69,20 +89,29 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         public neo4j.IAsyncTransaction? Transaction { get; set; }
         public neo4j.IAsyncQueryRunner? StatementRunner { get; set; }
 
+        private List<Neo4jBookmark>? Consistency;
+
         protected override void Initialize()
         {
             neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
 
-            Session = Provider.Driver.AsyncSession(c =>
+            Neo4jPersistenceProvider? provider = (Provider ?? PersistenceProvider.CurrentPersistenceProvider) as Neo4jPersistenceProvider;
+            if (provider is null)
+                throw new NullReferenceException("CurrentPersistenceProvider is null");
+
+            Session = provider.Driver.AsyncSession(c =>
             {
-                if (Provider.Database is not null)
-                    c.WithDatabase(Provider.Database);
+                if (provider.Database is not null)
+                    c.WithDatabase(provider.Database);
 
                 c.WithFetchSize(neo4j.Config.Infinite);
                 c.WithDefaultAccessMode(accessMode);
+
+                if (Consistency is not null)
+                    c.WithBookmarks(Consistency.Select(item => item.ToBookmark()).ToArray());
             });
 
-            Transaction = Provider.TaskScheduler.RunBlocking(() => Session.BeginTransactionAsync(), "Begin Transaction");
+            Transaction = provider.TaskScheduler.RunBlocking(() => Session.BeginTransactionAsync(), "Begin Transaction");
 
             StatementRunner = Transaction;
             base.Initialize();
@@ -96,7 +125,8 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             neo4j.IAsyncTransaction? t = Transaction;
             if (t is not null)
                 Provider.TaskScheduler.RunBlocking(() => t.CommitAsync(), "Commit Transaction");
-            RaiseOnCommit(this);
+
+            RaiseOnCommit();
 
             CloseSession();
         }
@@ -126,6 +156,14 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             Transaction = null;
             StatementRunner = null;
             Session = null;
+        }
+
+        public override Bookmark GetConsistency()
+        {
+            if (Session is null)
+                throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+            return new Neo4jBookmark(Session.LastBookmark.Values);
         }
 
         protected override void FlushInternal()

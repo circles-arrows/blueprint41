@@ -5,13 +5,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static Blueprint41.Core.RelationshipPersistenceProvider;
 using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41
 {
-    public abstract class Transaction : IDisposable
+    public abstract class Transaction : DisposableScope<Transaction>
     {
         protected Transaction()
         {
@@ -42,23 +43,47 @@ namespace Blueprint41
                 throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
 
             Transaction trans = PersistenceProvider.CurrentPersistenceProvider.NewTransaction(readWriteMode);
+            trans.RaiseOnBegin();
+            trans.Attach();
             trans.TransactionDate = DateTime.UtcNow;
             trans.Mode = mode;
             trans.FireEvents = EventOptions.AllEvents;
 
-            if (transactions is null)
-                transactions = new Stack<Transaction>();
-
-            transactions.Push(trans);
-            transaction = trans;
-
             return trans;
+        }
+
+        public virtual Transaction WithConsistency(Bookmark consistency)
+        {
+            return this;
+        }
+        public virtual Transaction WithConsistency(string consistencyToken)
+        {
+            return this;
+        }
+        public Transaction WithConsistency(params Bookmark[] consistency)
+        {
+            if (consistency is not null)
+            {
+                foreach (Bookmark item in consistency)
+                    WithConsistency(item);
+            }
+
+            return this;
+        }
+        public Transaction WithConsistency(params string[] consistencyTokens)
+        {
+            if (consistencyTokens is not null)
+            {
+                foreach (string item in consistencyTokens)
+                    WithConsistency(item);
+            }
+
+            return this;
         }
 
         public abstract RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
         public abstract RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
 
-        protected abstract void Initialize();
         protected abstract void ApplyFunctionalId(FunctionalId functionalId);
         // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushInternal()
@@ -217,20 +242,6 @@ namespace Blueprint41
             trans.Invalidate();
             trans.InTransaction = false;
         }
-        public static Transaction? Current
-        {
-            get
-            {
-                if (transaction is null)
-                {
-                    if (transactions is null || transactions.Count == 0)
-                        return null;
-
-                    transaction = transactions.Peek();
-                }
-                return transaction;
-            }
-        }
         public static Transaction RunningTransaction
         {
             get
@@ -251,6 +262,9 @@ namespace Blueprint41
         public DateTime TransactionDate { get; private set; }
         public OptimizeFor Mode { get; set; }
 
+        public virtual Bookmark GetConsistency() => NullConsistency;
+        private static readonly Bookmark NullConsistency = new Bookmark();
+
         public bool DisableForeignKeyChecks { get; set; }
 
         protected void ApplyFunctionalIds()
@@ -264,63 +278,16 @@ namespace Blueprint41
         protected abstract void RollbackInternal();
         protected abstract void RetryInternal();
 
-        #endregion
-
-        #region Storage
-
-        [ThreadStatic]
-        private static Stack<Transaction>? transactions = null;
-
-        [ThreadStatic]
-        private static Transaction? transaction = null;
-
-        #endregion
-
-        #region IDisposable Support
-
-        protected bool isDisposed = true;
-
-        public void Dispose()
+        protected override void Cleanup()
         {
-            if (!isDisposed)
-            {
-                try
-                {
-                    if (InTransaction)
-                        Rollback();
-                }
-                finally
-                {
-                    if (transactions is not null)
-                    {
-                        if (transactions.Count > 0)
-                            transactions.Pop();
-
-                        if (transactions.Count == 0)
-                            transactions = null;
-                    }
-
-                    transaction = null;
-
-                    if (IsDebug.Value)
-                        GC.SuppressFinalize(this);
-
-                    isDisposed = true;
-                }
-            }
+            if (InTransaction)
+                Rollback();
         }
-
-        ~Transaction()
-        {
-            if (IsDebug.Value && !isDisposed)
-                throw new InvalidOperationException("The transaction should be used with the using command: using (Transaction.Begin()) { ... Transaction.Commit(); }");
-        }
-        private readonly Lazy<bool> IsDebug = new Lazy<bool>(() => System.Diagnostics.Debugger.IsAttached, true);
-
 
         #endregion
 
         #region Registration
+
         private Dictionary<OGM, PersistenceState> beforeCommitEntityState = new Dictionary<OGM, PersistenceState>();
         private Dictionary<string, Dictionary<OGM, OGM>> registeredEntities = new Dictionary<string, Dictionary<OGM, OGM>>(50);
         private Dictionary<string, Dictionary<string, HashSet<Core.EntityCollectionBase>>> registeredCollections = new Dictionary<string, Dictionary<string, HashSet<Core.EntityCollectionBase>>>(100);
@@ -595,13 +562,27 @@ namespace Blueprint41
         internal bool FireEntityEvents { get { return (FireEvents & EventOptions.EntityEvents) == EventOptions.EntityEvents; } }
         internal bool FireGraphEvents { get { return (FireEvents & EventOptions.GraphEvents) == EventOptions.GraphEvents; } }
 
-        internal void RaiseOnCommit(Transaction trans)
+        internal void RaiseOnBegin()
         {
-            TransactionEventArgs args = TransactionEventArgs.CreateInstance(EventTypeEnum.OnCommit, trans);
-            if (!trans.FireEntityEvents)
-                return;
+            TransactionEventArgs args = TransactionEventArgs.CreateInstance(EventTypeEnum.OnBegin, this);
+            onBegin?.Invoke(this, args);
+        }
+        public static bool HasRegisteredOnBeginHandlers { get { return onBegin is not null; } }
+        private static EventHandler<TransactionEventArgs>? onBegin;
+        public static event EventHandler<TransactionEventArgs> OnBegin
+        {
+            add { onBegin += value; }
+            remove { onBegin -= value; }
+        }
 
-            onCommit?.Invoke(trans, args);
+
+        internal void RaiseOnCommit()
+        {
+            if (!this.FireEntityEvents)
+                return;
+            
+            TransactionEventArgs args = TransactionEventArgs.CreateInstance(EventTypeEnum.OnCommit, this);
+            onCommit?.Invoke(this, args);
             
             // Wipe custom-state so the garbage collection can collect it. If anyone thinks this causes a bug for them, feel free to remove this line of code :o)
             customState = null;

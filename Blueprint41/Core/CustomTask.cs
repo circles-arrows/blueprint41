@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Blueprint41.Core
@@ -82,11 +83,10 @@ namespace Blueprint41.Core
 
         public static CustomTask? Current
         {
-            get => current;
-            internal set => current = value;
+            get => current.Value;
+            internal set => current.Value = value;
         }
-        [ThreadStatic]
-        private static CustomTask? current;
+        private static AsyncLocal<CustomTask?> current = new AsyncLocal<CustomTask?>();
 
         public override string ToString()
         {
