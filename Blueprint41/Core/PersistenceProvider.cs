@@ -41,7 +41,7 @@ namespace Blueprint41.Core
         private Lazy<Dictionary<Type, Conversion?>> convertFromStoredType;
         internal Dictionary<Type, Conversion?> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
 
-        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4jPersistenceProvider(null, null, null, false);
+        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4jPersistenceProvider(null, null, null);
         public static bool IsConfigured => (((Neo4jPersistenceProvider)CurrentPersistenceProvider).Uri is not null); 
 
         public static bool IsNeo4j

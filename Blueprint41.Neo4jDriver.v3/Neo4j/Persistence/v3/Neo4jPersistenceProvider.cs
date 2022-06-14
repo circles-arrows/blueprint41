@@ -29,13 +29,8 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             }
         }
 
-        private Neo4jPersistenceProvider() : this(null, null, null, false) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, bool withLogging = false) : base(uri, username, password, null, withLogging)
-        {
-            Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
-            Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
-        }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, Action<string> logger) : base(uri, username, password, null, logger)
+        private Neo4jPersistenceProvider() : this(null, null, null) { }
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, AdvancedConfig? advancedConfig = null) : base(uri, username, password, advancedConfig)
         {
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);

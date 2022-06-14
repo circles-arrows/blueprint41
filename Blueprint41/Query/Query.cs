@@ -653,6 +653,10 @@ namespace Blueprint41.Query
         IWithQuery With(params Result[] results);
 
         IMatchQuery Match(params Node[] patterns);
+
+        IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, params FieldResult[] searchFields);
+
+        IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, out FloatResult scoreAlias, params FieldResult[] searchFields);
     }
     
     public partial interface ICallSubqueryMatch : ISemiBlankQuery, IModifyQuery

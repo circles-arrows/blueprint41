@@ -19,25 +19,26 @@ namespace Blueprint41.Neo4j.Persistence.Void
         public string? Username { get; private set; }
         public string? Password { get; private set; }
         public string? Database { get; private set; }
+        public AdvancedConfig? AdvancedConfig { get; private set; }
 
-        private Neo4jPersistenceProvider() : this(null, null, null, false) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, bool withLogging = false) : this(uri, username, password, null, withLogging) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string? database, bool withLogging = false) : base()
+        private Neo4jPersistenceProvider() : this(null, null, null, null) { }
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, AdvancedConfig? advancedConfig = null) : base()
         {
             Uri = uri;
             Username = username;
             Password = password;
-            Database = database;
-            TransactionLogger = (withLogging) ? new TransactionLogger() : null;
+            Database = null;
+            AdvancedConfig = advancedConfig;
+            TransactionLogger = advancedConfig?.GetLogger();
         }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, Action<string> logger) : this(uri, username, password, null, logger) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string? database, Action<string> logger) : base()
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base()
         {
             Uri = uri;
             Username = username;
             Password = password;
             Database = database;
-            TransactionLogger = (logger is not null) ? new TransactionLogger(logger) : null;
+            AdvancedConfig = advancedConfig;
+            TransactionLogger = advancedConfig?.GetLogger();
         }
 
         public string Version { get; private set; } = "0.0.0";

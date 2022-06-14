@@ -38,6 +38,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                                     o.WithMaxReadBufferSize(DEFAULT_READWRITESIZE_MAX);
                                     o.WithMaxWriteBufferSize(DEFAULT_READWRITESIZE_MAX);
                                     o.WithMaxTransactionRetryTime(TimeSpan.Zero);
+
+                                    if (AdvancedConfig?.DNSResolverHook is not null)
+                                        o.WithResolver(new HostResolver(AdvancedConfig));
                                 }
                             );
 
@@ -51,15 +54,27 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             }
         }
 
-        private Neo4jPersistenceProvider() : this(null, null, null, false) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, bool withLogging = false) : this(uri, username, password, null, withLogging) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string? database, bool withLogging = false) : base(uri, username, password, database, withLogging)
+        private class HostResolver : IServerAddressResolver
         {
-            Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode),         from => from is INode         item ? new Neo4jRawNode(item)         : null);
+            public HostResolver(AdvancedConfig config)
+            {
+                Config = config;
+            }
+            private readonly AdvancedConfig Config;
+
+            public ISet<ServerAddress> Resolve(ServerAddress address)
+            {
+                return new HashSet<ServerAddress>(Config.DNSResolverHook!(new Neo4jHost() { Host = address.Host, Port = address.Port }).Select(host => ServerAddress.From(host.Host, host.Port)));
+            }
+        }
+    
+        private Neo4jPersistenceProvider() : this(null, null, null) { }
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, AdvancedConfig? advancedConfig = null) : base(uri, username, password, advancedConfig)
+        {
+            Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
         }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, Action<string> logger) : this(uri, username, password, null, logger) { }
-        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string? database, Action<string> logger) : base(uri, username, password, database, logger)
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base(uri, username, password, database, advancedConfig)
         {
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
