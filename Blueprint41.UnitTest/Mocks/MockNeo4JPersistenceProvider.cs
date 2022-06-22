@@ -17,19 +17,19 @@ namespace Blueprint41.UnitTest.Mocks
 
         }
 
-        public override Transaction NewTransaction(bool withTransaction)
+        public override Transaction NewTransaction(bool readWriteMode)
         {
             if (NotNeo4jTransaction)
                 return new NotNeo4jTransaction();
 
-            Neo4jTransaction transaction = base.NewTransaction(withTransaction) as Neo4jTransaction;
+            Neo4jTransaction transaction = base.NewTransaction(readWriteMode) as Neo4jTransaction;
             ISession session = transaction.Session;
             transaction.Session = new MockSession(session);
             transaction.StatementRunner = transaction.Session;
             transaction.Transaction?.Dispose();
             transaction.Transaction = null;
 
-            if (withTransaction)
+            if (readWriteMode)
             {
                 transaction.Transaction = transaction.Session.BeginTransaction();
                 transaction.StatementRunner = transaction.Transaction;
@@ -56,7 +56,19 @@ namespace Blueprint41.UnitTest.Mocks
 
         }
 
+        protected override void CommitInternal()
+        {
+        }
+
         protected override void Initialize()
+        {
+        }
+
+        protected override void RetryInternal()
+        {
+        }
+
+        protected override void RollbackInternal()
         {
         }
     }
