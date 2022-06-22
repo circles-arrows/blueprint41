@@ -34,6 +34,10 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(left, Operator.Equals, right);
         }
+        public static QueryCondition operator ==(NumericResult left, NumericResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
 
         #endregion
 
@@ -48,6 +52,10 @@ namespace Blueprint41.Query
             return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
         }
         public static QueryCondition operator !=(NumericResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(NumericResult left, NumericResult right)
         {
             return new QueryCondition(left, Operator.NotEquals, right);
         }
@@ -68,6 +76,10 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(left, Operator.Less, right);
         }
+        public static QueryCondition operator <(NumericResult left, NumericResult right)
+        {
+            return new QueryCondition(left, Operator.Less, right);
+        }
 
         #endregion
 
@@ -82,6 +94,10 @@ namespace Blueprint41.Query
             return new QueryCondition(left, Operator.LessOrEqual, Parameter.Constant(right));
         }
         public static QueryCondition operator <=(NumericResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.LessOrEqual, right);
+        }
+        public static QueryCondition operator <=(NumericResult left, NumericResult right)
         {
             return new QueryCondition(left, Operator.LessOrEqual, right);
         }
@@ -102,6 +118,10 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(left, Operator.Greater, right);
         }
+        public static QueryCondition operator >(NumericResult left, NumericResult right)
+        {
+            return new QueryCondition(left, Operator.Greater, right);
+        }
 
         #endregion
 
@@ -116,6 +136,10 @@ namespace Blueprint41.Query
             return new QueryCondition(left, Operator.GreaterOrEqual, Parameter.Constant(right));
         }
         public static QueryCondition operator >=(NumericResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.GreaterOrEqual, right);
+        }
+        public static QueryCondition operator >=(NumericResult left, NumericResult right)
         {
             return new QueryCondition(left, Operator.GreaterOrEqual, right);
         }
