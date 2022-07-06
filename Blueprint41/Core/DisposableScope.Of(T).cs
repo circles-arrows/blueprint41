@@ -16,6 +16,9 @@ namespace Blueprint41.Core
             Initialize();
             isInitialized = true;
 
+            if (current is null)
+                current = new AsyncLocal<Stack<T>?>();
+
             if (current.Value is null)
                 current.Value = new Stack<T>();
 
@@ -38,6 +41,7 @@ namespace Blueprint41.Core
             }
         }
 
+        [ThreadStatic]
         private static AsyncLocal<Stack<T>?> current = new AsyncLocal<Stack<T>?>();
 
         private bool isInitialized;
