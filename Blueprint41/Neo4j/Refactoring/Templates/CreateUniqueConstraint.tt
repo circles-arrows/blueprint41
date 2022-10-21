@@ -6,6 +6,6 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Create unique constraint for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
+    Log("	executing {0} -> Create unique constraint for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
 #>
 CREATE CONSTRAINT ON (node:<#= Entity.Label.Name #>) ASSERT node.<#= Property.Name #> IS UNIQUE

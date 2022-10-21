@@ -6,7 +6,7 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> set creation date", this.GetType().Name);
+    Log("	executing {0} -> set creation date", this.GetType().Name);
 
 #>
 MATCH ()-[r]->() WHERE NOT EXISTS(r.CreationDate) WITH r LIMIT 10000 SET r.CreationDate = ID(r)

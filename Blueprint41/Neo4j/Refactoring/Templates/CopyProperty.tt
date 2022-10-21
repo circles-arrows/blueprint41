@@ -7,7 +7,7 @@
 <#@ import namespace="System.Linq.Expressions" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Entity.Label.Name);
+    Log("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Entity.Label.Name);
 #>
 MATCH (node:<#= Entity.Label.Name #>)
 WHERE NOT EXISTS(node.<#= To #>) OR node.<#= From #> <> node.<#= To #>

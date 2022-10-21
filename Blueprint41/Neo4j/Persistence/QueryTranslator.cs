@@ -501,6 +501,7 @@ namespace Blueprint41.Neo4j.Model
             string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
             search = string.Format("replace({0}, '{1}', '{2}')", search, "]", @"\\]");
             search = string.Format("replace({0}, '{1}', '{2}')", search, "[", @"\\[");
+            search = string.Format("replace({0}, '{1}', '{2}')", search, "-", $" {query.SearchOperator!.ToString().ToUpperInvariant()} ");
             Node node = query.Patterns.First();
             AliasResult alias = node.NodeAlias!;
             AliasResult? weight = query.Aliases?.FirstOrDefault();
@@ -508,7 +509,7 @@ namespace Blueprint41.Neo4j.Model
 
             List<string> queries = new List<string>();
             foreach (var property in fields)
-                queries.Add(string.Format("({0}.{1}:' + {2} + ')", node.Neo4jLabel, property.FieldName, search));
+                queries.Add(string.Format("({0}:' + {1} + ')", property.FieldName, search));
 
             state.Text.Append(string.Format(FtiSearch, string.Join(" OR ", queries), state.Preview(alias.Compile, state)));
             if ((object?)weight is not null)

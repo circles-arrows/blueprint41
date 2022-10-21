@@ -66,7 +66,7 @@ namespace Blueprint41.Log
         internal void Stop(string message, Dictionary<string, object?>? parameters = null, List<string>? callerInfo = null)
         {
             watcher.Stop();
-            if (watcher.ElapsedMilliseconds >= ThresholdInSeconds)
+            if (watcher.ElapsedMilliseconds >= ThresholdInSeconds * 1000)
             {
                 if (parameters is not null)
                     foreach (var par in parameters)

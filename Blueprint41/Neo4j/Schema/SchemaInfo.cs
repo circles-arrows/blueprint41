@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence.Void;
+using Blueprint41.Neo4j.Refactoring;
 
 namespace Blueprint41.Neo4j.Schema
 {
@@ -154,7 +155,7 @@ namespace Blueprint41.Neo4j.Schema
             {
                 foreach (var diff in GetFunctionalIdDifferences())
                 {
-                    System.Diagnostics.Debug.WriteLine(diff.ToString());
+                    Parser.Log(diff.ToString());
                     foreach (var query in diff.ToCypher())
                     {
                         Transaction.RunningTransaction.Run(query);
@@ -173,7 +174,7 @@ namespace Blueprint41.Neo4j.Schema
                     {
                         foreach (var cql in action.ToCypher())
                         {
-                            System.Diagnostics.Debug.WriteLine(cql);
+                            Parser.Log(cql);
                             Transaction.RunningTransaction.Run(cql);
                         }
                     }

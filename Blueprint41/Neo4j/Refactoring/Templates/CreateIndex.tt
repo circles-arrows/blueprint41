@@ -6,6 +6,6 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Create INDEX for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
+    Log("	executing {0} -> Create INDEX for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
 #>
 CREATE INDEX ON :<#= Entity.Label.Name #>(<#= Property.Name #>)

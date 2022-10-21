@@ -7,7 +7,7 @@
 <#@ import namespace="System.Linq.Expressions" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Convert value of {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, string.Format(AssignScript, string.Concat(Entity.Name, ".", Property.Name)));
+    Log("	executing {0} -> Convert value of {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, string.Format(AssignScript, string.Concat(Entity.Name, ".", Property.Name)));
 
 #>
 MATCH (node:<#= Entity.Label.Name #>) WHERE node.<#= Property.Name #> <> <#= string.Format(WhereScript, string.Concat("node.", Property.Name)) #>  WITH node LIMIT 10000 SET node.<#= Property.Name #> = <#= string.Format(AssignScript, string.Concat("node.", Property.Name)) #>

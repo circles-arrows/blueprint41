@@ -7,21 +7,19 @@ using Blueprint41.Core;
 
 namespace <#= Settings.FullCRUDNamespace #>
 {
-  internal class Register
+	internal class Register
 	{
 		private static bool isInitialized = false;
 
 		public static void Types()
 		{
-			if (isInitialized)
+			if (Datastore.GbmModel.Model.TypesRegistered)
 				return;
 
 			lock (typeof(Register))
 			{
-				if (isInitialized)
+				if (Datastore.GbmModel.Model.TypesRegistered)
 					return;
-
-				isInitialized = true;
 
 <#
 foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))

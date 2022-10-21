@@ -140,5 +140,14 @@ namespace Blueprint41.Query
 
             return value;
         }
+
+        public static StringResult ToUpperCase(Parameter value)
+        {
+            return new StringResult(t => t.FnToUpper.Replace("base", "0"), new object[] { value }, value.Type);
+        }
+        public static StringResult ToLowerCase(Parameter value)
+        {
+            return new StringResult(t => t.FnToLower.Replace("base", "0"), new object[] { value }, value.Type);
+        }
     }
 }

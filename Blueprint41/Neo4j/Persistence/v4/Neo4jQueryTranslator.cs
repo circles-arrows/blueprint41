@@ -23,16 +23,21 @@ namespace Blueprint41.Neo4j.Persistence.v4
             string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
             search = string.Format("replace({0}, '{1}', '{2}')", search, "]", @"\\]");
             search = string.Format("replace({0}, '{1}', '{2}')", search, "[", @"\\[");
+            search = string.Format("replace({0}, '{1}', '{2}')", search, "-", $" {query.SearchOperator!.ToString().ToUpperInvariant()} ");
             Node node = query.Patterns.First();
             AliasResult alias = node.NodeAlias!;
             AliasResult? weight = query.Aliases?.FirstOrDefault();
+            FieldResult[] fields = query.Fields!;
 
-            state.Text.Append(string.Format(FtiSearch, search, state.Preview(alias.Compile, state)));
+            List<string> queries = new List<string>();
+            foreach (var property in fields)
+                queries.Add(string.Format("({0}:' + {1} + ')", property.FieldName, search));
+
+            state.Text.Append(string.Format(FtiSearch, string.Join(" OR ", queries), state.Preview(alias.Compile, state)));
             if ((object?)weight is not null)
             {
                 state.Text.Append(string.Format(FtiWeight, state.Preview(weight.Compile, state)));
             }
-
             state.Text.Append(" WHERE (");
             Compile(alias, state);
             state.Text.Append(":");
@@ -51,7 +56,7 @@ namespace Blueprint41.Neo4j.Persistence.v4
 
         #region Full Text Indexes
 
-        public override string FtiSearch    => "CALL db.index.fulltext.queryNodes(\"fts\", {0}) YIELD node AS {1}";
+        public override string FtiSearch    => "CALL db.index.fulltext.queryNodes(\"fts\", '{0}') YIELD node AS {1}";
         public override string FtiWeight    => ", score AS {0}";
         public override string FtiCreate    => "CALL db.index.fulltext.createNodeIndex(\"fts\", [ {0} ], [ {1} ])";
         public override string FtiEntity    => "\"{0}\"";

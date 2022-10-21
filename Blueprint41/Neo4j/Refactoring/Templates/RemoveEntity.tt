@@ -6,6 +6,6 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Deprecate entity from {1}", this.GetType().Name, Name);
+    Log("	executing {0} -> Deprecate entity from {1}", this.GetType().Name, Name);
 #>
 MATCH (n:<#= Name #>) WITH n LIMIT 10000 DETACH DELETE n

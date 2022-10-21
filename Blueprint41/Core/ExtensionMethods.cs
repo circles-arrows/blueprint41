@@ -17,23 +17,83 @@ using System.Linq.Expressions;
 
 namespace System.Linq
 {
+    public static partial class Collection
+    {
+        public static (List<object> Removed, List<(object, object)> Matched, List<object> Added) Compare(this IEnumerable left, IEnumerable right, Func<object, IComparable>? leftField = null, Func<object, IComparable>? rightField = null) => Compare(left.Cast<object>(), right.Cast<object>(), leftField ?? GetItem, rightField ?? GetItem);
+        public static (List<TLeft> Removed, List<(TLeft, TRight)> Matched, List<TRight> Added) Compare<TLeft, TRight>(this IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, IComparable>? leftField = null, Func<TRight, IComparable>? rightField = null)
+        {
+            if (left is null)
+                left = new List<TLeft>(0);
+
+            if (right is null)
+                right = new List<TRight>(0);
+
+            if (rightField is null)
+            {
+                if (leftField is not null && typeof(TLeft) == typeof(TRight))
+                    rightField = (item) => leftField.Invoke((TLeft)(object)item!);
+                else
+                    rightField = (item) => item as IComparable ?? throw new InvalidCastException("Cannot cast item to IComparable");
+            }
+
+            if (leftField is null)
+                leftField = (item) => item as IComparable ?? throw new InvalidCastException("Cannot cast item to IComparable");
+
+            List<TLeft> Removed = new List<TLeft>();
+            List<(TLeft, TRight)> Matched = new List<(TLeft, TRight)>();
+            List<TRight> Added = new List<TRight>();
+
+            List<(TLeft item, IComparable comparable)> l = left.Select(item => (item, leftField.Invoke(item))).ToList();
+            List<(TRight item, IComparable comparable)> r = right.Select(item => (item, rightField.Invoke(item))).ToList();
+
+            l.Sort((a, b) => a.comparable.NullSafeCompareTo(b.comparable));
+            r.Sort((a, b) => a.comparable.NullSafeCompareTo(b.comparable));
+
+            // Fast compare
+            int leftIndex = 0;
+            int rightIndex = 0;
+            while (leftIndex < l.Count && rightIndex < r.Count)
+            {
+                int compareResult = l[leftIndex].comparable.NullSafeCompareTo(r[rightIndex].comparable);
+
+                switch (compareResult)
+                {
+                    case -1:
+                        Removed.Add(l[leftIndex].item);
+                        leftIndex++;
+                        break;
+                    case 1:
+                        Added.Add(r[rightIndex].item);
+                        rightIndex++;
+                        break;
+                    case 0:
+                        Matched.Add((l[leftIndex].item, r[rightIndex].item));
+                        rightIndex++;
+                        leftIndex++;
+                        break;
+                }
+            }
+
+            // Runoff
+            while (leftIndex < l.Count)
+            {
+                Removed.Add(l[leftIndex].item);
+                leftIndex++;
+            }
+
+            while (rightIndex < r.Count)
+            {
+                Added.Add(r[rightIndex].item);
+                rightIndex++;
+            }
+
+            return (Removed, Matched, Added);
+        }
+
+        private static IComparable GetItem(object item) => (IComparable)item;
+    }
     public static partial class ExtensionMethods
     {
-        public static string ToCSharp(this Type type, bool nullable = false)
-        {
-            CodeDomProvider csharpProvider = CodeDomProvider.CreateProvider("C#");
-            CodeTypeReference typeReference = new CodeTypeReference(type);
-            CodeVariableDeclarationStatement variableDeclaration = new CodeVariableDeclarationStatement(typeReference, "dummy");
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter writer = new StringWriter(sb))
-            {
-                csharpProvider.GenerateCodeFromStatement(variableDeclaration, writer, new CodeGeneratorOptions());
-            }
-            sb.Replace(" dummy;\r\n", null);
-            if (nullable && type.IsValueType)
-                return sb.ToString() + "?";
-            return sb.ToString();
-        }
 
         public static bool IsSubclassOfOrSelf(this Type self, Type type)
         {
@@ -61,6 +121,14 @@ namespace System.Linq
                 return;
             
             foreach (T item in items)
+                action.Invoke(item);
+        }
+        public static void ForEach(this IEnumerable items, Action<object> action)
+        {
+            if (action is null)
+                return;
+
+            foreach (object item in items)
                 action.Invoke(item);
         }
         public static IEnumerable<ReadOnlyCollection<T>> Chunks<T>(this IEnumerable<T> source, int pageSize)
@@ -202,6 +270,74 @@ namespace System
 {
     public static partial class ExtensionMethods
     {
+        public static string ToCSharp(this Type type, bool nullable = false)
+        {
+            CodeDomProvider csharpProvider = CodeDomProvider.CreateProvider("C#");
+            CodeTypeReference typeReference = new CodeTypeReference(type);
+            CodeVariableDeclarationStatement variableDeclaration = new CodeVariableDeclarationStatement(typeReference, "dummy");
+            StringBuilder sb = new StringBuilder();
+            using (StringWriter writer = new StringWriter(sb))
+            {
+                csharpProvider.GenerateCodeFromStatement(variableDeclaration, writer, new CodeGeneratorOptions());
+            }
+            sb.Replace(" dummy;\r\n", null);
+            if (nullable && type.IsValueType)
+                return sb.ToString() + "?";
+            return sb.ToString();
+        }
+        
+        /// <summary>
+        /// Compare an IComparable{T} with a {T}. If both are null, zero is returned. If this object is
+        /// null, -1 is returned. If the object to compare with is null, 1 is returned. Otherwise, this
+        /// object's <c>CompareTo</c> is called with the object to compare to as its parameter.
+        /// </summary>
+        /// <returns>The comparison of this object with the parameter</returns>
+        /// <param name="a">The object to compare against <c>b</c></param>
+        /// <param name="b">The object to compare with</param>
+        /// <typeparam name="T">The type of object to compare with</typeparam>
+        public static int NullSafeCompareTo<T>(this IComparable<T> a, T b)
+        {
+            return a is null
+                ? b is null
+                ? 0
+                    : -1
+                    : b is null
+                ? 1
+                    : a.CompareTo(b);
+        }
+
+        /// <summary>
+        /// Compare an IComparable with an object. If both are null, zero is returned. If this object is
+        /// null, -1 is returned. If the object to compare with is null, 1 is returned. Otherwise, this
+        /// object's <c>CompareTo</c> is called with the object to compare to as its parameter.
+        /// </summary>
+        /// <returns>The comparison of this object with the parameter</returns>
+        /// <param name="a">The object to compare against <c>b</c></param>
+        /// <param name="b">The object to compare with</param>
+        public static int NullSafeCompareTo(this IComparable a, object b)
+        {
+            return a is null
+                ? b is null
+                ? 0
+                    : -1
+                    : b is null
+                ? 1
+                    : Compare(a, b);
+        }
+
+        private static int Compare(IComparable a, object b)
+        {
+            Type typeA = a.GetType();
+            Type typeB = b.GetType();
+            if (typeA.IsGenericType && typeA.Name.StartsWith(nameof(ValueTuple)) && typeA.Name == typeB.Name)
+                return a.CompareTo(b);
+
+            if (typeA != typeB)
+                throw new NotSupportedException($"You cannot compare '{typeA.Name}' with '{typeB.Name}'.");
+
+            return a.CompareTo(b);
+        }
+
         public static bool IsMin(this DateTime self) => (Conversion.MinDateTime - self).TotalDays >= -1;
         public static bool IsMin(this DateTime? self) => (self.HasValue) ? IsMin(self) : true;
         public static bool IsMax(this DateTime self) => (Conversion.MaxDateTime - self).TotalDays <= 1;
@@ -315,10 +451,9 @@ namespace Blueprint41.Core
                 }
                 throw new InvalidCastException($"Unable to cast `null` to `{typeof(T)}`.");
             }
-            object obj;
-            if ((obj = value) is T)
+            if (value is T)
             {
-                return (T)obj;
+                return (T)value;
             }
 
             if (AsRegistered(value, out T converted))
@@ -444,11 +579,9 @@ namespace Blueprint41.Core
         [return: NotNullIfNotNull("value")]
         private static T AsItIs<T>(this object value)
         {
-            object obj;
-            if ((obj = value) is T)
-            {
-                return (T)obj;
-            }
+            if (value is T)
+                return (T)value;
+
             throw new InvalidOperationException($"The expected value `{typeof(T)}` is different from the actual value `{value.GetType()}`");
         }
 
@@ -456,7 +589,7 @@ namespace Blueprint41.Core
         private static bool AsRegistered<T>(this object instance, [NotNullWhen(true)] out T value)
         {
             if (instance is null)
-                throw new NullReferenceException("this");
+                throw new ArgumentNullException("this");
 
             if (specificConversions.TryGetValue(typeof(T), out var conversions))
             {

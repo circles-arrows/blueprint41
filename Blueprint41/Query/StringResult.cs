@@ -275,6 +275,10 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(this, Operator.Contains, param);
         }
+        public QueryCondition Contains(StringResult text)
+        {
+            return new QueryCondition(this, Operator.Contains, text);
+        }
         public QueryCondition NotContains(string text)
         {
             return new QueryCondition(new BooleanResult(this, t => t.FnNot), Operator.Contains, text);

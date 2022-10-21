@@ -6,7 +6,7 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> {1} set label {2}", this.GetType().Name, Entity.Name, Label);
+    Log("	executing {0} -> {1} set label {2}", this.GetType().Name, Entity.Name, Label);
 
 #>
 MATCH (node:<#= Entity.Label.Name #>) WHERE NONE(label IN labels(node) WHERE label = '<#= Label #>') WITH node LIMIT 10000 SET node:<#= Label #>

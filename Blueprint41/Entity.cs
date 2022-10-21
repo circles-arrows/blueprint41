@@ -209,6 +209,12 @@ namespace Blueprint41
 
             return this;
         }
+        public Entity RemoveUnidentifiedProperties()
+        {
+            UnidentifiedProperties = null;
+
+            return this;
+        }
         internal Entity AddLookup(string name, Entity type, bool nullable = true)
         {
             Property value = new Property(this, PropertyType.Lookup, name, type, nullable, IndexType.None);
@@ -436,6 +442,8 @@ namespace Blueprint41
         {
             RuntimeReturnType = returnType;
             RuntimeClassType = classType;
+
+            Parent.TypesRegistered = true;
         }
 
         #region Refactor Actions

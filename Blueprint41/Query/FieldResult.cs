@@ -17,6 +17,14 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(a, Operator.Equals, b);
         }
+        public static QueryCondition operator ==(FieldResult left, DateTime right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(FieldResult left, DateTime? right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
         public static QueryCondition operator !=(FieldResult a, FieldResult b)
         {
             return new QueryCondition(a, Operator.NotEquals, b);
@@ -24,6 +32,62 @@ namespace Blueprint41.Query
         public static QueryCondition operator !=(FieldResult a, Parameter b)
         {
             return new QueryCondition(a, Operator.NotEquals, b);
+        }
+        public static QueryCondition operator !=(FieldResult left, DateTime right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(FieldResult left, DateTime? right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator >=(FieldResult left, FieldResult right)
+        {
+            return new QueryCondition(left, Operator.GreaterOrEqual, right);
+        }
+        public static QueryCondition operator >=(FieldResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.GreaterOrEqual, right);
+        }
+        public static QueryCondition operator >=(FieldResult left, DateTime? right)
+        {
+            return new QueryCondition(left, Operator.GreaterOrEqual, Parameter.Constant(right));
+        }
+        public static QueryCondition operator <=(FieldResult left, FieldResult right)
+        {
+            return new QueryCondition(left, Operator.LessOrEqual, right);
+        }
+        public static QueryCondition operator <=(FieldResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.LessOrEqual, right);
+        }
+        public static QueryCondition operator <=(FieldResult left, DateTime? right)
+        {
+            return new QueryCondition(left, Operator.LessOrEqual, Parameter.Constant(right));
+        }
+        public static QueryCondition operator >(FieldResult left, FieldResult right)
+        {
+            return new QueryCondition(left, Operator.Greater, right);
+        }
+        public static QueryCondition operator >(FieldResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Greater, right);
+        }
+        public static QueryCondition operator >(FieldResult left, DateTime? right)
+        {
+            return new QueryCondition(left, Operator.Greater, Parameter.Constant(right));
+        }
+        public static QueryCondition operator <(FieldResult left, FieldResult right)
+        {
+            return new QueryCondition(left, Operator.Less, right);
+        }
+        public static QueryCondition operator <(FieldResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Less, right);
+        }
+        public static QueryCondition operator <(FieldResult left, DateTime? right)
+        {
+            return new QueryCondition(left, Operator.Less, Parameter.Constant(right));
         }
 
         public override bool Equals(object? obj)

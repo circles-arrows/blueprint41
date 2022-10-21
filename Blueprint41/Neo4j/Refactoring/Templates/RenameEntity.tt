@@ -6,6 +6,6 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Rename entity from {1} to {2}", this.GetType().Name, OldName, NewName);
+    Log("	executing {0} -> Rename entity from {1} to {2}", this.GetType().Name, OldName, NewName);
 #>
 MATCH (n:<#= OldName #>) WITH n LIMIT 10000 SET n:<#= NewName #> REMOVE n:<#= OldName #>

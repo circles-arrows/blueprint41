@@ -5,6 +5,6 @@
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="Blueprint41" #>
 <#
-    Debug.WriteLine("	executing {0} -> DROP CONSTRAINT ON for {1}.{2}", this.GetType().Name, Property.Parent.Label.Name, Property.Name);
+    Log("	executing {0} -> DROP CONSTRAINT ON for {1}.{2}", this.GetType().Name, Property.Parent.Label.Name, Property.Name);
 #>
 DROP CONSTRAINT ON (node:<#= Property.Parent.Label.Name #>) ASSERT exists(node.<#= Property.Name #>)

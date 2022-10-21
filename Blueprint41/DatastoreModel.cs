@@ -45,11 +45,18 @@ namespace Blueprint41
 
         public static List<DatastoreModel> RegisteredModels { get; } = new List<DatastoreModel>();
 
-        public bool IsUpgraded
+        public bool HasExecuted
         {
             get
             {
                 return executed;
+            }
+        }
+        public bool IsUpgraded
+        {
+            get
+            {
+                return executed && didUpgradeDataStore;
             }
         }
         public bool IsDataMigration
@@ -66,7 +73,8 @@ namespace Blueprint41
 
         #region Execute
 
-        private bool executed = false;
+        private bool executed = false; // true when all scripts finished executing
+        private bool didUpgradeDataStore = false; // true when "Execute(true)"
         private bool datamigration = false;
 
         internal List<UpgradeScript> GetUpgradeScripts(MethodInfo? unitTestScript)
@@ -121,15 +129,27 @@ namespace Blueprint41
             try
             {
                 isExecuting = true;
+                didUpgradeDataStore = upgradeDatastore;
 
                 Execute(upgradeDatastore, unitTestScript, item => true, true);
 
                 lock (RegisteredModels)
                 {
-                    if (RegisteredModels.Any(item => item.GetType() == this.GetType()))
-                        return;
-
-                    RegisteredModels.Add(this);
+                    DatastoreModel model = RegisteredModels.FirstOrDefault(item => item.GetType() == this.GetType());
+                    if (model is not null)
+                    {
+                        if (didUpgradeDataStore && !model.didUpgradeDataStore)
+                        {
+                            RegisteredModels.Remove(model);
+                            RegisteredModels.Add(this);
+                        }
+                        else if (model.Entities.Count == 0)
+                            throw new NotSupportedException("The registered model is not valid.");
+                        else
+                            return;
+                    }
+                    else
+                        RegisteredModels.Add(this);
                 }
             }
             finally
@@ -158,7 +178,7 @@ namespace Blueprint41
                     {
                         if (!Parser.HasScript(script))
                         {
-                            Debug.WriteLine("Running script: {0}.{1}.{2} ({3})", script.Major, script.Minor, script.Patch, script.Name);
+                            Parser.Log("Running script: {0}.{1}.{2} ({3})", script.Major, script.Minor, script.Patch, script.Name);
                             Stopwatch sw = Stopwatch.StartNew();
 
                             Refactor.ApplyFunctionalIds();
@@ -169,7 +189,7 @@ namespace Blueprint41
                             anyScriptRan = true;
                             scriptCommitted = true;
                             sw.Stop();
-                            Debug.WriteLine("Finished script in {0} ms.", sw.ElapsedMilliseconds);
+                            Parser.Log("Finished script in {0} ms.", sw.ElapsedMilliseconds);
                         }
                         else
                         {
@@ -219,12 +239,12 @@ namespace Blueprint41
             }
             SubscribeEventHandlers();
 
-            executed = true;
-
 #pragma warning restore CS0618 // Type or member is obsolete
 
             bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
             Refactor.ApplyFullTextSearchIndexes(shouldRun);
+
+            executed = true;
         }
 
         private void RunScriptChecked(UpgradeScript script)
@@ -476,6 +496,8 @@ namespace Blueprint41
         }
 
         internal RefactorTemplates Templates => PersistenceProvider.Templates;
+
+        public bool TypesRegistered { get; internal set; } = false;
     }
 
     public abstract class DatastoreModel<TSelf> : DatastoreModel
@@ -489,18 +511,18 @@ namespace Blueprint41
         {
             get
             {
-                if (model is null)
+                TSelf? registered = (TSelf?)RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
+                if (model is null || (registered is not null && registered != model))
                 {
                     lock (typeof(TSelf))
                     {
-                        if (model is null)
+                        if (model is null || (registered is not null && registered != model))
                         {
                             model = (TSelf?)RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
                             if (model is null)
                             {
-                                TSelf m = new TSelf();
-                                m.Execute(false);
-                                model = m;
+                                model = new TSelf();
+                                model.Execute(false);
                             }
                         }
                     }
@@ -508,5 +530,8 @@ namespace Blueprint41
                 return model;
             }
         }
+
+        public bool LogToConsole { get => Parser.LogToConsole; set => Parser.LogToConsole = value; }
+        public bool LogToDebugger { get => Parser.LogToDebugger; set => Parser.LogToDebugger= value; }
     }
 }

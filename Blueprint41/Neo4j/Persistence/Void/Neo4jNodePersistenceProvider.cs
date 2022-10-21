@@ -39,7 +39,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             var result = trans.Run(args.Cypher, args.Parameters);
 
             RawRecord record = result.FirstOrDefault();
-            if (record is null)
+            if (record is null || record["node"] is null)
             {
                 item.PersistenceState = PersistenceState.DoesntExist;
                 return;

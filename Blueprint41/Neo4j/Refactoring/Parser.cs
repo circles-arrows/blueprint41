@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using Blueprint41.Core;
@@ -10,7 +11,7 @@ using Blueprint41.Neo4j.Refactoring.Templates;
 
 namespace Blueprint41.Neo4j.Refactoring
 {
-    internal class Parser
+    internal static class Parser
     {
         #region Parser Logic
 
@@ -61,6 +62,18 @@ namespace Blueprint41.Neo4j.Refactoring
                 }
             }
             while (counters.ContainsUpdates);
+        }
+
+        internal static bool LogToDebugger { get; set; } = true;
+        internal static bool LogToConsole { get; set; } = false;
+
+        internal static void Log(string message, params object[] args)
+        {
+            if (LogToDebugger)
+                Debug.WriteLine(message, args);
+
+            if (LogToConsole)
+                Console.WriteLine(message, args);
         }
 
         #endregion

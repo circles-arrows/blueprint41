@@ -6,7 +6,7 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Merge relationship from {0} to {1}", this.GetType().Name, From.Name, To.Name);
+    Log("	executing {0} -> Merge relationship from {0} to {1}", this.GetType().Name, From.Name, To.Name);
 #>
 MATCH (in:<#= From.InEntity.Label.Name #>)-[rel:<#= From.Neo4JRelationshipType #>]-(out:<#= From.OutEntity.Label.Name #>)
 WITH in, rel, out LIMIT 10000

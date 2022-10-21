@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Blueprint41.Neo4j.Refactoring;
 
 namespace Blueprint41.Neo4j.Schema
 {
@@ -65,7 +66,7 @@ namespace Blueprint41.Neo4j.Schema
 
             foreach (var command in commands)
             {
-                Debug.WriteLine(command);
+                Parser.Log(command);
             }
 
             return commands;

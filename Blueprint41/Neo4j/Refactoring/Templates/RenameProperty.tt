@@ -6,7 +6,7 @@
 <#@ import namespace="Blueprint41" #>
 <#
 
-    Debug.WriteLine("	executing {0} -> Rename property from {1} to {2}", this.GetType().Name, From.Name, To);
+    Log("	executing {0} -> Rename property from {1} to {2}", this.GetType().Name, From.Name, To);
 #>
 MATCH (node:<#= ConcreteParent.Label.Name #>) WHERE EXISTS(node.<#= From.Name #>) 
 WITH node LIMIT 10000 
