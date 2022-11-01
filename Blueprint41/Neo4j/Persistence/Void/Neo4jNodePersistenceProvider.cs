@@ -233,7 +233,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             QueryTranslator t = PersistenceProviderFactory.Translator;
 
             if (functionalId.Guid == Guid.Empty)
-                return t.CallUuidCreate;
+                return t.CallApocCreateUuid;
             if (functionalId.Format == IdFormat.Hash)
                 return string.Format(t.CallFunctionalIdNextHash, functionalId.Label);
             else

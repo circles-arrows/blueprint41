@@ -380,7 +380,9 @@ namespace Blueprint41
             if (PropertyType != PropertyType.Attribute)
                 throw new NotSupportedException("Consider using the refactor action 'SetInEntity' or 'SetOutEntity' on the relationship.");
 
-            // TODO: This is not true... If we move the property to a base type, it should be checked the property is at least nullable
+            if (Parent.IsSubsclassOf(target) && !this.Nullable)
+                throw new ArgumentException("If we move the property to a base type, it should be checked the property is at least nullable.");
+
             if (!Parent.IsSubsclassOf(target) && !target.IsSubsclassOf(Parent))
                 throw new ArgumentException(string.Format("Target {0} is not a base-type or sub-type of {1}", target.Name, Parent.Name), "baseType");
 
@@ -1449,22 +1451,22 @@ namespace Blueprint41
 
         internal Type GetPropertyEventArgsType(Type senderType)
         {
-            Type? type;
-            if (!propertyEventArgsType.TryGetValue(senderType, out type))
+            Type type;
+            if (!propertyEventArgsType.TryGetValue(senderType.Name, out type))
             {
                 lock (this)
                 {
-                    if (!propertyEventArgsType.TryGetValue(senderType, out type))
+                    if (!propertyEventArgsType.TryGetValue(senderType.Name, out type))
                     {
                         type = typeof(PropertyEventArgs<,>).MakeGenericType(senderType, SystemReturnTypeWithNullability ?? EntityReturnType!.RuntimeReturnType!);
-                        propertyEventArgsType.Add(senderType, type);
+                        propertyEventArgsType.Add(senderType.Name, type);
                     }
                 }
             }
             return type;
         }
 
-        private Dictionary<Type, Type> propertyEventArgsType = new Dictionary<Type, Type>();
+        private Dictionary<string, Type> propertyEventArgsType = new Dictionary<string, Type>();
 
         #endregion
     }

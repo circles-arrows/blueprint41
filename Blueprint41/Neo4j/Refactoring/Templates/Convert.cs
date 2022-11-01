@@ -31,8 +31,15 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
             
-            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
 
 
     Log("	executing {0} -> Convert value of {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, string.Format(AssignScript, string.Concat(Entity.Name, ".", Property.Name)));
@@ -41,42 +48,42 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("MATCH (node:");
+            this.Write("\nMATCH (node:");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(") WHERE node.");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" <> ");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format(WhereScript, string.Concat("node.", Property.Name))));
             
             #line default
             #line hidden
             this.Write("  WITH node LIMIT 10000 SET node.");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format(AssignScript, string.Concat("node.", Property.Name))));
             
             #line default
             #line hidden
-            this.Write("\r\n");
+            this.Write("\n");
             return this.GenerationEnvironment.ToString();
         }
     }

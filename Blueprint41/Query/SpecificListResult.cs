@@ -31,11 +31,11 @@ namespace Blueprint41.Query
 			alias = (T)(object)genericAlias;
 			return retval;
 		}
-		public MiscJaggedListResult PairsMin()
-		{
-			return new MiscJaggedListResult(this, t => t.FnPairsMin);
-		}
-	}
+        public MiscJaggedListResult PairsMin()
+        {
+            return new MiscJaggedListResult(this, t => t.FnApocCollPairsMin);
+        }
+    }
 	public partial class StringListResult : ListResult<StringListResult, StringResult, string>, IPrimitiveListResult
 	{
 		public StringListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
@@ -61,7 +61,7 @@ namespace Blueprint41.Query
 		}
 		public StringJaggedListResult PairsMin()
 		{
-			return new StringJaggedListResult(this, t => t.FnPairsMin);
+			return new StringJaggedListResult(this, t => t.FnApocCollPairsMin);
 		}
 	}
 	public partial class BooleanListResult : ListResult<BooleanListResult, BooleanResult, bool>, IPrimitiveListResult
@@ -89,7 +89,7 @@ namespace Blueprint41.Query
 		}
 		public BooleanJaggedListResult PairsMin()
 		{
-			return new BooleanJaggedListResult(this, t => t.FnPairsMin);
+			return new BooleanJaggedListResult(this, t => t.FnApocCollPairsMin);
 		}
 	}
 	public partial class DateTimeListResult : ListResult<DateTimeListResult, DateTimeResult, DateTime>, IPrimitiveListResult
@@ -117,7 +117,7 @@ namespace Blueprint41.Query
 		}
 		public DateTimeJaggedListResult PairsMin()
 		{
-			return new DateTimeJaggedListResult(this, t => t.FnPairsMin);
+			return new DateTimeJaggedListResult(this, t => t.FnApocCollPairsMin);
 		}
 	}
 	public partial class FloatListResult : ListResult<FloatListResult, FloatResult, double>, IPrimitiveListResult
@@ -145,7 +145,7 @@ namespace Blueprint41.Query
 		}
 		public FloatJaggedListResult PairsMin()
 		{
-			return new FloatJaggedListResult(this, t => t.FnPairsMin);
+			return new FloatJaggedListResult(this, t => t.FnApocCollPairsMin);
 		}
 	}
 	public partial class NumericListResult : ListResult<NumericListResult, NumericResult, long>, IPrimitiveListResult
@@ -173,7 +173,7 @@ namespace Blueprint41.Query
 		}
 		public NumericJaggedListResult PairsMin()
 		{
-			return new NumericJaggedListResult(this, t => t.FnPairsMin);
+			return new NumericJaggedListResult(this, t => t.FnApocCollPairsMin);
 		}
 	}
 	public partial class MiscJaggedListResult : ListResult<MiscJaggedListResult, MiscListResult, object[]>, IPrimitiveListResult

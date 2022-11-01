@@ -49,18 +49,18 @@ namespace Blueprint41.Query
             string fld = fieldName.Invoke((TResult)this.Alias!);
 
             if (ascending)
-                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnListSortNode, new[] { new Literal(fld) });
+                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnApocCollSortNodes, new[] { new Literal(fld) });
             else
-                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnListSortNode, new[] { new Literal(string.Concat("^",fld)) });
+                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnApocCollSortNodes, new[] { new Literal(string.Concat("^",fld)) });
         }
 
         public TList Union(TList list)
         {
-            return NewList(t => t.FnListUnion, new object[] { list });
+            return NewList(t => t.FnApocCollUnion, new object[] { list });
         }
         public TList UnionAll(TList list)
         {
-            return NewList(t => t.FnListUnionAll, new object[] { list });
+            return NewList(t => t.FnApocCollUnionAll, new object[] { list });
         }
 
         public TList Filter(Func<TResult, QueryCondition> condition)
@@ -157,11 +157,11 @@ namespace Blueprint41.Query
         }
         public TList Sort()
         {
-            return NewList(t => t.FnListSort);
+            return NewList(t => t.FnApocCollSort);
         }
         public TList Flatten()
         {
-            return NewList(t => t.FnListFlatten);
+            return NewList(t => t.FnApocCollFlatten);
         }
         public TList Collect()
         {
@@ -178,11 +178,11 @@ namespace Blueprint41.Query
 
         public TList Union(TList list)
         {
-            return NewList(t => t.FnListUnion, new object[] { list });
+            return NewList(t => t.FnApocCollUnion, new object[] { list });
         }
         public TList UnionAll(TList list)
         {
-            return NewList(t => t.FnListUnionAll, new object[] { list });
+            return NewList(t => t.FnApocCollUnionAll, new object[] { list });
         }
 
         public StringResult Reduce(string init, Func<StringResult, TResult, StringResult> logic)

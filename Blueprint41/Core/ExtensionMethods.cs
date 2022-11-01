@@ -19,7 +19,6 @@ namespace System.Linq
 {
     public static partial class Collection
     {
-        public static (List<object> Removed, List<(object, object)> Matched, List<object> Added) Compare(this IEnumerable left, IEnumerable right, Func<object, IComparable>? leftField = null, Func<object, IComparable>? rightField = null) => Compare(left.Cast<object>(), right.Cast<object>(), leftField ?? GetItem, rightField ?? GetItem);
         public static (List<TLeft> Removed, List<(TLeft, TRight)> Matched, List<TRight> Added) Compare<TLeft, TRight>(this IEnumerable<TLeft> left, IEnumerable<TRight> right, Func<TLeft, IComparable>? leftField = null, Func<TRight, IComparable>? rightField = null)
         {
             if (left is null)
@@ -89,6 +88,7 @@ namespace System.Linq
 
             return (Removed, Matched, Added);
         }
+        public static (List<object> Removed, List<(object, object)> Matched, List<object> Added) Compare(this IEnumerable left, IEnumerable right, Func<object, IComparable>? leftField = null, Func<object, IComparable>? rightField = null) => Compare(left.Cast<object>(), right.Cast<object>(), leftField ?? GetItem, rightField ?? GetItem);
 
         private static IComparable GetItem(object item) => (IComparable)item;
     }

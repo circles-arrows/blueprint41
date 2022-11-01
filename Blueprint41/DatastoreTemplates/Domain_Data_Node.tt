@@ -1,5 +1,6 @@
 ﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Blueprint41" #>
 <#@ import namespace="Blueprint41.Core" #>
@@ -103,7 +104,7 @@ namespace <#= Settings.FullQueryNamespace #>
 		}
 
 <#
-	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && (p.SystemReturnType == typeof(string) || p.SystemReturnType.IsPrimitive)).OrderBy(p => p.Name).ToList();
+	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && p.SystemReturnType.Namespace == "System").OrderBy(p => p.Name).ToList();
 #>
         public <#= DALModel.Name #>Node Where(<#= string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
         {
@@ -185,6 +186,7 @@ namespace <#= Settings.FullQueryNamespace #>
 		public <#= DALModel.Name #>Node UseExistingAlias(AliasResult alias)
 		{
 			NodeAlias = alias;
+            IsReference = true;
 			return this;
 		}
 

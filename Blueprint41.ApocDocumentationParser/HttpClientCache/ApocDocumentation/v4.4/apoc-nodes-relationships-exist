@@ -1,0 +1,3265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1">
+    <meta name="msvalidate.01" content="B5163518CBE4A854B63801277FE5E35C" />
+    <meta name="google-site-verification" content="ucqagxjVuq0lJZeLKs0F5AppzK111lNt3IoxU6mzlJE" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="article" />
+
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-WK23PSS');</script>
+    <title>apoc.nodes.relationships.exist - APOC Documentation</title>
+    <link rel="canonical" href="https://neo4j.com/apoc/4.4/overview/apoc.nodes/apoc.nodes.relationships.exist/">
+      <meta name="description" content="This section contains reference documentation for the apoc.nodes.relationships.exist function.">
+<link rel="stylesheet" href="https://neo4j.com/wp-content/themes/neo4jweb/assets/neo4j-react-modules-assets/search-preact/chunkless/bundle.css" />
+<link rel="stylesheet" href="https://neo4j.com/wp-content/themes/neo4jweb/assets/neo4j-react-modules-assets/search-preact/chunkless/utilities.min.css" />
+
+    <link rel="preload" href="/static/assets/fonts/fontawesome-webfont.woff2?v=4.7.0" as="font">
+    <link rel="stylesheet" href="/static/assets/css/site.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="shortcut icon" href="https://neo4j.com/wp-content/themes/neo4jweb/favicon.ico" />
+
+
+
+    <meta property="neo:type" content="Developer Guide">
+    <meta property="neo:site" content="Developer Site">
+
+
+    <meta property="og:site_name" content="Neo4j Graph Data Platform" />
+    <meta property="article:publisher" content="https://www.facebook.com/neo4j.graph.database" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@neo4j" />
+    <meta name="twitter:site" content="@neo4j" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="apoc.nodes.relationships.exist - APOC Documentation" />
+    <meta property="og:locale" content="en_US">
+    <meta property="og:image" content="https://dist.neo4j.com/wp-content/uploads/20210423062553/neo4j-social-share-21.png" />
+    <meta property="og:description" content="This section contains reference documentation for the apoc.nodes.relationships.exist function.">
+    <meta property="og:url" content="https://neo4j.com/apoc/4.4/overview/apoc.nodes/apoc.nodes.relationships.exist/">
+    <link rel="shortcut icon" href="https://neo4j.com/wp-content/themes/neo4jweb/favicon.ico" />
+  </head>
+  <body class="article labs">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WK23PSS"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script>(function(f,b){if(!b.__SV){var e,g,i,h;window.mixpanel=b;b._i=[];b.init=function(e,f,c){function g(a,d){var b=d.split(".");2==b.length&&(a=a[b[0]],d=b[1]);a[d]=function(){a.push([d].concat(Array.prototype.slice.call(arguments,0)))}}var a=b;"undefined"!==typeof c?a=b[c]=[]:c="mixpanel";a.people=a.people||[];a.toString=function(a){var d="mixpanel";"mixpanel"!==c&&(d+="."+c);a||(d+=" (stub)");return d};a.people.toString=function(){return a.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");
+for(h=0;h<i.length;h++)g(a,i[h]);var j="set set_once union unset remove delete".split(" ");a.get_group=function(){function b(c){d[c]=function(){call2_args=arguments;call2=[c].concat(Array.prototype.slice.call(call2_args,0));a.push([e,call2])}}for(var d={},e=["get_group"].concat(Array.prototype.slice.call(arguments,0)),c=0;c<j.length;c++)b(j[c]);return d};b._i.push([e,f,c])};b.__SV=1.2;e=f.createElement("script");e.type="text/javascript";e.async=!0;e.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?
+MIXPANEL_CUSTOM_LIB_URL:"file:"===f.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";g=f.getElementsByTagName("script")[0];g.parentNode.insertBefore(e,g)}})(document,window.mixpanel||[]);
+mixpanel.init("4bfb2414ab973c741b6f067bf06d5575", {batch_requests: true})
+mixpanel.track("Page View", {
+    pathname: window.location.origin + window.location.pathname,
+    search: window.location.search,
+    hash: window.location.hash,
+    referrer: document.referrer,
+})
+</script>
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+
+      <img class="navbar-logo" src="https://dist.neo4j.com/wp-content/uploads/20210422142941/neo4j-logo-2020.svg" alt="Neo4j Labs Docs" />
+      <a href="/labs/" class="navbar-item no-left-padding" aria-label="Labs">
+        Labs
+      </a>
+
+      </div>
+
+      <button class="navbar-search search-button" data-target="topbar-nav" id="search_open_mobile" aria-label="Open Search">
+        <svg width="23px" height="23px" viewBox="0 0 23 23" version="1.1" class="fill-current float-right" id="searchx" role="button" title="Search Website">
+          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round"
+            stroke-linejoin="round">
+            <g transform="translate(-2.000000, -2.000000)" stroke="#a0aec0" stroke-width="1.5">
+              <circle
+                transform="translate(11.389364, 11.388564) rotate(-23.025000) translate(-11.389364, -11.388564) "
+                cx="11.3893642" cy="11.3885639" r="8.056"></circle>
+              <path d="M17.0853333,17.0844444 L23.3333333,23.3333333" ></path>
+            </g>
+          </g>
+        </svg>
+      </button>
+      <button class="navbar-burger" data-target="topbar-nav" aria-label="Mobile Navigation Button">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+
+        <div class="navbar-item has-dropdown is-hoverable docs">
+          <a class="navbar-link" href="/docs/">Docs</a>
+          <div class="navbar-dropdown">
+            <div class="navbar-item project">
+              <span class="project-name">Neo4j DBMS</span>
+              <ul class="project-links">
+                <li><a href="/docs/getting-started/current/" class="project-link">Getting Started</a></li>
+                <li><a href="/docs/operations-manual/current/" class="project-link">Operations</a></li>
+                <li><a href="/docs/migration-guide/current/" class="project-link">Migration and Upgrade</a></li>
+                <li><a href="/docs/status-codes/current/" class="project-link">Status Codes</a></li>
+                <li><a href="/docs/java-reference/current/" class="project-link">Java Developer Reference</a></li>
+                <li><a href="/docs/kerberos-add-on/current/" class="project-link">Kerberos Add-on</a></li>
+              </ul>
+            </div>
+
+            <div class="navbar-item project">
+              <a class="project-name" href="/docs/aura/">Neo4j Aura</a>
+              <ul class="project-links">
+                <li><a class="project-link" href="/docs/aura/auradb/">Neo4j AuraDB</a></li>
+                <li><a class="project-link" href="/docs/aura/aurads/">Neo4j AuraDS</a></li>
+              </ul>
+            </div>
+
+            <div class="navbar-item project">
+              <span class="project-name">Neo4j Tools</span>
+              <ul class="project-links">
+                <li><a href="/docs/bloom-user-guide/current/" class="project-link">Neo4j Bloom</a></li>
+                <li><a href="/docs/browser-manual/current/" class="project-link">Neo4j Browser</a></li>
+                <li><a href="/docs/desktop-manual/current/" class="project-link">Neo4j Desktop</a></li>
+                <li><a href="/docs/ops-manager/current/" class="project-link">Neo4j Ops Manager</a></li>
+              </ul>
+            </div>
+
+            <div class="navbar-item project">
+              <span class="project-name">Neo4j Graph Data Science</span>
+              <ul class="project-links">
+                <li><a href="/docs/graph-data-science/current/" class="project-link">Neo4j Graph Data Science Library</a></li>
+              </ul>
+            </div>
+
+            <div class="navbar-item project">
+              <span class="project-name">Cypher Query Language</span>
+              <ul class="project-links">
+                <li><a href="/docs/cypher-manual/current/" class="project-link">Cypher</a></li>
+                <li><a href="/docs/cypher-cheat-sheet/current/" class="project-link">Cypher Cheat Sheet</a></li>
+                <li><a href="/docs/cypher-refcard/current/" class="project-link">Cypher Refcard</a></li>
+                <li><a href="/docs/apoc/current/" class="project-link">APOC</a></li>
+              </ul>
+            </div>
+
+            <div class="navbar-item project">
+              <span class="project-name" href="/docs/drivers-apis">Neo4j Drivers and APIs</span>
+              <ul class="project-links">
+                <li><a href="/docs/go-manual/current/" class="project-link">Go Driver</a></li>
+                <li><a href="/docs/java-manual/current/" class="project-link">Java Driver</a></li>
+                <li><a href="/docs/javascript-manual/current/" class="project-link">JavaScript Driver</a></li>
+                <li><a href="/docs/dotnet-manual/current/" class="project-link">.Net Driver</a></li>
+                <li><a href="/docs/python-manual/current/" class="project-link">Python Driver</a></li>
+                <li><a href="/docs/graphql-manual/current/" class="project-link">Neo4j GraphQL Library</a></li>
+                <li><a href="/docs/http-api/current/" class="project-link">HTTP API</a></li>
+                <li><a href="/docs/ogm-manual/current/" class="project-link">OGM Library</a></li>
+                <li><a href="https://docs.spring.io/spring-data/neo4j/docs/current/reference/html/#reference" class="project-link">Spring Data Neo4j</a></li>
+                <li><a href="/docs/spark/" class="project-link">Neo4j Connector for Apache Spark</a></li>
+                <li><a href="/docs/kafka/" class="project-link">Neo4j Connector for Apache Kafka</a></li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable labs">
+          <a class="navbar-link" href="/labs/">Labs</a>
+          <div class="navbar-dropdown">
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/arrows/">arrows.app</a>
+              <ul class="project-links">
+                <li><a href="/labs/arrows/" class="project-link">Details</a></li>
+                <li><a href="https://arrows.app" class="project-link">arrows.app</a></li>
+              </ul>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/apoc/">APOC</a>
+
+              <ul class="project-links">
+                <li><a href="/labs/apoc/5/" class="project-link">Documentation</a></li>
+                <li><a href="/developer/neo4j-apoc/" class="project-link">Developer Guide</a></li>
+              </ul>
+            </div>
+
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/grandstack-graphql/">GraphQL &amp; GRANDStack</a>
+
+              <ul class="project-links">
+                <li><a href="/labs/grandstack-graphql/" class="project-link">Details</a></li>
+                <li><a href="https://grandstack.io/" class="project-link">GRANDstack.io</a></li>
+              </ul>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/halin/">Halin</a>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/kafka/">Kafka Integration</a>
+              <ul class="project-links">
+                <li><a href="/labs/kafka/" class="project-link">Details</a></li>
+                <li><a href="/labs/kafka/4.0/" class="project-link">Documentation</a></li>
+              </ul>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/etl-tool/">ETL Tool</a>
+              <ul class="project-links">
+                <li><a href="/labs/etl-tool/" class="project-link">Details</a></li>
+                <li><a href="/labs/etl-tool/1.5.0/" class="project-link">Documentation</a></li>
+              </ul>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/liquibase/">Neo4j Plugin For Liquibase</a>
+              <ul class="project-links">
+                <li><a href="/labs/liquibase/" class="project-link">Details</a></li>
+                <li><a href="https://github.com/liquibase/liquibase-neo4j" class="project-link">Documentation</a></li>
+              </ul>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/neosemantics/">Neosemantics</a>
+              <ul class="project-links">
+                <li><a href="/labs/neosemantics/tutorial/" class="project-link">Getting Started</a></li>
+                <li><a href="/labs/neosemantics/4.0/" class="project-link">Documentation</a></li>
+              </ul>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/neo4j-helm/">Neo4j Helm</a>
+              <ul class="project-links">
+                <li><a href="/labs/neo4j-helm/" class="project-link">Details</a></li>
+                <li><a href="/labs/neo4j-helm/1.0.0/" class="project-link">Documentation</a></li>
+              </ul>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/labs/neodash/">NeoDash</a>
+              <ul class="project-links">
+                <li><a href="/labs/neodash/" class="project-link">Details</a></li>
+                <li><a href="/labs/neodash/2.1/" class="project-link">Documentation</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable developer">
+          <a class="navbar-link" href="/developer/resources/">Get Help</a>
+          <div class="navbar-dropdown">
+            <div class="navbar-item project">
+              <a class="project-name" href="https://graphacademy.neo4j.com/?ref=docs" target="_blank">GraphAcademy</a>
+              <ul class="project-links">
+                <li><a class="project-link" href="https://graphacademy.neo4j.com/?ref=docs">Free, Self Paced Training</a></li>
+                <li><a class="project-link" href="https://graphacademy.neo4j.com/certification/?ref=docs" target="_blank">Certification</a></li>
+              </ul>
+            </div>
+
+            <div class="navbar-item project">
+              <a class="project-name" href="https://dev.neo4j.com/forum" target="_blank">Community Forum</a>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="https://dev.neo4j.com/chat" target="_blank">Discord Chat</a>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="/developer/kb" target="_blank">Knowledge Base</a>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="https://medium.com/neo4j" target="_blank">Neo4j Developer Blog</a>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="https://www.youtube.com/neo4j" target="_blank">Neo4j Videos</a>
+            </div>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable getting-started-cta">
+          <a class="navbar-link primary" href="https://neo4j.com/cloud/aura/?ref=docs-nav-get-started">Get Started</a>
+          <div class="navbar-dropdown">
+            <div class="navbar-item project">
+              <a class="project-name" href="https://neo4j.com/cloud/aura/?ref=docs-get-started-dropdown">
+                <div>Neo4j AuraDB <span class="aura-ticker">Start Free</span></div>
+                <div class="project-subtitle">Start your fully managed Neo4j cloud database</div>
+              </a>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="https://sandbox.neo4j.com/?ref=docs-get-started-dropdown-cta&persona=data-scientist">
+                <div>Neo4j Sandbox</div>
+                <div class="project-subtitle">Learn and use Neo4j for data science & more</div>
+              </a>
+            </div>
+            <div class="navbar-item project">
+              <a class="project-name" href="https://neo4j.com/download/?ref=docs-get-started-dropdown">
+                <div>Neo4j Desktop</div>
+                <div class="project-subtitle">Manage multiple local or remote Neo4j projects</div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <a class="navbar-link search-button" href="#search" id="search_open"><svg width="23px" height="23px" viewBox="0 0 23 23"
+              version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+              class="fill-current float-right" id="search" role="button" title="Search Website">
+              <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round"
+                stroke-linejoin="round">
+                <g transform="translate(-2.000000, -2.000000)" stroke="#a0aec0" stroke-width="1.5">
+                  <circle
+                    transform="translate(11.389364, 11.388564) rotate(-23.025000) translate(-11.389364, -11.388564) "
+                    cx="11.3893642" cy="11.3885639" r="8.056"></circle>
+                  <path d="M17.0853333,17.0844444 L23.3333333,23.3333333" ></path>
+                </g>
+              </g>
+            </svg><span class="navbar-mobile">Search</span></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="apoc" data-version="4.4">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-versions" data-panel="explore">
+
+  <div class="dropdown">
+    <span class="dropdown-label">Neo4j Version</span>
+
+    <select data-current="4.4" class="version-selector dropdown-styles">
+      <option value="" selected>
+        APOC Documentation 4.4
+      </option>
+        <option
+          data-version="5"
+          value="../../../../5/" disabled
+        >
+      5
+        </option>
+        <option
+          data-version="4.4"
+          value="./"
+        >
+      4.4
+        </option>
+        <option
+          data-version="4.3"
+          value="../../../../4.3/overview/apoc.nodes/apoc.nodes.relationships.exist/"
+        >
+      4.3
+        </option>
+        <option
+          data-version="4.2"
+          value="../../../../4.2/overview/apoc.nodes/apoc.nodes.relationships.exist/"
+        >
+      4.2
+        </option>
+        <option
+          data-version="4.1"
+          value="../../../../4.1/overview/apoc.nodes/apoc.nodes.relationships.exist/"
+        >
+      4.1
+        </option>
+        <option
+          data-version="4.0"
+          value="../../../../4.0/overview/apoc.nodes/apoc.nodes.relationships.exist/"
+        >
+      4.0
+        </option>
+    </select>
+  </div>
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+    <nav class="nav-menu">
+    <ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../introduction/">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../installation/">Installation</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../installation/#apoc-core">APOC Core</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../installation/#neo4j-desktop">Neo4j Desktop</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../installation/#neo4j-server">Neo4j Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../installation/#docker">Docker</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../usage/">Usage</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../help/">Built in Help</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../">Procedures &amp; Functions</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc/">apoc</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc/apoc.case/">apoc.case</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc/apoc.help/">apoc.help</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc/apoc.when/">apoc.when</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc/apoc.version/">apoc.version</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.agg/">apoc.agg</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.first/">apoc.agg.first</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.graph/">apoc.agg.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.last/">apoc.agg.last</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.maxItems/">apoc.agg.maxItems</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.median/">apoc.agg.median</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.minItems/">apoc.agg.minItems</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.nth/">apoc.agg.nth</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.percentiles/">apoc.agg.percentiles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.product/">apoc.agg.product</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.slice/">apoc.agg.slice</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.agg/apoc.agg.statistics/">apoc.agg.statistics</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.algo/">apoc.algo</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.algo/apoc.algo.aStar/">apoc.algo.aStar</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.algo/apoc.algo.aStarConfig/">apoc.algo.aStarConfig</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.algo/apoc.algo.allSimplePaths/">apoc.algo.allSimplePaths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.algo/apoc.algo.cover/">apoc.algo.cover</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.algo/apoc.algo.dijkstra/">apoc.algo.dijkstra</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.algo/apoc.algo.dijkstraWithDefaultWeight/">apoc.algo.dijkstraWithDefaultWeight</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.any/">apoc.any</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.any/apoc.any.properties/">apoc.any.properties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.any/apoc.any.property/">apoc.any.property</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.atomic/">apoc.atomic</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.atomic/apoc.atomic.add/">apoc.atomic.add</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.atomic/apoc.atomic.concat/">apoc.atomic.concat</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.atomic/apoc.atomic.insert/">apoc.atomic.insert</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.atomic/apoc.atomic.remove/">apoc.atomic.remove</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.atomic/apoc.atomic.subtract/">apoc.atomic.subtract</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.atomic/apoc.atomic.update/">apoc.atomic.update</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.bitwise/">apoc.bitwise</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.bitwise/apoc.bitwise.op/">apoc.bitwise.op</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.bolt/">apoc.bolt</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.bolt/apoc.bolt.execute/">apoc.bolt.execute</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.bolt/apoc.bolt.load/">apoc.bolt.load</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.bolt/apoc.bolt.load.fromLocal/">apoc.bolt.load.fromLocal</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.cluster/">apoc.cluster</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cluster/apoc.cluster.graph/">apoc.cluster.graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.coll/">apoc.coll</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.elements/">apoc.coll.elements</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.pairWithOffset/">apoc.coll.pairWithOffset</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.partition/">apoc.coll.partition</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.split/">apoc.coll.split</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.zipToRows/">apoc.coll.zipToRows</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.avg/">apoc.coll.avg</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.avgDuration/">apoc.coll.avgDuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.combinations/">apoc.coll.combinations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.contains/">apoc.coll.contains</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.containsAll/">apoc.coll.containsAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.containsAllSorted/">apoc.coll.containsAllSorted</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.containsDuplicates/">apoc.coll.containsDuplicates</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.containsSorted/">apoc.coll.containsSorted</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.different/">apoc.coll.different</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.disjunction/">apoc.coll.disjunction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.dropDuplicateNeighbors/">apoc.coll.dropDuplicateNeighbors</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.duplicates/">apoc.coll.duplicates</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.duplicatesWithCount/">apoc.coll.duplicatesWithCount</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.fill/">apoc.coll.fill</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.flatten/">apoc.coll.flatten</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.frequencies/">apoc.coll.frequencies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.frequenciesAsMap/">apoc.coll.frequenciesAsMap</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.indexOf/">apoc.coll.indexOf</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.insert/">apoc.coll.insert</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.insertAll/">apoc.coll.insertAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.intersection/">apoc.coll.intersection</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.isEqualCollection/">apoc.coll.isEqualCollection</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.max/">apoc.coll.max</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.min/">apoc.coll.min</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.occurrences/">apoc.coll.occurrences</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.pairWithOffset/">apoc.coll.pairWithOffset</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.pairs/">apoc.coll.pairs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.pairsMin/">apoc.coll.pairsMin</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.partition/">apoc.coll.partition</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.randomItem/">apoc.coll.randomItem</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.randomItems/">apoc.coll.randomItems</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.remove/">apoc.coll.remove</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.removeAll/">apoc.coll.removeAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.reverse/">apoc.coll.reverse</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.runningTotal/">apoc.coll.runningTotal</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.set/">apoc.coll.set</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.shuffle/">apoc.coll.shuffle</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.sort/">apoc.coll.sort</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.sortMaps/">apoc.coll.sortMaps</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.sortMulti/">apoc.coll.sortMulti</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.sortNodes/">apoc.coll.sortNodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.sortText/">apoc.coll.sortText</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.stdev/">apoc.coll.stdev</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.subtract/">apoc.coll.subtract</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.sum/">apoc.coll.sum</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.sumLongs/">apoc.coll.sumLongs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.toSet/">apoc.coll.toSet</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.union/">apoc.coll.union</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.unionAll/">apoc.coll.unionAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.coll/apoc.coll.zip/">apoc.coll.zip</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.config/">apoc.config</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.config/apoc.config.list/">apoc.config.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.config/apoc.config.map/">apoc.config.map</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.convert/">apoc.convert</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.setJsonProperty/">apoc.convert.setJsonProperty</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toTree/">apoc.convert.toTree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.fromJsonList/">apoc.convert.fromJsonList</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.fromJsonMap/">apoc.convert.fromJsonMap</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.getJsonProperty/">apoc.convert.getJsonProperty</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.getJsonPropertyMap/">apoc.convert.getJsonPropertyMap</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toBoolean/">apoc.convert.toBoolean</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toBooleanList/">apoc.convert.toBooleanList</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toFloat/">apoc.convert.toFloat</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toIntList/">apoc.convert.toIntList</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toInteger/">apoc.convert.toInteger</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toJson/">apoc.convert.toJson</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toList/">apoc.convert.toList</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toMap/">apoc.convert.toMap</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toNode/">apoc.convert.toNode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toNodeList/">apoc.convert.toNodeList</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toRelationship/">apoc.convert.toRelationship</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toRelationshipList/">apoc.convert.toRelationshipList</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toSet/">apoc.convert.toSet</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toSortedJsonMap/">apoc.convert.toSortedJsonMap</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toString/">apoc.convert.toString</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.convert/apoc.convert.toStringList/">apoc.convert.toStringList</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.couchbase/">apoc.couchbase</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.append/">apoc.couchbase.append</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.exists/">apoc.couchbase.exists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.get/">apoc.couchbase.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.insert/">apoc.couchbase.insert</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.namedParamsQuery/">apoc.couchbase.namedParamsQuery</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.posParamsQuery/">apoc.couchbase.posParamsQuery</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.prepend/">apoc.couchbase.prepend</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.query/">apoc.couchbase.query</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.remove/">apoc.couchbase.remove</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.replace/">apoc.couchbase.replace</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.couchbase/apoc.couchbase.upsert/">apoc.couchbase.upsert</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.create/">apoc.create</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.addLabels/">apoc.create.addLabels</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.node/">apoc.create.node</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.nodes/">apoc.create.nodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.relationship/">apoc.create.relationship</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.removeLabels/">apoc.create.removeLabels</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.removeProperties/">apoc.create.removeProperties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.removeRelProperties/">apoc.create.removeRelProperties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.setLabels/">apoc.create.setLabels</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.setProperties/">apoc.create.setProperties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.setProperty/">apoc.create.setProperty</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.setRelProperties/">apoc.create.setRelProperties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.setRelProperty/">apoc.create.setRelProperty</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.uuids/">apoc.create.uuids</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.vNode/">apoc.create.vNode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.vNodes/">apoc.create.vNodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.clonePathToVirtual/">apoc.create.clonePathToVirtual</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.clonePathsToVirtual/">apoc.create.clonePathsToVirtual</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.vPattern/">apoc.create.vPattern</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.vPatternFull/">apoc.create.vPatternFull</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.vRelationship/">apoc.create.vRelationship</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.virtualPath/">apoc.create.virtualPath</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.uuid/">apoc.create.uuid</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.vNode/">apoc.create.vNode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.vRelationship/">apoc.create.vRelationship</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.create/apoc.create.virtual.fromNode/">apoc.create.virtual.fromNode</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.custom/">apoc.custom</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.custom/apoc.custom.asFunction/">apoc.custom.asFunction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.custom/apoc.custom.asProcedure/">apoc.custom.asProcedure</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.custom/apoc.custom.declareFunction/">apoc.custom.declareFunction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.custom/apoc.custom.declareProcedure/">apoc.custom.declareProcedure</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.custom/apoc.custom.list/">apoc.custom.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.custom/apoc.custom.removeFunction/">apoc.custom.removeFunction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.custom/apoc.custom.removeProcedure/">apoc.custom.removeProcedure</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.cypher/">apoc.cypher</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.doIt/">apoc.cypher.doIt</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.mapParallel/">apoc.cypher.mapParallel</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.mapParallel2/">apoc.cypher.mapParallel2</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.parallel/">apoc.cypher.parallel</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.parallel2/">apoc.cypher.parallel2</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.run/">apoc.cypher.run</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runFile/">apoc.cypher.runFile</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runFiles/">apoc.cypher.runFiles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runMany/">apoc.cypher.runMany</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runManyReadOnly/">apoc.cypher.runManyReadOnly</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runSchema/">apoc.cypher.runSchema</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runSchemaFile/">apoc.cypher.runSchemaFile</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runSchemaFiles/">apoc.cypher.runSchemaFiles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runTimeboxed/">apoc.cypher.runTimeboxed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runWrite/">apoc.cypher.runWrite</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runFirstColumn/">apoc.cypher.runFirstColumn</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runFirstColumnMany/">apoc.cypher.runFirstColumnMany</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.cypher/apoc.cypher.runFirstColumnSingle/">apoc.cypher.runFirstColumnSingle</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.data/">apoc.data</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.data/apoc.data.domain/">apoc.data.domain</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.data/apoc.data.email/">apoc.data.email</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.data/apoc.data.url/">apoc.data.url</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.date/">apoc.date</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.expire/">apoc.date.expire</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.expireIn/">apoc.date.expireIn</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.add/">apoc.date.add</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.convert/">apoc.date.convert</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.convertFormat/">apoc.date.convertFormat</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.currentTimestamp/">apoc.date.currentTimestamp</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.field/">apoc.date.field</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.fields/">apoc.date.fields</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.format/">apoc.date.format</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.fromISO8601/">apoc.date.fromISO8601</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.parse/">apoc.date.parse</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.parseAsZonedDateTime/">apoc.date.parseAsZonedDateTime</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.systemTimezone/">apoc.date.systemTimezone</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.toISO8601/">apoc.date.toISO8601</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.date/apoc.date.toYears/">apoc.date.toYears</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.diff/">apoc.diff</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.diff/apoc.diff.nodes/">apoc.diff.nodes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.do/">apoc.do</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.do/apoc.do.case/">apoc.do.case</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.do/apoc.do.when/">apoc.do.when</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.dv/">apoc.dv</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.dv/apoc.dv.catalog.add/">apoc.dv.catalog.add</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.dv/apoc.dv.catalog.list/">apoc.dv.catalog.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.dv/apoc.dv.catalog.remove/">apoc.dv.catalog.remove</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.dv/apoc.dv.query/">apoc.dv.query</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.dv/apoc.dv.queryAndLink/">apoc.dv.queryAndLink</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.es/">apoc.es</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.es/apoc.es.get/">apoc.es.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.es/apoc.es.getRaw/">apoc.es.getRaw</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.es/apoc.es.post/">apoc.es.post</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.es/apoc.es.postRaw/">apoc.es.postRaw</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.es/apoc.es.put/">apoc.es.put</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.es/apoc.es.query/">apoc.es.query</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.es/apoc.es.stats/">apoc.es.stats</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.example/">apoc.example</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.example/apoc.example.movies/">apoc.example.movies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.export/">apoc.export</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.csv.all/">apoc.export.csv.all</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.csv.data/">apoc.export.csv.data</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.csv.graph/">apoc.export.csv.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.csv.query/">apoc.export.csv.query</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypher.all/">apoc.export.cypher.all</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypher.data/">apoc.export.cypher.data</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypher.graph/">apoc.export.cypher.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypher.query/">apoc.export.cypher.query</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypher.schema/">apoc.export.cypher.schema</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypherAll/">apoc.export.cypherAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypherData/">apoc.export.cypherData</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypherGraph/">apoc.export.cypherGraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.cypherQuery/">apoc.export.cypherQuery</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.graphml.all/">apoc.export.graphml.all</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.graphml.data/">apoc.export.graphml.data</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.graphml.graph/">apoc.export.graphml.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.graphml.query/">apoc.export.graphml.query</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.json.all/">apoc.export.json.all</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.json.data/">apoc.export.json.data</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.json.graph/">apoc.export.json.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.json.query/">apoc.export.json.query</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.xls.all/">apoc.export.xls.all</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.xls.data/">apoc.export.xls.data</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.xls.graph/">apoc.export.xls.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.export/apoc.export.xls.query/">apoc.export.xls.query</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.generate/">apoc.generate</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.generate/apoc.generate.ba/">apoc.generate.ba</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.generate/apoc.generate.complete/">apoc.generate.complete</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.generate/apoc.generate.er/">apoc.generate.er</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.generate/apoc.generate.simple/">apoc.generate.simple</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.generate/apoc.generate.ws/">apoc.generate.ws</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.gephi/">apoc.gephi</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.gephi/apoc.gephi.add/">apoc.gephi.add</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.get/">apoc.get</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.get/apoc.get.nodes/">apoc.get.nodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.get/apoc.get.rels/">apoc.get.rels</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.graph/">apoc.graph</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.graph/apoc.graph.from/">apoc.graph.from</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.graph/apoc.graph.fromCypher/">apoc.graph.fromCypher</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.graph/apoc.graph.fromDB/">apoc.graph.fromDB</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.graph/apoc.graph.fromData/">apoc.graph.fromData</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.graph/apoc.graph.fromDocument/">apoc.graph.fromDocument</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.graph/apoc.graph.fromPath/">apoc.graph.fromPath</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.graph/apoc.graph.fromPaths/">apoc.graph.fromPaths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.graph/apoc.graph.validateDocument/">apoc.graph.validateDocument</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.hashing/">apoc.hashing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.hashing/apoc.hashing.fingerprint/">apoc.hashing.fingerprint</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.hashing/apoc.hashing.fingerprintGraph/">apoc.hashing.fingerprintGraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.hashing/apoc.hashing.fingerprinting/">apoc.hashing.fingerprinting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.import/">apoc.import</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.import/apoc.import.csv/">apoc.import.csv</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.import/apoc.import.graphml/">apoc.import.graphml</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.import/apoc.import.json/">apoc.import.json</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.import/apoc.import.xml/">apoc.import.xml</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.json/">apoc.json</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.json/apoc.json.validate/">apoc.json.validate</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.json/apoc.json.path/">apoc.json.path</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.label/">apoc.label</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.label/apoc.label.exists/">apoc.label.exists</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.load/">apoc.load</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.csv/">apoc.load.csv</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.csvParams/">apoc.load.csvParams</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.directory/">apoc.load.directory</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.directory.async.add/">apoc.load.directory.async.add</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.directory.async.list/">apoc.load.directory.async.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.directory.async.remove/">apoc.load.directory.async.remove</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.directory.async.removeAll/">apoc.load.directory.async.removeAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.driver/">apoc.load.driver</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.html/">apoc.load.html</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.htmlPlainText/">apoc.load.htmlPlainText</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.jdbc/">apoc.load.jdbc</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.jdbcParams/">apoc.load.jdbcParams</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.jdbcUpdate/">apoc.load.jdbcUpdate</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.json/">apoc.load.json</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.jsonArray/">apoc.load.jsonArray</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.jsonParams/">apoc.load.jsonParams</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.ldap/">apoc.load.ldap</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.xls/">apoc.load.xls</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.load/apoc.load.xml/">apoc.load.xml</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.lock/">apoc.lock</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.lock/apoc.lock.all/">apoc.lock.all</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.lock/apoc.lock.nodes/">apoc.lock.nodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.lock/apoc.lock.read.nodes/">apoc.lock.read.nodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.lock/apoc.lock.read.rels/">apoc.lock.read.rels</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.lock/apoc.lock.rels/">apoc.lock.rels</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.log/">apoc.log</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.log/apoc.log.debug/">apoc.log.debug</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.log/apoc.log.error/">apoc.log.error</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.log/apoc.log.info/">apoc.log.info</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.log/apoc.log.stream/">apoc.log.stream</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.log/apoc.log.warn/">apoc.log.warn</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.map/">apoc.map</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.clean/">apoc.map.clean</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.flatten/">apoc.map.flatten</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.fromLists/">apoc.map.fromLists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.fromNodes/">apoc.map.fromNodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.fromPairs/">apoc.map.fromPairs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.fromValues/">apoc.map.fromValues</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.get/">apoc.map.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.groupBy/">apoc.map.groupBy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.groupByMulti/">apoc.map.groupByMulti</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.merge/">apoc.map.merge</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.mergeList/">apoc.map.mergeList</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.mget/">apoc.map.mget</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.removeKey/">apoc.map.removeKey</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.removeKeys/">apoc.map.removeKeys</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.setEntry/">apoc.map.setEntry</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.setKey/">apoc.map.setKey</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.setLists/">apoc.map.setLists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.setPairs/">apoc.map.setPairs</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.setValues/">apoc.map.setValues</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.sortedProperties/">apoc.map.sortedProperties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.submap/">apoc.map.submap</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.unflatten/">apoc.map.unflatten</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.updateTree/">apoc.map.updateTree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.map/apoc.map.values/">apoc.map.values</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.math/">apoc.math</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.regr/">apoc.math.regr</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.cosh/">apoc.math.cosh</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.coth/">apoc.math.coth</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.csch/">apoc.math.csch</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.maxByte/">apoc.math.maxByte</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.maxDouble/">apoc.math.maxDouble</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.maxInt/">apoc.math.maxInt</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.maxLong/">apoc.math.maxLong</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.minByte/">apoc.math.minByte</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.minDouble/">apoc.math.minDouble</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.minInt/">apoc.math.minInt</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.minLong/">apoc.math.minLong</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.round/">apoc.math.round</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.sech/">apoc.math.sech</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.sigmoid/">apoc.math.sigmoid</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.sigmoidPrime/">apoc.math.sigmoidPrime</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.sinh/">apoc.math.sinh</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.math/apoc.math.tanh/">apoc.math.tanh</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.merge/">apoc.merge</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.merge/apoc.merge.node/">apoc.merge.node</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.merge/apoc.merge.node.eager/">apoc.merge.node.eager</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.merge/apoc.merge.nodeWithStats/">apoc.merge.nodeWithStats</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.merge/apoc.merge.nodeWithStats.eager/">apoc.merge.nodeWithStats.eager</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.merge/apoc.merge.relationship/">apoc.merge.relationship</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.merge/apoc.merge.relationship.eager/">apoc.merge.relationship.eager</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.merge/apoc.merge.relationshipWithStats/">apoc.merge.relationshipWithStats</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.merge/apoc.merge.relationshipWithStats.eager/">apoc.merge.relationshipWithStats.eager</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.meta/">apoc.meta</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.data/">apoc.meta.data</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.data.of/">apoc.meta.data.of</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.graph/">apoc.meta.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.graph.of/">apoc.meta.graph.of</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.graphSample/">apoc.meta.graphSample</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.nodeTypeProperties/">apoc.meta.nodeTypeProperties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.relTypeProperties/">apoc.meta.relTypeProperties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.schema/">apoc.meta.schema</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.stats/">apoc.meta.stats</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.subGraph/">apoc.meta.subGraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.cypher.isType/">apoc.meta.cypher.isType</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.cypher.type/">apoc.meta.cypher.type</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.cypher.types/">apoc.meta.cypher.types</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.isType/">apoc.meta.isType</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.nodes.count/">apoc.meta.nodes.count</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.type/">apoc.meta.type</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.typeName/">apoc.meta.typeName</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.meta/apoc.meta.types/">apoc.meta.types</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.metrics/">apoc.metrics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.metrics/apoc.metrics.get/">apoc.metrics.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.metrics/apoc.metrics.list/">apoc.metrics.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.metrics/apoc.metrics.storage/">apoc.metrics.storage</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.model/">apoc.model</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.model/apoc.model.jdbc/">apoc.model.jdbc</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.mongo/">apoc.mongo</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongo/apoc.mongo.aggregate/">apoc.mongo.aggregate</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongo/apoc.mongo.count/">apoc.mongo.count</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongo/apoc.mongo.delete/">apoc.mongo.delete</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongo/apoc.mongo.find/">apoc.mongo.find</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongo/apoc.mongo.insert/">apoc.mongo.insert</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongo/apoc.mongo.update/">apoc.mongo.update</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.mongodb/">apoc.mongodb</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongodb/apoc.mongodb.count/">apoc.mongodb.count</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongodb/apoc.mongodb.delete/">apoc.mongodb.delete</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongodb/apoc.mongodb.find/">apoc.mongodb.find</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongodb/apoc.mongodb.first/">apoc.mongodb.first</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongodb/apoc.mongodb.get/">apoc.mongodb.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongodb/apoc.mongodb.get.byObjectId/">apoc.mongodb.get.byObjectId</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongodb/apoc.mongodb.insert/">apoc.mongodb.insert</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.mongodb/apoc.mongodb.update/">apoc.mongodb.update</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.monitor/">apoc.monitor</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.monitor/apoc.monitor.ids/">apoc.monitor.ids</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.monitor/apoc.monitor.kernel/">apoc.monitor.kernel</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.monitor/apoc.monitor.store/">apoc.monitor.store</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.monitor/apoc.monitor.tx/">apoc.monitor.tx</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.neighbors/">apoc.neighbors</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.neighbors/apoc.neighbors.athop/">apoc.neighbors.athop</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.neighbors/apoc.neighbors.athop.count/">apoc.neighbors.athop.count</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.neighbors/apoc.neighbors.byhop/">apoc.neighbors.byhop</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.neighbors/apoc.neighbors.byhop.count/">apoc.neighbors.byhop.count</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.neighbors/apoc.neighbors.tohop/">apoc.neighbors.tohop</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.neighbors/apoc.neighbors.tohop.count/">apoc.neighbors.tohop.count</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.nlp/">apoc.nlp</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.aws.entities.graph/">apoc.nlp.aws.entities.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.aws.entities.stream/">apoc.nlp.aws.entities.stream</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.aws.keyPhrases.graph/">apoc.nlp.aws.keyPhrases.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.aws.keyPhrases.stream/">apoc.nlp.aws.keyPhrases.stream</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.aws.sentiment.graph/">apoc.nlp.aws.sentiment.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.aws.sentiment.stream/">apoc.nlp.aws.sentiment.stream</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.azure.entities.graph/">apoc.nlp.azure.entities.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.azure.entities.stream/">apoc.nlp.azure.entities.stream</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.azure.keyPhrases.graph/">apoc.nlp.azure.keyPhrases.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.azure.keyPhrases.stream/">apoc.nlp.azure.keyPhrases.stream</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.azure.sentiment.graph/">apoc.nlp.azure.sentiment.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.azure.sentiment.stream/">apoc.nlp.azure.sentiment.stream</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.gcp.classify.graph/">apoc.nlp.gcp.classify.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.gcp.classify.stream/">apoc.nlp.gcp.classify.stream</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.gcp.entities.graph/">apoc.nlp.gcp.entities.graph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.nlp/apoc.nlp.gcp.entities.stream/">apoc.nlp.gcp.entities.stream</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.node/">apoc.node</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.node/apoc.node.degree/">apoc.node.degree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.node/apoc.node.degree.in/">apoc.node.degree.in</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.node/apoc.node.degree.out/">apoc.node.degree.out</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.node/apoc.node.id/">apoc.node.id</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.node/apoc.node.labels/">apoc.node.labels</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.node/apoc.node.relationship.exists/">apoc.node.relationship.exists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.node/apoc.node.relationship.types/">apoc.node.relationship.types</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.node/apoc.node.relationships.exist/">apoc.node.relationships.exist</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../">apoc.nodes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.collapse/">apoc.nodes.collapse</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.cycles/">apoc.nodes.cycles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.delete/">apoc.nodes.delete</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.get/">apoc.nodes.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.group/">apoc.nodes.group</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.link/">apoc.nodes.link</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.rels/">apoc.nodes.rels</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.connected/">apoc.nodes.connected</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.isDense/">apoc.nodes.isDense</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../apoc.nodes.relationship.types/">apoc.nodes.relationship.types</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="./">apoc.nodes.relationships.exist</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.number/">apoc.number</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.arabicToRoman/">apoc.number.arabicToRoman</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.exact.add/">apoc.number.exact.add</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.exact.div/">apoc.number.exact.div</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.exact.mul/">apoc.number.exact.mul</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.exact.sub/">apoc.number.exact.sub</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.exact.toExact/">apoc.number.exact.toExact</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.exact.toFloat/">apoc.number.exact.toFloat</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.exact.toInteger/">apoc.number.exact.toInteger</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.format/">apoc.number.format</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.parseFloat/">apoc.number.parseFloat</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.parseInt/">apoc.number.parseInt</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.number/apoc.number.romanToArabic/">apoc.number.romanToArabic</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.path/">apoc.path</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.expand/">apoc.path.expand</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.expandConfig/">apoc.path.expandConfig</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.spanningTree/">apoc.path.spanningTree</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.subgraphAll/">apoc.path.subgraphAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.subgraphNodes/">apoc.path.subgraphNodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.combine/">apoc.path.combine</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.create/">apoc.path.create</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.elements/">apoc.path.elements</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.path/apoc.path.slice/">apoc.path.slice</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.periodic/">apoc.periodic</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.cancel/">apoc.periodic.cancel</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.commit/">apoc.periodic.commit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.countdown/">apoc.periodic.countdown</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.iterate/">apoc.periodic.iterate</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.list/">apoc.periodic.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.repeat/">apoc.periodic.repeat</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.rock_n_roll/">apoc.periodic.rock_n_roll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.rock_n_roll_while/">apoc.periodic.rock_n_roll_while</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.submit/">apoc.periodic.submit</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.periodic/apoc.periodic.truncate/">apoc.periodic.truncate</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.redis/">apoc.redis</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.append/">apoc.redis.append</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.configGet/">apoc.redis.configGet</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.configSet/">apoc.redis.configSet</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.copy/">apoc.redis.copy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.eval/">apoc.redis.eval</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.exists/">apoc.redis.exists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.get/">apoc.redis.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.hdel/">apoc.redis.hdel</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.hexists/">apoc.redis.hexists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.hget/">apoc.redis.hget</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.hgetall/">apoc.redis.hgetall</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.hincrby/">apoc.redis.hincrby</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.hset/">apoc.redis.hset</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.incrby/">apoc.redis.incrby</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.info/">apoc.redis.info</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.lrange/">apoc.redis.lrange</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.persist/">apoc.redis.persist</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.pexpire/">apoc.redis.pexpire</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.pop/">apoc.redis.pop</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.pttl/">apoc.redis.pttl</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.push/">apoc.redis.push</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.sadd/">apoc.redis.sadd</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.scard/">apoc.redis.scard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.getSet/">apoc.redis.getSet</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.smembers/">apoc.redis.smembers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.spop/">apoc.redis.spop</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.sunion/">apoc.redis.sunion</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.zadd/">apoc.redis.zadd</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.zcard/">apoc.redis.zcard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.zrangebyscore/">apoc.redis.zrangebyscore</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.redis/apoc.redis.zrem/">apoc.redis.zrem</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.refactor/">apoc.refactor</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.categorize/">apoc.refactor.categorize</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.cloneNodes/">apoc.refactor.cloneNodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.cloneNodesWithRelationships/">apoc.refactor.cloneNodesWithRelationships</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.cloneSubgraph/">apoc.refactor.cloneSubgraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.cloneSubgraphFromPaths/">apoc.refactor.cloneSubgraphFromPaths</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.collapseNode/">apoc.refactor.collapseNode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.deleteAndReconnect/">apoc.refactor.deleteAndReconnect</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.extractNode/">apoc.refactor.extractNode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.from/">apoc.refactor.from</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.invert/">apoc.refactor.invert</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.mergeNodes/">apoc.refactor.mergeNodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.mergeRelationships/">apoc.refactor.mergeRelationships</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.normalizeAsBoolean/">apoc.refactor.normalizeAsBoolean</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.rename.label/">apoc.refactor.rename.label</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.rename.nodeProperty/">apoc.refactor.rename.nodeProperty</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.rename.type/">apoc.refactor.rename.type</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.rename.typeProperty/">apoc.refactor.rename.typeProperty</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.setType/">apoc.refactor.setType</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.refactor/apoc.refactor.to/">apoc.refactor.to</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.rel/">apoc.rel</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.rel/apoc.rel.endNode/">apoc.rel.endNode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.rel/apoc.rel.id/">apoc.rel.id</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.rel/apoc.rel.startNode/">apoc.rel.startNode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.rel/apoc.rel.type/">apoc.rel.type</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.schema/">apoc.schema</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.assert/">apoc.schema.assert</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.nodes/">apoc.schema.nodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.properties.distinct/">apoc.schema.properties.distinct</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.properties.distinctCount/">apoc.schema.properties.distinctCount</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.relationships/">apoc.schema.relationships</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.node.constraintExists/">apoc.schema.node.constraintExists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.node.indexExists/">apoc.schema.node.indexExists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.relationship.constraintExists/">apoc.schema.relationship.constraintExists</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.schema/apoc.schema.relationship.indexExists/">apoc.schema.relationship.indexExists</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.scoring/">apoc.scoring</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.scoring/apoc.scoring.existence/">apoc.scoring.existence</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.scoring/apoc.scoring.pareto/">apoc.scoring.pareto</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.search/">apoc.search</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.search/apoc.search.multiSearchReduced/">apoc.search.multiSearchReduced</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.search/apoc.search.node/">apoc.search.node</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.search/apoc.search.nodeAll/">apoc.search.nodeAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.search/apoc.search.nodeAllReduced/">apoc.search.nodeAllReduced</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.search/apoc.search.nodeReduced/">apoc.search.nodeReduced</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.spatial/">apoc.spatial</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.spatial/apoc.spatial.geocode/">apoc.spatial.geocode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.spatial/apoc.spatial.geocodeOnce/">apoc.spatial.geocodeOnce</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.spatial/apoc.spatial.reverseGeocode/">apoc.spatial.reverseGeocode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.spatial/apoc.spatial.sortByDistance/">apoc.spatial.sortByDistance</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.static/">apoc.static</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.static/apoc.static.get/">apoc.static.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.static/apoc.static.list/">apoc.static.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.static/apoc.static.set/">apoc.static.set</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.static/apoc.static.get/">apoc.static.get</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.static/apoc.static.getAll/">apoc.static.getAll</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.stats/">apoc.stats</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.stats/apoc.stats.degrees/">apoc.stats.degrees</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.systemdb/">apoc.systemdb</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.systemdb/apoc.systemdb.execute/">apoc.systemdb.execute</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.systemdb/apoc.systemdb.export.metadata/">apoc.systemdb.export.metadata</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.systemdb/apoc.systemdb.graph/">apoc.systemdb.graph</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.temporal/">apoc.temporal</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.temporal/apoc.temporal.format/">apoc.temporal.format</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.temporal/apoc.temporal.formatDuration/">apoc.temporal.formatDuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.temporal/apoc.temporal.toZonedTemporal/">apoc.temporal.toZonedTemporal</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.text/">apoc.text</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.doubleMetaphone/">apoc.text.doubleMetaphone</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.phonetic/">apoc.text.phonetic</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.phoneticDelta/">apoc.text.phoneticDelta</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.base64Decode/">apoc.text.base64Decode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.base64Encode/">apoc.text.base64Encode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.base64UrlDecode/">apoc.text.base64UrlDecode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.base64UrlEncode/">apoc.text.base64UrlEncode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.byteCount/">apoc.text.byteCount</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.bytes/">apoc.text.bytes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.camelCase/">apoc.text.camelCase</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.capitalize/">apoc.text.capitalize</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.capitalizeAll/">apoc.text.capitalizeAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.charAt/">apoc.text.charAt</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.clean/">apoc.text.clean</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.code/">apoc.text.code</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.compareCleaned/">apoc.text.compareCleaned</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.decapitalize/">apoc.text.decapitalize</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.decapitalizeAll/">apoc.text.decapitalizeAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.distance/">apoc.text.distance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.doubleMetaphone/">apoc.text.doubleMetaphone</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.format/">apoc.text.format</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.fuzzyMatch/">apoc.text.fuzzyMatch</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.hammingDistance/">apoc.text.hammingDistance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.hexCharAt/">apoc.text.hexCharAt</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.hexValue/">apoc.text.hexValue</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.indexOf/">apoc.text.indexOf</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.indexesOf/">apoc.text.indexesOf</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.jaroWinklerDistance/">apoc.text.jaroWinklerDistance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.join/">apoc.text.join</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.levenshteinDistance/">apoc.text.levenshteinDistance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.levenshteinSimilarity/">apoc.text.levenshteinSimilarity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.lpad/">apoc.text.lpad</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.phonetic/">apoc.text.phonetic</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.random/">apoc.text.random</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.regexGroups/">apoc.text.regexGroups</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.regreplace/">apoc.text.regreplace</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.repeat/">apoc.text.repeat</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.replace/">apoc.text.replace</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.rpad/">apoc.text.rpad</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.slug/">apoc.text.slug</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.snakeCase/">apoc.text.snakeCase</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.sorensenDiceSimilarity/">apoc.text.sorensenDiceSimilarity</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.split/">apoc.text.split</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.swapCase/">apoc.text.swapCase</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.toCypher/">apoc.text.toCypher</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.toUpperCase/">apoc.text.toUpperCase</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.upperCamelCase/">apoc.text.upperCamelCase</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.urldecode/">apoc.text.urldecode</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.text/apoc.text.urlencode/">apoc.text.urlencode</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.trigger/">apoc.trigger</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.trigger/apoc.trigger.add/">apoc.trigger.add</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.trigger/apoc.trigger.list/">apoc.trigger.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.trigger/apoc.trigger.pause/">apoc.trigger.pause</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.trigger/apoc.trigger.remove/">apoc.trigger.remove</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.trigger/apoc.trigger.removeAll/">apoc.trigger.removeAll</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.trigger/apoc.trigger.resume/">apoc.trigger.resume</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.trigger/apoc.trigger.nodesByLabel/">apoc.trigger.nodesByLabel</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.trigger/apoc.trigger.propertiesByKey/">apoc.trigger.propertiesByKey</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.ttl/">apoc.ttl</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.ttl/apoc.ttl.expire/">apoc.ttl.expire</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.ttl/apoc.ttl.expireIn/">apoc.ttl.expireIn</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.ttl/apoc.ttl.config/">apoc.ttl.config</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.util/">apoc.util</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.sleep/">apoc.util.sleep</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.validate/">apoc.util.validate</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.compress/">apoc.util.compress</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.decompress/">apoc.util.decompress</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.md5/">apoc.util.md5</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.sha1/">apoc.util.sha1</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.sha256/">apoc.util.sha256</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.sha384/">apoc.util.sha384</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.sha512/">apoc.util.sha512</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.util/apoc.util.validatePredicate/">apoc.util.validatePredicate</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.uuid/">apoc.uuid</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.uuid/apoc.uuid.install/">apoc.uuid.install</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.uuid/apoc.uuid.list/">apoc.uuid.list</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.uuid/apoc.uuid.remove/">apoc.uuid.remove</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.uuid/apoc.uuid.removeAll/">apoc.uuid.removeAll</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.warmup/">apoc.warmup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.warmup/apoc.warmup.run/">apoc.warmup.run</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../apoc.xml/">apoc.xml</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.xml/apoc.xml.import/">apoc.xml.import</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../apoc.xml/apoc.xml.parse/">apoc.xml.parse</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../config/">Configuration Options</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../general-considerations/">General considerations</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../import/">Import</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../import/web-apis/">Loading Data from Web-APIs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../import/load-json/">Load JSON</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../import/load-csv/">Load CSV</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../import/import-csv/">Import CSV</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../import/xls/">Loading Excel (XLS)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../import/xml/">Load XML</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../import/html/">Load HTML</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../import/graphml/">Import GraphML</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../export/">Export</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../export/csv/">Export to CSV</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../export/json/">Export to JSON</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../export/cypher/">Export to Cypher Script</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../export/graphml/">Export to GraphML</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../export/gephi/">Export to Gephi</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../export/xls/">Export to Excel</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../database-integration/">Database Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-integration/load-jdbc/">Load JDBC (RDBMS)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-integration/database-modeling/">Database Modeling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-integration/elasticsearch/">ElasticSearch</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-integration/mongodb/">MongoDB (Deprecated)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-integration/couchbase/">Couchbase</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-integration/bolt-neo4j/">Bolt</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-integration/load-ldap/">Load LDAP</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-integration/redis/">Redis</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../graph-updates/">Graph Updates</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-updates/data-creation/">Creating Data</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link nav-item-toggle" href="../../../graph-updates/graph-refactoring/">Graph Refactorings</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/categorize/">Categorize</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/clone-nodes/">Clone nodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/clone-subgraph/">Clone subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/collapse-node-to-relationship/">Collapse node to relationship</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/extract-node-from-relationship/">Extract node from relationships</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/invert-relationship/">Invert relationship</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/merge-nodes/">Merge Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/normalize-boolean/">Normalize As Boolean</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/property-value-label/">Property value to a label</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/redirect-relationship/">Redirect relationships</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/rename-label-type-property/">Rename</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../graph-updates/graph-refactoring/set-relationship-type/">Set Relationship Types</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-updates/uuid/">UUIDs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-updates/periodic-execution/">Periodic Execution</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-updates/atomic-updates/">Atomic Property Updates</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-updates/locking/">Locking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-updates/ttl/">Time To Live (TTL) - Expire Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-updates/graph-generators/">Generating Graphs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-updates/data-deletion/">Deleting Data</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../data-structures/">Data Structures</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../data-structures/conversion-functions/">Conversion Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../data-structures/map-functions/">Map Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../data-structures/collection-list-functions/">Collection Functions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../temporal/">Temporal (Date Time)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../temporal/temporal-conversions/">Temporal Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../temporal/datetime-conversions/">Date and Time Conversions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../mathematical/">Mathematical</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../mathematical/math-functions/">Math Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../mathematical/exact-math-functions/">Exact Math</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../mathematical/number-conversions/">Number Format Conversions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../mathematical/bitwise-operations/">Bitwise operations</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../graph-querying/">Advanced Graph Querying</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/path-expander/">Path Expander Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/expand-paths/">Expand paths</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/expand-paths-config/">Expand paths with config</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/expand-subgraph-nodes/">Expand to nodes in a subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/expand-subgraph/">Expand to subgraph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/expand-spanning-tree/">Expand a spanning tree</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/neighborhood/">Neighbor Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/path-querying/">Path Manipulation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/relationship-querying/">Relationship Querying</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/node-querying/">Node Querying</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../graph-querying/parallel-node-search/">Parallel Node Search</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../comparing-graphs/">Comparing Graphs</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../comparing-graphs/node-difference/">Diff</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../comparing-graphs/fingerprinting/">Fingerprinting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../cypher-execution/">Cypher Execution</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../cypher-execution/running-cypher/">Running Cypher fragments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../cypher-execution/conditionals/">Conditional Cypher Execution</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../cypher-execution/cypher-timeboxed/">Timeboxed Cypher statements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../cypher-execution/cypher-multiple-statements/">Run multiple Statements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../cypher-execution/run-cypher-scripts/">Run Cypher Script Files</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../cypher-execution/cypher-based-procedures-functions/">Custom, Cypher Based Procedures and Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../cypher-execution/parallel/">Parallel Cypher Execution</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../virtual/">Virtual Nodes &amp; Relationships (Graph Projections)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../virtual/virtual-nodes-rels/">Virtual Nodes/Rels</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../virtual/nodes-collapse/">Collapse Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../virtual/virtual-graph/">Virtual Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../virtual/graph-grouping/">Graph Grouping</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../virtual-resource/">Virtual Resource</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../nlp/">Natural Language Processing (NLP)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../nlp/gcp/">Google Cloud Platform (GCP)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../nlp/aws/">Amazon Web Services (AWS)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../nlp/azure/">Microsoft Azure Cognitive Services</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../background-operations/">Background Operations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../background-operations/periodic-background/">Background Jobs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../background-operations/triggers/">Triggers</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../database-introspection/">Database Introspection</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-introspection/meta/">Meta Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-introspection/config/">Config</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-introspection/monitoring/">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../database-introspection/systemdb/">SystemDB</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../operational/">Operational</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../operational/init-script/">Cypher init script</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../operational/warmup/">Warmup</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../operational/log/">Logging</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../misc/">Miscellaneous</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../misc/text-functions/">Text Functions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../misc/spatial/">Spatial</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../misc/static-values/">Static Value Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../misc/utility-functions/">Utilities</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../indexes/">Text and Lookup Indexes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../indexes/schema-index-operations/">Schema Information</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link nav-item-toggle" href="../../../algorithms/">Graph Algorithms</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../algorithms/path-finding-procedures/">Path Finding Procedures</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../algorithms/similarity/">Deprecated: Similarity</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../transaction/">List of procedures with its own transaction</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+  <div class="toolbar-wrapper">
+    <button class="nav-toggle" aria-label="Toggle Table of Contents"></button>
+    <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../">APOC Documentation</a></li>
+    <li><a href="../../">
+        Procedures &amp; Functions
+    </a></li>
+    <li><a href="../">
+        apoc.nodes
+    </a></li>
+    <li><a href="./">
+        apoc.nodes.relationships.exist
+    </a></li>
+  </ul>
+</nav>
+        <div class="edit-this-page"><a href="https://github.com/neo4j-contrib/neo4j-apoc-procedures/edit/4.4/docs/asciidoc/modules/ROOT/pages/overview/apoc.nodes/apoc.nodes.relationships.exist.adoc">Edit this Page</a></div>
+    </div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">apoc.nodes.relationships.exist</h1>
+
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="label label--function">Function</span> <span class="label label--apoc-core">APOC Core</span></p>
+</div>
+<div class="paragraph emphasis">
+<p>apoc.nodes.relationships.exist(node|nodes|id|[ids], rel-direction-pattern) - returns a list of maps where each one has two fields: <code>node</code> which is the node subject of the analysis and <code>exists</code> which is a map with rel-pattern, boolean for the given relationship patterns</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_signature"><a class="anchor" href="#_signature"></a>Signature</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>apoc.nodes.relationships.exist(ids :: ANY?, types =  :: STRING?) :: (LIST? OF ANY?)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_input_parameters"><a class="anchor" href="#_input_parameters"></a>Input parameters</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch procedures">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ids</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ANY?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">null</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING?</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-apoc.nodes.relationships.exist"><a class="anchor" href="#usage-apoc.nodes.relationships.exist"></a>Usage Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The examples in this section are based on the following sample graph:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cypher hljs" data-lang="cypher">MERGE (michael:Person {name: "Michael"})
+WITH michael
+CALL {
+    WITH michael
+    UNWIND range(0, 100) AS id
+    MERGE (p:Person {name: "Person" + id})
+    MERGE (michael)-[:KNOWS]-(p)
+    RETURN count(*) AS friends
+}
+
+CALL {
+    WITH michael
+    UNWIND range(0, 50) AS id
+    MERGE (p:Person {name: "Person" + id})
+    MERGE (michael)-[:FOLLOWS]-(p)
+    RETURN count(*) AS follows
+}
+
+RETURN friends, follows;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Results</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">friends</th>
+<th class="tableblock halign-left valign-top">follows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">101</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">51</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cypher hljs" data-lang="cypher">MATCH (p1:Person)
+WHERE p1.name IN ["Michael", "Person30", "Person60"]
+WITH collect(p1) AS people
+UNWIND apoc.nodes.relationships.exist(people, "KNOWS&gt;|FOLLOWS") AS output
+RETURN output;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Results</caption>
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{node: (:Person {name: "Michael"}), exists: {<code>KNOWS&gt;</code>: TRUE, FOLLOWS: TRUE}}</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{node: (:Person {name: "Person30"}), exists: {<code>KNOWS&gt;</code>: FALSE, FOLLOWS: TRUE}}</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">{node: (:Person {name: "Person60"}), exists: {<code>KNOWS&gt;</code>: FALSE, FOLLOWS: FALSE}}</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="../../../graph-querying/node-querying/" class="page more information">More documentation of apoc.nodes.relationships.exist</a></p>
+</div>
+</div>
+</div>
+  <div class="feedback">
+    <div class="header question">
+        <p><strong>Was this page helpful?</strong></p>
+
+        <svg width="22px" height="22px" viewBox="0 0 22 22" role="button" class="no" aria-label="No, this page isn't helpful">
+            <path
+                d="M6.25,15.8333333 C6.25,13.7622655 7.92893219,12.0833333 10,12.0833333 C12.0710678,12.0833333 13.75,13.7622655 13.75,15.8333333"
+                ></path>
+            <circle  cx="10" cy="10" r="9.58333333"></circle>
+            <path
+                d="M12.5,4.58333333 C12.8934466,4.05873783 13.5109223,3.75 14.1666667,3.75 C14.822411,3.75 15.4398867,4.05873783 15.8333333,4.58333333"
+                ></path>
+            <line x1="4.58333333" y1="7.91666667" x2="7.08333333" y2="7.91666667" ></line>
+            <path
+                d="M7.08333333,8.54166667 C6.96827401,8.54166667 6.875,8.44839266 6.875,8.33333333 C6.875,8.21827401 6.96827401,8.125 7.08333333,8.125 C7.19839266,8.125 7.29166667,8.21827401 7.29166667,8.33333333 C7.29166667,8.44839266 7.19839266,8.54166667 7.08333333,8.54166667"
+                ></path>
+            <line x1="12.9166667" y1="7.91666667" x2="15.4166667" y2="7.91666667" ></line>
+            <path
+                d="M15.4166667,8.54166667 C15.3016073,8.54166667 15.2083333,8.44839266 15.2083333,8.33333333 C15.2083333,8.21827401 15.3016073,8.125 15.4166667,8.125 C15.531726,8.125 15.625,8.21827401 15.625,8.33333333 C15.625,8.44839266 15.531726,8.54166667 15.4166667,8.54166667"
+                ></path>
+            <path
+                d="M4.16666667,4.58333333 C4.5601133,4.05873783 5.17758895,3.75 5.83333333,3.75 C6.48907772,3.75 7.10655337,4.05873783 7.5,4.58333333"
+                ></path>
+        </svg>
+
+        <svg width="22px" height="22px" viewBox="0 0 22 22" role="button" class="yes" aria-label="Yes, this page is helpful">
+            <circle  cx="10" cy="10" r="9.58333333"></circle>
+            <path
+                d="M5.41666667,8.125 C5.53172599,8.125 5.625,8.21827401 5.625,8.33333333 C5.625,8.44839266 5.53172599,8.54166667 5.41666667,8.54166667 C5.30160734,8.54166667 5.20833333,8.44839266 5.20833333,8.33333333 C5.20833333,8.21827401 5.30160734,8.125 5.41666667,8.125"
+                ></path>
+            <path
+                d="M14.5833333,8.125 C14.468274,8.125 14.375,8.21827401 14.375,8.33333333 C14.375,8.44839266 14.468274,8.54166667 14.5833333,8.54166667 C14.6983927,8.54166667 14.7916667,8.44839266 14.7916667,8.33333333 C14.7916667,8.21827401 14.6983927,8.125 14.5833333,8.125"
+                ></path>
+            <path
+                d="M13.2275,12.9166657 C13.4853075,12.9162808 13.7287776,13.035241 13.8869095,13.2388563 C14.0450415,13.4424715 14.1000278,13.7078123 14.0358333,13.9575 C13.562901,15.7999679 11.9021969,17.0882321 10,17.0882321 C8.09780311,17.0882321 6.43709903,15.7999679 5.96416667,13.9575 C5.89997223,13.7078123 5.95495852,13.4424715 6.11309045,13.2388563 C6.27122239,13.035241 6.51469246,12.9162808 6.7725,12.9166657 L13.2275,12.9166657 Z"
+                ></path>
+        </svg>
+    </div>
+
+
+</div></article>
+<aside class="toc sidebar" data-title="Contents"
+  data-levels="2">
+  <div class="toc-menu">
+    <div class="toc-menu-placeholder"></div>
+
+    <div class="toc-ad">
+    <div class="toc-ad-overline">
+        <a href="https://neo4j.com/nodes-2022" target="_blank">
+
+        16-17 November 2022
+
+        </a>
+    </div>
+
+    <a href="https://neo4j.com/nodes-2022" target="_blank">
+
+        <h2 class="toc-ad-title">
+            NODES 2022
+        </h2>
+
+        <p class="toc-ad-description">Join us for a free two-day virtual conference of technical presentations by developers and data scientists solving problems with graphs.</p>
+
+        <div class="toc-ad-underline button">
+            Save your space
+        </div>
+    </a>
+</div>
+  </div>
+  </aside>  </div>
+</main>
+</div>
+<footer class="footer">
+  <div class="wrapper">
+  <div class="column">
+    <div class="logo-footer"></div>
+    <p>© <span id="footer-copyright-year">2022</span> Neo4j, Inc.<br>
+      <a href="https://neo4j.com/terms/">Terms</a> | <a href="https://neo4j.com/privacy-policy/">Privacy </a> | <a href="https://neo4j.com/sitemap/">Sitemap</a></p>
+    <p>Neo4j<sup>®</sup>, Neo Technology<sup>®</sup>, Cypher<sup>®</sup>, Neo4j<sup>®</sup> Bloom<sup>™</sup> and
+      Neo4j<sup>®</sup> Aura<sup>™</sup> are registered trademarks
+      of Neo4j, Inc. All other marks are owned by their respective companies.</p>
+  </div>
+
+  <div class="column">
+    <h2><a href="https://neo4j.com/contact-us/?ref=footer">Contact Us →</a></h2>
+    <p>US: 1-855-636-4532<br>
+      Sweden +46 171 480 113<br>
+      UK: +44 20 3868 3223<br>
+      France: +33 (0) 8 05 08 03 44<br>
+      <!--Germany: +49 (0)89 26204 6300</p>-->
+    </p>
+  </div>
+  <div class="column links">
+    <h2>Learn</h2>
+    <ul>
+      <li><i class="fa fa-wrench" aria-hidden="true"></i> <a rel="noopener" href="https://neo4j.com/sandbox/?ref=developer-footer">Sandbox</a></li>
+      <li><i class="fa fa-comments-o" aria-hidden="true"></i> <a rel="noopener" href="https://community.neo4j.com?ref=developer-footer" target="_blank">Neo4j Community Site</a></li>
+      <li><i class="fa fa-book" aria-hidden="true"></i> <a rel="noopener" href="https://medium.com/neo4j" target="_blank">Neo4j Developer Blog</a></li>
+      <li><i class="fa fa-youtube" aria-hidden="true"></i> <a rel="noopener" href="https://www.youtube.com/neo4j" target="_blank">Neo4j Videos</a></li>
+      <li><i class="fa fa-graduation-cap" aria-hidden="true"></i> <a rel="noopener" href="https://neo4j.com/graphacademy/?ref=developer-footer">GraphAcademy</a></li>
+      <li><i class="fa fa-flask" aria-hidden="true"></i> <a href="https://neo4j.com/labs/?ref=developer-footer">Neo4j Labs</a></li>
+    </ul>
+  </div>
+  <div class="column links">
+    <h2>Social</h2>
+    <ul>
+      <li><i class="fa fa-twitter" aria-hidden="true"></i> <a rel="noopener" href="https://twitter.com/neo4j" target="_blank">Twitter</a></li>
+      <li><i class="fa fa-meetup" aria-hidden="true"></i> <a rel="noopener" href="https://www.meetup.com/Neo4j-Online-Meetup/" target="_blank">Meetups</a></li>
+      <li><i class="fa fa-github" aria-hidden="true"></i> <a rel="noopener" href="https://github.com/neo4j/neo4j" target="_blank">Github</a></li>
+      <li><i class="fa fa-stack-overflow" aria-hidden="true"></i> <a rel="noopener" href="https://stackoverflow.com/questions/tagged/neo4j" target="_blank">Stack Overflow</a></li>
+
+      <li class="speaker-program">Want to Speak? <a href="https://neo4j.com/speaker-program/">Get $ back.</a></li>
+    </ul>
+  </div>
+</div>
+</footer>
+
+  <script src="/static/assets/js/vendor/auth0.js"></script>
+  <script src="/static/assets/js/site.js"></script>
+  <script async src="/static/assets/js/vendor/highlight.js"></script>
+  <script async src="/static/assets/js/vendor/image-zoom.js"></script>
+
+
+<div id="neo4j-algolia-search-v2"></div>
+<script src="https://neo4j.com/wp-content/themes/neo4jweb/assets/neo4j-react-modules-assets/search-preact/chunkless/bundle.js"></script>
+<script src="https://neo4j.com/wp-content/themes/neo4jweb/assets/neo4j-react-modules-assets/search-preact/chunkless/polyfill.js"></script>
+<script>window.algoliaSearchOptions = {indexName: "docs",placeholder: "Search Documentation",template: "docs"}</script>  </body>
+</html>

@@ -30,8 +30,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
 
 
     Log("	executing {0} -> Merge relationship from {0} to {1}", this.GetType().Name, From.Name, To.Name);
@@ -39,35 +45,35 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("MATCH (in:");
+            this.Write("\nMATCH (in:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.InEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")-[rel:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Neo4JRelationshipType));
             
             #line default
             #line hidden
             this.Write("]-(out:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.OutEntity.Label.Name));
             
             #line default
             #line hidden
-            this.Write(")\r\nWITH in, rel, out LIMIT 10000\r\nMERGE (in)-[newRelationship:");
+            this.Write(")\nWITH in, rel, out LIMIT 10000\nMERGE (in)-[newRelationship:");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To.Neo4JRelationshipType));
             
             #line default
             #line hidden
-            this.Write("]->(out) ON CREATE SET newRelationship += rel WITH rel DELETE rel\r\n");
+            this.Write("]->(out) ON CREATE SET newRelationship += rel WITH rel DELETE rel\n");
             return this.GenerationEnvironment.ToString();
         }
     }

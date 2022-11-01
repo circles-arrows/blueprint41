@@ -58,7 +58,7 @@ namespace Blueprint41.Query
                 Node = this,
             };
             alias = new PathResult(aliasResult, null);
-            return new PathNode(this, aliasResult); ;
+            return new PathNode(this, aliasResult);
         }
 
         internal virtual void Compile(CompileState state)

@@ -5,6 +5,7 @@
 <#@ import namespace="Blueprint41" #>
 <#@ import namespace="Blueprint41.Core" #>
 using System;
+using System.Collections.Generic;
 
 using Blueprint41;
 using Blueprint41.Query;
@@ -198,8 +199,12 @@ public partial class <#= DALRelation.Name #>_REL : RELATIONSHIP, IFromIn_<#= DAL
 
 			CreationDate = new RelationFieldResult(this, "CreationDate");
 <#
+	List<string> fields = new List<string>() { "CreationDate" };
+
 	if (DALRelation.IsTimeDependent)
 	{
+		fields.Add("StartDate");
+		fields.Add("EndDate");
 #>
 			StartDate    = new RelationFieldResult(this, "StartDate");
 			EndDate      = new RelationFieldResult(this, "EndDate");
@@ -207,6 +212,23 @@ public partial class <#= DALRelation.Name #>_REL : RELATIONSHIP, IFromIn_<#= DAL
 	}
 #>
 		}
+
+        public Assignment[] Assign(<#= string.Join(", ", fields.Select(item => $"JsNotation<DateTime> {item} = default")) #>)
+        {
+            List<Assignment> assignments = new List<Assignment>();
+            if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
+<#
+	if (DALRelation.IsTimeDependent)
+	{
+#>
+            if (StartDate.HasValue) assignments.Add(new Assignment(this.StartDate, StartDate));
+            if (EndDate.HasValue) assignments.Add(new Assignment(this.EndDate, EndDate));
+<#
+	}
+#>
+
+            return assignments.ToArray();
+        }
 
 		public RelationFieldResult CreationDate { get; private set; } 
 <#

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29318.209
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41", "Blueprint41\Blueprint41.csproj", "{B24F3C43-0B21-474A-8B42-E9E165E2F8CF}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.Neo4jDriver.v4", "Blueprint41.Neo4jDriver.v4\Blueprint41.Neo4jDriver.v4.csproj", "{8EB6277B-3258-45B9-92D3-65B42B412556}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.Neo4jDriver.v3", "Blueprint41.Neo4jDriver.v3\Blueprint41.Neo4jDriver.v3.csproj", "{CE3D68EF-FB48-43FC-B38F-034B65A4E95E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.ApocDocumentationParser", "Blueprint41.ApocDocumentationParser\Blueprint41.ApocDocumentationParser.csproj", "{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -714,6 +716,78 @@ Global
 		{CE3D68EF-FB48-43FC-B38F-034B65A4E95E}.Surface Graph Viewer - Release|x64.Build.0 = Release|x64
 		{CE3D68EF-FB48-43FC-B38F-034B65A4E95E}.Surface Graph Viewer - Release|x86.ActiveCfg = Release|x86
 		{CE3D68EF-FB48-43FC-B38F-034B65A4E95E}.Surface Graph Viewer - Release|x86.Build.0 = Release|x86
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.CutRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.CutRelease|Any CPU.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.CutRelease|x64.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.CutRelease|x64.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.CutRelease|x86.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.CutRelease|x86.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug Surface Graph Viewer|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug Surface Graph Viewer|Any CPU.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug Surface Graph Viewer|x64.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug Surface Graph Viewer|x64.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug Surface Graph Viewer|x86.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug Surface Graph Viewer|x86.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug|x64.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Debug|x86.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugDevTrace|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugDevTrace|Any CPU.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugDevTrace|x64.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugDevTrace|x64.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugDevTrace|x86.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugDevTrace|x86.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugSurface|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugSurface|Any CPU.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugSurface|x64.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugSurface|x64.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugSurface|x86.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugSurface|x86.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugWithoutRebuild|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugWithoutRebuild|Any CPU.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugWithoutRebuild|x64.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugWithoutRebuild|x64.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugWithoutRebuild|x86.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.DebugWithoutRebuild|x86.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.MinimalMsagl|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.MinimalMsagl|Any CPU.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.MinimalMsagl|x64.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.MinimalMsagl|x64.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.MinimalMsagl|x86.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.MinimalMsagl|x86.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Release|x64.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Release|x64.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Release|x86.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Release|x86.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Retail|Any CPU.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Retail|Any CPU.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Retail|x64.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Retail|x64.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Retail|x86.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Retail|x86.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Setup|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Setup|Any CPU.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Setup|x64.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Setup|x64.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Setup|x86.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Setup|x86.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Debug|x64.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Debug|x64.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Debug|x86.Build.0 = Debug|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Release|Any CPU.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Release|x64.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Release|x64.Build.0 = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Release|x86.ActiveCfg = Release|Any CPU
+		{8B709957-5CE2-42AF-8D45-FA61AC1FD8C7}.Surface Graph Viewer - Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

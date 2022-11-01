@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace Blueprint41.Query
 {
-    public static class Functions
+    public static partial class Functions
     {
         public static Parameter NULL { get { return null!; } }
         public static StringResult NewGuid()
         {
-            return new StringResult(t => t.FnUuidCreate, null, typeof(string));
+            return new StringResult(t => t.FnApocCreateUuid, null, typeof(string));
         }
         public static FloatResult Pi()
         {
@@ -21,11 +21,11 @@ namespace Blueprint41.Query
         }
         public static StringResult SHA1(params FieldResult[] fields)
         {
-            return new StringResult(t => t.FnSHA1(fields.Length), fields, typeof(string));
+            return new StringResult(t => t.FnApocUtilSHA1(fields.Length), fields, typeof(string));
         }
         public static StringResult MD5(params FieldResult[] fields)
         {
-            return new StringResult(t => t.FnMD5(fields.Length), fields, typeof(string));
+            return new StringResult(t => t.FnApocUtilMD5(fields.Length), fields, typeof(string));
         }
         public static NumericListResult Range(int start, int end, int step)
         {
@@ -72,6 +72,22 @@ namespace Blueprint41.Query
         }
 
         public static T CaseWhen<T>(QueryCondition condition, Parameter @then, Parameter @else)
+             where T : IPlainPrimitiveResult
+        {
+            ResultHelper<T> info = ResultHelper.Of<T>();
+            Type underlyingType = info.UnderlyingType!;
+
+            return info.NewFunctionResult(t => t.FnCaseWhen, new object[] { condition, WrapIfNull(@then), WrapIfNull(@else) }, underlyingType);
+        }
+        public static T CaseWhen<T>(QueryCondition condition, Parameter @then, T @else)
+             where T : IPlainPrimitiveResult
+        {
+            ResultHelper<T> info = ResultHelper.Of<T>();
+            Type underlyingType = info.UnderlyingType!;
+
+            return info.NewFunctionResult(t => t.FnCaseWhen, new object[] { condition, WrapIfNull(@then), WrapIfNull(@else) }, underlyingType);
+        }
+        public static T CaseWhen<T>(QueryCondition condition, T @then, Parameter @else)
              where T : IPlainPrimitiveResult
         {
             ResultHelper<T> info = ResultHelper.Of<T>();
