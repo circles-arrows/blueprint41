@@ -52,7 +52,7 @@ namespace Blueprint41.ApocDocumentationParser
         }
         public List<(string key, string url, Exception[] errors)> WaitForPages(StatusUpdate? infoCallback = null)
         {
-            taskScheduler!.Wait(true);
+            taskScheduler!.Wait(true, false, infoCallback);
 
             // Retrieve error details
             List<(string key, string url, Exception[] errors)> result = taskCache.Where(item => item.callback.IsFaulted).Select(item => (item.key, item.url, item.task.Exception?.InnerExceptions?.ToArray() ?? new Exception[0])).ToList();
@@ -124,5 +124,4 @@ namespace Blueprint41.ApocDocumentationParser
             taskScheduler = null;
         }
     }
-    internal delegate void StatusUpdate(int total, int finished);
 }

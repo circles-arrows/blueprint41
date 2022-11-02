@@ -144,17 +144,19 @@ namespace Blueprint41.Core
         
         static private AsyncLocal<string?> taskDescription = new AsyncLocal<string?>();
 
-        public virtual void Wait(bool includeSubTasks = true, bool clearHistory = true)
+        public virtual void Wait(bool includeSubTasks = true, bool clearHistory = true, StatusUpdate? status = null)
         {
             if (!includeSubTasks)
                 clearHistory = false;
+
+            Action? action = status is null ? null : () => status.Invoke(history.Count(item => !item.Value.Completed(true)));
 
             int skip = head;
             while (skip < history.Count)
             {
                 KeyValuePair<Task, CustomTask>[] items = history.ToArray();
 
-                items.Skip(skip).Select(item => item.Value.Task).WaitEx(includeSubTasks);
+                AsyncHelper.WaitEx(items.Skip(skip).Select(item => item.Value.Task), includeSubTasks, action);
 
                 skip = items.Length;
             }
@@ -216,12 +218,13 @@ namespace Blueprint41.Core
     {
         public CustomThreadSafeTaskScheduler(CustomTaskQueueOptions? mainQueue = null, CustomTaskQueueOptions? subQueue = null) : base(mainQueue, subQueue) { }
 
-        public override void Wait(bool includeSubTasks = true, bool clearHistory = true)
+        public override void Wait(bool includeSubTasks = true, bool clearHistory = true, StatusUpdate? status = null)
         {
-            base.Wait(includeSubTasks, false);
+            base.Wait(includeSubTasks, false, status);
 
             if (clearHistory)
                 ClearHistory();
         }
     }
+    public delegate void StatusUpdate(int pending);
 }

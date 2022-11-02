@@ -22,7 +22,11 @@ namespace Blueprint41.ApocDocumentationParser
 
                 documentation.client.SchedulePage("index", documentation.baseUrl, content =>
                 {
-                    Console.Write("Parsing Apoc Procedure Documentation.");
+                    lock (documentation)
+                    {
+                        Console.Clear();
+                        Console.Write("Parsing Apoc Procedure Documentation.");
+                    }
 
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(content);
@@ -49,19 +53,22 @@ namespace Blueprint41.ApocDocumentationParser
                             documentation.RegisterNamespace(apocNamespace);
                         }
 
-                        if (duplicates.Contains(name))
+                        if (duplicates.Contains(fullname))
                         {
                             Interlocked.Increment(ref documentation.methodsFinished);
                             continue;
                         }
 
                         ApocMethod.Build(apocNamespace, name, col1, col2, col3);
-                        duplicates.Add(name);
+                        duplicates.Add(fullname);
                     }
                 });
-                List<(string key, string url, Exception[] errors)> errors = documentation.client.WaitForPages((int total, int finished) =>
+                List<(string key, string url, Exception[] errors)> errors = documentation.client.WaitForPages(pending =>
                 {
-                    Console.Write($"\rParsing Apoc Procedure Documentation {documentation.methodsFinished} of {documentation.totalMethods}.");
+                    lock (documentation)
+                    {
+                        Console.Write($"\rParsing Apoc Procedure Documentation {documentation.methodsFinished} of {documentation.totalMethods}.");
+                    }
                 });
 
                 Console.WriteLine();
@@ -152,7 +159,9 @@ namespace Blueprint41.ApocDocumentationParser
                             param = CreateNode(method, "input-parameter");
                             SetAttr(param, "name", paramObj.Name);
                         }
-                        SetAttr(param, "type", paramObj.ParameterType);
+                        SetAttr(param, "type", paramObj.ParameterType.Name);
+                        SetAttr(param, "neo4j-type", paramObj.ParameterType.Neo4jType.ToString());
+                        SetAttr(param, "list-type", paramObj.ParameterType.ListType.ToString());
                         SetAttr(param, "default-value", paramObj.DefaultValue);
                     }
                     Remove(cmpInParams.Added);
@@ -166,7 +175,9 @@ namespace Blueprint41.ApocDocumentationParser
                             param = CreateNode(method, "output-parameter");
                             SetAttr(param, "name", paramObj.Name);
                         }
-                        SetAttr(param, "type", paramObj.ParameterType);
+                        SetAttr(param, "type", paramObj.ParameterType.Name);
+                        SetAttr(param, "neo4j-type", paramObj.ParameterType.Neo4jType.ToString());
+                        SetAttr(param, "list-type", paramObj.ParameterType.ListType.ToString());
                     }
                     Remove(cmpOutParams.Added);
 

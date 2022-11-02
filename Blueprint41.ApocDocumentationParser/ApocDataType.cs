@@ -16,52 +16,54 @@ namespace Blueprint41.ApocDocumentationParser
         }
         private static void InitDataTypes()
         {
-            if (apocDataTypes is null)
+            if (apocDataTypes is not null)
                 return;
 
-            lock (apocDataTypes)
+            lock (typeof(ApocDataType))
             {
-                if (apocDataTypes is null)
+                if (apocDataTypes is not null)
                     return;
 
-                apocDataTypes = new Dictionary<string, ApocDataType>()
+                apocDataTypes = new List<ApocDataType>()
                 {
-                    { "ANY?",                      new ApocDataType(Neo4jType.Any,          ListType.None) },
-                    { "BOOLEAN?",                  new ApocDataType(Neo4jType.Boolean,      ListType.None) },
-                    { "BYTEARRAY?",                new ApocDataType(Neo4jType.ByteArray,    ListType.None) },
-                    { "DATETIME?",                 new ApocDataType(Neo4jType.DateTime,     ListType.None) },
-                    { "DURATION?",                 new ApocDataType(Neo4jType.Duration,     ListType.None) },
-                    { "FLOAT?",                    new ApocDataType(Neo4jType.Float,        ListType.None) },
-                    { "INTEGER?",                  new ApocDataType(Neo4jType.Integer,      ListType.None) },
-                    { "MAP?",                      new ApocDataType(Neo4jType.Map,          ListType.None) },
-                    { "NODE?",                     new ApocDataType(Neo4jType.Node,         ListType.None) },
-                    { "NUMBER?",                   new ApocDataType(Neo4jType.Number,       ListType.None) },
-                    { "PATH?",                     new ApocDataType(Neo4jType.Path,         ListType.None) },
-                    { "RELATIONSHIP?",             new ApocDataType(Neo4jType.Relationship, ListType.None) },
-                    { "STRING?",                   new ApocDataType(Neo4jType.String,       ListType.None) },
-                    { "LIST? OF ANY?",             new ApocDataType(Neo4jType.Any,          ListType.List) },
-                    { "LIST? OF DURATION?",        new ApocDataType(Neo4jType.Duration,     ListType.List) },
-                    { "LIST? OF FLOAT?",           new ApocDataType(Neo4jType.Float,        ListType.List) },
-                    { "LIST? OF INTEGER?",         new ApocDataType(Neo4jType.Integer,      ListType.List) },
-                    { "LIST? OF MAP?",             new ApocDataType(Neo4jType.Map,          ListType.List) },
-                    { "LIST? OF NODE?",            new ApocDataType(Neo4jType.Node,         ListType.List) },
-                    { "LIST? OF NUMBER?",          new ApocDataType(Neo4jType.Number,       ListType.List) },
-                    { "LIST? OF PATH?",            new ApocDataType(Neo4jType.Path,         ListType.List) },
-                    { "LIST? OF RELATIONSHIP?",    new ApocDataType(Neo4jType.Relationship, ListType.List) },
-                    { "LIST? OF STRING?",          new ApocDataType(Neo4jType.String,       ListType.List) },
-                    { "LIST? OF LIST? OF ANY?",    new ApocDataType(Neo4jType.Any,          ListType.JaggedList) },
-                    { "LIST? OF LIST? OF STRING?", new ApocDataType(Neo4jType.String,       ListType.JaggedList) },
-                };
+                    new ApocDataType("ANY?",                      Neo4jType.Any,          ListType.None),
+                    new ApocDataType("BOOLEAN?",                  Neo4jType.Boolean,      ListType.None),
+                    new ApocDataType("BYTEARRAY?",                Neo4jType.ByteArray,    ListType.None),
+                    new ApocDataType("DATETIME?",                 Neo4jType.DateTime,     ListType.None),
+                    new ApocDataType("DURATION?",                 Neo4jType.Duration,     ListType.None),
+                    new ApocDataType("FLOAT?",                    Neo4jType.Float,        ListType.None),
+                    new ApocDataType("INTEGER?",                  Neo4jType.Integer,      ListType.None),
+                    new ApocDataType("MAP?",                      Neo4jType.Map,          ListType.None),
+                    new ApocDataType("NODE?",                     Neo4jType.Node,         ListType.None),
+                    new ApocDataType("NUMBER?",                   Neo4jType.Number,       ListType.None),
+                    new ApocDataType("PATH?",                     Neo4jType.Path,         ListType.None),
+                    new ApocDataType("RELATIONSHIP?",             Neo4jType.Relationship, ListType.None),
+                    new ApocDataType("STRING?",                   Neo4jType.String,       ListType.None),
+                    new ApocDataType("LIST? OF ANY?",             Neo4jType.Any,          ListType.List),
+                    new ApocDataType("LIST? OF DURATION?",        Neo4jType.Duration,     ListType.List),
+                    new ApocDataType("LIST? OF FLOAT?",           Neo4jType.Float,        ListType.List),
+                    new ApocDataType("LIST? OF INTEGER?",         Neo4jType.Integer,      ListType.List),
+                    new ApocDataType("LIST? OF MAP?",             Neo4jType.Map,          ListType.List),
+                    new ApocDataType("LIST? OF NODE?",            Neo4jType.Node,         ListType.List),
+                    new ApocDataType("LIST? OF NUMBER?",          Neo4jType.Number,       ListType.List),
+                    new ApocDataType("LIST? OF PATH?",            Neo4jType.Path,         ListType.List),
+                    new ApocDataType("LIST? OF RELATIONSHIP?",    Neo4jType.Relationship, ListType.List),
+                    new ApocDataType("LIST? OF STRING?",          Neo4jType.String,       ListType.List),
+                    new ApocDataType("LIST? OF LIST? OF ANY?",    Neo4jType.Any,          ListType.JaggedList),
+                    new ApocDataType("LIST? OF LIST? OF STRING?", Neo4jType.String,       ListType.JaggedList),
+                }.ToDictionary(item => item.Name, item => item);
             }
         }
         private static Dictionary<string, ApocDataType>? apocDataTypes = null;
 
-        private ApocDataType(Neo4jType neo4jType, ListType listType)
+        private ApocDataType(string name, Neo4jType neo4jType, ListType listType)
         {
+            Name = name;
             Neo4jType = neo4jType;
             ListType = listType;
         }
 
+        public string Name { get; private set; }
         public Neo4jType Neo4jType { get; private set; }
         public ListType ListType { get; private set; }
         public bool IsList => (ListType != ListType.None);

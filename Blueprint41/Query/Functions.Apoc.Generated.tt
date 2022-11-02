@@ -1,0 +1,103 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+    string filename = Host.ResolvePath("Functions.Apoc.xml");
+
+    XmlDocument doc = new XmlDocument();
+    doc.Load(filename);
+
+    IReadOnlyCollection<ApocNamespace> documentation = doc.SelectNodes("/apoc/namespace").Cast<XmlNode>().Select(item => new ApocNamespace(item)).ToList();
+#>
+#nullable enable
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Blueprint41.Query
+{
+    public static partial class Functions
+    {
+        public static partial class Apoc
+        {
+            public static partial class Coll
+            {
+                public static MiscJaggedListResult Xyz(MiscListResult list)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+        }
+    }
+}
+<#+
+
+public class ApocNamespace
+{
+    public ApocNamespace(XmlNode node)
+    {
+        Name = node.Attributes["name"]?.Value;
+        Methods = node.SelectNodes("./method").Cast<XmlNode>().Select(item => new ApocMethod(item)).ToList();
+    }
+
+    public string Name { get; }
+    public IReadOnlyCollection<ApocMethod> Methods { get; }
+}
+
+public class ApocMethod
+{
+    public ApocMethod(XmlNode node)
+    {
+        Name = node.Attributes["name"]?.Value;
+        Name = node.Attributes["description"]?.Value;
+        Name = node.Attributes["type"]?.Value;
+        Name = node.Attributes["release"]?.Value;
+        InputParameters = node.SelectNodes("./input-parameter").Cast<XmlNode>().Select(item => new ApocParameter(item)).ToList();
+        OutputParameters = node.SelectNodes("./output-parameter").Cast<XmlNode>().Select(item => new ApocParameter(item)).ToList();
+        Warnings= node.SelectNodes("./warning").Cast<XmlNode>().Select(item => item.InnerText.Trim()).ToList();
+    }
+
+    public string Name { get; }
+    public string Description { get; }
+    public string Type { get; }
+    public string Release { get; }
+    public IReadOnlyCollection<ApocParameter> InputParameters { get; }
+    public IReadOnlyCollection<ApocParameter> OutputParameters { get; }
+    public IReadOnlyCollection<string> Warnings { get; }
+
+}
+
+public class ApocParameter
+{
+    public ApocParameter(XmlNode node)
+    {
+        Name = node.Attributes["name"]?.Value;
+        DataType = new ApocDataType(node.Attributes["type"].Value, node.Attributes["neo4j-type"].Value, node.Attributes["list-type"].Value);
+        DefaultValue = node.Attributes["default-value"]?.Value;
+    }
+
+    public string Name { get; }
+    public ApocDataType DataType { get; }
+    public string DefaultValue { get; }
+}
+
+public class ApocDataType
+{
+    public ApocDataType(string type, string neo4jType, string listType)
+    {
+        Name = type;
+        Neo4jType = neo4jType;
+        ListType = listType;
+    }
+
+    public string Name { get; }
+    public string Neo4jType { get; }
+    public string ListType { get; }
+}
+
+#>

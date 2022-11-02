@@ -12,14 +12,14 @@ namespace Blueprint41.ApocDocumentationParser
         {
             Parent = parent;
             Name = name;
-            ParameterType = type;
+            ParameterType = ApocDataType.Get(type);
             DefaultValue = (defaultValue?.ToLowerInvariant() == "null") ? null : DefaultValue;
             HasDefaultValue = DefaultValue is not null;
         }
 
         public ApocMethod Parent { get; private set; }
         public string Name { get; private set; }
-        public string ParameterType { get; private set; }
+        public ApocDataType ParameterType { get; private set; }
         public string? DefaultValue { get; private set; }
         public bool HasDefaultValue { get; private set; }
     }

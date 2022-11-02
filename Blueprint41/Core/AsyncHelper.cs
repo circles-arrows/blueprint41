@@ -75,21 +75,41 @@ namespace Blueprint41.Core
             }
         }
         public static T WaitEx<T>(this T task, bool recursive = true)
-            where T :Task
+            where T : Task
         {
-            task.Wait();
-
-            if (recursive)
-                OnSubTask(task, subTask => WaitEx(subTask, recursive));
-
+            WaitEx(task, recursive, null);
             return task;
         }
+        internal static void WaitEx<T>(T task, bool recursive, Action? status)
+            where T :Task
+        {
+            if (status is null)
+            {
+                task.Wait();
+            }
+            else
+            {
+                while (!task.IsCompleted)
+                {
+                    task.Wait(100);
+                    status.Invoke();
+                }
+            }
+
+            if (recursive)
+                OnSubTask(task, subTask => WaitEx(subTask, recursive, status));
+        }
+
         public static void WaitEx(this IEnumerable<Task> tasks, bool recursive = true)
+        {
+            WaitEx(tasks, recursive, null);
+        }
+        internal static void WaitEx(this IEnumerable<Task> tasks, bool recursive, Action? status)
         {
             foreach (Task task in tasks)
             {
                 if (task is not null)
-                    task.WaitEx(recursive);
+                    WaitEx(task, recursive, status);
             }
         }
         public static T ResultEx<T>(this Task<T> task)
