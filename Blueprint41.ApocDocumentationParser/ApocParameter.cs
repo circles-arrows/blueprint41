@@ -13,7 +13,7 @@ namespace Blueprint41.ApocDocumentationParser
             Parent = parent;
             Name = name;
             ParameterType = ApocDataType.Get(type);
-            DefaultValue = (defaultValue?.ToLowerInvariant() == "null") ? null : DefaultValue;
+            DefaultValue = (defaultValue?.ToLowerInvariant() == "null") ? null : defaultValue;
             HasDefaultValue = DefaultValue is not null;
         }
 

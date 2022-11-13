@@ -3,15 +3,127 @@
 <#@ assembly name="System.Xml" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Xml" #>
+<#@ import namespace="System.IO" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
 <#@ output extension=".cs" #>
 <#
-    string filename = Host.ResolvePath("Functions.Apoc.xml");
+    ApocNamespace documentation = ApocNamespace.Get(Host.ResolvePath("Functions.Apoc.xml"));
+#>
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
+using Blueprint41.Neo4j.Schema;
+using Blueprint41.Query;
+using q = Blueprint41.Query;
 
-    XmlDocument doc = new XmlDocument();
-    doc.Load(filename);
+namespace Blueprint41.Neo4j.Model
+{
+    public abstract partial class QueryTranslator
+    {
 
-    IReadOnlyCollection<ApocNamespace> documentation = doc.SelectNodes("/apoc/namespace").Cast<XmlNode>().Select(item => new ApocNamespace(item)).ToList();
+<#
+    foreach (ApocNamespace ns in documentation.All.Where(item => item.Release == Release.Core).OrderBy(item => item.Name))
+    {
+#>
+        #region <#= ns.Name #>
+
+<#
+        int columns = ns.Methods.Where(item => item.Release == Release.Core).Select(m => (m.UseParams || m.MinimumArgs != m.TotalArgs) ? m.TranslatorName.Length + 11: m.TranslatorName.Length).Max();
+        foreach (ApocMethod m in ns.Methods.Where(item => item.Release == Release.Core).OrderBy(item => item.TranslatorName))
+        {
+            int whiteSpace = columns - m.TranslatorName.Length;
+
+            if (m.UseParams)
+            {
+#>
+        public virtual string <#= m.TranslatorName #>(int count)<#= Whitespace(whiteSpace - 11) #> => string.Format("<#= ns.Name #>.<#= m.Name #>([{0}])", Args(count));
+<#
+            }
+            else if (m.MinimumArgs != m.TotalArgs)
+            {
+#>
+        public virtual string <#= m.TranslatorName #>(int count)<#= Whitespace(whiteSpace - 11) #> => string.Format("<#= ns.Name #>.<#= m.Name #>({0})", Args(<#= m.MinimumArgs #>, <#= m.TotalArgs #>, count));
+<#
+            }
+            else
+            {
+#>
+        public virtual string <#= m.TranslatorName #><#= Whitespace(whiteSpace) #> => "<#= ns.Name #>.<#= m.Name #>(<#= string.Join(", ", Enumerable.Range(0, m.TotalArgs).Select(item => string.Concat("{", item, "}"))) #>)";
+<#
+            }
+        }
+#>
+
+        #endregion
+
+<#
+    }
+#>
+        //public virtual string FnApocCreateUuid          => "apoc.create.uuid()";
+        //public virtual string FnApocCollFlatten         => "apoc.coll.flatten({0})";
+        //public virtual string FnApocCollSort            => "apoc.coll.sort({0})";
+        //public virtual string FnApocCollSortNodes       => "apoc.coll.sortNodes({0}, \"{1}\")";
+        //public virtual string FnApocCollPairs           => "apoc.coll.pairs({0})";
+        //public virtual string FnApocCollPairsMin        => "apoc.coll.pairsMin({0})";
+        //public virtual string FnApocCollUnion           => "apoc.coll.union({0}, {1})";
+        //public virtual string FnApocCollUnionAll        => "apoc.coll.unionAll({0}, {1})";
+        //public virtual string FnApocMapSortedProperties => "apoc.map.sortedProperties({0})";
+        //public virtual string FnApocJsonPath(int count)
+        //{
+        //    if (count > 2)
+        //        throw new NotSupportedException("The count cannot be greater than 2.");
+        //
+        //    StringBuilder sb = new StringBuilder();
+        //    sb.Append("apoc.json.path({0}");
+        //
+        //    if (count >= 1)
+        //        sb.Append(", {1}");
+        //
+        //    if (count == 2)
+        //        sb.Append(", {2}");
+        //
+        //    sb.Append(")");
+        //
+        //    return sb.ToString();
+        //}
+        //
+        //public virtual string FnApocUtilSHA1(int count) => $"apoc.util.sha1([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
+        //public virtual string FnApocUtilMD5(int count)
+        //{
+        //    return $"apoc.util.md5([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
+        //}
+
+        private string Args(int count)
+        {
+            if (count < 0)
+                throw new ArgumentOutOfRangeException("count", $"The minimum count is 0.");
+
+            return string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")));
+        }
+        private string Args(int minimum, int maximum, int count)
+        {
+            if (count < minimum)
+                throw new ArgumentOutOfRangeException("count", $"The minimum count is {minimum}.");
+
+            if (count > maximum)
+                throw new ArgumentOutOfRangeException("count", $"The maximum count is {maximum}.");
+
+            return string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")));
+        }
+    }
+}
+<#
+    string filename = Host.ResolvePath(@"..\Neo4j\Persistence\QueryTranslator.Partial.cs");
+    string content = GenerationEnvironment.ToString();
+    File.WriteAllText(filename, content);
+
+    GenerationEnvironment.Clear();
 #>
 #nullable enable
 
@@ -19,57 +131,173 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blueprint41.Query
+namespace Blueprint41.Query;
+
+public static partial class Functions
 {
-    public static partial class Functions
+    public static partial class Apoc
     {
-        public static partial class Apoc
+<#
+    PushIndent("    ");
+    foreach (var m in documentation.Methods.Where(item => item.Release == Release.Core))
+    {
+        WriteMethod(documentation, m);
+    }
+    PopIndent();
+
+    foreach (var ns in documentation.Namespaces.Where(item => item.Release == Release.Core))
+    {
+#>
+
+        public static partial class <#= ns.CSharpName #>
         {
-            public static partial class Coll
-            {
-                public static MiscJaggedListResult Xyz(MiscListResult list)
-                {
-                    throw new NotImplementedException();
-                }
-            }
+<#
+        PushIndent("        ");
+        foreach (var m in ns.Methods.Where(item => item.Release == Release.Core))
+        {
+            WriteMethod(ns, m);
         }
+        PopIndent();
+#>
+        }
+<#    
+    }
+#>
     }
 }
 <#+
 
+private string Whitespace(int size)
+{
+    if (size == 0) return string.Empty;
+    return new string(' ', size);
+}
+
+private void WriteMethod(ApocNamespace ns, ApocMethod m)
+{
+#>
+    /// <summary>
+<#+
+    foreach (string line in m.Description.Split('\n'))
+    {
+#>
+    /// <#= line.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;") #>
+<#+
+    }
+#>
+    /// </summary>
+<#+
+    if (m.UseParams)
+    {
+#>
+    public static MiscJaggedListResult <#= m.CSharpName #>(params Result[] results)
+    {
+        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>(results.Length), results);
+    }
+<#+
+    }
+    else if (m.MinimumArgs != m.TotalArgs)
+    {
+#>
+    public static MiscJaggedListResult <#= m.CSharpName #>(MiscListResult list)
+    {
+        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>(0));
+    }
+<#+
+    }
+    else
+    {
+#>
+    public static MiscJaggedListResult <#= m.CSharpName #>(MiscListResult list)
+    {
+        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>);
+    }
+<#+
+    }
+}
+
 public class ApocNamespace
 {
+    public static ApocNamespace Get(string filename)
+    {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(filename);
+
+        IReadOnlyList<ApocNamespace> all = doc.SelectNodes("/apoc/namespace").Cast<XmlNode>().Select(item => new ApocNamespace(item)).ToList();
+
+        ApocNamespace documentation = all.First(item => item.CSharpName == "Apoc");
+        documentation.namespaces.AddRange(all.Where(item => item.CSharpName != "Apoc"));
+        foreach (ApocNamespace child in documentation.Namespaces)
+            child.Parent = documentation;
+
+        documentation.all.Add(documentation);
+        documentation.all.AddRange(documentation.Namespaces);
+
+        return documentation;
+    }
+
     public ApocNamespace(XmlNode node)
     {
         Name = node.Attributes["name"]?.Value;
-        Methods = node.SelectNodes("./method").Cast<XmlNode>().Select(item => new ApocMethod(item)).ToList();
+        TranslatorName = string.Join("", Name.Split('.').Select(item => string.Concat(item.Substring(0, 1).ToUpperInvariant(), item.Substring(1).ToLowerInvariant())));
+        CSharpName = (TranslatorName.StartsWith("Apoc") && TranslatorName.Length > 4) ? TranslatorName.Substring(4) : TranslatorName;
+
+        methods.AddRange(node.SelectNodes("./method").Cast<XmlNode>().Select(item => new ApocMethod(this, item)));
+
+        Release = Methods.Any(item => item.Release == Release.Core) ? Release.Core : Release.Full;
     }
 
-    public string Name { get; }
-    public IReadOnlyCollection<ApocMethod> Methods { get; }
+    public ApocNamespace Parent { get; private set; }
+    public string Name { get; private set; }
+    public string CSharpName { get; private set; }
+    public string TranslatorName { get; private set; }
+    public Release Release { get; private set; }
+
+    public IReadOnlyList<ApocMethod> Methods => methods;
+    private readonly List<ApocMethod> methods = new List<ApocMethod>();
+
+    public IReadOnlyList<ApocNamespace> Namespaces => namespaces;
+    private readonly List<ApocNamespace> namespaces = new List<ApocNamespace>();
+
+    public IReadOnlyList<ApocNamespace> All => (Parent is null) ? all : Parent.All;
+    private readonly List<ApocNamespace> all = new List<ApocNamespace>();
 }
 
 public class ApocMethod
 {
-    public ApocMethod(XmlNode node)
+    public ApocMethod(ApocNamespace parent, XmlNode node)
     {
-        Name = node.Attributes["name"]?.Value;
-        Name = node.Attributes["description"]?.Value;
-        Name = node.Attributes["type"]?.Value;
-        Name = node.Attributes["release"]?.Value;
+        Parent = parent;
+        Name = node.Attributes["name"].Value;
+        Description = node.Attributes["description"].Value;
+        Type = (MethodType)Enum.Parse(typeof(MethodType), node.Attributes["type"].Value);
+        Release = (Release)Enum.Parse(typeof(Release), node.Attributes["release"].Value.Replace("APOC ", ""));
+        Warnings= node.SelectNodes("./warning").Cast<XmlNode>().Select(item => item.InnerText.Trim()).ToList();
+
+        CSharpName = string.Concat(Name.Substring(0, 1).ToUpperInvariant(), Name.Substring(1).ToLowerInvariant());
+        TranslatorName = (Type == MethodType.Function) ? string.Concat("Fn", Parent.TranslatorName, CSharpName) : string.Concat("Call", Parent.TranslatorName, CSharpName);
+
         InputParameters = node.SelectNodes("./input-parameter").Cast<XmlNode>().Select(item => new ApocParameter(item)).ToList();
         OutputParameters = node.SelectNodes("./output-parameter").Cast<XmlNode>().Select(item => new ApocParameter(item)).ToList();
-        Warnings= node.SelectNodes("./warning").Cast<XmlNode>().Select(item => item.InnerText.Trim()).ToList();
+
+        UseParams = (InputParameters.Count == 1 && InputParameters[0].Name == "values" && InputParameters[0].DataType.IsList);
+        MinimumArgs = InputParameters.Count - InputParameters.Reverse().TakeWhile(item => item.DefaultValue is not null).Count();
+        TotalArgs = InputParameters.Count;
     }
 
-    public string Name { get; }
-    public string Description { get; }
-    public string Type { get; }
-    public string Release { get; }
-    public IReadOnlyCollection<ApocParameter> InputParameters { get; }
-    public IReadOnlyCollection<ApocParameter> OutputParameters { get; }
-    public IReadOnlyCollection<string> Warnings { get; }
-
+    public ApocNamespace Parent { get; private set; }
+    public string Name { get; private set; }
+    public string CSharpName { get; private set; }
+    public string TranslatorName { get; private set; }
+    public string Description { get; private set; }
+    public MethodType Type { get; private set; }
+    public Release Release { get; private set; }
+    public IReadOnlyList<ApocParameter> InputParameters { get; private set; }
+    public IReadOnlyList<ApocParameter> OutputParameters { get; private set; }
+    public IReadOnlyList<string> Warnings { get; private set; }
+    public bool UseParams { get; private set; }
+    public int MinimumArgs { get; private set; }
+    public int TotalArgs { get; private set; }
 }
 
 public class ApocParameter
@@ -81,9 +309,9 @@ public class ApocParameter
         DefaultValue = node.Attributes["default-value"]?.Value;
     }
 
-    public string Name { get; }
-    public ApocDataType DataType { get; }
-    public string DefaultValue { get; }
+    public string Name { get; private set; }
+    public ApocDataType DataType { get; private set; }
+    public string DefaultValue { get; private set; }
 }
 
 public class ApocDataType
@@ -92,12 +320,24 @@ public class ApocDataType
     {
         Name = type;
         Neo4jType = neo4jType;
-        ListType = listType;
+        IsList = listType == "List";
     }
 
-    public string Name { get; }
-    public string Neo4jType { get; }
-    public string ListType { get; }
+    public string Name { get; private set; }
+    public string Neo4jType { get; private set; }
+    public bool IsList { get; private set; }
+}
+
+public enum MethodType
+{
+    Procedure,
+    Function,
+}
+
+public enum Release
+{
+    Core,
+    Full,
 }
 
 #>

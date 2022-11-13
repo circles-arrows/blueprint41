@@ -12,7 +12,7 @@ namespace Blueprint41.Query
             {
                 public static MiscJaggedListResult PairsMin(MiscListResult list)
                 {
-                    return new MiscJaggedListResult(list, t => t.FnApocCollPairsMin);
+                    return new MiscJaggedListResult(list, t => t.FnApocCollPairsmin);
                 }
             }
             public static partial class Json
@@ -39,7 +39,7 @@ namespace Blueprint41.Query
             {
                 public static StringJaggedListResult SortedProperties(MiscResult map)
                 {
-                    return new StringJaggedListResult(map, t => t.FnApocMapSortedProperties);
+                    return new StringJaggedListResult(map, t => t.FnApocMapSortedproperties);
                 }
             }
         }

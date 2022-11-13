@@ -49,9 +49,9 @@ namespace Blueprint41.Query
             string fld = fieldName.Invoke((TResult)this.Alias!);
 
             if (ascending)
-                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnApocCollSortNodes, new[] { new Literal(fld) });
+                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnApocCollSortnodes, new[] { new Literal(fld) });
             else
-                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnApocCollSortNodes, new[] { new Literal(string.Concat("^",fld)) });
+                return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnApocCollSortnodes, new[] { new Literal(string.Concat("^",fld)) });
         }
 
         public TList Union(TList list)
@@ -60,7 +60,7 @@ namespace Blueprint41.Query
         }
         public TList UnionAll(TList list)
         {
-            return NewList(t => t.FnApocCollUnionAll, new object[] { list });
+            return NewList(t => t.FnApocCollUnionall, new object[] { list });
         }
 
         public TList Filter(Func<TResult, QueryCondition> condition)
@@ -161,7 +161,7 @@ namespace Blueprint41.Query
         }
         public TList Flatten()
         {
-            return NewList(t => t.FnApocCollFlatten);
+            return NewList(t => t.FnApocCollFlatten(1));
         }
         public TList Collect()
         {
@@ -182,7 +182,7 @@ namespace Blueprint41.Query
         }
         public TList UnionAll(TList list)
         {
-            return NewList(t => t.FnApocCollUnionAll, new object[] { list });
+            return NewList(t => t.FnApocCollUnionall, new object[] { list });
         }
 
         public StringResult Reduce(string init, Func<StringResult, TResult, StringResult> logic)

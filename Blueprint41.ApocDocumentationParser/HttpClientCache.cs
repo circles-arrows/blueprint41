@@ -1,11 +1,12 @@
-﻿using Blueprint41.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+
+using Blueprint41.Core;
 
 namespace Blueprint41.ApocDocumentationParser
 {

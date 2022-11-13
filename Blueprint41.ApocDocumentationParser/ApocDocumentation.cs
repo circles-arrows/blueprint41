@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Xml;
 
-using Blueprint41.Core;
 using HtmlAgilityPack;
 
 namespace Blueprint41.ApocDocumentationParser
