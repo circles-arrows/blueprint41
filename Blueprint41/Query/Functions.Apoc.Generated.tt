@@ -170,52 +170,67 @@ private void WriteMethodAlternateTypes(ApocNamespace ns, ApocMethod m, IEnumerab
 {
     ApocDataType[] d = p.Select(item => item.DataType).ToArray();
 
-    if (p.Any(item => item.DataType.AlsoRenderAs is not null))
+    do
     {
-#>
-    // HAS ALTERNATE TYPE
-<#+        
+        WriteSingleMethod(ns, m, d);
     }
-    WriteSingleMethod(ns, m, d);
+    while (Increment());
 
+    bool Increment()
+    {
+        for (int index = 0; index < d.Length; index++)
+        {
+            ApocDataType zero = d[index].Parent.DataType;
+            if (zero.AlsoRenderAs is null)
+                continue;
+
+            d[index] = d[index].AlsoRenderAs;
+            if (d[index] is not null)
+                return true;
+
+            d[index] = zero;
+        }
+        return false;
+    }
 }
 private void WriteSingleMethod(ApocNamespace ns, ApocMethod m, ApocDataType[] d)
 {
     WriteDocumentation(ns, m);
 
+    string retval = m.OutputParameters?.FirstOrDefault()?.DataType?.Bp41Type ?? "MiscResult";
     if (m.UseParams)
     {
 #>
-    public static MiscJaggedListResult <#= m.CSharpName #>(<#= d.First().ToBp41Signature() #>)
+    public static <#= retval #> <#= m.CSharpName #>(<#= d.First().ToBp41Signature() #>)
     {
-        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>(@<#= d.First().Parent.CSharpName #>.Length), @<#= d.First().Parent.CSharpName #>);
+        return new <#= retval #>(t => t.<#= m.TranslatorName #>(@<#= d.First().Parent.CSharpName #>.Length), @<#= d.First().Parent.CSharpName #>, null);
     }
 <#+
     }
     else if (m.MinimumArgs != m.TotalArgs)
     {
 #>
-    public static MiscJaggedListResult <#= m.CSharpName #>(<#= string.Join(", ", d.Select(item => item.ToBp41Signature())) #>)
+    public static <#= retval #> <#= m.CSharpName #>(<#= string.Join(", ", d.Select(item => item.ToBp41Signature())) #>)
     {
-        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>(<#= d.Length #>), new object[] { <#= string.Join(", ", d.Select(item => string.Concat("@", item.Parent.CSharpName))) #> });
+        return new <#= retval #>(t => t.<#= m.TranslatorName #>(<#= d.Length #>), new object[] { <#= string.Join(", ", d.Select(item => string.Concat("@", item.Parent.CSharpName))) #> }, null);
     }
 <#+
     }
     else if (d.Length > 0)
     {
 #>
-    public static MiscJaggedListResult <#= m.CSharpName #>(<#= string.Join(", ", d.Select(item => item.ToBp41Signature())) #>)
+    public static <#= retval #> <#= m.CSharpName #>(<#= string.Join(", ", d.Select(item => item.ToBp41Signature())) #>)
     {
-        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>, new object[] { <#= string.Join(", ", d.Select(item => string.Concat("@", item.Parent.CSharpName))) #> });
+        return new <#= retval #>(t => t.<#= m.TranslatorName #>, new object[] { <#= string.Join(", ", d.Select(item => string.Concat("@", item.Parent.CSharpName))) #> }, null);
     }
 <#+
     }
     else
     {
 #>
-    public static MiscJaggedListResult <#= m.CSharpName #>()
+    public static <#= retval #> <#= m.CSharpName #>()
     {
-        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>);
+        return new <#= retval #>(t => t.<#= m.TranslatorName #>, new object[0], null);
     }
 <#+
     }

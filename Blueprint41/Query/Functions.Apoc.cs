@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Neo4j.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,16 +50,38 @@ namespace Blueprint41.Query
     {
         public static partial class Apoc
         {
-            public static partial class Json 
+            public static partial class Json
             {
                 private static Parameter GetPathOptions(PathOptions pathOptions) => Parameter.Constant(pathOptions.ToString().Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries));
             }
          }
     }
 
-    public class AliasListResult { }
-    public class PathListResult { }
-    public class BinaryResult { }
+    #region TEMPORARY TEMPORARY TEMPORARY TEMPORARY TEMPORARY TEMPORARY TEMPORARY TEMPORARY TEMPORARY TEMPORARY
+
+    public partial class PathResult
+    {
+    }
+    public partial class AliasListResult
+    {
+        public AliasListResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type)
+        {
+        }
+    }
+    public partial class PathListResult
+    {
+        public PathListResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type)
+        {
+        }
+    }
+    public partial class BinaryResult
+    {
+        public BinaryResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type)
+        {
+        }
+    }
+
+    #endregion
 
     [Flags]
     public enum PathOptions
