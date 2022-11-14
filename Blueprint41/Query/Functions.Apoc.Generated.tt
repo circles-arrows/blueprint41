@@ -10,23 +10,15 @@
 <#
     ApocNamespace documentation = ApocNamespace.Get(Host.ResolvePath("Functions.Apoc.xml"));
 #>
+#nullable enable
+
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence.Void;
-using Blueprint41.Neo4j.Schema;
-using Blueprint41.Query;
-using q = Blueprint41.Query;
 
 namespace Blueprint41.Neo4j.Model
 {
     public abstract partial class QueryTranslator
     {
-
 <#
     foreach (ApocNamespace ns in documentation.All.Where(item => item.Release == Release.Core).OrderBy(item => item.Name))
     {
@@ -65,39 +57,7 @@ namespace Blueprint41.Neo4j.Model
 <#
     }
 #>
-        //public virtual string FnApocCreateUuid          => "apoc.create.uuid()";
-        //public virtual string FnApocCollFlatten         => "apoc.coll.flatten({0})";
-        //public virtual string FnApocCollSort            => "apoc.coll.sort({0})";
-        //public virtual string FnApocCollSortNodes       => "apoc.coll.sortNodes({0}, \"{1}\")";
-        //public virtual string FnApocCollPairs           => "apoc.coll.pairs({0})";
-        //public virtual string FnApocCollPairsMin        => "apoc.coll.pairsMin({0})";
-        //public virtual string FnApocCollUnion           => "apoc.coll.union({0}, {1})";
-        //public virtual string FnApocCollUnionAll        => "apoc.coll.unionAll({0}, {1})";
-        //public virtual string FnApocMapSortedProperties => "apoc.map.sortedProperties({0})";
-        //public virtual string FnApocJsonPath(int count)
-        //{
-        //    if (count > 2)
-        //        throw new NotSupportedException("The count cannot be greater than 2.");
-        //
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append("apoc.json.path({0}");
-        //
-        //    if (count >= 1)
-        //        sb.Append(", {1}");
-        //
-        //    if (count == 2)
-        //        sb.Append(", {2}");
-        //
-        //    sb.Append(")");
-        //
-        //    return sb.ToString();
-        //}
-        //
-        //public virtual string FnApocUtilSHA1(int count) => $"apoc.util.sha1([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
-        //public virtual string FnApocUtilMD5(int count)
-        //{
-        //    return $"apoc.util.md5([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
-        //}
+        #region Helper Methods
 
         private string Args(int count)
         {
@@ -116,6 +76,8 @@ namespace Blueprint41.Neo4j.Model
 
             return string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")));
         }
+
+        #endregion
     }
 }
 <#
@@ -141,7 +103,7 @@ public static partial class Functions
     PushIndent("    ");
     foreach (var m in documentation.Methods.Where(item => item.Release == Release.Core))
     {
-        WriteMethod(documentation, m);
+        WriteMethods(documentation, m);
     }
     PopIndent();
 
@@ -155,7 +117,7 @@ public static partial class Functions
         PushIndent("        ");
         foreach (var m in ns.Methods.Where(item => item.Release == Release.Core))
         {
-            WriteMethod(ns, m);
+            WriteMethods(ns, m);
         }
         PopIndent();
 #>
@@ -173,7 +135,7 @@ private string Whitespace(int size)
     return new string(' ', size);
 }
 
-private void WriteMethod(ApocNamespace ns, ApocMethod m)
+private void WriteDocumentation(ApocNamespace ns, ApocMethod m)
 {
 #>
     /// <summary>
@@ -187,28 +149,71 @@ private void WriteMethod(ApocNamespace ns, ApocMethod m)
 #>
     /// </summary>
 <#+
+}
+private void WriteMethods(ApocNamespace ns, ApocMethod m)
+{
+    WriteMethodOptionalArguments(ns, m);
+}
+private void WriteMethodOptionalArguments(ApocNamespace ns, ApocMethod m)
+{
+    if (m.MinimumArgs != m.TotalArgs)
+    {
+        foreach (int arguments in Enumerable.Range(m.MinimumArgs, m.TotalArgs - m.MinimumArgs + 1))
+            WriteMethodAlternateTypes(ns, m, m.InputParameters.Take(arguments));
+    }
+    else
+    {
+        WriteMethodAlternateTypes(ns, m, m.InputParameters);
+    }
+}
+private void WriteMethodAlternateTypes(ApocNamespace ns, ApocMethod m, IEnumerable<ApocParameter> p)
+{
+    ApocDataType[] d = p.Select(item => item.DataType).ToArray();
+
+    if (p.Any(item => item.DataType.AlsoRenderAs is not null))
+    {
+#>
+    // HAS ALTERNATE TYPE
+<#+        
+    }
+    WriteSingleMethod(ns, m, d);
+
+}
+private void WriteSingleMethod(ApocNamespace ns, ApocMethod m, ApocDataType[] d)
+{
+    WriteDocumentation(ns, m);
+
     if (m.UseParams)
     {
 #>
-    public static MiscJaggedListResult <#= m.CSharpName #>(params Result[] results)
+    public static MiscJaggedListResult <#= m.CSharpName #>(<#= d.First().ToBp41Signature() #>)
     {
-        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>(results.Length), results);
+        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>(@<#= d.First().Parent.CSharpName #>.Length), @<#= d.First().Parent.CSharpName #>);
     }
 <#+
     }
     else if (m.MinimumArgs != m.TotalArgs)
     {
 #>
-    public static MiscJaggedListResult <#= m.CSharpName #>(MiscListResult list)
+    public static MiscJaggedListResult <#= m.CSharpName #>(<#= string.Join(", ", d.Select(item => item.ToBp41Signature())) #>)
     {
-        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>(0));
+        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>(<#= d.Length #>), new object[] { <#= string.Join(", ", d.Select(item => string.Concat("@", item.Parent.CSharpName))) #> });
+    }
+<#+
+    }
+    else if (d.Length > 0)
+    {
+#>
+    public static MiscJaggedListResult <#= m.CSharpName #>(<#= string.Join(", ", d.Select(item => item.ToBp41Signature())) #>)
+    {
+        return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>, new object[] { <#= string.Join(", ", d.Select(item => string.Concat("@", item.Parent.CSharpName))) #> });
     }
 <#+
     }
     else
     {
 #>
-    public static MiscJaggedListResult <#= m.CSharpName #>(MiscListResult list)
+    public static MiscJaggedListResult <#= m.CSharpName #>()
     {
         return new MiscJaggedListResult(t => t.<#= m.TranslatorName #>);
     }
@@ -277,8 +282,8 @@ public class ApocMethod
         CSharpName = string.Concat(Name.Substring(0, 1).ToUpperInvariant(), Name.Substring(1).ToLowerInvariant());
         TranslatorName = (Type == MethodType.Function) ? string.Concat("Fn", Parent.TranslatorName, CSharpName) : string.Concat("Call", Parent.TranslatorName, CSharpName);
 
-        InputParameters = node.SelectNodes("./input-parameter").Cast<XmlNode>().Select(item => new ApocParameter(item)).ToList();
-        OutputParameters = node.SelectNodes("./output-parameter").Cast<XmlNode>().Select(item => new ApocParameter(item)).ToList();
+        InputParameters = node.SelectNodes("./input-parameter").Cast<XmlNode>().Select(item => new ApocParameter(this, item)).ToList();
+        OutputParameters = node.SelectNodes("./output-parameter").Cast<XmlNode>().Select(item => new ApocParameter(this, item)).ToList();
 
         UseParams = (InputParameters.Count == 1 && InputParameters[0].Name == "values" && InputParameters[0].DataType.IsList);
         MinimumArgs = InputParameters.Count - InputParameters.Reverse().TakeWhile(item => item.DefaultValue is not null).Count();
@@ -302,30 +307,86 @@ public class ApocMethod
 
 public class ApocParameter
 {
-    public ApocParameter(XmlNode node)
+    public ApocParameter(ApocMethod parent, XmlNode node)
     {
+        Parent = parent;
         Name = node.Attributes["name"]?.Value;
-        DataType = new ApocDataType(node.Attributes["type"].Value, node.Attributes["neo4j-type"].Value, node.Attributes["list-type"].Value);
+
+        DataType = new ApocDataType(this, node.Attributes["type"].Value, node.Attributes["neo4j-type"].Value, node.Attributes["list-type"].Value, node.Attributes["override-type"]?.Value, node.Attributes["also-render-as"]?.Value);
         DefaultValue = node.Attributes["default-value"]?.Value;
+
+        string[] parts = Name.Split(' ');
+        if (parts.Length > 1)
+            CSharpName = string.Concat(parts.First(), string.Join("", parts.Skip(1).Select(item => string.Concat(item.Substring(0, 1).ToUpperInvariant(), item.Substring(1).ToLowerInvariant()))));
+        else
+            CSharpName = Name; 
     }
 
+    public ApocMethod Parent { get; private set; }
     public string Name { get; private set; }
+    public string CSharpName { get; private set; }
     public ApocDataType DataType { get; private set; }
     public string DefaultValue { get; private set; }
 }
 
 public class ApocDataType
 {
-    public ApocDataType(string type, string neo4jType, string listType)
+    public ApocDataType(ApocParameter parent, string type, string neo4jType, string listType, string overrideType, string alsoRenderAs) : this(parent, type, neo4jType, listType, overrideType, alsoRenderAs?.Split(';')) { }
+    private ApocDataType(ApocParameter parent, string type, string neo4jType, string listType, string overrideType, IEnumerable<string> alsoRenderAs)
     {
+        Parent = parent;
         Name = type;
         Neo4jType = neo4jType;
-        IsList = listType == "List";
+        IsList = (listType != "None");
+        IsJaggedList = (listType == "JaggedList");
+
+        Bp41Type = (string.IsNullOrEmpty(overrideType)) ? ToBp41Type() : overrideType;
+
+        string first = alsoRenderAs?.FirstOrDefault();
+        AlsoRenderAs = string.IsNullOrEmpty(first) ? null : new ApocDataType(parent, type, neo4jType, listType, first, alsoRenderAs.Skip(1));
     }
 
+    public ApocParameter Parent { get; private set; }
     public string Name { get; private set; }
     public string Neo4jType { get; private set; }
+    public string Bp41Type { get; private set; }
+    public ApocDataType AlsoRenderAs { get; private set; }
     public bool IsList { get; private set; }
+    public bool IsJaggedList { get; private set; }
+
+    private string ToBp41Type()
+    {
+        string type = Neo4jType switch
+        {
+            "Any"          => "Misc",
+            "Boolean"      => "Boolean",
+            "ByteArray"    => "Binary",
+            "DateTime"     => "Misc",
+            "Duration"     => "Misc",
+            "Float"        => "Float",
+            "Integer"      => "Numeric",
+            "Map"          => "Misc",
+            "Node"         => "Alias",
+            "Number"       => "Float",
+            "Path"         => "Path",
+            "Relationship" => "Alias",
+            "String"       => "String",
+        };
+
+        if (IsJaggedList)
+            return string.Concat(type, "JaggedListResult");
+        else if (IsList)
+            return string.Concat(type, "ListResult");
+        else
+            return string.Concat(type, "Result");
+    }
+    public string ToBp41Signature()
+    {
+        if (Parent.Parent.UseParams)
+            return string.Concat("params ", Bp41Type, "[] @", Parent.CSharpName);
+
+        return string.Concat(Bp41Type, " @", Parent.CSharpName);
+    }
 }
 
 public enum MethodType

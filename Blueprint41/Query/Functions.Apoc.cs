@@ -56,6 +56,10 @@ namespace Blueprint41.Query
          }
     }
 
+    public class AliasListResult { }
+    public class PathListResult { }
+    public class BinaryResult { }
+
     [Flags]
     public enum PathOptions
     {

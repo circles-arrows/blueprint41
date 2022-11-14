@@ -2019,8 +2019,8 @@
   <namespace name="apoc.json">
     <method name="path" description="apoc.json.path('{json}' [,'json-path' , 'path-options'])" type="Function" release="APOC Core">
       <input-parameter name="json" type="STRING?" neo4j-type="String" list-type="None" />
-      <input-parameter name="path" type="STRING?" neo4j-type="String" list-type="None" default-value="$" />
-      <input-parameter name="pathOptions" type="LIST? OF STRING?" neo4j-type="String" list-type="List" default-value="[]" />
+      <input-parameter name="path" type="STRING?" neo4j-type="String" list-type="None" default-value="$" also-render-as="string" />
+      <input-parameter name="pathOptions" type="LIST? OF STRING?" neo4j-type="String" list-type="List" default-value="[]" override-type="PathOptions" />
       <output-parameter name="Return Value" type="ANY?" neo4j-type="Any" list-type="None" />
     </method>
     <method name="validate" description="apoc.json.validate('{json}' [,'json-path' , 'path-options']) - to check if the json is correct (returning an empty result) or not" type="Procedure" release="APOC Full">

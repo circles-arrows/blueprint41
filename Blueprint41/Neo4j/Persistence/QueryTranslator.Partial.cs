@@ -1,20 +1,12 @@
+#nullable enable
+
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence.Void;
-using Blueprint41.Neo4j.Schema;
-using Blueprint41.Query;
-using q = Blueprint41.Query;
 
 namespace Blueprint41.Neo4j.Model
 {
     public abstract partial class QueryTranslator
     {
-
         #region apoc
 
         public virtual string CallApocCase(int count) => string.Format("apoc.case({0})", Args(2, 3, count));
@@ -858,39 +850,7 @@ namespace Blueprint41.Neo4j.Model
 
         #endregion
 
-        //public virtual string FnApocCreateUuid          => "apoc.create.uuid()";
-        //public virtual string FnApocCollFlatten         => "apoc.coll.flatten({0})";
-        //public virtual string FnApocCollSort            => "apoc.coll.sort({0})";
-        //public virtual string FnApocCollSortNodes       => "apoc.coll.sortNodes({0}, \"{1}\")";
-        //public virtual string FnApocCollPairs           => "apoc.coll.pairs({0})";
-        //public virtual string FnApocCollPairsMin        => "apoc.coll.pairsMin({0})";
-        //public virtual string FnApocCollUnion           => "apoc.coll.union({0}, {1})";
-        //public virtual string FnApocCollUnionAll        => "apoc.coll.unionAll({0}, {1})";
-        //public virtual string FnApocMapSortedProperties => "apoc.map.sortedProperties({0})";
-        //public virtual string FnApocJsonPath(int count)
-        //{
-        //    if (count > 2)
-        //        throw new NotSupportedException("The count cannot be greater than 2.");
-        //
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append("apoc.json.path({0}");
-        //
-        //    if (count >= 1)
-        //        sb.Append(", {1}");
-        //
-        //    if (count == 2)
-        //        sb.Append(", {2}");
-        //
-        //    sb.Append(")");
-        //
-        //    return sb.ToString();
-        //}
-        //
-        //public virtual string FnApocUtilSHA1(int count) => $"apoc.util.sha1([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
-        //public virtual string FnApocUtilMD5(int count)
-        //{
-        //    return $"apoc.util.md5([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
-        //}
+        #region Helper Methods
 
         private string Args(int count)
         {
@@ -909,5 +869,7 @@ namespace Blueprint41.Neo4j.Model
 
             return string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")));
         }
+
+        #endregion
     }
 }
