@@ -122,7 +122,7 @@ namespace Blueprint41.Neo4j.Model
                 throw new NotSupportedException("Setting functional-id's on (batch) queries is not supported if the Blueprint41 plug-in is not installed or a lower version than 'blueprint41-4.0.2.jar'.");
 
             if (functionalId.Guid == Guid.Empty)
-                state.Text.Append(FnApocCreateUuid);
+                state.Text.Append(Fn_ApocCreate_Uuid);
             if (functionalId.Format == IdFormat.Hash)
                 state.Text.AppendFormat(FnFunctionalIdNextHash, functionalId.Label);
             else

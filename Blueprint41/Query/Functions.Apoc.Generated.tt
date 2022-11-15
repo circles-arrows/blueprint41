@@ -4,10 +4,13 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Xml" #>
 <#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
-<#@ output extension=".cs" #>
+<#@ output extension=".txt" #>
 <#
+try
+{
     ApocNamespace documentation = ApocNamespace.Get(Host.ResolvePath("Functions.Apoc.xml"));
 #>
 #nullable enable
@@ -81,11 +84,7 @@ namespace Blueprint41.Neo4j.Model
     }
 }
 <#
-    string filename = Host.ResolvePath(@"..\Neo4j\Persistence\QueryTranslator.Partial.cs");
-    string content = GenerationEnvironment.ToString();
-    File.WriteAllText(filename, content);
-
-    GenerationEnvironment.Clear();
+    WriteToFile(Host.ResolvePath(@"..\Neo4j\Persistence\QueryTranslator.Partial.cs"));
 #>
 #nullable enable
 
@@ -99,6 +98,28 @@ public static partial class Functions
 {
     public static partial class Apoc
     {
+        #region Conversion Methods
+
+<#
+    var allMethods = documentation.All.Where(item => item.Release == Release.Core).SelectMany(item => item.Methods).ToList();
+    foreach ((string from, string to) in allMethods.SelectMany(item => item.InputParameters).Union(allMethods.SelectMany(item => item.OutputParameters)).SelectMany(item => item.DataTypes.Where(dt => dt.OriginalBp41Type is not null).Select(item => (item.Bp41Type, item.OriginalBp41Type))).Distinct().OrderBy(item => item))
+    {
+#>
+        private static Parameter <#= from #>_To_<#= to #>(<#= from #> value)
+        {
+            #region <#= from #>_To_<#= to #> -> NoOverwrite
+
+            #error Method '<#= from #>_To_<#= to #>' has no implementation
+            throw new NotImplementedException("Method '<#= from #>_To_<#= to #>' has no implementation");
+
+            #endregion <#= from #>_To_<#= to #> -> Overwrite
+        }
+<#
+    }
+#>
+
+        #endregion
+
 <#
     PushIndent("    ");
     foreach (var m in documentation.Methods.Where(item => item.Release == Release.Core))
@@ -127,12 +148,50 @@ public static partial class Functions
 #>
     }
 }
+<#
+    WriteToFile(Host.ResolvePath(@"Functions.Apoc.Generated.cs"), true);
+#>
+Generation Successful
+---------------------
+<#= DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") #>
+<#
+}
+catch (Exception ex)
+{
+#>
+Generation Failed
+-----------------
+<#= ex.GetType().Name #>: <#= ex.Message #>
+Stacktrace:
+<#= ex.StackTrace #>
+<#
+}
+#>
 <#+
 
 private string Whitespace(int size)
 {
     if (size == 0) return string.Empty;
     return new string(' ', size);
+}
+private void WriteToFile(string filename, bool withNoOverwrite = false)
+{
+    string old = (withNoOverwrite) ? File.ReadAllText(filename) : null;
+    List<(string key, string value)> sections = string.IsNullOrEmpty(old) ? null : Regex.Matches(old, @"#region (?<key>.+) -> NoOverwrite(?<content>.*)#endregion \k<key> -> Overwrite", RegexOptions.Singleline | RegexOptions.Multiline).Cast<Match>().Select(m => (m.Groups["key"].Value, m.Value)).ToList();
+
+    string content = GenerationEnvironment.ToString();
+    if (sections is not null)
+    {
+        foreach ((string key, string value) in sections)
+        {
+            string pattern = @$"#region {key} -> NoOverwrite.*#endregion {key} -> Overwrite";
+            content = Regex.Replace(content, pattern, value, RegexOptions.Singleline | RegexOptions.Multiline);
+        }
+    }
+
+    File.WriteAllText(filename, content);
+
+    GenerationEnvironment.Clear();
 }
 
 private void WriteDocumentation(ApocNamespace ns, ApocMethod m)
@@ -203,7 +262,7 @@ private void WriteSingleMethod(ApocNamespace ns, ApocMethod m, ApocDataType[] d)
 #>
     public static <#= retval #> <#= m.CSharpName #>(<#= d.First().ToBp41Signature() #>)
     {
-        return new <#= retval #>(t => t.<#= m.TranslatorName #>(@<#= d.First().Parent.CSharpName #>.Length), @<#= d.First().Parent.CSharpName #>, null);
+        return new <#= retval #>(t => t.<#= m.TranslatorName #>(@<#= d.First().Parent.CSharpName #>.Length), <#= d.First().ToNameWithConversion() #>, null);
     }
 <#+
     }
@@ -212,7 +271,7 @@ private void WriteSingleMethod(ApocNamespace ns, ApocMethod m, ApocDataType[] d)
 #>
     public static <#= retval #> <#= m.CSharpName #>(<#= string.Join(", ", d.Select(item => item.ToBp41Signature())) #>)
     {
-        return new <#= retval #>(t => t.<#= m.TranslatorName #>(<#= d.Length #>), new object[] { <#= string.Join(", ", d.Select(item => string.Concat("@", item.Parent.CSharpName))) #> }, null);
+        return new <#= retval #>(t => t.<#= m.TranslatorName #>(<#= d.Length #>), new object[] { <#= string.Join(", ", d.Select(item => item.ToNameWithConversion())) #> }, null);
     }
 <#+
     }
@@ -221,7 +280,7 @@ private void WriteSingleMethod(ApocNamespace ns, ApocMethod m, ApocDataType[] d)
 #>
     public static <#= retval #> <#= m.CSharpName #>(<#= string.Join(", ", d.Select(item => item.ToBp41Signature())) #>)
     {
-        return new <#= retval #>(t => t.<#= m.TranslatorName #>, new object[] { <#= string.Join(", ", d.Select(item => string.Concat("@", item.Parent.CSharpName))) #> }, null);
+        return new <#= retval #>(t => t.<#= m.TranslatorName #>, new object[] { <#= string.Join(", ", d.Select(item => item.ToNameWithConversion())) #> }, null);
     }
 <#+
     }
@@ -259,7 +318,7 @@ public class ApocNamespace
     public ApocNamespace(XmlNode node)
     {
         Name = node.Attributes["name"]?.Value;
-        TranslatorName = string.Join("", Name.Split('.').Select(item => string.Concat(item.Substring(0, 1).ToUpperInvariant(), item.Substring(1).ToLowerInvariant())));
+        TranslatorName = string.Join("", Name.Split('.').Select(item => string.Concat(item.Substring(0, 1).ToUpperInvariant(), item.Substring(1))));
         CSharpName = (TranslatorName.StartsWith("Apoc") && TranslatorName.Length > 4) ? TranslatorName.Substring(4) : TranslatorName;
 
         methods.AddRange(node.SelectNodes("./method").Cast<XmlNode>().Select(item => new ApocMethod(this, item)));
@@ -294,8 +353,8 @@ public class ApocMethod
         Release = (Release)Enum.Parse(typeof(Release), node.Attributes["release"].Value.Replace("APOC ", ""));
         Warnings= node.SelectNodes("./warning").Cast<XmlNode>().Select(item => item.InnerText.Trim()).ToList();
 
-        CSharpName = string.Concat(Name.Substring(0, 1).ToUpperInvariant(), Name.Substring(1).ToLowerInvariant());
-        TranslatorName = (Type == MethodType.Function) ? string.Concat("Fn", Parent.TranslatorName, CSharpName) : string.Concat("Call", Parent.TranslatorName, CSharpName);
+        CSharpName = string.Concat(Name.Substring(0, 1).ToUpperInvariant(), Name.Substring(1));
+        TranslatorName = (Type == MethodType.Function) ? string.Concat("Fn_", Parent.TranslatorName, "_", CSharpName) : string.Concat("Call_", Parent.TranslatorName, "_", CSharpName);
 
         InputParameters = node.SelectNodes("./input-parameter").Cast<XmlNode>().Select(item => new ApocParameter(this, item)).ToList();
         OutputParameters = node.SelectNodes("./output-parameter").Cast<XmlNode>().Select(item => new ApocParameter(this, item)).ToList();
@@ -335,6 +394,24 @@ public class ApocParameter
             CSharpName = string.Concat(parts.First(), string.Join("", parts.Skip(1).Select(item => string.Concat(item.Substring(0, 1).ToUpperInvariant(), item.Substring(1).ToLowerInvariant()))));
         else
             CSharpName = Name; 
+
+        if (DataType.AlsoRenderAs is null)
+        {
+            DataTypes = new ApocDataType[] { DataType };
+        }
+        else
+        {
+            ApocDataType datatype = DataType;
+            List<ApocDataType> datatypes = new List<ApocDataType>();
+            do
+            {
+                datatypes.Add(datatype);
+                datatype = datatype.AlsoRenderAs;
+            }
+            while (datatype is not null);
+
+            DataTypes = datatypes.ToArray();
+        }
     }
 
     public ApocMethod Parent { get; private set; }
@@ -342,6 +419,8 @@ public class ApocParameter
     public string CSharpName { get; private set; }
     public ApocDataType DataType { get; private set; }
     public string DefaultValue { get; private set; }
+
+    public IReadOnlyList<ApocDataType> DataTypes { get; private set; }
 }
 
 public class ApocDataType
@@ -356,6 +435,7 @@ public class ApocDataType
         IsJaggedList = (listType == "JaggedList");
 
         Bp41Type = (string.IsNullOrEmpty(overrideType)) ? ToBp41Type() : overrideType;
+        OriginalBp41Type = (string.IsNullOrEmpty(overrideType)) ? null : ToBp41Type();
 
         string first = alsoRenderAs?.FirstOrDefault();
         AlsoRenderAs = string.IsNullOrEmpty(first) ? null : new ApocDataType(parent, type, neo4jType, listType, first, alsoRenderAs.Skip(1));
@@ -365,6 +445,7 @@ public class ApocDataType
     public string Name { get; private set; }
     public string Neo4jType { get; private set; }
     public string Bp41Type { get; private set; }
+    public string OriginalBp41Type { get; private set; }
     public ApocDataType AlsoRenderAs { get; private set; }
     public bool IsList { get; private set; }
     public bool IsJaggedList { get; private set; }
@@ -402,6 +483,14 @@ public class ApocDataType
 
         return string.Concat(Bp41Type, " @", Parent.CSharpName);
     }
+    public string ToNameWithConversion()
+    {
+        if (OriginalBp41Type is not null)
+            return string.Concat(Bp41Type, "_To_", OriginalBp41Type, "(@", Parent.CSharpName, ")");
+
+        return string.Concat("@", Parent.CSharpName);
+    }
+
 }
 
 public enum MethodType

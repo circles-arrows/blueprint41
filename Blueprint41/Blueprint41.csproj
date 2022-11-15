@@ -53,14 +53,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Query\Functions.Apoc.Generated.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Functions.Apoc.Generated.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Crc32.NET" Version="1.*" />
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.*" />
     <PackageReference Include="Microsoft.CSharp" Version="4.*" />
@@ -205,7 +197,12 @@
     </None>
     <None Update="Query\Functions.Apoc.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Functions.Apoc.Generated.cs</LastGenOutput>
+      <LastGenOutput>Functions.Apoc.Generated.txt</LastGenOutput>
+    </None>
+    <None Update="Query\Functions.Apoc.Generated.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Functions.Apoc.Generated.tt</DependentUpon>
     </None>
     <None Update="Query\Result.Partial.tt">
       <LastGenOutput>Result.Partial.cs</LastGenOutput>
@@ -383,11 +380,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Query\Functions.Apoc.Generated.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Functions.Apoc.Generated.tt</DependentUpon>
     </Compile>
     <Compile Update="Query\ListResult.Partial.cs">
       <DesignTime>True</DesignTime>
