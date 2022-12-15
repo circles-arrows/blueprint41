@@ -43,10 +43,6 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
                                         o.WithResolver(new HostResolver(AdvancedConfig));
                                 }
                             );
-
-                            if (Database is not null)
-                                using (Transaction.Begin())
-                                    Transaction.RunningTransaction.Run($":use {Database}");
                         }
                     }
                 }
