@@ -122,7 +122,7 @@ namespace Blueprint41.Neo4j.Model
                 throw new NotSupportedException("Setting functional-id's on (batch) queries is not supported if the Blueprint41 plug-in is not installed or a lower version than 'blueprint41-4.0.2.jar'.");
 
             if (functionalId.Guid == Guid.Empty)
-                state.Text.Append(Fn_ApocCreate_Uuid);
+                state.Text.Append(FnApocCreateUuid);
             if (functionalId.Format == IdFormat.Hash)
                 state.Text.AppendFormat(FnFunctionalIdNextHash, functionalId.Label);
             else
@@ -540,6 +540,7 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnCoalesce                  => "coalesce({base}, {0})";
         public virtual string FnToUpper                   => "upper({base})";
         public virtual string FnToLower                   => "lower({base})";
+        public virtual string FnIgnoreCase                => "lower({0})";
         public virtual string FnReverse                   => "reverse({base})";
         public virtual string FnTrim                      => "trim({base})";
         public virtual string FnLeftTrim                  => "ltrim({base})";
@@ -593,7 +594,6 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnFunctionalIdNextNumeric   => "blueprint41.functionalid.fnNextNumeric('{0}')";
         public virtual string CallFunctionalIdNextHash    => "CALL blueprint41.functionalid.next('{0}') YIELD value as key";
         public virtual string CallFunctionalIdNextNumeric => "CALL blueprint41.functionalid.nextNumeric('{0}') YIELD value as key";
-        public virtual string CallApocCreateUuid          => "WITH apoc.create.uuid() as key";
         public virtual string FnListAll                   => "all(item IN {base} WHERE {0})";
         public virtual string FnListAny                   => "any(item IN {base} WHERE {0})";
         public virtual string FnListNone                  => "none(item IN {base} WHERE {0})";
@@ -650,6 +650,44 @@ namespace Blueprint41.Neo4j.Model
             }
             sb.Append(")");
             return sb.ToString();
+        }
+
+        public virtual string FnApocCreateUuid            => "apoc.create.uuid()";
+        public virtual string CallApocCreateUuid          => "WITH apoc.create.uuid() as key";
+        public virtual string FnApocCollFlatten           => "apoc.coll.flatten({base})";
+        public virtual string FnApocCollSort              => "apoc.coll.sort({base})";
+        public virtual string FnApocCollSortNodes         => "apoc.coll.sortNodes({base}, \"{0}\")";
+        public virtual string FnApocCollPairs             => "apoc.coll.pairs({base})";
+        public virtual string FnApocCollPairsMin          => "apoc.coll.pairsMin({base})";
+        public virtual string FnApocCollUnion             => "apoc.coll.union({base}, {0})";
+        public virtual string FnApocCollUnionAll          => "apoc.coll.unionAll({base}, {0})";
+        public virtual string FnApocMapSortedProperties   => "apoc.map.sortedProperties({base})";
+        public virtual string FnApocJsonPath(int count)
+        {
+            if (count > 2)
+                throw new NotSupportedException("The count cannot be greater than 2.");
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("apoc.json.path({base}");
+
+            if (count >= 1)
+                sb.Append(", {0}");
+
+            if (count == 2)
+                sb.Append(", {1}");
+
+            sb.Append(")");
+
+            return sb.ToString();
+        }
+
+        public virtual string FnApocUtilSHA1(int count)
+        {
+            return $"apoc.util.sha1([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
+        }
+        public virtual string FnApocUtilMD5(int count)
+        {
+            return $"apoc.util.md5([{string.Join(", ", Enumerable.Range(0, count).Select(item => string.Concat("{", item, "}")))}])";
         }
 
         #endregion

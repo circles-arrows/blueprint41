@@ -30,14 +30,8 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
 
 
     Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
@@ -49,35 +43,35 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("\nMATCH (node:");
+            this.Write("MATCH (node:");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(") WHERE NOT EXISTS(node.");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(") WITH node LIMIT 10000 SET node.");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = {");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
-            this.Write("}\n");
+            this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

@@ -12,6 +12,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 {
     public partial class Neo4jPersistenceProvider : PersistenceProvider
     {
+        // Precision (roughly) 11.8
         internal const decimal DECIMAL_FACTOR = 100000000m;
 
         public TransactionLogger? TransactionLogger { get; private set; }
@@ -84,7 +85,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                                 Version = record["version"].As<string>();
                                 IsEnterpriseEdition = (record["edition"].As<string>().ToLowerInvariant() == "enterprise");
 
-                                string[] parts = Version.Split('.');
+                                string[] parts = Version.Split(new[] { '.' });
                                 Major = int.Parse(parts[0]);
 
                                 if (parts[1].ToLower().Contains("-aura"))

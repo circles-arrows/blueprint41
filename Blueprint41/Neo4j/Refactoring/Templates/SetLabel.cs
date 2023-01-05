@@ -30,14 +30,8 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetLabel.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetLabel.tt"
 
 
     Log("	executing {0} -> {1} set label {2}", this.GetType().Name, Entity.Name, Label);
@@ -46,28 +40,28 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("\nMATCH (node:");
+            this.Write("MATCH (node:");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetLabel.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetLabel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(") WHERE NONE(label IN labels(node) WHERE label = \'");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetLabel.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetLabel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Label));
             
             #line default
             #line hidden
             this.Write("\') WITH node LIMIT 10000 SET node:");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetLabel.tt"
+            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetLabel.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Label));
             
             #line default
             #line hidden
-            this.Write("\n");
+            this.Write("\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

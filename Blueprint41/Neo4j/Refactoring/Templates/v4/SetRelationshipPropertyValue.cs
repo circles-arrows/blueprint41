@@ -36,7 +36,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v4
 
 
     string relationship = string.IsNullOrWhiteSpace(RelationshipType) ? "All Relationships" : RelationshipType;
-    Debug.WriteLine("	executing {0} -> SetRelationshipPropertyValue of  relationship {1} for property {2} = {3}", this.GetType().Name, relationship, Property, Value);
+    Log("	executing {0} -> SetRelationshipPropertyValue of  relationship {1} for property {2} = {3}", this.GetType().Name, relationship, Property, Value);
     string type = string.IsNullOrWhiteSpace(RelationshipType) ? "r" : "r:" + RelationshipType;
 
     OutputParameters.Add(Property, Value);

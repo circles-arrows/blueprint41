@@ -9,7 +9,7 @@ namespace Blueprint41.Query
         public static Parameter NULL { get { return null!; } }
         public static StringResult NewGuid()
         {
-            return new StringResult(t => t.Fn_ApocCreate_Uuid, null, typeof(string));
+            return new StringResult(t => t.FnApocCreateUuid, null, typeof(string));
         }
         public static FloatResult Pi()
         {
@@ -19,13 +19,13 @@ namespace Blueprint41.Query
         {
             return new FloatResult(t => t.FnRand, null, typeof(Double));
         }
-        public static StringResult SHA1(params Result[] fields)
+        public static StringResult SHA1(params FieldResult[] fields)
         {
-            return new StringResult(t => t.Fn_ApocUtil_Sha1(fields.Length), fields, typeof(string));
+            return new StringResult(t => t.FnApocUtilSHA1(fields.Length), fields, typeof(string));
         }
-        public static StringResult MD5(params Result[] fields)
+        public static StringResult MD5(params FieldResult[] fields)
         {
-            return new StringResult(t => t.Fn_ApocUtil_Md5(fields.Length), fields, typeof(string));
+            return new StringResult(t => t.FnApocUtilMD5(fields.Length), fields, typeof(string));
         }
         public static NumericListResult Range(int start, int end, int step)
         {

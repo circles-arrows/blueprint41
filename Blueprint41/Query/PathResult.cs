@@ -11,7 +11,8 @@ namespace Blueprint41.Query
     {
         private object[] emptyArguments = new object[0];
 
-        protected internal PathResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this((AliasResult)null!, function, arguments, type) { }
+        [Obsolete("Not supported", true)]
+        protected internal PathResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this((AliasResult)null!, function, arguments, type) => throw new NotSupportedException();
         [Obsolete("Not supported", true)]
         protected internal PathResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : this(parent?.Alias!, function, arguments, type) => throw new NotSupportedException();
         protected internal PathResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null)

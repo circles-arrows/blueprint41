@@ -30,14 +30,8 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
 
 
     string relationship = string.IsNullOrWhiteSpace(RelationshipType) ? "All Relationships" : RelationshipType;
@@ -49,35 +43,35 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("\nMATCH ()-[");
+            this.Write("MATCH ()-[");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(type));
             
             #line default
             #line hidden
             this.Write("]->() WHERE NOT EXISTS(r.");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default
             #line hidden
             this.Write(")  WITH r LIMIT 10000 SET r.");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default
             #line hidden
             this.Write(" = {");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property));
             
             #line default
             #line hidden
-            this.Write("}\n");
+            this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

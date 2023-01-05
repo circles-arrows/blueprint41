@@ -30,14 +30,8 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
 
 
     Log("	executing {0} -> Rename relationship from {0} to {1}", this.GetType().Name, Relation);
@@ -45,28 +39,28 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("\nMATCH (in:");
+            this.Write("MATCH (in:");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(InEntity));
             
             #line default
             #line hidden
             this.Write(")-[rel:");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relation));
             
             #line default
             #line hidden
             this.Write("]->(out:");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveRelationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OutEntity));
             
             #line default
             #line hidden
-            this.Write(")\nWITH rel LIMIT 10000\nDELETE rel\n");
+            this.Write(")\r\nWITH rel LIMIT 10000\r\nDELETE rel\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

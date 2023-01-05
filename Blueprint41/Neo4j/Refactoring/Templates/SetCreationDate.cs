@@ -30,14 +30,8 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
             
-            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetCreationDate.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetCreationDate.tt"
 
 
     Log("	executing {0} -> set creation date", this.GetType().Name);
@@ -46,8 +40,8 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("\nMATCH ()-[r]->() WHERE NOT EXISTS(r.CreationDate) WITH r LIMIT 10000 SET r.Creat" +
-                    "ionDate = ID(r)");
+            this.Write("MATCH ()-[r]->() WHERE NOT EXISTS(r.CreationDate) WITH r LIMIT 10000 SET r.Creati" +
+                    "onDate = ID(r)");
             return this.GenerationEnvironment.ToString();
         }
     }
