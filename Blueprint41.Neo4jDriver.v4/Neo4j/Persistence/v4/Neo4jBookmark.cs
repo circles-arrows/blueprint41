@@ -30,7 +30,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             if (string.IsNullOrEmpty(consistencyToken))
                 return NullBookmark;
 
-            string[] values = consistencyToken.Split('|');
+            string[] values = consistencyToken.Split(new[] { '|' });
 
             return new Neo4jBookmark(values);
         }
