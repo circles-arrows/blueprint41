@@ -12,6 +12,7 @@ using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Refactoring;
 using Force.Crc32;
 using model = Blueprint41.Neo4j.Model;
+using System.Threading;
 
 namespace Blueprint41
 {
@@ -131,26 +132,24 @@ namespace Blueprint41
                 isExecuting = true;
                 didUpgradeDataStore = upgradeDatastore;
 
-                Execute(upgradeDatastore, unitTestScript, item => true, true);
-
+                DatastoreModel? model = null;
                 lock (RegisteredModels)
                 {
-                    DatastoreModel model = RegisteredModels.FirstOrDefault(item => item.GetType() == this.GetType());
-                    if (model is not null)
+                    model = RegisteredModels.FirstOrDefault(item => item.GetType() == this.GetType());
+                    if (model is null)
                     {
-                        if (didUpgradeDataStore && !model.didUpgradeDataStore)
-                        {
-                            RegisteredModels.Remove(model);
-                            RegisteredModels.Add(this);
-                        }
-                        else if (model.Entities.Count == 0)
-                            throw new NotSupportedException("The registered model is not valid.");
-                        else
-                            return;
+                        model = this;
+                        RegisteredModels.Add(model);
                     }
-                    else
-                        RegisteredModels.Add(this);
                 }
+
+                Execute(upgradeDatastore, unitTestScript, item => true, true);
+
+                if (executed)
+                    model.executed = true;
+
+                if (didUpgradeDataStore)
+                    model.didUpgradeDataStore = true;
             }
             finally
             {
@@ -341,8 +340,10 @@ namespace Blueprint41
         void IRefactorGlobal.ApplyFunctionalIds()
         {
             EnsureSchemaMigration();
-            if (!Parser.ShouldExecute)
-                return;
+
+            //This will cause that the code to refresh function id every 12 hours to not be triggered.
+            //if (!Parser.ShouldExecute) 
+            //    return;
 
             GetSchema().UpdateFunctionalIds();
         }
@@ -507,29 +508,36 @@ namespace Blueprint41
         protected DatastoreModel(PersistenceProvider persistence) : base(persistence) { }
 
         private static TSelf? model = null;
+        public static TSelf GetMainInstance()
+        {
+            if (model is null)
+            {
+                lock (typeof(TSelf))
+                {
+                    if (model is null)
+                    {
+                        model = (TSelf?)RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
+                        if (model is null)
+                        {
+                            model = new TSelf();
+                            model.Execute(false);
+                        }
+                    }
+                }
+            }
+            return model;
+        }
         public static TSelf Model
         {
             get
             {
-                TSelf? registered = (TSelf?)RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
-                if (model is null || (registered is not null && registered != model))
-                {
-                    lock (typeof(TSelf))
-                    {
-                        if (model is null || (registered is not null && registered != model))
-                        {
-                            model = (TSelf?)RegisteredModels.FirstOrDefault(item => item.GetType() == typeof(TSelf));
-                            if (model is null)
-                            {
-                                model = new TSelf();
-                                model.Execute(false);
-                            }
-                        }
-                    }
-                }
-                return model;
+                while (!GetMainInstance().HasExecuted)
+                    Thread.Sleep(100);
+
+                return GetMainInstance();
             }
         }
+        
 
         public bool LogToConsole { get => Parser.LogToConsole; set => Parser.LogToConsole = value; }
         public bool LogToDebugger { get => Parser.LogToDebugger; set => Parser.LogToDebugger= value; }

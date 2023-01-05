@@ -14,7 +14,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return Guid.Empty;
 
-            return Guid.ParseExact(value, "B");
+            return Guid.Parse(value);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Blueprint41.Neo4j.Persistence
     {
         public Neo4jHost(string host)
         {
-            string[] parts = host.Split(':');
+            string[] parts = host.Split(new[] { ':' });
 
             if (parts.Length != 2)
                 throw new ArgumentException("Provide a host in the format 'hostname:port'.", nameof(host));
