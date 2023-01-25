@@ -29,7 +29,7 @@ namespace Blueprint41.Log
 
         public int MaxFileSize { get; private set; }
 
-        public int ThresholdInSeconds { get; set; }
+        public int ThresholdInMilliSeconds { get; set; }
 
         public string LogFile { get; private set; }
 
@@ -41,12 +41,12 @@ namespace Blueprint41.Log
 
         #endregion
 
-        public TransactionLogger(Action<string>? logger = null)
+        public TransactionLogger(int thresholdInSeconds, Action<string>? logger = null)
         {
             LogMethod = logger;
             LogFile = string.Empty;
 
-            ThresholdInSeconds = 100 /*1s*/;
+            ThresholdInMilliSeconds = thresholdInSeconds * 1000;
             MaxFileSize = 2 * 1024 * 1024;
             LogDirectory = InitialLogDirectory();
 
@@ -66,7 +66,7 @@ namespace Blueprint41.Log
         internal void Stop(string message, Dictionary<string, object?>? parameters = null, List<string>? callerInfo = null)
         {
             watcher.Stop();
-            if (watcher.ElapsedMilliseconds >= ThresholdInSeconds * 1000)
+            if (watcher.ElapsedMilliseconds >= ThresholdInMilliSeconds)
             {
                 if (parameters is not null)
                     foreach (var par in parameters)

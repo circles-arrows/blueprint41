@@ -12,6 +12,11 @@ namespace Blueprint41.Neo4j.Persistence
         public Action<string>? CustomLogging { get; set; } = null;
 
         /// <summary>
+        /// Only queries that take longer than the threshold will be logged
+        /// </summary>
+        public int ThresholdInSeconds { get; set; } = 0;
+
+        /// <summary>
         /// Neo4j 4.x only: Hook to catch DNS resolver requests. You can use this instead of hard-coding the IP lookup in the hosts file or on the DNS server.
         /// </summary>
         /// <remarks>
@@ -22,9 +27,9 @@ namespace Blueprint41.Neo4j.Persistence
         internal TransactionLogger? GetLogger()
         {
             if (CustomLogging is not null)
-                return new TransactionLogger(CustomLogging);
+                return new TransactionLogger(ThresholdInSeconds, CustomLogging);
             else if (SimpleLogging)
-                return new TransactionLogger();
+                return new TransactionLogger(ThresholdInSeconds);
             
             return null;
         }
