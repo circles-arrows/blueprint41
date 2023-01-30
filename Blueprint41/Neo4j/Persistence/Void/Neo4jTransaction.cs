@@ -24,7 +24,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 #if DEBUG
             Logger?.Start();
             if (Logger is not null)
-                Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+                Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
 
             return new Neo4jRawResult();
@@ -35,7 +35,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Logger?.Start();
             if (Logger is not null)
             {
-                Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+                Logger.Stop(cypher, parameters: parameters, memberName, sourceFilePath, sourceLineNumber);
             }
 #endif
 

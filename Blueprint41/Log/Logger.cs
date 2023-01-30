@@ -7,33 +7,21 @@ using System.IO;
 using System.Text;
 using System.Collections;
 
+using Blueprint41.Neo4j.Persistence;
+
 namespace Blueprint41.Log
 {
     public class TransactionLogger
     {
         #region Properties
 
-        private string m_LogDirectory = null!;
-        public string LogDirectory
-        {
-            get
-            {
-                return m_LogDirectory;
-            }
-            set
-            {
-                m_LogDirectory = value ?? InitialLogDirectory();
-                LogFile = Path.Combine(LogDirectory, string.Concat("Log_", DateTime.Now.ToString("yyyyMMdd_hhmmss"), ".csv"));
-            }
-        }
+        private readonly AdvancedConfig Config;
+        private readonly string LogDirectory;
+        private readonly int MaxFileSizeInBytes;
+        private readonly int ThresholdInMilliSeconds;
 
-        public int MaxFileSize { get; private set; }
+        public string? LogFile { get; private set; }
 
-        public int ThresholdInMilliSeconds { get; set; }
-
-        public string LogFile { get; private set; }
-
-        private Action<string>? LogMethod { get; set; }
 
         private Stopwatch watcher;
 
@@ -41,20 +29,45 @@ namespace Blueprint41.Log
 
         #endregion
 
-        public TransactionLogger(int thresholdInSeconds, Action<string>? logger = null)
+        public TransactionLogger(AdvancedConfig config)
         {
-            LogMethod = logger;
-            LogFile = string.Empty;
-
-            ThresholdInMilliSeconds = thresholdInSeconds * 1000;
-            MaxFileSize = 2 * 1024 * 1024;
-            LogDirectory = InitialLogDirectory();
+            Config = config;
+            LogDirectory = config.LogDirectory ?? InitialLogDirectory();
+            MaxFileSizeInBytes = GetMaxFileSize(config.MaxFileSize);
+            ThresholdInMilliSeconds = config.ThresholdInSeconds * 1000;
 
             watcher = new Stopwatch();
-        }
-        private static string InitialLogDirectory()
-        {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? @"C:\", "TransactionLogs");
+
+            static int GetMaxFileSize(string? text)
+            {
+                if (text is null)
+                    return 2 * 1024 * 1024;
+
+                string lower = text.ToLowerInvariant();
+
+                if (lower.Contains("kb"))
+                {
+                    return int.Parse(lower.Replace("kb", "000"));
+                }
+                else if (lower.Contains("mb"))
+                {
+                    return int.Parse(lower.Replace("mb", "000000"));
+                }
+                else if (lower.Contains("gb"))
+                {
+                    return int.Parse(lower.Replace("gb", "000000000"));
+                }
+                else if (lower.Contains("b"))
+                {
+                    return int.Parse(lower.Replace("b", ""));
+                }
+                else
+                    throw new NotSupportedException("This method requires that you specify the unit like GB, MB, KB, B.");
+            }
+            static string InitialLogDirectory()
+            {
+                return Path.Combine(AppDomain.CurrentDomain.BaseDirectory ?? @"C:\", "TransactionLogs");
+            }
         }
 
         internal void Start()
@@ -63,12 +76,40 @@ namespace Blueprint41.Log
             watcher.Start();
         }
 
-        internal void Stop(string message, Dictionary<string, object?>? parameters = null, List<string>? callerInfo = null)
+        internal void Stop(string cypher, Dictionary<string, object?>? parameters, string? memberName = null, string? sourceFilePath = null, int sourceLineNumber = 0)
         {
             watcher.Stop();
             if (watcher.ElapsedMilliseconds >= ThresholdInMilliSeconds)
             {
+                string? cypherWithArgs = null;
+
+                if (Config.CustomLogging is not null)
+                {
+                    cypherWithArgs = FixArgs(cypher, parameters);
+                    Config.CustomLogging.Invoke(cypherWithArgs);
+                }
+
+                if (Config.CustomCypherLogging is not null)
+                {
+                    Config.CustomCypherLogging.Invoke(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+                }
+
+                if (Config.SimpleLogging)
+                {
+                    if (cypherWithArgs is null)
+                        cypherWithArgs = FixArgs(cypher, parameters);
+
+                    if (memberName is null || sourceFilePath is null)
+                        LogToFile(string.Format("{0}\t\t\t\t{1}", TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), cypherWithArgs));
+                    else
+                        LogToFile(string.Format("{0}\t{1}\t{2}\t{3}\t{4}", memberName, sourceFilePath, sourceLineNumber, TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), cypherWithArgs));
+                }
+            }
+
+            static string FixArgs(string cypher, Dictionary<string, object?>? parameters)
+            {
                 if (parameters is not null)
+                {
                     foreach (var par in parameters)
                     {
                         if (par.Value is IEnumerable val)
@@ -79,34 +120,34 @@ namespace Blueprint41.Log
                                 sb.Append(Serializer.Serialize(value));
                                 sb.Append(",");
                             }
-                            message = message.Replace("{" + par.Key + "}", sb.ToString());
+                            cypher = cypher.Replace("{" + par.Key + "}", sb.ToString());
                         }
                         else
-                            message = message.Replace("{" + par.Key + "}", Serializer.Serialize(par.Value).Replace("\"", "\'"));
+                            cypher = cypher.Replace("{" + par.Key + "}", Serializer.Serialize(par.Value).Replace("\"", "\'"));
                     }
+                }
 
-                if (callerInfo is null)
-                    Log(string.Format("{0}\t{1}", TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), message));
-                else
-                    Log(string.Format("{0}\t{1}\t{2}\t{3}\t{4}", callerInfo[0], callerInfo[1], callerInfo[2], TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), message));
+                return cypher;
             }
         }
 
-        internal void Log(string message)
+        public void Log(string message)
         {
-            if (LogMethod is not null)
-            {
-                LogMethod.Invoke(message);
-                return;
-            }
+            if (Config.CustomLogging is not null)
+                Config.CustomLogging.Invoke(message);
 
+            if (Config.SimpleLogging)
+                LogToFile(message);
+        }
+        private void LogToFile(string message)
+        {
             if (!Directory.Exists(LogDirectory))
                 Directory.CreateDirectory(LogDirectory);
 
             FileInfo fileInfo = new FileInfo(LogFile);
             if (fileInfo.Exists)
             {
-                if (fileInfo.Length >= MaxFileSize)
+                if (fileInfo.Length >= MaxFileSizeInBytes)
                     LogFile = Path.Combine(LogDirectory, string.Concat("Log_", DateTime.Now.ToString("yyyyMMdd_hhmmss"), ".csv"));
             }
             else
@@ -117,35 +158,5 @@ namespace Blueprint41.Log
                 File.AppendAllText(LogFile, string.Concat(message, "\r\n"));
             }
         }
-
-        #region Utilities
-
-        /// <summary>
-        /// kb, mb, gb, b
-        /// </summary>
-        /// <param name="text"></param>
-        public void SetMaxFileSize(string text)
-        {
-            if (text.ToLower().Contains("kb"))
-            {
-                MaxFileSize = int.Parse(text.ToLower().Replace("kb", "000"));
-            }
-            else if (text.ToLower().Contains("mb"))
-            {
-                MaxFileSize = int.Parse(text.ToLower().Replace("mb", "000000"));
-            }
-            else if (text.ToLower().Contains("gb"))
-            {
-                MaxFileSize = int.Parse(text.ToLower().Replace("gb", "000000000"));
-            }
-            else if (text.ToLower().Contains("b"))
-            {
-                MaxFileSize = int.Parse(text.ToLower().Replace("b", ""));
-            }
-            else
-                throw new NotSupportedException("This method requires that you specify the unit like GB, MB, KB, B.");
-        }
-
-        #endregion
     }
 }

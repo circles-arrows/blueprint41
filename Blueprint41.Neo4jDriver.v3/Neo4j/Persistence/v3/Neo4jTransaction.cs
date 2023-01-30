@@ -32,7 +32,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             if (Logger is not null)
             {
                 results.Peek();
-                Logger.Stop(cypher, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+                Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
             }
 #endif
 
@@ -52,7 +52,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             if (Logger is not null)
             {
                 results.Peek();
-                Logger.Stop(cypher, parameters: parameters, callerInfo: new List<string>() { memberName, sourceFilePath, sourceLineNumber.ToString() });
+                Logger.Stop(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
             }
 #endif
 
