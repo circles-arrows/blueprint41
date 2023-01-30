@@ -176,6 +176,7 @@ namespace Blueprint41.Core
             IEnumerable<CollectionItem> items = RelationshipPersistenceProvider.Load(Parent, this);
             InitialLoad(items);
         }
+        internal protected abstract void AfterFlush();
         internal abstract void InitialLoad(IEnumerable<CollectionItem> items);
 
         public bool IsLoaded { get; internal set; }

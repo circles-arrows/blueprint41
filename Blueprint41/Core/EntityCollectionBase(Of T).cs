@@ -83,6 +83,10 @@ namespace Blueprint41.Core
             else if (Parent.PersistenceState == PersistenceState.Loaded)
                 Parent.PersistenceState = PersistenceState.LoadedAndChanged;
         }
+        internal protected override void AfterFlush()
+        {
+            loadedData = innerData;
+        }
 
         int ICollection<TEntity>.Count { get { return CountInternal; } }
         private protected abstract int CountInternal { get; }

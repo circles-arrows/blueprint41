@@ -370,6 +370,10 @@ namespace Blueprint41.Core
 		{
 			return InnerData;
 		}
+		sealed internal protected override void AfterSetData()
+		{
+            OriginalData = InnerData;
+        }
 		//internal TData GetData()
 		//{
 		//    return Current ?? Loaded;

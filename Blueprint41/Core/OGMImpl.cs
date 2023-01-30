@@ -213,6 +213,7 @@ namespace Blueprint41.Core
         void OGM.SetData(IReadOnlyDictionary<string, object?> data)
         {
             this.GetData().MapFrom(data);
+            AfterSetData();
         }
 
         PersistenceState OGM.PersistenceState { get { return this.PersistenceState; } set { this.PersistenceState = value; } }
@@ -302,6 +303,7 @@ namespace Blueprint41.Core
 
         internal protected abstract void LazyGet(bool locked = false);
         internal protected abstract void LazySet();
+        internal protected abstract void AfterSetData();
         internal protected virtual bool LazySet<T>(Property property, T previousValue, T assignValue, DateTime? moment)
         {
             return property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set);
