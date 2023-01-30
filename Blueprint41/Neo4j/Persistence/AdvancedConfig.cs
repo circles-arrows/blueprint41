@@ -53,7 +53,7 @@ namespace Blueprint41.Neo4j.Persistence
         }
     }
 
-    public delegate void CypherLoggingHandler(string cypher, Dictionary<string, object?>? parameters, string? memberName, string? sourceFilePath, int sourceLineNumber);
+    public delegate void CypherLoggingHandler(string cypher, Dictionary<string, object?>? parameters, long elapsedMilliseconds, string? memberName, string? sourceFilePath, int sourceLineNumber);
 
     public struct Neo4jHost
     {

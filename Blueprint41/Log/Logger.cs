@@ -82,17 +82,8 @@ namespace Blueprint41.Log
             if (watcher.ElapsedMilliseconds >= ThresholdInMilliSeconds)
             {
                 string? cypherWithArgs = null;
-
-                if (Config.CustomLogging is not null)
-                {
-                    cypherWithArgs = FixArgs(cypher, parameters);
-                    Config.CustomLogging.Invoke(cypherWithArgs);
-                }
-
-                if (Config.CustomCypherLogging is not null)
-                {
-                    Config.CustomCypherLogging.Invoke(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
-                }
+                                
+                Config.CustomCypherLogging?.Invoke(cypher, parameters, watcher.ElapsedMilliseconds, memberName, sourceFilePath, sourceLineNumber);
 
                 if (Config.SimpleLogging)
                 {
@@ -102,7 +93,9 @@ namespace Blueprint41.Log
                     if (memberName is null || sourceFilePath is null)
                         LogToFile(string.Format("{0}\t\t\t\t{1}", TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), cypherWithArgs));
                     else
+                    {
                         LogToFile(string.Format("{0}\t{1}\t{2}\t{3}\t{4}", memberName, sourceFilePath, sourceLineNumber, TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), cypherWithArgs));
+                    }
                 }
             }
 
@@ -133,8 +126,7 @@ namespace Blueprint41.Log
 
         public void Log(string message)
         {
-            if (Config.CustomLogging is not null)
-                Config.CustomLogging.Invoke(message);
+            Config.CustomLogging?.Invoke(message);
 
             if (Config.SimpleLogging)
                 LogToFile(message);
@@ -143,6 +135,8 @@ namespace Blueprint41.Log
         {
             if (!Directory.Exists(LogDirectory))
                 Directory.CreateDirectory(LogDirectory);
+            
+            LogFile ??= Path.Combine(LogDirectory, string.Concat("Log_", DateTime.Now.ToString("yyyyMMdd_hhmmss"), ".csv"));
 
             FileInfo fileInfo = new FileInfo(LogFile);
             if (fileInfo.Exists)

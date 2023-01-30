@@ -61,7 +61,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
         {
             Neo4jTransaction? trans = RunningTransaction as Neo4jTransaction;
             if (trans is null)
-                throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");
+                throw new InvalidOperationException("The current transaction is not a Neo4j transaction.");            
 
             trans.Logger?.Log(message);
         }
