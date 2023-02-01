@@ -374,25 +374,25 @@ namespace Blueprint41.Core
 		{
             OriginalData = InnerData;
         }
-		//internal TData GetData()
-		//{
-		//    return Current ?? Loaded;
-		//}
-		//sealed internal override Data NewData(object key = null)
-		//{
-		//    return NewData((TKey)key);
-		//}
-		//internal TData NewData(TKey key)
-		//{
-		//	  TData item = NewData();
+        //internal TData GetData()
+        //{
+        //    return Current ?? Loaded;
+        //}
+        //sealed internal override Data NewData(object key = null)
+        //{
+        //    return NewData((TKey)key);
+        //}
+        //internal TData NewData(TKey key)
+        //{
+        //	  TData item = NewData();
 
-		//	  if (key is not null && !key.Equals(default(TKey)))
-		//		  item.SetKey(key);
+        //	  if (key is not null && !key.Equals(default(TKey)))
+        //		  item.SetKey(key);
 
-		//    return item;
-		//}
+        //    return item;
+        //}
 
-		protected void KeySet(Action set)
+        protected void KeySet(Action set)
 		{
 			if (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged)
 				throw new InvalidOperationException("You cannot set the key unless if the object is a newly created one.");

@@ -93,9 +93,7 @@ namespace Blueprint41.Log
                     if (memberName is null || sourceFilePath is null)
                         LogToFile(string.Format("{0}\t\t\t\t{1}", TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), cypherWithArgs));
                     else
-                    {
                         LogToFile(string.Format("{0}\t{1}\t{2}\t{3}\t{4}", memberName, sourceFilePath, sourceLineNumber, TimeSpan.FromMilliseconds(watcher.ElapsedMilliseconds), cypherWithArgs));
-                    }
                 }
             }
 
