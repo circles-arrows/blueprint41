@@ -369,4 +369,15 @@ namespace Blueprint41.Core
     {
         void SetRuntimeTypes(Type returnType, Type classType);
     }
+    public interface IEntityAdvancedFeatures
+    {
+        OGM Activator(EventOptions eventOptions = EventOptions.GraphEvents);
+        OGM? Map(RawNode node, NodeMapping mappingMode);
+        OGM? Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode);
+
+        OGM? Load(object? key, bool locked = false);
+        OGM? Lookup(object? key);
+        void ForceDelete(object key);
+        void Delete(object key);
+    }
 }

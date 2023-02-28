@@ -11,7 +11,7 @@ using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41.Core
 {
-    public abstract class EntityCollectionBase<TEntity> : EntityCollectionBase, ICollection<TEntity>, ILookupHelper<TEntity>
+    public abstract class EntityCollectionBase<TEntity> : EntityCollectionBase, ICollection<TEntity>, ILookupHelper<TEntity>, IInnerDataCol<TEntity>
         where TEntity : class, OGM
     {
         protected EntityCollectionBase(OGM parent, Property property, Action<TEntity>? eagerLoadLogic) : base(parent, property)
@@ -150,6 +150,21 @@ namespace Blueprint41.Core
         }
 
         bool ICollection<TEntity>.IsReadOnly { get { return false; } }
+
+        IEnumerable<TEntity> IInnerDataCol<TEntity>.InnerData => InnerData.Select(item => item.Item);
+
+        IEnumerable<OGM> IInnerDataCol.InnerData => InnerData.Select(item => item.Item);
+
+        IEnumerable<OGM> IInnerDataCol.OriginalData => OriginalData;
+
+        OGM? IInnerDataCol.InnerDataLookup => InnerData.FirstOrDefault()?.Item;
+
+        OGM? IInnerDataCol.OriginalDataLookup => OriginalData.FirstOrDefault();
+
+        public TEntity? InnerDataLookup => InnerData.FirstOrDefault()?.Item;
+
+        public TEntity? OriginalDataLookup => OriginalData.FirstOrDefault();
+
         void ICollection<TEntity>.CopyTo(TEntity[] array, int arrayIndex)
         {
             foreach (TEntity item in this)
@@ -201,5 +216,20 @@ namespace Blueprint41.Core
             Remove(item);
             return true;
         }
+    }
+
+    public interface IInnerDataCol
+    {
+        IEnumerable<OGM> InnerData { get; }
+        IEnumerable<OGM> OriginalData { get; }
+        OGM? InnerDataLookup { get; }
+        OGM? OriginalDataLookup { get; }
+    }
+    public interface IInnerDataCol<TEntity> : IInnerDataCol
+    {
+        new IEnumerable<TEntity> InnerData { get; }
+        new IEnumerable<TEntity> OriginalData { get; }
+        new TEntity? InnerDataLookup { get; }
+        new TEntity? OriginalDataLookup { get; }
     }
 }

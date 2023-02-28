@@ -19,7 +19,7 @@ using System.Reflection;
 namespace Blueprint41
 {
     [DebuggerDisplay("Entity: {Name}")]
-    public partial class Entity : IRefactorEntity, IEntityEvents, ISetRuntimeType
+    public partial class Entity : IRefactorEntity, IEntityEvents, ISetRuntimeType, IEntityAdvancedFeatures
     {
         internal Entity(DatastoreModel parent, string name, string label, string? prefix, Entity? inherits)
             : this(parent, name, label, GetFunctionalId(parent, name, label, prefix), inherits)
@@ -1347,6 +1347,54 @@ namespace Blueprint41
         }
         private Func<OGM>? activator = null;
 
+        internal OGM? Load(object? key, bool locked = false)
+        {
+            if (key is null)
+                return null;
+
+            OGM? item = Lookup(key);
+            if (item is null)
+                return null;
+
+            if (locked || item.PersistenceState != PersistenceState.DoesntExist)
+                Transaction.RunningTransaction.NodePersistenceProvider.Load(item, locked);
+
+            if (item.PersistenceState != PersistenceState.New && item.PersistenceState != PersistenceState.DoesntExist)
+                return item;
+            else
+                return null;
+        }
+        internal OGM? Lookup(object? key)
+        {
+            if (key is null)
+                return null;
+
+            OGM? instance = (OGM?)Transaction.RunningTransaction.GetEntityByKey(Name, key);
+            if (instance is not null)
+                return instance;
+
+            OGM item = Activator();
+            item.SetKey(key);
+
+            return item;
+        }
+        internal void ForceDelete(object key)
+        {
+            OGM? item = Load(key);
+            if (item is null || (Parser.ShouldExecute && ContainsStaticData))
+                return;
+
+            item.Delete(true);
+        }
+        internal void Delete(object key)
+        {
+            OGM? item = Load(key);
+            if (item is null || (Parser.ShouldExecute && ContainsStaticData))
+                return;
+
+            item.Delete(false);
+        }
+
         internal OGM? Map(RawNode node, NodeMapping mappingMode)
         {
             return Map(node, null!, null!, mappingMode);
@@ -1369,6 +1417,19 @@ namespace Blueprint41
             return mapMethod?.Invoke(node, cypher, parameters, mappingMode);
         }
         private Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>? mapMethod = null;
+
+        #region IEntityAdvancedFeatures
+
+
+        OGM? IEntityAdvancedFeatures.Load(object? key, bool locked) => Load(key, locked);
+        OGM? IEntityAdvancedFeatures.Lookup(object? key) => Lookup(key);
+        void IEntityAdvancedFeatures.ForceDelete(object key) => ForceDelete(key);
+        void IEntityAdvancedFeatures.Delete(object key) => Delete(key);
+
+        OGM IEntityAdvancedFeatures.Activator(EventOptions eventOptions) => Activator(eventOptions);
+        OGM? IEntityAdvancedFeatures.Map(RawNode node, NodeMapping mappingMode) => Map(node, mappingMode);
+        OGM? IEntityAdvancedFeatures.Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode) => Map(node, cypher, parameters, mappingMode);
+        #endregion
 
         #endregion
     }

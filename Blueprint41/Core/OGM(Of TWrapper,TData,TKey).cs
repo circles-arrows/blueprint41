@@ -350,8 +350,11 @@ namespace Blueprint41.Core
 		}
 		internal protected TData? OriginalData = default(TData);
 		TData IInnerData<TData>.InnerData { get { return InnerData; } }
+        TData IInnerData<TData>.OriginalData { get { return OriginalData ?? InnerData; } }
+        Data IInnerData.InnerData => InnerData;
+        Data IInnerData.OriginalData => OriginalData ?? InnerData;
 
-		public override PersistenceState PersistenceState
+        public override PersistenceState PersistenceState
 		{
 			get { return InnerData.PersistenceState; }
 			internal set { InnerData.PersistenceState = value; }
@@ -455,8 +458,14 @@ namespace Blueprint41.Core
 		#endregion
 	}
 
-	public interface IInnerData<TData>
+	public interface IInnerData
 	{
-		TData InnerData { get; }
-	}
+        Data InnerData { get; }
+        Data OriginalData { get; }
+    }
+    public interface IInnerData<TData> : IInnerData
+    {
+		new TData InnerData { get; }
+        new TData OriginalData { get; }
+    }
 }
