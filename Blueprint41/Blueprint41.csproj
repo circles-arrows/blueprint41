@@ -195,6 +195,15 @@
       <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
+    <None Update="Query\Functions.Apoc.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Functions.Apoc.Generated.txt</LastGenOutput>
+    </None>
+    <None Update="Query\Functions.Apoc.Generated.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Functions.Apoc.Generated.tt</DependentUpon>
+    </None>
     <None Update="Query\Result.Partial.tt">
       <LastGenOutput>Result.Partial.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>

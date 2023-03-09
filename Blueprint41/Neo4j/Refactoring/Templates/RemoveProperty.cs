@@ -30,8 +30,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
 
 
     Log("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, ConcreteParent.Label.Name, Name);
@@ -39,23 +45,23 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("MATCH (node:");
+            this.Write("\nMATCH (node:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ConcreteParent.Label.Name));
             
             #line default
             #line hidden
             this.Write(") WHERE EXISTS(node.");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default
             #line hidden
             this.Write(") WITH node LIMIT 10000 REMOVE node.");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default

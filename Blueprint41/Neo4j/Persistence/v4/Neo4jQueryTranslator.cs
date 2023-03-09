@@ -49,9 +49,8 @@ namespace Blueprint41.Neo4j.Persistence.v4
 
         #region Compile Functions
 
-        public override string FnToUpper     => "toUpper({base})";
-        public override string FnToLower     => "toLower({base})";
-        public override string FnIgnoreCase  => "toLower({0})";
+        public override string FnToUpper => "toUpper({base})";
+        public override string FnToLower => "toLower({base})";
         public override string FnListExtract => "[item in {base} | {0}]";
 
         #endregion

@@ -73,27 +73,6 @@ namespace Blueprint41.Query
 
         #endregion
 
-        public QueryCondition EqualsIgnoreCase(string value)
-        {
-            return EqualsIgnoreCase(Parameter.Constant(value));
-        }
-        public QueryCondition EqualsIgnoreCase(Parameter value)
-        {
-            return new QueryCondition(IgnoreCase(this), Operator.Equals, IgnoreCase(value));
-        }
-        public QueryCondition EqualsIgnoreCase(StringResult value)
-        {
-            return new QueryCondition(IgnoreCase(this), Operator.Equals, IgnoreCase(value));
-        }
-        private StringResult IgnoreCase(Parameter parameter)
-        {
-            return new StringResult(t => t.FnIgnoreCase, new object[] { parameter }, null);
-        }
-        private StringResult IgnoreCase(StringResult field)
-        {
-            return new StringResult(field, t => t.FnIgnoreCase, new object[] { field });
-        }
-
         public StringResult ToUpperCase()
         {
             return new StringResult(this, t => t.FnToUpper);
@@ -311,11 +290,6 @@ namespace Blueprint41.Query
         public QueryCondition MatchRegex(string text)
         {
             return new QueryCondition(this, Operator.Match, text);
-        }
-
-        public QueryCondition MatchRegex(Parameter param)
-        {
-            return new QueryCondition(this, Operator.Match, param);
         }
 
         public StringResult Concat(params object[] args)

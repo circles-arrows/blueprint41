@@ -30,8 +30,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         /// </summary>
         public override string TransformText()
         {
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
 
 
     Log("	executing {0} -> Create unique constraint for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
@@ -39,21 +45,21 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line default
             #line hidden
-            this.Write("CREATE CONSTRAINT ON (node:");
+            this.Write("\nCREATE CONSTRAINT ON (node:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(") ASSERT node.");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
+            #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
-            this.Write(" IS UNIQUE\r\n");
+            this.Write(" IS UNIQUE\n");
             return this.GenerationEnvironment.ToString();
         }
     }

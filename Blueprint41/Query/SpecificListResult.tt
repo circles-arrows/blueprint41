@@ -66,7 +66,7 @@ namespace Blueprint41.Query
 #>
 		public <#= listType.Replace("ListResult", "JaggedListResult") #> PairsMin()
 		{
-			return new <#= listType.Replace("ListResult", "JaggedListResult") #>(this, t => t.FnApocCollPairsMin);
+			return new <#= listType.Replace("ListResult", "JaggedListResult") #>(this, t => t.Fn_ApocColl_PairsMin);
 		}
 <#
 		}
