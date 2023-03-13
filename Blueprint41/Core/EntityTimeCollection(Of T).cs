@@ -11,7 +11,7 @@ using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41.Core
 {
-	public class EntityTimeCollection<TEntity> : EntityCollectionBase<TEntity>
+	public partial class EntityTimeCollection<TEntity> : EntityCollectionBase<TEntity>
 		where TEntity : class, OGM
 	{
 		public EntityTimeCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null) : base(parent, property, eagerLoadLogic) { }

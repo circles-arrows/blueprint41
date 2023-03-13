@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Neo4j.Refactoring
 {
-    public interface IRefactorRelationship
+    public partial interface IRefactorRelationship
     {
         void Rename(string newName, string newNeo4JRelationshipType);
 

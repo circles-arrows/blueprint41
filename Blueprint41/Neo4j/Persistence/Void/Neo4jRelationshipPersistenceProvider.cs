@@ -8,7 +8,7 @@ using Blueprint41.Neo4j.Refactoring;
 
 namespace Blueprint41.Neo4j.Persistence.Void
 {
-    internal class Neo4jRelationshipPersistenceProvider : RelationshipPersistenceProvider
+    internal partial class Neo4jRelationshipPersistenceProvider : RelationshipPersistenceProvider
     {
         public Neo4jRelationshipPersistenceProvider(PersistenceProvider factory) : base(factory) { }
 

@@ -7,7 +7,7 @@ using Blueprint41.Dynamic;
 
 namespace Blueprint41.Neo4j.Refactoring
 {
-    public interface IRefactorEntity
+    public partial interface IRefactorEntity
     {
         /// <summary>
         /// 

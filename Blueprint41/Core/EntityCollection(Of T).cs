@@ -13,7 +13,7 @@ using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41.Core
 {
-    public class EntityCollection<TEntity> : EntityCollectionBase<TEntity>
+    public partial class EntityCollection<TEntity> : EntityCollectionBase<TEntity>
         where TEntity : class, OGM
     {
         public EntityCollection(OGM parent, Property property, Action<TEntity>? eagerLoadLogic = null)

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Blueprint41.Core
 {
-    internal abstract class RelationshipPersistenceProvider
+    internal abstract partial class RelationshipPersistenceProvider
     {
         protected RelationshipPersistenceProvider(PersistenceProvider factory)
         {

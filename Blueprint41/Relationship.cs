@@ -12,7 +12,7 @@ using System.Diagnostics;
 namespace Blueprint41
 {
     [DebuggerDisplay("Relationship: {Name}")]
-    public class Relationship : IRefactorRelationship, Core.IRelationshipEvents
+    public partial class Relationship : IRefactorRelationship, Core.IRelationshipEvents
     {
         internal Relationship(DatastoreModel parent, string name, string? neo4JRelationshipType, Entity? inEntity, Interface? inInterface, Entity? outEntity, Interface? outInterface)
         {

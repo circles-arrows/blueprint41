@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Neo4j.Refactoring
 {
-    public interface IRefactorProperty
+    public partial interface IRefactorProperty
     {
         void Rename(string newName);
 

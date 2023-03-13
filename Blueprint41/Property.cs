@@ -18,7 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Blueprint41
 {
     [DebuggerDisplay("{Parent.Name}.{Name}")]
-    public class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
+    public partial class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
     {
         internal Property(Entity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
         {
