@@ -430,6 +430,17 @@ namespace Blueprint41.Query
         }
         public ICallSubqueryMatch CallSubQuery(ICompiled compiled)
         {
+            if (compiled is null)
+                throw new ArgumentNullException(nameof(compiled));
+
+            if (compiled.CompiledQuery is not null)
+            {
+                foreach (var parameter in compiled.CompiledQuery.Parameters.Where(item => item.IsConstant))
+                {
+                    parameter.Name = null!;
+                }
+            }
+
             SetType(PartType.CallSubquery);
             SubQueryPart = compiled.Query;
 

@@ -2758,6 +2758,7 @@ if (!DALModel.IsAbstract)
 	events.Add("OnNew");
 	events.Add("OnDelete");
 	events.Add("OnSave");
+	events.Add("OnAfterSave");
 
 	foreach (string evnt in events)
 	{

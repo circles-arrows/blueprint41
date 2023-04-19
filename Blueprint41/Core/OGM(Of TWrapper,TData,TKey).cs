@@ -358,9 +358,14 @@ namespace Blueprint41.Core
 		{
 			get { return InnerData.PersistenceState; }
 			internal set { InnerData.PersistenceState = value; }
-		}
+        }
+        public override PersistenceState OriginalPersistenceState
+        {
+            get { return InnerData.OriginalPersistenceState; }
+            internal set { InnerData.OriginalPersistenceState = value; }
+        }
 
-		internal override object? GetKey()
+        internal override object? GetKey()
 		{
 			TData? data = innerData;
 			if (data is null)

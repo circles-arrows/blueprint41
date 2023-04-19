@@ -99,8 +99,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
                                 if (parts.Length > 2)
                                     Revision = int.Parse(parts[2]);
 
-                                functions = new HashSet<string>(Transaction.RunningTransaction.Run("call dbms.functions() yield name return name").Select(item => item.Values["name"].As<string>()));
-                                procedures = new HashSet<string>(Transaction.RunningTransaction.Run("call dbms.procedures() yield name as name").Select(item => item.Values["name"].As<string>()));
+                                functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(Major)).Select(item => item.Values["name"].As<string>()));
+                                procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(Major)).Select(item => item.Values["name"].As<string>()));
                             }
 
                             if (Major == 3)
@@ -111,6 +111,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
                             {
                                 translator = new v4.Neo4jQueryTranslator(this);
                             }
+                            else if (Major == 5)
+                            {
+                                translator = new v5.Neo4jQueryTranslator(this);
+                            }
                             else
                             {
                                 throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.");
@@ -119,8 +123,20 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     }
                 }
                 return translator;
+
+                static string GetFunctions(int version) => version switch
+                {
+                    < 5 => "call dbms.functions() yield name return name",
+                    >= 5 => "show functions yield name return name",
+                };
+                static string GetProcedures(int version) => version switch
+                {
+                    < 5 => "call dbms.procedures() yield name as name",
+                    >= 5 => "show procedures yield name return name",
+                };
             }
         }
+
         private QueryTranslator? translator = null;
         private QueryTranslator GetVoidTranslator()
         {

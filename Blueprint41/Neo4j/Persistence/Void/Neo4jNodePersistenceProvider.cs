@@ -58,6 +58,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             {
                 item.SetData(args.Properties!);
                 item.PersistenceState = PersistenceState.Loaded;
+                item.OriginalPersistenceState = PersistenceState.Loaded;
             }
         }
 
@@ -373,6 +374,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
                     wrapper.SetData(args.Properties!);
                     wrapper.PersistenceState = PersistenceState.Loaded;
+                    wrapper.OriginalPersistenceState = PersistenceState.Loaded;
                 }
                 else
                 {
@@ -384,6 +386,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     {
                         wrapper.SetData(args.Properties!);
                         wrapper.PersistenceState = PersistenceState.Loaded;
+                        wrapper.OriginalPersistenceState = PersistenceState.Loaded;
                     }
                 }
                 items.Add(wrapper);

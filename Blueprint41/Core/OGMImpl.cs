@@ -24,7 +24,7 @@ namespace Blueprint41.Core
         {
             if (!GetEntity().Parent.IsUpgraded)
                 throw new InvalidOperationException("You cannot use entity inside the upgrade script.");
-
+            
             Transaction.RunningTransaction.Register(this);
         }
 
@@ -217,6 +217,7 @@ namespace Blueprint41.Core
         }
 
         PersistenceState OGM.PersistenceState { get { return this.PersistenceState; } set { this.PersistenceState = value; } }
+        PersistenceState OGM.OriginalPersistenceState { get { return this.OriginalPersistenceState; } set { this.OriginalPersistenceState = value; } }
         Transaction? OGM.Transaction { get { return this.DbTransaction; } set { this.DbTransaction = value; } }
 
         #endregion
@@ -242,6 +243,7 @@ namespace Blueprint41.Core
         }
 
         public abstract PersistenceState PersistenceState { get; internal set; }
+        public abstract PersistenceState OriginalPersistenceState { get; internal set; }
         internal Transaction? DbTransaction { get; set; }
         protected private Transaction RunningTransaction
         {

@@ -131,6 +131,7 @@ namespace Blueprint41.Core
         }
 
         public PersistenceState PersistenceState = PersistenceState.New;
+        public PersistenceState OriginalPersistenceState = PersistenceState.New;
 
         protected class PropertyDetail
         {

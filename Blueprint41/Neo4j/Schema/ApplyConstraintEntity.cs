@@ -19,9 +19,11 @@ namespace Blueprint41.Neo4j.Schema
 
         private List<ApplyConstraintProperty> Initialize()
         {
+            // TODO: Only applies indexes and constraints on a single field, composite indexes and constraints are ignored.
+
             List<ApplyConstraintProperty> actions = new List<ApplyConstraintProperty>();
-            IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity == Entity.Label.Name);
-            IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity == Entity.Label.Name);
+            IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity.Count == 1 && item.Entity[0] == Entity.Label.Name);
+            IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity.Count == 1 && item.Entity[0] == Entity.Label.Name);
             IReadOnlyList<Property> properties = Entity.GetPropertiesOfBaseTypesAndSelf();
 
             foreach (Property property in properties)
@@ -29,8 +31,8 @@ namespace Blueprint41.Neo4j.Schema
                 if (property.SystemReturnType is null)
                     continue;
 
-                IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field == property.Name);
-                IEnumerable<IndexInfo> indexes = entityIndexes.Where(item => item.Field == property.Name);
+                IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field.Count == 1 && item.Field[0] == property.Name);
+                IEnumerable<IndexInfo> indexes = entityIndexes.Where(item => item.Field.Count == 1 && item.Field[0] == property.Name);
 
                 bool IsUnique = Entity.IsVirtual ? false : constraints.Any(item => item.IsUnique);
                 bool IsIndexed = Entity.IsVirtual ? false : indexes.Any(item => item.IsIndexed);
@@ -42,13 +44,13 @@ namespace Blueprint41.Neo4j.Schema
                     actions.Add(Parent.NewApplyConstraintProperty(this, property, commands.ToArray()));
             }
 
-            List<string> propertiesWithIndexOrConstraint = entityIndexes.Select(item => item.Field).Union(entityConstraints.Select(item => item.Field)).Distinct().ToList();
+            List<string> propertiesWithIndexOrConstraint = entityIndexes.SelectMany(item => item.Field).Union(entityConstraints.SelectMany(item => item.Field)).Distinct().ToList();
             List<string> propertiesThatAreAllowedToHaveIndexOrConstraint = properties.Where(property => property.SystemReturnType is not null).Select(item => item.Name).ToList();
 
             foreach (string property in propertiesWithIndexOrConstraint.Where(item => !propertiesThatAreAllowedToHaveIndexOrConstraint.Contains(item)))
             {
-                IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field == property);
-                IEnumerable<IndexInfo> indexes = entityIndexes.Where(item => item.Field == property);
+                IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field.Count == 1 && item.Field[0] == property);
+                IEnumerable<IndexInfo> indexes = entityIndexes.Where(item => item.Field.Count == 1 && item.Field[0] == property);
 
                 bool IsUnique = Entity.IsVirtual ? false : constraints.Any(item => item.IsUnique);
                 bool IsIndexed = Entity.IsVirtual ? false : indexes.Any(item => item.IsIndexed);

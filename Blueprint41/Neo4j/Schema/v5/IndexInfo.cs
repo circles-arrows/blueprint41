@@ -6,11 +6,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blueprint41.Core;
 
-namespace Blueprint41.Neo4j.Schema.v4
+namespace Blueprint41.Neo4j.Schema.v5
 {
-    public class IndexInfo_v4: IndexInfo
+    public class IndexInfo_v5: IndexInfo
     {
-        internal IndexInfo_v4(RawRecord record) : base(record) { }
+        internal IndexInfo_v5(RawRecord record) : base(record) { }
 
         protected override void Initialize(RawRecord record)
         {
@@ -18,9 +18,9 @@ namespace Blueprint41.Neo4j.Schema.v4
             State = record.Values["state"].As<string>();
             Type = record.Values["type"].As<string>();
             IsIndexed = true;
-            isUnique = record.Values["uniqueness"].As<string>().ToLowerInvariant() == "unique";
-            Entity = record.Values["labelsOrTypes"].As<List<string>>().ToArray();
-            Field = record.Values["properties"].As<List<string>>().ToArray();
+            isUnique = record.Values["owningConstraint"].As<string>() is not null;
+            Entity = record.Values["labelsOrTypes"]?.As<List<object>>()?.Cast<string>()?.ToArray()!;
+            Field = record.Values["properties"]?.As<List<object>>()?.Cast<string>()?.ToArray()!;
         }
     }
 }

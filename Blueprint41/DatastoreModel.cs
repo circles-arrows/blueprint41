@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace Blueprint41
 {
-    public abstract class DatastoreModel : IRefactorGlobal
+    public abstract partial class DatastoreModel : IRefactorGlobal
     {
         protected DatastoreModel(PersistenceProvider persistence)
         {
@@ -160,6 +160,8 @@ namespace Blueprint41
 
         internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript, Predicate<UpgradeScript> predicate, bool standAloneScript)
         {
+            bool isVoidProvider = (PersistenceProvider.GetType() == typeof(Blueprint41.Neo4j.Persistence.Void.Neo4jPersistenceProvider));
+
 #pragma warning disable CS0618 // Type or member is obsolete
 
             if (executed && standAloneScript)
@@ -171,7 +173,7 @@ namespace Blueprint41
             foreach (UpgradeScript script in scripts.Where(item => predicate.Invoke(item)))
             {
                 bool scriptCommitted = false;
-                if (upgradeDatastore && PersistenceProvider.IsNeo4j)
+                if (upgradeDatastore && PersistenceProvider.IsNeo4j && !isVoidProvider)
                 {
                     using (Transaction.Begin(true))
                     {
@@ -240,8 +242,11 @@ namespace Blueprint41
 
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
-            Refactor.ApplyFullTextSearchIndexes(shouldRun);
+            if (!isVoidProvider)
+            {
+                bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
+                Refactor.ApplyFullTextSearchIndexes(shouldRun);
+            }
 
             executed = true;
         }

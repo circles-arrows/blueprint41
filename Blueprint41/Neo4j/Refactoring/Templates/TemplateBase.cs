@@ -324,7 +324,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
                 using (Transaction.Begin(true))
                 {
                     TSelf template = CreateInstance();
-                    Setup.Invoke(template);
+                    Setup?.Invoke(template);
 
                     RawResult result = template.Execute();
                     counters = result.Statistics();

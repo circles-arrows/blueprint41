@@ -27,6 +27,12 @@ namespace Blueprint41.Core
         bool HasRegisteredOnSaveHandlers { get; }
 
         /// <summary>
+        /// This event fires while calling the after save internal method
+        /// </summary>
+        event EventHandler<EntityEventArgs> OnAfterSave;
+        bool HasRegisteredOnAfterSaveHandlers { get; }
+
+        /// <summary>
         /// This event fires when a node is about to be loaded into memory
         /// </summary>
         event EventHandler<NodeEventArgs> OnNodeLoading;

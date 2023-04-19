@@ -817,6 +817,22 @@ namespace Blueprint41
             remove { onSave -= value; }
         }
 
+        internal void RaiseOnAfterSave(OGMImpl sender, Transaction trans)
+        {
+            EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnAfterSave, sender, trans);
+            if (!trans.FireEntityEvents)
+                return;
+
+            onAfterSave?.Invoke(sender, args);
+        }
+        bool IEntityEvents.HasRegisteredOnAfterSaveHandlers { get { return onAfterSave is not null; } }
+        private EventHandler<EntityEventArgs>? onAfterSave;
+        event EventHandler<EntityEventArgs> IEntityEvents.OnAfterSave
+        {
+            add { onAfterSave += value; }
+            remove { onAfterSave -= value; }
+        }
+
         internal void RaiseOnDelete(OGMImpl sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnDelete, sender, trans);

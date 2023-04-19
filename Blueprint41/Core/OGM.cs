@@ -18,6 +18,7 @@ namespace Blueprint41.Core
         void ValidateSave();
         void ValidateDelete();
 
+        PersistenceState OriginalPersistenceState { get; set; }
         PersistenceState PersistenceState { get; set; }
         Transaction? Transaction { get; set; }
 

@@ -359,7 +359,7 @@ namespace Blueprint41
 
                     foreach (var entity in Parent.GetSubclassesOrSelf())
                     {
-                        ApplyConstraintEntity applyConstraint = new ApplyConstraintEntity(Parent.Parent.GetSchema(), entity);
+                        ApplyConstraintEntity applyConstraint = Parent.Parent.GetSchema().NewApplyConstraintEntity(entity);
                         foreach (var action in applyConstraint.Actions.Where(c => c.Property == Name))
                         {
                             foreach (string query in action.ToCypher())
@@ -386,8 +386,16 @@ namespace Blueprint41
             if (!Parent.IsSubsclassOf(target) && !target.IsSubsclassOf(Parent))
                 throw new ArgumentException(string.Format("Target {0} is not a base-type or sub-type of {1}", target.Name, Parent.Name), "baseType");
 
-            // No changes in DB needed for this action!!!
-            // TODO: This is not true... If we move the property to a sub type, we should delete the content for the base types that do not inherit the sub-type
+            if (target.IsSubsclassOf(Parent))
+            {
+                foreach (var subClass in Parent.GetSubclasses())
+                {
+                    if (subClass == target)
+                        continue;
+
+                    subClass.Properties.Remove(Name);
+                }
+            }
 
             Parent.Properties.Remove(Name);
             target.Properties.Add(Name, this);

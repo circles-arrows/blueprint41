@@ -187,8 +187,8 @@ namespace Blueprint41.Neo4j.Schema
         protected virtual ConstraintInfo   NewConstraintInfo(RawRecord rawRecord)   => new ConstraintInfo(rawRecord);
         protected virtual IndexInfo        NewIndexInfo(RawRecord rawRecord)        => new IndexInfo(rawRecord);
 
-        protected virtual ApplyConstraintEntity   NewApplyConstraintEntity(Entity entity)                                                                              => new ApplyConstraintEntity(this, entity);
-        protected virtual ApplyFunctionalId       NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);
+        internal virtual ApplyConstraintEntity    NewApplyConstraintEntity(Entity entity)                                                                              => new ApplyConstraintEntity(this, entity);
+        internal virtual ApplyFunctionalId        NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);
         internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, params ApplyConstraintAction[] commands) => new ApplyConstraintProperty(parent, property, commands);
         internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, params ApplyConstraintAction[] commands)   => new ApplyConstraintProperty(parent, property, commands);
     }

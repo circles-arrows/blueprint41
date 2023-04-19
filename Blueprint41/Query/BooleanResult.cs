@@ -35,6 +35,10 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(left, Operator.NotEquals, right);
         }
+        public static BooleanResult operator !(BooleanResult field)
+        {
+            return new BooleanResult(field, t => t.FnNot, null, typeof(bool));
+        }
 
         public override bool Equals(object? obj)
         {

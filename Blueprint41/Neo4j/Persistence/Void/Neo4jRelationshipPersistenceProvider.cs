@@ -242,6 +242,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     item.SetData(node.Properties);
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
                     item.PersistenceState = PersistenceState.Loaded;
+                    item.OriginalPersistenceState = PersistenceState.Loaded;
                 }
 
                 if (item is null)
@@ -256,16 +257,20 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
                             return type;
                         });
-                        item = (OGM)Activator.CreateInstance(type)!;
+                        Transaction.Execute(() =>
+                        {
+                            item = (OGM)Activator.CreateInstance(type)!;
+                        }, EventOptions.SupressEvents);
                     }
                     else
                         item = new DynamicEntity(targetEntity, Parser.ShouldExecute);
 
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-                    item.SetData(node.Properties);
+                    item!.SetData(node.Properties);
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
                     item.SetKey(keyObject);
                     item.PersistenceState = PersistenceState.Loaded;
+                    item.OriginalPersistenceState = PersistenceState.Loaded;
                 }
             }
 
@@ -368,7 +373,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             RawResult createResult = trans.Run(create, parameters);
 
             if (updateResult.Statistics().PropertiesSet > 0 && createResult.Statistics().RelationshipsCreated > 0)
-                throw new InvalidOperationException(); // TODO: Make the error better...
+                throw new InvalidOperationException($"Unable to create relation '{relationship.Neo4JRelationshipType}' between {inEntity.Label.Name}('{inItem.GetKey()}') and {outEntity.Label.Name}('{outItem.GetKey()}')");
         }
 
         public override void Remove(Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment, bool timedependent)

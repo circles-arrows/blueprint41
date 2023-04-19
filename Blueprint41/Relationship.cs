@@ -285,7 +285,13 @@ namespace Blueprint41
             if (this.IsTimeDependent)
                 throw new NotImplementedException("Merging time dependent relationships is not implemented because I found it annoying to program... You add it yourself if you really want it :oP");
 
-            //TODO: implement...
+            Parent.Templates.MergeRelationship(template =>
+            {
+                template.From = this;
+                template.To = target;
+            }).RunBatched();
+
+            Parent.Relations.Remove(Name);
         }
         void IRefactorRelationship.Deprecate()
         {

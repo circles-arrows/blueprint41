@@ -189,6 +189,16 @@ namespace Blueprint41
             {
                 collection.AfterFlush();
             }
+
+            foreach (OGMImpl entity in entities)
+            {
+                if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
+                {
+                    entity.GetEntity().RaiseOnAfterSave((OGMImpl)entity, this);
+                    foreach (EntityEventArgs item in entity.EventHistory)
+                        item.Flush();
+                }
+            }
         }
         public static void Flush()
         {

@@ -27,21 +27,21 @@ namespace Blueprint41.Neo4j.Schema
 
             if (uniqueMatch.Success)
             {
-                Entity = uniqueMatch.Groups["entity"].Value;
-                Field = uniqueMatch.Groups["field"].Value;
+                Entity = new string[] { uniqueMatch.Groups["entity"].Value };
+                Field = new string[] { uniqueMatch.Groups["field"].Value };
                 IsUnique = true;
             }
             if (notnullMatch.Success)
             {
-                Entity = notnullMatch.Groups["entity"].Value;
-                Field = notnullMatch.Groups["field"].Value;
+                Entity = new string[] { notnullMatch.Groups["entity"].Value };
+                Field = new string[] { notnullMatch.Groups["field"].Value };
                 IsMandatory = true;
             }
         }
 
         public string Name { get; protected set; } = null!;
-        public string Entity { get; protected set; } = null!;
-        public string Field { get; protected set; } = null!;
+        public IReadOnlyList<string> Entity { get; protected set; } = null!;
+        public IReadOnlyList<string> Field { get; protected set; } = null!;
 
         public bool IsUnique { get; protected set; }
         public bool IsMandatory { get; protected set; }
@@ -98,7 +98,7 @@ namespace Blueprint41.Neo4j.Schema
             if (IsMandatory)
                 desc = "mandatory";
 
-            return $"{Entity}.{Field} -> {desc}";
+            return $"{Entity}.{string.Join("/", Field)} -> {desc}";
         }
     }
 }

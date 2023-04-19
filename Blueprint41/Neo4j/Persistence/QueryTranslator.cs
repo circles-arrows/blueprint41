@@ -534,6 +534,7 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnToFloat                   => "toFloat({base})";
         public virtual string FnToString                  => "toString({base})";
         public virtual string FnExists                    => "exists({base})";
+        public virtual string FnPatternExists             => "exists({0})";
         public virtual string FnNot                       => "NOT ({base})";
         public virtual string FnCollect                   => "collect({base})";
         public virtual string FnCollectDistinct           => "collect(distinct {base})";

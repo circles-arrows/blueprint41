@@ -10,7 +10,7 @@ using Blueprint41.Log;
 using Blueprint41.Neo4j.Model;
 using Blueprint41.Neo4j.Schema;
 
-namespace Blueprint41.Neo4j.Persistence.Driver.v4
+namespace Blueprint41.Neo4j.Persistence.Driver.v5
 {
     public partial class Neo4jPersistenceProvider : Void.Neo4jPersistenceProvider
     {

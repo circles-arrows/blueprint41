@@ -16,7 +16,7 @@ namespace Blueprint41.Neo4j.Schema
         }
         protected virtual void Initialize(RawRecord record)
         {
-            Description = record.Values["description"].As<string>();
+            Name = record.Values["description"].As<string>();
             State = record.Values["state"].As<string>();
             Type = record.Values["type"].As<string>();
             IsIndexed = true;
@@ -33,20 +33,20 @@ namespace Blueprint41.Neo4j.Schema
                     throw new NotSupportedException("There should be no unknown types of indexes");
             }
 
-            Match results = index.Match(Description);
+            Match results = index.Match(Name);
             if (!results.Success)
                 throw new NotSupportedException("The regular expression should always produce a match...");
 
-            Entity = results.Groups["entity"].Value;
-            Field = results.Groups["field"].Value;
+            Entity = new string[] { results.Groups["entity"].Value };
+            Field = new string[] { results.Groups["field"].Value };
         }
 
-        public string Description { get; protected set; } = null!;
+        public string Name { get; protected set; } = null!;
         public string State { get; protected set; } = null!;
         public string Type { get; protected set; } = null!;
 
-        public string Entity { get; protected set; } = null!;
-        public string Field { get; protected set; } = null!;
+        public IReadOnlyList<string> Entity { get; protected set; } = null!;
+        public IReadOnlyList<string> Field { get; protected set; } = null!;
 
         [Obsolete("Your code should prefer the use of Constraint.IsUnique to check if a field is unique.", true)]
         public bool IsUnique { get { return isUnique; } }

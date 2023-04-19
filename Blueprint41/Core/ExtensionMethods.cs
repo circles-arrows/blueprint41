@@ -425,7 +425,7 @@ namespace System
             FieldInfo field = typeof(Task).GetField("m_action", BindingFlags.Instance | BindingFlags.NonPublic);
 
             ParameterExpression parameter = Expression.Parameter(typeof(Task), "task");
-            Expression accessField = Expression.Field(parameter, field);
+            Expression accessField = Expression.Convert(Expression.Field(parameter, field), typeof(Delegate));
 
             return Expression.Lambda<Func<Task, Delegate?>>(accessField, parameter).Compile();
 

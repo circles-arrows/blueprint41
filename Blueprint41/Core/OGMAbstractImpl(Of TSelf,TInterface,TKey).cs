@@ -68,6 +68,7 @@ namespace Blueprint41.Core
             {
                 ogm.SetData(properties);
                 instance.PersistenceState = (mappingMode == NodeMapping.AsWritableEntity) ? PersistenceState.Loaded : PersistenceState.OutOfScope;
+                instance.OriginalPersistenceState = instance.PersistenceState;
             }
 
             return instance;

@@ -48,7 +48,7 @@ namespace Blueprint41.Query
         {
             string fld = fieldName.Invoke((TResult)this.Alias!);
 
-            if (ascending)
+            if (!ascending)
                 return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnApocCollSortNodes, new[] { new Literal(fld) });
             else
                 return ResultHelper.Of<TList>().NewAliasResult(this, t => t.FnApocCollSortNodes, new[] { new Literal(string.Concat("^",fld)) });

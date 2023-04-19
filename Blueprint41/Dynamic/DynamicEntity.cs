@@ -60,8 +60,7 @@ namespace Blueprint41.Dynamic
                     if (!TryGetMember(init.Key, out member))
                         throw new ArgumentException(string.Format("The property '{0}' is not contained within entity '{1}'.", init.Key, entity.Name));
 
-                    EntityCollection<DynamicEntity>? collection = member as EntityCollection<DynamicEntity>;
-                    if (collection is null)
+                    if (member is not EntityCollection<DynamicEntity> collection)
                         throw new ArgumentException(string.Format("The property '{0}' is not contained within entity '{1}'.", init.Key, entity.Name));
 
                     foreach (DynamicEntity item in input)
@@ -294,8 +293,7 @@ namespace Blueprint41.Dynamic
                         }
                     case PropertyType.Collection:
                         {
-                            object? tmp;
-                            TryGetMember(name, out tmp);
+                            TryGetMember(name, out object? tmp);
                             EntityCollectionBase<DynamicEntity>? collection = tmp as EntityCollectionBase<DynamicEntity>;
                             // TODO: add nice error for tmp not being a EntityCollectionBase<DynamicEntity>
 
@@ -382,7 +380,6 @@ namespace Blueprint41.Dynamic
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
             object? key = GetKey();
-            //TODO:: Validation here
             foreach (Entity inherited in DynamicEntityType.GetBaseTypesAndSelf())
             {
                 foreach (Property attr in inherited.Properties)
@@ -415,7 +412,6 @@ namespace Blueprint41.Dynamic
 
         void OGM.ValidateDelete()
         {
-            //TODO:: Validation here
             object? key = GetKey();
             foreach (var relationship in DynamicEntityType.Parent.Relations)
             {
@@ -694,7 +690,20 @@ namespace Blueprint41.Dynamic
             }
         }
 
+        public PersistenceState OriginalPersistenceState
+        {
+            get
+            {
+                return ((OGM)this).OriginalPersistenceState;
+            }
+            internal set
+            {
+                ((OGM)this).OriginalPersistenceState = value;
+            }
+        }
+
         PersistenceState OGM.PersistenceState { get; set; }
+        PersistenceState OGM.OriginalPersistenceState { get; set; }
 
         public Transaction? DbTransaction
         {

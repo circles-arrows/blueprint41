@@ -52,8 +52,28 @@ namespace Blueprint41.Core
         protected abstract OGMImpl SenderInternalBridge { get; set; }
         public OGM Sender { get { return SenderInternalBridge; } }
 
-        public bool IsInsert { get { return Sender?.PersistenceState == PersistenceState.NewAndChanged; } }
-        public bool IsUpdate { get { return Sender?.PersistenceState == PersistenceState.LoadedAndChanged; } }
+        public bool IsInsert 
+        { 
+            get 
+            {
+                if (Sender?.PersistenceState == PersistenceState.NewAndChanged)
+                    return true;
+                else if (Sender?.PersistenceState == PersistenceState.Persisted && Sender?.OriginalPersistenceState == PersistenceState.New)
+                    return true;
+                return false;
+            } 
+        }
+        public bool IsUpdate
+        {
+            get
+            {
+                if (Sender?.PersistenceState == PersistenceState.LoadedAndChanged)
+                    return true;
+                else if (Sender?.PersistenceState == PersistenceState.Persisted && Sender?.OriginalPersistenceState == PersistenceState.Loaded)
+                    return true;
+                return false;
+            }
+        }
         public bool IsDelete { get { return Sender?.PersistenceState == PersistenceState.Delete || Sender?.PersistenceState == PersistenceState.ForceDelete; } }
 
         public Entity Entity { get; protected set; }
@@ -327,6 +347,7 @@ namespace Blueprint41.Core
         OnNew,
         OnPropertyChange,
         OnSave,
+        OnAfterSave,
         OnDelete,
         OnBegin,
         OnCommit,
