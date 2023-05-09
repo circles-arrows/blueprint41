@@ -1,0 +1,12 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="SetCreationDateBase" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#
+
+    Log("	executing {0} -> set creation date", this.GetType().Name);
+
+#>
+MATCH ()-[r]->() WHERE r.CreationDate IS NULL WITH r LIMIT 10000 SET r.CreationDate = ID(r)

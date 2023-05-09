@@ -195,6 +195,38 @@
       <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\CopyProperty.tt">
+      <LastGenOutput>CopyProperty.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\MergeProperty.tt">
+      <LastGenOutput>MergeProperty.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\RefactorTemplates.tt">
+      <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\RemoveProperty.tt">
+      <LastGenOutput>RemoveProperty.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\RenameProperty.tt">
+      <LastGenOutput>RenameProperty.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\SetCreationDate.tt">
+      <LastGenOutput>SetCreationDate.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt">
+      <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\SetRelationshipPropertyValue.tt">
+      <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
     <None Update="Query\Result.Partial.tt">
       <LastGenOutput>Result.Partial.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -371,6 +403,46 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\CopyProperty.cs">
+      <DependentUpon>CopyProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\MergeProperty.cs">
+      <DependentUpon>MergeProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\RefactorTemplates.cs">
+      <DependentUpon>RefactorTemplates.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\RemoveProperty.cs">
+      <DependentUpon>RemoveProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\RenameProperty.cs">
+      <DependentUpon>RenameProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\SetCreationDate.cs">
+      <DependentUpon>SetCreationDate.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.cs">
+      <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\SetRelationshipPropertyValue.cs">
+      <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Query\ListResult.Partial.cs">
       <DesignTime>True</DesignTime>
