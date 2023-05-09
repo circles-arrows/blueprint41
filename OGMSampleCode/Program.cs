@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Blueprint41;
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence;
+using neo4j = Blueprint41.Neo4j.Persistence.Void;
+
 using Domain.Data.Manipulation;
 using Domain.Data.Query;
 
@@ -15,8 +16,7 @@ namespace OGMSampleCode
     {
         static void Main(string[] args)
         {
-            PersistenceProvider.CurrentPersistenceProvider = new Neo4JPersistenceProvider($"bolt://localhost:7687", $"neo", $"neo");
-
+            PersistenceProvider.CurrentPersistenceProvider = new neo4j.Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo", $"neo");
 
             // The definition of what you can store in the graph can be found in the "Datastore" project
             // The type-safe objects you can program against to do CRUD operations can be found in the "Datastore.Generated" project

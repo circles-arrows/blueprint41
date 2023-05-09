@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IPurchaseOrderHeaderOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string RevisionNumber { get; }
 		string Status { get; }
 		System.DateTime OrderDate { get; }
@@ -22,95 +22,82 @@ namespace Domain.Data.Manipulation
 		double TotalDue { get; }
 		Vendor Vendor { get; }
 		ShipMethod ShipMethod { get; }
-    }
+	}
 
 	public partial class PurchaseOrderHeader : OGM<PurchaseOrderHeader, PurchaseOrderHeader.PurchaseOrderHeaderData, System.String>, ISchemaBase, INeo4jBase, IPurchaseOrderHeaderOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static PurchaseOrderHeader()
-        {
-            Register.Types();
-        }
+		static PurchaseOrderHeader()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, PurchaseOrderHeader> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, PurchaseOrderHeader> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.PurchaseOrderHeaderAlias, IWhereQuery> query)
-        {
-            q.PurchaseOrderHeaderAlias alias;
+		{
+			q.PurchaseOrderHeaderAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.PurchaseOrderHeader.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.PurchaseOrderHeader.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"PurchaseOrderHeader => RevisionNumber : {this.RevisionNumber}, Status : {this.Status}, OrderDate : {this.OrderDate}, ShipDate : {this.ShipDate}, SubTotal : {this.SubTotal}, TaxAmt : {this.TaxAmt}, Freight : {this.Freight}, TotalDue : {this.TotalDue}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"PurchaseOrderHeader => RevisionNumber : {this.RevisionNumber}, Status : {this.Status}, OrderDate : {this.OrderDate}, ShipDate : {this.ShipDate}, SubTotal : {this.SubTotal}, TaxAmt : {this.TaxAmt}, Freight : {this.Freight}, TotalDue : {this.TotalDue}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new PurchaseOrderHeaderData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new PurchaseOrderHeaderData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.RevisionNumber == null)
+			if (InnerData.RevisionNumber is null)
 				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the RevisionNumber cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Status == null)
+			if (InnerData.Status is null)
 				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the Status cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.OrderDate == null)
-				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the OrderDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ShipDate == null)
-				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the ShipDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.SubTotal == null)
-				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the SubTotal cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.TaxAmt == null)
-				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the TaxAmt cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Freight == null)
+			if (InnerData.Freight is null)
 				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the Freight cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.TotalDue == null)
-				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the TotalDue cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save PurchaseOrderHeader with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -124,12 +111,12 @@ namespace Domain.Data.Manipulation
 		public class PurchaseOrderHeaderData : Data<System.String>
 		{
 			public PurchaseOrderHeaderData()
-            {
+			{
 
-            }
+			}
 
-            public PurchaseOrderHeaderData(PurchaseOrderHeaderData data)
-            {
+			public PurchaseOrderHeaderData(PurchaseOrderHeaderData data)
+			{
 				RevisionNumber = data.RevisionNumber;
 				Status = data.Status;
 				OrderDate = data.OrderDate;
@@ -142,10 +129,10 @@ namespace Domain.Data.Manipulation
 				ShipMethod = data.ShipMethod;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -285,240 +272,283 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static PurchaseOrderHeaderMembers members = null;
-        public static PurchaseOrderHeaderMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(PurchaseOrderHeader))
-                    {
-                        if (members == null)
-                            members = new PurchaseOrderHeaderMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class PurchaseOrderHeaderMembers
-        {
-            internal PurchaseOrderHeaderMembers() { }
+		private static PurchaseOrderHeaderMembers members = null;
+		public static PurchaseOrderHeaderMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(PurchaseOrderHeader))
+					{
+						if (members is null)
+							members = new PurchaseOrderHeaderMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class PurchaseOrderHeaderMembers
+		{
+			internal PurchaseOrderHeaderMembers() { }
 
 			#region Members for interface IPurchaseOrderHeader
 
-            public Property RevisionNumber { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["RevisionNumber"];
-            public Property Status { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["Status"];
-            public Property OrderDate { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["OrderDate"];
-            public Property ShipDate { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["ShipDate"];
-            public Property SubTotal { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["SubTotal"];
-            public Property TaxAmt { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["TaxAmt"];
-            public Property Freight { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["Freight"];
-            public Property TotalDue { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["TotalDue"];
-            public Property Vendor { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["Vendor"];
-            public Property ShipMethod { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["ShipMethod"];
+			public Property RevisionNumber { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["RevisionNumber"];
+			public Property Status { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["Status"];
+			public Property OrderDate { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["OrderDate"];
+			public Property ShipDate { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["ShipDate"];
+			public Property SubTotal { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["SubTotal"];
+			public Property TaxAmt { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["TaxAmt"];
+			public Property Freight { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["Freight"];
+			public Property TotalDue { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["TotalDue"];
+			public Property Vendor { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["Vendor"];
+			public Property ShipMethod { get; } = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"].Properties["ShipMethod"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static PurchaseOrderHeaderFullTextMembers fullTextMembers = null;
-        public static PurchaseOrderHeaderFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(PurchaseOrderHeader))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new PurchaseOrderHeaderFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static PurchaseOrderHeaderFullTextMembers fullTextMembers = null;
+		public static PurchaseOrderHeaderFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(PurchaseOrderHeader))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new PurchaseOrderHeaderFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class PurchaseOrderHeaderFullTextMembers
-        {
-            internal PurchaseOrderHeaderFullTextMembers() { }
+		public class PurchaseOrderHeaderFullTextMembers
+		{
+			internal PurchaseOrderHeaderFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(PurchaseOrderHeader))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(PurchaseOrderHeader))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["PurchaseOrderHeader"];
+				}
+			}
+			return entity;
+		}
 
 		private static PurchaseOrderHeaderEvents events = null;
-        public static PurchaseOrderHeaderEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(PurchaseOrderHeader))
-                    {
-                        if (events == null)
-                            events = new PurchaseOrderHeaderEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class PurchaseOrderHeaderEvents
-        {
+		public static PurchaseOrderHeaderEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(PurchaseOrderHeader))
+					{
+						if (events is null)
+							events = new PurchaseOrderHeaderEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class PurchaseOrderHeaderEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<PurchaseOrderHeader, EntityEventArgs> onNew;
-            public event EventHandler<PurchaseOrderHeader, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<PurchaseOrderHeader, EntityEventArgs> onNew;
+			public event EventHandler<PurchaseOrderHeader, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<PurchaseOrderHeader, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((PurchaseOrderHeader)sender, args);
-            }
+			{
+				EventHandler<PurchaseOrderHeader, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((PurchaseOrderHeader)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<PurchaseOrderHeader, EntityEventArgs> onDelete;
-            public event EventHandler<PurchaseOrderHeader, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<PurchaseOrderHeader, EntityEventArgs> onDelete;
+			public event EventHandler<PurchaseOrderHeader, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<PurchaseOrderHeader, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((PurchaseOrderHeader)sender, args);
-            }
+			{
+				EventHandler<PurchaseOrderHeader, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((PurchaseOrderHeader)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<PurchaseOrderHeader, EntityEventArgs> onSave;
-            public event EventHandler<PurchaseOrderHeader, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<PurchaseOrderHeader, EntityEventArgs> onSave;
+			public event EventHandler<PurchaseOrderHeader, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<PurchaseOrderHeader, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((PurchaseOrderHeader)sender, args);
-            }
+			{
+				EventHandler<PurchaseOrderHeader, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((PurchaseOrderHeader)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<PurchaseOrderHeader, EntityEventArgs> onAfterSave;
+			public event EventHandler<PurchaseOrderHeader, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<PurchaseOrderHeader, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((PurchaseOrderHeader)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnRevisionNumber
 
@@ -545,7 +575,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onRevisionNumber -= value;
-							if (onRevisionNumber == null && onRevisionNumberIsRegistered)
+							if (onRevisionNumber is null && onRevisionNumberIsRegistered)
 							{
 								Members.RevisionNumber.Events.OnChange -= onRevisionNumberProxy;
 								onRevisionNumberIsRegistered = false;
@@ -553,11 +583,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onRevisionNumberProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onRevisionNumber;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -588,7 +618,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStatus -= value;
-							if (onStatus == null && onStatusIsRegistered)
+							if (onStatus is null && onStatusIsRegistered)
 							{
 								Members.Status.Events.OnChange -= onStatusProxy;
 								onStatusIsRegistered = false;
@@ -596,11 +626,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStatusProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onStatus;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -631,7 +661,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onOrderDate -= value;
-							if (onOrderDate == null && onOrderDateIsRegistered)
+							if (onOrderDate is null && onOrderDateIsRegistered)
 							{
 								Members.OrderDate.Events.OnChange -= onOrderDateProxy;
 								onOrderDateIsRegistered = false;
@@ -639,11 +669,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onOrderDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onOrderDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -674,7 +704,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onShipDate -= value;
-							if (onShipDate == null && onShipDateIsRegistered)
+							if (onShipDate is null && onShipDateIsRegistered)
 							{
 								Members.ShipDate.Events.OnChange -= onShipDateProxy;
 								onShipDateIsRegistered = false;
@@ -682,11 +712,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onShipDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onShipDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -717,7 +747,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSubTotal -= value;
-							if (onSubTotal == null && onSubTotalIsRegistered)
+							if (onSubTotal is null && onSubTotalIsRegistered)
 							{
 								Members.SubTotal.Events.OnChange -= onSubTotalProxy;
 								onSubTotalIsRegistered = false;
@@ -725,11 +755,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSubTotalProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onSubTotal;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -760,7 +790,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onTaxAmt -= value;
-							if (onTaxAmt == null && onTaxAmtIsRegistered)
+							if (onTaxAmt is null && onTaxAmtIsRegistered)
 							{
 								Members.TaxAmt.Events.OnChange -= onTaxAmtProxy;
 								onTaxAmtIsRegistered = false;
@@ -768,11 +798,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTaxAmtProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onTaxAmt;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -803,7 +833,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onFreight -= value;
-							if (onFreight == null && onFreightIsRegistered)
+							if (onFreight is null && onFreightIsRegistered)
 							{
 								Members.Freight.Events.OnChange -= onFreightProxy;
 								onFreightIsRegistered = false;
@@ -811,11 +841,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onFreightProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onFreight;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -846,7 +876,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onTotalDue -= value;
-							if (onTotalDue == null && onTotalDueIsRegistered)
+							if (onTotalDue is null && onTotalDueIsRegistered)
 							{
 								Members.TotalDue.Events.OnChange -= onTotalDueProxy;
 								onTotalDueIsRegistered = false;
@@ -854,11 +884,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTotalDueProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onTotalDue;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -889,7 +919,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onVendor -= value;
-							if (onVendor == null && onVendorIsRegistered)
+							if (onVendor is null && onVendorIsRegistered)
 							{
 								Members.Vendor.Events.OnChange -= onVendorProxy;
 								onVendorIsRegistered = false;
@@ -897,11 +927,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onVendorProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onVendor;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -932,7 +962,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onShipMethod -= value;
-							if (onShipMethod == null && onShipMethodIsRegistered)
+							if (onShipMethod is null && onShipMethodIsRegistered)
 							{
 								Members.ShipMethod.Events.OnChange -= onShipMethodProxy;
 								onShipMethodIsRegistered = false;
@@ -940,11 +970,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onShipMethodProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onShipMethod;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -975,7 +1005,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -983,11 +1013,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -1018,7 +1048,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -1026,11 +1056,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<PurchaseOrderHeader, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((PurchaseOrderHeader)sender, args);
 				}
 
@@ -1039,9 +1069,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IPurchaseOrderHeaderOriginalData
 

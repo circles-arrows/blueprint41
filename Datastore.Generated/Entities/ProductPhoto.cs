@@ -11,84 +11,81 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IProductPhotoOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string ThumbNailPhoto { get; }
 		string ThumbNailPhotoFileName { get; }
 		string LargePhoto { get; }
 		string LargePhotoFileName { get; }
-    }
+	}
 
 	public partial class ProductPhoto : OGM<ProductPhoto, ProductPhoto.ProductPhotoData, System.String>, ISchemaBase, INeo4jBase, IProductPhotoOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static ProductPhoto()
-        {
-            Register.Types();
-        }
+		static ProductPhoto()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, ProductPhoto> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, ProductPhoto> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.ProductPhotoAlias, IWhereQuery> query)
-        {
-            q.ProductPhotoAlias alias;
+		{
+			q.ProductPhotoAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.ProductPhoto.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.ProductPhoto.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"ProductPhoto => ThumbNailPhoto : {this.ThumbNailPhoto?.ToString() ?? "null"}, ThumbNailPhotoFileName : {this.ThumbNailPhotoFileName?.ToString() ?? "null"}, LargePhoto : {this.LargePhoto?.ToString() ?? "null"}, LargePhotoFileName : {this.LargePhotoFileName?.ToString() ?? "null"}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"ProductPhoto => ThumbNailPhoto : {this.ThumbNailPhoto?.ToString() ?? "null"}, ThumbNailPhotoFileName : {this.ThumbNailPhotoFileName?.ToString() ?? "null"}, LargePhoto : {this.LargePhoto?.ToString() ?? "null"}, LargePhotoFileName : {this.LargePhotoFileName?.ToString() ?? "null"}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new ProductPhotoData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new ProductPhotoData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save ProductPhoto with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -102,22 +99,22 @@ namespace Domain.Data.Manipulation
 		public class ProductPhotoData : Data<System.String>
 		{
 			public ProductPhotoData()
-            {
+			{
 
-            }
+			}
 
-            public ProductPhotoData(ProductPhotoData data)
-            {
+			public ProductPhotoData(ProductPhotoData data)
+			{
 				ThumbNailPhoto = data.ThumbNailPhoto;
 				ThumbNailPhotoFileName = data.ThumbNailPhotoFileName;
 				LargePhoto = data.LargePhoto;
 				LargePhotoFileName = data.LargePhotoFileName;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -215,234 +212,277 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static ProductPhotoMembers members = null;
-        public static ProductPhotoMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(ProductPhoto))
-                    {
-                        if (members == null)
-                            members = new ProductPhotoMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class ProductPhotoMembers
-        {
-            internal ProductPhotoMembers() { }
+		private static ProductPhotoMembers members = null;
+		public static ProductPhotoMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(ProductPhoto))
+					{
+						if (members is null)
+							members = new ProductPhotoMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class ProductPhotoMembers
+		{
+			internal ProductPhotoMembers() { }
 
 			#region Members for interface IProductPhoto
 
-            public Property ThumbNailPhoto { get; } = Datastore.AdventureWorks.Model.Entities["ProductPhoto"].Properties["ThumbNailPhoto"];
-            public Property ThumbNailPhotoFileName { get; } = Datastore.AdventureWorks.Model.Entities["ProductPhoto"].Properties["ThumbNailPhotoFileName"];
-            public Property LargePhoto { get; } = Datastore.AdventureWorks.Model.Entities["ProductPhoto"].Properties["LargePhoto"];
-            public Property LargePhotoFileName { get; } = Datastore.AdventureWorks.Model.Entities["ProductPhoto"].Properties["LargePhotoFileName"];
+			public Property ThumbNailPhoto { get; } = Datastore.AdventureWorks.Model.Entities["ProductPhoto"].Properties["ThumbNailPhoto"];
+			public Property ThumbNailPhotoFileName { get; } = Datastore.AdventureWorks.Model.Entities["ProductPhoto"].Properties["ThumbNailPhotoFileName"];
+			public Property LargePhoto { get; } = Datastore.AdventureWorks.Model.Entities["ProductPhoto"].Properties["LargePhoto"];
+			public Property LargePhotoFileName { get; } = Datastore.AdventureWorks.Model.Entities["ProductPhoto"].Properties["LargePhotoFileName"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static ProductPhotoFullTextMembers fullTextMembers = null;
-        public static ProductPhotoFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(ProductPhoto))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new ProductPhotoFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static ProductPhotoFullTextMembers fullTextMembers = null;
+		public static ProductPhotoFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(ProductPhoto))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new ProductPhotoFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class ProductPhotoFullTextMembers
-        {
-            internal ProductPhotoFullTextMembers() { }
+		public class ProductPhotoFullTextMembers
+		{
+			internal ProductPhotoFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(ProductPhoto))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["ProductPhoto"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(ProductPhoto))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["ProductPhoto"];
+				}
+			}
+			return entity;
+		}
 
 		private static ProductPhotoEvents events = null;
-        public static ProductPhotoEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(ProductPhoto))
-                    {
-                        if (events == null)
-                            events = new ProductPhotoEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class ProductPhotoEvents
-        {
+		public static ProductPhotoEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(ProductPhoto))
+					{
+						if (events is null)
+							events = new ProductPhotoEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class ProductPhotoEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<ProductPhoto, EntityEventArgs> onNew;
-            public event EventHandler<ProductPhoto, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductPhoto, EntityEventArgs> onNew;
+			public event EventHandler<ProductPhoto, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductPhoto, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((ProductPhoto)sender, args);
-            }
+			{
+				EventHandler<ProductPhoto, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((ProductPhoto)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<ProductPhoto, EntityEventArgs> onDelete;
-            public event EventHandler<ProductPhoto, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductPhoto, EntityEventArgs> onDelete;
+			public event EventHandler<ProductPhoto, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductPhoto, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((ProductPhoto)sender, args);
-            }
+			{
+				EventHandler<ProductPhoto, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((ProductPhoto)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<ProductPhoto, EntityEventArgs> onSave;
-            public event EventHandler<ProductPhoto, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductPhoto, EntityEventArgs> onSave;
+			public event EventHandler<ProductPhoto, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductPhoto, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((ProductPhoto)sender, args);
-            }
+			{
+				EventHandler<ProductPhoto, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((ProductPhoto)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<ProductPhoto, EntityEventArgs> onAfterSave;
+			public event EventHandler<ProductPhoto, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<ProductPhoto, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((ProductPhoto)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnThumbNailPhoto
 
@@ -469,7 +509,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onThumbNailPhoto -= value;
-							if (onThumbNailPhoto == null && onThumbNailPhotoIsRegistered)
+							if (onThumbNailPhoto is null && onThumbNailPhotoIsRegistered)
 							{
 								Members.ThumbNailPhoto.Events.OnChange -= onThumbNailPhotoProxy;
 								onThumbNailPhotoIsRegistered = false;
@@ -477,11 +517,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onThumbNailPhotoProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductPhoto, PropertyEventArgs> handler = onThumbNailPhoto;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductPhoto)sender, args);
 				}
 
@@ -512,7 +552,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onThumbNailPhotoFileName -= value;
-							if (onThumbNailPhotoFileName == null && onThumbNailPhotoFileNameIsRegistered)
+							if (onThumbNailPhotoFileName is null && onThumbNailPhotoFileNameIsRegistered)
 							{
 								Members.ThumbNailPhotoFileName.Events.OnChange -= onThumbNailPhotoFileNameProxy;
 								onThumbNailPhotoFileNameIsRegistered = false;
@@ -520,11 +560,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onThumbNailPhotoFileNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductPhoto, PropertyEventArgs> handler = onThumbNailPhotoFileName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductPhoto)sender, args);
 				}
 
@@ -555,7 +595,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onLargePhoto -= value;
-							if (onLargePhoto == null && onLargePhotoIsRegistered)
+							if (onLargePhoto is null && onLargePhotoIsRegistered)
 							{
 								Members.LargePhoto.Events.OnChange -= onLargePhotoProxy;
 								onLargePhotoIsRegistered = false;
@@ -563,11 +603,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onLargePhotoProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductPhoto, PropertyEventArgs> handler = onLargePhoto;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductPhoto)sender, args);
 				}
 
@@ -598,7 +638,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onLargePhotoFileName -= value;
-							if (onLargePhotoFileName == null && onLargePhotoFileNameIsRegistered)
+							if (onLargePhotoFileName is null && onLargePhotoFileNameIsRegistered)
 							{
 								Members.LargePhotoFileName.Events.OnChange -= onLargePhotoFileNameProxy;
 								onLargePhotoFileNameIsRegistered = false;
@@ -606,11 +646,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onLargePhotoFileNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductPhoto, PropertyEventArgs> handler = onLargePhotoFileName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductPhoto)sender, args);
 				}
 
@@ -641,7 +681,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -649,11 +689,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductPhoto, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductPhoto)sender, args);
 				}
 
@@ -684,7 +724,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -692,11 +732,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductPhoto, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductPhoto)sender, args);
 				}
 
@@ -705,9 +745,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IProductPhotoOriginalData
 

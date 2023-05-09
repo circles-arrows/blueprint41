@@ -1,0 +1,14 @@
+﻿<#@ template language="C#"  visibility="internal" inherits="MergePropertyBase" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#
+
+    Log("	executing {0} -> Merge property from {0} to {1}", this.GetType().Name, From.Name, To.Name);
+#>
+MATCH (node:<#= ConcreteParent.Label.Name #>) WHERE node.<#= From.Name #> IS NOT NULL
+WITH node LIMIT 10000 
+SET node.<#= To.Name #> = node.<#= From.Name #>
+SET node.<#= From.Name #> = NULL

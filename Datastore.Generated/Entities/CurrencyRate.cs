@@ -11,96 +11,91 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface ICurrencyRateOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		System.DateTime CurrencyRateDate { get; }
 		string FromCurrencyCode { get; }
 		string ToCurrencyCode { get; }
 		string AverageRate { get; }
 		string EndOfDayRate { get; }
 		Currency Currency { get; }
-    }
+	}
 
 	public partial class CurrencyRate : OGM<CurrencyRate, CurrencyRate.CurrencyRateData, System.String>, ISchemaBase, INeo4jBase, ICurrencyRateOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static CurrencyRate()
-        {
-            Register.Types();
-        }
+		static CurrencyRate()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, CurrencyRate> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, CurrencyRate> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.CurrencyRateAlias, IWhereQuery> query)
-        {
-            q.CurrencyRateAlias alias;
+		{
+			q.CurrencyRateAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.CurrencyRate.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.CurrencyRate.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"CurrencyRate => CurrencyRateDate : {this.CurrencyRateDate}, FromCurrencyCode : {this.FromCurrencyCode}, ToCurrencyCode : {this.ToCurrencyCode}, AverageRate : {this.AverageRate}, EndOfDayRate : {this.EndOfDayRate}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"CurrencyRate => CurrencyRateDate : {this.CurrencyRateDate}, FromCurrencyCode : {this.FromCurrencyCode}, ToCurrencyCode : {this.ToCurrencyCode}, AverageRate : {this.AverageRate}, EndOfDayRate : {this.EndOfDayRate}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new CurrencyRateData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new CurrencyRateData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.CurrencyRateDate == null)
-				throw new PersistenceException(string.Format("Cannot save CurrencyRate with key '{0}' because the CurrencyRateDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.FromCurrencyCode == null)
+			if (InnerData.FromCurrencyCode is null)
 				throw new PersistenceException(string.Format("Cannot save CurrencyRate with key '{0}' because the FromCurrencyCode cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ToCurrencyCode == null)
+			if (InnerData.ToCurrencyCode is null)
 				throw new PersistenceException(string.Format("Cannot save CurrencyRate with key '{0}' because the ToCurrencyCode cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.AverageRate == null)
+			if (InnerData.AverageRate is null)
 				throw new PersistenceException(string.Format("Cannot save CurrencyRate with key '{0}' because the AverageRate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.EndOfDayRate == null)
+			if (InnerData.EndOfDayRate is null)
 				throw new PersistenceException(string.Format("Cannot save CurrencyRate with key '{0}' because the EndOfDayRate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save CurrencyRate with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -114,12 +109,12 @@ namespace Domain.Data.Manipulation
 		public class CurrencyRateData : Data<System.String>
 		{
 			public CurrencyRateData()
-            {
+			{
 
-            }
+			}
 
-            public CurrencyRateData(CurrencyRateData data)
-            {
+			public CurrencyRateData(CurrencyRateData data)
+			{
 				CurrencyRateDate = data.CurrencyRateDate;
 				FromCurrencyCode = data.FromCurrencyCode;
 				ToCurrencyCode = data.ToCurrencyCode;
@@ -128,10 +123,10 @@ namespace Domain.Data.Manipulation
 				Currency = data.Currency;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -245,236 +240,279 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static CurrencyRateMembers members = null;
-        public static CurrencyRateMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(CurrencyRate))
-                    {
-                        if (members == null)
-                            members = new CurrencyRateMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class CurrencyRateMembers
-        {
-            internal CurrencyRateMembers() { }
+		private static CurrencyRateMembers members = null;
+		public static CurrencyRateMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(CurrencyRate))
+					{
+						if (members is null)
+							members = new CurrencyRateMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class CurrencyRateMembers
+		{
+			internal CurrencyRateMembers() { }
 
 			#region Members for interface ICurrencyRate
 
-            public Property CurrencyRateDate { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["CurrencyRateDate"];
-            public Property FromCurrencyCode { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["FromCurrencyCode"];
-            public Property ToCurrencyCode { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["ToCurrencyCode"];
-            public Property AverageRate { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["AverageRate"];
-            public Property EndOfDayRate { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["EndOfDayRate"];
-            public Property Currency { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["Currency"];
+			public Property CurrencyRateDate { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["CurrencyRateDate"];
+			public Property FromCurrencyCode { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["FromCurrencyCode"];
+			public Property ToCurrencyCode { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["ToCurrencyCode"];
+			public Property AverageRate { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["AverageRate"];
+			public Property EndOfDayRate { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["EndOfDayRate"];
+			public Property Currency { get; } = Datastore.AdventureWorks.Model.Entities["CurrencyRate"].Properties["Currency"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static CurrencyRateFullTextMembers fullTextMembers = null;
-        public static CurrencyRateFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(CurrencyRate))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new CurrencyRateFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static CurrencyRateFullTextMembers fullTextMembers = null;
+		public static CurrencyRateFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(CurrencyRate))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new CurrencyRateFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class CurrencyRateFullTextMembers
-        {
-            internal CurrencyRateFullTextMembers() { }
+		public class CurrencyRateFullTextMembers
+		{
+			internal CurrencyRateFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(CurrencyRate))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["CurrencyRate"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(CurrencyRate))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["CurrencyRate"];
+				}
+			}
+			return entity;
+		}
 
 		private static CurrencyRateEvents events = null;
-        public static CurrencyRateEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(CurrencyRate))
-                    {
-                        if (events == null)
-                            events = new CurrencyRateEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class CurrencyRateEvents
-        {
+		public static CurrencyRateEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(CurrencyRate))
+					{
+						if (events is null)
+							events = new CurrencyRateEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class CurrencyRateEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<CurrencyRate, EntityEventArgs> onNew;
-            public event EventHandler<CurrencyRate, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<CurrencyRate, EntityEventArgs> onNew;
+			public event EventHandler<CurrencyRate, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<CurrencyRate, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((CurrencyRate)sender, args);
-            }
+			{
+				EventHandler<CurrencyRate, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((CurrencyRate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<CurrencyRate, EntityEventArgs> onDelete;
-            public event EventHandler<CurrencyRate, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<CurrencyRate, EntityEventArgs> onDelete;
+			public event EventHandler<CurrencyRate, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<CurrencyRate, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((CurrencyRate)sender, args);
-            }
+			{
+				EventHandler<CurrencyRate, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((CurrencyRate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<CurrencyRate, EntityEventArgs> onSave;
-            public event EventHandler<CurrencyRate, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<CurrencyRate, EntityEventArgs> onSave;
+			public event EventHandler<CurrencyRate, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<CurrencyRate, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((CurrencyRate)sender, args);
-            }
+			{
+				EventHandler<CurrencyRate, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((CurrencyRate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<CurrencyRate, EntityEventArgs> onAfterSave;
+			public event EventHandler<CurrencyRate, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<CurrencyRate, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((CurrencyRate)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnCurrencyRateDate
 
@@ -501,7 +539,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCurrencyRateDate -= value;
-							if (onCurrencyRateDate == null && onCurrencyRateDateIsRegistered)
+							if (onCurrencyRateDate is null && onCurrencyRateDateIsRegistered)
 							{
 								Members.CurrencyRateDate.Events.OnChange -= onCurrencyRateDateProxy;
 								onCurrencyRateDateIsRegistered = false;
@@ -509,11 +547,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCurrencyRateDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CurrencyRate, PropertyEventArgs> handler = onCurrencyRateDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CurrencyRate)sender, args);
 				}
 
@@ -544,7 +582,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onFromCurrencyCode -= value;
-							if (onFromCurrencyCode == null && onFromCurrencyCodeIsRegistered)
+							if (onFromCurrencyCode is null && onFromCurrencyCodeIsRegistered)
 							{
 								Members.FromCurrencyCode.Events.OnChange -= onFromCurrencyCodeProxy;
 								onFromCurrencyCodeIsRegistered = false;
@@ -552,11 +590,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onFromCurrencyCodeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CurrencyRate, PropertyEventArgs> handler = onFromCurrencyCode;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CurrencyRate)sender, args);
 				}
 
@@ -587,7 +625,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onToCurrencyCode -= value;
-							if (onToCurrencyCode == null && onToCurrencyCodeIsRegistered)
+							if (onToCurrencyCode is null && onToCurrencyCodeIsRegistered)
 							{
 								Members.ToCurrencyCode.Events.OnChange -= onToCurrencyCodeProxy;
 								onToCurrencyCodeIsRegistered = false;
@@ -595,11 +633,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onToCurrencyCodeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CurrencyRate, PropertyEventArgs> handler = onToCurrencyCode;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CurrencyRate)sender, args);
 				}
 
@@ -630,7 +668,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onAverageRate -= value;
-							if (onAverageRate == null && onAverageRateIsRegistered)
+							if (onAverageRate is null && onAverageRateIsRegistered)
 							{
 								Members.AverageRate.Events.OnChange -= onAverageRateProxy;
 								onAverageRateIsRegistered = false;
@@ -638,11 +676,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onAverageRateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CurrencyRate, PropertyEventArgs> handler = onAverageRate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CurrencyRate)sender, args);
 				}
 
@@ -673,7 +711,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEndOfDayRate -= value;
-							if (onEndOfDayRate == null && onEndOfDayRateIsRegistered)
+							if (onEndOfDayRate is null && onEndOfDayRateIsRegistered)
 							{
 								Members.EndOfDayRate.Events.OnChange -= onEndOfDayRateProxy;
 								onEndOfDayRateIsRegistered = false;
@@ -681,11 +719,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEndOfDayRateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CurrencyRate, PropertyEventArgs> handler = onEndOfDayRate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CurrencyRate)sender, args);
 				}
 
@@ -716,7 +754,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCurrency -= value;
-							if (onCurrency == null && onCurrencyIsRegistered)
+							if (onCurrency is null && onCurrencyIsRegistered)
 							{
 								Members.Currency.Events.OnChange -= onCurrencyProxy;
 								onCurrencyIsRegistered = false;
@@ -724,11 +762,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCurrencyProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CurrencyRate, PropertyEventArgs> handler = onCurrency;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CurrencyRate)sender, args);
 				}
 
@@ -759,7 +797,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -767,11 +805,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CurrencyRate, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CurrencyRate)sender, args);
 				}
 
@@ -802,7 +840,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -810,11 +848,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CurrencyRate, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CurrencyRate)sender, args);
 				}
 
@@ -823,9 +861,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region ICurrencyRateOriginalData
 

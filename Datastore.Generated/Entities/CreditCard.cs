@@ -11,93 +11,90 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface ICreditCardOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string CardType { get; }
 		string CardNumber { get; }
 		string ExpMonth { get; }
 		string ExpYear { get; }
 		IEnumerable<Person> Persons { get; }
-    }
+	}
 
 	public partial class CreditCard : OGM<CreditCard, CreditCard.CreditCardData, System.String>, ISchemaBase, INeo4jBase, ICreditCardOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static CreditCard()
-        {
-            Register.Types();
-        }
+		static CreditCard()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, CreditCard> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, CreditCard> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.CreditCardAlias, IWhereQuery> query)
-        {
-            q.CreditCardAlias alias;
+		{
+			q.CreditCardAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.CreditCard.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.CreditCard.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"CreditCard => CardType : {this.CardType}, CardNumber : {this.CardNumber}, ExpMonth : {this.ExpMonth}, ExpYear : {this.ExpYear}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"CreditCard => CardType : {this.CardType}, CardNumber : {this.CardNumber}, ExpMonth : {this.ExpMonth}, ExpYear : {this.ExpYear}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new CreditCardData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new CreditCardData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.CardType == null)
+			if (InnerData.CardType is null)
 				throw new PersistenceException(string.Format("Cannot save CreditCard with key '{0}' because the CardType cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.CardNumber == null)
+			if (InnerData.CardNumber is null)
 				throw new PersistenceException(string.Format("Cannot save CreditCard with key '{0}' because the CardNumber cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ExpMonth == null)
+			if (InnerData.ExpMonth is null)
 				throw new PersistenceException(string.Format("Cannot save CreditCard with key '{0}' because the ExpMonth cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ExpYear == null)
+			if (InnerData.ExpYear is null)
 				throw new PersistenceException(string.Format("Cannot save CreditCard with key '{0}' because the ExpYear cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save CreditCard with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -111,12 +108,12 @@ namespace Domain.Data.Manipulation
 		public class CreditCardData : Data<System.String>
 		{
 			public CreditCardData()
-            {
+			{
 
-            }
+			}
 
-            public CreditCardData(CreditCardData data)
-            {
+			public CreditCardData(CreditCardData data)
+			{
 				CardType = data.CardType;
 				CardNumber = data.CardNumber;
 				ExpMonth = data.ExpMonth;
@@ -124,10 +121,10 @@ namespace Domain.Data.Manipulation
 				Persons = data.Persons;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -232,235 +229,278 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static CreditCardMembers members = null;
-        public static CreditCardMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(CreditCard))
-                    {
-                        if (members == null)
-                            members = new CreditCardMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class CreditCardMembers
-        {
-            internal CreditCardMembers() { }
+		private static CreditCardMembers members = null;
+		public static CreditCardMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(CreditCard))
+					{
+						if (members is null)
+							members = new CreditCardMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class CreditCardMembers
+		{
+			internal CreditCardMembers() { }
 
 			#region Members for interface ICreditCard
 
-            public Property CardType { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["CardType"];
-            public Property CardNumber { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["CardNumber"];
-            public Property ExpMonth { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["ExpMonth"];
-            public Property ExpYear { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["ExpYear"];
-            public Property Persons { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["Persons"];
+			public Property CardType { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["CardType"];
+			public Property CardNumber { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["CardNumber"];
+			public Property ExpMonth { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["ExpMonth"];
+			public Property ExpYear { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["ExpYear"];
+			public Property Persons { get; } = Datastore.AdventureWorks.Model.Entities["CreditCard"].Properties["Persons"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static CreditCardFullTextMembers fullTextMembers = null;
-        public static CreditCardFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(CreditCard))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new CreditCardFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static CreditCardFullTextMembers fullTextMembers = null;
+		public static CreditCardFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(CreditCard))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new CreditCardFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class CreditCardFullTextMembers
-        {
-            internal CreditCardFullTextMembers() { }
+		public class CreditCardFullTextMembers
+		{
+			internal CreditCardFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(CreditCard))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["CreditCard"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(CreditCard))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["CreditCard"];
+				}
+			}
+			return entity;
+		}
 
 		private static CreditCardEvents events = null;
-        public static CreditCardEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(CreditCard))
-                    {
-                        if (events == null)
-                            events = new CreditCardEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class CreditCardEvents
-        {
+		public static CreditCardEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(CreditCard))
+					{
+						if (events is null)
+							events = new CreditCardEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class CreditCardEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<CreditCard, EntityEventArgs> onNew;
-            public event EventHandler<CreditCard, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<CreditCard, EntityEventArgs> onNew;
+			public event EventHandler<CreditCard, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<CreditCard, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((CreditCard)sender, args);
-            }
+			{
+				EventHandler<CreditCard, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((CreditCard)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<CreditCard, EntityEventArgs> onDelete;
-            public event EventHandler<CreditCard, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<CreditCard, EntityEventArgs> onDelete;
+			public event EventHandler<CreditCard, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<CreditCard, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((CreditCard)sender, args);
-            }
+			{
+				EventHandler<CreditCard, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((CreditCard)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<CreditCard, EntityEventArgs> onSave;
-            public event EventHandler<CreditCard, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<CreditCard, EntityEventArgs> onSave;
+			public event EventHandler<CreditCard, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<CreditCard, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((CreditCard)sender, args);
-            }
+			{
+				EventHandler<CreditCard, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((CreditCard)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<CreditCard, EntityEventArgs> onAfterSave;
+			public event EventHandler<CreditCard, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<CreditCard, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((CreditCard)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnCardType
 
@@ -487,7 +527,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCardType -= value;
-							if (onCardType == null && onCardTypeIsRegistered)
+							if (onCardType is null && onCardTypeIsRegistered)
 							{
 								Members.CardType.Events.OnChange -= onCardTypeProxy;
 								onCardTypeIsRegistered = false;
@@ -495,11 +535,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCardTypeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CreditCard, PropertyEventArgs> handler = onCardType;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CreditCard)sender, args);
 				}
 
@@ -530,7 +570,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCardNumber -= value;
-							if (onCardNumber == null && onCardNumberIsRegistered)
+							if (onCardNumber is null && onCardNumberIsRegistered)
 							{
 								Members.CardNumber.Events.OnChange -= onCardNumberProxy;
 								onCardNumberIsRegistered = false;
@@ -538,11 +578,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCardNumberProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CreditCard, PropertyEventArgs> handler = onCardNumber;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CreditCard)sender, args);
 				}
 
@@ -573,7 +613,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onExpMonth -= value;
-							if (onExpMonth == null && onExpMonthIsRegistered)
+							if (onExpMonth is null && onExpMonthIsRegistered)
 							{
 								Members.ExpMonth.Events.OnChange -= onExpMonthProxy;
 								onExpMonthIsRegistered = false;
@@ -581,11 +621,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onExpMonthProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CreditCard, PropertyEventArgs> handler = onExpMonth;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CreditCard)sender, args);
 				}
 
@@ -616,7 +656,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onExpYear -= value;
-							if (onExpYear == null && onExpYearIsRegistered)
+							if (onExpYear is null && onExpYearIsRegistered)
 							{
 								Members.ExpYear.Events.OnChange -= onExpYearProxy;
 								onExpYearIsRegistered = false;
@@ -624,11 +664,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onExpYearProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CreditCard, PropertyEventArgs> handler = onExpYear;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CreditCard)sender, args);
 				}
 
@@ -659,7 +699,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onPersons -= value;
-							if (onPersons == null && onPersonsIsRegistered)
+							if (onPersons is null && onPersonsIsRegistered)
 							{
 								Members.Persons.Events.OnChange -= onPersonsProxy;
 								onPersonsIsRegistered = false;
@@ -667,11 +707,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onPersonsProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CreditCard, PropertyEventArgs> handler = onPersons;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CreditCard)sender, args);
 				}
 
@@ -702,7 +742,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -710,11 +750,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CreditCard, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CreditCard)sender, args);
 				}
 
@@ -745,7 +785,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -753,11 +793,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<CreditCard, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((CreditCard)sender, args);
 				}
 
@@ -766,9 +806,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region ICreditCardOriginalData
 

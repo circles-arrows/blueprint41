@@ -13,12 +13,12 @@ namespace <#= Settings.FullCRUDNamespace #>
 
 		public static void Types()
 		{
-			if (Datastore.GbmModel.Model.TypesRegistered)
+			if (<#= Datastore.GetType().FullName #>.Model.TypesRegistered)
 				return;
 
 			lock (typeof(Register))
 			{
-				if (Datastore.GbmModel.Model.TypesRegistered)
+				if (<#= Datastore.GetType().FullName #>.Model.TypesRegistered)
 					return;
 
 <#

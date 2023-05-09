@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface ISpecialOfferOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string Description { get; }
 		string DiscountPct { get; }
 		string Type { get; }
@@ -21,97 +21,88 @@ namespace Domain.Data.Manipulation
 		int MinQty { get; }
 		string MaxQty { get; }
 		string rowguid { get; }
-    }
+	}
 
 	public partial class SpecialOffer : OGM<SpecialOffer, SpecialOffer.SpecialOfferData, System.String>, ISchemaBase, INeo4jBase, ISpecialOfferOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static SpecialOffer()
-        {
-            Register.Types();
-        }
+		static SpecialOffer()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, SpecialOffer> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, SpecialOffer> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.SpecialOfferAlias, IWhereQuery> query)
-        {
-            q.SpecialOfferAlias alias;
+		{
+			q.SpecialOfferAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.SpecialOffer.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.SpecialOffer.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"SpecialOffer => Description : {this.Description}, DiscountPct : {this.DiscountPct}, Type : {this.Type}, Category : {this.Category}, StartDate : {this.StartDate}, EndDate : {this.EndDate}, MinQty : {this.MinQty}, MaxQty : {this.MaxQty}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"SpecialOffer => Description : {this.Description}, DiscountPct : {this.DiscountPct}, Type : {this.Type}, Category : {this.Category}, StartDate : {this.StartDate}, EndDate : {this.EndDate}, MinQty : {this.MinQty}, MaxQty : {this.MaxQty}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new SpecialOfferData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new SpecialOfferData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.Description == null)
+			if (InnerData.Description is null)
 				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the Description cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.DiscountPct == null)
+			if (InnerData.DiscountPct is null)
 				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the DiscountPct cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Type == null)
+			if (InnerData.Type is null)
 				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the Type cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Category == null)
+			if (InnerData.Category is null)
 				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the Category cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.StartDate == null)
-				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the StartDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.EndDate == null)
-				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the EndDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.MinQty == null)
-				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the MinQty cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.MaxQty == null)
+			if (InnerData.MaxQty is null)
 				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the MaxQty cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.rowguid == null)
+			if (InnerData.rowguid is null)
 				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the rowguid cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save SpecialOffer with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -125,12 +116,12 @@ namespace Domain.Data.Manipulation
 		public class SpecialOfferData : Data<System.String>
 		{
 			public SpecialOfferData()
-            {
+			{
 
-            }
+			}
 
-            public SpecialOfferData(SpecialOfferData data)
-            {
+			public SpecialOfferData(SpecialOfferData data)
+			{
 				Description = data.Description;
 				DiscountPct = data.DiscountPct;
 				Type = data.Type;
@@ -142,10 +133,10 @@ namespace Domain.Data.Manipulation
 				rowguid = data.rowguid;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -268,239 +259,282 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static SpecialOfferMembers members = null;
-        public static SpecialOfferMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(SpecialOffer))
-                    {
-                        if (members == null)
-                            members = new SpecialOfferMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class SpecialOfferMembers
-        {
-            internal SpecialOfferMembers() { }
+		private static SpecialOfferMembers members = null;
+		public static SpecialOfferMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(SpecialOffer))
+					{
+						if (members is null)
+							members = new SpecialOfferMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class SpecialOfferMembers
+		{
+			internal SpecialOfferMembers() { }
 
 			#region Members for interface ISpecialOffer
 
-            public Property Description { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["Description"];
-            public Property DiscountPct { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["DiscountPct"];
-            public Property Type { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["Type"];
-            public Property Category { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["Category"];
-            public Property StartDate { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["StartDate"];
-            public Property EndDate { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["EndDate"];
-            public Property MinQty { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["MinQty"];
-            public Property MaxQty { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["MaxQty"];
-            public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["rowguid"];
+			public Property Description { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["Description"];
+			public Property DiscountPct { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["DiscountPct"];
+			public Property Type { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["Type"];
+			public Property Category { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["Category"];
+			public Property StartDate { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["StartDate"];
+			public Property EndDate { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["EndDate"];
+			public Property MinQty { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["MinQty"];
+			public Property MaxQty { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["MaxQty"];
+			public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["SpecialOffer"].Properties["rowguid"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static SpecialOfferFullTextMembers fullTextMembers = null;
-        public static SpecialOfferFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(SpecialOffer))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new SpecialOfferFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static SpecialOfferFullTextMembers fullTextMembers = null;
+		public static SpecialOfferFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(SpecialOffer))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new SpecialOfferFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class SpecialOfferFullTextMembers
-        {
-            internal SpecialOfferFullTextMembers() { }
+		public class SpecialOfferFullTextMembers
+		{
+			internal SpecialOfferFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(SpecialOffer))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["SpecialOffer"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(SpecialOffer))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["SpecialOffer"];
+				}
+			}
+			return entity;
+		}
 
 		private static SpecialOfferEvents events = null;
-        public static SpecialOfferEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(SpecialOffer))
-                    {
-                        if (events == null)
-                            events = new SpecialOfferEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class SpecialOfferEvents
-        {
+		public static SpecialOfferEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(SpecialOffer))
+					{
+						if (events is null)
+							events = new SpecialOfferEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class SpecialOfferEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<SpecialOffer, EntityEventArgs> onNew;
-            public event EventHandler<SpecialOffer, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SpecialOffer, EntityEventArgs> onNew;
+			public event EventHandler<SpecialOffer, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SpecialOffer, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((SpecialOffer)sender, args);
-            }
+			{
+				EventHandler<SpecialOffer, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((SpecialOffer)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<SpecialOffer, EntityEventArgs> onDelete;
-            public event EventHandler<SpecialOffer, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SpecialOffer, EntityEventArgs> onDelete;
+			public event EventHandler<SpecialOffer, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SpecialOffer, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((SpecialOffer)sender, args);
-            }
+			{
+				EventHandler<SpecialOffer, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((SpecialOffer)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<SpecialOffer, EntityEventArgs> onSave;
-            public event EventHandler<SpecialOffer, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SpecialOffer, EntityEventArgs> onSave;
+			public event EventHandler<SpecialOffer, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SpecialOffer, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((SpecialOffer)sender, args);
-            }
+			{
+				EventHandler<SpecialOffer, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((SpecialOffer)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<SpecialOffer, EntityEventArgs> onAfterSave;
+			public event EventHandler<SpecialOffer, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<SpecialOffer, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((SpecialOffer)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnDescription
 
@@ -527,7 +561,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDescription -= value;
-							if (onDescription == null && onDescriptionIsRegistered)
+							if (onDescription is null && onDescriptionIsRegistered)
 							{
 								Members.Description.Events.OnChange -= onDescriptionProxy;
 								onDescriptionIsRegistered = false;
@@ -535,11 +569,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDescriptionProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onDescription;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -570,7 +604,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDiscountPct -= value;
-							if (onDiscountPct == null && onDiscountPctIsRegistered)
+							if (onDiscountPct is null && onDiscountPctIsRegistered)
 							{
 								Members.DiscountPct.Events.OnChange -= onDiscountPctProxy;
 								onDiscountPctIsRegistered = false;
@@ -578,11 +612,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDiscountPctProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onDiscountPct;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -613,7 +647,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onType -= value;
-							if (onType == null && onTypeIsRegistered)
+							if (onType is null && onTypeIsRegistered)
 							{
 								Members.Type.Events.OnChange -= onTypeProxy;
 								onTypeIsRegistered = false;
@@ -621,11 +655,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTypeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onType;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -656,7 +690,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCategory -= value;
-							if (onCategory == null && onCategoryIsRegistered)
+							if (onCategory is null && onCategoryIsRegistered)
 							{
 								Members.Category.Events.OnChange -= onCategoryProxy;
 								onCategoryIsRegistered = false;
@@ -664,11 +698,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCategoryProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onCategory;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -699,7 +733,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStartDate -= value;
-							if (onStartDate == null && onStartDateIsRegistered)
+							if (onStartDate is null && onStartDateIsRegistered)
 							{
 								Members.StartDate.Events.OnChange -= onStartDateProxy;
 								onStartDateIsRegistered = false;
@@ -707,11 +741,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStartDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onStartDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -742,7 +776,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEndDate -= value;
-							if (onEndDate == null && onEndDateIsRegistered)
+							if (onEndDate is null && onEndDateIsRegistered)
 							{
 								Members.EndDate.Events.OnChange -= onEndDateProxy;
 								onEndDateIsRegistered = false;
@@ -750,11 +784,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEndDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onEndDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -785,7 +819,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onMinQty -= value;
-							if (onMinQty == null && onMinQtyIsRegistered)
+							if (onMinQty is null && onMinQtyIsRegistered)
 							{
 								Members.MinQty.Events.OnChange -= onMinQtyProxy;
 								onMinQtyIsRegistered = false;
@@ -793,11 +827,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onMinQtyProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onMinQty;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -828,7 +862,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onMaxQty -= value;
-							if (onMaxQty == null && onMaxQtyIsRegistered)
+							if (onMaxQty is null && onMaxQtyIsRegistered)
 							{
 								Members.MaxQty.Events.OnChange -= onMaxQtyProxy;
 								onMaxQtyIsRegistered = false;
@@ -836,11 +870,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onMaxQtyProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onMaxQty;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -871,7 +905,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onrowguid -= value;
-							if (onrowguid == null && onrowguidIsRegistered)
+							if (onrowguid is null && onrowguidIsRegistered)
 							{
 								Members.rowguid.Events.OnChange -= onrowguidProxy;
 								onrowguidIsRegistered = false;
@@ -879,11 +913,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onrowguidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onrowguid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -914,7 +948,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -922,11 +956,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -957,7 +991,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -965,11 +999,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SpecialOffer, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SpecialOffer)sender, args);
 				}
 
@@ -978,9 +1012,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region ISpecialOfferOriginalData
 

@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IProductOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string Name { get; }
 		string ProductNumber { get; }
 		bool MakeFlag { get; }
@@ -39,101 +39,82 @@ namespace Domain.Data.Manipulation
 		ProductModel ProductModel { get; }
 		Document Document { get; }
 		IEnumerable<ProductListPriceHistory> ProductListPriceHistories { get; }
-    }
+	}
 
 	public partial class Product : OGM<Product, Product.ProductData, System.String>, ISchemaBase, INeo4jBase, IProductOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static Product()
-        {
-            Register.Types();
-        }
+		static Product()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Product> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, Product> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.ProductAlias, IWhereQuery> query)
-        {
-            q.ProductAlias alias;
+		{
+			q.ProductAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Product.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Product.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"Product => Name : {this.Name}, ProductNumber : {this.ProductNumber}, MakeFlag : {this.MakeFlag}, FinishedGoodsFlag : {this.FinishedGoodsFlag}, Color : {this.Color?.ToString() ?? "null"}, SafetyStockLevel : {this.SafetyStockLevel}, ReorderPoint : {this.ReorderPoint}, StandardCost : {this.StandardCost}, ListPrice : {this.ListPrice}, Size : {this.Size?.ToString() ?? "null"}, SizeUnitMeasureCode : {this.SizeUnitMeasureCode?.ToString() ?? "null"}, WeightUnitMeasureCode : {this.WeightUnitMeasureCode?.ToString() ?? "null"}, Weight : {this.Weight?.ToString() ?? "null"}, DaysToManufacture : {this.DaysToManufacture}, ProductLine : {this.ProductLine?.ToString() ?? "null"}, Class : {this.Class?.ToString() ?? "null"}, Style : {this.Style?.ToString() ?? "null"}, SellStartDate : {this.SellStartDate}, SellEndDate : {this.SellEndDate?.ToString() ?? "null"}, DiscontinuedDate : {this.DiscontinuedDate?.ToString() ?? "null"}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"Product => Name : {this.Name}, ProductNumber : {this.ProductNumber}, MakeFlag : {this.MakeFlag}, FinishedGoodsFlag : {this.FinishedGoodsFlag}, Color : {this.Color?.ToString() ?? "null"}, SafetyStockLevel : {this.SafetyStockLevel}, ReorderPoint : {this.ReorderPoint}, StandardCost : {this.StandardCost}, ListPrice : {this.ListPrice}, Size : {this.Size?.ToString() ?? "null"}, SizeUnitMeasureCode : {this.SizeUnitMeasureCode?.ToString() ?? "null"}, WeightUnitMeasureCode : {this.WeightUnitMeasureCode?.ToString() ?? "null"}, Weight : {this.Weight?.ToString() ?? "null"}, DaysToManufacture : {this.DaysToManufacture}, ProductLine : {this.ProductLine?.ToString() ?? "null"}, Class : {this.Class?.ToString() ?? "null"}, Style : {this.Style?.ToString() ?? "null"}, SellStartDate : {this.SellStartDate}, SellEndDate : {this.SellEndDate?.ToString() ?? "null"}, DiscontinuedDate : {this.DiscontinuedDate?.ToString() ?? "null"}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new ProductData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new ProductData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.Name == null)
+			if (InnerData.Name is null)
 				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ProductNumber == null)
+			if (InnerData.ProductNumber is null)
 				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the ProductNumber cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.MakeFlag == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the MakeFlag cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.FinishedGoodsFlag == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the FinishedGoodsFlag cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.SafetyStockLevel == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the SafetyStockLevel cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ReorderPoint == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the ReorderPoint cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.StandardCost == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the StandardCost cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ListPrice == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the ListPrice cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.DaysToManufacture == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the DaysToManufacture cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.SellStartDate == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the SellStartDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.rowguid == null)
+			if (InnerData.rowguid is null)
 				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the rowguid cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save Product with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -147,12 +128,12 @@ namespace Domain.Data.Manipulation
 		public class ProductData : Data<System.String>
 		{
 			public ProductData()
-            {
+			{
 
-            }
+			}
 
-            public ProductData(ProductData data)
-            {
+			public ProductData(ProductData data)
+			{
 				Name = data.Name;
 				ProductNumber = data.ProductNumber;
 				MakeFlag = data.MakeFlag;
@@ -182,10 +163,10 @@ namespace Domain.Data.Manipulation
 				ProductListPriceHistories = data.ProductListPriceHistories;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -434,257 +415,300 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static ProductMembers members = null;
-        public static ProductMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(Product))
-                    {
-                        if (members == null)
-                            members = new ProductMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class ProductMembers
-        {
-            internal ProductMembers() { }
+		private static ProductMembers members = null;
+		public static ProductMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(Product))
+					{
+						if (members is null)
+							members = new ProductMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class ProductMembers
+		{
+			internal ProductMembers() { }
 
 			#region Members for interface IProduct
 
-            public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Name"];
-            public Property ProductNumber { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductNumber"];
-            public Property MakeFlag { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["MakeFlag"];
-            public Property FinishedGoodsFlag { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["FinishedGoodsFlag"];
-            public Property Color { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Color"];
-            public Property SafetyStockLevel { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["SafetyStockLevel"];
-            public Property ReorderPoint { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ReorderPoint"];
-            public Property StandardCost { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["StandardCost"];
-            public Property ListPrice { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ListPrice"];
-            public Property Size { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Size"];
-            public Property SizeUnitMeasureCode { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["SizeUnitMeasureCode"];
-            public Property WeightUnitMeasureCode { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["WeightUnitMeasureCode"];
-            public Property Weight { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Weight"];
-            public Property DaysToManufacture { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["DaysToManufacture"];
-            public Property ProductLine { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductLine"];
-            public Property Class { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Class"];
-            public Property Style { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Style"];
-            public Property SellStartDate { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["SellStartDate"];
-            public Property SellEndDate { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["SellEndDate"];
-            public Property DiscontinuedDate { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["DiscontinuedDate"];
-            public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["rowguid"];
-            public Property TransactionHistory { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["TransactionHistory"];
-            public Property ProductReview { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductReview"];
-            public Property ProductProductPhoto { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductProductPhoto"];
-            public Property ProductModel { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductModel"];
-            public Property Document { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Document"];
-            public Property ProductListPriceHistories { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductListPriceHistories"];
+			public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Name"];
+			public Property ProductNumber { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductNumber"];
+			public Property MakeFlag { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["MakeFlag"];
+			public Property FinishedGoodsFlag { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["FinishedGoodsFlag"];
+			public Property Color { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Color"];
+			public Property SafetyStockLevel { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["SafetyStockLevel"];
+			public Property ReorderPoint { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ReorderPoint"];
+			public Property StandardCost { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["StandardCost"];
+			public Property ListPrice { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ListPrice"];
+			public Property Size { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Size"];
+			public Property SizeUnitMeasureCode { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["SizeUnitMeasureCode"];
+			public Property WeightUnitMeasureCode { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["WeightUnitMeasureCode"];
+			public Property Weight { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Weight"];
+			public Property DaysToManufacture { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["DaysToManufacture"];
+			public Property ProductLine { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductLine"];
+			public Property Class { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Class"];
+			public Property Style { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Style"];
+			public Property SellStartDate { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["SellStartDate"];
+			public Property SellEndDate { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["SellEndDate"];
+			public Property DiscontinuedDate { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["DiscontinuedDate"];
+			public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["rowguid"];
+			public Property TransactionHistory { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["TransactionHistory"];
+			public Property ProductReview { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductReview"];
+			public Property ProductProductPhoto { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductProductPhoto"];
+			public Property ProductModel { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductModel"];
+			public Property Document { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["Document"];
+			public Property ProductListPriceHistories { get; } = Datastore.AdventureWorks.Model.Entities["Product"].Properties["ProductListPriceHistories"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static ProductFullTextMembers fullTextMembers = null;
-        public static ProductFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(Product))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new ProductFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static ProductFullTextMembers fullTextMembers = null;
+		public static ProductFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(Product))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new ProductFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class ProductFullTextMembers
-        {
-            internal ProductFullTextMembers() { }
+		public class ProductFullTextMembers
+		{
+			internal ProductFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(Product))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["Product"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(Product))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["Product"];
+				}
+			}
+			return entity;
+		}
 
 		private static ProductEvents events = null;
-        public static ProductEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(Product))
-                    {
-                        if (events == null)
-                            events = new ProductEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class ProductEvents
-        {
+		public static ProductEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(Product))
+					{
+						if (events is null)
+							events = new ProductEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class ProductEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<Product, EntityEventArgs> onNew;
-            public event EventHandler<Product, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Product, EntityEventArgs> onNew;
+			public event EventHandler<Product, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Product, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((Product)sender, args);
-            }
+			{
+				EventHandler<Product, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((Product)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Product, EntityEventArgs> onDelete;
-            public event EventHandler<Product, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Product, EntityEventArgs> onDelete;
+			public event EventHandler<Product, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Product, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((Product)sender, args);
-            }
+			{
+				EventHandler<Product, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((Product)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<Product, EntityEventArgs> onSave;
-            public event EventHandler<Product, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Product, EntityEventArgs> onSave;
+			public event EventHandler<Product, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Product, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((Product)sender, args);
-            }
+			{
+				EventHandler<Product, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((Product)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<Product, EntityEventArgs> onAfterSave;
+			public event EventHandler<Product, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<Product, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((Product)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnName
 
@@ -711,7 +735,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onName -= value;
-							if (onName == null && onNameIsRegistered)
+							if (onName is null && onNameIsRegistered)
 							{
 								Members.Name.Events.OnChange -= onNameProxy;
 								onNameIsRegistered = false;
@@ -719,11 +743,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -754,7 +778,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProductNumber -= value;
-							if (onProductNumber == null && onProductNumberIsRegistered)
+							if (onProductNumber is null && onProductNumberIsRegistered)
 							{
 								Members.ProductNumber.Events.OnChange -= onProductNumberProxy;
 								onProductNumberIsRegistered = false;
@@ -762,11 +786,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductNumberProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onProductNumber;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -797,7 +821,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onMakeFlag -= value;
-							if (onMakeFlag == null && onMakeFlagIsRegistered)
+							if (onMakeFlag is null && onMakeFlagIsRegistered)
 							{
 								Members.MakeFlag.Events.OnChange -= onMakeFlagProxy;
 								onMakeFlagIsRegistered = false;
@@ -805,11 +829,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onMakeFlagProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onMakeFlag;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -840,7 +864,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onFinishedGoodsFlag -= value;
-							if (onFinishedGoodsFlag == null && onFinishedGoodsFlagIsRegistered)
+							if (onFinishedGoodsFlag is null && onFinishedGoodsFlagIsRegistered)
 							{
 								Members.FinishedGoodsFlag.Events.OnChange -= onFinishedGoodsFlagProxy;
 								onFinishedGoodsFlagIsRegistered = false;
@@ -848,11 +872,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onFinishedGoodsFlagProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onFinishedGoodsFlag;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -883,7 +907,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onColor -= value;
-							if (onColor == null && onColorIsRegistered)
+							if (onColor is null && onColorIsRegistered)
 							{
 								Members.Color.Events.OnChange -= onColorProxy;
 								onColorIsRegistered = false;
@@ -891,11 +915,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onColorProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onColor;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -926,7 +950,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSafetyStockLevel -= value;
-							if (onSafetyStockLevel == null && onSafetyStockLevelIsRegistered)
+							if (onSafetyStockLevel is null && onSafetyStockLevelIsRegistered)
 							{
 								Members.SafetyStockLevel.Events.OnChange -= onSafetyStockLevelProxy;
 								onSafetyStockLevelIsRegistered = false;
@@ -934,11 +958,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSafetyStockLevelProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onSafetyStockLevel;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -969,7 +993,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onReorderPoint -= value;
-							if (onReorderPoint == null && onReorderPointIsRegistered)
+							if (onReorderPoint is null && onReorderPointIsRegistered)
 							{
 								Members.ReorderPoint.Events.OnChange -= onReorderPointProxy;
 								onReorderPointIsRegistered = false;
@@ -977,11 +1001,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onReorderPointProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onReorderPoint;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1012,7 +1036,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStandardCost -= value;
-							if (onStandardCost == null && onStandardCostIsRegistered)
+							if (onStandardCost is null && onStandardCostIsRegistered)
 							{
 								Members.StandardCost.Events.OnChange -= onStandardCostProxy;
 								onStandardCostIsRegistered = false;
@@ -1020,11 +1044,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStandardCostProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onStandardCost;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1055,7 +1079,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onListPrice -= value;
-							if (onListPrice == null && onListPriceIsRegistered)
+							if (onListPrice is null && onListPriceIsRegistered)
 							{
 								Members.ListPrice.Events.OnChange -= onListPriceProxy;
 								onListPriceIsRegistered = false;
@@ -1063,11 +1087,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onListPriceProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onListPrice;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1098,7 +1122,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSize -= value;
-							if (onSize == null && onSizeIsRegistered)
+							if (onSize is null && onSizeIsRegistered)
 							{
 								Members.Size.Events.OnChange -= onSizeProxy;
 								onSizeIsRegistered = false;
@@ -1106,11 +1130,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSizeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onSize;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1141,7 +1165,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSizeUnitMeasureCode -= value;
-							if (onSizeUnitMeasureCode == null && onSizeUnitMeasureCodeIsRegistered)
+							if (onSizeUnitMeasureCode is null && onSizeUnitMeasureCodeIsRegistered)
 							{
 								Members.SizeUnitMeasureCode.Events.OnChange -= onSizeUnitMeasureCodeProxy;
 								onSizeUnitMeasureCodeIsRegistered = false;
@@ -1149,11 +1173,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSizeUnitMeasureCodeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onSizeUnitMeasureCode;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1184,7 +1208,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onWeightUnitMeasureCode -= value;
-							if (onWeightUnitMeasureCode == null && onWeightUnitMeasureCodeIsRegistered)
+							if (onWeightUnitMeasureCode is null && onWeightUnitMeasureCodeIsRegistered)
 							{
 								Members.WeightUnitMeasureCode.Events.OnChange -= onWeightUnitMeasureCodeProxy;
 								onWeightUnitMeasureCodeIsRegistered = false;
@@ -1192,11 +1216,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onWeightUnitMeasureCodeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onWeightUnitMeasureCode;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1227,7 +1251,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onWeight -= value;
-							if (onWeight == null && onWeightIsRegistered)
+							if (onWeight is null && onWeightIsRegistered)
 							{
 								Members.Weight.Events.OnChange -= onWeightProxy;
 								onWeightIsRegistered = false;
@@ -1235,11 +1259,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onWeightProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onWeight;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1270,7 +1294,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDaysToManufacture -= value;
-							if (onDaysToManufacture == null && onDaysToManufactureIsRegistered)
+							if (onDaysToManufacture is null && onDaysToManufactureIsRegistered)
 							{
 								Members.DaysToManufacture.Events.OnChange -= onDaysToManufactureProxy;
 								onDaysToManufactureIsRegistered = false;
@@ -1278,11 +1302,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDaysToManufactureProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onDaysToManufacture;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1313,7 +1337,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProductLine -= value;
-							if (onProductLine == null && onProductLineIsRegistered)
+							if (onProductLine is null && onProductLineIsRegistered)
 							{
 								Members.ProductLine.Events.OnChange -= onProductLineProxy;
 								onProductLineIsRegistered = false;
@@ -1321,11 +1345,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductLineProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onProductLine;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1356,7 +1380,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onClass -= value;
-							if (onClass == null && onClassIsRegistered)
+							if (onClass is null && onClassIsRegistered)
 							{
 								Members.Class.Events.OnChange -= onClassProxy;
 								onClassIsRegistered = false;
@@ -1364,11 +1388,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onClassProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onClass;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1399,7 +1423,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStyle -= value;
-							if (onStyle == null && onStyleIsRegistered)
+							if (onStyle is null && onStyleIsRegistered)
 							{
 								Members.Style.Events.OnChange -= onStyleProxy;
 								onStyleIsRegistered = false;
@@ -1407,11 +1431,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStyleProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onStyle;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1442,7 +1466,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSellStartDate -= value;
-							if (onSellStartDate == null && onSellStartDateIsRegistered)
+							if (onSellStartDate is null && onSellStartDateIsRegistered)
 							{
 								Members.SellStartDate.Events.OnChange -= onSellStartDateProxy;
 								onSellStartDateIsRegistered = false;
@@ -1450,11 +1474,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSellStartDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onSellStartDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1485,7 +1509,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSellEndDate -= value;
-							if (onSellEndDate == null && onSellEndDateIsRegistered)
+							if (onSellEndDate is null && onSellEndDateIsRegistered)
 							{
 								Members.SellEndDate.Events.OnChange -= onSellEndDateProxy;
 								onSellEndDateIsRegistered = false;
@@ -1493,11 +1517,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSellEndDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onSellEndDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1528,7 +1552,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDiscontinuedDate -= value;
-							if (onDiscontinuedDate == null && onDiscontinuedDateIsRegistered)
+							if (onDiscontinuedDate is null && onDiscontinuedDateIsRegistered)
 							{
 								Members.DiscontinuedDate.Events.OnChange -= onDiscontinuedDateProxy;
 								onDiscontinuedDateIsRegistered = false;
@@ -1536,11 +1560,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDiscontinuedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onDiscontinuedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1571,7 +1595,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onrowguid -= value;
-							if (onrowguid == null && onrowguidIsRegistered)
+							if (onrowguid is null && onrowguidIsRegistered)
 							{
 								Members.rowguid.Events.OnChange -= onrowguidProxy;
 								onrowguidIsRegistered = false;
@@ -1579,11 +1603,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onrowguidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onrowguid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1614,7 +1638,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onTransactionHistory -= value;
-							if (onTransactionHistory == null && onTransactionHistoryIsRegistered)
+							if (onTransactionHistory is null && onTransactionHistoryIsRegistered)
 							{
 								Members.TransactionHistory.Events.OnChange -= onTransactionHistoryProxy;
 								onTransactionHistoryIsRegistered = false;
@@ -1622,11 +1646,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTransactionHistoryProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onTransactionHistory;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1657,7 +1681,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProductReview -= value;
-							if (onProductReview == null && onProductReviewIsRegistered)
+							if (onProductReview is null && onProductReviewIsRegistered)
 							{
 								Members.ProductReview.Events.OnChange -= onProductReviewProxy;
 								onProductReviewIsRegistered = false;
@@ -1665,11 +1689,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductReviewProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onProductReview;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1700,7 +1724,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProductProductPhoto -= value;
-							if (onProductProductPhoto == null && onProductProductPhotoIsRegistered)
+							if (onProductProductPhoto is null && onProductProductPhotoIsRegistered)
 							{
 								Members.ProductProductPhoto.Events.OnChange -= onProductProductPhotoProxy;
 								onProductProductPhotoIsRegistered = false;
@@ -1708,11 +1732,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductProductPhotoProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onProductProductPhoto;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1743,7 +1767,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProductModel -= value;
-							if (onProductModel == null && onProductModelIsRegistered)
+							if (onProductModel is null && onProductModelIsRegistered)
 							{
 								Members.ProductModel.Events.OnChange -= onProductModelProxy;
 								onProductModelIsRegistered = false;
@@ -1751,11 +1775,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductModelProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onProductModel;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1786,7 +1810,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDocument -= value;
-							if (onDocument == null && onDocumentIsRegistered)
+							if (onDocument is null && onDocumentIsRegistered)
 							{
 								Members.Document.Events.OnChange -= onDocumentProxy;
 								onDocumentIsRegistered = false;
@@ -1794,11 +1818,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDocumentProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onDocument;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1829,7 +1853,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProductListPriceHistories -= value;
-							if (onProductListPriceHistories == null && onProductListPriceHistoriesIsRegistered)
+							if (onProductListPriceHistories is null && onProductListPriceHistoriesIsRegistered)
 							{
 								Members.ProductListPriceHistories.Events.OnChange -= onProductListPriceHistoriesProxy;
 								onProductListPriceHistoriesIsRegistered = false;
@@ -1837,11 +1861,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductListPriceHistoriesProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onProductListPriceHistories;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1872,7 +1896,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -1880,11 +1904,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1915,7 +1939,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -1923,11 +1947,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Product, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Product)sender, args);
 				}
 
@@ -1936,9 +1960,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IProductOriginalData
 

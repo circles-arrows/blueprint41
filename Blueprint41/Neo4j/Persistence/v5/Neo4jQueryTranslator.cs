@@ -27,8 +27,8 @@ namespace Blueprint41.Neo4j.Persistence.v5
 
         #region Compile Functions
 
-        public override string FnExists    => "{base} is NULL";
-        public override string FnNotExists => "{base} is NOT NULL";
+        public override string FnExists    => "{base} IS NOT NULL";
+        public override string FnNotExists => "{base} is NULL";
 
         #endregion
     }

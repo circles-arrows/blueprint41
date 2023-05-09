@@ -11,89 +11,82 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IShiftOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string Name { get; }
 		System.DateTime StartTime { get; }
 		System.DateTime EndTime { get; }
-    }
+	}
 
 	public partial class Shift : OGM<Shift, Shift.ShiftData, System.String>, ISchemaBase, INeo4jBase, IShiftOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static Shift()
-        {
-            Register.Types();
-        }
+		static Shift()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Shift> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, Shift> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.ShiftAlias, IWhereQuery> query)
-        {
-            q.ShiftAlias alias;
+		{
+			q.ShiftAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Shift.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Shift.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"Shift => Name : {this.Name}, StartTime : {this.StartTime}, EndTime : {this.EndTime}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"Shift => Name : {this.Name}, StartTime : {this.StartTime}, EndTime : {this.EndTime}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new ShiftData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new ShiftData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.Name == null)
+			if (InnerData.Name is null)
 				throw new PersistenceException(string.Format("Cannot save Shift with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.StartTime == null)
-				throw new PersistenceException(string.Format("Cannot save Shift with key '{0}' because the StartTime cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.EndTime == null)
-				throw new PersistenceException(string.Format("Cannot save Shift with key '{0}' because the EndTime cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save Shift with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -107,21 +100,21 @@ namespace Domain.Data.Manipulation
 		public class ShiftData : Data<System.String>
 		{
 			public ShiftData()
-            {
+			{
 
-            }
+			}
 
-            public ShiftData(ShiftData data)
-            {
+			public ShiftData(ShiftData data)
+			{
 				Name = data.Name;
 				StartTime = data.StartTime;
 				EndTime = data.EndTime;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -214,233 +207,276 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static ShiftMembers members = null;
-        public static ShiftMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(Shift))
-                    {
-                        if (members == null)
-                            members = new ShiftMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class ShiftMembers
-        {
-            internal ShiftMembers() { }
+		private static ShiftMembers members = null;
+		public static ShiftMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(Shift))
+					{
+						if (members is null)
+							members = new ShiftMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class ShiftMembers
+		{
+			internal ShiftMembers() { }
 
 			#region Members for interface IShift
 
-            public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["Shift"].Properties["Name"];
-            public Property StartTime { get; } = Datastore.AdventureWorks.Model.Entities["Shift"].Properties["StartTime"];
-            public Property EndTime { get; } = Datastore.AdventureWorks.Model.Entities["Shift"].Properties["EndTime"];
+			public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["Shift"].Properties["Name"];
+			public Property StartTime { get; } = Datastore.AdventureWorks.Model.Entities["Shift"].Properties["StartTime"];
+			public Property EndTime { get; } = Datastore.AdventureWorks.Model.Entities["Shift"].Properties["EndTime"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static ShiftFullTextMembers fullTextMembers = null;
-        public static ShiftFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(Shift))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new ShiftFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static ShiftFullTextMembers fullTextMembers = null;
+		public static ShiftFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(Shift))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new ShiftFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class ShiftFullTextMembers
-        {
-            internal ShiftFullTextMembers() { }
+		public class ShiftFullTextMembers
+		{
+			internal ShiftFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(Shift))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["Shift"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(Shift))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["Shift"];
+				}
+			}
+			return entity;
+		}
 
 		private static ShiftEvents events = null;
-        public static ShiftEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(Shift))
-                    {
-                        if (events == null)
-                            events = new ShiftEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class ShiftEvents
-        {
+		public static ShiftEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(Shift))
+					{
+						if (events is null)
+							events = new ShiftEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class ShiftEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<Shift, EntityEventArgs> onNew;
-            public event EventHandler<Shift, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Shift, EntityEventArgs> onNew;
+			public event EventHandler<Shift, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Shift, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((Shift)sender, args);
-            }
+			{
+				EventHandler<Shift, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((Shift)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Shift, EntityEventArgs> onDelete;
-            public event EventHandler<Shift, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Shift, EntityEventArgs> onDelete;
+			public event EventHandler<Shift, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Shift, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((Shift)sender, args);
-            }
+			{
+				EventHandler<Shift, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((Shift)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<Shift, EntityEventArgs> onSave;
-            public event EventHandler<Shift, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Shift, EntityEventArgs> onSave;
+			public event EventHandler<Shift, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Shift, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((Shift)sender, args);
-            }
+			{
+				EventHandler<Shift, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((Shift)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<Shift, EntityEventArgs> onAfterSave;
+			public event EventHandler<Shift, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<Shift, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((Shift)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnName
 
@@ -467,7 +503,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onName -= value;
-							if (onName == null && onNameIsRegistered)
+							if (onName is null && onNameIsRegistered)
 							{
 								Members.Name.Events.OnChange -= onNameProxy;
 								onNameIsRegistered = false;
@@ -475,11 +511,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Shift, PropertyEventArgs> handler = onName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Shift)sender, args);
 				}
 
@@ -510,7 +546,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStartTime -= value;
-							if (onStartTime == null && onStartTimeIsRegistered)
+							if (onStartTime is null && onStartTimeIsRegistered)
 							{
 								Members.StartTime.Events.OnChange -= onStartTimeProxy;
 								onStartTimeIsRegistered = false;
@@ -518,11 +554,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStartTimeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Shift, PropertyEventArgs> handler = onStartTime;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Shift)sender, args);
 				}
 
@@ -553,7 +589,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEndTime -= value;
-							if (onEndTime == null && onEndTimeIsRegistered)
+							if (onEndTime is null && onEndTimeIsRegistered)
 							{
 								Members.EndTime.Events.OnChange -= onEndTimeProxy;
 								onEndTimeIsRegistered = false;
@@ -561,11 +597,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEndTimeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Shift, PropertyEventArgs> handler = onEndTime;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Shift)sender, args);
 				}
 
@@ -596,7 +632,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -604,11 +640,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Shift, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Shift)sender, args);
 				}
 
@@ -639,7 +675,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -647,11 +683,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Shift, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Shift)sender, args);
 				}
 
@@ -660,9 +696,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IShiftOriginalData
 

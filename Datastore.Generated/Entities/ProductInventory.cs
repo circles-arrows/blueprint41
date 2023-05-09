@@ -11,94 +11,89 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IProductInventoryOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string Shelf { get; }
 		string Bin { get; }
 		int Quantity { get; }
 		string rowguid { get; }
 		Location Location { get; }
 		Product Product { get; }
-    }
+	}
 
 	public partial class ProductInventory : OGM<ProductInventory, ProductInventory.ProductInventoryData, System.String>, ISchemaBase, INeo4jBase, IProductInventoryOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static ProductInventory()
-        {
-            Register.Types();
-        }
+		static ProductInventory()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, ProductInventory> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, ProductInventory> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.ProductInventoryAlias, IWhereQuery> query)
-        {
-            q.ProductInventoryAlias alias;
+		{
+			q.ProductInventoryAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.ProductInventory.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.ProductInventory.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"ProductInventory => Shelf : {this.Shelf}, Bin : {this.Bin}, Quantity : {this.Quantity}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"ProductInventory => Shelf : {this.Shelf}, Bin : {this.Bin}, Quantity : {this.Quantity}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new ProductInventoryData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new ProductInventoryData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.Shelf == null)
+			if (InnerData.Shelf is null)
 				throw new PersistenceException(string.Format("Cannot save ProductInventory with key '{0}' because the Shelf cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Bin == null)
+			if (InnerData.Bin is null)
 				throw new PersistenceException(string.Format("Cannot save ProductInventory with key '{0}' because the Bin cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Quantity == null)
-				throw new PersistenceException(string.Format("Cannot save ProductInventory with key '{0}' because the Quantity cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.rowguid == null)
+			if (InnerData.rowguid is null)
 				throw new PersistenceException(string.Format("Cannot save ProductInventory with key '{0}' because the rowguid cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save ProductInventory with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -112,12 +107,12 @@ namespace Domain.Data.Manipulation
 		public class ProductInventoryData : Data<System.String>
 		{
 			public ProductInventoryData()
-            {
+			{
 
-            }
+			}
 
-            public ProductInventoryData(ProductInventoryData data)
-            {
+			public ProductInventoryData(ProductInventoryData data)
+			{
 				Shelf = data.Shelf;
 				Bin = data.Bin;
 				Quantity = data.Quantity;
@@ -126,10 +121,10 @@ namespace Domain.Data.Manipulation
 				Product = data.Product;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -249,236 +244,279 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static ProductInventoryMembers members = null;
-        public static ProductInventoryMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(ProductInventory))
-                    {
-                        if (members == null)
-                            members = new ProductInventoryMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class ProductInventoryMembers
-        {
-            internal ProductInventoryMembers() { }
+		private static ProductInventoryMembers members = null;
+		public static ProductInventoryMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(ProductInventory))
+					{
+						if (members is null)
+							members = new ProductInventoryMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class ProductInventoryMembers
+		{
+			internal ProductInventoryMembers() { }
 
 			#region Members for interface IProductInventory
 
-            public Property Shelf { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Shelf"];
-            public Property Bin { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Bin"];
-            public Property Quantity { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Quantity"];
-            public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["rowguid"];
-            public Property Location { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Location"];
-            public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Product"];
+			public Property Shelf { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Shelf"];
+			public Property Bin { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Bin"];
+			public Property Quantity { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Quantity"];
+			public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["rowguid"];
+			public Property Location { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Location"];
+			public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["ProductInventory"].Properties["Product"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static ProductInventoryFullTextMembers fullTextMembers = null;
-        public static ProductInventoryFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(ProductInventory))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new ProductInventoryFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static ProductInventoryFullTextMembers fullTextMembers = null;
+		public static ProductInventoryFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(ProductInventory))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new ProductInventoryFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class ProductInventoryFullTextMembers
-        {
-            internal ProductInventoryFullTextMembers() { }
+		public class ProductInventoryFullTextMembers
+		{
+			internal ProductInventoryFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(ProductInventory))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["ProductInventory"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(ProductInventory))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["ProductInventory"];
+				}
+			}
+			return entity;
+		}
 
 		private static ProductInventoryEvents events = null;
-        public static ProductInventoryEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(ProductInventory))
-                    {
-                        if (events == null)
-                            events = new ProductInventoryEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class ProductInventoryEvents
-        {
+		public static ProductInventoryEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(ProductInventory))
+					{
+						if (events is null)
+							events = new ProductInventoryEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class ProductInventoryEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<ProductInventory, EntityEventArgs> onNew;
-            public event EventHandler<ProductInventory, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductInventory, EntityEventArgs> onNew;
+			public event EventHandler<ProductInventory, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductInventory, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((ProductInventory)sender, args);
-            }
+			{
+				EventHandler<ProductInventory, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((ProductInventory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<ProductInventory, EntityEventArgs> onDelete;
-            public event EventHandler<ProductInventory, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductInventory, EntityEventArgs> onDelete;
+			public event EventHandler<ProductInventory, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductInventory, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((ProductInventory)sender, args);
-            }
+			{
+				EventHandler<ProductInventory, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((ProductInventory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<ProductInventory, EntityEventArgs> onSave;
-            public event EventHandler<ProductInventory, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductInventory, EntityEventArgs> onSave;
+			public event EventHandler<ProductInventory, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductInventory, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((ProductInventory)sender, args);
-            }
+			{
+				EventHandler<ProductInventory, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((ProductInventory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<ProductInventory, EntityEventArgs> onAfterSave;
+			public event EventHandler<ProductInventory, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<ProductInventory, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((ProductInventory)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnShelf
 
@@ -505,7 +543,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onShelf -= value;
-							if (onShelf == null && onShelfIsRegistered)
+							if (onShelf is null && onShelfIsRegistered)
 							{
 								Members.Shelf.Events.OnChange -= onShelfProxy;
 								onShelfIsRegistered = false;
@@ -513,11 +551,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onShelfProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductInventory, PropertyEventArgs> handler = onShelf;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductInventory)sender, args);
 				}
 
@@ -548,7 +586,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onBin -= value;
-							if (onBin == null && onBinIsRegistered)
+							if (onBin is null && onBinIsRegistered)
 							{
 								Members.Bin.Events.OnChange -= onBinProxy;
 								onBinIsRegistered = false;
@@ -556,11 +594,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onBinProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductInventory, PropertyEventArgs> handler = onBin;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductInventory)sender, args);
 				}
 
@@ -591,7 +629,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onQuantity -= value;
-							if (onQuantity == null && onQuantityIsRegistered)
+							if (onQuantity is null && onQuantityIsRegistered)
 							{
 								Members.Quantity.Events.OnChange -= onQuantityProxy;
 								onQuantityIsRegistered = false;
@@ -599,11 +637,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onQuantityProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductInventory, PropertyEventArgs> handler = onQuantity;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductInventory)sender, args);
 				}
 
@@ -634,7 +672,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onrowguid -= value;
-							if (onrowguid == null && onrowguidIsRegistered)
+							if (onrowguid is null && onrowguidIsRegistered)
 							{
 								Members.rowguid.Events.OnChange -= onrowguidProxy;
 								onrowguidIsRegistered = false;
@@ -642,11 +680,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onrowguidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductInventory, PropertyEventArgs> handler = onrowguid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductInventory)sender, args);
 				}
 
@@ -677,7 +715,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onLocation -= value;
-							if (onLocation == null && onLocationIsRegistered)
+							if (onLocation is null && onLocationIsRegistered)
 							{
 								Members.Location.Events.OnChange -= onLocationProxy;
 								onLocationIsRegistered = false;
@@ -685,11 +723,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onLocationProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductInventory, PropertyEventArgs> handler = onLocation;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductInventory)sender, args);
 				}
 
@@ -720,7 +758,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProduct -= value;
-							if (onProduct == null && onProductIsRegistered)
+							if (onProduct is null && onProductIsRegistered)
 							{
 								Members.Product.Events.OnChange -= onProductProxy;
 								onProductIsRegistered = false;
@@ -728,11 +766,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductInventory, PropertyEventArgs> handler = onProduct;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductInventory)sender, args);
 				}
 
@@ -763,7 +801,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -771,11 +809,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductInventory, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductInventory)sender, args);
 				}
 
@@ -806,7 +844,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -814,11 +852,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductInventory, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductInventory)sender, args);
 				}
 
@@ -827,9 +865,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IProductInventoryOriginalData
 

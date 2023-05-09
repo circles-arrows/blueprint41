@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IAddressOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string AddressLine1 { get; }
 		string AddressLine2 { get; }
 		string City { get; }
@@ -20,87 +20,84 @@ namespace Domain.Data.Manipulation
 		string rowguid { get; }
 		StateProvince StateProvince { get; }
 		AddressType AddressType { get; }
-    }
+	}
 
 	public partial class Address : OGM<Address, Address.AddressData, System.String>, ISchemaBase, INeo4jBase, IAddressOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static Address()
-        {
-            Register.Types();
-        }
+		static Address()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Address> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, Address> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.AddressAlias, IWhereQuery> query)
-        {
-            q.AddressAlias alias;
+		{
+			q.AddressAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Address.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Address.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"Address => AddressLine1 : {this.AddressLine1}, AddressLine2 : {this.AddressLine2?.ToString() ?? "null"}, City : {this.City}, PostalCode : {this.PostalCode}, SpatialLocation : {this.SpatialLocation?.ToString() ?? "null"}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"Address => AddressLine1 : {this.AddressLine1}, AddressLine2 : {this.AddressLine2?.ToString() ?? "null"}, City : {this.City}, PostalCode : {this.PostalCode}, SpatialLocation : {this.SpatialLocation?.ToString() ?? "null"}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new AddressData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new AddressData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.AddressLine1 == null)
+			if (InnerData.AddressLine1 is null)
 				throw new PersistenceException(string.Format("Cannot save Address with key '{0}' because the AddressLine1 cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.City == null)
+			if (InnerData.City is null)
 				throw new PersistenceException(string.Format("Cannot save Address with key '{0}' because the City cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.PostalCode == null)
+			if (InnerData.PostalCode is null)
 				throw new PersistenceException(string.Format("Cannot save Address with key '{0}' because the PostalCode cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.rowguid == null)
+			if (InnerData.rowguid is null)
 				throw new PersistenceException(string.Format("Cannot save Address with key '{0}' because the rowguid cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save Address with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -114,12 +111,12 @@ namespace Domain.Data.Manipulation
 		public class AddressData : Data<System.String>
 		{
 			public AddressData()
-            {
+			{
 
-            }
+			}
 
-            public AddressData(AddressData data)
-            {
+			public AddressData(AddressData data)
+			{
 				AddressLine1 = data.AddressLine1;
 				AddressLine2 = data.AddressLine2;
 				City = data.City;
@@ -130,10 +127,10 @@ namespace Domain.Data.Manipulation
 				AddressType = data.AddressType;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -263,238 +260,281 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static AddressMembers members = null;
-        public static AddressMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(Address))
-                    {
-                        if (members == null)
-                            members = new AddressMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class AddressMembers
-        {
-            internal AddressMembers() { }
+		private static AddressMembers members = null;
+		public static AddressMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(Address))
+					{
+						if (members is null)
+							members = new AddressMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class AddressMembers
+		{
+			internal AddressMembers() { }
 
 			#region Members for interface IAddress
 
-            public Property AddressLine1 { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["AddressLine1"];
-            public Property AddressLine2 { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["AddressLine2"];
-            public Property City { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["City"];
-            public Property PostalCode { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["PostalCode"];
-            public Property SpatialLocation { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["SpatialLocation"];
-            public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["rowguid"];
-            public Property StateProvince { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["StateProvince"];
-            public Property AddressType { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["AddressType"];
+			public Property AddressLine1 { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["AddressLine1"];
+			public Property AddressLine2 { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["AddressLine2"];
+			public Property City { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["City"];
+			public Property PostalCode { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["PostalCode"];
+			public Property SpatialLocation { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["SpatialLocation"];
+			public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["rowguid"];
+			public Property StateProvince { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["StateProvince"];
+			public Property AddressType { get; } = Datastore.AdventureWorks.Model.Entities["Address"].Properties["AddressType"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static AddressFullTextMembers fullTextMembers = null;
-        public static AddressFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(Address))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new AddressFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static AddressFullTextMembers fullTextMembers = null;
+		public static AddressFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(Address))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new AddressFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class AddressFullTextMembers
-        {
-            internal AddressFullTextMembers() { }
+		public class AddressFullTextMembers
+		{
+			internal AddressFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(Address))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["Address"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(Address))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["Address"];
+				}
+			}
+			return entity;
+		}
 
 		private static AddressEvents events = null;
-        public static AddressEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(Address))
-                    {
-                        if (events == null)
-                            events = new AddressEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class AddressEvents
-        {
+		public static AddressEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(Address))
+					{
+						if (events is null)
+							events = new AddressEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class AddressEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<Address, EntityEventArgs> onNew;
-            public event EventHandler<Address, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Address, EntityEventArgs> onNew;
+			public event EventHandler<Address, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Address, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((Address)sender, args);
-            }
+			{
+				EventHandler<Address, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((Address)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Address, EntityEventArgs> onDelete;
-            public event EventHandler<Address, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Address, EntityEventArgs> onDelete;
+			public event EventHandler<Address, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Address, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((Address)sender, args);
-            }
+			{
+				EventHandler<Address, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((Address)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<Address, EntityEventArgs> onSave;
-            public event EventHandler<Address, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Address, EntityEventArgs> onSave;
+			public event EventHandler<Address, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Address, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((Address)sender, args);
-            }
+			{
+				EventHandler<Address, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((Address)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<Address, EntityEventArgs> onAfterSave;
+			public event EventHandler<Address, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<Address, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((Address)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnAddressLine1
 
@@ -521,7 +561,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onAddressLine1 -= value;
-							if (onAddressLine1 == null && onAddressLine1IsRegistered)
+							if (onAddressLine1 is null && onAddressLine1IsRegistered)
 							{
 								Members.AddressLine1.Events.OnChange -= onAddressLine1Proxy;
 								onAddressLine1IsRegistered = false;
@@ -529,11 +569,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onAddressLine1Proxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onAddressLine1;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -564,7 +604,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onAddressLine2 -= value;
-							if (onAddressLine2 == null && onAddressLine2IsRegistered)
+							if (onAddressLine2 is null && onAddressLine2IsRegistered)
 							{
 								Members.AddressLine2.Events.OnChange -= onAddressLine2Proxy;
 								onAddressLine2IsRegistered = false;
@@ -572,11 +612,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onAddressLine2Proxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onAddressLine2;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -607,7 +647,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCity -= value;
-							if (onCity == null && onCityIsRegistered)
+							if (onCity is null && onCityIsRegistered)
 							{
 								Members.City.Events.OnChange -= onCityProxy;
 								onCityIsRegistered = false;
@@ -615,11 +655,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCityProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onCity;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -650,7 +690,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onPostalCode -= value;
-							if (onPostalCode == null && onPostalCodeIsRegistered)
+							if (onPostalCode is null && onPostalCodeIsRegistered)
 							{
 								Members.PostalCode.Events.OnChange -= onPostalCodeProxy;
 								onPostalCodeIsRegistered = false;
@@ -658,11 +698,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onPostalCodeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onPostalCode;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -693,7 +733,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSpatialLocation -= value;
-							if (onSpatialLocation == null && onSpatialLocationIsRegistered)
+							if (onSpatialLocation is null && onSpatialLocationIsRegistered)
 							{
 								Members.SpatialLocation.Events.OnChange -= onSpatialLocationProxy;
 								onSpatialLocationIsRegistered = false;
@@ -701,11 +741,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSpatialLocationProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onSpatialLocation;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -736,7 +776,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onrowguid -= value;
-							if (onrowguid == null && onrowguidIsRegistered)
+							if (onrowguid is null && onrowguidIsRegistered)
 							{
 								Members.rowguid.Events.OnChange -= onrowguidProxy;
 								onrowguidIsRegistered = false;
@@ -744,11 +784,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onrowguidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onrowguid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -779,7 +819,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStateProvince -= value;
-							if (onStateProvince == null && onStateProvinceIsRegistered)
+							if (onStateProvince is null && onStateProvinceIsRegistered)
 							{
 								Members.StateProvince.Events.OnChange -= onStateProvinceProxy;
 								onStateProvinceIsRegistered = false;
@@ -787,11 +827,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStateProvinceProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onStateProvince;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -822,7 +862,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onAddressType -= value;
-							if (onAddressType == null && onAddressTypeIsRegistered)
+							if (onAddressType is null && onAddressTypeIsRegistered)
 							{
 								Members.AddressType.Events.OnChange -= onAddressTypeProxy;
 								onAddressTypeIsRegistered = false;
@@ -830,11 +870,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onAddressTypeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onAddressType;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -865,7 +905,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -873,11 +913,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -908,7 +948,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -916,11 +956,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Address, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Address)sender, args);
 				}
 
@@ -929,9 +969,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IAddressOriginalData
 

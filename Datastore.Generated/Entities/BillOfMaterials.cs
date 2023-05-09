@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IBillOfMaterialsOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		System.DateTime StartDate { get; }
 		System.DateTime? EndDate { get; }
 		string UnitMeasureCode { get; }
@@ -19,87 +19,80 @@ namespace Domain.Data.Manipulation
 		int PerAssemblyQty { get; }
 		UnitMeasure UnitMeasure { get; }
 		Product Product { get; }
-    }
+	}
 
 	public partial class BillOfMaterials : OGM<BillOfMaterials, BillOfMaterials.BillOfMaterialsData, System.String>, ISchemaBase, INeo4jBase, IBillOfMaterialsOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static BillOfMaterials()
-        {
-            Register.Types();
-        }
+		static BillOfMaterials()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, BillOfMaterials> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, BillOfMaterials> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.BillOfMaterialsAlias, IWhereQuery> query)
-        {
-            q.BillOfMaterialsAlias alias;
+		{
+			q.BillOfMaterialsAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.BillOfMaterials.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.BillOfMaterials.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"BillOfMaterials => StartDate : {this.StartDate}, EndDate : {this.EndDate?.ToString() ?? "null"}, UnitMeasureCode : {this.UnitMeasureCode}, BOMLevel : {this.BOMLevel}, PerAssemblyQty : {this.PerAssemblyQty}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"BillOfMaterials => StartDate : {this.StartDate}, EndDate : {this.EndDate?.ToString() ?? "null"}, UnitMeasureCode : {this.UnitMeasureCode}, BOMLevel : {this.BOMLevel}, PerAssemblyQty : {this.PerAssemblyQty}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new BillOfMaterialsData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new BillOfMaterialsData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.StartDate == null)
-				throw new PersistenceException(string.Format("Cannot save BillOfMaterials with key '{0}' because the StartDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.UnitMeasureCode == null)
+			if (InnerData.UnitMeasureCode is null)
 				throw new PersistenceException(string.Format("Cannot save BillOfMaterials with key '{0}' because the UnitMeasureCode cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.BOMLevel == null)
+			if (InnerData.BOMLevel is null)
 				throw new PersistenceException(string.Format("Cannot save BillOfMaterials with key '{0}' because the BOMLevel cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.PerAssemblyQty == null)
-				throw new PersistenceException(string.Format("Cannot save BillOfMaterials with key '{0}' because the PerAssemblyQty cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save BillOfMaterials with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -113,12 +106,12 @@ namespace Domain.Data.Manipulation
 		public class BillOfMaterialsData : Data<System.String>
 		{
 			public BillOfMaterialsData()
-            {
+			{
 
-            }
+			}
 
-            public BillOfMaterialsData(BillOfMaterialsData data)
-            {
+			public BillOfMaterialsData(BillOfMaterialsData data)
+			{
 				StartDate = data.StartDate;
 				EndDate = data.EndDate;
 				UnitMeasureCode = data.UnitMeasureCode;
@@ -128,10 +121,10 @@ namespace Domain.Data.Manipulation
 				Product = data.Product;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -256,237 +249,280 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static BillOfMaterialsMembers members = null;
-        public static BillOfMaterialsMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(BillOfMaterials))
-                    {
-                        if (members == null)
-                            members = new BillOfMaterialsMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class BillOfMaterialsMembers
-        {
-            internal BillOfMaterialsMembers() { }
+		private static BillOfMaterialsMembers members = null;
+		public static BillOfMaterialsMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(BillOfMaterials))
+					{
+						if (members is null)
+							members = new BillOfMaterialsMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class BillOfMaterialsMembers
+		{
+			internal BillOfMaterialsMembers() { }
 
 			#region Members for interface IBillOfMaterials
 
-            public Property StartDate { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["StartDate"];
-            public Property EndDate { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["EndDate"];
-            public Property UnitMeasureCode { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["UnitMeasureCode"];
-            public Property BOMLevel { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["BOMLevel"];
-            public Property PerAssemblyQty { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["PerAssemblyQty"];
-            public Property UnitMeasure { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["UnitMeasure"];
-            public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["Product"];
+			public Property StartDate { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["StartDate"];
+			public Property EndDate { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["EndDate"];
+			public Property UnitMeasureCode { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["UnitMeasureCode"];
+			public Property BOMLevel { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["BOMLevel"];
+			public Property PerAssemblyQty { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["PerAssemblyQty"];
+			public Property UnitMeasure { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["UnitMeasure"];
+			public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"].Properties["Product"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static BillOfMaterialsFullTextMembers fullTextMembers = null;
-        public static BillOfMaterialsFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(BillOfMaterials))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new BillOfMaterialsFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static BillOfMaterialsFullTextMembers fullTextMembers = null;
+		public static BillOfMaterialsFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(BillOfMaterials))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new BillOfMaterialsFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class BillOfMaterialsFullTextMembers
-        {
-            internal BillOfMaterialsFullTextMembers() { }
+		public class BillOfMaterialsFullTextMembers
+		{
+			internal BillOfMaterialsFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(BillOfMaterials))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(BillOfMaterials))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["BillOfMaterials"];
+				}
+			}
+			return entity;
+		}
 
 		private static BillOfMaterialsEvents events = null;
-        public static BillOfMaterialsEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(BillOfMaterials))
-                    {
-                        if (events == null)
-                            events = new BillOfMaterialsEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class BillOfMaterialsEvents
-        {
+		public static BillOfMaterialsEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(BillOfMaterials))
+					{
+						if (events is null)
+							events = new BillOfMaterialsEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class BillOfMaterialsEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<BillOfMaterials, EntityEventArgs> onNew;
-            public event EventHandler<BillOfMaterials, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<BillOfMaterials, EntityEventArgs> onNew;
+			public event EventHandler<BillOfMaterials, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<BillOfMaterials, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((BillOfMaterials)sender, args);
-            }
+			{
+				EventHandler<BillOfMaterials, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((BillOfMaterials)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<BillOfMaterials, EntityEventArgs> onDelete;
-            public event EventHandler<BillOfMaterials, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<BillOfMaterials, EntityEventArgs> onDelete;
+			public event EventHandler<BillOfMaterials, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<BillOfMaterials, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((BillOfMaterials)sender, args);
-            }
+			{
+				EventHandler<BillOfMaterials, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((BillOfMaterials)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<BillOfMaterials, EntityEventArgs> onSave;
-            public event EventHandler<BillOfMaterials, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<BillOfMaterials, EntityEventArgs> onSave;
+			public event EventHandler<BillOfMaterials, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<BillOfMaterials, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((BillOfMaterials)sender, args);
-            }
+			{
+				EventHandler<BillOfMaterials, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((BillOfMaterials)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<BillOfMaterials, EntityEventArgs> onAfterSave;
+			public event EventHandler<BillOfMaterials, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<BillOfMaterials, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((BillOfMaterials)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnStartDate
 
@@ -513,7 +549,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStartDate -= value;
-							if (onStartDate == null && onStartDateIsRegistered)
+							if (onStartDate is null && onStartDateIsRegistered)
 							{
 								Members.StartDate.Events.OnChange -= onStartDateProxy;
 								onStartDateIsRegistered = false;
@@ -521,11 +557,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStartDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onStartDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -556,7 +592,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEndDate -= value;
-							if (onEndDate == null && onEndDateIsRegistered)
+							if (onEndDate is null && onEndDateIsRegistered)
 							{
 								Members.EndDate.Events.OnChange -= onEndDateProxy;
 								onEndDateIsRegistered = false;
@@ -564,11 +600,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEndDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onEndDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -599,7 +635,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUnitMeasureCode -= value;
-							if (onUnitMeasureCode == null && onUnitMeasureCodeIsRegistered)
+							if (onUnitMeasureCode is null && onUnitMeasureCodeIsRegistered)
 							{
 								Members.UnitMeasureCode.Events.OnChange -= onUnitMeasureCodeProxy;
 								onUnitMeasureCodeIsRegistered = false;
@@ -607,11 +643,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUnitMeasureCodeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onUnitMeasureCode;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -642,7 +678,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onBOMLevel -= value;
-							if (onBOMLevel == null && onBOMLevelIsRegistered)
+							if (onBOMLevel is null && onBOMLevelIsRegistered)
 							{
 								Members.BOMLevel.Events.OnChange -= onBOMLevelProxy;
 								onBOMLevelIsRegistered = false;
@@ -650,11 +686,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onBOMLevelProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onBOMLevel;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -685,7 +721,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onPerAssemblyQty -= value;
-							if (onPerAssemblyQty == null && onPerAssemblyQtyIsRegistered)
+							if (onPerAssemblyQty is null && onPerAssemblyQtyIsRegistered)
 							{
 								Members.PerAssemblyQty.Events.OnChange -= onPerAssemblyQtyProxy;
 								onPerAssemblyQtyIsRegistered = false;
@@ -693,11 +729,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onPerAssemblyQtyProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onPerAssemblyQty;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -728,7 +764,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUnitMeasure -= value;
-							if (onUnitMeasure == null && onUnitMeasureIsRegistered)
+							if (onUnitMeasure is null && onUnitMeasureIsRegistered)
 							{
 								Members.UnitMeasure.Events.OnChange -= onUnitMeasureProxy;
 								onUnitMeasureIsRegistered = false;
@@ -736,11 +772,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUnitMeasureProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onUnitMeasure;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -771,7 +807,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProduct -= value;
-							if (onProduct == null && onProductIsRegistered)
+							if (onProduct is null && onProductIsRegistered)
 							{
 								Members.Product.Events.OnChange -= onProductProxy;
 								onProductIsRegistered = false;
@@ -779,11 +815,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onProduct;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -814,7 +850,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -822,11 +858,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -857,7 +893,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -865,11 +901,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<BillOfMaterials, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((BillOfMaterials)sender, args);
 				}
 
@@ -878,9 +914,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IBillOfMaterialsOriginalData
 

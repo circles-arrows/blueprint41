@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IDocumentOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string DocumentNode { get; }
 		string DocumentLevel { get; }
 		string Title { get; }
@@ -26,101 +26,98 @@ namespace Domain.Data.Manipulation
 		string Doc { get; }
 		string rowguid { get; }
 		IEnumerable<Person> Persons { get; }
-    }
+	}
 
 	public partial class Document : OGM<Document, Document.DocumentData, System.String>, ISchemaBase, INeo4jBase, IDocumentOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static Document()
-        {
-            Register.Types();
-        }
+		static Document()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Document> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, Document> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.DocumentAlias, IWhereQuery> query)
-        {
-            q.DocumentAlias alias;
+		{
+			q.DocumentAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Document.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Document.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"Document => DocumentNode : {this.DocumentNode}, DocumentLevel : {this.DocumentLevel}, Title : {this.Title}, Owner : {this.Owner}, FolderFlag : {this.FolderFlag}, FileName : {this.FileName}, FileExtension : {this.FileExtension}, Revision : {this.Revision}, ChangeNumber : {this.ChangeNumber}, Status : {this.Status}, DocumentSummary : {this.DocumentSummary?.ToString() ?? "null"}, Doc : {this.Doc?.ToString() ?? "null"}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"Document => DocumentNode : {this.DocumentNode}, DocumentLevel : {this.DocumentLevel}, Title : {this.Title}, Owner : {this.Owner}, FolderFlag : {this.FolderFlag}, FileName : {this.FileName}, FileExtension : {this.FileExtension}, Revision : {this.Revision}, ChangeNumber : {this.ChangeNumber}, Status : {this.Status}, DocumentSummary : {this.DocumentSummary?.ToString() ?? "null"}, Doc : {this.Doc?.ToString() ?? "null"}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new DocumentData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new DocumentData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.DocumentNode == null)
+			if (InnerData.DocumentNode is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the DocumentNode cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.DocumentLevel == null)
+			if (InnerData.DocumentLevel is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the DocumentLevel cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Title == null)
+			if (InnerData.Title is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the Title cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Owner == null)
+			if (InnerData.Owner is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the Owner cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.FolderFlag == null)
+			if (InnerData.FolderFlag is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the FolderFlag cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.FileName == null)
+			if (InnerData.FileName is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the FileName cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.FileExtension == null)
+			if (InnerData.FileExtension is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the FileExtension cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Revision == null)
+			if (InnerData.Revision is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the Revision cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ChangeNumber == null)
+			if (InnerData.ChangeNumber is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the ChangeNumber cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Status == null)
+			if (InnerData.Status is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the Status cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.rowguid == null)
+			if (InnerData.rowguid is null)
 				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the rowguid cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save Document with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -134,12 +131,12 @@ namespace Domain.Data.Manipulation
 		public class DocumentData : Data<System.String>
 		{
 			public DocumentData()
-            {
+			{
 
-            }
+			}
 
-            public DocumentData(DocumentData data)
-            {
+			public DocumentData(DocumentData data)
+			{
 				DocumentNode = data.DocumentNode;
 				DocumentLevel = data.DocumentLevel;
 				Title = data.Title;
@@ -156,10 +153,10 @@ namespace Domain.Data.Manipulation
 				Persons = data.Persons;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -309,244 +306,287 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static DocumentMembers members = null;
-        public static DocumentMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(Document))
-                    {
-                        if (members == null)
-                            members = new DocumentMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class DocumentMembers
-        {
-            internal DocumentMembers() { }
+		private static DocumentMembers members = null;
+		public static DocumentMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(Document))
+					{
+						if (members is null)
+							members = new DocumentMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class DocumentMembers
+		{
+			internal DocumentMembers() { }
 
 			#region Members for interface IDocument
 
-            public Property DocumentNode { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["DocumentNode"];
-            public Property DocumentLevel { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["DocumentLevel"];
-            public Property Title { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Title"];
-            public Property Owner { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Owner"];
-            public Property FolderFlag { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["FolderFlag"];
-            public Property FileName { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["FileName"];
-            public Property FileExtension { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["FileExtension"];
-            public Property Revision { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Revision"];
-            public Property ChangeNumber { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["ChangeNumber"];
-            public Property Status { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Status"];
-            public Property DocumentSummary { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["DocumentSummary"];
-            public Property Doc { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Doc"];
-            public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["rowguid"];
-            public Property Persons { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Persons"];
+			public Property DocumentNode { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["DocumentNode"];
+			public Property DocumentLevel { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["DocumentLevel"];
+			public Property Title { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Title"];
+			public Property Owner { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Owner"];
+			public Property FolderFlag { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["FolderFlag"];
+			public Property FileName { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["FileName"];
+			public Property FileExtension { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["FileExtension"];
+			public Property Revision { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Revision"];
+			public Property ChangeNumber { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["ChangeNumber"];
+			public Property Status { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Status"];
+			public Property DocumentSummary { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["DocumentSummary"];
+			public Property Doc { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Doc"];
+			public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["rowguid"];
+			public Property Persons { get; } = Datastore.AdventureWorks.Model.Entities["Document"].Properties["Persons"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static DocumentFullTextMembers fullTextMembers = null;
-        public static DocumentFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(Document))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new DocumentFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static DocumentFullTextMembers fullTextMembers = null;
+		public static DocumentFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(Document))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new DocumentFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class DocumentFullTextMembers
-        {
-            internal DocumentFullTextMembers() { }
+		public class DocumentFullTextMembers
+		{
+			internal DocumentFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(Document))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["Document"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(Document))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["Document"];
+				}
+			}
+			return entity;
+		}
 
 		private static DocumentEvents events = null;
-        public static DocumentEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(Document))
-                    {
-                        if (events == null)
-                            events = new DocumentEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class DocumentEvents
-        {
+		public static DocumentEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(Document))
+					{
+						if (events is null)
+							events = new DocumentEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class DocumentEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<Document, EntityEventArgs> onNew;
-            public event EventHandler<Document, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Document, EntityEventArgs> onNew;
+			public event EventHandler<Document, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Document, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((Document)sender, args);
-            }
+			{
+				EventHandler<Document, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((Document)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Document, EntityEventArgs> onDelete;
-            public event EventHandler<Document, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Document, EntityEventArgs> onDelete;
+			public event EventHandler<Document, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Document, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((Document)sender, args);
-            }
+			{
+				EventHandler<Document, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((Document)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<Document, EntityEventArgs> onSave;
-            public event EventHandler<Document, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Document, EntityEventArgs> onSave;
+			public event EventHandler<Document, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Document, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((Document)sender, args);
-            }
+			{
+				EventHandler<Document, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((Document)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<Document, EntityEventArgs> onAfterSave;
+			public event EventHandler<Document, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<Document, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((Document)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnDocumentNode
 
@@ -573,7 +613,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDocumentNode -= value;
-							if (onDocumentNode == null && onDocumentNodeIsRegistered)
+							if (onDocumentNode is null && onDocumentNodeIsRegistered)
 							{
 								Members.DocumentNode.Events.OnChange -= onDocumentNodeProxy;
 								onDocumentNodeIsRegistered = false;
@@ -581,11 +621,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDocumentNodeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onDocumentNode;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -616,7 +656,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDocumentLevel -= value;
-							if (onDocumentLevel == null && onDocumentLevelIsRegistered)
+							if (onDocumentLevel is null && onDocumentLevelIsRegistered)
 							{
 								Members.DocumentLevel.Events.OnChange -= onDocumentLevelProxy;
 								onDocumentLevelIsRegistered = false;
@@ -624,11 +664,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDocumentLevelProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onDocumentLevel;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -659,7 +699,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onTitle -= value;
-							if (onTitle == null && onTitleIsRegistered)
+							if (onTitle is null && onTitleIsRegistered)
 							{
 								Members.Title.Events.OnChange -= onTitleProxy;
 								onTitleIsRegistered = false;
@@ -667,11 +707,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTitleProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onTitle;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -702,7 +742,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onOwner -= value;
-							if (onOwner == null && onOwnerIsRegistered)
+							if (onOwner is null && onOwnerIsRegistered)
 							{
 								Members.Owner.Events.OnChange -= onOwnerProxy;
 								onOwnerIsRegistered = false;
@@ -710,11 +750,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onOwnerProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onOwner;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -745,7 +785,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onFolderFlag -= value;
-							if (onFolderFlag == null && onFolderFlagIsRegistered)
+							if (onFolderFlag is null && onFolderFlagIsRegistered)
 							{
 								Members.FolderFlag.Events.OnChange -= onFolderFlagProxy;
 								onFolderFlagIsRegistered = false;
@@ -753,11 +793,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onFolderFlagProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onFolderFlag;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -788,7 +828,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onFileName -= value;
-							if (onFileName == null && onFileNameIsRegistered)
+							if (onFileName is null && onFileNameIsRegistered)
 							{
 								Members.FileName.Events.OnChange -= onFileNameProxy;
 								onFileNameIsRegistered = false;
@@ -796,11 +836,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onFileNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onFileName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -831,7 +871,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onFileExtension -= value;
-							if (onFileExtension == null && onFileExtensionIsRegistered)
+							if (onFileExtension is null && onFileExtensionIsRegistered)
 							{
 								Members.FileExtension.Events.OnChange -= onFileExtensionProxy;
 								onFileExtensionIsRegistered = false;
@@ -839,11 +879,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onFileExtensionProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onFileExtension;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -874,7 +914,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onRevision -= value;
-							if (onRevision == null && onRevisionIsRegistered)
+							if (onRevision is null && onRevisionIsRegistered)
 							{
 								Members.Revision.Events.OnChange -= onRevisionProxy;
 								onRevisionIsRegistered = false;
@@ -882,11 +922,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onRevisionProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onRevision;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -917,7 +957,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onChangeNumber -= value;
-							if (onChangeNumber == null && onChangeNumberIsRegistered)
+							if (onChangeNumber is null && onChangeNumberIsRegistered)
 							{
 								Members.ChangeNumber.Events.OnChange -= onChangeNumberProxy;
 								onChangeNumberIsRegistered = false;
@@ -925,11 +965,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onChangeNumberProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onChangeNumber;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -960,7 +1000,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStatus -= value;
-							if (onStatus == null && onStatusIsRegistered)
+							if (onStatus is null && onStatusIsRegistered)
 							{
 								Members.Status.Events.OnChange -= onStatusProxy;
 								onStatusIsRegistered = false;
@@ -968,11 +1008,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStatusProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onStatus;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -1003,7 +1043,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDocumentSummary -= value;
-							if (onDocumentSummary == null && onDocumentSummaryIsRegistered)
+							if (onDocumentSummary is null && onDocumentSummaryIsRegistered)
 							{
 								Members.DocumentSummary.Events.OnChange -= onDocumentSummaryProxy;
 								onDocumentSummaryIsRegistered = false;
@@ -1011,11 +1051,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDocumentSummaryProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onDocumentSummary;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -1046,7 +1086,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDoc -= value;
-							if (onDoc == null && onDocIsRegistered)
+							if (onDoc is null && onDocIsRegistered)
 							{
 								Members.Doc.Events.OnChange -= onDocProxy;
 								onDocIsRegistered = false;
@@ -1054,11 +1094,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDocProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onDoc;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -1089,7 +1129,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onrowguid -= value;
-							if (onrowguid == null && onrowguidIsRegistered)
+							if (onrowguid is null && onrowguidIsRegistered)
 							{
 								Members.rowguid.Events.OnChange -= onrowguidProxy;
 								onrowguidIsRegistered = false;
@@ -1097,11 +1137,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onrowguidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onrowguid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -1132,7 +1172,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onPersons -= value;
-							if (onPersons == null && onPersonsIsRegistered)
+							if (onPersons is null && onPersonsIsRegistered)
 							{
 								Members.Persons.Events.OnChange -= onPersonsProxy;
 								onPersonsIsRegistered = false;
@@ -1140,11 +1180,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onPersonsProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onPersons;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -1175,7 +1215,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -1183,11 +1223,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -1218,7 +1258,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -1226,11 +1266,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Document, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Document)sender, args);
 				}
 
@@ -1239,9 +1279,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IDocumentOriginalData
 

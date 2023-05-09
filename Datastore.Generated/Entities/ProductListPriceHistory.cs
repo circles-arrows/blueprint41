@@ -11,90 +11,83 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IProductListPriceHistoryOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		System.DateTime StartDate { get; }
 		System.DateTime EndDate { get; }
 		string ListPrice { get; }
 		Product Product { get; }
-    }
+	}
 
 	public partial class ProductListPriceHistory : OGM<ProductListPriceHistory, ProductListPriceHistory.ProductListPriceHistoryData, System.String>, ISchemaBase, INeo4jBase, IProductListPriceHistoryOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static ProductListPriceHistory()
-        {
-            Register.Types();
-        }
+		static ProductListPriceHistory()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, ProductListPriceHistory> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, ProductListPriceHistory> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.ProductListPriceHistoryAlias, IWhereQuery> query)
-        {
-            q.ProductListPriceHistoryAlias alias;
+		{
+			q.ProductListPriceHistoryAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.ProductListPriceHistory.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.ProductListPriceHistory.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"ProductListPriceHistory => StartDate : {this.StartDate}, EndDate : {this.EndDate}, ListPrice : {this.ListPrice}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"ProductListPriceHistory => StartDate : {this.StartDate}, EndDate : {this.EndDate}, ListPrice : {this.ListPrice}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new ProductListPriceHistoryData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new ProductListPriceHistoryData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.StartDate == null)
-				throw new PersistenceException(string.Format("Cannot save ProductListPriceHistory with key '{0}' because the StartDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.EndDate == null)
-				throw new PersistenceException(string.Format("Cannot save ProductListPriceHistory with key '{0}' because the EndDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ListPrice == null)
+			if (InnerData.ListPrice is null)
 				throw new PersistenceException(string.Format("Cannot save ProductListPriceHistory with key '{0}' because the ListPrice cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save ProductListPriceHistory with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -108,22 +101,22 @@ namespace Domain.Data.Manipulation
 		public class ProductListPriceHistoryData : Data<System.String>
 		{
 			public ProductListPriceHistoryData()
-            {
+			{
 
-            }
+			}
 
-            public ProductListPriceHistoryData(ProductListPriceHistoryData data)
-            {
+			public ProductListPriceHistoryData(ProductListPriceHistoryData data)
+			{
 				StartDate = data.StartDate;
 				EndDate = data.EndDate;
 				ListPrice = data.ListPrice;
 				Product = data.Product;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -231,234 +224,277 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static ProductListPriceHistoryMembers members = null;
-        public static ProductListPriceHistoryMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(ProductListPriceHistory))
-                    {
-                        if (members == null)
-                            members = new ProductListPriceHistoryMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class ProductListPriceHistoryMembers
-        {
-            internal ProductListPriceHistoryMembers() { }
+		private static ProductListPriceHistoryMembers members = null;
+		public static ProductListPriceHistoryMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(ProductListPriceHistory))
+					{
+						if (members is null)
+							members = new ProductListPriceHistoryMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class ProductListPriceHistoryMembers
+		{
+			internal ProductListPriceHistoryMembers() { }
 
 			#region Members for interface IProductListPriceHistory
 
-            public Property StartDate { get; } = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"].Properties["StartDate"];
-            public Property EndDate { get; } = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"].Properties["EndDate"];
-            public Property ListPrice { get; } = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"].Properties["ListPrice"];
-            public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"].Properties["Product"];
+			public Property StartDate { get; } = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"].Properties["StartDate"];
+			public Property EndDate { get; } = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"].Properties["EndDate"];
+			public Property ListPrice { get; } = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"].Properties["ListPrice"];
+			public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"].Properties["Product"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static ProductListPriceHistoryFullTextMembers fullTextMembers = null;
-        public static ProductListPriceHistoryFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(ProductListPriceHistory))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new ProductListPriceHistoryFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static ProductListPriceHistoryFullTextMembers fullTextMembers = null;
+		public static ProductListPriceHistoryFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(ProductListPriceHistory))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new ProductListPriceHistoryFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class ProductListPriceHistoryFullTextMembers
-        {
-            internal ProductListPriceHistoryFullTextMembers() { }
+		public class ProductListPriceHistoryFullTextMembers
+		{
+			internal ProductListPriceHistoryFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(ProductListPriceHistory))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(ProductListPriceHistory))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["ProductListPriceHistory"];
+				}
+			}
+			return entity;
+		}
 
 		private static ProductListPriceHistoryEvents events = null;
-        public static ProductListPriceHistoryEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(ProductListPriceHistory))
-                    {
-                        if (events == null)
-                            events = new ProductListPriceHistoryEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class ProductListPriceHistoryEvents
-        {
+		public static ProductListPriceHistoryEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(ProductListPriceHistory))
+					{
+						if (events is null)
+							events = new ProductListPriceHistoryEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class ProductListPriceHistoryEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<ProductListPriceHistory, EntityEventArgs> onNew;
-            public event EventHandler<ProductListPriceHistory, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductListPriceHistory, EntityEventArgs> onNew;
+			public event EventHandler<ProductListPriceHistory, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductListPriceHistory, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((ProductListPriceHistory)sender, args);
-            }
+			{
+				EventHandler<ProductListPriceHistory, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((ProductListPriceHistory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<ProductListPriceHistory, EntityEventArgs> onDelete;
-            public event EventHandler<ProductListPriceHistory, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductListPriceHistory, EntityEventArgs> onDelete;
+			public event EventHandler<ProductListPriceHistory, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductListPriceHistory, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((ProductListPriceHistory)sender, args);
-            }
+			{
+				EventHandler<ProductListPriceHistory, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((ProductListPriceHistory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<ProductListPriceHistory, EntityEventArgs> onSave;
-            public event EventHandler<ProductListPriceHistory, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<ProductListPriceHistory, EntityEventArgs> onSave;
+			public event EventHandler<ProductListPriceHistory, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<ProductListPriceHistory, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((ProductListPriceHistory)sender, args);
-            }
+			{
+				EventHandler<ProductListPriceHistory, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((ProductListPriceHistory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<ProductListPriceHistory, EntityEventArgs> onAfterSave;
+			public event EventHandler<ProductListPriceHistory, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<ProductListPriceHistory, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((ProductListPriceHistory)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnStartDate
 
@@ -485,7 +521,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStartDate -= value;
-							if (onStartDate == null && onStartDateIsRegistered)
+							if (onStartDate is null && onStartDateIsRegistered)
 							{
 								Members.StartDate.Events.OnChange -= onStartDateProxy;
 								onStartDateIsRegistered = false;
@@ -493,11 +529,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStartDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductListPriceHistory, PropertyEventArgs> handler = onStartDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductListPriceHistory)sender, args);
 				}
 
@@ -528,7 +564,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEndDate -= value;
-							if (onEndDate == null && onEndDateIsRegistered)
+							if (onEndDate is null && onEndDateIsRegistered)
 							{
 								Members.EndDate.Events.OnChange -= onEndDateProxy;
 								onEndDateIsRegistered = false;
@@ -536,11 +572,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEndDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductListPriceHistory, PropertyEventArgs> handler = onEndDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductListPriceHistory)sender, args);
 				}
 
@@ -571,7 +607,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onListPrice -= value;
-							if (onListPrice == null && onListPriceIsRegistered)
+							if (onListPrice is null && onListPriceIsRegistered)
 							{
 								Members.ListPrice.Events.OnChange -= onListPriceProxy;
 								onListPriceIsRegistered = false;
@@ -579,11 +615,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onListPriceProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductListPriceHistory, PropertyEventArgs> handler = onListPrice;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductListPriceHistory)sender, args);
 				}
 
@@ -614,7 +650,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProduct -= value;
-							if (onProduct == null && onProductIsRegistered)
+							if (onProduct is null && onProductIsRegistered)
 							{
 								Members.Product.Events.OnChange -= onProductProxy;
 								onProductIsRegistered = false;
@@ -622,11 +658,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductListPriceHistory, PropertyEventArgs> handler = onProduct;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductListPriceHistory)sender, args);
 				}
 
@@ -657,7 +693,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -665,11 +701,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductListPriceHistory, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductListPriceHistory)sender, args);
 				}
 
@@ -700,7 +736,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -708,11 +744,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<ProductListPriceHistory, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((ProductListPriceHistory)sender, args);
 				}
 
@@ -721,9 +757,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IProductListPriceHistoryOriginalData
 

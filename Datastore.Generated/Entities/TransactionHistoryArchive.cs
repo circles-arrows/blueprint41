@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface ITransactionHistoryArchiveOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		int ReferenceOrderID { get; }
 		System.DateTime TransactionDate { get; }
 		string TransactionType { get; }
@@ -19,91 +19,78 @@ namespace Domain.Data.Manipulation
 		decimal ActualCost { get; }
 		int ReferenceOrderLineID { get; }
 		Product Product { get; }
-    }
+	}
 
 	public partial class TransactionHistoryArchive : OGM<TransactionHistoryArchive, TransactionHistoryArchive.TransactionHistoryArchiveData, System.String>, ISchemaBase, INeo4jBase, ITransactionHistoryArchiveOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static TransactionHistoryArchive()
-        {
-            Register.Types();
-        }
+		static TransactionHistoryArchive()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, TransactionHistoryArchive> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, TransactionHistoryArchive> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.TransactionHistoryArchiveAlias, IWhereQuery> query)
-        {
-            q.TransactionHistoryArchiveAlias alias;
+		{
+			q.TransactionHistoryArchiveAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.TransactionHistoryArchive.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.TransactionHistoryArchive.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"TransactionHistoryArchive => ReferenceOrderID : {this.ReferenceOrderID}, TransactionDate : {this.TransactionDate}, TransactionType : {this.TransactionType}, Quantity : {this.Quantity}, ActualCost : {this.ActualCost}, ReferenceOrderLineID : {this.ReferenceOrderLineID}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"TransactionHistoryArchive => ReferenceOrderID : {this.ReferenceOrderID}, TransactionDate : {this.TransactionDate}, TransactionType : {this.TransactionType}, Quantity : {this.Quantity}, ActualCost : {this.ActualCost}, ReferenceOrderLineID : {this.ReferenceOrderLineID}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new TransactionHistoryArchiveData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new TransactionHistoryArchiveData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.ReferenceOrderID == null)
-				throw new PersistenceException(string.Format("Cannot save TransactionHistoryArchive with key '{0}' because the ReferenceOrderID cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.TransactionDate == null)
-				throw new PersistenceException(string.Format("Cannot save TransactionHistoryArchive with key '{0}' because the TransactionDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.TransactionType == null)
+			if (InnerData.TransactionType is null)
 				throw new PersistenceException(string.Format("Cannot save TransactionHistoryArchive with key '{0}' because the TransactionType cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Quantity == null)
-				throw new PersistenceException(string.Format("Cannot save TransactionHistoryArchive with key '{0}' because the Quantity cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ActualCost == null)
-				throw new PersistenceException(string.Format("Cannot save TransactionHistoryArchive with key '{0}' because the ActualCost cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ReferenceOrderLineID == null)
-				throw new PersistenceException(string.Format("Cannot save TransactionHistoryArchive with key '{0}' because the ReferenceOrderLineID cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save TransactionHistoryArchive with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -117,12 +104,12 @@ namespace Domain.Data.Manipulation
 		public class TransactionHistoryArchiveData : Data<System.String>
 		{
 			public TransactionHistoryArchiveData()
-            {
+			{
 
-            }
+			}
 
-            public TransactionHistoryArchiveData(TransactionHistoryArchiveData data)
-            {
+			public TransactionHistoryArchiveData(TransactionHistoryArchiveData data)
+			{
 				ReferenceOrderID = data.ReferenceOrderID;
 				TransactionDate = data.TransactionDate;
 				TransactionType = data.TransactionType;
@@ -132,10 +119,10 @@ namespace Domain.Data.Manipulation
 				Product = data.Product;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -254,237 +241,280 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static TransactionHistoryArchiveMembers members = null;
-        public static TransactionHistoryArchiveMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(TransactionHistoryArchive))
-                    {
-                        if (members == null)
-                            members = new TransactionHistoryArchiveMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class TransactionHistoryArchiveMembers
-        {
-            internal TransactionHistoryArchiveMembers() { }
+		private static TransactionHistoryArchiveMembers members = null;
+		public static TransactionHistoryArchiveMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(TransactionHistoryArchive))
+					{
+						if (members is null)
+							members = new TransactionHistoryArchiveMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class TransactionHistoryArchiveMembers
+		{
+			internal TransactionHistoryArchiveMembers() { }
 
 			#region Members for interface ITransactionHistoryArchive
 
-            public Property ReferenceOrderID { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["ReferenceOrderID"];
-            public Property TransactionDate { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["TransactionDate"];
-            public Property TransactionType { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["TransactionType"];
-            public Property Quantity { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["Quantity"];
-            public Property ActualCost { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["ActualCost"];
-            public Property ReferenceOrderLineID { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["ReferenceOrderLineID"];
-            public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["Product"];
+			public Property ReferenceOrderID { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["ReferenceOrderID"];
+			public Property TransactionDate { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["TransactionDate"];
+			public Property TransactionType { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["TransactionType"];
+			public Property Quantity { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["Quantity"];
+			public Property ActualCost { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["ActualCost"];
+			public Property ReferenceOrderLineID { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["ReferenceOrderLineID"];
+			public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"].Properties["Product"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static TransactionHistoryArchiveFullTextMembers fullTextMembers = null;
-        public static TransactionHistoryArchiveFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(TransactionHistoryArchive))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new TransactionHistoryArchiveFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static TransactionHistoryArchiveFullTextMembers fullTextMembers = null;
+		public static TransactionHistoryArchiveFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(TransactionHistoryArchive))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new TransactionHistoryArchiveFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class TransactionHistoryArchiveFullTextMembers
-        {
-            internal TransactionHistoryArchiveFullTextMembers() { }
+		public class TransactionHistoryArchiveFullTextMembers
+		{
+			internal TransactionHistoryArchiveFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(TransactionHistoryArchive))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(TransactionHistoryArchive))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["TransactionHistoryArchive"];
+				}
+			}
+			return entity;
+		}
 
 		private static TransactionHistoryArchiveEvents events = null;
-        public static TransactionHistoryArchiveEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(TransactionHistoryArchive))
-                    {
-                        if (events == null)
-                            events = new TransactionHistoryArchiveEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class TransactionHistoryArchiveEvents
-        {
+		public static TransactionHistoryArchiveEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(TransactionHistoryArchive))
+					{
+						if (events is null)
+							events = new TransactionHistoryArchiveEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class TransactionHistoryArchiveEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<TransactionHistoryArchive, EntityEventArgs> onNew;
-            public event EventHandler<TransactionHistoryArchive, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<TransactionHistoryArchive, EntityEventArgs> onNew;
+			public event EventHandler<TransactionHistoryArchive, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<TransactionHistoryArchive, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((TransactionHistoryArchive)sender, args);
-            }
+			{
+				EventHandler<TransactionHistoryArchive, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((TransactionHistoryArchive)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<TransactionHistoryArchive, EntityEventArgs> onDelete;
-            public event EventHandler<TransactionHistoryArchive, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<TransactionHistoryArchive, EntityEventArgs> onDelete;
+			public event EventHandler<TransactionHistoryArchive, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<TransactionHistoryArchive, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((TransactionHistoryArchive)sender, args);
-            }
+			{
+				EventHandler<TransactionHistoryArchive, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((TransactionHistoryArchive)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<TransactionHistoryArchive, EntityEventArgs> onSave;
-            public event EventHandler<TransactionHistoryArchive, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<TransactionHistoryArchive, EntityEventArgs> onSave;
+			public event EventHandler<TransactionHistoryArchive, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<TransactionHistoryArchive, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((TransactionHistoryArchive)sender, args);
-            }
+			{
+				EventHandler<TransactionHistoryArchive, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((TransactionHistoryArchive)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<TransactionHistoryArchive, EntityEventArgs> onAfterSave;
+			public event EventHandler<TransactionHistoryArchive, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<TransactionHistoryArchive, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((TransactionHistoryArchive)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnReferenceOrderID
 
@@ -511,7 +541,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onReferenceOrderID -= value;
-							if (onReferenceOrderID == null && onReferenceOrderIDIsRegistered)
+							if (onReferenceOrderID is null && onReferenceOrderIDIsRegistered)
 							{
 								Members.ReferenceOrderID.Events.OnChange -= onReferenceOrderIDProxy;
 								onReferenceOrderIDIsRegistered = false;
@@ -519,11 +549,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onReferenceOrderIDProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onReferenceOrderID;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -554,7 +584,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onTransactionDate -= value;
-							if (onTransactionDate == null && onTransactionDateIsRegistered)
+							if (onTransactionDate is null && onTransactionDateIsRegistered)
 							{
 								Members.TransactionDate.Events.OnChange -= onTransactionDateProxy;
 								onTransactionDateIsRegistered = false;
@@ -562,11 +592,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTransactionDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onTransactionDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -597,7 +627,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onTransactionType -= value;
-							if (onTransactionType == null && onTransactionTypeIsRegistered)
+							if (onTransactionType is null && onTransactionTypeIsRegistered)
 							{
 								Members.TransactionType.Events.OnChange -= onTransactionTypeProxy;
 								onTransactionTypeIsRegistered = false;
@@ -605,11 +635,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTransactionTypeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onTransactionType;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -640,7 +670,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onQuantity -= value;
-							if (onQuantity == null && onQuantityIsRegistered)
+							if (onQuantity is null && onQuantityIsRegistered)
 							{
 								Members.Quantity.Events.OnChange -= onQuantityProxy;
 								onQuantityIsRegistered = false;
@@ -648,11 +678,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onQuantityProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onQuantity;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -683,7 +713,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onActualCost -= value;
-							if (onActualCost == null && onActualCostIsRegistered)
+							if (onActualCost is null && onActualCostIsRegistered)
 							{
 								Members.ActualCost.Events.OnChange -= onActualCostProxy;
 								onActualCostIsRegistered = false;
@@ -691,11 +721,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onActualCostProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onActualCost;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -726,7 +756,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onReferenceOrderLineID -= value;
-							if (onReferenceOrderLineID == null && onReferenceOrderLineIDIsRegistered)
+							if (onReferenceOrderLineID is null && onReferenceOrderLineIDIsRegistered)
 							{
 								Members.ReferenceOrderLineID.Events.OnChange -= onReferenceOrderLineIDProxy;
 								onReferenceOrderLineIDIsRegistered = false;
@@ -734,11 +764,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onReferenceOrderLineIDProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onReferenceOrderLineID;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -769,7 +799,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProduct -= value;
-							if (onProduct == null && onProductIsRegistered)
+							if (onProduct is null && onProductIsRegistered)
 							{
 								Members.Product.Events.OnChange -= onProductProxy;
 								onProductIsRegistered = false;
@@ -777,11 +807,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onProduct;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -812,7 +842,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -820,11 +850,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -855,7 +885,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -863,11 +893,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<TransactionHistoryArchive, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((TransactionHistoryArchive)sender, args);
 				}
 
@@ -876,9 +906,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region ITransactionHistoryArchiveOriginalData
 

@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface ISalesTerritoryOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string Name { get; }
 		string CountryRegionCode { get; }
 		string Group { get; }
@@ -21,95 +21,92 @@ namespace Domain.Data.Manipulation
 		string CostLastYear { get; }
 		string rowguid { get; }
 		SalesTerritoryHistory SalesTerritoryHistory { get; }
-    }
+	}
 
 	public partial class SalesTerritory : OGM<SalesTerritory, SalesTerritory.SalesTerritoryData, System.String>, ISchemaBase, INeo4jBase, ISalesTerritoryOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static SalesTerritory()
-        {
-            Register.Types();
-        }
+		static SalesTerritory()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, SalesTerritory> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, SalesTerritory> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.SalesTerritoryAlias, IWhereQuery> query)
-        {
-            q.SalesTerritoryAlias alias;
+		{
+			q.SalesTerritoryAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.SalesTerritory.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.SalesTerritory.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"SalesTerritory => Name : {this.Name}, CountryRegionCode : {this.CountryRegionCode}, Group : {this.Group}, SalesYTD : {this.SalesYTD}, SalesLastYear : {this.SalesLastYear}, CostYTD : {this.CostYTD}, CostLastYear : {this.CostLastYear}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"SalesTerritory => Name : {this.Name}, CountryRegionCode : {this.CountryRegionCode}, Group : {this.Group}, SalesYTD : {this.SalesYTD}, SalesLastYear : {this.SalesLastYear}, CostYTD : {this.CostYTD}, CostLastYear : {this.CostLastYear}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new SalesTerritoryData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new SalesTerritoryData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.Name == null)
+			if (InnerData.Name is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.CountryRegionCode == null)
+			if (InnerData.CountryRegionCode is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the CountryRegionCode cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Group == null)
+			if (InnerData.Group is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the Group cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.SalesYTD == null)
+			if (InnerData.SalesYTD is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the SalesYTD cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.SalesLastYear == null)
+			if (InnerData.SalesLastYear is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the SalesLastYear cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.CostYTD == null)
+			if (InnerData.CostYTD is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the CostYTD cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.CostLastYear == null)
+			if (InnerData.CostLastYear is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the CostLastYear cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.rowguid == null)
+			if (InnerData.rowguid is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the rowguid cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save SalesTerritory with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -123,12 +120,12 @@ namespace Domain.Data.Manipulation
 		public class SalesTerritoryData : Data<System.String>
 		{
 			public SalesTerritoryData()
-            {
+			{
 
-            }
+			}
 
-            public SalesTerritoryData(SalesTerritoryData data)
-            {
+			public SalesTerritoryData(SalesTerritoryData data)
+			{
 				Name = data.Name;
 				CountryRegionCode = data.CountryRegionCode;
 				Group = data.Group;
@@ -140,10 +137,10 @@ namespace Domain.Data.Manipulation
 				SalesTerritoryHistory = data.SalesTerritoryHistory;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -272,239 +269,282 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static SalesTerritoryMembers members = null;
-        public static SalesTerritoryMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(SalesTerritory))
-                    {
-                        if (members == null)
-                            members = new SalesTerritoryMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class SalesTerritoryMembers
-        {
-            internal SalesTerritoryMembers() { }
+		private static SalesTerritoryMembers members = null;
+		public static SalesTerritoryMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(SalesTerritory))
+					{
+						if (members is null)
+							members = new SalesTerritoryMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class SalesTerritoryMembers
+		{
+			internal SalesTerritoryMembers() { }
 
 			#region Members for interface ISalesTerritory
 
-            public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["Name"];
-            public Property CountryRegionCode { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["CountryRegionCode"];
-            public Property Group { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["Group"];
-            public Property SalesYTD { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["SalesYTD"];
-            public Property SalesLastYear { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["SalesLastYear"];
-            public Property CostYTD { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["CostYTD"];
-            public Property CostLastYear { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["CostLastYear"];
-            public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["rowguid"];
-            public Property SalesTerritoryHistory { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["SalesTerritoryHistory"];
+			public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["Name"];
+			public Property CountryRegionCode { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["CountryRegionCode"];
+			public Property Group { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["Group"];
+			public Property SalesYTD { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["SalesYTD"];
+			public Property SalesLastYear { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["SalesLastYear"];
+			public Property CostYTD { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["CostYTD"];
+			public Property CostLastYear { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["CostLastYear"];
+			public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["rowguid"];
+			public Property SalesTerritoryHistory { get; } = Datastore.AdventureWorks.Model.Entities["SalesTerritory"].Properties["SalesTerritoryHistory"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static SalesTerritoryFullTextMembers fullTextMembers = null;
-        public static SalesTerritoryFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(SalesTerritory))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new SalesTerritoryFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static SalesTerritoryFullTextMembers fullTextMembers = null;
+		public static SalesTerritoryFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(SalesTerritory))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new SalesTerritoryFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class SalesTerritoryFullTextMembers
-        {
-            internal SalesTerritoryFullTextMembers() { }
+		public class SalesTerritoryFullTextMembers
+		{
+			internal SalesTerritoryFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(SalesTerritory))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["SalesTerritory"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(SalesTerritory))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["SalesTerritory"];
+				}
+			}
+			return entity;
+		}
 
 		private static SalesTerritoryEvents events = null;
-        public static SalesTerritoryEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(SalesTerritory))
-                    {
-                        if (events == null)
-                            events = new SalesTerritoryEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class SalesTerritoryEvents
-        {
+		public static SalesTerritoryEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(SalesTerritory))
+					{
+						if (events is null)
+							events = new SalesTerritoryEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class SalesTerritoryEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<SalesTerritory, EntityEventArgs> onNew;
-            public event EventHandler<SalesTerritory, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SalesTerritory, EntityEventArgs> onNew;
+			public event EventHandler<SalesTerritory, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SalesTerritory, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((SalesTerritory)sender, args);
-            }
+			{
+				EventHandler<SalesTerritory, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((SalesTerritory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<SalesTerritory, EntityEventArgs> onDelete;
-            public event EventHandler<SalesTerritory, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SalesTerritory, EntityEventArgs> onDelete;
+			public event EventHandler<SalesTerritory, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SalesTerritory, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((SalesTerritory)sender, args);
-            }
+			{
+				EventHandler<SalesTerritory, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((SalesTerritory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<SalesTerritory, EntityEventArgs> onSave;
-            public event EventHandler<SalesTerritory, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SalesTerritory, EntityEventArgs> onSave;
+			public event EventHandler<SalesTerritory, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SalesTerritory, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((SalesTerritory)sender, args);
-            }
+			{
+				EventHandler<SalesTerritory, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((SalesTerritory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<SalesTerritory, EntityEventArgs> onAfterSave;
+			public event EventHandler<SalesTerritory, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<SalesTerritory, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((SalesTerritory)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnName
 
@@ -531,7 +571,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onName -= value;
-							if (onName == null && onNameIsRegistered)
+							if (onName is null && onNameIsRegistered)
 							{
 								Members.Name.Events.OnChange -= onNameProxy;
 								onNameIsRegistered = false;
@@ -539,11 +579,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -574,7 +614,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCountryRegionCode -= value;
-							if (onCountryRegionCode == null && onCountryRegionCodeIsRegistered)
+							if (onCountryRegionCode is null && onCountryRegionCodeIsRegistered)
 							{
 								Members.CountryRegionCode.Events.OnChange -= onCountryRegionCodeProxy;
 								onCountryRegionCodeIsRegistered = false;
@@ -582,11 +622,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCountryRegionCodeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onCountryRegionCode;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -617,7 +657,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onGroup -= value;
-							if (onGroup == null && onGroupIsRegistered)
+							if (onGroup is null && onGroupIsRegistered)
 							{
 								Members.Group.Events.OnChange -= onGroupProxy;
 								onGroupIsRegistered = false;
@@ -625,11 +665,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onGroupProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onGroup;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -660,7 +700,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSalesYTD -= value;
-							if (onSalesYTD == null && onSalesYTDIsRegistered)
+							if (onSalesYTD is null && onSalesYTDIsRegistered)
 							{
 								Members.SalesYTD.Events.OnChange -= onSalesYTDProxy;
 								onSalesYTDIsRegistered = false;
@@ -668,11 +708,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSalesYTDProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onSalesYTD;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -703,7 +743,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSalesLastYear -= value;
-							if (onSalesLastYear == null && onSalesLastYearIsRegistered)
+							if (onSalesLastYear is null && onSalesLastYearIsRegistered)
 							{
 								Members.SalesLastYear.Events.OnChange -= onSalesLastYearProxy;
 								onSalesLastYearIsRegistered = false;
@@ -711,11 +751,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSalesLastYearProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onSalesLastYear;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -746,7 +786,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCostYTD -= value;
-							if (onCostYTD == null && onCostYTDIsRegistered)
+							if (onCostYTD is null && onCostYTDIsRegistered)
 							{
 								Members.CostYTD.Events.OnChange -= onCostYTDProxy;
 								onCostYTDIsRegistered = false;
@@ -754,11 +794,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCostYTDProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onCostYTD;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -789,7 +829,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCostLastYear -= value;
-							if (onCostLastYear == null && onCostLastYearIsRegistered)
+							if (onCostLastYear is null && onCostLastYearIsRegistered)
 							{
 								Members.CostLastYear.Events.OnChange -= onCostLastYearProxy;
 								onCostLastYearIsRegistered = false;
@@ -797,11 +837,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCostLastYearProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onCostLastYear;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -832,7 +872,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onrowguid -= value;
-							if (onrowguid == null && onrowguidIsRegistered)
+							if (onrowguid is null && onrowguidIsRegistered)
 							{
 								Members.rowguid.Events.OnChange -= onrowguidProxy;
 								onrowguidIsRegistered = false;
@@ -840,11 +880,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onrowguidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onrowguid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -875,7 +915,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSalesTerritoryHistory -= value;
-							if (onSalesTerritoryHistory == null && onSalesTerritoryHistoryIsRegistered)
+							if (onSalesTerritoryHistory is null && onSalesTerritoryHistoryIsRegistered)
 							{
 								Members.SalesTerritoryHistory.Events.OnChange -= onSalesTerritoryHistoryProxy;
 								onSalesTerritoryHistoryIsRegistered = false;
@@ -883,11 +923,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSalesTerritoryHistoryProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onSalesTerritoryHistory;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -918,7 +958,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -926,11 +966,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -961,7 +1001,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -969,11 +1009,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTerritory, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTerritory)sender, args);
 				}
 
@@ -982,9 +1022,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region ISalesTerritoryOriginalData
 

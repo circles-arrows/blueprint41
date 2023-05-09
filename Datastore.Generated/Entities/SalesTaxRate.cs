@@ -11,93 +11,90 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface ISalesTaxRateOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string TaxType { get; }
 		string TaxRate { get; }
 		string Name { get; }
 		string rowguid { get; }
 		StateProvince StateProvince { get; }
-    }
+	}
 
 	public partial class SalesTaxRate : OGM<SalesTaxRate, SalesTaxRate.SalesTaxRateData, System.String>, ISchemaBase, INeo4jBase, ISalesTaxRateOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static SalesTaxRate()
-        {
-            Register.Types();
-        }
+		static SalesTaxRate()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, SalesTaxRate> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, SalesTaxRate> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.SalesTaxRateAlias, IWhereQuery> query)
-        {
-            q.SalesTaxRateAlias alias;
+		{
+			q.SalesTaxRateAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.SalesTaxRate.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.SalesTaxRate.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"SalesTaxRate => TaxType : {this.TaxType}, TaxRate : {this.TaxRate}, Name : {this.Name}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"SalesTaxRate => TaxType : {this.TaxType}, TaxRate : {this.TaxRate}, Name : {this.Name}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new SalesTaxRateData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new SalesTaxRateData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.TaxType == null)
+			if (InnerData.TaxType is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTaxRate with key '{0}' because the TaxType cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.TaxRate == null)
+			if (InnerData.TaxRate is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTaxRate with key '{0}' because the TaxRate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Name == null)
+			if (InnerData.Name is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTaxRate with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.rowguid == null)
+			if (InnerData.rowguid is null)
 				throw new PersistenceException(string.Format("Cannot save SalesTaxRate with key '{0}' because the rowguid cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save SalesTaxRate with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -111,12 +108,12 @@ namespace Domain.Data.Manipulation
 		public class SalesTaxRateData : Data<System.String>
 		{
 			public SalesTaxRateData()
-            {
+			{
 
-            }
+			}
 
-            public SalesTaxRateData(SalesTaxRateData data)
-            {
+			public SalesTaxRateData(SalesTaxRateData data)
+			{
 				TaxType = data.TaxType;
 				TaxRate = data.TaxRate;
 				Name = data.Name;
@@ -124,10 +121,10 @@ namespace Domain.Data.Manipulation
 				StateProvince = data.StateProvince;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -236,235 +233,278 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static SalesTaxRateMembers members = null;
-        public static SalesTaxRateMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(SalesTaxRate))
-                    {
-                        if (members == null)
-                            members = new SalesTaxRateMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class SalesTaxRateMembers
-        {
-            internal SalesTaxRateMembers() { }
+		private static SalesTaxRateMembers members = null;
+		public static SalesTaxRateMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(SalesTaxRate))
+					{
+						if (members is null)
+							members = new SalesTaxRateMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class SalesTaxRateMembers
+		{
+			internal SalesTaxRateMembers() { }
 
 			#region Members for interface ISalesTaxRate
 
-            public Property TaxType { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["TaxType"];
-            public Property TaxRate { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["TaxRate"];
-            public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["Name"];
-            public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["rowguid"];
-            public Property StateProvince { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["StateProvince"];
+			public Property TaxType { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["TaxType"];
+			public Property TaxRate { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["TaxRate"];
+			public Property Name { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["Name"];
+			public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["rowguid"];
+			public Property StateProvince { get; } = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"].Properties["StateProvince"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static SalesTaxRateFullTextMembers fullTextMembers = null;
-        public static SalesTaxRateFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(SalesTaxRate))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new SalesTaxRateFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static SalesTaxRateFullTextMembers fullTextMembers = null;
+		public static SalesTaxRateFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(SalesTaxRate))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new SalesTaxRateFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class SalesTaxRateFullTextMembers
-        {
-            internal SalesTaxRateFullTextMembers() { }
+		public class SalesTaxRateFullTextMembers
+		{
+			internal SalesTaxRateFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(SalesTaxRate))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(SalesTaxRate))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["SalesTaxRate"];
+				}
+			}
+			return entity;
+		}
 
 		private static SalesTaxRateEvents events = null;
-        public static SalesTaxRateEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(SalesTaxRate))
-                    {
-                        if (events == null)
-                            events = new SalesTaxRateEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class SalesTaxRateEvents
-        {
+		public static SalesTaxRateEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(SalesTaxRate))
+					{
+						if (events is null)
+							events = new SalesTaxRateEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class SalesTaxRateEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<SalesTaxRate, EntityEventArgs> onNew;
-            public event EventHandler<SalesTaxRate, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SalesTaxRate, EntityEventArgs> onNew;
+			public event EventHandler<SalesTaxRate, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SalesTaxRate, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((SalesTaxRate)sender, args);
-            }
+			{
+				EventHandler<SalesTaxRate, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((SalesTaxRate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<SalesTaxRate, EntityEventArgs> onDelete;
-            public event EventHandler<SalesTaxRate, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SalesTaxRate, EntityEventArgs> onDelete;
+			public event EventHandler<SalesTaxRate, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SalesTaxRate, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((SalesTaxRate)sender, args);
-            }
+			{
+				EventHandler<SalesTaxRate, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((SalesTaxRate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<SalesTaxRate, EntityEventArgs> onSave;
-            public event EventHandler<SalesTaxRate, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<SalesTaxRate, EntityEventArgs> onSave;
+			public event EventHandler<SalesTaxRate, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<SalesTaxRate, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((SalesTaxRate)sender, args);
-            }
+			{
+				EventHandler<SalesTaxRate, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((SalesTaxRate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<SalesTaxRate, EntityEventArgs> onAfterSave;
+			public event EventHandler<SalesTaxRate, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<SalesTaxRate, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((SalesTaxRate)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnTaxType
 
@@ -491,7 +531,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onTaxType -= value;
-							if (onTaxType == null && onTaxTypeIsRegistered)
+							if (onTaxType is null && onTaxTypeIsRegistered)
 							{
 								Members.TaxType.Events.OnChange -= onTaxTypeProxy;
 								onTaxTypeIsRegistered = false;
@@ -499,11 +539,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTaxTypeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTaxRate, PropertyEventArgs> handler = onTaxType;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTaxRate)sender, args);
 				}
 
@@ -534,7 +574,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onTaxRate -= value;
-							if (onTaxRate == null && onTaxRateIsRegistered)
+							if (onTaxRate is null && onTaxRateIsRegistered)
 							{
 								Members.TaxRate.Events.OnChange -= onTaxRateProxy;
 								onTaxRateIsRegistered = false;
@@ -542,11 +582,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onTaxRateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTaxRate, PropertyEventArgs> handler = onTaxRate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTaxRate)sender, args);
 				}
 
@@ -577,7 +617,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onName -= value;
-							if (onName == null && onNameIsRegistered)
+							if (onName is null && onNameIsRegistered)
 							{
 								Members.Name.Events.OnChange -= onNameProxy;
 								onNameIsRegistered = false;
@@ -585,11 +625,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTaxRate, PropertyEventArgs> handler = onName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTaxRate)sender, args);
 				}
 
@@ -620,7 +660,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onrowguid -= value;
-							if (onrowguid == null && onrowguidIsRegistered)
+							if (onrowguid is null && onrowguidIsRegistered)
 							{
 								Members.rowguid.Events.OnChange -= onrowguidProxy;
 								onrowguidIsRegistered = false;
@@ -628,11 +668,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onrowguidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTaxRate, PropertyEventArgs> handler = onrowguid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTaxRate)sender, args);
 				}
 
@@ -663,7 +703,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStateProvince -= value;
-							if (onStateProvince == null && onStateProvinceIsRegistered)
+							if (onStateProvince is null && onStateProvinceIsRegistered)
 							{
 								Members.StateProvince.Events.OnChange -= onStateProvinceProxy;
 								onStateProvinceIsRegistered = false;
@@ -671,11 +711,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStateProvinceProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTaxRate, PropertyEventArgs> handler = onStateProvince;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTaxRate)sender, args);
 				}
 
@@ -706,7 +746,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -714,11 +754,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTaxRate, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTaxRate)sender, args);
 				}
 
@@ -749,7 +789,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -757,11 +797,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<SalesTaxRate, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((SalesTaxRate)sender, args);
 				}
 
@@ -770,9 +810,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region ISalesTaxRateOriginalData
 

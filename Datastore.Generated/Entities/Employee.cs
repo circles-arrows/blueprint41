@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IEmployeeOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string NationalIDNumber { get; }
 		int LoginID { get; }
 		string JobTitle { get; }
@@ -30,103 +30,86 @@ namespace Domain.Data.Manipulation
 		Shift Shift { get; }
 		JobCandidate JobCandidate { get; }
 		IEnumerable<Vendor> Vendors { get; }
-    }
+	}
 
 	public partial class Employee : OGM<Employee, Employee.EmployeeData, System.String>, ISchemaBase, INeo4jBase, IEmployeeOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static Employee()
-        {
-            Register.Types();
-        }
+		static Employee()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Employee> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, Employee> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.EmployeeAlias, IWhereQuery> query)
-        {
-            q.EmployeeAlias alias;
+		{
+			q.EmployeeAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Employee.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Employee.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"Employee => NationalIDNumber : {this.NationalIDNumber}, LoginID : {this.LoginID}, JobTitle : {this.JobTitle}, BirthDate : {this.BirthDate}, MaritalStatus : {this.MaritalStatus}, Gender : {this.Gender}, HireDate : {this.HireDate}, SalariedFlag : {this.SalariedFlag}, VacationHours : {this.VacationHours}, SickLeaveHours : {this.SickLeaveHours}, Currentflag : {this.Currentflag}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"Employee => NationalIDNumber : {this.NationalIDNumber}, LoginID : {this.LoginID}, JobTitle : {this.JobTitle}, BirthDate : {this.BirthDate}, MaritalStatus : {this.MaritalStatus}, Gender : {this.Gender}, HireDate : {this.HireDate}, SalariedFlag : {this.SalariedFlag}, VacationHours : {this.VacationHours}, SickLeaveHours : {this.SickLeaveHours}, Currentflag : {this.Currentflag}, rowguid : {this.rowguid}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new EmployeeData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new EmployeeData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.NationalIDNumber == null)
+			if (InnerData.NationalIDNumber is null)
 				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the NationalIDNumber cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.LoginID == null)
-				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the LoginID cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.JobTitle == null)
+			if (InnerData.JobTitle is null)
 				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the JobTitle cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.BirthDate == null)
-				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the BirthDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.MaritalStatus == null)
+			if (InnerData.MaritalStatus is null)
 				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the MaritalStatus cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Gender == null)
+			if (InnerData.Gender is null)
 				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the Gender cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.HireDate == null)
-				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the HireDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.SalariedFlag == null)
-				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the SalariedFlag cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.VacationHours == null)
-				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the VacationHours cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.SickLeaveHours == null)
-				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the SickLeaveHours cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Currentflag == null)
-				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the Currentflag cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.rowguid == null)
+			if (InnerData.rowguid is null)
 				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the rowguid cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save Employee with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -140,12 +123,12 @@ namespace Domain.Data.Manipulation
 		public class EmployeeData : Data<System.String>
 		{
 			public EmployeeData()
-            {
+			{
 
-            }
+			}
 
-            public EmployeeData(EmployeeData data)
-            {
+			public EmployeeData(EmployeeData data)
+			{
 				NationalIDNumber = data.NationalIDNumber;
 				LoginID = data.LoginID;
 				JobTitle = data.JobTitle;
@@ -166,10 +149,10 @@ namespace Domain.Data.Manipulation
 				Vendors = data.Vendors;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -373,248 +356,291 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static EmployeeMembers members = null;
-        public static EmployeeMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(Employee))
-                    {
-                        if (members == null)
-                            members = new EmployeeMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class EmployeeMembers
-        {
-            internal EmployeeMembers() { }
+		private static EmployeeMembers members = null;
+		public static EmployeeMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(Employee))
+					{
+						if (members is null)
+							members = new EmployeeMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class EmployeeMembers
+		{
+			internal EmployeeMembers() { }
 
 			#region Members for interface IEmployee
 
-            public Property NationalIDNumber { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["NationalIDNumber"];
-            public Property LoginID { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["LoginID"];
-            public Property JobTitle { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["JobTitle"];
-            public Property BirthDate { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["BirthDate"];
-            public Property MaritalStatus { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["MaritalStatus"];
-            public Property Gender { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Gender"];
-            public Property HireDate { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["HireDate"];
-            public Property SalariedFlag { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SalariedFlag"];
-            public Property VacationHours { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["VacationHours"];
-            public Property SickLeaveHours { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SickLeaveHours"];
-            public Property Currentflag { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Currentflag"];
-            public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["rowguid"];
-            public Property EmployeePayHistory { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["EmployeePayHistory"];
-            public Property SalesPerson { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SalesPerson"];
-            public Property EmployeeDepartmentHistory { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["EmployeeDepartmentHistory"];
-            public Property Shift { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Shift"];
-            public Property JobCandidate { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["JobCandidate"];
-            public Property Vendors { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Vendors"];
+			public Property NationalIDNumber { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["NationalIDNumber"];
+			public Property LoginID { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["LoginID"];
+			public Property JobTitle { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["JobTitle"];
+			public Property BirthDate { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["BirthDate"];
+			public Property MaritalStatus { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["MaritalStatus"];
+			public Property Gender { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Gender"];
+			public Property HireDate { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["HireDate"];
+			public Property SalariedFlag { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SalariedFlag"];
+			public Property VacationHours { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["VacationHours"];
+			public Property SickLeaveHours { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SickLeaveHours"];
+			public Property Currentflag { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Currentflag"];
+			public Property rowguid { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["rowguid"];
+			public Property EmployeePayHistory { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["EmployeePayHistory"];
+			public Property SalesPerson { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["SalesPerson"];
+			public Property EmployeeDepartmentHistory { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["EmployeeDepartmentHistory"];
+			public Property Shift { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Shift"];
+			public Property JobCandidate { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["JobCandidate"];
+			public Property Vendors { get; } = Datastore.AdventureWorks.Model.Entities["Employee"].Properties["Vendors"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static EmployeeFullTextMembers fullTextMembers = null;
-        public static EmployeeFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(Employee))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new EmployeeFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static EmployeeFullTextMembers fullTextMembers = null;
+		public static EmployeeFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(Employee))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new EmployeeFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class EmployeeFullTextMembers
-        {
-            internal EmployeeFullTextMembers() { }
+		public class EmployeeFullTextMembers
+		{
+			internal EmployeeFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(Employee))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["Employee"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(Employee))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["Employee"];
+				}
+			}
+			return entity;
+		}
 
 		private static EmployeeEvents events = null;
-        public static EmployeeEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(Employee))
-                    {
-                        if (events == null)
-                            events = new EmployeeEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class EmployeeEvents
-        {
+		public static EmployeeEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(Employee))
+					{
+						if (events is null)
+							events = new EmployeeEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class EmployeeEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<Employee, EntityEventArgs> onNew;
-            public event EventHandler<Employee, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Employee, EntityEventArgs> onNew;
+			public event EventHandler<Employee, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Employee, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((Employee)sender, args);
-            }
+			{
+				EventHandler<Employee, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((Employee)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Employee, EntityEventArgs> onDelete;
-            public event EventHandler<Employee, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Employee, EntityEventArgs> onDelete;
+			public event EventHandler<Employee, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Employee, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((Employee)sender, args);
-            }
+			{
+				EventHandler<Employee, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((Employee)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<Employee, EntityEventArgs> onSave;
-            public event EventHandler<Employee, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Employee, EntityEventArgs> onSave;
+			public event EventHandler<Employee, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Employee, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((Employee)sender, args);
-            }
+			{
+				EventHandler<Employee, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((Employee)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<Employee, EntityEventArgs> onAfterSave;
+			public event EventHandler<Employee, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<Employee, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((Employee)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnNationalIDNumber
 
@@ -641,7 +667,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onNationalIDNumber -= value;
-							if (onNationalIDNumber == null && onNationalIDNumberIsRegistered)
+							if (onNationalIDNumber is null && onNationalIDNumberIsRegistered)
 							{
 								Members.NationalIDNumber.Events.OnChange -= onNationalIDNumberProxy;
 								onNationalIDNumberIsRegistered = false;
@@ -649,11 +675,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onNationalIDNumberProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onNationalIDNumber;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -684,7 +710,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onLoginID -= value;
-							if (onLoginID == null && onLoginIDIsRegistered)
+							if (onLoginID is null && onLoginIDIsRegistered)
 							{
 								Members.LoginID.Events.OnChange -= onLoginIDProxy;
 								onLoginIDIsRegistered = false;
@@ -692,11 +718,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onLoginIDProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onLoginID;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -727,7 +753,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onJobTitle -= value;
-							if (onJobTitle == null && onJobTitleIsRegistered)
+							if (onJobTitle is null && onJobTitleIsRegistered)
 							{
 								Members.JobTitle.Events.OnChange -= onJobTitleProxy;
 								onJobTitleIsRegistered = false;
@@ -735,11 +761,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onJobTitleProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onJobTitle;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -770,7 +796,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onBirthDate -= value;
-							if (onBirthDate == null && onBirthDateIsRegistered)
+							if (onBirthDate is null && onBirthDateIsRegistered)
 							{
 								Members.BirthDate.Events.OnChange -= onBirthDateProxy;
 								onBirthDateIsRegistered = false;
@@ -778,11 +804,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onBirthDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onBirthDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -813,7 +839,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onMaritalStatus -= value;
-							if (onMaritalStatus == null && onMaritalStatusIsRegistered)
+							if (onMaritalStatus is null && onMaritalStatusIsRegistered)
 							{
 								Members.MaritalStatus.Events.OnChange -= onMaritalStatusProxy;
 								onMaritalStatusIsRegistered = false;
@@ -821,11 +847,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onMaritalStatusProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onMaritalStatus;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -856,7 +882,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onGender -= value;
-							if (onGender == null && onGenderIsRegistered)
+							if (onGender is null && onGenderIsRegistered)
 							{
 								Members.Gender.Events.OnChange -= onGenderProxy;
 								onGenderIsRegistered = false;
@@ -864,11 +890,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onGenderProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onGender;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -899,7 +925,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onHireDate -= value;
-							if (onHireDate == null && onHireDateIsRegistered)
+							if (onHireDate is null && onHireDateIsRegistered)
 							{
 								Members.HireDate.Events.OnChange -= onHireDateProxy;
 								onHireDateIsRegistered = false;
@@ -907,11 +933,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onHireDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onHireDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -942,7 +968,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSalariedFlag -= value;
-							if (onSalariedFlag == null && onSalariedFlagIsRegistered)
+							if (onSalariedFlag is null && onSalariedFlagIsRegistered)
 							{
 								Members.SalariedFlag.Events.OnChange -= onSalariedFlagProxy;
 								onSalariedFlagIsRegistered = false;
@@ -950,11 +976,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSalariedFlagProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onSalariedFlag;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -985,7 +1011,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onVacationHours -= value;
-							if (onVacationHours == null && onVacationHoursIsRegistered)
+							if (onVacationHours is null && onVacationHoursIsRegistered)
 							{
 								Members.VacationHours.Events.OnChange -= onVacationHoursProxy;
 								onVacationHoursIsRegistered = false;
@@ -993,11 +1019,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onVacationHoursProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onVacationHours;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1028,7 +1054,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSickLeaveHours -= value;
-							if (onSickLeaveHours == null && onSickLeaveHoursIsRegistered)
+							if (onSickLeaveHours is null && onSickLeaveHoursIsRegistered)
 							{
 								Members.SickLeaveHours.Events.OnChange -= onSickLeaveHoursProxy;
 								onSickLeaveHoursIsRegistered = false;
@@ -1036,11 +1062,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSickLeaveHoursProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onSickLeaveHours;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1071,7 +1097,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCurrentflag -= value;
-							if (onCurrentflag == null && onCurrentflagIsRegistered)
+							if (onCurrentflag is null && onCurrentflagIsRegistered)
 							{
 								Members.Currentflag.Events.OnChange -= onCurrentflagProxy;
 								onCurrentflagIsRegistered = false;
@@ -1079,11 +1105,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCurrentflagProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onCurrentflag;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1114,7 +1140,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onrowguid -= value;
-							if (onrowguid == null && onrowguidIsRegistered)
+							if (onrowguid is null && onrowguidIsRegistered)
 							{
 								Members.rowguid.Events.OnChange -= onrowguidProxy;
 								onrowguidIsRegistered = false;
@@ -1122,11 +1148,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onrowguidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onrowguid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1157,7 +1183,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEmployeePayHistory -= value;
-							if (onEmployeePayHistory == null && onEmployeePayHistoryIsRegistered)
+							if (onEmployeePayHistory is null && onEmployeePayHistoryIsRegistered)
 							{
 								Members.EmployeePayHistory.Events.OnChange -= onEmployeePayHistoryProxy;
 								onEmployeePayHistoryIsRegistered = false;
@@ -1165,11 +1191,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEmployeePayHistoryProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onEmployeePayHistory;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1200,7 +1226,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onSalesPerson -= value;
-							if (onSalesPerson == null && onSalesPersonIsRegistered)
+							if (onSalesPerson is null && onSalesPersonIsRegistered)
 							{
 								Members.SalesPerson.Events.OnChange -= onSalesPersonProxy;
 								onSalesPersonIsRegistered = false;
@@ -1208,11 +1234,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onSalesPersonProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onSalesPerson;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1243,7 +1269,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEmployeeDepartmentHistory -= value;
-							if (onEmployeeDepartmentHistory == null && onEmployeeDepartmentHistoryIsRegistered)
+							if (onEmployeeDepartmentHistory is null && onEmployeeDepartmentHistoryIsRegistered)
 							{
 								Members.EmployeeDepartmentHistory.Events.OnChange -= onEmployeeDepartmentHistoryProxy;
 								onEmployeeDepartmentHistoryIsRegistered = false;
@@ -1251,11 +1277,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEmployeeDepartmentHistoryProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onEmployeeDepartmentHistory;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1286,7 +1312,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onShift -= value;
-							if (onShift == null && onShiftIsRegistered)
+							if (onShift is null && onShiftIsRegistered)
 							{
 								Members.Shift.Events.OnChange -= onShiftProxy;
 								onShiftIsRegistered = false;
@@ -1294,11 +1320,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onShiftProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onShift;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1329,7 +1355,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onJobCandidate -= value;
-							if (onJobCandidate == null && onJobCandidateIsRegistered)
+							if (onJobCandidate is null && onJobCandidateIsRegistered)
 							{
 								Members.JobCandidate.Events.OnChange -= onJobCandidateProxy;
 								onJobCandidateIsRegistered = false;
@@ -1337,11 +1363,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onJobCandidateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onJobCandidate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1372,7 +1398,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onVendors -= value;
-							if (onVendors == null && onVendorsIsRegistered)
+							if (onVendors is null && onVendorsIsRegistered)
 							{
 								Members.Vendors.Events.OnChange -= onVendorsProxy;
 								onVendorsIsRegistered = false;
@@ -1380,11 +1406,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onVendorsProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onVendors;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1415,7 +1441,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -1423,11 +1449,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1458,7 +1484,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -1466,11 +1492,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Employee, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Employee)sender, args);
 				}
 
@@ -1479,9 +1505,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IEmployeeOriginalData
 

@@ -11,85 +11,80 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IJobCandidateOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		int JobCandidateID { get; }
 		string Resume { get; }
 		Employee Employee { get; }
-    }
+	}
 
 	public partial class JobCandidate : OGM<JobCandidate, JobCandidate.JobCandidateData, System.String>, ISchemaBase, INeo4jBase, IJobCandidateOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static JobCandidate()
-        {
-            Register.Types();
-        }
+		static JobCandidate()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, JobCandidate> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, JobCandidate> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.JobCandidateAlias, IWhereQuery> query)
-        {
-            q.JobCandidateAlias alias;
+		{
+			q.JobCandidateAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.JobCandidate.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.JobCandidate.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"JobCandidate => JobCandidateID : {this.JobCandidateID}, Resume : {this.Resume?.ToString() ?? "null"}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"JobCandidate => JobCandidateID : {this.JobCandidateID}, Resume : {this.Resume?.ToString() ?? "null"}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new JobCandidateData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new JobCandidateData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.JobCandidateID == null)
-				throw new PersistenceException(string.Format("Cannot save JobCandidate with key '{0}' because the JobCandidateID cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save JobCandidate with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -103,21 +98,21 @@ namespace Domain.Data.Manipulation
 		public class JobCandidateData : Data<System.String>
 		{
 			public JobCandidateData()
-            {
+			{
 
-            }
+			}
 
-            public JobCandidateData(JobCandidateData data)
-            {
+			public JobCandidateData(JobCandidateData data)
+			{
 				JobCandidateID = data.JobCandidateID;
 				Resume = data.Resume;
 				Employee = data.Employee;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -220,233 +215,276 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static JobCandidateMembers members = null;
-        public static JobCandidateMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(JobCandidate))
-                    {
-                        if (members == null)
-                            members = new JobCandidateMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class JobCandidateMembers
-        {
-            internal JobCandidateMembers() { }
+		private static JobCandidateMembers members = null;
+		public static JobCandidateMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(JobCandidate))
+					{
+						if (members is null)
+							members = new JobCandidateMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class JobCandidateMembers
+		{
+			internal JobCandidateMembers() { }
 
 			#region Members for interface IJobCandidate
 
-            public Property JobCandidateID { get; } = Datastore.AdventureWorks.Model.Entities["JobCandidate"].Properties["JobCandidateID"];
-            public Property Resume { get; } = Datastore.AdventureWorks.Model.Entities["JobCandidate"].Properties["Resume"];
-            public Property Employee { get; } = Datastore.AdventureWorks.Model.Entities["JobCandidate"].Properties["Employee"];
+			public Property JobCandidateID { get; } = Datastore.AdventureWorks.Model.Entities["JobCandidate"].Properties["JobCandidateID"];
+			public Property Resume { get; } = Datastore.AdventureWorks.Model.Entities["JobCandidate"].Properties["Resume"];
+			public Property Employee { get; } = Datastore.AdventureWorks.Model.Entities["JobCandidate"].Properties["Employee"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static JobCandidateFullTextMembers fullTextMembers = null;
-        public static JobCandidateFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(JobCandidate))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new JobCandidateFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static JobCandidateFullTextMembers fullTextMembers = null;
+		public static JobCandidateFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(JobCandidate))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new JobCandidateFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class JobCandidateFullTextMembers
-        {
-            internal JobCandidateFullTextMembers() { }
+		public class JobCandidateFullTextMembers
+		{
+			internal JobCandidateFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(JobCandidate))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["JobCandidate"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(JobCandidate))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["JobCandidate"];
+				}
+			}
+			return entity;
+		}
 
 		private static JobCandidateEvents events = null;
-        public static JobCandidateEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(JobCandidate))
-                    {
-                        if (events == null)
-                            events = new JobCandidateEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class JobCandidateEvents
-        {
+		public static JobCandidateEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(JobCandidate))
+					{
+						if (events is null)
+							events = new JobCandidateEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class JobCandidateEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<JobCandidate, EntityEventArgs> onNew;
-            public event EventHandler<JobCandidate, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<JobCandidate, EntityEventArgs> onNew;
+			public event EventHandler<JobCandidate, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<JobCandidate, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((JobCandidate)sender, args);
-            }
+			{
+				EventHandler<JobCandidate, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((JobCandidate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<JobCandidate, EntityEventArgs> onDelete;
-            public event EventHandler<JobCandidate, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<JobCandidate, EntityEventArgs> onDelete;
+			public event EventHandler<JobCandidate, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<JobCandidate, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((JobCandidate)sender, args);
-            }
+			{
+				EventHandler<JobCandidate, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((JobCandidate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<JobCandidate, EntityEventArgs> onSave;
-            public event EventHandler<JobCandidate, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<JobCandidate, EntityEventArgs> onSave;
+			public event EventHandler<JobCandidate, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<JobCandidate, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((JobCandidate)sender, args);
-            }
+			{
+				EventHandler<JobCandidate, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((JobCandidate)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<JobCandidate, EntityEventArgs> onAfterSave;
+			public event EventHandler<JobCandidate, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<JobCandidate, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((JobCandidate)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnJobCandidateID
 
@@ -473,7 +511,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onJobCandidateID -= value;
-							if (onJobCandidateID == null && onJobCandidateIDIsRegistered)
+							if (onJobCandidateID is null && onJobCandidateIDIsRegistered)
 							{
 								Members.JobCandidateID.Events.OnChange -= onJobCandidateIDProxy;
 								onJobCandidateIDIsRegistered = false;
@@ -481,11 +519,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onJobCandidateIDProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<JobCandidate, PropertyEventArgs> handler = onJobCandidateID;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((JobCandidate)sender, args);
 				}
 
@@ -516,7 +554,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onResume -= value;
-							if (onResume == null && onResumeIsRegistered)
+							if (onResume is null && onResumeIsRegistered)
 							{
 								Members.Resume.Events.OnChange -= onResumeProxy;
 								onResumeIsRegistered = false;
@@ -524,11 +562,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onResumeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<JobCandidate, PropertyEventArgs> handler = onResume;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((JobCandidate)sender, args);
 				}
 
@@ -559,7 +597,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEmployee -= value;
-							if (onEmployee == null && onEmployeeIsRegistered)
+							if (onEmployee is null && onEmployeeIsRegistered)
 							{
 								Members.Employee.Events.OnChange -= onEmployeeProxy;
 								onEmployeeIsRegistered = false;
@@ -567,11 +605,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEmployeeProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<JobCandidate, PropertyEventArgs> handler = onEmployee;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((JobCandidate)sender, args);
 				}
 
@@ -602,7 +640,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -610,11 +648,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<JobCandidate, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((JobCandidate)sender, args);
 				}
 
@@ -645,7 +683,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -653,11 +691,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<JobCandidate, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((JobCandidate)sender, args);
 				}
 
@@ -666,9 +704,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IJobCandidateOriginalData
 

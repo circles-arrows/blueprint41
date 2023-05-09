@@ -11,83 +11,80 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IIllustrationOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		string Diagram { get; }
-    }
+	}
 
 	public partial class Illustration : OGM<Illustration, Illustration.IllustrationData, System.String>, ISchemaBase, INeo4jBase, IIllustrationOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static Illustration()
-        {
-            Register.Types();
-        }
+		static Illustration()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Illustration> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, Illustration> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.IllustrationAlias, IWhereQuery> query)
-        {
-            q.IllustrationAlias alias;
+		{
+			q.IllustrationAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Illustration.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Illustration.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"Illustration => Diagram : {this.Diagram}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"Illustration => Diagram : {this.Diagram}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new IllustrationData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new IllustrationData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.Diagram == null)
+			if (InnerData.Diagram is null)
 				throw new PersistenceException(string.Format("Cannot save Illustration with key '{0}' because the Diagram cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save Illustration with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -101,19 +98,19 @@ namespace Domain.Data.Manipulation
 		public class IllustrationData : Data<System.String>
 		{
 			public IllustrationData()
-            {
+			{
 
-            }
+			}
 
-            public IllustrationData(IllustrationData data)
-            {
+			public IllustrationData(IllustrationData data)
+			{
 				Diagram = data.Diagram;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -196,231 +193,274 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static IllustrationMembers members = null;
-        public static IllustrationMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(Illustration))
-                    {
-                        if (members == null)
-                            members = new IllustrationMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class IllustrationMembers
-        {
-            internal IllustrationMembers() { }
+		private static IllustrationMembers members = null;
+		public static IllustrationMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(Illustration))
+					{
+						if (members is null)
+							members = new IllustrationMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class IllustrationMembers
+		{
+			internal IllustrationMembers() { }
 
 			#region Members for interface IIllustration
 
-            public Property Diagram { get; } = Datastore.AdventureWorks.Model.Entities["Illustration"].Properties["Diagram"];
+			public Property Diagram { get; } = Datastore.AdventureWorks.Model.Entities["Illustration"].Properties["Diagram"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static IllustrationFullTextMembers fullTextMembers = null;
-        public static IllustrationFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(Illustration))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new IllustrationFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static IllustrationFullTextMembers fullTextMembers = null;
+		public static IllustrationFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(Illustration))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new IllustrationFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class IllustrationFullTextMembers
-        {
-            internal IllustrationFullTextMembers() { }
+		public class IllustrationFullTextMembers
+		{
+			internal IllustrationFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(Illustration))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["Illustration"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(Illustration))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["Illustration"];
+				}
+			}
+			return entity;
+		}
 
 		private static IllustrationEvents events = null;
-        public static IllustrationEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(Illustration))
-                    {
-                        if (events == null)
-                            events = new IllustrationEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class IllustrationEvents
-        {
+		public static IllustrationEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(Illustration))
+					{
+						if (events is null)
+							events = new IllustrationEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class IllustrationEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<Illustration, EntityEventArgs> onNew;
-            public event EventHandler<Illustration, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Illustration, EntityEventArgs> onNew;
+			public event EventHandler<Illustration, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Illustration, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((Illustration)sender, args);
-            }
+			{
+				EventHandler<Illustration, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((Illustration)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Illustration, EntityEventArgs> onDelete;
-            public event EventHandler<Illustration, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Illustration, EntityEventArgs> onDelete;
+			public event EventHandler<Illustration, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Illustration, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((Illustration)sender, args);
-            }
+			{
+				EventHandler<Illustration, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((Illustration)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<Illustration, EntityEventArgs> onSave;
-            public event EventHandler<Illustration, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Illustration, EntityEventArgs> onSave;
+			public event EventHandler<Illustration, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Illustration, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((Illustration)sender, args);
-            }
+			{
+				EventHandler<Illustration, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((Illustration)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<Illustration, EntityEventArgs> onAfterSave;
+			public event EventHandler<Illustration, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<Illustration, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((Illustration)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnDiagram
 
@@ -447,7 +487,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDiagram -= value;
-							if (onDiagram == null && onDiagramIsRegistered)
+							if (onDiagram is null && onDiagramIsRegistered)
 							{
 								Members.Diagram.Events.OnChange -= onDiagramProxy;
 								onDiagramIsRegistered = false;
@@ -455,11 +495,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDiagramProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Illustration, PropertyEventArgs> handler = onDiagram;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Illustration)sender, args);
 				}
 
@@ -490,7 +530,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -498,11 +538,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Illustration, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Illustration)sender, args);
 				}
 
@@ -533,7 +573,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -541,11 +581,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Illustration, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Illustration)sender, args);
 				}
 
@@ -554,9 +594,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IIllustrationOriginalData
 

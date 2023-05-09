@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IWorkOrderOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		int OrderQty { get; }
 		int StockedQty { get; }
 		int ScrappedQty { get; }
@@ -20,89 +20,76 @@ namespace Domain.Data.Manipulation
 		System.DateTime DueDate { get; }
 		ScrapReason ScrapReason { get; }
 		Product Product { get; }
-    }
+	}
 
 	public partial class WorkOrder : OGM<WorkOrder, WorkOrder.WorkOrderData, System.String>, ISchemaBase, INeo4jBase, IWorkOrderOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static WorkOrder()
-        {
-            Register.Types();
-        }
+		static WorkOrder()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, WorkOrder> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, WorkOrder> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.WorkOrderAlias, IWhereQuery> query)
-        {
-            q.WorkOrderAlias alias;
+		{
+			q.WorkOrderAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.WorkOrder.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.WorkOrder.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"WorkOrder => OrderQty : {this.OrderQty}, StockedQty : {this.StockedQty}, ScrappedQty : {this.ScrappedQty}, StartDate : {this.StartDate}, EndDate : {this.EndDate?.ToString() ?? "null"}, DueDate : {this.DueDate}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"WorkOrder => OrderQty : {this.OrderQty}, StockedQty : {this.StockedQty}, ScrappedQty : {this.ScrappedQty}, StartDate : {this.StartDate}, EndDate : {this.EndDate?.ToString() ?? "null"}, DueDate : {this.DueDate}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new WorkOrderData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new WorkOrderData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.OrderQty == null)
-				throw new PersistenceException(string.Format("Cannot save WorkOrder with key '{0}' because the OrderQty cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.StockedQty == null)
-				throw new PersistenceException(string.Format("Cannot save WorkOrder with key '{0}' because the StockedQty cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ScrappedQty == null)
-				throw new PersistenceException(string.Format("Cannot save WorkOrder with key '{0}' because the ScrappedQty cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.StartDate == null)
-				throw new PersistenceException(string.Format("Cannot save WorkOrder with key '{0}' because the StartDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.DueDate == null)
-				throw new PersistenceException(string.Format("Cannot save WorkOrder with key '{0}' because the DueDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save WorkOrder with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -116,12 +103,12 @@ namespace Domain.Data.Manipulation
 		public class WorkOrderData : Data<System.String>
 		{
 			public WorkOrderData()
-            {
+			{
 
-            }
+			}
 
-            public WorkOrderData(WorkOrderData data)
-            {
+			public WorkOrderData(WorkOrderData data)
+			{
 				OrderQty = data.OrderQty;
 				StockedQty = data.StockedQty;
 				ScrappedQty = data.ScrappedQty;
@@ -132,10 +119,10 @@ namespace Domain.Data.Manipulation
 				Product = data.Product;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -265,238 +252,281 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static WorkOrderMembers members = null;
-        public static WorkOrderMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(WorkOrder))
-                    {
-                        if (members == null)
-                            members = new WorkOrderMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class WorkOrderMembers
-        {
-            internal WorkOrderMembers() { }
+		private static WorkOrderMembers members = null;
+		public static WorkOrderMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(WorkOrder))
+					{
+						if (members is null)
+							members = new WorkOrderMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class WorkOrderMembers
+		{
+			internal WorkOrderMembers() { }
 
 			#region Members for interface IWorkOrder
 
-            public Property OrderQty { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["OrderQty"];
-            public Property StockedQty { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["StockedQty"];
-            public Property ScrappedQty { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["ScrappedQty"];
-            public Property StartDate { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["StartDate"];
-            public Property EndDate { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["EndDate"];
-            public Property DueDate { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["DueDate"];
-            public Property ScrapReason { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["ScrapReason"];
-            public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["Product"];
+			public Property OrderQty { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["OrderQty"];
+			public Property StockedQty { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["StockedQty"];
+			public Property ScrappedQty { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["ScrappedQty"];
+			public Property StartDate { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["StartDate"];
+			public Property EndDate { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["EndDate"];
+			public Property DueDate { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["DueDate"];
+			public Property ScrapReason { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["ScrapReason"];
+			public Property Product { get; } = Datastore.AdventureWorks.Model.Entities["WorkOrder"].Properties["Product"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static WorkOrderFullTextMembers fullTextMembers = null;
-        public static WorkOrderFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(WorkOrder))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new WorkOrderFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static WorkOrderFullTextMembers fullTextMembers = null;
+		public static WorkOrderFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(WorkOrder))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new WorkOrderFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class WorkOrderFullTextMembers
-        {
-            internal WorkOrderFullTextMembers() { }
+		public class WorkOrderFullTextMembers
+		{
+			internal WorkOrderFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(WorkOrder))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["WorkOrder"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(WorkOrder))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["WorkOrder"];
+				}
+			}
+			return entity;
+		}
 
 		private static WorkOrderEvents events = null;
-        public static WorkOrderEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(WorkOrder))
-                    {
-                        if (events == null)
-                            events = new WorkOrderEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class WorkOrderEvents
-        {
+		public static WorkOrderEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(WorkOrder))
+					{
+						if (events is null)
+							events = new WorkOrderEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class WorkOrderEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<WorkOrder, EntityEventArgs> onNew;
-            public event EventHandler<WorkOrder, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<WorkOrder, EntityEventArgs> onNew;
+			public event EventHandler<WorkOrder, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<WorkOrder, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((WorkOrder)sender, args);
-            }
+			{
+				EventHandler<WorkOrder, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((WorkOrder)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<WorkOrder, EntityEventArgs> onDelete;
-            public event EventHandler<WorkOrder, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<WorkOrder, EntityEventArgs> onDelete;
+			public event EventHandler<WorkOrder, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<WorkOrder, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((WorkOrder)sender, args);
-            }
+			{
+				EventHandler<WorkOrder, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((WorkOrder)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<WorkOrder, EntityEventArgs> onSave;
-            public event EventHandler<WorkOrder, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<WorkOrder, EntityEventArgs> onSave;
+			public event EventHandler<WorkOrder, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<WorkOrder, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((WorkOrder)sender, args);
-            }
+			{
+				EventHandler<WorkOrder, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((WorkOrder)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<WorkOrder, EntityEventArgs> onAfterSave;
+			public event EventHandler<WorkOrder, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<WorkOrder, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((WorkOrder)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnOrderQty
 
@@ -523,7 +553,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onOrderQty -= value;
-							if (onOrderQty == null && onOrderQtyIsRegistered)
+							if (onOrderQty is null && onOrderQtyIsRegistered)
 							{
 								Members.OrderQty.Events.OnChange -= onOrderQtyProxy;
 								onOrderQtyIsRegistered = false;
@@ -531,11 +561,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onOrderQtyProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onOrderQty;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -566,7 +596,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStockedQty -= value;
-							if (onStockedQty == null && onStockedQtyIsRegistered)
+							if (onStockedQty is null && onStockedQtyIsRegistered)
 							{
 								Members.StockedQty.Events.OnChange -= onStockedQtyProxy;
 								onStockedQtyIsRegistered = false;
@@ -574,11 +604,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStockedQtyProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onStockedQty;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -609,7 +639,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onScrappedQty -= value;
-							if (onScrappedQty == null && onScrappedQtyIsRegistered)
+							if (onScrappedQty is null && onScrappedQtyIsRegistered)
 							{
 								Members.ScrappedQty.Events.OnChange -= onScrappedQtyProxy;
 								onScrappedQtyIsRegistered = false;
@@ -617,11 +647,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onScrappedQtyProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onScrappedQty;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -652,7 +682,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onStartDate -= value;
-							if (onStartDate == null && onStartDateIsRegistered)
+							if (onStartDate is null && onStartDateIsRegistered)
 							{
 								Members.StartDate.Events.OnChange -= onStartDateProxy;
 								onStartDateIsRegistered = false;
@@ -660,11 +690,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onStartDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onStartDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -695,7 +725,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEndDate -= value;
-							if (onEndDate == null && onEndDateIsRegistered)
+							if (onEndDate is null && onEndDateIsRegistered)
 							{
 								Members.EndDate.Events.OnChange -= onEndDateProxy;
 								onEndDateIsRegistered = false;
@@ -703,11 +733,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEndDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onEndDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -738,7 +768,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDueDate -= value;
-							if (onDueDate == null && onDueDateIsRegistered)
+							if (onDueDate is null && onDueDateIsRegistered)
 							{
 								Members.DueDate.Events.OnChange -= onDueDateProxy;
 								onDueDateIsRegistered = false;
@@ -746,11 +776,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDueDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onDueDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -781,7 +811,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onScrapReason -= value;
-							if (onScrapReason == null && onScrapReasonIsRegistered)
+							if (onScrapReason is null && onScrapReasonIsRegistered)
 							{
 								Members.ScrapReason.Events.OnChange -= onScrapReasonProxy;
 								onScrapReasonIsRegistered = false;
@@ -789,11 +819,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onScrapReasonProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onScrapReason;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -824,7 +854,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProduct -= value;
-							if (onProduct == null && onProductIsRegistered)
+							if (onProduct is null && onProductIsRegistered)
 							{
 								Members.Product.Events.OnChange -= onProductProxy;
 								onProductIsRegistered = false;
@@ -832,11 +862,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProductProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onProduct;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -867,7 +897,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -875,11 +905,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -910,7 +940,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -918,11 +948,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<WorkOrder, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((WorkOrder)sender, args);
 				}
 
@@ -931,9 +961,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IWorkOrderOriginalData
 

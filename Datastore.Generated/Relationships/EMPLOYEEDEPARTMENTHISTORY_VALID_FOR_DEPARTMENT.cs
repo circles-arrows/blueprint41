@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Blueprint41;
 using Blueprint41.Query;
@@ -6,29 +7,30 @@ using Blueprint41.Query;
 namespace Domain.Data.Query
 {
 public partial class EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL : RELATIONSHIP, IFromIn_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL, IFromOut_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL	{
-        public override string NEO4J_TYPE
-        {
-            get
-            {
-                return "VALID_FOR_DEPARTMENT";
-            }
-        }
-        public override AliasResult RelationshipAlias { get; protected set; }
-        
+		public override string NEO4J_TYPE
+		{
+			get
+			{
+				return "VALID_FOR_DEPARTMENT";
+			}
+		}
+		public override AliasResult RelationshipAlias { get; protected set; }
+		
 		internal EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL(Blueprint41.Query.Node parent, DirectionEnum direction) : base(parent, direction) { }
 
 		public EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Alias(out EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_ALIAS alias)
 		{
 			alias = new EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_ALIAS(this);
-            RelationshipAlias = alias;
+			RelationshipAlias = alias;
 			return this;
 		} 
 		public EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Repeat(int maxHops)
 		{
 			return Repeat(1, maxHops);
 		}
-		public EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Repeat(int minHops, int maxHops)
+		public new EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Repeat(int minHops, int maxHops)
 		{
+			base.Repeat(minHops, maxHops);
 			return this;
 		}
 
@@ -59,54 +61,66 @@ public partial class EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL : RELATI
 
 
 		public EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_IN In { get { return new EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_IN(this); } }
-        public class EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_IN
-        {
-            private EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Parent;
-            internal EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_IN(EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL parent)
-            {
-                Parent = parent;
-            }
+		public class EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_IN
+		{
+			private EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Parent;
+			internal EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_IN(EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL parent)
+			{
+				Parent = parent;
+			}
 
 			public EmployeeDepartmentHistoryNode EmployeeDepartmentHistory { get { return new EmployeeDepartmentHistoryNode(Parent, DirectionEnum.In); } }
-        }
+		}
 
-        public EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT Out { get { return new EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT(this); } }
-        public class EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT
-        {
-            private EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Parent;
-            internal EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT(EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL parent)
-            {
-                Parent = parent;
-            }
+		public EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT Out { get { return new EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT(this); } }
+		public class EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT
+		{
+			private EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Parent;
+			internal EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT(EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL parent)
+			{
+				Parent = parent;
+			}
 
 			public DepartmentNode Department { get { return new DepartmentNode(Parent, DirectionEnum.Out); } }
-        }
+		}
 	}
 
-    public interface IFromIn_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL
-    {
+	public interface IFromIn_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL
+	{
 		IFromIn_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Alias(out EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_ALIAS alias);
 		IFromIn_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Repeat(int maxHops);
 		IFromIn_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Repeat(int minHops, int maxHops);
 
-        EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL.EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT Out { get; }
-    }
-    public interface IFromOut_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL
-    {
+		EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL.EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_OUT Out { get; }
+	}
+	public interface IFromOut_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL
+	{
 		IFromOut_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Alias(out EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_ALIAS alias);
 		IFromOut_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Repeat(int maxHops);
 		IFromOut_EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Repeat(int minHops, int maxHops);
 
-        EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL.EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_IN In { get; }
-    }
+		EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL.EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_IN In { get; }
+	}
 
-    public class EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_ALIAS : AliasResult
-    {
+	public class EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_ALIAS : AliasResult
+	{
 		private EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL Parent;
 
-        internal EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_ALIAS(EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL parent)
-        {
+		internal EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_ALIAS(EMPLOYEEDEPARTMENTHISTORY_VALID_FOR_DEPARTMENT_REL parent)
+		{
 			Parent = parent;
+
+			CreationDate = new RelationFieldResult(this, "CreationDate");
+		}
+
+        public Assignment[] Assign(JsNotation<DateTime> CreationDate = default)
+        {
+            List<Assignment> assignments = new List<Assignment>();
+            if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
+
+            return assignments.ToArray();
         }
-    }
+
+		public RelationFieldResult CreationDate { get; private set; } 
+	}
 }

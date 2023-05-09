@@ -11,89 +11,84 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IEmployeePayHistoryOriginalData : ISchemaBaseOriginalData
-    {
+	{
 		System.DateTime RateChangeDate { get; }
 		string Rate { get; }
 		string PayFrequency { get; }
-    }
+	}
 
 	public partial class EmployeePayHistory : OGM<EmployeePayHistory, EmployeePayHistory.EmployeePayHistoryData, System.String>, ISchemaBase, INeo4jBase, IEmployeePayHistoryOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static EmployeePayHistory()
-        {
-            Register.Types();
-        }
+		static EmployeePayHistory()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, EmployeePayHistory> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, EmployeePayHistory> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.EmployeePayHistoryAlias, IWhereQuery> query)
-        {
-            q.EmployeePayHistoryAlias alias;
+		{
+			q.EmployeePayHistoryAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.EmployeePayHistory.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.EmployeePayHistory.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"EmployeePayHistory => RateChangeDate : {this.RateChangeDate}, Rate : {this.Rate}, PayFrequency : {this.PayFrequency}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
-        }
+		{
+			return $"EmployeePayHistory => RateChangeDate : {this.RateChangeDate}, Rate : {this.Rate}, PayFrequency : {this.PayFrequency}, ModifiedDate : {this.ModifiedDate}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new EmployeePayHistoryData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new EmployeePayHistoryData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-			if (InnerData.RateChangeDate == null)
-				throw new PersistenceException(string.Format("Cannot save EmployeePayHistory with key '{0}' because the RateChangeDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.Rate == null)
+			if (InnerData.Rate is null)
 				throw new PersistenceException(string.Format("Cannot save EmployeePayHistory with key '{0}' because the Rate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.PayFrequency == null)
+			if (InnerData.PayFrequency is null)
 				throw new PersistenceException(string.Format("Cannot save EmployeePayHistory with key '{0}' because the PayFrequency cannot be null.", this.Uid?.ToString() ?? "<null>"));
-			if (InnerData.ModifiedDate == null)
-				throw new PersistenceException(string.Format("Cannot save EmployeePayHistory with key '{0}' because the ModifiedDate cannot be null.", this.Uid?.ToString() ?? "<null>"));
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -107,21 +102,21 @@ namespace Domain.Data.Manipulation
 		public class EmployeePayHistoryData : Data<System.String>
 		{
 			public EmployeePayHistoryData()
-            {
+			{
 
-            }
+			}
 
-            public EmployeePayHistoryData(EmployeePayHistoryData data)
-            {
+			public EmployeePayHistoryData(EmployeePayHistoryData data)
+			{
 				RateChangeDate = data.RateChangeDate;
 				Rate = data.Rate;
 				PayFrequency = data.PayFrequency;
 				ModifiedDate = data.ModifiedDate;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -214,233 +209,276 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static EmployeePayHistoryMembers members = null;
-        public static EmployeePayHistoryMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(EmployeePayHistory))
-                    {
-                        if (members == null)
-                            members = new EmployeePayHistoryMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class EmployeePayHistoryMembers
-        {
-            internal EmployeePayHistoryMembers() { }
+		private static EmployeePayHistoryMembers members = null;
+		public static EmployeePayHistoryMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(EmployeePayHistory))
+					{
+						if (members is null)
+							members = new EmployeePayHistoryMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class EmployeePayHistoryMembers
+		{
+			internal EmployeePayHistoryMembers() { }
 
 			#region Members for interface IEmployeePayHistory
 
-            public Property RateChangeDate { get; } = Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["RateChangeDate"];
-            public Property Rate { get; } = Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["Rate"];
-            public Property PayFrequency { get; } = Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["PayFrequency"];
+			public Property RateChangeDate { get; } = Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["RateChangeDate"];
+			public Property Rate { get; } = Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["Rate"];
+			public Property PayFrequency { get; } = Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"].Properties["PayFrequency"];
 			#endregion
 
 			#region Members for interface ISchemaBase
 
-            public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
+			public Property ModifiedDate { get; } = Datastore.AdventureWorks.Model.Entities["SchemaBase"].Properties["ModifiedDate"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static EmployeePayHistoryFullTextMembers fullTextMembers = null;
-        public static EmployeePayHistoryFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(EmployeePayHistory))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new EmployeePayHistoryFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static EmployeePayHistoryFullTextMembers fullTextMembers = null;
+		public static EmployeePayHistoryFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(EmployeePayHistory))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new EmployeePayHistoryFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class EmployeePayHistoryFullTextMembers
-        {
-            internal EmployeePayHistoryFullTextMembers() { }
+		public class EmployeePayHistoryFullTextMembers
+		{
+			internal EmployeePayHistoryFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(EmployeePayHistory))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(EmployeePayHistory))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["EmployeePayHistory"];
+				}
+			}
+			return entity;
+		}
 
 		private static EmployeePayHistoryEvents events = null;
-        public static EmployeePayHistoryEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(EmployeePayHistory))
-                    {
-                        if (events == null)
-                            events = new EmployeePayHistoryEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class EmployeePayHistoryEvents
-        {
+		public static EmployeePayHistoryEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(EmployeePayHistory))
+					{
+						if (events is null)
+							events = new EmployeePayHistoryEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class EmployeePayHistoryEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<EmployeePayHistory, EntityEventArgs> onNew;
-            public event EventHandler<EmployeePayHistory, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<EmployeePayHistory, EntityEventArgs> onNew;
+			public event EventHandler<EmployeePayHistory, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<EmployeePayHistory, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((EmployeePayHistory)sender, args);
-            }
+			{
+				EventHandler<EmployeePayHistory, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((EmployeePayHistory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<EmployeePayHistory, EntityEventArgs> onDelete;
-            public event EventHandler<EmployeePayHistory, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<EmployeePayHistory, EntityEventArgs> onDelete;
+			public event EventHandler<EmployeePayHistory, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<EmployeePayHistory, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((EmployeePayHistory)sender, args);
-            }
+			{
+				EventHandler<EmployeePayHistory, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((EmployeePayHistory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<EmployeePayHistory, EntityEventArgs> onSave;
-            public event EventHandler<EmployeePayHistory, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<EmployeePayHistory, EntityEventArgs> onSave;
+			public event EventHandler<EmployeePayHistory, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<EmployeePayHistory, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((EmployeePayHistory)sender, args);
-            }
+			{
+				EventHandler<EmployeePayHistory, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((EmployeePayHistory)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<EmployeePayHistory, EntityEventArgs> onAfterSave;
+			public event EventHandler<EmployeePayHistory, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<EmployeePayHistory, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((EmployeePayHistory)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnRateChangeDate
 
@@ -467,7 +505,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onRateChangeDate -= value;
-							if (onRateChangeDate == null && onRateChangeDateIsRegistered)
+							if (onRateChangeDate is null && onRateChangeDateIsRegistered)
 							{
 								Members.RateChangeDate.Events.OnChange -= onRateChangeDateProxy;
 								onRateChangeDateIsRegistered = false;
@@ -475,11 +513,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onRateChangeDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<EmployeePayHistory, PropertyEventArgs> handler = onRateChangeDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((EmployeePayHistory)sender, args);
 				}
 
@@ -510,7 +548,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onRate -= value;
-							if (onRate == null && onRateIsRegistered)
+							if (onRate is null && onRateIsRegistered)
 							{
 								Members.Rate.Events.OnChange -= onRateProxy;
 								onRateIsRegistered = false;
@@ -518,11 +556,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onRateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<EmployeePayHistory, PropertyEventArgs> handler = onRate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((EmployeePayHistory)sender, args);
 				}
 
@@ -553,7 +591,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onPayFrequency -= value;
-							if (onPayFrequency == null && onPayFrequencyIsRegistered)
+							if (onPayFrequency is null && onPayFrequencyIsRegistered)
 							{
 								Members.PayFrequency.Events.OnChange -= onPayFrequencyProxy;
 								onPayFrequencyIsRegistered = false;
@@ -561,11 +599,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onPayFrequencyProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<EmployeePayHistory, PropertyEventArgs> handler = onPayFrequency;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((EmployeePayHistory)sender, args);
 				}
 
@@ -596,7 +634,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onModifiedDate -= value;
-							if (onModifiedDate == null && onModifiedDateIsRegistered)
+							if (onModifiedDate is null && onModifiedDateIsRegistered)
 							{
 								Members.ModifiedDate.Events.OnChange -= onModifiedDateProxy;
 								onModifiedDateIsRegistered = false;
@@ -604,11 +642,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onModifiedDateProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<EmployeePayHistory, PropertyEventArgs> handler = onModifiedDate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((EmployeePayHistory)sender, args);
 				}
 
@@ -639,7 +677,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -647,11 +685,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<EmployeePayHistory, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((EmployeePayHistory)sender, args);
 				}
 
@@ -660,9 +698,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IEmployeePayHistoryOriginalData
 

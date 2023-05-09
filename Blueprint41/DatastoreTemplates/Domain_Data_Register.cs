@@ -18,7 +18,7 @@ namespace Blueprint41.DatastoreTemplates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+    #line 1 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class Domain_Data_Register : GeneratorBase
     {
@@ -30,30 +30,30 @@ namespace Blueprint41.DatastoreTemplates
         {
             this.Write("using System;\r\nusing Blueprint41.Core;\r\n\r\nnamespace ");
             
-            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 8 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullCRUDNamespace));
             
             #line default
             #line hidden
-            this.Write(@"
-{
-	internal class Register
-	{
-		private static bool isInitialized = false;
-
-		public static void Types()
-		{
-			if (Datastore.GbmModel.Model.TypesRegistered)
-				return;
-
-			lock (typeof(Register))
-			{
-				if (Datastore.GbmModel.Model.TypesRegistered)
-					return;
-
-");
+            this.Write("\r\n{\r\n\tinternal class Register\r\n\t{\r\n\t\tprivate static bool isInitialized = false;\r\n" +
+                    "\r\n\t\tpublic static void Types()\r\n\t\t{\r\n\t\t\tif (");
             
-            #line 24 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 16 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
+            
+            #line default
+            #line hidden
+            this.Write(".Model.TypesRegistered)\r\n\t\t\t\treturn;\r\n\r\n\t\t\tlock (typeof(Register))\r\n\t\t\t{\r\n\t\t\t\tif " +
+                    "(");
+            
+            #line 21 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
+            
+            #line default
+            #line hidden
+            this.Write(".Model.TypesRegistered)\r\n\t\t\t\t\treturn;\r\n\r\n");
+            
+            #line 24 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
 
 foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
 {	
@@ -63,35 +63,35 @@ foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
             #line hidden
             this.Write("\t\t\t\t((ISetRuntimeType)");
             
-            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 28 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
             
             #line default
             #line hidden
             this.Write(".Model.Entities[\"");
             
-            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 28 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("\"]).SetRuntimeTypes(typeof(");
             
-            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 28 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("), typeof(");
             
-            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 28 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n");
             
-            #line 29 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 29 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Register.tt"
 
 }
 

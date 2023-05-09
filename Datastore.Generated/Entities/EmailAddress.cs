@@ -11,80 +11,79 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IEmailAddressOriginalData : INeo4jBaseOriginalData
-    {
+	{
 		string EmailAddr { get; }
 		IEnumerable<Person> EmailAddresses { get; }
-    }
+	}
 
 	public partial class EmailAddress : OGM<EmailAddress, EmailAddress.EmailAddressData, System.String>, INeo4jBase, IEmailAddressOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static EmailAddress()
-        {
-            Register.Types();
-        }
+		static EmailAddress()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, EmailAddress> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, EmailAddress> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.EmailAddressAlias, IWhereQuery> query)
-        {
-            q.EmailAddressAlias alias;
+		{
+			q.EmailAddressAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.EmailAddress.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.EmailAddress.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"EmailAddress => EmailAddr : {this.EmailAddr?.ToString() ?? "null"}, Uid : {this.Uid}";
-        }
+		{
+			return $"EmailAddress => EmailAddr : {this.EmailAddr?.ToString() ?? "null"}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new EmailAddressData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new EmailAddressData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -98,19 +97,19 @@ namespace Domain.Data.Manipulation
 		public class EmailAddressData : Data<System.String>
 		{
 			public EmailAddressData()
-            {
+			{
 
-            }
+			}
 
-            public EmailAddressData(EmailAddressData data)
-            {
+			public EmailAddressData(EmailAddressData data)
+			{
 				EmailAddr = data.EmailAddr;
 				EmailAddresses = data.EmailAddresses;
 				Uid = data.Uid;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -187,227 +186,270 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static EmailAddressMembers members = null;
-        public static EmailAddressMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(EmailAddress))
-                    {
-                        if (members == null)
-                            members = new EmailAddressMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class EmailAddressMembers
-        {
-            internal EmailAddressMembers() { }
+		private static EmailAddressMembers members = null;
+		public static EmailAddressMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(EmailAddress))
+					{
+						if (members is null)
+							members = new EmailAddressMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class EmailAddressMembers
+		{
+			internal EmailAddressMembers() { }
 
 			#region Members for interface IEmailAddress
 
-            public Property EmailAddr { get; } = Datastore.AdventureWorks.Model.Entities["EmailAddress"].Properties["EmailAddr"];
-            public Property EmailAddresses { get; } = Datastore.AdventureWorks.Model.Entities["EmailAddress"].Properties["EmailAddresses"];
+			public Property EmailAddr { get; } = Datastore.AdventureWorks.Model.Entities["EmailAddress"].Properties["EmailAddr"];
+			public Property EmailAddresses { get; } = Datastore.AdventureWorks.Model.Entities["EmailAddress"].Properties["EmailAddresses"];
 			#endregion
 
 			#region Members for interface INeo4jBase
 
-            public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property Uid { get; } = Datastore.AdventureWorks.Model.Entities["Neo4jBase"].Properties["Uid"];
 			#endregion
 
-        }
+		}
 
-        private static EmailAddressFullTextMembers fullTextMembers = null;
-        public static EmailAddressFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(EmailAddress))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new EmailAddressFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static EmailAddressFullTextMembers fullTextMembers = null;
+		public static EmailAddressFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(EmailAddress))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new EmailAddressFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class EmailAddressFullTextMembers
-        {
-            internal EmailAddressFullTextMembers() { }
+		public class EmailAddressFullTextMembers
+		{
+			internal EmailAddressFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(EmailAddress))
-                {
-                    if (entity == null)
-                        entity = Datastore.AdventureWorks.Model.Entities["EmailAddress"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(EmailAddress))
+				{
+					if (entity is null)
+						entity = Datastore.AdventureWorks.Model.Entities["EmailAddress"];
+				}
+			}
+			return entity;
+		}
 
 		private static EmailAddressEvents events = null;
-        public static EmailAddressEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(EmailAddress))
-                    {
-                        if (events == null)
-                            events = new EmailAddressEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class EmailAddressEvents
-        {
+		public static EmailAddressEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(EmailAddress))
+					{
+						if (events is null)
+							events = new EmailAddressEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class EmailAddressEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<EmailAddress, EntityEventArgs> onNew;
-            public event EventHandler<EmailAddress, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<EmailAddress, EntityEventArgs> onNew;
+			public event EventHandler<EmailAddress, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<EmailAddress, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((EmailAddress)sender, args);
-            }
+			{
+				EventHandler<EmailAddress, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((EmailAddress)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<EmailAddress, EntityEventArgs> onDelete;
-            public event EventHandler<EmailAddress, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<EmailAddress, EntityEventArgs> onDelete;
+			public event EventHandler<EmailAddress, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<EmailAddress, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((EmailAddress)sender, args);
-            }
+			{
+				EventHandler<EmailAddress, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((EmailAddress)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<EmailAddress, EntityEventArgs> onSave;
-            public event EventHandler<EmailAddress, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<EmailAddress, EntityEventArgs> onSave;
+			public event EventHandler<EmailAddress, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<EmailAddress, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((EmailAddress)sender, args);
-            }
+			{
+				EventHandler<EmailAddress, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((EmailAddress)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<EmailAddress, EntityEventArgs> onAfterSave;
+			public event EventHandler<EmailAddress, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<EmailAddress, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((EmailAddress)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnEmailAddr
 
@@ -434,7 +476,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEmailAddr -= value;
-							if (onEmailAddr == null && onEmailAddrIsRegistered)
+							if (onEmailAddr is null && onEmailAddrIsRegistered)
 							{
 								Members.EmailAddr.Events.OnChange -= onEmailAddrProxy;
 								onEmailAddrIsRegistered = false;
@@ -442,11 +484,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEmailAddrProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<EmailAddress, PropertyEventArgs> handler = onEmailAddr;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((EmailAddress)sender, args);
 				}
 
@@ -477,7 +519,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onEmailAddresses -= value;
-							if (onEmailAddresses == null && onEmailAddressesIsRegistered)
+							if (onEmailAddresses is null && onEmailAddressesIsRegistered)
 							{
 								Members.EmailAddresses.Events.OnChange -= onEmailAddressesProxy;
 								onEmailAddressesIsRegistered = false;
@@ -485,11 +527,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onEmailAddressesProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<EmailAddress, PropertyEventArgs> handler = onEmailAddresses;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((EmailAddress)sender, args);
 				}
 
@@ -520,7 +562,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -528,11 +570,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<EmailAddress, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((EmailAddress)sender, args);
 				}
 
@@ -541,9 +583,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IEmailAddressOriginalData
 
