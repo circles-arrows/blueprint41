@@ -189,7 +189,7 @@ namespace Blueprint41.Neo4j.Schema
 
         internal virtual ApplyConstraintEntity    NewApplyConstraintEntity(Entity entity)                                                                              => new ApplyConstraintEntity(this, entity);
         internal virtual ApplyFunctionalId        NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);
-        internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, params ApplyConstraintAction[] commands) => new ApplyConstraintProperty(parent, property, commands);
-        internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, params ApplyConstraintAction[] commands)   => new ApplyConstraintProperty(parent, property, commands);
+        internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty(parent, property, commands);
+        internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty(parent, property, commands);
     }
 }

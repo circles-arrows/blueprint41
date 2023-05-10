@@ -11,15 +11,15 @@ namespace Blueprint41.Neo4j.Schema.v4
 {
     public class ApplyConstraintProperty_v4 : ApplyConstraintProperty
     {
-        internal ApplyConstraintProperty_v4(ApplyConstraintEntity parent, Property property, params ApplyConstraintAction[] commands) : base(parent, property, commands) { }
-        internal ApplyConstraintProperty_v4(ApplyConstraintEntity parent, string property, params ApplyConstraintAction[] commands) : base(parent, property, commands) { }
+        internal ApplyConstraintProperty_v4(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
+        internal ApplyConstraintProperty_v4(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
     
         internal override List<string> ToCypher()
         {
             List<string> commands = new List<string>();
-            foreach (var command in Commands)
+            foreach (var (actionEnum, constraintOrIndexName) in Commands)
             {
-                switch (command)
+                switch (actionEnum)
                 {
                     case ApplyConstraintAction.CreateIndex:
                         commands.Add($"CREATE INDEX ON :{Parent.Entity.Label.Name}({Property})");

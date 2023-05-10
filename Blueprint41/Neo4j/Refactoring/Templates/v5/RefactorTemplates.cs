@@ -16,6 +16,18 @@ namespace Blueprint41.Core
             template.CreateInstance = CopyProperty;
             return template;
         }
+        public override t.CreateUniqueConstraintBase CreateUniqueConstraint()
+        {
+            t.CreateUniqueConstraintBase template = new t.v5.CreateUniqueConstraint();
+            template.CreateInstance = CreateUniqueConstraint;
+            return template;
+        }
+        public override t.DropExistConstraintBase DropExistConstraint()
+        {
+            t.DropExistConstraintBase template = new t.v5.DropExistConstraint();
+            template.CreateInstance = DropExistConstraint;
+            return template;
+        }
         public override t.MergePropertyBase MergeProperty()
         {
             t.MergePropertyBase template = new t.v5.MergeProperty();

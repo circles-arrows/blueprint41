@@ -11,14 +11,14 @@ namespace Blueprint41.Neo4j.Schema
 {
     public class ApplyConstraintProperty
     {
-        internal ApplyConstraintProperty(ApplyConstraintEntity parent, Property property, params ApplyConstraintAction[] commands)
+        internal ApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands)
         {
             Parent = parent;
             Property = property.Name;
             Commands = commands;
         }
 
-        internal ApplyConstraintProperty(ApplyConstraintEntity parent, string property, params ApplyConstraintAction[] commands)
+        internal ApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands)
         {
             Parent = parent;
             Property = property;
@@ -28,7 +28,7 @@ namespace Blueprint41.Neo4j.Schema
         protected ApplyConstraintEntity Parent { get; set; }
 
         public string Property { get; protected set; }
-        public IReadOnlyList<ApplyConstraintAction> Commands { get; protected set; }
+        public IReadOnlyList<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> Commands { get; protected set; }
 
         /// <summary>
         /// Turns actions into cypher queries.
@@ -37,9 +37,9 @@ namespace Blueprint41.Neo4j.Schema
         internal virtual List<string> ToCypher()
         {
             List<string> commands = new List<string>();
-            foreach (var command in Commands)
+            foreach (var (actionEnum, constraintOrIndexName) in Commands)
             {
-                switch (command)
+                switch (actionEnum)
                 {
                     case ApplyConstraintAction.CreateIndex:
                         commands.Add($"CREATE INDEX ON :{Parent.Entity.Label.Name}({Property})");

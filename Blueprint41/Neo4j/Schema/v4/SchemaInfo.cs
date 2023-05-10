@@ -64,7 +64,7 @@ namespace Blueprint41.Neo4j.Schema.v4
         protected override ConstraintInfo   NewConstraintInfo(RawRecord rawRecord)   => new ConstraintInfo(rawRecord);
         protected override IndexInfo        NewIndexInfo(RawRecord rawRecord)        => new IndexInfo_v4(rawRecord);
 
-        internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, params ApplyConstraintAction[] commands) => new ApplyConstraintProperty_v4(parent, property, commands);
-        internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, params ApplyConstraintAction[] commands)   => new ApplyConstraintProperty_v4(parent, property, commands);
+        internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v4(parent, property, commands);
+        internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty_v4(parent, property, commands);
     }
 }

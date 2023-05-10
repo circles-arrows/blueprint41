@@ -199,6 +199,14 @@
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\CreateUniqueConstraint.tt">
+      <LastGenOutput>CreateUniqueConstraint.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt">
+      <LastGenOutput>DropExistConstraint.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
     <None Update="Neo4j\Refactoring\Templates\v5\MergeProperty.tt">
       <LastGenOutput>MergeProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -406,6 +414,16 @@
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\v5\CopyProperty.cs">
       <DependentUpon>CopyProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\CreateUniqueConstraint.cs">
+      <DependentUpon>CreateUniqueConstraint.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\DropExistConstraint.cs">
+      <DependentUpon>DropExistConstraint.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
