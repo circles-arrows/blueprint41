@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
+    #line 1 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class DropExistConstraint : DropExistConstraintBase
     {
@@ -31,28 +31,21 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
         public override string TransformText()
         {
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
+            #line 7 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
 
-    Log("	executing {0} -> DROP CONSTRAINT ON for {1}.{2}", this.GetType().Name, Property.Parent.Label.Name, Property.Name);
+    Log("	executing {0} -> DROP CONSTRAINT {1}", this.GetType().Name, ConstraintName);
 
             
             #line default
             #line hidden
-            this.Write("DROP CONSTRAINT ON (node:");
+            this.Write("DROP CONSTRAINT ");
             
-            #line 10 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Parent.Label.Name));
-            
-            #line default
-            #line hidden
-            this.Write(") ASSERT exists(node.");
-            
-            #line 10 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
+            #line 10 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\DropExistConstraint.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ConstraintName));
             
             #line default
             #line hidden
-            this.Write(")\r\n");
+            this.Write("\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

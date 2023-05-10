@@ -380,6 +380,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     public abstract class DropExistConstraintBase : TemplateBase<DropExistConstraintBase>
     {
         public Property Property { get; set; }
+        public string ConstraintName { get; set; } 
     }
     public abstract class MergePropertyBase : TemplateBase<MergePropertyBase>
     {
