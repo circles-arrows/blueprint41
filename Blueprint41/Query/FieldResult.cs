@@ -149,6 +149,10 @@ namespace Blueprint41.Query
         {
             return new BooleanResult(this, t => t.FnExists, null, typeof(bool));
         }
+        public virtual BooleanResult IsNaN()
+        {
+            return new BooleanResult(this, t => t.FnIsNaN, null, typeof(bool));
+        }
         public virtual BooleanResult ToBoolean()
         {
             return new BooleanResult(this, t => t.FnToBoolean, null, typeof(bool));

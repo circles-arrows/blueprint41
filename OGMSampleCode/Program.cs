@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Blueprint41;
 using Blueprint41.Core;
-using neo4j = Blueprint41.Neo4j.Persistence.Driver.v5;
 
 using Domain.Data.Manipulation;
 using Domain.Data.Query;
+
+using neo4j = Blueprint41.Neo4j.Persistence.Driver.v5;
 
 namespace OGMSampleCode
 {

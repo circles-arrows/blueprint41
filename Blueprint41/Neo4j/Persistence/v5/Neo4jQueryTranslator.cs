@@ -29,6 +29,7 @@ namespace Blueprint41.Neo4j.Persistence.v5
 
         public override string FnExists    => "{base} IS NOT NULL";
         public override string FnNotExists => "{base} is NULL";
+        public override string FnIsNaN     => "isNaN({base})";
 
         #endregion
     }
