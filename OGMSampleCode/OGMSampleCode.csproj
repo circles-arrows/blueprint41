@@ -49,6 +49,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Neo4jDriver.v5\Blueprint41.Neo4jDriver.v5.csproj">
+      <Project>{59252068-59e1-4216-a7df-567908412d92}</Project>
+      <Name>Blueprint41.Neo4jDriver.v5</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj">
       <Project>{7446d213-4723-4398-8d8d-30fd19fd1b9a}</Project>
       <Name>Blueprint41</Name>

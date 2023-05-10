@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blueprint41;
 using Blueprint41.Core;
-using neo4j = Blueprint41.Neo4j.Persistence.Void;
+using neo4j = Blueprint41.Neo4j.Persistence.Driver.v5;
 
 using Domain.Data.Manipulation;
 using Domain.Data.Query;
@@ -16,10 +16,17 @@ namespace OGMSampleCode
     {
         static void Main(string[] args)
         {
-            PersistenceProvider.CurrentPersistenceProvider = new neo4j.Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo", $"neo");
+            PersistenceProvider.CurrentPersistenceProvider = new neo4j.Neo4jPersistenceProvider($"bolt://localhost:7689", $"neo4j", $"neo");
 
             // The definition of what you can store in the graph can be found in the "Datastore" project
             // The type-safe objects you can program against to do CRUD operations can be found in the "Datastore.Generated" project
+            var model = new Datastore.AdventureWorks
+            {
+                LogToConsole = true,
+                LogToDebugger = false,
+            };
+
+            model.Execute(true);
 
             using (Transaction.Begin())
             {
@@ -36,20 +43,21 @@ namespace OGMSampleCode
                 };
 
                 // and an employee
-                development.Employees.Add(
-                    new Employee()
-                    {
-                        NationalIDNumber = "123",
-                        JobTitle = "Developer",
-                        BirthDate = new DateTime(1980, 1, 1),
-                        MaritalStatus = "M",
-                        Gender = "M",
-                        SalariedFlag = true,
-                        VacationHours = 0,
-                        SickLeaveHours = 0,
-                        Currentflag = true,
-                        ModifiedDate = Transaction.Current.TransactionDate,
-                    });
+                Employee employee = new Employee()
+                {
+                    NationalIDNumber = "123",
+                    rowguid = Guid.NewGuid().ToString(),
+                    JobTitle = "Developer",
+                    BirthDate = new DateTime(1980, 1, 1),
+                    MaritalStatus = "M",
+                    Gender = "M",
+                    SalariedFlag = true,
+                    VacationHours = 0,
+                    SickLeaveHours = 0,
+                    Currentflag = true,
+                    ModifiedDate = Transaction.Current.TransactionDate,
+                };
+                development.Employees.Add(employee);
 
                 // save them, since we did it right...
                 Transaction.Commit();
