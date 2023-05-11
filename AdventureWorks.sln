@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41", "Blueprint41\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGMSampleCode", "OGMSampleCode\OGMSampleCode.csproj", "{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.Neo4jDriver.v5", "Blueprint41.Neo4jDriver.v5\Blueprint41.Neo4jDriver.v5.csproj", "{59252068-59E1-4216-A7DF-567908412D92}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,18 +69,6 @@ Global
 		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|x64.Build.0 = Release|Any CPU
 		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|x86.ActiveCfg = Release|Any CPU
 		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|x86.Build.0 = Release|Any CPU
-		{59252068-59E1-4216-A7DF-567908412D92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{59252068-59E1-4216-A7DF-567908412D92}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{59252068-59E1-4216-A7DF-567908412D92}.Debug|x64.ActiveCfg = Debug|x64
-		{59252068-59E1-4216-A7DF-567908412D92}.Debug|x64.Build.0 = Debug|x64
-		{59252068-59E1-4216-A7DF-567908412D92}.Debug|x86.ActiveCfg = Debug|x86
-		{59252068-59E1-4216-A7DF-567908412D92}.Debug|x86.Build.0 = Debug|x86
-		{59252068-59E1-4216-A7DF-567908412D92}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{59252068-59E1-4216-A7DF-567908412D92}.Release|Any CPU.Build.0 = Release|Any CPU
-		{59252068-59E1-4216-A7DF-567908412D92}.Release|x64.ActiveCfg = Release|x64
-		{59252068-59E1-4216-A7DF-567908412D92}.Release|x64.Build.0 = Release|x64
-		{59252068-59E1-4216-A7DF-567908412D92}.Release|x86.ActiveCfg = Release|x86
-		{59252068-59E1-4216-A7DF-567908412D92}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

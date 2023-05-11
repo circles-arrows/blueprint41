@@ -6,7 +6,7 @@ using Blueprint41.Core;
 using Domain.Data.Manipulation;
 using Domain.Data.Query;
 
-using neo4j = Blueprint41.Neo4j.Persistence.Driver.v5;
+using neo4j = Blueprint41.Neo4j.Persistence.Void;
 
 namespace OGMSampleCode
 {
