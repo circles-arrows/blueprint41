@@ -319,6 +319,11 @@ namespace Blueprint41
             if (string.IsNullOrEmpty(newName))
                 throw new ArgumentNullException(nameof(newName));
 
+            List<string> propertyNames = Parent.GetBaseTypesAndSelf().SelectMany(item => item.Properties.Select(p => p.Name)).ToList();
+            if (propertyNames.Any(item => item == newName))
+                throw new InvalidOperationException($"There is an existing property with name '{newName}'.");
+
+
             Parent.Parent.EnsureSchemaMigration();
 
             if (PropertyType == PropertyType.Attribute)
