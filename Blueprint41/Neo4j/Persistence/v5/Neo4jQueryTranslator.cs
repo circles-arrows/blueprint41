@@ -32,5 +32,56 @@ namespace Blueprint41.Neo4j.Persistence.v5
         public override string FnIsNaN     => "isNaN({base})";
 
         #endregion
+
+        #region Full Text Indexes
+
+        public override string FtiCreate => "CREATE FULLTEXT INDEX fts FOR (n:{0}) ON EACH [ {1} ])";
+        public override string FtiEntity => "{0}";
+        public override string FtiProperty => "{0}";
+        public virtual string FtiEntitySeparator => "|";
+        public virtual string FtiPropertySeparator => ", ";
+        internal override void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
+        {
+            if (HasFullTextSearchIndexes())
+            {
+                try
+                {
+                    using (Transaction.Begin(true))
+                    {
+                        Transaction.RunningTransaction.Run(FtiRemove);
+                        Transaction.Commit();
+                    }
+                }
+                catch { }
+            }
+
+            using (Transaction.Begin(true))
+            {
+                string e = string.Join(
+                        FtiEntitySeparator,
+                        entities.Where(entity => entity.FullTextIndexProperties.Count > 0).Select(entity =>
+                            string.Format(
+                                FtiEntity,
+                                entity.Label.Name
+                            )
+                        )
+                    );
+                string p = string.Join(
+                        FtiPropertySeparator,
+                        entities.Where(entity => entity.FullTextIndexProperties.Count > 0).SelectMany(entity => entity.FullTextIndexProperties).Select(property =>
+                            string.Format(
+                                FtiProperty,
+                                property.Name
+                            )
+                        ).Distinct()
+                    );
+                string query = string.Format(FtiCreate, e, p);
+
+                Transaction.RunningTransaction.Run(query);
+                Transaction.Commit();
+            }
+        }
+
+        #endregion
     }
 }
