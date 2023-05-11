@@ -1,5 +1,8 @@
-﻿using Neo4j.Driver.V1;
+﻿
+using Neo4j.Driver;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,112 +10,67 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.UnitTest.Mocks
 {
-    internal class MockTransaction : ITransaction
+    internal class MockTransaction : IAsyncTransaction
     {
-        public MockTransaction(ITransaction neoTransaction)
+        public MockTransaction(IAsyncTransaction neoTransaction)
         {
             NeoTransaction = neoTransaction;
         }
 
-        public ITransaction NeoTransaction { get; private set; }
+        public IAsyncTransaction NeoTransaction { get; private set; }
+
+        public TransactionConfig TransactionConfig => NeoTransaction.TransactionConfig;
 
         public Task CommitAsync()
         {
-            Console.WriteLine("CommitAsync");
             return NeoTransaction.CommitAsync();
         }
 
         public void Dispose()
         {
-            Console.WriteLine("Transaction: Dispose");
             NeoTransaction.Dispose();
         }
 
-        public void Failure()
+        public ValueTask DisposeAsync()
         {
-            Console.WriteLine("Transaction: Failure");
-            NeoTransaction.Failure();
+            return NeoTransaction.DisposeAsync();
         }
 
         public Task RollbackAsync()
         {
-            Console.WriteLine("RollbackAsync");
             return NeoTransaction.RollbackAsync();
         }
 
-        public IStatementResult Run(string statement)
+        public Task<IResultCursor> RunAsync(string query)
         {
-            Console.WriteLine(statement);
-            return NeoTransaction.Run(statement);
+            return NeoTransaction.RunAsync(query);
         }
 
-        public IStatementResult Run(string statement, object parameters)
+        public Task<IResultCursor> RunAsync(string query, object parameters)
         {
             if (parameters is IDictionary<string, object> par)
-                return Run(statement, par);
+                return RunAsync(query, par);
 
-            Console.WriteLine(statement);
+            Console.WriteLine(query);
             Console.WriteLine("params: {0}:{1}", parameters.ToString());
-
-            return NeoTransaction.Run(statement, parameters);
+            return NeoTransaction.RunAsync(query, parameters);
         }
 
-        public IStatementResult Run(string statement, IDictionary<string, object> parameters)
+        public Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters)
         {
-            string st = statement;
+            string st = query;
 
             if (parameters != null)
                 foreach (var par in parameters)
                     st = st.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
 
             Console.WriteLine(st);
-            return NeoTransaction.Run(statement, parameters);
+            return NeoTransaction.RunAsync(query, parameters);
         }
 
-        public IStatementResult Run(Statement statement)
+        public Task<IResultCursor> RunAsync(global::Neo4j.Driver.Query query)
         {
-            return Run(statement.Text, statement.Parameters);
-        }
-
-        public Task<IStatementResultCursor> RunAsync(string statement)
-        {
-            Console.WriteLine(statement);
-            return NeoTransaction.RunAsync(statement);
-        }
-
-        public Task<IStatementResultCursor> RunAsync(string statement, object parameters)
-        {
-            Console.WriteLine(statement);
-            Console.WriteLine("params: {0}:{1}", parameters?.ToString());
-            return NeoTransaction.RunAsync(statement, parameters);
-        }
-
-        public Task<IStatementResultCursor> RunAsync(string statement, IDictionary<string, object> parameters)
-        {
-            string st = statement;
-
-            if (parameters != null)
-                foreach (var par in parameters)
-                    st = st.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
-
-            Console.WriteLine(st);
-            return NeoTransaction.RunAsync(statement, parameters);
-        }
-
-        public Task<IStatementResultCursor> RunAsync(Statement statement)
-        {
-            return RunAsync(statement.Text, statement.Parameters);
-        }
-
-        public void Success()
-        {
-            Console.WriteLine("Transaction: Success");
-            NeoTransaction.Success();
-        }
-
-        ~MockTransaction()
-        {
-            NeoTransaction = null;
+            return NeoTransaction.RunAsync(query);
         }
     }
 }

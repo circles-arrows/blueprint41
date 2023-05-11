@@ -7,12 +7,12 @@ using Blueprint41.DatastoreTemplates;
 namespace Datastore.Manipulation
 {
 	public static class GraphEvents
-    {
+	{
 		public static class Nodes
-        {
+		{
 			public static class City
-            {
-                private static readonly Entity Entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"];
+			{
+				public static readonly Entity Entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"];
 
 				#region OnNodeLoading
 
@@ -38,7 +38,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -50,7 +50,7 @@ namespace Datastore.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -79,7 +79,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -91,7 +91,7 @@ namespace Datastore.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -120,7 +120,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -132,7 +132,7 @@ namespace Datastore.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -161,7 +161,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -173,7 +173,7 @@ namespace Datastore.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -202,7 +202,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -214,7 +214,7 @@ namespace Datastore.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -243,7 +243,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -255,7 +255,7 @@ namespace Datastore.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -284,7 +284,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -296,7 +296,7 @@ namespace Datastore.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -325,7 +325,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -337,7 +337,7 @@ namespace Datastore.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -366,7 +366,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -378,15 +378,15 @@ namespace Datastore.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class Movie
-            {
-                private static readonly Entity Entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"];
+			{
+				public static readonly Entity Entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"];
 
 				#region OnNodeLoading
 
@@ -412,7 +412,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -424,7 +424,7 @@ namespace Datastore.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -453,7 +453,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -465,7 +465,7 @@ namespace Datastore.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -494,7 +494,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -506,7 +506,7 @@ namespace Datastore.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -535,7 +535,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -547,7 +547,7 @@ namespace Datastore.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -576,7 +576,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -588,7 +588,7 @@ namespace Datastore.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -617,7 +617,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -629,7 +629,7 @@ namespace Datastore.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -658,7 +658,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -670,7 +670,7 @@ namespace Datastore.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -699,7 +699,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -711,7 +711,7 @@ namespace Datastore.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -740,7 +740,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -752,15 +752,15 @@ namespace Datastore.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class Person
-            {
-                private static readonly Entity Entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"];
+			{
+				public static readonly Entity Entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"];
 
 				#region OnNodeLoading
 
@@ -786,7 +786,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -798,7 +798,7 @@ namespace Datastore.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -827,7 +827,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -839,7 +839,7 @@ namespace Datastore.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -868,7 +868,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -880,7 +880,7 @@ namespace Datastore.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -909,7 +909,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -921,7 +921,7 @@ namespace Datastore.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -950,7 +950,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -962,7 +962,7 @@ namespace Datastore.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -991,7 +991,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -1003,7 +1003,7 @@ namespace Datastore.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1032,7 +1032,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -1044,7 +1044,7 @@ namespace Datastore.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1073,7 +1073,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -1085,7 +1085,7 @@ namespace Datastore.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1114,7 +1114,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -1126,15 +1126,15 @@ namespace Datastore.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class Restaurant
-            {
-                private static readonly Entity Entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"];
+			{
+				public static readonly Entity Entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"];
 
 				#region OnNodeLoading
 
@@ -1160,7 +1160,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -1172,7 +1172,7 @@ namespace Datastore.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1201,7 +1201,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -1213,7 +1213,7 @@ namespace Datastore.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1242,7 +1242,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -1254,7 +1254,7 @@ namespace Datastore.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1283,7 +1283,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -1295,7 +1295,7 @@ namespace Datastore.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1324,7 +1324,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -1336,7 +1336,7 @@ namespace Datastore.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1365,7 +1365,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -1377,7 +1377,7 @@ namespace Datastore.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1406,7 +1406,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -1418,7 +1418,7 @@ namespace Datastore.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1447,7 +1447,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -1459,7 +1459,7 @@ namespace Datastore.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1488,7 +1488,7 @@ namespace Datastore.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -1500,18 +1500,18 @@ namespace Datastore.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 		}
 		public static class Relationships
-        {
+		{
 			public static class ACTED_IN
-            {
-				private static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["ACTED_IN"];
+			{
+				public static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["ACTED_IN"];
 
 				#region OnRelationCreate
 
@@ -1537,7 +1537,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -1549,7 +1549,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1578,7 +1578,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -1590,7 +1590,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1619,7 +1619,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -1631,7 +1631,7 @@ namespace Datastore.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1660,7 +1660,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -1672,15 +1672,15 @@ namespace Datastore.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class PERSON_DIRECTED
-            {
-				private static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_DIRECTED"];
+			{
+				public static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_DIRECTED"];
 
 				#region OnRelationCreate
 
@@ -1706,7 +1706,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -1718,7 +1718,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1747,7 +1747,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -1759,7 +1759,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1788,7 +1788,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -1800,7 +1800,7 @@ namespace Datastore.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1829,7 +1829,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -1841,15 +1841,15 @@ namespace Datastore.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class PERSON_EATS_AT
-            {
-				private static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"];
+			{
+				public static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"];
 
 				#region OnRelationCreate
 
@@ -1875,7 +1875,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -1887,7 +1887,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1916,7 +1916,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -1928,7 +1928,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1957,7 +1957,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -1969,7 +1969,7 @@ namespace Datastore.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1998,7 +1998,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2010,15 +2010,15 @@ namespace Datastore.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class PERSON_LIVES_IN
-            {
-				private static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"];
+			{
+				public static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"];
 
 				#region OnRelationCreate
 
@@ -2044,7 +2044,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -2056,7 +2056,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2085,7 +2085,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -2097,7 +2097,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2126,7 +2126,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -2138,7 +2138,7 @@ namespace Datastore.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2167,7 +2167,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2179,15 +2179,15 @@ namespace Datastore.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class RESTAURANT_LOCATED_AT
-            {
-				private static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"];
+			{
+				public static readonly Relationship Relationship = Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"];
 
 				#region OnRelationCreate
 
@@ -2213,7 +2213,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -2225,7 +2225,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2254,7 +2254,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -2266,7 +2266,7 @@ namespace Datastore.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2295,7 +2295,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -2307,7 +2307,7 @@ namespace Datastore.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2336,7 +2336,7 @@ namespace Datastore.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2348,12 +2348,12 @@ namespace Datastore.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
         }
 	}
 }

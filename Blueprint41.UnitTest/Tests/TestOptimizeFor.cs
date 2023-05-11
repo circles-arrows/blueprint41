@@ -1,7 +1,7 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
 using Blueprint41.Neo4j.Persistence;
-using Blueprint41.Neo4j.Persistence.Driver.v3;
+using Blueprint41.Neo4j.Persistence.Driver.v5;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
@@ -18,7 +18,7 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7687", "neo4j", "neo");
+            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7689", "neo4j", "neo");
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();
@@ -39,6 +39,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 string reset = "Match (n) detach delete n";
                 Transaction.RunningTransaction.Run(reset);
+                Transaction.Commit();
             }
         }
 

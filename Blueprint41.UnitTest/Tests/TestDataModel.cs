@@ -1,6 +1,6 @@
 ﻿using Blueprint41.Dynamic;
 using Blueprint41.UnitTest.Helper;
-using Neo4j.Driver.V1;
+using Neo4j.Driver;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -581,14 +581,14 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureStaticDataIsDeleted()
         {
-            // TODO: Delete node has not yet been implemented
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
+            ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 DatastoreModel model = new DataModelStaticDataWithDeleteNode();
                 model.Execute(true);
+                dynamic contactStatus = model.Entities["ContactStatus"].Refactor.MatchNode("1");
             });
-
-            Assert.That(exception.Message, Contains.Substring("The method or operation is not implemented."));
+            
+            Assert.That(exception.Message, Contains.Substring("Specified argument was out of the range of valid values. (Parameter 'Only statically created data (via the upgrade script) can be loaded here.')"));
         }
 
         #endregion
@@ -634,10 +634,13 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DataModelWithDeprecatedEntities model = new DataModelWithDeprecatedEntities();
+                DataModelWithDeprecatedEntities model = new DataModelWithDeprecatedEntities()
+                {
+                    LogToConsole = true
+                };
                 model.Execute(true);
                 Assert.Throws<ArgumentOutOfRangeException>(() => Assert.IsNotNull(model.Entities["Person"]));
-                Assert.That(output.GetOuput(), Contains.Substring("MATCH (n:Person) WITH n LIMIT 10000 DETACH DELETE n"));
+                Assert.That(output.GetOuput(), Contains.Substring("Deprecate entity from Person"));
             }
         }
 
@@ -712,7 +715,10 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntityRefactor();
+                DatastoreModel model = new DatastoreEntityRefactor()
+                {
+                    LogToConsole = true
+                };
                 model.Execute(true);
             }
         }
@@ -756,11 +762,14 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreEntityRefactorConstraints model = new DatastoreEntityRefactorConstraints();
+                DatastoreEntityRefactorConstraints model = new DatastoreEntityRefactorConstraints()
+                {
+                    LogToConsole = true
+                };
                 model.Execute(true);
 
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX ON :AccountType(Indexed)"));
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT ON (node:AccountType) ASSERT node.Unique IS UNIQUE"));
+                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX FOR (node:AccountType) ON (node.Indexed)"));
+                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT FOR (node:AccountType) REQUIRE node.Unique IS UNIQUE"));
             }
         }
         #endregion
@@ -954,9 +963,12 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntityCopyValue();
+                DatastoreModel model = new DatastoreEntityCopyValue()
+                {
+                    LogToConsole = true
+                };
                 model.Execute(true);
-                Assert.IsTrue(Regex.IsMatch(output.GetOuput(), @"(MATCH \(node:Account\))[^a-zA-Z,0-9]*(WHERE NOT EXISTS\(node\.CopyName\) OR node.Name <> node.CopyName)[^a-zA-Z,0-9]*(WITH node limit 10000)[^a-zA-Z,0-9]*(SET node\.CopyName = node\.Name)"));
+                Assert.IsTrue(Regex.IsMatch(output.GetOuput(), "Copy properties from Name to CopyName for entity Account"));
             }
         }
 
@@ -1002,10 +1014,10 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntitySetDefaultValue();
+                DatastoreModel model = new DatastoreEntitySetDefaultValue() { LogToConsole = true };
                 model.Execute(true);
 
-                string query = @"MATCH (node:Account) WHERE NOT EXISTS(node.Name) WITH node LIMIT 10000 SET node.Name = ""First Account""";
+                string query = "SetDefaultConstantValue -> Account.Name = 'First Account'";
                 Assert.That(output.GetOuput(), Contains.Substring(query));
             }
         }
@@ -1089,11 +1101,11 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DatastoreModel model = new DatastoreEntitySetFunctionalId();
+                DatastoreModel model = new DatastoreEntitySetFunctionalId() { LogToConsole = true };
                 model.Execute(true);
 
-                Assert.That(output.GetOuput(), Contains.Substring("MATCH (node:Account) where node.Uid STARTS WITH 'A_' AND Length(node.Uid) = 8 CALL blueprint41.hashing.decode(replace(node.Uid, 'A_', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId"));
-                Assert.That(output.GetOuput(), Contains.Substring("MATCH (node:Account) where node.Uid STARTS WITH 'CA_' AND Length(node.Uid) = 9 CALL blueprint41.hashing.decode(replace(node.Uid, 'CA_', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId"));
+                Assert.That(output.GetOuput(), Contains.Substring("Differences for Account (\"A_\" : 1) -> CreateFunctionalId"));
+                Assert.That(output.GetOuput(), Contains.Substring("Differences for ChangeAccount (\"CA_\" : 1) -> CreateFunctionalId"));
             }
 
             TearDown();

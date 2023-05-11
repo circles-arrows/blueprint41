@@ -11,83 +11,82 @@ using q = Datastore.Query;
 namespace Datastore.Manipulation
 {
 	public interface IPersonOriginalData : IBaseEntityOriginalData
-    {
+	{
 		string Name { get; }
 		City City { get; }
 		IEnumerable<Restaurant> Restaurants { get; }
 		IEnumerable<Movie> DirectedMovies { get; }
 		IEnumerable<Movie> ActedInMovies { get; }
-    }
+	}
 
 	public partial class Person : OGM<Person, Person.PersonData, System.String>, IBaseEntity, IPersonOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static Person()
-        {
-            Register.Types();
-        }
+		static Person()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadFromNaturalKey
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
-        partial void AdditionalGeneratedStoredQueries();
+		}
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Person> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, Person> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.PersonAlias, IWhereQuery> query)
-        {
-            q.PersonAlias alias;
+		{
+			q.PersonAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Person.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Person.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"Person => Name : {this.Name?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
-        }
+		{
+			return $"Person => Name : {this.Name?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new PersonData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new PersonData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -101,12 +100,12 @@ namespace Datastore.Manipulation
 		public class PersonData : Data<System.String>
 		{
 			public PersonData()
-            {
+			{
 
-            }
+			}
 
-            public PersonData(PersonData data)
-            {
+			public PersonData(PersonData data)
+			{
 				Name = data.Name;
 				City = data.City;
 				Restaurants = data.Restaurants;
@@ -114,10 +113,10 @@ namespace Datastore.Manipulation
 				ActedInMovies = data.ActedInMovies;
 				Uid = data.Uid;
 				LastModifiedOn = data.LastModifiedOn;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -226,231 +225,274 @@ namespace Datastore.Manipulation
 
 		#region Reflection
 
-        private static PersonMembers members = null;
-        public static PersonMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(Person))
-                    {
-                        if (members == null)
-                            members = new PersonMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class PersonMembers
-        {
-            internal PersonMembers() { }
+		private static PersonMembers members = null;
+		public static PersonMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(Person))
+					{
+						if (members is null)
+							members = new PersonMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class PersonMembers
+		{
+			internal PersonMembers() { }
 
 			#region Members for interface IPerson
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Name"];
-            public Property City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["City"];
-            public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Restaurants"];
-            public Property DirectedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["DirectedMovies"];
-            public Property ActedInMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["ActedInMovies"];
+			public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Name"];
+			public Property City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["City"];
+			public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Restaurants"];
+			public Property DirectedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["DirectedMovies"];
+			public Property ActedInMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["ActedInMovies"];
 			#endregion
 
 			#region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+			public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+			public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
 			#endregion
 
-        }
+		}
 
-        private static PersonFullTextMembers fullTextMembers = null;
-        public static PersonFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(Person))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new PersonFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static PersonFullTextMembers fullTextMembers = null;
+		public static PersonFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(Person))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new PersonFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class PersonFullTextMembers
-        {
-            internal PersonFullTextMembers() { }
+		public class PersonFullTextMembers
+		{
+			internal PersonFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(Person))
-                {
-                    if (entity == null)
-                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(Person))
+				{
+					if (entity is null)
+						entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"];
+				}
+			}
+			return entity;
+		}
 
 		private static PersonEvents events = null;
-        public static PersonEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(Person))
-                    {
-                        if (events == null)
-                            events = new PersonEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class PersonEvents
-        {
+		public static PersonEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(Person))
+					{
+						if (events is null)
+							events = new PersonEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class PersonEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<Person, EntityEventArgs> onNew;
-            public event EventHandler<Person, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Person, EntityEventArgs> onNew;
+			public event EventHandler<Person, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Person, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((Person)sender, args);
-            }
+			{
+				EventHandler<Person, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((Person)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Person, EntityEventArgs> onDelete;
-            public event EventHandler<Person, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Person, EntityEventArgs> onDelete;
+			public event EventHandler<Person, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Person, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((Person)sender, args);
-            }
+			{
+				EventHandler<Person, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((Person)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<Person, EntityEventArgs> onSave;
-            public event EventHandler<Person, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Person, EntityEventArgs> onSave;
+			public event EventHandler<Person, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Person, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((Person)sender, args);
-            }
+			{
+				EventHandler<Person, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((Person)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<Person, EntityEventArgs> onAfterSave;
+			public event EventHandler<Person, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<Person, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((Person)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnName
 
@@ -477,7 +519,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onName -= value;
-							if (onName == null && onNameIsRegistered)
+							if (onName is null && onNameIsRegistered)
 							{
 								Members.Name.Events.OnChange -= onNameProxy;
 								onNameIsRegistered = false;
@@ -485,11 +527,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Person, PropertyEventArgs> handler = onName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Person)sender, args);
 				}
 
@@ -520,7 +562,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onCity -= value;
-							if (onCity == null && onCityIsRegistered)
+							if (onCity is null && onCityIsRegistered)
 							{
 								Members.City.Events.OnChange -= onCityProxy;
 								onCityIsRegistered = false;
@@ -528,11 +570,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onCityProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Person, PropertyEventArgs> handler = onCity;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Person)sender, args);
 				}
 
@@ -563,7 +605,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onRestaurants -= value;
-							if (onRestaurants == null && onRestaurantsIsRegistered)
+							if (onRestaurants is null && onRestaurantsIsRegistered)
 							{
 								Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
 								onRestaurantsIsRegistered = false;
@@ -571,11 +613,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onRestaurantsProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Person, PropertyEventArgs> handler = onRestaurants;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Person)sender, args);
 				}
 
@@ -606,7 +648,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDirectedMovies -= value;
-							if (onDirectedMovies == null && onDirectedMoviesIsRegistered)
+							if (onDirectedMovies is null && onDirectedMoviesIsRegistered)
 							{
 								Members.DirectedMovies.Events.OnChange -= onDirectedMoviesProxy;
 								onDirectedMoviesIsRegistered = false;
@@ -614,11 +656,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDirectedMoviesProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Person, PropertyEventArgs> handler = onDirectedMovies;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Person)sender, args);
 				}
 
@@ -649,7 +691,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onActedInMovies -= value;
-							if (onActedInMovies == null && onActedInMoviesIsRegistered)
+							if (onActedInMovies is null && onActedInMoviesIsRegistered)
 							{
 								Members.ActedInMovies.Events.OnChange -= onActedInMoviesProxy;
 								onActedInMoviesIsRegistered = false;
@@ -657,11 +699,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onActedInMoviesProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Person, PropertyEventArgs> handler = onActedInMovies;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Person)sender, args);
 				}
 
@@ -692,7 +734,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -700,11 +742,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Person, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Person)sender, args);
 				}
 
@@ -735,7 +777,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onLastModifiedOn -= value;
-							if (onLastModifiedOn == null && onLastModifiedOnIsRegistered)
+							if (onLastModifiedOn is null && onLastModifiedOnIsRegistered)
 							{
 								Members.LastModifiedOn.Events.OnChange -= onLastModifiedOnProxy;
 								onLastModifiedOnIsRegistered = false;
@@ -743,11 +785,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onLastModifiedOnProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Person, PropertyEventArgs> handler = onLastModifiedOn;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Person)sender, args);
 				}
 
@@ -756,9 +798,9 @@ namespace Datastore.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IPersonOriginalData
 

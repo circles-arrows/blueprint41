@@ -1,6 +1,6 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
-using Blueprint41.Neo4j.Persistence.Driver.v3;
+using Blueprint41.Neo4j.Persistence.Driver.v5;
 using Blueprint41.Neo4j.Schema;
 using Blueprint41.Query;
 using Blueprint41.UnitTest.Mocks;

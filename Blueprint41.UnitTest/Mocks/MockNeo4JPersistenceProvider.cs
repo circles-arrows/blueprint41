@@ -1,6 +1,8 @@
 ﻿using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence.Driver.v3;
-using Neo4j.Driver.V1;
+using Blueprint41.Neo4j.Persistence.Driver.v5;
+
+using Neo4j.Driver;
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -23,7 +25,7 @@ namespace Blueprint41.UnitTest.Mocks
                 return new NotNeo4jTransaction();
 
             Neo4jTransaction transaction = base.NewTransaction(readWriteMode) as Neo4jTransaction;
-            ISession session = transaction.Session;
+            IAsyncSession session = transaction.Session;
             transaction.Session = new MockSession(session);
             transaction.StatementRunner = transaction.Session;
             transaction.Transaction?.Dispose();
@@ -31,7 +33,7 @@ namespace Blueprint41.UnitTest.Mocks
 
             if (readWriteMode)
             {
-                transaction.Transaction = transaction.Session.BeginTransaction();
+                transaction.Transaction = transaction.Session.BeginTransactionAsync().Result;
                 transaction.StatementRunner = transaction.Transaction;
             }
 

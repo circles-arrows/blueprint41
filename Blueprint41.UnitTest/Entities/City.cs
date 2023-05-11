@@ -11,91 +11,90 @@ using q = Datastore.Query;
 namespace Datastore.Manipulation
 {
 	public interface ICityOriginalData : IBaseEntityOriginalData
-    {
+	{
 		string Name { get; }
 		IEnumerable<Restaurant> Restraurants { get; }
-    }
+	}
 
 	public partial class City : OGM<City, City.CityData, System.String>, IBaseEntity, ICityOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static City()
-        {
-            Register.Types();
-        }
+		static City()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadFromNaturalKey
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			#region LoadByName
 
 			RegisterQuery(nameof(LoadByName), (query, alias) => query.
-                Where(alias.Name == Parameter.New<string>(Param0)));
+				Where(alias.Name == Parameter.New<string>(Param0)));
 
 			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
+		}
 		public static City LoadByName(string name)
 		{
 			return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
 		}
-        partial void AdditionalGeneratedStoredQueries();
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, City> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, City> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.CityAlias, IWhereQuery> query)
-        {
-            q.CityAlias alias;
+		{
+			q.CityAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.City.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.City.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"City => Name : {this.Name?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
-        }
+		{
+			return $"City => Name : {this.Name?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new CityData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new CityData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -109,20 +108,20 @@ namespace Datastore.Manipulation
 		public class CityData : Data<System.String>
 		{
 			public CityData()
-            {
+			{
 
-            }
+			}
 
-            public CityData(CityData data)
-            {
+			public CityData(CityData data)
+			{
 				Name = data.Name;
 				Restraurants = data.Restraurants;
 				Uid = data.Uid;
 				LastModifiedOn = data.LastModifiedOn;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -206,228 +205,271 @@ namespace Datastore.Manipulation
 
 		#region Reflection
 
-        private static CityMembers members = null;
-        public static CityMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(City))
-                    {
-                        if (members == null)
-                            members = new CityMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class CityMembers
-        {
-            internal CityMembers() { }
+		private static CityMembers members = null;
+		public static CityMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(City))
+					{
+						if (members is null)
+							members = new CityMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class CityMembers
+		{
+			internal CityMembers() { }
 
 			#region Members for interface ICity
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"];
-            public Property Restraurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restraurants"];
+			public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"];
+			public Property Restraurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restraurants"];
 			#endregion
 
 			#region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+			public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+			public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
 			#endregion
 
-        }
+		}
 
-        private static CityFullTextMembers fullTextMembers = null;
-        public static CityFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(City))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new CityFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static CityFullTextMembers fullTextMembers = null;
+		public static CityFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(City))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new CityFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class CityFullTextMembers
-        {
-            internal CityFullTextMembers() { }
+		public class CityFullTextMembers
+		{
+			internal CityFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(City))
-                {
-                    if (entity == null)
-                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(City))
+				{
+					if (entity is null)
+						entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"];
+				}
+			}
+			return entity;
+		}
 
 		private static CityEvents events = null;
-        public static CityEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(City))
-                    {
-                        if (events == null)
-                            events = new CityEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class CityEvents
-        {
+		public static CityEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(City))
+					{
+						if (events is null)
+							events = new CityEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class CityEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onNew;
-            public event EventHandler<City, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<City, EntityEventArgs> onNew;
+			public event EventHandler<City, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<City, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((City)sender, args);
-            }
+			{
+				EventHandler<City, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((City)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onDelete;
-            public event EventHandler<City, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<City, EntityEventArgs> onDelete;
+			public event EventHandler<City, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<City, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((City)sender, args);
-            }
+			{
+				EventHandler<City, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((City)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onSave;
-            public event EventHandler<City, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<City, EntityEventArgs> onSave;
+			public event EventHandler<City, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<City, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((City)sender, args);
-            }
+			{
+				EventHandler<City, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((City)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<City, EntityEventArgs> onAfterSave;
+			public event EventHandler<City, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<City, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((City)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region OnName
 
@@ -454,7 +496,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onName -= value;
-							if (onName == null && onNameIsRegistered)
+							if (onName is null && onNameIsRegistered)
 							{
 								Members.Name.Events.OnChange -= onNameProxy;
 								onNameIsRegistered = false;
@@ -462,11 +504,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onNameProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<City, PropertyEventArgs> handler = onName;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((City)sender, args);
 				}
 
@@ -497,7 +539,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onRestraurants -= value;
-							if (onRestraurants == null && onRestraurantsIsRegistered)
+							if (onRestraurants is null && onRestraurantsIsRegistered)
 							{
 								Members.Restraurants.Events.OnChange -= onRestraurantsProxy;
 								onRestraurantsIsRegistered = false;
@@ -505,11 +547,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onRestraurantsProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<City, PropertyEventArgs> handler = onRestraurants;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((City)sender, args);
 				}
 
@@ -540,7 +582,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -548,11 +590,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<City, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((City)sender, args);
 				}
 
@@ -583,7 +625,7 @@ namespace Datastore.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onLastModifiedOn -= value;
-							if (onLastModifiedOn == null && onLastModifiedOnIsRegistered)
+							if (onLastModifiedOn is null && onLastModifiedOnIsRegistered)
 							{
 								Members.LastModifiedOn.Events.OnChange -= onLastModifiedOnProxy;
 								onLastModifiedOnIsRegistered = false;
@@ -591,11 +633,11 @@ namespace Datastore.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onLastModifiedOnProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<City, PropertyEventArgs> handler = onLastModifiedOn;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((City)sender, args);
 				}
 
@@ -604,9 +646,9 @@ namespace Datastore.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region ICityOriginalData
 

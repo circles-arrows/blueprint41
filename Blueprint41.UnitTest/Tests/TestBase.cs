@@ -14,7 +14,8 @@ namespace Blueprint41.UnitTest.Tests
         [SetUp]
         public void Setup()
         {
-            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7687", "neo4j", "neo");
+            TearDown();
+            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7689", "neo4j", "neo");
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();
@@ -28,6 +29,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 string reset = "Match (n) detach delete n";
                 Transaction.RunningTransaction.Run(reset);
+                Transaction.Commit();
             }
         }
     }

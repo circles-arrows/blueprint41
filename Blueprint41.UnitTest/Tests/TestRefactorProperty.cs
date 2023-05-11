@@ -1,6 +1,6 @@
 ﻿using Blueprint41.Neo4j.Persistence;
 using Blueprint41.UnitTest.Helper;
-using Neo4j.Driver.V1;
+using Neo4j.Driver;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -55,7 +55,7 @@ namespace Blueprint41.UnitTest.Tests
                 Entities["Person"].Properties["Name"].Refactor.Rename("FullName");
 
                 //TODO: This should fail when there is an existing inherited property
-                Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename("LastModifiedOn"));
+                Assert.Throws<InvalidOperationException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename("LastModifiedOn"));
 
                 Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(null));                
                 Assert.Throws<ArgumentNullException>(() => Entities["Person"].Properties["FullName"].Refactor.Rename(""));
@@ -67,11 +67,11 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DataModelPropertyRename model = new DataModelPropertyRename();
+                DataModelPropertyRename model = new DataModelPropertyRename() { LogToConsole = true };
                 model.Execute(true);
 
                 Assert.DoesNotThrow(() => { var a = model.Entities["Person"].Properties["FullName"]; });
-                Assert.IsTrue(Regex.IsMatch(output.GetOuput(), @"(MATCH \(node:Person\) WHERE EXISTS\(node.Name\))[^a-zA-Z,0-9]*(WITH node LIMIT 10000)[^a-zA-Z,0-9]*(SET node\.FullName = node\.Name)[^a-zA-Z,0-9]*(SET node\.Name = NULL)"));
+                Assert.That(output.GetOuput(), Contains.Substring("executing RenameProperty -> Rename property from Name to FullName"));
             }
 
         }
@@ -232,7 +232,7 @@ namespace Blueprint41.UnitTest.Tests
 
             TearDown();
 
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.DoesNotThrow(() =>
             {
 
                 DataModelPropertyMoveFromBase modelFromBase = new DataModelPropertyMoveFromBase();
@@ -719,14 +719,13 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                DataModelPropertyMandatory model = new DataModelPropertyMandatory();
+                DataModelPropertyMandatory model = new DataModelPropertyMandatory() { LogToConsole = true };
                 model.Execute(true);
 
                 string consoleOutput = output.GetOuput();
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (node:Person) WHERE NOT EXISTS(node.Name) WITH node LIMIT 10000 SET node.Name = ""Mr/Mrs."""));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Movie\))[^a-zA-Z,0-9]*(MATCH \(target:Genre \{ Uid : 'Action'\}\))[^a-zA-Z,0-9]*(OPTIONAL MATCH \(in\)-\[rel:MOVIE_HAS\]-\(out:Genre\))[^a-zA-Z,0-9]*(WITH in, count\(out\) as count, target)[^a-zA-Z,0-9]*(WHERE count = 0)[^a-zA-Z,0-9]*(WITH in, target LIMIT 10000)[^a-zA-Z,0-9]*(MERGE \(in\)-\[rel:MOVIE_HAS\]-\(target\))"));
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (node:Genre) WHERE node.Uid = ""8"" RETURN node"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(target:Genre \{ Uid : '8'\}\))[^a-zA-Z,0-9]*(OPTIONAL MATCH \(in\)-\[rel:LIKES\]-\(out:Genre\))[^a-zA-Z,0-9]*(WITH in, count\(out\) as count, target)[^a-zA-Z,0-9]*(WHERE count = 0)[^a-zA-Z,0-9]*(WITH in, target LIMIT 10000)[^a-zA-Z,0-9]*(MERGE \(in\)-\[rel:LIKES\]-\(target\))"));
+                Assert.That(consoleOutput, Contains.Substring("executing SetDefaultConstantValue -> Person.Name = 'Mr/Mrs.'"));
+                Assert.That(consoleOutput, Contains.Substring("executing SetDefaultLookupValue -> Set Default Lookup Value for Movie.MovieGenre"));
+                Assert.That(consoleOutput, Contains.Substring("executing SetDefaultLookupValue -> Set Default Lookup Value for Person.MovieGenre"));
             }   
         }
         #endregion

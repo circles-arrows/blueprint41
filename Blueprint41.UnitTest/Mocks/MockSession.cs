@@ -1,7 +1,10 @@
 ﻿using Blueprint41.Neo4j.Persistence;
-using Blueprint41.Neo4j.Persistence.Driver.v3;
-using Neo4j.Driver.V1;
+using Blueprint41.Neo4j.Persistence.Driver.v5;
+
+using Neo4j.Driver;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,265 +12,124 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.UnitTest.Mocks
 {
-    
 
-    internal class MockSession : ISession
+
+    internal class MockSession : IAsyncSession
     {
-        public string LastBookmark => NeoSession.LastBookmark;
-        public ISession NeoSession { get; private set; }
-        public ITransaction MockTransaction { get; set; }
-
-        public MockSession(ISession neoSession)
+        public MockSession(IAsyncSession neoSession)
         {
             NeoSession = neoSession;
         }
+        public IAsyncSession NeoSession { get; private set; }
+        public IAsyncTransaction MockTransaction { get; set; }
 
-        public ITransaction BeginTransaction()
-        {
-            Console.WriteLine("Begin Transaction");
-            ITransaction transaction = NeoSession.BeginTransaction();
-            MockTransaction = new MockTransaction(transaction);
-            return MockTransaction;
-        }
+        public global::Neo4j.Driver.Bookmark LastBookmark => NeoSession.LastBookmark;
 
-        public ITransaction BeginTransaction(string bookmark)
-        {
-            Console.WriteLine("Begin Transaction");
-            ITransaction transaction = NeoSession.BeginTransaction();
-            MockTransaction = new MockTransaction(transaction);
-            return MockTransaction;
-        }
+        public Bookmarks LastBookmarks => NeoSession.LastBookmarks;
 
-        public Task<ITransaction> BeginTransactionAsync()
+        public SessionConfig SessionConfig => NeoSession.SessionConfig;
+
+        public async Task<IAsyncTransaction> BeginTransactionAsync()
         {
             Console.WriteLine("BeginTransactionAsync");
-            return Task.Run(() =>
-            {
-                ITransaction transaction = NeoSession.BeginTransaction();
-                MockTransaction = new MockTransaction(transaction);
-                return MockTransaction;
-            });
+            IAsyncTransaction transaction = await NeoSession.BeginTransactionAsync();
+            MockTransaction = new MockTransaction(transaction);
+            return MockTransaction;
+        }
+
+        public Task<IAsyncTransaction> BeginTransactionAsync(Action<TransactionConfigBuilder> action)
+        {
+            return NeoSession.BeginTransactionAsync(action);
         }
 
         public Task CloseAsync()
         {
-            Console.WriteLine("CloseAsync");
             return NeoSession.CloseAsync();
         }
 
         public void Dispose()
         {
-            Console.WriteLine("Session: Dispose");            
             NeoSession.Dispose();
         }
 
-        ~MockSession()
+        public ValueTask DisposeAsync()
         {
-            NeoSession = null;
+            return NeoSession.DisposeAsync();
         }
 
-        public T ReadTransaction<T>(Func<ITransaction, T> work)
+        public Task<TResult> ExecuteReadAsync<TResult>(Func<IAsyncQueryRunner, Task<TResult>> work, Action<TransactionConfigBuilder> action = null)
         {
-            return NeoSession.ReadTransaction(work);
+            return NeoSession.ExecuteReadAsync(work, action);
         }
 
-        public void ReadTransaction(Action<ITransaction> work)
+        public Task ExecuteReadAsync(Func<IAsyncQueryRunner, Task> work, Action<TransactionConfigBuilder> action = null)
         {
-            NeoSession.ReadTransaction(work);
+            return NeoSession.ExecuteReadAsync(work, action);
         }
 
-        public Task<T> ReadTransactionAsync<T>(Func<ITransaction, Task<T>> work)
+        public Task<TResult> ExecuteWriteAsync<TResult>(Func<IAsyncQueryRunner, Task<TResult>> work, Action<TransactionConfigBuilder> action = null)
         {
-            return NeoSession.ReadTransactionAsync(work);
+            return NeoSession.ExecuteWriteAsync(work, action);
         }
 
-        public Task ReadTransactionAsync(Func<ITransaction, Task> work)
+        public Task ExecuteWriteAsync(Func<IAsyncQueryRunner, Task> work, Action<TransactionConfigBuilder> action = null)
         {
-            return NeoSession.ReadTransactionAsync(work);
+            return NeoSession.ExecuteWriteAsync(work, action);
         }
 
-
-        public IStatementResult Run(string statement)
+        public Task<T> ReadTransactionAsync<T>(Func<IAsyncTransaction, Task<T>> work, Action<TransactionConfigBuilder> action = null)
         {
-            Console.WriteLine(statement);
-            return NeoSession.Run(statement);
+            return NeoSession.ReadTransactionAsync(work, action);
         }
 
-        public IStatementResult Run(string statement, object parameters)
+        public Task ReadTransactionAsync(Func<IAsyncTransaction, Task> work, Action<TransactionConfigBuilder> action = null)
         {
-            if (parameters is IDictionary<string, object> par)
-                return Run(statement, par);
-
-            Console.WriteLine(statement);
-            Console.WriteLine("params: {0}:{1}", parameters.ToString());
-
-            return NeoSession.Run(statement, parameters);
+            return NeoSession.ReadTransactionAsync(work, action);
         }
 
-        public IStatementResult Run(string statement, IDictionary<string, object> parameters)
+        public Task<IResultCursor> RunAsync(string query, Action<TransactionConfigBuilder> action = null)
         {
-            string st = statement;
-
-            if (parameters != null)
-                foreach (var par in parameters)
-                    st = st.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
-
-            Console.WriteLine(st);
-            return NeoSession.Run(statement, parameters);
+            return NeoSession.RunAsync(query, action);
         }
 
-        public IStatementResult Run(Statement statement)
+        public Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters, Action<TransactionConfigBuilder> action = null)
         {
-            return Run(statement.Text, statement.Parameters);
+            return NeoSession.RunAsync(query, parameters, action);
         }
 
-        public Task<IStatementResultCursor> RunAsync(string statement)
+        public Task<IResultCursor> RunAsync(global::Neo4j.Driver.Query query, Action<TransactionConfigBuilder> action = null)
         {
-            Console.WriteLine(statement);
-            return NeoSession.RunAsync(statement);
+            return NeoSession.RunAsync(query, action);
         }
 
-        public Task<IStatementResultCursor> RunAsync(string statement, object parameters)
+        public Task<IResultCursor> RunAsync(string query)
         {
-            Console.WriteLine(statement);
-            Console.WriteLine("params: {0}:{1}", parameters?.ToString());
-            return NeoSession.RunAsync(statement, parameters);
+            return ((IAsyncQueryRunner)NeoSession).RunAsync(query);
         }
 
-        public Task<IStatementResultCursor> RunAsync(string statement, IDictionary<string, object> parameters)
+        public Task<IResultCursor> RunAsync(string query, object parameters)
         {
-            if (parameters != null)
-                foreach (var par in parameters)
-                    statement = statement.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
-
-            Console.WriteLine(statement);
-            return NeoSession.RunAsync(statement, parameters);
+            return NeoSession.RunAsync(query, parameters);
         }
 
-        public Task<IStatementResultCursor> RunAsync(Statement statement)
+        public Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters)
         {
-            return RunAsync(statement.Text, statement.Parameters);
+            return ((IAsyncQueryRunner)NeoSession).RunAsync(query, parameters);
         }
 
-
-        public T WriteTransaction<T>(Func<ITransaction, T> work)
+        public Task<IResultCursor> RunAsync(global::Neo4j.Driver.Query query)
         {
-            Console.WriteLine("Write Transaction");
-            return NeoSession.WriteTransaction(work);
+            return ((IAsyncQueryRunner)NeoSession).RunAsync(query);
         }
 
-        public void WriteTransaction(Action<ITransaction> work)
+        public Task<T> WriteTransactionAsync<T>(Func<IAsyncTransaction, Task<T>> work, Action<TransactionConfigBuilder> action = null)
         {
-            Console.WriteLine("Write Transaction");
-            NeoSession.WriteTransaction(work);
+            return NeoSession.WriteTransactionAsync(work, action);
         }
 
-        public Task<T> WriteTransactionAsync<T>(Func<ITransaction, Task<T>> work)
+        public Task WriteTransactionAsync(Func<IAsyncTransaction, Task> work, Action<TransactionConfigBuilder> action = null)
         {
-            Console.WriteLine("WriteTransactionAsync");
-            return NeoSession.WriteTransactionAsync(work);
-        }
-
-        public Task WriteTransactionAsync(Func<ITransaction, Task> work)
-        {
-            Console.WriteLine("WriteTransactionAsync");
-            return NeoSession.WriteTransactionAsync(work);
-        }
-
-        public ITransaction BeginTransaction(TransactionConfig txConfig)
-        {
-            Console.WriteLine("BeginTransaction");
-            return NeoSession.BeginTransaction(txConfig);
-        }
-
-        public Task<ITransaction> BeginTransactionAsync(TransactionConfig txConfig)
-        {
-            Console.WriteLine("BeginTransactionAsync");
-            return NeoSession.BeginTransactionAsync(txConfig);
-        }
-
-        public T ReadTransaction<T>(Func<ITransaction, T> work, TransactionConfig txConfig)
-        {
-            Console.WriteLine("ReadTransaction");
-            return NeoSession.ReadTransaction(work, txConfig);
-        }
-
-        public Task<T> ReadTransactionAsync<T>(Func<ITransaction, Task<T>> work, TransactionConfig txConfig)
-        {
-            Console.WriteLine("ReadTransactionAsync");
-            return NeoSession.ReadTransactionAsync(work, txConfig);
-        }
-
-        public void ReadTransaction(Action<ITransaction> work, TransactionConfig txConfig)
-        {
-            Console.WriteLine("ReadTransaction");
-            NeoSession.ReadTransaction(work, txConfig);
-        }
-
-        public Task ReadTransactionAsync(Func<ITransaction, Task> work, TransactionConfig txConfig)
-        {
-            Console.WriteLine("ReadTransactionAsync");
-            return NeoSession.ReadTransactionAsync(work, txConfig);
-        }
-
-        public T WriteTransaction<T>(Func<ITransaction, T> work, TransactionConfig txConfig)
-        {
-            Console.WriteLine("WriteTransaction");
-            return NeoSession.WriteTransaction(work, txConfig);
-        }
-
-        public Task<T> WriteTransactionAsync<T>(Func<ITransaction, Task<T>> work, TransactionConfig txConfig)
-        {
-            Console.WriteLine("WriteTransactionAsync");
-            return NeoSession.WriteTransactionAsync(work, txConfig);
-        }
-
-        public void WriteTransaction(Action<ITransaction> work, TransactionConfig txConfig)
-        {
-            Console.WriteLine("WriteTransaction");
-            NeoSession.WriteTransaction(work, txConfig);
-        }
-
-        public Task WriteTransactionAsync(Func<ITransaction, Task> work, TransactionConfig txConfig)
-        {
-            Console.WriteLine("WriteTransactionAsync");
-            return NeoSession.WriteTransactionAsync(work, txConfig);
-        }
-
-        public IStatementResult Run(string statement, TransactionConfig txConfig)
-        {
-            Console.WriteLine("Run");
-            return NeoSession.Run(statement, txConfig);
-        }
-
-        public Task<IStatementResultCursor> RunAsync(string statement, TransactionConfig txConfig)
-        {
-            Console.WriteLine("RunAsync");
-            return NeoSession.RunAsync(statement, txConfig);
-        }
-
-        public IStatementResult Run(string statement, IDictionary<string, object> parameters, TransactionConfig txConfig)
-        {
-            Console.WriteLine("Run");
-            return NeoSession.Run(statement, parameters, txConfig);
-        }
-
-        public Task<IStatementResultCursor> RunAsync(string statement, IDictionary<string, object> parameters, TransactionConfig txConfig)
-        {
-            Console.WriteLine("RunAsync");
-            return NeoSession.RunAsync(statement, parameters, txConfig);
-        }
-
-        public IStatementResult Run(Statement statement, TransactionConfig txConfig)
-        {
-            Console.WriteLine("Run");
-            return NeoSession.Run(statement, txConfig);
-        }
-
-        public Task<IStatementResultCursor> RunAsync(Statement statement, TransactionConfig txConfig)
-        {
-            Console.WriteLine("RunAsync");
-            return NeoSession.RunAsync(statement, txConfig);
+            return NeoSession.WriteTransactionAsync(work, action);
         }
     }
 }
