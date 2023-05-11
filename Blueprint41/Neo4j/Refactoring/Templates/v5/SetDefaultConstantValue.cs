@@ -64,14 +64,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             
             #line default
             #line hidden
-            this.Write(" = {");
+            this.Write(" = $");
             
             #line 15 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
-            this.Write("}\r\n");
+            this.Write("\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

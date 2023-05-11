@@ -12,4 +12,4 @@
 	OutputParameters.Add(Property.Name, Value);
 
 #>
-MATCH (node:<#= Entity.Label.Name #>) WHERE node.<#= Property.Name #> IS NULL WITH node LIMIT 10000 SET node.<#= Property.Name #> = {<#= Property.Name #>}
+MATCH (node:<#= Entity.Label.Name #>) WHERE node.<#= Property.Name #> IS NULL WITH node LIMIT 10000 SET node.<#= Property.Name #> = $<#= Property.Name #>
