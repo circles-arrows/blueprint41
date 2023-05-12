@@ -35,11 +35,12 @@ namespace Blueprint41.Neo4j.Persistence.v5
 
         #region Full Text Indexes
 
-        public override string FtiCreate => "CREATE FULLTEXT INDEX fts FOR (n:{0}) ON EACH [ {1} ])";
+        public override string FtiCreate => "CREATE FULLTEXT INDEX fts FOR (n:{0}) ON EACH [ {1} ]";
         public override string FtiEntity => "{0}";
-        public override string FtiProperty => "{0}";
+        public override string FtiProperty => "n.{0}";
         public virtual string FtiEntitySeparator => "|";
         public virtual string FtiPropertySeparator => ", ";
+        public override string FtiRemove => "DROP INDEX fts";
         internal override void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
         {
             if (HasFullTextSearchIndexes())

@@ -48,6 +48,13 @@ namespace Blueprint41.UnitTest.Tests
             {
                 string reset = "Match (n) detach delete n";
                 Transaction.RunningTransaction.Run(reset);
+
+                Transaction.Commit();
+            }
+            using (Transaction.Begin())
+            {
+                string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
+                Transaction.RunningTransaction.Run(clearSchema);
                 Transaction.Commit();
             }
         }
