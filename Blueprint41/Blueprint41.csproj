@@ -199,6 +199,10 @@
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\CreateIndex.tt">
+      <LastGenOutput>CreateIndex.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
     <None Update="Neo4j\Refactoring\Templates\v5\CreateUniqueConstraint.tt">
       <LastGenOutput>CreateUniqueConstraint.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -414,6 +418,11 @@
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\v5\CopyProperty.cs">
       <DependentUpon>CopyProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\CreateIndex.cs">
+      <DependentUpon>CreateIndex.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>

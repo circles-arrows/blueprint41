@@ -16,6 +16,12 @@ namespace Blueprint41.Core
             template.CreateInstance = CopyProperty;
             return template;
         }
+        public override t.CreateIndexBase CreateIndex()
+        {
+            t.CreateIndexBase template = new t.v5.CreateIndex();
+            template.CreateInstance = CreateIndex;
+            return template;
+        }
         public override t.CreateUniqueConstraintBase CreateUniqueConstraint()
         {
             t.CreateUniqueConstraintBase template = new t.v5.CreateUniqueConstraint();
