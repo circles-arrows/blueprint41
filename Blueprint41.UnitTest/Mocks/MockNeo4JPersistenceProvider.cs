@@ -25,6 +25,16 @@ namespace Blueprint41.UnitTest.Mocks
                 return new NotNeo4jTransaction();
 
             Neo4jTransaction transaction = base.NewTransaction(readWriteMode) as Neo4jTransaction;
+            AccessMode accessMode = (readWriteMode) ? AccessMode.Write : AccessMode.Read;
+
+            transaction.Session = this.Driver.AsyncSession(c =>
+            {
+                if (this.Database is not null)
+                    c.WithDatabase(this.Database);
+
+                c.WithFetchSize(Config.Infinite);
+                c.WithDefaultAccessMode(accessMode);
+            });
             IAsyncSession session = transaction.Session;
             transaction.Session = new MockSession(session);
             transaction.StatementRunner = transaction.Session;
@@ -33,12 +43,34 @@ namespace Blueprint41.UnitTest.Mocks
 
             if (readWriteMode)
             {
-                transaction.Transaction = transaction.Session.BeginTransactionAsync().Result;
+                transaction.Transaction = this.TaskScheduler.RunBlocking(() => transaction.Session.BeginTransactionAsync(), "Begin Transaction");
                 transaction.StatementRunner = transaction.Transaction;
             }
 
             return transaction;
         }
+        internal CustomTaskScheduler TaskScheduler
+        {
+            get
+            {
+                if (taskScheduler is null)
+                {
+                    lock (sync)
+                    {
+                        if (taskScheduler is null)
+                        {
+                            CustomTaskQueueOptions main = new CustomTaskQueueOptions(10, 50);
+                            CustomTaskQueueOptions sub = new CustomTaskQueueOptions(4, 20);
+                            taskScheduler = new CustomThreadSafeTaskScheduler(main, sub);
+                        }
+                    }
+                }
+
+                return taskScheduler;
+            }
+        }
+        private CustomTaskScheduler? taskScheduler = null;
+        private static object sync = new object();
     }
 
     public class NotNeo4jTransaction : Transaction

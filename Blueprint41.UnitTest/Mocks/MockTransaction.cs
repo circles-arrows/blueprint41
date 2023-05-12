@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.UnitTest.Mocks
 {
-    internal class MockTransaction : IAsyncTransaction
+    internal class MockTransaction : IAsyncTransaction/*,ITransaction*/
     {
         public MockTransaction(IAsyncTransaction neoTransaction)
         {
@@ -23,26 +23,31 @@ namespace Blueprint41.UnitTest.Mocks
 
         public Task CommitAsync()
         {
+            Console.WriteLine("CommitAsync");
             return NeoTransaction.CommitAsync();
         }
 
         public void Dispose()
         {
+            Console.WriteLine("Transaction: Dispose");
             NeoTransaction.Dispose();
         }
 
         public ValueTask DisposeAsync()
         {
+            Console.WriteLine("DisposeAsync");
             return NeoTransaction.DisposeAsync();
         }
 
         public Task RollbackAsync()
         {
+            Console.WriteLine("RollbackAsync");
             return NeoTransaction.RollbackAsync();
         }
 
         public Task<IResultCursor> RunAsync(string query)
         {
+            Console.WriteLine(query);
             return NeoTransaction.RunAsync(query);
         }
 
@@ -70,6 +75,7 @@ namespace Blueprint41.UnitTest.Mocks
 
         public Task<IResultCursor> RunAsync(global::Neo4j.Driver.Query query)
         {
+            Console.WriteLine(query);
             return NeoTransaction.RunAsync(query);
         }
     }

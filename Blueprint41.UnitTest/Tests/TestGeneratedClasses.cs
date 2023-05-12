@@ -34,7 +34,10 @@ namespace Blueprint41.UnitTest.Tests
             GeneratorSettings settings = new GeneratorSettings(projectFolder);
             GeneratorResult result = Generator.Execute<MockModel>(settings);
 
-            MockModel model = new MockModel();
+            MockModel model = new MockModel()
+            {
+                LogToConsole = true
+            };
             model.Execute(true);
         }
 
@@ -58,6 +61,7 @@ namespace Blueprint41.UnitTest.Tests
                 Person a;
                 using (Transaction.Begin(true))
                 {
+                    
                     a = new Person()
                     {
                         Name = "Joe Smith",

@@ -37,23 +37,29 @@ namespace Blueprint41.UnitTest.Mocks
             return MockTransaction;
         }
 
-        public Task<IAsyncTransaction> BeginTransactionAsync(Action<TransactionConfigBuilder> action)
+        public async Task<IAsyncTransaction> BeginTransactionAsync(Action<TransactionConfigBuilder> action)
         {
-            return NeoSession.BeginTransactionAsync(action);
+            Console.WriteLine("BeginTransactionAsync");
+            IAsyncTransaction transaction = await NeoSession.BeginTransactionAsync(action);
+            MockTransaction = new MockTransaction(transaction);
+            return MockTransaction;
         }
 
         public Task CloseAsync()
         {
+            Console.WriteLine("CloseAsync");
             return NeoSession.CloseAsync();
         }
 
         public void Dispose()
         {
+            Console.WriteLine("Session: Dispose");
             NeoSession.Dispose();
         }
 
         public ValueTask DisposeAsync()
         {
+            Console.WriteLine("Session: DisposeAsync");
             return NeoSession.DisposeAsync();
         }
 
@@ -89,36 +95,63 @@ namespace Blueprint41.UnitTest.Mocks
 
         public Task<IResultCursor> RunAsync(string query, Action<TransactionConfigBuilder> action = null)
         {
+            Console.WriteLine(query);
             return NeoSession.RunAsync(query, action);
         }
 
         public Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters, Action<TransactionConfigBuilder> action = null)
         {
+            string st = query;
+
+            if (parameters != null)
+                foreach (var par in parameters)
+                    st = st.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
+
+            Console.WriteLine(st);
+            Console.WriteLine("params: {0}:{1}", parameters.ToString());
+
             return NeoSession.RunAsync(query, parameters, action);
         }
 
         public Task<IResultCursor> RunAsync(global::Neo4j.Driver.Query query, Action<TransactionConfigBuilder> action = null)
         {
+            Console.WriteLine(query);
             return NeoSession.RunAsync(query, action);
         }
 
         public Task<IResultCursor> RunAsync(string query)
         {
+            Console.WriteLine(query);
             return ((IAsyncQueryRunner)NeoSession).RunAsync(query);
         }
 
         public Task<IResultCursor> RunAsync(string query, object parameters)
         {
+            if (parameters is IDictionary<string, object> par)
+                return RunAsync(query, par);
+
+            Console.WriteLine(query);
+            Console.WriteLine("params: {0}:{1}", parameters.ToString());
+
             return NeoSession.RunAsync(query, parameters);
         }
 
         public Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters)
         {
+            string st = query;
+
+            if (parameters != null)
+                foreach (var par in parameters)
+                    st = st.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
+
+            Console.WriteLine(st);
+            Console.WriteLine("params: {0}:{1}", parameters.ToString());
             return ((IAsyncQueryRunner)NeoSession).RunAsync(query, parameters);
         }
 
         public Task<IResultCursor> RunAsync(global::Neo4j.Driver.Query query)
         {
+            Console.WriteLine(query);
             return ((IAsyncQueryRunner)NeoSession).RunAsync(query);
         }
 
