@@ -39,7 +39,21 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             
             #line default
             #line hidden
-            this.Write("CREATE CONSTRAINT FOR (node:");
+            this.Write("CREATE CONSTRAINT ");
+            
+            #line 11 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\CreateUniqueConstraint.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
+            
+            #line default
+            #line hidden
+            this.Write("_");
+            
+            #line 11 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\CreateUniqueConstraint.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
+            
+            #line default
+            #line hidden
+            this.Write("_UniqueConstraint FOR (node:");
             
             #line 11 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\CreateUniqueConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));

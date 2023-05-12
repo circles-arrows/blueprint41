@@ -8,4 +8,4 @@
 
     Log("	executing {0} -> Create INDEX for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
 #>
-CREATE INDEX FOR (node:<#= Entity.Label.Name #>) ON (node.<#= Property.Name #>)
+CREATE INDEX <#= Entity.Label.Name #>_<#= Property.Name #>_RangeIndex FOR (node:<#= Entity.Label.Name #>) ON (node.<#= Property.Name #>)

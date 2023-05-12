@@ -8,4 +8,4 @@
 
     Log("	executing {0} -> Create unique constraint for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
 #>
-CREATE CONSTRAINT FOR (node:<#= Entity.Label.Name #>) REQUIRE node.<#= Property.Name #> IS UNIQUE
+CREATE CONSTRAINT <#= Entity.Label.Name #>_<#= Property.Name #>_UniqueConstraint FOR (node:<#= Entity.Label.Name #>) REQUIRE node.<#= Property.Name #> IS UNIQUE
