@@ -472,6 +472,24 @@ namespace Blueprint41.Neo4j.Model
                     state.Text.AppendLine();
                     state.Text.Append("}");
                     break;
+                case PartType.WhereExistsSubquery:
+                    if (query.Patterns is null || query.Patterns.Length == 0)
+                    {
+                        state.Text.Append("WHERE EXISTS {");
+                        state.Text.AppendLine();
+                        query.SubQueryPart?.CompileParts(state);
+                        state.Text.AppendLine();
+                        state.Text.Append("}");
+                    }
+                    else
+                    {
+                        state.Text.Append("WHERE EXISTS {");
+                        state.Text.AppendLine();
+                        query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
+                        state.Text.AppendLine();
+                        state.Text.Append("}");
+                    }
+                    break;
                 case PartType.None:
                 case PartType.Compiled:
                     // Ignore
