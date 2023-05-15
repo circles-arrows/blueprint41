@@ -231,5 +231,9 @@ namespace Blueprint41.Query
             object? parameter = value is null ? null : Parameter.Constant(value);
             return new NumericResult(t => "{0}", new object[] { parameter! }, typeof(int));
         }
+        public static BooleanResult ExistsSubquery(QueryCondition pattern)
+        {
+            return new BooleanResult(t => t.FnExistsSubquery, new[] { pattern }, typeof(bool));
+        }
     }
 }
