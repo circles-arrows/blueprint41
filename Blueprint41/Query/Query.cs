@@ -12,7 +12,7 @@ using query = Blueprint41.Query;
 namespace Blueprint41.Query
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, IModifyQuery, IMergeQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICallSubquery, ICallSubqueryMatch, ICompiled
+    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, IModifyQuery, IMergeQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICallSubquery, ICallSubqueryMatch, IWhereExistsSubQuery, IWhereExistsSubQueryMatch, ICompiled
     { 
         internal Query(PersistenceProvider persistenceProvider)
         {
@@ -447,6 +447,23 @@ namespace Blueprint41.Query
             return New;
         }
 
+        IWithQuery IWhereExistsSubQueryMatch.With(params Result[] results)
+        {
+            return With(false, results);
+        }
+        public IWhereExistsSubQueryMatch WhereExistsSubQuery(params Node[] pattern)
+        {
+            SetType(PartType.WhereExistsSubquery);
+            Patterns = pattern;
+            return New;
+        }
+        public IWhereExistsSubQueryMatch WhereExistsSubQuery(Func<IWhereExistsSubQuery, ISemiBlankQuery> pattern)
+        {
+            SetType(PartType.WhereExistsSubquery);
+            SubQueryPart = (Query)pattern.Invoke(new Query(PersistenceProvider));
+            return New;
+        }
+
         private Query New { get { return new Query(this); } }
 
 
@@ -579,7 +596,8 @@ namespace Blueprint41.Query
         Limit,
         UnionMatch,
         UnionSearch,
-        CallSubquery
+        CallSubquery,
+        WhereExistsSubquery
     }
 
     #region Interfaces
@@ -601,6 +619,8 @@ namespace Blueprint41.Query
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
         IWhereQuery Where(params QueryCondition[] conditions);
+        IWhereExistsSubQueryMatch WhereExistsSubQuery(params Node[] patterns);
+        IWhereExistsSubQueryMatch WhereExistsSubQuery(Func<IWhereExistsSubQuery, ISemiBlankQuery> query);
     }
     public partial interface IMatchQuery : IOptionalMatchQuery
     {
@@ -675,6 +695,19 @@ namespace Blueprint41.Query
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
         IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns);
+    }
+    public partial interface IWhereExistsSubQuery
+    {
+        IWithQuery With(params Result[] results);
+
+        IMatchQuery Match(params Node[] patterns);
+    }
+    public partial interface IWhereExistsSubQueryMatch : ISemiBlankQuery, IModifyQuery
+    {
+        IWithQuery With(params Result[] results);
+        IWithQuery With(bool distinct, params Result[] results);
+        IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns);
+        IWhereExistsSubQueryMatch WhereExistsSubQuery(Func<IWhereExistsSubQuery, ISemiBlankQuery> query);
     }
 
     public partial interface IOrderQuery
