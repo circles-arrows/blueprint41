@@ -181,7 +181,6 @@ namespace Blueprint41.UnitTest.Tests
                 {
                     // Let us try to create an entity
                     Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
-                    Transaction.Commit();
                     throw new Exception();
                 }
             });
@@ -255,7 +254,7 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
-                Transaction.Commit();
+                Transaction.Flush();
             }
 
             using (Transaction.Begin())
