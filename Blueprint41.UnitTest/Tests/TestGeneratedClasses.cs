@@ -391,56 +391,51 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Commit();
                 }
             }
-
-            string outputConsole;
-            using (ConsoleOutput output = new ConsoleOutput())
+            string queryString;
+            using (Transaction.Begin())
             {
-                using (Transaction.Begin())
-                {
-                    ICompiled compiled = Transaction.CompiledQuery
-                        .Match(node.Person.Alias(out PersonAlias p))
-                        .Where(p.Name.Contains("Smith"))
-                        .Return(p)
-                        .Compile();
+                ICompiled compiled = Transaction.CompiledQuery
+                    .Match(node.Person.Alias(out PersonAlias p))
+                    .Where(p.Name.Contains("Smith"))
+                    .Return(p)
+                    .Compile();
+                List<Person> searchResult = Person.LoadWhere(compiled);
+                Assert.Greater(searchResult.Count, 0);
 
-                    List<Person> searchResult = Person.LoadWhere(compiled);
-                    Assert.Greater(searchResult.Count, 0);
+                queryString = compiled.ToString();
 
-                    outputConsole = output.GetOuput();
+                Assert.IsTrue(Regex.IsMatch(queryString, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS 'Smith'\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)"));
 
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Smith""\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)"));
+                compiled = Transaction.CompiledQuery
+                    .Match(node.Person.Alias(out PersonAlias pWithLimit))
+                    .Where(pWithLimit.Name.Contains("Smith"))
+                    .Return(pWithLimit)
+                    .Limit(1)
+                    .Compile();
 
-                    compiled = Transaction.CompiledQuery
-                        .Match(node.Person.Alias(out PersonAlias pWithLimit))
-                        .Where(pWithLimit.Name.Contains("Smith"))
-                        .Return(pWithLimit)
-                        .Limit(1)
-                        .Compile();
+                searchResult = Person.LoadWhere(compiled);
+                Assert.AreEqual(searchResult.Count, 1);
 
-                    searchResult = Person.LoadWhere(compiled);
-                    Assert.AreEqual(searchResult.Count, 1);
+                queryString = compiled.ToString();
 
-                    outputConsole = output.GetOuput();
+                Assert.IsTrue(Regex.IsMatch(queryString, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0.Name CONTAINS 'Smith'\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(LIMIT 1)"));
 
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0.Name CONTAINS ""Smith""\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(LIMIT 1)"));
+                compiled = Transaction.CompiledQuery
+                    .Match(node.Person.Alias(out var pR).In.PERSON_EATS_AT.Out.Restaurant.Alias(out var rP))
+                    .Where(rP.Name == "Shakeys")
+                    .Return(pR)
+                    .OrderBy(pR.Name)
+                    .Compile();
 
-                    compiled = Transaction.CompiledQuery
-                        .Match(node.Person.Alias(out var pR).In.PERSON_EATS_AT.Out.Restaurant.Alias(out var rP))
-                        .Where(rP.Name == "Shakeys")
-                        .Return(pR)
-                        .OrderBy(pR.Name)
-                        .Compile();
+                searchResult = Person.LoadWhere(compiled);
+                Assert.AreEqual(searchResult.Count, 2);
 
-                    searchResult = Person.LoadWhere(compiled);
-                    Assert.AreEqual(searchResult.Count, 2);
+                Assert.AreEqual(searchResult[0].Name, "Jane Smith");
+                Assert.AreEqual(searchResult[1].Name, "Joe Smith");
 
-                    Assert.AreEqual(searchResult[0].Name, "Jane Smith");
-                    Assert.AreEqual(searchResult[1].Name, "Joe Smith");
+                queryString = compiled.ToString();
 
-                    outputConsole = output.GetOuput();
-
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\)-\[:EATS_AT\]->\(n1:Restaurant\))[^a-zA-Z,0-9]*(WHERE \(n1\.Name = ""Shakeys""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(ORDER BY n0.Name)"));
-                }
+                Assert.IsTrue(Regex.IsMatch(queryString, @"(MATCH \(n0:Person\)-\[:EATS_AT\]->\(n1:Restaurant\))[^a-zA-Z,0-9]*(WHERE \(n1\.Name = 'Shakeys'\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(ORDER BY n0.Name)"));
             }
         }
 
