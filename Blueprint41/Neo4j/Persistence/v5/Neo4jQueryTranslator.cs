@@ -27,9 +27,11 @@ namespace Blueprint41.Neo4j.Persistence.v5
 
         #region Compile Functions
 
-        public override string FnExists    => "{base} IS NOT NULL";
-        public override string FnNotExists => "{base} is NULL";
-        public override string FnIsNaN     => "isNaN({base})";
+        public override string FnExists           => "{base} IS NOT NULL";
+        public override string FnNotExists        => "{base} is NULL";
+        public override string FnIsNaN            => "isNaN({base})";
+        public override string FnApocCreateUuid   => "UUID.randomUUID()";
+        public override string CallApocCreateUuid => "WITH UUID.randomUUID() as key";
 
         #endregion
 
