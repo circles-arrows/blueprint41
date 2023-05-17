@@ -235,7 +235,7 @@ namespace Blueprint41.Query
         {
             return new BooleanResult(t => t.FnExistsSubquery, new[] { pattern }, typeof(bool));
         }
-        public static BooleanResult ExistsSubquery(Func<IWhereExistsSubQuery, ISemiBlankQuery> pattern, IBlankQuery query)
+        public static BooleanResult ExistsSubquery(Func<Query, ISemiBlankQuery> pattern, IBlankQuery query)
         {
             ((Query)query).SubQueryPart = (Query)pattern.Invoke((Query)query);
             return new BooleanResult(t => t.FnExistsSubquery, new[] { query }, typeof(bool));
@@ -244,17 +244,16 @@ namespace Blueprint41.Query
         {
             return new NumericResult(t => t.FnCountSubquery, new[] { pattern }, typeof(int));
         }
-        public static NumericResult CountSubquery(Func<IBlankQuery, ISemiBlankQuery> pattern, IBlankQuery query)
+        public static NumericResult CountSubquery(Func<Query, ISemiBlankQuery> pattern, IBlankQuery query)
         {
             ((Query)query).SubQueryPart = (Query)pattern.Invoke((Query)query);
             return new NumericResult(t => t.FnCountSubquery, new[] { query }, typeof(int));
         }
-        public static TList CollectSubquery<TList, TValue>(Func<IBlankQuery, IReturnQuery> pattern, IBlankQuery query)
-             where TValue : IResult
+        public static TList CollectSubquery<TList>(Func<Query, IReturnQuery> pattern, IBlankQuery query)
+             where TList : IListResult
         {
-            ResultHelper info = ResultHelper.Of<TValue>();
-            ResultHelper listInfo = info.ListType ?? throw new NotSupportedException("Collect subquery on a jagged-list is not supported.");
-            Type? underlyingType = info.UnderlyingType;
+            ResultHelper listInfo = ResultHelper.Of<TList>() ?? throw new NotSupportedException("Collect subquery on a jagged-list is not supported.");
+            Type? underlyingType = listInfo.UnderlyingType;
             ((Query)query).SubQueryPart = (Query)pattern.Invoke((Query)query);
             return (TList)listInfo.NewFunctionResult(t => t.FnCollectSubquery, new object[] { query }, underlyingType);
         }
