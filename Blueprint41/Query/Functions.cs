@@ -235,17 +235,19 @@ namespace Blueprint41.Query
         {
             return new BooleanResult(t => t.FnExistsSubquery, new[] { pattern }, typeof(bool));
         }
-        //public static BooleanResult ExistsSubquery(Func<IWhereExistsSubQuery, ISemiBlankQuery> pattern)
-        //{
-        //    return new BooleanResult(t => t.FnExistsSubquery, new[] { pattern }, typeof(bool));
-        //}
-        //public static BooleanResult ExistsSubquery(Query pattern)
-        //{
-        //    return new BooleanResult(t => t.FnExistsSubquery, new[] { pattern }, typeof(bool));
-        //}
+        public static BooleanResult ExistsSubquery(Func<IWhereExistsSubQuery, ISemiBlankQuery> pattern, IBlankQuery query)
+        {
+            ((Query)query).SubQueryPart = (Query)pattern.Invoke((Query)query);
+            return new BooleanResult(t => t.FnExistsSubquery, new[] { query }, typeof(bool));
+        }
         public static NumericResult CountSubquery(QueryCondition pattern)
         {
             return new NumericResult(t => t.FnCountSubquery, new[] { pattern }, typeof(int));
+        }
+        public static NumericResult CountSubquery(Func<IBlankQuery, ISemiBlankQuery> pattern, IBlankQuery query)
+        {
+            ((Query)query).SubQueryPart = (Query)pattern.Invoke((Query)query);
+            return new NumericResult(t => t.FnCountSubquery, new[] { query }, typeof(int));
         }
 
     }

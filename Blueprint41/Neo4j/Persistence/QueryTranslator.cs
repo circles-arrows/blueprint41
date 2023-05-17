@@ -1052,6 +1052,13 @@ namespace Blueprint41.Neo4j.Model
                     Compile((FunctionalId)arg, state);
                 };
             }
+            else if (arg is q.Query query)
+            {
+                return delegate (CompileState state)
+                {
+                    query.SubQueryPart?.CompileParts(state);
+                };
+            }
             else
             {
                 throw new NotSupportedException($"Function arguments of type '{arg.GetType().Name}' are not supported.");
