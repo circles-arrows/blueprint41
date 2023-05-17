@@ -556,6 +556,7 @@ namespace Blueprint41.Neo4j.Model
         public virtual string FnIsNaN                     => "isNaN({base})";
         public virtual string FnPatternExists             => "exists({0})";
         public virtual string FnExistsSubquery            => "EXISTS{{{0}}}";
+        public virtual string FnCountSubquery             => "COUNT{{{0}}}";
         public virtual string FnNot                       => "NOT ({base})";
         public virtual string FnCollect                   => "collect({base})";
         public virtual string FnCollectDistinct           => "collect(distinct {base})";

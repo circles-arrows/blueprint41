@@ -474,7 +474,7 @@ namespace Blueprint41.Query
             var state = new CompileState(PersistenceProvider.SupportedTypeMappings, PersistenceProvider.Translator);
 
             Query[] parts = CompileParts(state);
-            CompiledQuery = new CompiledQuery(state, parts.Last(item => item.Last).AsResults ?? new AsResult[0]);
+            CompiledQuery = new CompiledQuery(state, parts.LastOrDefault(item => item.Last)?.AsResults ?? new AsResult[0]);
 
             if (CompiledQuery.Errors.Count > 0)
                 throw new QueryException(CompiledQuery);
