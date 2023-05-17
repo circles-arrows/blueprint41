@@ -249,6 +249,15 @@ namespace Blueprint41.Query
             ((Query)query).SubQueryPart = (Query)pattern.Invoke((Query)query);
             return new NumericResult(t => t.FnCountSubquery, new[] { query }, typeof(int));
         }
+        public static TList CollectSubquery<TList, TValue>(Func<IBlankQuery, IReturnQuery> pattern, IBlankQuery query)
+             where TValue : IResult
+        {
+            ResultHelper info = ResultHelper.Of<TValue>();
+            ResultHelper listInfo = info.ListType ?? throw new NotSupportedException("Collect subquery on a jagged-list is not supported.");
+            Type? underlyingType = info.UnderlyingType;
+            ((Query)query).SubQueryPart = (Query)pattern.Invoke((Query)query);
+            return (TList)listInfo.NewFunctionResult(t => t.FnCollectSubquery, new object[] { query }, underlyingType);
+        }
 
     }
 }
