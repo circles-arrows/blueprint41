@@ -25,7 +25,7 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7689", "neo4j", "neo");
+            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7687", "neo4j", "neo4j");
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();
@@ -74,7 +74,6 @@ namespace Blueprint41.UnitTest.Tests
                         Name = "Joe Smith",
                         City = new City() { Name = "New York" }
                     };
-
                     Transaction.Commit();
                 }
 
@@ -368,11 +367,11 @@ namespace Blueprint41.UnitTest.Tests
                     p1.Restaurants.Add(p1.City.Restraurants[3]);
                     p1.Restaurants.Add(p1.City.Restraurants[4]);
 
-                    p1.Restaurants.Add(p2.City.Restraurants[0]);
-                    p1.Restaurants.Add(p2.City.Restraurants[1]);
-                    p1.Restaurants.Add(p2.City.Restraurants[2]);
-                    p1.Restaurants.Add(p2.City.Restraurants[3]);
-                    p1.Restaurants.Add(p2.City.Restraurants[4]);
+                    //p1.Restaurants.Add(p2.City.Restraurants[0]);
+                    //p1.Restaurants.Add(p2.City.Restraurants[1]);
+                    //p1.Restaurants.Add(p2.City.Restraurants[2]);
+                    //p1.Restaurants.Add(p2.City.Restraurants[3]);
+                    //p1.Restaurants.Add(p2.City.Restraurants[4]);
 
                     p2.Restaurants.Add(p1.City.Restraurants[0]);
                     p2.Restaurants.Add(p1.City.Restraurants[1]);
@@ -396,9 +395,22 @@ namespace Blueprint41.UnitTest.Tests
             {
                 ICompiled compiled = Transaction.CompiledQuery
                     .Match(node.Person.Alias(out PersonAlias p))
-                    .Where(p.Name.Contains("Smith"))
-                    .Return(p)
+                    .With(p, Functions.CollectSubquery<StringListResult>(sq => 
+                        sq.Match
+                        (
+                            p
+                                .In.PERSON_EATS_AT.Out.
+                            Restaurant.Alias(out var restaurantAlias)
+                        )
+                        .Where(Functions.CountSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Transaction.CompiledQuery) == 5)
+                        .Return(restaurantAlias.Name), Transaction.CompiledQuery)
+                        .As("restaurants", out var restaurants)
+                    )
+                    //.WhereExistsSubQuery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant))
+                    //.Where(Functions.ExistsSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Transaction.CompiledQuery) == true)
+                    .Return(p, restaurants)
                     .Compile();
+                var result = compiled.GetExecutionContext().Execute();
                 List<Person> searchResult = Person.LoadWhere(compiled);
                 Assert.Greater(searchResult.Count, 0);
 
