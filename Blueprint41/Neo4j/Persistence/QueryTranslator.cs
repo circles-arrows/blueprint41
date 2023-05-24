@@ -891,35 +891,21 @@ namespace Blueprint41.Neo4j.Model
             if (operand is null)
                 return null;
 
-            Type type = operand.GetType();
-
-            if (type.IsSubclassOfOrSelf(typeof(Result)))
+            switch (operand)
             {
-                return operand;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(QueryCondition)))
-            {
-                return operand;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Parameter)))
-            {
-                return operand;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Node)))
-            {
-                return operand;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(FunctionalId)))
-            {
-                return operand;
-            }
-            else
-            {
-                state.TypeMappings.TryGetValue(type, out TypeMapping mapping);
-                if (mapping is null)
+                case Result:
+                case QueryCondition:
+                case Parameter:
+                case Node:
+                case FunctionalId:
                     return operand;
+                default:
+                    Type type = operand.GetType();
+                    state.TypeMappings.TryGetValue(type, out TypeMapping mapping);
+                    if (mapping is null)
+                        return operand;
 
-                return Parameter.Constant(operand, type);
+                    return Parameter.Constant(operand, type);
             }
         }
         protected Type? GetOperandType(object? operand)
@@ -927,32 +913,15 @@ namespace Blueprint41.Neo4j.Model
             if (operand is null)
                 return null;
 
-            Type type = operand.GetType();
-
-            if (type.IsSubclassOfOrSelf(typeof(Result)))
+            return operand switch
             {
-                return ((Result)operand).GetResultType();
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(QueryCondition)))
-            {
-                return null;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Parameter)))
-            {
-                return ((Parameter)operand).Type;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(Node)))
-            {
-                return null;
-            }
-            else if (type.IsSubclassOfOrSelf(typeof(FunctionalId)))
-            {
-                return typeof(string);
-            }
-            else
-            {
-                throw new NotSupportedException("The expression is not supported for compilation.");
-            }
+                Result result       => result.GetResultType(),
+                QueryCondition      => null,
+                Parameter parameter => parameter.Type,
+                Node                => null,
+                FunctionalId        => typeof(string),
+                _                   => throw new NotSupportedException("The expression is not supported for compilation."),
+            };
         }
         protected string GetConversionGroup(Type type, IReadOnlyDictionary<Type, TypeMapping> mappings)
         {
@@ -981,35 +950,29 @@ namespace Blueprint41.Neo4j.Model
                 state.Text.Append("NULL");
                 return;
             }
-            else
-            {
-                Type type = operand.GetType();
 
-                if (type.IsSubclassOfOrSelf(typeof(Result)))
-                {
-                    ((Result)operand).Compile(state);
-                }
-                else if (type.IsSubclassOfOrSelf(typeof(QueryCondition)))
-                {
-                    ((QueryCondition)operand).Compile(state);
-                }
-                else if (type.IsSubclassOfOrSelf(typeof(Parameter)))
-                {
-                    ((Parameter)operand).Compile(state);
-                }
-                else if (type.IsSubclassOfOrSelf(typeof(Node)))
-                {
-                    ((Node)operand).Compile(state, false);
-                }
-                else if (type.IsSubclassOfOrSelf(typeof(FunctionalId)))
-                {
-                    Compile((FunctionalId)operand, state);
-                }
-                else
-                {
+            switch (operand)
+            {
+                case Result result:
+                    result.Compile(state);
+                    break;
+                case QueryCondition queryCondition:
+                    queryCondition.Compile(state);
+                    break;
+                case Parameter parameter:
+                    parameter.Compile(state);
+                    break;
+                case Node node:
+                    node.Compile(state);
+                    break;
+                case FunctionalId functionalId:
+                    Compile(functionalId, state);
+                    break;
+                default:
+                    Type type = operand.GetType();
                     state.Errors.Add($"The type {type!.Name} is not supported for compilation.");
                     state.Text.Append(operand.ToString());
-                }
+                    break;
             }
         }
         protected Action<CompileState> GetCompile(object? arg)
@@ -1021,49 +984,17 @@ namespace Blueprint41.Neo4j.Model
                     state.Text.Append("NULL");
                 };
             }
-            else if (arg is Literal)
+            return arg switch
             {
-                Literal param = (Literal)arg;
-                return param.Compile;
-            }
-            else if (arg is Parameter)
-            {
-                Parameter param = (Parameter)arg;
-                return param.Compile;
-            }
-            else if (arg.GetType().IsSubclassOfOrSelf(typeof(FieldResult)))
-            {
-                FieldResult field = (FieldResult)arg;
-                return field.Compile;
-            }
-            else if (arg is QueryCondition)
-            {
-                QueryCondition param = (QueryCondition)arg;
-                return param.Compile;
-            }
-            else if (arg is AliasResult)
-            {
-                AliasResult param = (AliasResult)arg;
-                return param.Compile;
-            }
-            else if (arg is FunctionalId)
-            {
-                return delegate (CompileState state)
-                {
-                    Compile((FunctionalId)arg, state);
-                };
-            }
-            else if (arg is q.Query query)
-            {
-                return delegate (CompileState state)
-                {
-                    query.SubQueryPart?.CompileParts(state);
-                };
-            }
-            else
-            {
-                throw new NotSupportedException($"Function arguments of type '{arg.GetType().Name}' are not supported.");
-            }
+                Literal literal               => literal.Compile,
+                Parameter parameter           => parameter.Compile,
+                FieldResult fieldResult       => fieldResult.Compile,
+                QueryCondition queryCondition => queryCondition.Compile,
+                AliasResult aliasResult       => aliasResult.Compile,
+                FunctionalId functionalId     => delegate (CompileState state) { Compile(functionalId, state); },
+                q.Query query                 => delegate (CompileState state) { query.SubQueryPart?.CompileParts(state); },
+                _                             => throw new NotSupportedException($"Function arguments of type '{arg.GetType().Name}' are not supported.")
+            };
         }
 
         #endregion

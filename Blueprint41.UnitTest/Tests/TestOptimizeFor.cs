@@ -25,7 +25,7 @@ namespace Blueprint41.UnitTest.Tests
 
             string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
             GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            GeneratorResult result = Generator.Execute<MockModel>(settings);
+            _ = Generator.Execute<MockModel>(settings);
 
             MockModel model = new MockModel();
             model.Execute(true);

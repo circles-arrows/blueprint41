@@ -103,22 +103,13 @@ namespace Blueprint41.Neo4j.Persistence.Void
                                 procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(Major)).Select(item => item.Values["name"].As<string>()));
                             }
 
-                            if (Major == 3)
+                            translator = Major switch
                             {
-                                translator = new v3.Neo4jQueryTranslator(this);
-                            }
-                            else if (Major == 4)
-                            {
-                                translator = new v4.Neo4jQueryTranslator(this);
-                            }
-                            else if (Major == 5)
-                            {
-                                translator = new v5.Neo4jQueryTranslator(this);
-                            }
-                            else
-                            {
-                                throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.");
-                            }
+                                3 => new v3.Neo4jQueryTranslator(this),
+                                4 => new v4.Neo4jQueryTranslator(this),
+                                5 => new v5.Neo4jQueryTranslator(this),
+                                _ => throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.")
+                            };
                         }
                     }
                 }

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
+
 using Blueprint41.Core;
 
 namespace Blueprint41.Neo4j.Schema.v5
@@ -32,7 +29,7 @@ namespace Blueprint41.Neo4j.Schema.v5
             string templateNumeric = "MATCH (node:{0}) WHERE toInteger(node.Uid) IS NOT NULL WITH toInteger(node.Uid) AS decoded RETURN CASE WHEN Max(decoded) IS NULL THEN 0 ELSE Max(decoded) END as MaxId";
             string templateHash = "MATCH (node:{0}) where node.Uid STARTS WITH '{1}' AND SIZE(node.Uid) = {2} CALL blueprint41.hashing.decode(replace(node.Uid, '{1}', '')) YIELD value as decoded RETURN CASE WHEN Max(decoded) IS NULL THEN 0 ELSE Max(decoded) END as MaxId";
             string actualFidValue = "CALL blueprint41.functionalid.current('{0}') YIELD Sequence as sequence RETURN sequence";
-            StringBuilder queryBuilder = new StringBuilder();
+            StringBuilder queryBuilder = new();
             foreach (var entity in Model.Entities.Where(entity => entity.FunctionalId?.Label == functionalId.Label))
             {
                 if (first)
@@ -50,10 +47,7 @@ namespace Blueprint41.Neo4j.Schema.v5
             if (queryBuilder.Length != 0)
             {
                 var ids = LoadData(queryBuilder.ToString(), record => record.Values["MaxId"].As<int>());
-                if (ids.Count == 0)
-                    return 0;
-                else
-                    return ids.Max() + 1;
+                return ids.Count == 0 ? 0 : ids.Max() + 1;
             }
             else
             {
@@ -62,7 +56,7 @@ namespace Blueprint41.Neo4j.Schema.v5
         }
 
         protected override ConstraintInfo NewConstraintInfo(RawRecord rawRecord) => new ConstraintInfo_v5(rawRecord);
-        protected override IndexInfo NewIndexInfo(RawRecord rawRecord)           => new IndexInfo_v5(rawRecord);
+        protected override IndexInfo NewIndexInfo(RawRecord rawRecord) => new IndexInfo_v5(rawRecord);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v5(parent, property, commands);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v5(parent, property, commands);
 
