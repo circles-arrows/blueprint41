@@ -19,8 +19,8 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
             Scheduler = scheduler;
             TaskResult = taskResult;
         }
-        private CustomTaskScheduler Scheduler;
-        private IResultCursor TaskResult;
+        private readonly CustomTaskScheduler Scheduler;
+        private readonly IResultCursor TaskResult;
 
         private IResultCursor? Result
         {
@@ -85,8 +85,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
 
         private void ConsumeResult()
         {
-            if (m_Result is null)
-                m_Result = TaskResult;
+            m_Result ??= TaskResult;
         }
 
         //protected class RawRecordCursorEnumerator : IEnumerator<RawRecord>

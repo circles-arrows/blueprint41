@@ -32,8 +32,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
             Neo4jBookmark? neo4JConsistency = consistency as Neo4jBookmark;
             if (neo4JConsistency is not null && consistency != Bookmark.NullBookmark)
             {
-                if (Consistency is null)
-                    Consistency = new List<Neo4jBookmark>();
+                Consistency ??= new List<Neo4jBookmark>();
 
                 Consistency.Add(neo4JConsistency);
             }
@@ -95,8 +94,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
         {
             neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
 
-            Neo4jPersistenceProvider? provider = (Provider ?? PersistenceProvider.CurrentPersistenceProvider) as Neo4jPersistenceProvider;
-            if (provider is null)
+            if ((Provider ?? PersistenceProvider.CurrentPersistenceProvider) is not Neo4jPersistenceProvider provider)
                 throw new NullReferenceException("CurrentPersistenceProvider is null");
 
             Session = provider.Driver.AsyncSession(c =>

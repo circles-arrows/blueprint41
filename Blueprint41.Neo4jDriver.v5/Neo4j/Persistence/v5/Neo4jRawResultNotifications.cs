@@ -15,7 +15,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
         {
             Notification = notification;
         }
-        private INotification Notification;
+        private readonly INotification Notification;
 
         public override string Code => Notification.Code;
         public override string Title => Notification.Title;

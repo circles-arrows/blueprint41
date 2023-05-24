@@ -15,7 +15,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
         {
             Record = record;
         }
-        private IRecord Record;
+        private readonly IRecord Record;
 
         public override IReadOnlyDictionary<string, object> Values => Record.Values;
         public override IReadOnlyList<string> Keys => Record.Keys;

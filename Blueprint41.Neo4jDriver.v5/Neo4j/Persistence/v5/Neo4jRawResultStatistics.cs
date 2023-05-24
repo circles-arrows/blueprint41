@@ -15,7 +15,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
         {
             Statistics = statistics;
         }
-        private ICounters Statistics;
+        private readonly ICounters Statistics;
 
         public override bool ContainsUpdates => Statistics.ContainsUpdates;
         public override int NodesCreated => Statistics.NodesCreated;

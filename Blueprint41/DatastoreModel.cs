@@ -96,14 +96,14 @@ namespace Blueprint41
             UpgradeScript? prev = null;
             foreach (UpgradeScript item in scripts)
             {
-                if (!(prev is null) && prev.Equals(item)) // don't use prev == item !!!!
+                if (prev is not null && prev.Equals(item)) // don't use prev == item !!!!
                     throw new NotSupportedException($"There are two methods ({prev.Name} & {item.Name}) with the same script version ({item.Major}.{item.Minor}.{item.Patch}).");
 
                 prev = item;
             }
 
 
-            if (!(unitTestScript is null))
+            if (unitTestScript is not null)
             {
                 UpgradeScript prevScript = scripts.LastOrDefault();
                 long major = prevScript?.Major ?? 0;
@@ -319,8 +319,7 @@ namespace Blueprint41
 
             public override bool Equals(object? obj)
             {
-                UpgradeScript? other = obj as UpgradeScript;
-                if (other is null)
+                if (obj is not UpgradeScript other)
                     return false;
 
                 return (Patch == other.Patch && Minor == other.Minor && Major == other.Major);
@@ -486,9 +485,9 @@ namespace Blueprint41
 
             return new Guid(i1, (ushort)i2, (ushort)(i2 >> 16), i3[0], i3[1], i3[2], i3[3], i4[0], i4[1], i4[2], i4[3]);
         }
-        private HashSet<Guid> knownGuids = new HashSet<Guid>();
+        private readonly HashSet<Guid> knownGuids = new HashSet<Guid>();
 
-        private AtomicDictionary<string, Entity> entityByLabel = new AtomicDictionary<string, Entity>();
+        private readonly AtomicDictionary<string, Entity> entityByLabel = new AtomicDictionary<string, Entity>();
         internal Entity? GetEntity(IEnumerable<string> labels)
         {
             Entity? entity = null;

@@ -19,8 +19,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
 
         internal static string ToTokenInternal(Bookmark consistency)
         {
-            Neo4jBookmark? bookmark = consistency as Neo4jBookmark;
-            if (bookmark == null)
+            if (consistency is not Neo4jBookmark bookmark)
                 return string.Empty;
 
             return string.Join("|", bookmark.Values);
