@@ -1,21 +1,20 @@
-﻿using Blueprint41.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
-using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Query;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
+
 using Datastore.Manipulation;
 using Datastore.Query;
-using node = Datastore.Query.Node;
-using Neo4j.Driver;
+
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Dynamic;
+
+using node = Datastore.Query.Node;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -406,8 +405,7 @@ namespace Blueprint41.UnitTest.Tests
                         .Return(restaurantAlias.Name), Transaction.CompiledQuery)
                         .As("restaurants", out var restaurants)
                     )
-                    //.WhereExistsSubQuery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant))
-                    //.Where(Functions.ExistsSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Transaction.CompiledQuery) == true)
+                    .Where(Functions.ExistsSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Transaction.CompiledQuery) == true)
                     .Return(p, restaurants)
                     .Compile();
                 var result = compiled.GetExecutionContext().Execute();

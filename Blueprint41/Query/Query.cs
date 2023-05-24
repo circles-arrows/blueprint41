@@ -1,24 +1,24 @@
-﻿using Blueprint41.Core;
-using Blueprint41.DatastoreTemplates;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
+using Blueprint41.Core;
+using Blueprint41.DatastoreTemplates;
+
 using query = Blueprint41.Query;
 
 namespace Blueprint41.Query
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, IModifyQuery, IMergeQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICallSubquery, ICallSubqueryMatch, IWhereExistsSubQuery, IWhereExistsSubQueryMatch, ICompiled
-    { 
+    public partial class Query : IBlankQuery, IMatchQuery, IWhereQuery, IWithQuery, IReturnQuery, IModifyQuery, IMergeQuery, ISkipQuery, ILimitQuery, IOrderQuery, IPageQuery, ICallSubquery, ICallSubqueryMatch, ICompiled
+    {
         internal Query(PersistenceProvider persistenceProvider)
         {
             PersistenceProvider = persistenceProvider;
         }
-        private PersistenceProvider PersistenceProvider;
+        private readonly PersistenceProvider PersistenceProvider;
 
         internal Query(Query parent)
         {
@@ -26,7 +26,7 @@ namespace Blueprint41.Query
             PersistenceProvider = parent.PersistenceProvider;
 
         }
-        private Query? Parent;
+        private readonly Query? Parent;
 
         internal bool Last = false;
         internal bool Distinct = true;
@@ -61,7 +61,7 @@ namespace Blueprint41.Query
             Patterns = new[] { searchNodeType };
             Fields = searchFields;
 
-            if(searchNodeType.Entity.FullTextIndexProperties.Count == 0)
+            if (searchNodeType.Entity.FullTextIndexProperties.Count == 0)
                 throw new ArgumentException($"The searchNodeType '{searchNodeType.Entity.Name}' is not part of the full text index.");
 
             if ((object?)searchNodeType.NodeAlias is null)
@@ -96,7 +96,7 @@ namespace Blueprint41.Query
             }
             string OperatorExample()
             {
-                return $"SearchOperator.{searchOperator.ToString()}";
+                return $"SearchOperator.{searchOperator}";
             }
             string SearchWordExample()
             {
@@ -105,7 +105,7 @@ namespace Blueprint41.Query
         }
         public IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, out FloatResult scoreAlias, params FieldResult[] searchFields)
         {
-            AliasResult scoreResult = new AliasResult();
+            AliasResult scoreResult = new();
             scoreAlias = new FloatResult(scoreResult, null, null, typeof(double));
             Aliases = new[] { scoreResult };
 
@@ -164,10 +164,7 @@ namespace Blueprint41.Query
             AsResults = results.Select(delegate (Result item)
             {
                 index++;
-                if (item is AsResult)
-                    return (AsResult)item;
-                else
-                    return new AsResult(item, string.Concat("Column", index));
+                return item is AsResult result ? result : new AsResult(item, string.Concat("Column", index));
             }).ToArray();
             Last = true;
 
@@ -261,8 +258,7 @@ namespace Blueprint41.Query
             int len = (Parent.Conditions?.Length ?? 0);
 
             QueryCondition[] newArray = new QueryCondition[conditions.Length + len];
-            if(Parent.Conditions is not null)
-                Parent.Conditions.CopyTo(newArray, 0);
+            Parent.Conditions?.CopyTo(newArray, 0);
 
             conditions.CopyTo(newArray, len);
 
@@ -322,7 +318,7 @@ namespace Blueprint41.Query
             }
             string OperatorExample()
             {
-                return $"SearchOperator.{searchOperator.ToString()}";
+                return $"SearchOperator.{searchOperator}";
             }
             string SearchWordExample()
             {
@@ -331,7 +327,7 @@ namespace Blueprint41.Query
         }
         public IBlankQuery UnionSearch(bool duplicates, Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, out FloatResult scoreAlias, params FieldResult[] searchFields)
         {
-            AliasResult scoreResult = new AliasResult();
+            AliasResult scoreResult = new();
             scoreAlias = new FloatResult(scoreResult, null, null, typeof(double));
             Aliases = new[] { scoreResult };
 
@@ -447,23 +443,6 @@ namespace Blueprint41.Query
             return New;
         }
 
-        IWithQuery IWhereExistsSubQueryMatch.With(params Result[] results)
-        {
-            return With(false, results);
-        }
-        public IWhereExistsSubQueryMatch WhereExistsSubQuery(params Node[] pattern)
-        {
-            SetType(PartType.WhereExistsSubquery);
-            Patterns = pattern;
-            return New;
-        }
-        public IWhereExistsSubQueryMatch WhereExistsSubQuery(Func<IWhereExistsSubQuery, ISemiBlankQuery> pattern)
-        {
-            SetType(PartType.WhereExistsSubquery);
-            SubQueryPart = (Query)pattern.Invoke(new Query(PersistenceProvider));
-            return New;
-        }
-
         private Query New { get { return new Query(this); } }
 
 
@@ -476,10 +455,7 @@ namespace Blueprint41.Query
             Query[] parts = CompileParts(state);
             CompiledQuery = new CompiledQuery(state, parts.LastOrDefault(item => item.Last)?.AsResults ?? new AsResult[0]);
 
-            if (CompiledQuery.Errors.Count > 0)
-                throw new QueryException(CompiledQuery);
-
-            return this;
+            return CompiledQuery.Errors.Count > 0 ? throw new QueryException(CompiledQuery) : (ICompiled)this;
         }
         internal Query[] CompileParts(CompileState state)
         {
@@ -499,10 +475,9 @@ namespace Blueprint41.Query
             if (CompiledQuery is null)
                 throw new InvalidOperationException("You need to call the 'Compile' method before you can get an execution context.");
 
-            if(CompiledQuery.QueryText.StartsWith("WITH "))
-                throw new InvalidOperationException("Sub query should be called within a main query.");
-
-            return new QueryExecutionContext(CompiledQuery);
+            return CompiledQuery.QueryText.StartsWith("WITH ")
+                ? throw new InvalidOperationException("Sub query should be called within a main query.")
+                : new QueryExecutionContext(CompiledQuery);
         }
 
         public override string ToString()
@@ -512,7 +487,7 @@ namespace Blueprint41.Query
 
             Transaction transaction = Transaction.RunningTransaction;
             string cypherQuery = CompiledQuery.QueryText;
-            Dictionary<string, object?> parameterValues = new Dictionary<string, object?>();
+            Dictionary<string, object?> parameterValues = new();
 
             foreach (var queryParameter in CompiledQuery.ConstantValues)
             {
@@ -550,7 +525,7 @@ namespace Blueprint41.Query
         }
         private Query[] GetParts()
         {
-            LinkedList<Query> parts = new LinkedList<Query>();
+            LinkedList<Query> parts = new();
             Query? query = Parent;
             while (query is not null)
             {
@@ -596,8 +571,7 @@ namespace Blueprint41.Query
         Limit,
         UnionMatch,
         UnionSearch,
-        CallSubquery,
-        WhereExistsSubquery
+        CallSubquery
     }
 
     #region Interfaces
@@ -619,8 +593,6 @@ namespace Blueprint41.Query
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
         IWhereQuery Where(params QueryCondition[] conditions);
-        IWhereExistsSubQueryMatch WhereExistsSubQuery(params Node[] patterns);
-        IWhereExistsSubQueryMatch WhereExistsSubQuery(Func<IWhereExistsSubQuery, ISemiBlankQuery> query);
     }
     public partial interface IMatchQuery : IOptionalMatchQuery
     {
@@ -689,25 +661,12 @@ namespace Blueprint41.Query
 
         IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, out FloatResult scoreAlias, params FieldResult[] searchFields);
     }
-    
+
     public partial interface ICallSubqueryMatch : ISemiBlankQuery, IModifyQuery
     {
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
         IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns);
-    }
-    public partial interface IWhereExistsSubQuery
-    {
-        IWithQuery With(params Result[] results);
-
-        IMatchQuery Match(params Node[] patterns);
-    }
-    public partial interface IWhereExistsSubQueryMatch : ISemiBlankQuery, IModifyQuery
-    {
-        IWithQuery With(params Result[] results);
-        IWithQuery With(bool distinct, params Result[] results);
-        IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns);
-        IWhereExistsSubQueryMatch WhereExistsSubQuery(Func<IWhereExistsSubQuery, ISemiBlankQuery> query);
     }
 
     public partial interface IOrderQuery

@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Schema;
 using Blueprint41.Query;
+
 using q = Blueprint41.Query;
 
 namespace Blueprint41.Neo4j.Model
@@ -77,8 +78,7 @@ namespace Blueprint41.Neo4j.Model
         }
         internal virtual void Compile(AliasResult alias, CompileState state)
         {
-            if (alias.AliasName is null)
-                alias.AliasName = string.Format("n{0}", state.patternSeq++);
+            alias.AliasName ??= string.Format("n{0}", state.patternSeq++);
 
             string? functionText = alias.FunctionText.Invoke(state.Translator);
             if (functionText is null)
@@ -130,7 +130,7 @@ namespace Blueprint41.Neo4j.Model
         }
         internal virtual void Compile(RelationFieldResult field, CompileState state)
         {
-            if (!(field.Alias is null))
+            if (field.Alias is not null)
             {
                 field.Alias.Compile(state);
                 state.Text.Append(".");
@@ -199,9 +199,8 @@ namespace Blueprint41.Neo4j.Model
             else if (condition.Operator != Operator.Pattern)
                 CompileOperand(state, condition.Left);
 
-            if (condition.Right is Parameter)
+            if (condition.Right is Parameter rightParameter)
             {
-                Parameter rightParameter = (Parameter)condition.Right;
                 if (rightParameter.IsConstant && rightParameter.Value is null)
                 {
                     condition.Operator.Compile(state, true);
@@ -320,8 +319,7 @@ namespace Blueprint41.Neo4j.Model
                         else
                             state.Text.Append(", ");
 
-                        FieldResult? field = condition.Left as FieldResult;
-                        if (field is null)
+                        if (condition.Left is not FieldResult field)
                             continue;
 
                         object? value = Substitute(state, condition.Right);
@@ -472,30 +470,12 @@ namespace Blueprint41.Neo4j.Model
                     state.Text.AppendLine();
                     state.Text.Append("}");
                     break;
-                case PartType.WhereExistsSubquery:
-                    if (query.Patterns is null || query.Patterns.Length == 0)
-                    {
-                        state.Text.Append("WHERE EXISTS {");
-                        state.Text.AppendLine();
-                        query.SubQueryPart?.CompileParts(state);
-                        state.Text.AppendLine();
-                        state.Text.Append("}");
-                    }
-                    else
-                    {
-                        state.Text.Append("WHERE EXISTS {");
-                        state.Text.AppendLine();
-                        query.ForEach(query.Patterns, state.Text, ", ", item => item?.Compile(state));
-                        state.Text.AppendLine();
-                        state.Text.Append("}");
-                    }
-                    break;
                 case PartType.None:
                 case PartType.Compiled:
                     // Ignore
                     break;
                 default:
-                    throw new NotImplementedException($"Compilation for the {query.Type.ToString()} clause is not supported yet.");
+                    throw new NotImplementedException($"Compilation for the {query.Type} clause is not supported yet.");
             }
             void MatchTranslation(q.Query query, CompileState state)
             {
@@ -817,21 +797,21 @@ namespace Blueprint41.Neo4j.Model
                 return false;
 
             RawNode node = record["version"].As<RawNode>();
-            (long major, long minor, long patch) databaseVersion = ((long)node.Properties["Major"]!, (long)node.Properties["Minor"]!, (long)node.Properties["Patch"]!);
+            (long major, long minor, long patch) = ((long)node.Properties["Major"]!, (long)node.Properties["Minor"]!, (long)node.Properties["Patch"]!);
 
-            if (databaseVersion.major < script.Major)
+            if (major < script.Major)
                 return false;
 
-            if (databaseVersion.major > script.Major)
+            if (major > script.Major)
                 return true;
 
-            if (databaseVersion.minor < script.Minor)
+            if (minor < script.Minor)
                 return false;
 
-            if (databaseVersion.minor > script.Minor)
+            if (minor > script.Minor)
                 return true;
 
-            if (databaseVersion.patch < script.Patch)
+            if (patch < script.Patch)
                 return false;
 
             return true;
@@ -841,14 +821,18 @@ namespace Blueprint41.Neo4j.Model
             // write version nr
             string create = "MERGE (n:RefactorVersion) ON CREATE SET n = $node ON MATCH SET n = $node";
 
-            Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add("Major", script.Major);
-            node.Add("Minor", script.Minor);
-            node.Add("Patch", script.Patch);
-            node.Add("LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow));
+            Dictionary<string, object> node = new Dictionary<string, object>
+            {
+                { "Major", script.Major },
+                { "Minor", script.Minor },
+                { "Patch", script.Patch },
+                { "LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow) }
+            };
 
-            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
-            parameters.Add("node", node);
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>
+            {
+                { "node", node }
+            };
 
             Transaction.RunningTransaction.Run(create, parameters);
             Transaction.Commit();
@@ -876,8 +860,10 @@ namespace Blueprint41.Neo4j.Model
             // write version nr
             string query = "MATCH (n:RefactorVersion) SET n.LastRun = $LastRun";
 
-            Dictionary<string, object?> parameters = new Dictionary<string, object?>();
-            parameters.Add("LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow));
+            Dictionary<string, object?> parameters = new Dictionary<string, object?>
+            {
+                { "LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow) }
+            };
 
             Transaction.RunningTransaction.Run(query, parameters);
         }
