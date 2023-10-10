@@ -56,8 +56,9 @@ namespace Blueprint41.Core
 			Add(item, RunningTransaction.TransactionDate, fireEvents);
 		}
 		public void Add(TEntity item, DateTime? moment)
-		{
-			Add(item, moment, true);
+        {
+            ForeignProperty?.ClearLookup(item, moment);
+            Add(item, moment, true);
 		}
 		internal void Add(TEntity item, DateTime? moment, bool fireEvents)
 		{
