@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Refactoring;
 using Blueprint41.Neo4j.Schema.v4;
 
@@ -24,7 +24,8 @@ namespace Blueprint41.Neo4j.Schema.v5
                         commands.Add($"CREATE CONSTRAINT {Parent.Entity.Label.Name}_{Property}_UniqueConstraint FOR (node:{Parent.Entity.Label.Name}) REQUIRE node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.CreateExistsConstraint:
-                        commands.Add($"CREATE CONSTRAINT {Parent.Entity.Label.Name}_{Property}_ExistsConstraint FOR (node:{Parent.Entity.Label.Name}) REQUIRE node.{Property} IS NOT NULL");
+                        if(Parent.Entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition)
+                            commands.Add($"CREATE CONSTRAINT {Parent.Entity.Label.Name}_{Property}_ExistsConstraint FOR (node:{Parent.Entity.Label.Name}) REQUIRE node.{Property} IS NOT NULL");
                         break;
                     case ApplyConstraintAction.DeleteIndex:
                         commands.Add($"DROP INDEX {constraintOrIndexName}");

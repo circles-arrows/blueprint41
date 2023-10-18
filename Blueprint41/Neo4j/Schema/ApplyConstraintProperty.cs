@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Blueprint41.Neo4j.Refactoring;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema
 {
@@ -48,7 +49,8 @@ namespace Blueprint41.Neo4j.Schema
                         commands.Add($"CREATE CONSTRAINT ON (node:{Parent.Entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.CreateExistsConstraint:
-                        commands.Add($"CREATE CONSTRAINT ON (node:{Parent.Entity.Label.Name}) ASSERT exists(node.{Property})");
+                        if (Parent.Entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition)
+                            commands.Add($"CREATE CONSTRAINT ON (node:{Parent.Entity.Label.Name}) ASSERT exists(node.{Property})");
                         break;
                     case ApplyConstraintAction.DeleteIndex:
                         commands.Add($"DROP INDEX ON :{Parent.Entity.Label.Name}({Property})");
