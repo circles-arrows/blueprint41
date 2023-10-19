@@ -45,6 +45,7 @@ namespace Blueprint41.Neo4j.Schema
 
         public bool IsUnique { get; protected set; }
         public bool IsMandatory { get; protected set; }
+        public virtual bool IsKey => IsUnique && IsMandatory;
 
         #region Regex
 

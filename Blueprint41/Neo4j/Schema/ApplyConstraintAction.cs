@@ -12,8 +12,10 @@ namespace Blueprint41.Neo4j.Schema
         CreateIndex,
         CreateUniqueConstraint,
         CreateExistsConstraint,
+        CreateKeyConstraint,
         DeleteIndex,
         DeleteUniqueConstraint,
         DeleteExistsConstraint,
+        DeleteKeyConstraint
     }
 }

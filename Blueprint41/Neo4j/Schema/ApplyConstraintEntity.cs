@@ -34,7 +34,7 @@ namespace Blueprint41.Neo4j.Schema
                 IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field.Count == 1 && item.Field[0] == property.Name);
                 IEnumerable<IndexInfo> indexes = entityIndexes.Where(item => item.Field.Count == 1 && item.Field[0] == property.Name);
 
-                List<(ApplyConstraintAction, string?)> commands = GetCommands(property.IndexType, property.Nullable, constraints, indexes);
+                List<(ApplyConstraintAction, string?)> commands = Parent.ComputeCommands(Entity, property.IndexType, property.Nullable, property.IsKey, constraints, indexes);
 
                 if (commands.Count > 0)
                     actions.Add(Parent.NewApplyConstraintProperty(this, property, commands));
@@ -48,87 +48,14 @@ namespace Blueprint41.Neo4j.Schema
                 IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field.Count == 1 && item.Field[0] == property);
                 IEnumerable<IndexInfo> indexes = entityIndexes.Where(item => item.Field.Count == 1 && item.Field[0] == property);
 
-                List<(ApplyConstraintAction, string?)> commands = GetCommands(IndexType.None, true, constraints, indexes);
+                List<(ApplyConstraintAction, string?)> commands = Parent.ComputeCommands(Entity, IndexType.None, true, false, constraints, indexes);
 
                 if (commands.Count > 0)
                     actions.Add(Parent.NewApplyConstraintProperty(this, property, commands));
             }
 
             return actions;
-        }
-        internal List<(ApplyConstraintAction, string?)> GetCommands(IndexType indexType, bool nullable, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
-        {
-            bool IsUnique = Entity.IsVirtual ? false : constraints.Any(item => item.IsUnique);
-            bool IsIndexed = Entity.IsVirtual ? false : indexes.Any(item => item.IsIndexed);
-            bool IsMandatory = Entity.IsVirtual ? false : constraints.Any(item => item.IsMandatory);
-
-            string? uniqueConstraintName = constraints.FirstOrDefault(item => item.IsUnique)?.Name;
-            string? existsConstraintName = constraints.FirstOrDefault(item => item.IsMandatory)?.Name;
-            string? indexName = indexes.FirstOrDefault(item => item.IsIndexed)?.Name;
-
-            List<(ApplyConstraintAction, string?)> commands = new List<(ApplyConstraintAction, string?)>();
-
-            if (Entity.IsAbstract && indexType == IndexType.Unique)
-                indexType = IndexType.Indexed;
-
-            switch (indexType)
-            {
-                case IndexType.None:
-                    if (IsUnique)
-                    {
-                        // Database has an unique index, but we want no index at all
-                        commands.Add((ApplyConstraintAction.DeleteUniqueConstraint, uniqueConstraintName));
-                    }
-                    else if (IsIndexed)
-                    {
-                        // Database has an index, but we want no index at all
-                        commands.Add((ApplyConstraintAction.DeleteIndex, indexName));
-                    }
-                    break;
-                case IndexType.Indexed:
-                    if (IsUnique)
-                    {
-                        // Database has an unique index, but we want a normal index instead
-                        commands.Add((ApplyConstraintAction.DeleteUniqueConstraint, uniqueConstraintName));
-                        commands.Add((ApplyConstraintAction.CreateIndex, null));
-                    }
-                    else if (!IsIndexed)
-                    {
-                        // Database has no index, but we want a normal index instead
-                        commands.Add((ApplyConstraintAction.CreateIndex, null));
-                    }
-                    break;
-                case IndexType.Unique:
-                    if (!IsUnique)
-                    {
-                        if (IsIndexed)
-                        {
-                            // Database has a normal index, but we want a unique index instead
-                            commands.Add((ApplyConstraintAction.DeleteIndex, indexName));
-                            commands.Add((ApplyConstraintAction.CreateUniqueConstraint, null));
-                        }
-                        else
-                        {
-                            // Database has no index, but we want a unique index instead
-                            commands.Add((ApplyConstraintAction.CreateUniqueConstraint, null));
-                        }
-                    }
-                    break;
-            }
-
-            if (IsMandatory && nullable)
-            {
-                // Database has has a exists constraint, but we want a nullable field instead
-                commands.Add((ApplyConstraintAction.DeleteExistsConstraint, existsConstraintName));
-            }
-            else if (!IsMandatory && !nullable)
-            {
-                // Database has has no exists constraint, but we want a non-nullable field instead
-                commands.Add((ApplyConstraintAction.CreateExistsConstraint, null));
-            }
-
-            return commands;
-        }
+        }        
 
         protected SchemaInfo Parent { get; set; }
         public Entity Entity { get; protected set; }

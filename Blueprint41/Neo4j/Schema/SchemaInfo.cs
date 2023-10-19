@@ -191,5 +191,80 @@ namespace Blueprint41.Neo4j.Schema
         internal virtual ApplyFunctionalId        NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);
         internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty(parent, property, commands);
         internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty(parent, property, commands);
+
+        internal virtual List<(ApplyConstraintAction, string?)> ComputeCommands(Entity entity, IndexType indexType, bool nullable, bool isKey, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
+        {
+            bool isUnique = entity.IsVirtual ? false : constraints.Any(item => item.IsUnique);
+            bool isIndexed = entity.IsVirtual ? false : indexes.Any(item => item.IsIndexed);
+            bool isMandatory = entity.IsVirtual ? false : constraints.Any(item => item.IsMandatory);
+
+            string? uniqueConstraintName = constraints.FirstOrDefault(item => item.IsUnique)?.Name;
+            string? existsConstraintName = constraints.FirstOrDefault(item => item.IsMandatory)?.Name;
+            string? indexName = indexes.FirstOrDefault(item => item.IsIndexed)?.Name;
+
+            List<(ApplyConstraintAction, string?)> commands = new List<(ApplyConstraintAction, string?)>();
+
+            if (entity.IsAbstract && indexType == IndexType.Unique)
+                indexType = IndexType.Indexed;
+
+            switch (indexType)
+            {
+                case IndexType.None:
+                    if (isUnique)
+                    {
+                        // Database has an unique index, but we want no index at all
+                        commands.Add((ApplyConstraintAction.DeleteUniqueConstraint, uniqueConstraintName));
+                    }
+                    else if (isIndexed)
+                    {
+                        // Database has an index, but we want no index at all
+                        commands.Add((ApplyConstraintAction.DeleteIndex, indexName));
+                    }
+                    break;
+                case IndexType.Indexed:
+                    if (isUnique)
+                    {
+                        // Database has an unique index, but we want a normal index instead
+                        commands.Add((ApplyConstraintAction.DeleteUniqueConstraint, uniqueConstraintName));
+                        commands.Add((ApplyConstraintAction.CreateIndex, null));
+                    }
+                    else if (!isIndexed)
+                    {
+                        // Database has no index, but we want a normal index instead
+                        commands.Add((ApplyConstraintAction.CreateIndex, null));
+                    }
+                    break;
+                case IndexType.Unique:
+                    if (!isUnique)
+                    {
+                        if (isIndexed)
+                        {
+                            // Database has a normal index, but we want a unique index instead
+                            commands.Add((ApplyConstraintAction.DeleteIndex, indexName));
+                            commands.Add((ApplyConstraintAction.CreateUniqueConstraint, null));
+                        }
+                        else
+                        {
+                            // Database has no index, but we want a unique index instead
+                            commands.Add((ApplyConstraintAction.CreateUniqueConstraint, null));
+                        }
+                    }
+                    break;
+            }
+
+            if (isMandatory && nullable)
+            {
+                // Database has has a exists constraint, but we want a nullable field instead
+                commands.Add((ApplyConstraintAction.DeleteExistsConstraint, existsConstraintName));
+            }
+            else if (!isMandatory && !nullable)
+            {
+                // Database has has no exists constraint, but we want a non-nullable field instead
+                commands.Add((ApplyConstraintAction.CreateExistsConstraint, null));
+            }
+
+            return commands;
+        }
+
     }
 }
