@@ -71,6 +71,9 @@ namespace Blueprint41.Neo4j.Schema.v5
             if (entity.IsAbstract && indexType == IndexType.Unique)
                 indexType = IndexType.Indexed;
 
+            if (isKey)
+                indexType = IndexType.None;
+
             switch (indexType)
             {
                 case IndexType.None:
@@ -79,7 +82,7 @@ namespace Blueprint41.Neo4j.Schema.v5
                         // Database has an unique index, but we want no index at all
                         commands.Add((ApplyConstraintAction.DeleteUniqueConstraint, uniqueConstraint.Name));
                     }
-                    else if (indexInfo is not null)
+                    else if (indexInfo is not null && indexInfo.OwningConstraint is null)
                     {
                         // Database has an index, but we want no index at all
                         commands.Add((ApplyConstraintAction.DeleteIndex, indexInfo.Name));
@@ -101,7 +104,7 @@ namespace Blueprint41.Neo4j.Schema.v5
                 case IndexType.Unique:
                     if (uniqueConstraint is null)
                     {
-                        if (indexInfo is not null)
+                        if (indexInfo is not null && indexInfo.OwningConstraint is null)
                         {
                             // Database has a normal index, but we want a unique index instead
                             commands.Add((ApplyConstraintAction.DeleteIndex, indexInfo.Name));
