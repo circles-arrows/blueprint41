@@ -1,5 +1,11 @@
 # Blueprint41
 
+[![NuGet](https://img.shields.io/nuget/v/Blueprint41.svg)](https://www.nuget.org/packages/Blueprint41)
+[![downloads](https://img.shields.io/nuget/dt/Blueprint41)](https://www.nuget.org/packages/Blueprint41)
+![repo size](https://img.shields.io/github/repo-size/circles-arrows/blueprint41)
+[![License](https://img.shields.io/github/license/Blueprint41/Blueprint41.svg)](https://img.shields.io/github/license/circles-arrows/blueprint41)
+
+
 ### .NET ORM for Neo4j Graph Database
 
 Simplify database operations through generated data access objects. 
