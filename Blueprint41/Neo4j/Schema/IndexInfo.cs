@@ -44,6 +44,7 @@ namespace Blueprint41.Neo4j.Schema
         public string Name { get; protected set; } = null!;
         public string State { get; protected set; } = null!;
         public string Type { get; protected set; } = null!;
+        public string OwningConstraint { get; protected set; } = null!;
 
         public IReadOnlyList<string> Entity { get; protected set; } = null!;
         public IReadOnlyList<string> Field { get; protected set; } = null!;

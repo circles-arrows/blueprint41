@@ -17,6 +17,8 @@ namespace Blueprint41.Neo4j.Schema.v5
             Name = record.Values["name"].As<string>();
             State = record.Values["state"].As<string>();
             Type = record.Values["type"].As<string>();
+            OwningConstraint = record.Values["type"].As<string>();
+
             IsIndexed = true;
             isUnique = record.Values["owningConstraint"].As<string>() is not null;
             Entity = record.Values["labelsOrTypes"]?.As<List<object>>()?.Cast<string>()?.ToArray()!;
