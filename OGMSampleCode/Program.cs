@@ -7,7 +7,7 @@ using Blueprint41.Core;
 
 using MemgraphTestApp;
 
-using neo4j = Blueprint41.Neo4j.Persistence.Driver.v5;
+using neo4j = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
 
 namespace OGMSampleCode
 {

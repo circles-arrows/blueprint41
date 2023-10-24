@@ -6,15 +6,15 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence.Driver.v5;
+using Blueprint41.Neo4j.Persistence.Driver.Memgraph;
 
 using neo4jDriver = Neo4j.Driver;
 
-namespace Blueprint41.Neo4j.Schema.v5
+namespace Blueprint41.Neo4j.Schema.Memgraph
 {
-    public class SchemaInfo_v5 : v4.SchemaInfo_v4
+    public class SchemaInfo_Memgraph : v4.SchemaInfo_v4
     {
-        internal SchemaInfo_v5(DatastoreModel model) : base(model) { }
+        internal SchemaInfo_Memgraph(DatastoreModel model) : base(model) { }
 
         protected override void Initialize()
         {
@@ -86,10 +86,10 @@ namespace Blueprint41.Neo4j.Schema.v5
             }
         }
 
-        protected override ConstraintInfo NewConstraintInfo(RawRecord rawRecord) => new ConstraintInfo_v5(rawRecord);
-        protected override IndexInfo NewIndexInfo(RawRecord rawRecord) => new IndexInfo_v5(rawRecord);
-        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v5(parent, property, commands);
-        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v5(parent, property, commands);
+        protected override ConstraintInfo NewConstraintInfo(RawRecord rawRecord) => new ConstraintInfo_Memgraph(rawRecord);
+        protected override IndexInfo NewIndexInfo(RawRecord rawRecord) => new IndexInfo_Memgraph(rawRecord);
+        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
+        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
         internal override List<(ApplyConstraintAction, string?)> ComputeCommands(Entity entity, IndexType indexType, bool nullable, bool isKey, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
         {
             ConstraintInfo? uniqueConstraint = entity.IsVirtual ? null : constraints.FirstOrDefault(item => item.IsUnique);

@@ -3,7 +3,7 @@
   <PropertyGroup Label="Build">
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <RootNamespace>Blueprint41</RootNamespace>
-    <AssemblyName>Blueprint41.Neo4jDriver.v5</AssemblyName>
+    <AssemblyName>Blueprint41.MemgraphDriver</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -22,8 +22,8 @@
 
   <PropertyGroup Label="Package">
     <PackageVersion>1.0.25</PackageVersion>
-    <PackageId>Blueprint41.Neo4jDriver.v5</PackageId>
-    <Title>Blueprint41.Neo4jDriver.v5</Title>
+    <PackageId>Blueprint41.MemgraphDriver</PackageId>
+    <Title>Blueprint41.MemgraphDriver</Title>
     <Authors>Circles Arrows Limited</Authors>
     <Description>Driver needed to connect to Neo4j using Blueprint41</Description>
     <Copyright>Copyright 2017, 2022 (c) Circles Arrows Limited</Copyright>
@@ -49,7 +49,7 @@
   <ItemGroup>
     <PackageReference Include="Neo4j.Driver" Version="5.8.0" />
   </ItemGroup>
-
+    
   <ItemGroup>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
   </ItemGroup>

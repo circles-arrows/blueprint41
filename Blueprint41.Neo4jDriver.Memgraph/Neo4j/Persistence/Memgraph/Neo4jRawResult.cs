@@ -10,7 +10,7 @@ using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence;
 using System.Linq;
 
-namespace Blueprint41.Neo4j.Persistence.Driver.v5
+namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
     internal class Neo4jRawResult : RawResult
     {

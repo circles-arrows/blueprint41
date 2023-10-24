@@ -11,7 +11,7 @@ using Blueprint41.Neo4j.Model;
 using Blueprint41.Neo4j.Schema;
 using System.Runtime.CompilerServices;
 
-namespace Blueprint41.Neo4j.Persistence.Driver.v5
+namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
     public partial class Neo4jPersistenceProvider : Void.Neo4jPersistenceProvider
     {
@@ -139,7 +139,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
                             {
                                 3 => new v3.Neo4jQueryTranslator(this),
                                 4 => new v4.Neo4jQueryTranslator(this),
-                                5 => new Persistence.v5.Neo4jQueryTranslator(this),
+                                5 => new Persistence.Memgraph.Neo4jQueryTranslator(this),
                                 _ => throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.")
                             };
                         }

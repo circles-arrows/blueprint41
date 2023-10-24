@@ -10,7 +10,7 @@ using Blueprint41.Core;
 using Blueprint41.Log;
 using System.Threading.Tasks;
 
-namespace Blueprint41.Neo4j.Persistence.Driver.v5
+namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
 
     public class Neo4jTransaction : Void.Neo4jTransaction
