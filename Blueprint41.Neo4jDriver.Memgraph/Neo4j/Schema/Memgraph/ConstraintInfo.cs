@@ -3,14 +3,14 @@ using System.Linq;
 
 using Blueprint41.Core;
 
-namespace Blueprint41.Neo4j.Schema.v5
+namespace Blueprint41.Neo4j.Schema.Memgraph
 {
-    public class ConstraintInfo_v5 : ConstraintInfo
+    public class ConstraintInfo_Memgraph : ConstraintInfo
     {
         private bool isKey = false;
         public override bool IsKey => isKey;
 
-        internal ConstraintInfo_v5(RawRecord record) : base(record) { }
+        internal ConstraintInfo_Memgraph(RawRecord record) : base(record) { }
 
         protected override void Initialize(RawRecord record)
         {

@@ -4,7 +4,7 @@ using System.Text;
 
 using neo4j = Neo4j.Driver;
 
-namespace Blueprint41.Neo4j.Persistence.Driver.v5
+namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
     internal class Neo4jBookmark : Bookmark
     {

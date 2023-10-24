@@ -3,12 +3,12 @@ using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Refactoring;
 using Blueprint41.Neo4j.Schema.v4;
 
-namespace Blueprint41.Neo4j.Schema.v5
+namespace Blueprint41.Neo4j.Schema.Memgraph
 {
-    public class ApplyConstraintProperty_v5 : ApplyConstraintProperty_v4
+    public class ApplyConstraintProperty_Memgraph : ApplyConstraintProperty_v4
     {
-        internal ApplyConstraintProperty_v5(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
-        internal ApplyConstraintProperty_v5(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
+        internal ApplyConstraintProperty_Memgraph(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
+        internal ApplyConstraintProperty_Memgraph(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
 
         internal override List<string> ToCypher()
         {

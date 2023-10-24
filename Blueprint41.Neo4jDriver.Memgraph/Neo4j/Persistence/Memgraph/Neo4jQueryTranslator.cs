@@ -4,7 +4,7 @@ using System.Linq;
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Schema;
 
-namespace Blueprint41.Neo4j.Persistence.v5
+namespace Blueprint41.Neo4j.Persistence.Memgraph
 {
     internal class Neo4jQueryTranslator : v4.Neo4jQueryTranslator
     {
@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Persistence.v5
 
         internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v5();
 
-        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.v5.SchemaInfo_v5(datastoreModel);
+        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.Memgraph.SchemaInfo_Memgraph(datastoreModel);
 
         #endregion
 

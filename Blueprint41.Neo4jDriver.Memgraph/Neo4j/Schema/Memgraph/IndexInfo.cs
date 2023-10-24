@@ -6,11 +6,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blueprint41.Core;
 
-namespace Blueprint41.Neo4j.Schema.v5
+namespace Blueprint41.Neo4j.Schema.Memgraph
 {
-    public class IndexInfo_v5: IndexInfo
+    public class IndexInfo_Memgraph : IndexInfo
     {
-        internal IndexInfo_v5(RawRecord record) : base(record) { }
+        internal IndexInfo_Memgraph(RawRecord record) : base(record) { }
 
         protected override void Initialize(RawRecord record)
         {
