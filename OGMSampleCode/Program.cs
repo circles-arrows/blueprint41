@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
 
-using Domain.Data.Manipulation;
-using Domain.Data.Query;
-
-using neo4j = Blueprint41.Neo4j.Persistence.Void;
+using neo4j = Blueprint41.Neo4j.Persistence.Driver.v5;
 
 namespace OGMSampleCode
 {
@@ -14,76 +13,84 @@ namespace OGMSampleCode
     {
         static void Main(string[] args)
         {
-            PersistenceProvider.CurrentPersistenceProvider = new neo4j.Neo4jPersistenceProvider($"bolt://localhost:7689", $"neo4j", $"neo");
+            PersistenceProvider.CurrentPersistenceProvider = new neo4j.Neo4jPersistenceProvider($"bolt://localhost:7690", $"neo4j", $"passionite?01");
 
             // The definition of what you can store in the graph can be found in the "Datastore" project
             // The type-safe objects you can program against to do CRUD operations can be found in the "Datastore.Generated" project
-            var model = new Datastore.AdventureWorks
+            var model = new Datastore.HumanResources
             {
                 LogToConsole = true,
                 LogToDebugger = false,
             };
-
             model.Execute(true);
-
-            using (Transaction.Begin())
-            {
-                // create 2 departments in the graph
-                Department development = new Department()
-                {
-                    Name = "Software Development",
-                    GroupName = "IT",
-                };
-                Department support = new Department()
-                {
-                    Name = "Support",
-                    GroupName = "IT",
-                };
-
-                // and an employee
-                Employee employee = new Employee()
-                {
-                    NationalIDNumber = "123",
-                    rowguid = Guid.NewGuid().ToString(),
-                    JobTitle = "Developer",
-                    BirthDate = new DateTime(1980, 1, 1),
-                    MaritalStatus = "M",
-                    Gender = "M",
-                    SalariedFlag = true,
-                    VacationHours = 0,
-                    SickLeaveHours = 0,
-                    Currentflag = true,
-                    ModifiedDate = Transaction.Current.TransactionDate,
-                };
-                development.Employees.Add(employee);
-
-                // save them, since we did it right...
-                Transaction.Commit();
-                //Transaction.Rollback();
-            }
-
-            using (Transaction.Begin())
-            {
-                // Reusable type-safe query
-                var compiled = Transaction.CompiledQuery
-                    .Match(Node.Department.Alias(out var d).In.DEPARTMENT_CONTAINS_EMPLOYEE.Out.Employee.Alias(out var e))
-                    .Where(d.Name == Parameter.New<string>("DepartmentName"))
-                    .Return(d.Name.As("Department"), e.SickLeaveHours.Sum().As("TotalSickleaveHours"), e.VacationHours.Sum().As("TotalVacationHours"))
-                    .Compile();
-
-                // Make an execution context, which will hold the parameter values to be used
-                var context = compiled.GetExecutionContext();
-                context.SetParameter("DepartmentName", "Software Development");
-
-                // Execute query and display results
-                var resultSet = context.Execute();
-                foreach (var result in resultSet)
-                {
-                    Console.WriteLine($"Department: {result.Department}, Total outstanding sick leave hours: {result.TotalSickleaveHours}, Total outstanding vacation hours: {result.TotalVacationHours}.");
-                }
-
-                // No commit needed, since we're only reading anyway...
-            }
+            //CreateEntities();
+            //UpdateEntities();
         }
+
+        //private static void UpdateEntities()
+        //{
+        //    using (Transaction.Begin(true))
+        //    {
+        //        // create 2 departments in the graph
+        //        Department development = Department.Load("4");
+        //        Department support = Department.Load("5");
+
+        //        // and an employee
+        //        Employee employee = Employee.Load("6");
+        //        Employee employee2 = Employee.Load("7");
+
+        //        //employee.Department = support;
+        //        development.Employees.AddRange(new List<Employee>() { employee, employee2 });
+
+        //        // save them, since we did it right...
+        //        Transaction.Commit();
+        //        //Transaction.Rollback();
+        //    }
+        //}
+        //private static void CreateEntities()
+        //{
+        //    using (Transaction.Begin())
+        //    {
+        //        // create 2 departments in the graph
+        //        Department development = new Department()
+        //        {
+        //            Name = "Software Development",
+        //        };
+        //        Department support = new Department()
+        //        {
+        //            Name = "Support",
+        //        };
+
+        //        // and an employee
+        //        Employee employee1 = new Employee()
+        //        {
+        //            FirstName = "Juan",
+        //            LastName = "Enrile"
+        //        };
+        //        development.Employees.Add(employee1);
+        //        Employee employee2 = new Employee()
+        //        {
+        //            FirstName = "Juan2",
+        //            LastName = "Enrile"
+        //        };
+        //        development.Employees.Add(employee2);
+        //        Employee employee3 = new Employee()
+        //        {
+        //            FirstName = "Juan3",
+        //            LastName = "Enrile"
+        //        };
+        //        development.Employees.Add(employee3);
+        //        Employee employee4 = new Employee()
+        //        {
+        //            FirstName = "Juan4",
+        //            LastName = "Enrile"
+        //        };
+        //        development.Employees.Add(employee4);
+
+        //        // save them, since we did it right...
+        //        Transaction.Commit();
+        //        //Transaction.Rollback();
+        //    }
+        //}
     }
 }
