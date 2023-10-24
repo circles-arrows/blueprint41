@@ -24,9 +24,9 @@ namespace Blueprint41.Neo4j.Schema.v5
             {
                 bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
                 FunctionalIds = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
-                Labels = LoadSimpleData("CALL db.labels()", "label");
-                PropertyKeys = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
-                RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
+                Labels = LoadSimpleData("MATCH (n) Unwind labels(n) as label RETURN DISTINCT label", "label");
+                PropertyKeys = LoadSimpleData("MATCH (n) Unwind properties(n) as propertyKey RETURN DISTINCT propertyKey", "propertyKey");
+                RelationshipTypes = LoadSimpleData("MATCH (in)-[r]->(out) RETURN DISTINCT type(r) as relationshipType", "relationshipType");
             }
         }
         protected IReadOnlyList<T> ImplicitLoadData<T>(string procedure, Func<RawRecord, T> processor)

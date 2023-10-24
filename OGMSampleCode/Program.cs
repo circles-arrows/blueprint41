@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Blueprint41;
 using Blueprint41.Core;
 
+using MemgraphTestApp;
+
 using neo4j = Blueprint41.Neo4j.Persistence.Driver.v5;
 
 namespace OGMSampleCode
@@ -17,7 +19,7 @@ namespace OGMSampleCode
 
             // The definition of what you can store in the graph can be found in the "Datastore" project
             // The type-safe objects you can program against to do CRUD operations can be found in the "Datastore.Generated" project
-            var model = new Datastore.HumanResources
+            var model = new HumanResources
             {
                 LogToConsole = true,
                 LogToDebugger = false,
