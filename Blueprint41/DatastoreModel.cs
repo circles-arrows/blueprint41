@@ -176,6 +176,7 @@ namespace Blueprint41
                 bool scriptCommitted = false;
                 if (upgradeDatastore && PersistenceProvider.IsNeo4j && !isVoidProvider)
                 {
+                    Refactor.ApplyFunctionalIds();
                     using (Transaction.Begin(true))
                     {
                         if (!Parser.HasScript(script))
@@ -183,7 +184,6 @@ namespace Blueprint41
                             Parser.Log("Running script: {0}.{1}.{2} ({3})", script.Major, script.Minor, script.Patch, script.Name);
                             Stopwatch sw = Stopwatch.StartNew();
 
-                            Refactor.ApplyFunctionalIds();
                             RunScriptChecked(script);
                             Refactor.ApplyFunctionalIds();
 

@@ -49,17 +49,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Neo4jDriver.Memgraph\Blueprint41.MemgraphDriver.csproj">
+      <Project>{1d639c5c-6670-43ad-98c1-3047b0b101d6}</Project>
+      <Name>Blueprint41.MemgraphDriver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj">
       <Project>{7446d213-4723-4398-8d8d-30fd19fd1b9a}</Project>
       <Name>Blueprint41</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Datastore.Generated\Datastore.Generated.csproj">
-      <Project>{d607bf48-266c-4391-86b0-020c6fd0fdff}</Project>
-      <Name>Datastore.Generated</Name>
+    <ProjectReference Include="..\MemgraphTestApp\MemgraphTestApp.Generated\MemgraphTestApp.Generated.csproj">
+      <Project>{a2f09e6f-bba5-4bfc-a634-140746dac46a}</Project>
+      <Name>MemgraphTestApp.Generated</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Datastore\Datastore.csproj">
-      <Project>{3a823a05-b1b3-4c90-ae6f-b0e4ce1ed73d}</Project>
-      <Name>Datastore</Name>
+    <ProjectReference Include="..\MemgraphTestApp\MemgraphTestApp.Model\MemgraphTestApp.csproj">
+      <Project>{e1e8f985-d44a-4226-b749-edda701ee700}</Project>
+      <Name>MemgraphTestApp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

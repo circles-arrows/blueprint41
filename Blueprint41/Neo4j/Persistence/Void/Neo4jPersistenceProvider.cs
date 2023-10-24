@@ -76,12 +76,12 @@ namespace Blueprint41.Neo4j.Persistence.Void
             });
         }
 
-        public string Version { get; private set; } = "0.0.0";
-        public int Major { get; private set; } = 0;
-        public int Minor { get; private set; } = 0;
-        public int? Revision { get; private set; } = null;
+        public string Version { get; set; } = "0.0.0";
+        public int Major { get; set; } = 0;
+        public int Minor { get; set; } = 0;
+        public int? Revision { get;  set; } = null;
         public bool IsAura { get; set; } = false;
-        public bool IsEnterpriseEdition { get; private set; } = false;
+        public bool IsEnterpriseEdition { get; set; } = false;
 
         public FeatureSupport NodePropertyFeatures => _nodePropertyFeatures.Value;
         private readonly Lazy<FeatureSupport> _nodePropertyFeatures;
@@ -102,13 +102,13 @@ namespace Blueprint41.Neo4j.Persistence.Void
         {
             return functions.Contains(function);
         }
-        private HashSet<string> functions = new HashSet<string>();
+        protected HashSet<string> functions = new HashSet<string>();
 
         public bool HasProcedure(string procedure)
         {
             return procedures.Contains(procedure);
         }
-        private HashSet<string> procedures = new HashSet<string>();
+        protected HashSet<string> procedures = new HashSet<string>();
 
         internal override QueryTranslator Translator
         {
