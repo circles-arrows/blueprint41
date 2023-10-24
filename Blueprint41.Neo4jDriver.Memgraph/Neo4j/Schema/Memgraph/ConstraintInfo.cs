@@ -14,23 +14,18 @@ namespace Blueprint41.Neo4j.Schema.v5
 
         protected override void Initialize(RawRecord record)
         {
-            Name = record.Values["name"].As<string>();
+            //Name = record.Values["name"].As<string>();
             IsUnique = false;
             IsMandatory = false;
-
-            string type = record.Values["type"]?.As<string>()?.ToLowerInvariant() ?? "";
-
-            if (type.Contains("node_key"))
-                isKey = true;
-
-            if (type.Contains("uniqueness"))
+            string constraintType = record.Values["constraint type"]?.As<string>()?.ToLowerInvariant() ?? "";
+            if (constraintType.Contains("unique") || constraintType.Contains("key"))
                 IsUnique = true;
 
-            if (type.Contains("existence"))
+            if (constraintType.Contains("exists") || constraintType.Contains("key"))
                 IsMandatory = true;
 
-            Entity = record.Values["labelsOrTypes"]?.As<List<object>>()?.Cast<string>()?.ToArray()!;
-            Field = record.Values["properties"]?.As<List<object>>()?.Cast<string>()?.ToArray()!;
+            Entity = new List<string>() { record.Values["label"].ToString()! };
+            Field = IsMandatory ? new List<string>() { record.Values["properties"].ToString()! } : record.Values["properties"]?.As<List<object>>()?.Cast<string>()?.ToList()!;
         }
     }
 }
