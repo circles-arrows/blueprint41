@@ -18,37 +18,37 @@ namespace MemgraphTestApp
 
         {
 
-            FunctionalIds.Default = FunctionalIds.New("Shared", "HR_", IdFormat.Numeric, 0);
+            //FunctionalIds.Default = FunctionalIds.New("Shared", "HR_", IdFormat.Numeric, 0);
+
+
+            Entity Neo4jBase =
+                Entities.New("Neo4jBase")
+                    .Abstract(true)
+                    .Virtual(true)
+                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                    .SetKey("Uid", true)
+                    .AddProperty("CreatedOn", typeof(DateTime))
+                    .AddProperty("CreatedBy", typeof(string))
+                    .AddProperty("LastModifiedOn", typeof(DateTime))
+                    .AddProperty("LastModifiedBy", typeof(string))
+                    .AddProperty("Description", typeof(string))
+                    .SetRowVersionField("LastModifiedOn");
+
+            Entities.New("Branch", Neo4jBase)
+
+                .AddProperty("Name", typeof(string));
 
 
 
-            Entities.New("Branch")
+            Entities.New("Department", Neo4jBase)
 
-                .AddProperty("Name", typeof(string))
-
-                .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-
-                .SetKey("Uid", true);
+                .AddProperty("Name", typeof(string));
 
 
 
-            Entities.New("Department")
-
-                .AddProperty("Name", typeof(string))
-
-                .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-
-                .SetKey("Uid", true);
-
-
-
-            var Personnel = Entities.New("Personnel")
+            var Personnel = Entities.New("Personnel", Neo4jBase)
 
                 .Abstract(true)
-
-                .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-
-                .SetKey("Uid", true)
 
                 .AddProperty("FirstName", typeof(string))
 
@@ -68,13 +68,9 @@ namespace MemgraphTestApp
 
 
 
-            Entities.New("EmploymentStatus")
+            Entities.New("EmploymentStatus", Neo4jBase)
 
                 .HasStaticData(true)
-
-                .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-
-                .SetKey("Uid", true)
 
                 .AddProperty("Name", typeof(string), false);
 
@@ -96,7 +92,7 @@ namespace MemgraphTestApp
 
             Relations.New(Entities["Employee"], Entities["Department"], "WORKS_IN", "WORKS_IN")
 
-                .SetInProperty("Department", PropertyType.Collection)
+                .SetInProperty("Department", PropertyType.Lookup)
 
                 .SetOutProperty("Employees", PropertyType.Collection);
 

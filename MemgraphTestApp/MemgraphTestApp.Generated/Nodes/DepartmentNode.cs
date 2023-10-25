@@ -35,13 +35,6 @@ namespace Domain.Data.Query
         {
 			return m.Department.Entity;
         }
-		public FunctionalId FunctionalId
-        {
-            get
-            {
-                return m.Department.Entity.FunctionalId;
-            }
-        }
 
 		internal DepartmentNode() { }
 		internal DepartmentNode(DepartmentAlias alias, bool isReference = false)
@@ -55,7 +48,7 @@ namespace Domain.Data.Query
 			NodeAlias = nodeAlias;
 		}
 
-        public DepartmentNode Where(JsNotation<string> Name = default, JsNotation<string> Uid = default)
+        public DepartmentNode Where(JsNotation<string> CreatedBy = default, JsNotation<System.DateTime?> CreatedOn = default, JsNotation<string> Description = default, JsNotation<string> LastModifiedBy = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
         {
             if (InlineConditions is not null || InlineAssignments is not null)
                 throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
@@ -66,6 +59,11 @@ namespace Domain.Data.Query
                 return a;
             });
             List<QueryCondition> conditions = new List<QueryCondition>();
+            if (CreatedBy.HasValue) conditions.Add(new QueryCondition(alias.Value.CreatedBy, Operator.Equals, ((IValue)CreatedBy).GetValue()));
+            if (CreatedOn.HasValue) conditions.Add(new QueryCondition(alias.Value.CreatedOn, Operator.Equals, ((IValue)CreatedOn).GetValue()));
+            if (Description.HasValue) conditions.Add(new QueryCondition(alias.Value.Description, Operator.Equals, ((IValue)Description).GetValue()));
+            if (LastModifiedBy.HasValue) conditions.Add(new QueryCondition(alias.Value.LastModifiedBy, Operator.Equals, ((IValue)LastModifiedBy).GetValue()));
+            if (LastModifiedOn.HasValue) conditions.Add(new QueryCondition(alias.Value.LastModifiedOn, Operator.Equals, ((IValue)LastModifiedOn).GetValue()));
             if (Name.HasValue) conditions.Add(new QueryCondition(alias.Value.Name, Operator.Equals, ((IValue)Name).GetValue()));
             if (Uid.HasValue) conditions.Add(new QueryCondition(alias.Value.Uid, Operator.Equals, ((IValue)Uid).GetValue()));
 
@@ -73,7 +71,7 @@ namespace Domain.Data.Query
 
             return this;
         }
-        public DepartmentNode Assign(JsNotation<string> Name = default, JsNotation<string> Uid = default)
+        public DepartmentNode Assign(JsNotation<string> CreatedBy = default, JsNotation<System.DateTime?> CreatedOn = default, JsNotation<string> Description = default, JsNotation<string> LastModifiedBy = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
         {
             if (InlineConditions is not null || InlineAssignments is not null)
                 throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
@@ -84,6 +82,11 @@ namespace Domain.Data.Query
                 return a;
             });
             List<Assignment> assignments = new List<Assignment>();
+            if (CreatedBy.HasValue) assignments.Add(new Assignment(alias.Value.CreatedBy, CreatedBy));
+            if (CreatedOn.HasValue) assignments.Add(new Assignment(alias.Value.CreatedOn, CreatedOn));
+            if (Description.HasValue) assignments.Add(new Assignment(alias.Value.Description, Description));
+            if (LastModifiedBy.HasValue) assignments.Add(new Assignment(alias.Value.LastModifiedBy, LastModifiedBy));
+            if (LastModifiedOn.HasValue) assignments.Add(new Assignment(alias.Value.LastModifiedOn, LastModifiedOn));
             if (Name.HasValue) assignments.Add(new Assignment(alias.Value.Name, Name));
             if (Uid.HasValue) assignments.Add(new Assignment(alias.Value.Uid, Uid));
 
@@ -162,9 +165,14 @@ namespace Domain.Data.Query
 			Node = alias.Node;
 		}
 
-		public Assignment[] Assign(JsNotation<string> Name = default, JsNotation<string> Uid = default)
+		public Assignment[] Assign(JsNotation<string> CreatedBy = default, JsNotation<System.DateTime?> CreatedOn = default, JsNotation<string> Description = default, JsNotation<string> LastModifiedBy = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
         {
             List<Assignment> assignments = new List<Assignment>();
+			if (CreatedBy.HasValue) assignments.Add(new Assignment(this.CreatedBy, CreatedBy));
+			if (CreatedOn.HasValue) assignments.Add(new Assignment(this.CreatedOn, CreatedOn));
+			if (Description.HasValue) assignments.Add(new Assignment(this.Description, Description));
+			if (LastModifiedBy.HasValue) assignments.Add(new Assignment(this.LastModifiedBy, LastModifiedBy));
+			if (LastModifiedOn.HasValue) assignments.Add(new Assignment(this.LastModifiedOn, LastModifiedOn));
 			if (Name.HasValue) assignments.Add(new Assignment(this.Name, Name));
 			if (Uid.HasValue) assignments.Add(new Assignment(this.Uid, Uid));
             
@@ -181,7 +189,12 @@ namespace Domain.Data.Query
 					m_AliasFields = new Dictionary<string, FieldResult>()
 					{
 						{ "Name", new StringResult(this, "Name", MemgraphTestApp.HumanResources.Model.Entities["Department"], MemgraphTestApp.HumanResources.Model.Entities["Department"].Properties["Name"]) },
-						{ "Uid", new StringResult(this, "Uid", MemgraphTestApp.HumanResources.Model.Entities["Department"], MemgraphTestApp.HumanResources.Model.Entities["Department"].Properties["Uid"]) },
+						{ "Uid", new StringResult(this, "Uid", MemgraphTestApp.HumanResources.Model.Entities["Department"], MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["Uid"]) },
+						{ "CreatedOn", new DateTimeResult(this, "CreatedOn", MemgraphTestApp.HumanResources.Model.Entities["Department"], MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["CreatedOn"]) },
+						{ "CreatedBy", new StringResult(this, "CreatedBy", MemgraphTestApp.HumanResources.Model.Entities["Department"], MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["CreatedBy"]) },
+						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", MemgraphTestApp.HumanResources.Model.Entities["Department"], MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["LastModifiedOn"]) },
+						{ "LastModifiedBy", new StringResult(this, "LastModifiedBy", MemgraphTestApp.HumanResources.Model.Entities["Department"], MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["LastModifiedBy"]) },
+						{ "Description", new StringResult(this, "Description", MemgraphTestApp.HumanResources.Model.Entities["Department"], MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["Description"]) },
 					};
 				}
 				return m_AliasFields;
@@ -213,6 +226,61 @@ namespace Domain.Data.Query
 			}
 		}
 		private StringResult m_Uid = null;
+		public DateTimeResult CreatedOn
+		{
+			get
+			{
+				if (m_CreatedOn is null)
+					m_CreatedOn = (DateTimeResult)AliasFields["CreatedOn"];
+
+				return m_CreatedOn;
+			}
+		}
+		private DateTimeResult m_CreatedOn = null;
+		public StringResult CreatedBy
+		{
+			get
+			{
+				if (m_CreatedBy is null)
+					m_CreatedBy = (StringResult)AliasFields["CreatedBy"];
+
+				return m_CreatedBy;
+			}
+		}
+		private StringResult m_CreatedBy = null;
+		public DateTimeResult LastModifiedOn
+		{
+			get
+			{
+				if (m_LastModifiedOn is null)
+					m_LastModifiedOn = (DateTimeResult)AliasFields["LastModifiedOn"];
+
+				return m_LastModifiedOn;
+			}
+		}
+		private DateTimeResult m_LastModifiedOn = null;
+		public StringResult LastModifiedBy
+		{
+			get
+			{
+				if (m_LastModifiedBy is null)
+					m_LastModifiedBy = (StringResult)AliasFields["LastModifiedBy"];
+
+				return m_LastModifiedBy;
+			}
+		}
+		private StringResult m_LastModifiedBy = null;
+		public StringResult Description
+		{
+			get
+			{
+				if (m_Description is null)
+					m_Description = (StringResult)AliasFields["Description"];
+
+				return m_Description;
+			}
+		}
+		private StringResult m_Description = null;
 		public AsResult As(string aliasName, out DepartmentAlias alias)
 		{
 			alias = new DepartmentAlias((DepartmentNode)Node)

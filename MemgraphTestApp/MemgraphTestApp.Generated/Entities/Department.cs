@@ -10,16 +10,15 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IDepartmentOriginalData
+	public interface IDepartmentOriginalData : INeo4jBaseOriginalData
 	{
 		string Name { get; }
-		string Uid { get; }
 		Branch Branch { get; }
 		IEnumerable<Employee> Employees { get; }
 		HeadEmployee DepartmentHead { get; }
 	}
 
-	public partial class Department : OGM<Department, Department.DepartmentData, System.String>, IDepartmentOriginalData
+	public partial class Department : OGM<Department, Department.DepartmentData, System.String>, INeo4jBase, IDepartmentOriginalData
 	{
 		#region Initialize
 
@@ -38,18 +37,7 @@ namespace Domain.Data.Manipulation
 
 			#endregion
 
-			#region LoadByUid
-
-			RegisterQuery(nameof(LoadByUid), (query, alias) => query.
-				Where(alias.Uid == Parameter.New<string>(Param0)));
-
-			#endregion
-
 			AdditionalGeneratedStoredQueries();
-		}
-		public static Department LoadByUid(string uid)
-		{
-			return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
 		}
 		partial void AdditionalGeneratedStoredQueries();
 
@@ -71,7 +59,7 @@ namespace Domain.Data.Manipulation
 
 		public override string ToString()
 		{
-			return $"Department => Name : {this.Name?.ToString() ?? "null"}, Uid : {this.Uid}";
+			return $"Department => Name : {this.Name?.ToString() ?? "null"}, Uid : {this.Uid}, CreatedOn : {this.CreatedOn?.ToString() ?? "null"}, CreatedBy : {this.CreatedBy?.ToString() ?? "null"}, LastModifiedOn : {this.LastModifiedOn}, LastModifiedBy : {this.LastModifiedBy?.ToString() ?? "null"}, Description : {this.Description?.ToString() ?? "null"}";
 		}
 
 		public override int GetHashCode()
@@ -98,6 +86,8 @@ namespace Domain.Data.Manipulation
 		{
 			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
+			if (InnerData.Uid is null)
+				throw new PersistenceException(string.Format("Cannot save Department with key '{0}' because the Uid cannot be null.", this.Uid?.ToString() ?? "<null>"));
 		}
 
 		protected override void ValidateDelete()
@@ -118,10 +108,15 @@ namespace Domain.Data.Manipulation
 			public DepartmentData(DepartmentData data)
 			{
 				Name = data.Name;
-				Uid = data.Uid;
 				Branch = data.Branch;
 				Employees = data.Employees;
 				DepartmentHead = data.DepartmentHead;
+				Uid = data.Uid;
+				CreatedOn = data.CreatedOn;
+				CreatedBy = data.CreatedBy;
+				LastModifiedOn = data.LastModifiedOn;
+				LastModifiedBy = data.LastModifiedBy;
+				Description = data.Description;
 			}
 
 
@@ -132,7 +127,7 @@ namespace Domain.Data.Manipulation
 				NodeType = "Department";
 
 				Branch = new EntityCollection<Branch>(Wrapper, Members.Branch, item => { if (Members.Branch.Events.HasRegisteredChangeHandlers) { int loadHack = item.Departments.Count; } });
-				Employees = new EntityCollection<Employee>(Wrapper, Members.Employees, item => { if (Members.Employees.Events.HasRegisteredChangeHandlers) { int loadHack = item.Department.Count; } });
+				Employees = new EntityCollection<Employee>(Wrapper, Members.Employees, item => { if (Members.Employees.Events.HasRegisteredChangeHandlers) { object loadHack = item.Department; } });
 				DepartmentHead = new EntityCollection<HeadEmployee>(Wrapper, Members.DepartmentHead);
 			}
 			public string NodeType { get; private set; }
@@ -147,6 +142,11 @@ namespace Domain.Data.Manipulation
 				IDictionary<string, object> dictionary = new Dictionary<string, object>();
 				dictionary.Add("Name",  Name);
 				dictionary.Add("Uid",  Uid);
+				dictionary.Add("CreatedOn",  Conversion<System.DateTime?, long?>.Convert(CreatedOn));
+				dictionary.Add("CreatedBy",  CreatedBy);
+				dictionary.Add("LastModifiedOn",  Conversion<System.DateTime, long>.Convert(LastModifiedOn));
+				dictionary.Add("LastModifiedBy",  LastModifiedBy);
+				dictionary.Add("Description",  Description);
 				return dictionary;
 			}
 
@@ -157,6 +157,16 @@ namespace Domain.Data.Manipulation
 					Name = (string)value;
 				if (properties.TryGetValue("Uid", out value))
 					Uid = (string)value;
+				if (properties.TryGetValue("CreatedOn", out value))
+					CreatedOn = Conversion<long, System.DateTime>.Convert((long)value);
+				if (properties.TryGetValue("CreatedBy", out value))
+					CreatedBy = (string)value;
+				if (properties.TryGetValue("LastModifiedOn", out value))
+					LastModifiedOn = Conversion<long, System.DateTime>.Convert((long)value);
+				if (properties.TryGetValue("LastModifiedBy", out value))
+					LastModifiedBy = (string)value;
+				if (properties.TryGetValue("Description", out value))
+					Description = (string)value;
 			}
 
 			#endregion
@@ -164,10 +174,19 @@ namespace Domain.Data.Manipulation
 			#region Members for interface IDepartment
 
 			public string Name { get; set; }
-			public string Uid { get; set; }
 			public EntityCollection<Branch> Branch { get; private set; }
 			public EntityCollection<Employee> Employees { get; private set; }
 			public EntityCollection<HeadEmployee> DepartmentHead { get; private set; }
+
+			#endregion
+			#region Members for interface INeo4jBase
+
+			public string Uid { get; set; }
+			public System.DateTime? CreatedOn { get; set; }
+			public string CreatedBy { get; set; }
+			public System.DateTime LastModifiedOn { get; set; }
+			public string LastModifiedBy { get; set; }
+			public string Description { get; set; }
 
 			#endregion
 		}
@@ -179,7 +198,6 @@ namespace Domain.Data.Manipulation
 		#region Members for interface IDepartment
 
 		public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-		public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
 		public Branch Branch
 		{
 			get { return ((ILookupHelper<Branch>)InnerData.Branch).GetItem(null); }
@@ -207,6 +225,18 @@ namespace Domain.Data.Manipulation
 					((ILookupHelper<HeadEmployee>)InnerData.DepartmentHead).SetItem(value, null); 
 			}
 		}
+
+		#endregion
+		#region Members for interface INeo4jBase
+
+		public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
+		public System.DateTime? CreatedOn { get { LazyGet(); return InnerData.CreatedOn; } set { if (LazySet(Members.CreatedOn, InnerData.CreatedOn, value)) InnerData.CreatedOn = value; } }
+		public string CreatedBy { get { LazyGet(); return InnerData.CreatedBy; } set { if (LazySet(Members.CreatedBy, InnerData.CreatedBy, value)) InnerData.CreatedBy = value; } }
+		public System.DateTime LastModifiedOn { get { LazyGet(); return InnerData.LastModifiedOn; } set { if (LazySet(Members.LastModifiedOn, InnerData.LastModifiedOn, value)) InnerData.LastModifiedOn = value; } }
+		protected override DateTime GetRowVersion() { return LastModifiedOn; }
+		public override void SetRowVersion(DateTime? value) { LastModifiedOn = value ?? DateTime.MinValue; }
+		public string LastModifiedBy { get { LazyGet(); return InnerData.LastModifiedBy; } set { if (LazySet(Members.LastModifiedBy, InnerData.LastModifiedBy, value)) InnerData.LastModifiedBy = value; } }
+		public string Description { get { LazyGet(); return InnerData.Description; } set { if (LazySet(Members.Description, InnerData.Description, value)) InnerData.Description = value; } }
 
 		#endregion
 
@@ -243,10 +273,19 @@ namespace Domain.Data.Manipulation
 			#region Members for interface IDepartment
 
 			public Property Name { get; } = MemgraphTestApp.HumanResources.Model.Entities["Department"].Properties["Name"];
-			public Property Uid { get; } = MemgraphTestApp.HumanResources.Model.Entities["Department"].Properties["Uid"];
 			public Property Branch { get; } = MemgraphTestApp.HumanResources.Model.Entities["Department"].Properties["Branch"];
 			public Property Employees { get; } = MemgraphTestApp.HumanResources.Model.Entities["Department"].Properties["Employees"];
 			public Property DepartmentHead { get; } = MemgraphTestApp.HumanResources.Model.Entities["Department"].Properties["DepartmentHead"];
+			#endregion
+
+			#region Members for interface INeo4jBase
+
+			public Property Uid { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property CreatedOn { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["CreatedOn"];
+			public Property CreatedBy { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["CreatedBy"];
+			public Property LastModifiedOn { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["LastModifiedOn"];
+			public Property LastModifiedBy { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["LastModifiedBy"];
+			public Property Description { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["Description"];
 			#endregion
 
 		}
@@ -526,49 +565,6 @@ namespace Domain.Data.Manipulation
 
 				#endregion
 
-				#region OnUid
-
-				private static bool onUidIsRegistered = false;
-
-				private static EventHandler<Department, PropertyEventArgs> onUid;
-				public static event EventHandler<Department, PropertyEventArgs> OnUid
-				{
-					add
-					{
-						lock (typeof(OnPropertyChange))
-						{
-							if (!onUidIsRegistered)
-							{
-								Members.Uid.Events.OnChange -= onUidProxy;
-								Members.Uid.Events.OnChange += onUidProxy;
-								onUidIsRegistered = true;
-							}
-							onUid += value;
-						}
-					}
-					remove
-					{
-						lock (typeof(OnPropertyChange))
-						{
-							onUid -= value;
-							if (onUid is null && onUidIsRegistered)
-							{
-								Members.Uid.Events.OnChange -= onUidProxy;
-								onUidIsRegistered = false;
-							}
-						}
-					}
-				}
-			
-				private static void onUidProxy(object sender, PropertyEventArgs args)
-				{
-					EventHandler<Department, PropertyEventArgs> handler = onUid;
-					if (handler is not null)
-						handler.Invoke((Department)sender, args);
-				}
-
-				#endregion
-
 				#region OnBranch
 
 				private static bool onBranchIsRegistered = false;
@@ -698,6 +694,264 @@ namespace Domain.Data.Manipulation
 
 				#endregion
 
+				#region OnUid
+
+				private static bool onUidIsRegistered = false;
+
+				private static EventHandler<Department, PropertyEventArgs> onUid;
+				public static event EventHandler<Department, PropertyEventArgs> OnUid
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onUidIsRegistered)
+							{
+								Members.Uid.Events.OnChange -= onUidProxy;
+								Members.Uid.Events.OnChange += onUidProxy;
+								onUidIsRegistered = true;
+							}
+							onUid += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onUid -= value;
+							if (onUid is null && onUidIsRegistered)
+							{
+								Members.Uid.Events.OnChange -= onUidProxy;
+								onUidIsRegistered = false;
+							}
+						}
+					}
+				}
+			
+				private static void onUidProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Department, PropertyEventArgs> handler = onUid;
+					if (handler is not null)
+						handler.Invoke((Department)sender, args);
+				}
+
+				#endregion
+
+				#region OnCreatedOn
+
+				private static bool onCreatedOnIsRegistered = false;
+
+				private static EventHandler<Department, PropertyEventArgs> onCreatedOn;
+				public static event EventHandler<Department, PropertyEventArgs> OnCreatedOn
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onCreatedOnIsRegistered)
+							{
+								Members.CreatedOn.Events.OnChange -= onCreatedOnProxy;
+								Members.CreatedOn.Events.OnChange += onCreatedOnProxy;
+								onCreatedOnIsRegistered = true;
+							}
+							onCreatedOn += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onCreatedOn -= value;
+							if (onCreatedOn is null && onCreatedOnIsRegistered)
+							{
+								Members.CreatedOn.Events.OnChange -= onCreatedOnProxy;
+								onCreatedOnIsRegistered = false;
+							}
+						}
+					}
+				}
+			
+				private static void onCreatedOnProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Department, PropertyEventArgs> handler = onCreatedOn;
+					if (handler is not null)
+						handler.Invoke((Department)sender, args);
+				}
+
+				#endregion
+
+				#region OnCreatedBy
+
+				private static bool onCreatedByIsRegistered = false;
+
+				private static EventHandler<Department, PropertyEventArgs> onCreatedBy;
+				public static event EventHandler<Department, PropertyEventArgs> OnCreatedBy
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onCreatedByIsRegistered)
+							{
+								Members.CreatedBy.Events.OnChange -= onCreatedByProxy;
+								Members.CreatedBy.Events.OnChange += onCreatedByProxy;
+								onCreatedByIsRegistered = true;
+							}
+							onCreatedBy += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onCreatedBy -= value;
+							if (onCreatedBy is null && onCreatedByIsRegistered)
+							{
+								Members.CreatedBy.Events.OnChange -= onCreatedByProxy;
+								onCreatedByIsRegistered = false;
+							}
+						}
+					}
+				}
+			
+				private static void onCreatedByProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Department, PropertyEventArgs> handler = onCreatedBy;
+					if (handler is not null)
+						handler.Invoke((Department)sender, args);
+				}
+
+				#endregion
+
+				#region OnLastModifiedOn
+
+				private static bool onLastModifiedOnIsRegistered = false;
+
+				private static EventHandler<Department, PropertyEventArgs> onLastModifiedOn;
+				public static event EventHandler<Department, PropertyEventArgs> OnLastModifiedOn
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onLastModifiedOnIsRegistered)
+							{
+								Members.LastModifiedOn.Events.OnChange -= onLastModifiedOnProxy;
+								Members.LastModifiedOn.Events.OnChange += onLastModifiedOnProxy;
+								onLastModifiedOnIsRegistered = true;
+							}
+							onLastModifiedOn += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onLastModifiedOn -= value;
+							if (onLastModifiedOn is null && onLastModifiedOnIsRegistered)
+							{
+								Members.LastModifiedOn.Events.OnChange -= onLastModifiedOnProxy;
+								onLastModifiedOnIsRegistered = false;
+							}
+						}
+					}
+				}
+			
+				private static void onLastModifiedOnProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Department, PropertyEventArgs> handler = onLastModifiedOn;
+					if (handler is not null)
+						handler.Invoke((Department)sender, args);
+				}
+
+				#endregion
+
+				#region OnLastModifiedBy
+
+				private static bool onLastModifiedByIsRegistered = false;
+
+				private static EventHandler<Department, PropertyEventArgs> onLastModifiedBy;
+				public static event EventHandler<Department, PropertyEventArgs> OnLastModifiedBy
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onLastModifiedByIsRegistered)
+							{
+								Members.LastModifiedBy.Events.OnChange -= onLastModifiedByProxy;
+								Members.LastModifiedBy.Events.OnChange += onLastModifiedByProxy;
+								onLastModifiedByIsRegistered = true;
+							}
+							onLastModifiedBy += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onLastModifiedBy -= value;
+							if (onLastModifiedBy is null && onLastModifiedByIsRegistered)
+							{
+								Members.LastModifiedBy.Events.OnChange -= onLastModifiedByProxy;
+								onLastModifiedByIsRegistered = false;
+							}
+						}
+					}
+				}
+			
+				private static void onLastModifiedByProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Department, PropertyEventArgs> handler = onLastModifiedBy;
+					if (handler is not null)
+						handler.Invoke((Department)sender, args);
+				}
+
+				#endregion
+
+				#region OnDescription
+
+				private static bool onDescriptionIsRegistered = false;
+
+				private static EventHandler<Department, PropertyEventArgs> onDescription;
+				public static event EventHandler<Department, PropertyEventArgs> OnDescription
+				{
+					add
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							if (!onDescriptionIsRegistered)
+							{
+								Members.Description.Events.OnChange -= onDescriptionProxy;
+								Members.Description.Events.OnChange += onDescriptionProxy;
+								onDescriptionIsRegistered = true;
+							}
+							onDescription += value;
+						}
+					}
+					remove
+					{
+						lock (typeof(OnPropertyChange))
+						{
+							onDescription -= value;
+							if (onDescription is null && onDescriptionIsRegistered)
+							{
+								Members.Description.Events.OnChange -= onDescriptionProxy;
+								onDescriptionIsRegistered = false;
+							}
+						}
+					}
+				}
+			
+				private static void onDescriptionProxy(object sender, PropertyEventArgs args)
+				{
+					EventHandler<Department, PropertyEventArgs> handler = onDescription;
+					if (handler is not null)
+						handler.Invoke((Department)sender, args);
+				}
+
+				#endregion
+
 			}
 
 			#endregion
@@ -712,10 +966,21 @@ namespace Domain.Data.Manipulation
 		#region Members for interface IDepartment
 
 		string IDepartmentOriginalData.Name { get { return OriginalData.Name; } }
-		string IDepartmentOriginalData.Uid { get { return OriginalData.Uid; } }
 		Branch IDepartmentOriginalData.Branch { get { return ((ILookupHelper<Branch>)OriginalData.Branch).GetOriginalItem(null); } }
 		IEnumerable<Employee> IDepartmentOriginalData.Employees { get { return OriginalData.Employees.OriginalData; } }
 		HeadEmployee IDepartmentOriginalData.DepartmentHead { get { return ((ILookupHelper<HeadEmployee>)OriginalData.DepartmentHead).GetOriginalItem(null); } }
+
+		#endregion
+		#region Members for interface INeo4jBase
+
+		INeo4jBaseOriginalData INeo4jBase.OriginalVersion { get { return this; } }
+
+		string INeo4jBaseOriginalData.Uid { get { return OriginalData.Uid; } }
+		System.DateTime? INeo4jBaseOriginalData.CreatedOn { get { return OriginalData.CreatedOn; } }
+		string INeo4jBaseOriginalData.CreatedBy { get { return OriginalData.CreatedBy; } }
+		System.DateTime INeo4jBaseOriginalData.LastModifiedOn { get { return OriginalData.LastModifiedOn; } }
+		string INeo4jBaseOriginalData.LastModifiedBy { get { return OriginalData.LastModifiedBy; } }
+		string INeo4jBaseOriginalData.Description { get { return OriginalData.Description; } }
 
 		#endregion
 		#endregion
