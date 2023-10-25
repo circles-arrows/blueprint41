@@ -42,6 +42,10 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
         public virtual string FtiEntitySeparator => "|";
         public virtual string FtiPropertySeparator => ", ";
         public override string FtiRemove => "DROP INDEX fts";
+        internal override bool HasFullTextSearchIndexes()
+        {
+            return false;
+        }
 
         internal override void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
         {
