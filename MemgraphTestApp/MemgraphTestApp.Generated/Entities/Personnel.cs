@@ -12,23 +12,20 @@ using q = Domain.Data.Query;
 
 namespace Domain.Data.Manipulation
 {
-	public interface IPersonnelOriginalData
+	public interface IPersonnelOriginalData : INeo4jBaseOriginalData
 	{
-		string Uid { get; }
 		string FirstName { get; }
 		string LastName { get; }
 		EmploymentStatus Status { get; }
 	}
 
-	public partial interface IPersonnel : OGM
+	public partial interface IPersonnel : OGM, INeo4jBase
 	{
-		string NodeType { get; }
-		string Uid { get; set; }
 		string FirstName { get; set; }
 		string LastName { get; set; }
 		EmploymentStatus Status { get; set; }
 
-		IPersonnelOriginalData OriginalVersion { get; }
+		new IPersonnelOriginalData OriginalVersion { get; }
 	}
 
 	public partial class Personnel : OGMAbstractImpl<Personnel, IPersonnel, System.String>
@@ -49,18 +46,7 @@ namespace Domain.Data.Manipulation
 
 			#endregion
 
-
-			#region LoadByUid
-
-			RegisterQuery(nameof(LoadByUid), (query, alias) => query.
-				Where(alias.Uid == Parameter.New<string>(Param0)));
-
-			#endregion
 			AdditionalGeneratedStoredQueries();
-		}
-		public static IPersonnel LoadByUid(string uid)
-		{
-			return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
 		}
 		partial void AdditionalGeneratedStoredQueries();
 		
@@ -104,10 +90,19 @@ namespace Domain.Data.Manipulation
 
 			#region Members for interface IPersonnel
 
-			public Property Uid { get; } = MemgraphTestApp.HumanResources.Model.Entities["Personnel"].Properties["Uid"];
 			public Property FirstName { get; } = MemgraphTestApp.HumanResources.Model.Entities["Personnel"].Properties["FirstName"];
 			public Property LastName { get; } = MemgraphTestApp.HumanResources.Model.Entities["Personnel"].Properties["LastName"];
 			public Property Status { get; } = MemgraphTestApp.HumanResources.Model.Entities["Personnel"].Properties["Status"];
+			#endregion
+
+			#region Members for interface INeo4jBase
+
+			public Property Uid { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["Uid"];
+			public Property CreatedOn { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["CreatedOn"];
+			public Property CreatedBy { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["CreatedBy"];
+			public Property LastModifiedOn { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["LastModifiedOn"];
+			public Property LastModifiedBy { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["LastModifiedBy"];
+			public Property Description { get; } = MemgraphTestApp.HumanResources.Model.Entities["Neo4jBase"].Properties["Description"];
 			#endregion
 
 		}
