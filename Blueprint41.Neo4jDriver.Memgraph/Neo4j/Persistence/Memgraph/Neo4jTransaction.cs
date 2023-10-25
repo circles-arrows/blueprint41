@@ -9,6 +9,8 @@ using neo4j = Neo4j.Driver;
 using Blueprint41.Core;
 using Blueprint41.Log;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.IO;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
@@ -79,7 +81,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             }
 #endif
 
-            //DebugQueryString(cypher, parameters);
+            DebugQueryString(cypher, parameters);
             return new Neo4jRawResult(Provider.TaskScheduler, results);
         }
 
@@ -184,11 +186,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         {
             if (parameterValues is not null)
             {
-                foreach (var queryParam in parameterValues)
-                {
-                    object paramValue = queryParam.Value?.GetType() == typeof(string) ? string.Format("'{0}'", queryParam.Value.ToString()) : queryParam.Value?.ToString() ?? "NULL";
-                    cypherQuery = cypherQuery.Replace(queryParam.Key, paramValue.ToString());
-                }
+                System.Diagnostics.Debug.WriteLine(parameterValues.ToNeo4jParams());
             }
             System.Diagnostics.Debug.WriteLine(cypherQuery);
         }
