@@ -217,7 +217,6 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeUpdated(trans, args);
-
             item.PersistenceState = PersistenceState.Persisted;
         }
 
