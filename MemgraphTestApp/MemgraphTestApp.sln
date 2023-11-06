@@ -5,15 +5,15 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Datastore", "Datastore", "{FC11FAEE-2A05-458F-B5F3-EC7B5A4ABEBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemgraphTestApp", "MemgraphTestApp.Model\MemgraphTestApp.csproj", "{E1E8F985-D44A-4226-B749-EDDA701EE700}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemgraphTestApp", "MemgraphTestApp.Model\MemgraphTestApp.csproj", "{E1E8F985-D44A-4226-B749-EDDA701EE700}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemgraphTestApp.Generated", "MemgraphTestApp.Generated\MemgraphTestApp.Generated.csproj", "{A2F09E6F-BBA5-4BFC-A634-140746DAC46A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemgraphTestApp.Generated", "MemgraphTestApp.Generated\MemgraphTestApp.Generated.csproj", "{A2F09E6F-BBA5-4BFC-A634-140746DAC46A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41", "..\Blueprint41\Blueprint41.csproj", "{3D08E1AB-00F9-4B2F-A0C1-3D4579A89333}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.MemgraphDriver", "..\Blueprint41.Neo4jDriver.Memgraph\Blueprint41.MemgraphDriver.csproj", "{1D639C5C-6670-43AD-98C1-3047B0B101D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGMSampleCode", "..\OGMSampleCode\OGMSampleCode.csproj", "{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemgraphSampleCode", "..\MemgraphSampleCode\MemgraphSampleCode.csproj", "{3289A9D1-12C4-4E81-9039-77988B8ECE83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,18 +73,18 @@ Global
 		{1D639C5C-6670-43AD-98C1-3047B0B101D6}.Release|x64.Build.0 = Release|x64
 		{1D639C5C-6670-43AD-98C1-3047B0B101D6}.Release|x86.ActiveCfg = Release|x86
 		{1D639C5C-6670-43AD-98C1-3047B0B101D6}.Release|x86.Build.0 = Release|x86
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Debug|x64.Build.0 = Debug|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Debug|x86.Build.0 = Debug|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|x64.ActiveCfg = Release|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|x64.Build.0 = Release|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|x86.ActiveCfg = Release|Any CPU
-		{8A989E58-E159-4B8B-BBF2-BD24802F2E7B}.Release|x86.Build.0 = Release|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Debug|x64.Build.0 = Debug|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Debug|x86.Build.0 = Debug|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Release|x64.ActiveCfg = Release|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Release|x64.Build.0 = Release|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Release|x86.ActiveCfg = Release|Any CPU
+		{3289A9D1-12C4-4E81-9039-77988B8ECE83}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
