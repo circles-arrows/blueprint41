@@ -14,7 +14,7 @@ namespace Blueprint41.UnitTest.Mocks
     {
         public bool NotNeo4jTransaction { get; set; }
 
-        public MockNeo4JPersistenceProvider(string uri, string username, string pass) : base(uri, username, pass)
+        public MockNeo4JPersistenceProvider(string uri, string username, string pass) : base(uri, username, pass, "unittest")
         {
 
         }

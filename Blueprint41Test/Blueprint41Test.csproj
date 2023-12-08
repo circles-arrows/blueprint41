@@ -74,10 +74,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Blueprint41.Modeller.Schemas\Blueprint41.Modeller.Schemas.csproj">
-      <Project>{ce27c579-0842-46a2-8aba-d21908ac00b6}</Project>
-      <Name>Blueprint41.Modeller.Schemas</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj">
       <Project>{b24f3c43-0b21-474a-8b42-e9e165e2f8cf}</Project>
       <Name>Blueprint41</Name>

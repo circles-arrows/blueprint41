@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Blueprint41.Neo4jDriver.v3\Blueprint41.Neo4jDriver.v3.csproj" />
     <ProjectReference Include="..\Blueprint41.Neo4jDriver.v5\Blueprint41.Neo4jDriver.v5.csproj" />
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
   </ItemGroup>

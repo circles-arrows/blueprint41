@@ -602,7 +602,7 @@ namespace Blueprint41
                 if (chkScript is null || convScript is null)
                     (_, _, chkScript, convScript) = genericConvertTabel.FirstOrDefault(item => item.fromType == fromDb && (item.toType is null || item.toType == toDb));
 
-                if (chkScript is null || convScript is null || chkScript == NOT_SUPPORTED || convScript == NOT_SUPPORTED)
+                if (chkScript is null || string.IsNullOrEmpty(convScript) || chkScript == NOT_SUPPORTED || convScript == NOT_SUPPORTED)
                     throw new NotSupportedException($"A refactor conversion from '{from.Name}' to '{to.Name}' is not supported.");
 
                 if (chkScript != NO_SCRIPT && convScript != NO_SCRIPT)

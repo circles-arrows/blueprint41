@@ -127,7 +127,7 @@ namespace Blueprint41.Core
             if (!ConvertFromStoredTypeCache.TryGetValue(returnType, out converter))
                 return null;
 
-            return converter?.FromType;
+            return converter?.FromType ?? returnType;
         }
 
         private class ConvertToStoredTypeCacheVia<TReturnType>
