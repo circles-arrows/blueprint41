@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetCreationDate.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetCreationDate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class SetCreationDate : SetCreationDateBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
         public override string TransformText()
         {
             
-            #line 7 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetCreationDate.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetCreationDate.tt"
 
 
     Log("	executing {0} -> set creation date", this.GetType().Name);

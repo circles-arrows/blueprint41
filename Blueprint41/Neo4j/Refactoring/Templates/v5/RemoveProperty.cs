@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class RemoveProperty : RemovePropertyBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
         public override string TransformText()
         {
             
-            #line 7 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
 
 
     Log("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, ConcreteParent.Label.Name, Name);
@@ -41,21 +41,21 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 11 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ConcreteParent.Label.Name));
             
             #line default
             #line hidden
             this.Write(") WHERE node.");
             
-            #line 11 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default
             #line hidden
             this.Write(" IS NOT NULL WITH node LIMIT 10000 REMOVE node.");
             
-            #line 11 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
+            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default

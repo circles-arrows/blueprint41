@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class DropExistConstraint : DropExistConstraintBase
     {
@@ -31,7 +31,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
         public override string TransformText()
         {
             
-            #line 7 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
 
     Log("	executing {0} -> DROP CONSTRAINT ON for {1}.{2}", this.GetType().Name, Property.Parent.Label.Name, Property.Name);
 
@@ -40,14 +40,14 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             #line hidden
             this.Write("DROP CONSTRAINT ON (node:");
             
-            #line 10 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
+            #line 10 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Parent.Label.Name));
             
             #line default
             #line hidden
             this.Write(") ASSERT exists(node.");
             
-            #line 10 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
+            #line 10 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
