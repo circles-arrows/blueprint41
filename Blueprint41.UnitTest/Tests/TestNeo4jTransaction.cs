@@ -37,7 +37,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureRunningTransactionIsNeo4jTransactionWithException()
         {
-            var provider = PersistenceProvider.CurrentPersistenceProvider as MockNeo4JPersistenceProvider;
+            var provider = PersistenceProvider.CurrentPersistenceProvider as MockNeo4jPersistenceProvider;
             provider.NotNeo4jTransaction = true;
 
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
@@ -50,7 +50,7 @@ namespace Blueprint41.UnitTest.Tests
                 }
             });
 
-            Assert.That(exception.Message, Contains.Substring("The current transaction is not a Neo4j transaction."));
+            Assert.IsTrue(exception.Message.Contains(@"The current transaction is not a Neo4j transaction."));
 
             // Revert back for future transaction
             provider.NotNeo4jTransaction = false;

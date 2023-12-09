@@ -15,7 +15,7 @@ namespace Blueprint41.UnitTest.Tests
         public void Setup()
         {
             TearDown();
-            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
+            MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();

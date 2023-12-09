@@ -18,7 +18,7 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
+            MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();
@@ -56,6 +56,8 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
+                string key = null;
+
                 string outputConsole;
                 using (Transaction.Begin(true))
                 {
@@ -104,36 +106,38 @@ namespace Blueprint41.UnitTest.Tests
                     p4.DirectedMovies.Add(tap);
 
                     Transaction.Commit();
+
+                    key = p2.Uid;
                 }
 
                 using (Transaction.Begin(OptimizeFor.RecursiveSubGraphAccess))
                 {
-                    Person p = Person.Load("2");
+                    Person p = Person.Load(key);
                     Assert.Zero(p.DirectedMovies.Count);
                     Assert.Greater(p.ActedInMovies.Count, 0);
                     Assert.Greater(p.ActedInMovies[0].Actors.Count, 0);
 
                     outputConsole = output.GetOuput();
 
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\) WHERE node.Uid = ""2"" RETURN node)"));
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\)-\[rel:DIRECTED_BY\]->\(out:Movie\) WHERE node\.Uid in \(\[""2""\]\) RETURN out, rel, node\.Uid as ParentKey)"));
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\)-\[rel:ACTORS\]->\(out:Movie\) WHERE node\.Uid in \(\[""2""\]\) RETURN out, rel, node\.Uid as ParentKey)"));
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Movie\)<-\[rel:ACTORS\]-\(out:Person\) WHERE node\.Uid in \(\["")\d+("","")\d+(""\]\) RETURN out, rel, node\.Uid as ParentKey)"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person) WHERE node.Uid = $key RETURN node"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:DIRECTED_BY]->(out:Movie) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:ACTORS]->(out:Movie) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Movie)<-[rel:ACTORS]-(out:Person) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
                 }
 
                 using (Transaction.Begin(OptimizeFor.PartialSubGraphAccess))
                 {
-                    Person p = Person.Load("2");
+                    Person p = Person.Load(key);
                     Assert.Zero(p.DirectedMovies.Count);
                     Assert.Greater(p.ActedInMovies.Count, 0);
                     Assert.Greater(p.ActedInMovies[0].Actors.Count, 0);
 
                     outputConsole = output.GetOuput();
 
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\) WHERE node.Uid = ""2"" RETURN node)"));
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\)-\[rel:DIRECTED_BY\]->\(out:Movie\) WHERE node\.Uid = ""2"" RETURN out, rel)"));
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Person\)-\[rel:ACTORS\]->\(out:Movie\) WHERE node\.Uid = ""2"" RETURN out, rel)"));
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(node:Movie\)<-\[rel:ACTORS\]-\(out:Person\) WHERE node\.Uid = "")\d("" RETURN out, rel)"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person) WHERE node.Uid = $key RETURN node"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:DIRECTED_BY]->(out:Movie) WHERE node.Uid = $key RETURN out, rel"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:ACTORS]->(out:Movie) WHERE node.Uid = $key RETURN out, rel"));
+                    Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Movie)<-[rel:ACTORS]-(out:Person) WHERE node.Uid = $key RETURN out, rel"));
                 }
             }
         }

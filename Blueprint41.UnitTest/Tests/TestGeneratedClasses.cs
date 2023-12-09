@@ -24,7 +24,7 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
+            MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();
@@ -78,24 +78,30 @@ namespace Blueprint41.UnitTest.Tests
 
                 string consoleOutput = output.GetOuput();
 
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Person {""Name"":""Joe Smith"",""LastModifiedOn"":)\d+}(\) SET inserted.Uid = key Return inserted)"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City {""Name"":""New York"",""LastModifiedOn"":)\d+}(\) SET inserted.Uid = key Return inserted)"));
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (in:Person {Uid:""2"" })"));
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (out:City {Uid:""3"" })"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LIVES_IN\]->\(out\) ON CREATE SET outr \+= {""CreationDate"":)\d+(\})"));
+                Assert.IsTrue(consoleOutput.Contains(@"MERGE (inserted:Person { Uid: key}) ON CREATE SET inserted += $node ON MATCH SET inserted = $node, inserted.Uid = key RETURN inserted"));
+                Assert.IsTrue(consoleOutput.Contains(@"MERGE (inserted:City { Uid: key}) ON CREATE SET inserted += $node ON MATCH SET inserted = $node, inserted.Uid = key RETURN inserted"));
+                Assert.IsTrue(consoleOutput.Contains(@"MATCH (in:Person) WHERE in.Uid = $inKey"));
+                Assert.IsTrue(consoleOutput.Contains(@"MATCH (out:City) WHERE out.Uid = $outKe"));
+                Assert.IsTrue(consoleOutput.Contains(@"MERGE (in)-[outr:LIVES_IN]->(out) ON CREATE SET outr.CreationDate = $CreationDate SET outr += $node"));
 
                 Assert.IsInstanceOf<OGMImpl>(a);
                 Assert.AreEqual(a.Name, "Joe Smith");
                 Assert.AreEqual(a.City.Name, "New York");
 
+                // Database assigned a valid Uid
+                string key = a.Uid;
+                Assert.IsNotNull(key);
+                Assert.IsNotEmpty(key);
+                Assert.DoesNotThrow(() => int.Parse(key));
+
                 // Without transaction
-                Assert.Throws<InvalidOperationException>(() => Person.Load("2"));
+                Assert.Throws<InvalidOperationException>(() => Person.Load(key));
 
                 Person b;
                 using (Transaction.Begin(true))
                 {
                     // Load
-                    b = Person.Load("2");
+                    b = Person.Load(key);
                     Assert.AreEqual(a, b);
 
                     // Update
@@ -106,12 +112,12 @@ namespace Blueprint41.UnitTest.Tests
                 consoleOutput = output.GetOuput();
 
                 Assert.AreEqual(b.Name, "Jaden Smith");
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\) WHERE node.Uid = ""2"" AND node.LastModifiedOn = )\d+( SET node = \{""Name"":""Jaden Smith"",""Uid"":""2"",""LastModifiedOn"":)\d+(\})"));
+                Assert.IsTrue(consoleOutput.Contains(@"MATCH (node:Person) WHERE node.Uid = $key AND node.LastModifiedOn = $lockId SET node = $newValues"));
 
                 Person c;
                 using (Transaction.Begin(true))
                 {
-                    c = Person.Load("2");
+                    c = Person.Load(key);
 
                     c.Delete();
                     Transaction.Commit();
@@ -119,15 +125,15 @@ namespace Blueprint41.UnitTest.Tests
 
                 consoleOutput = output.GetOuput();
 
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (item:Person)-[r:LIVES_IN]->(useless) WHERE item.Uid = ""2"" DELETE r"));
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (item:Person)-[r:EATS_AT]->(useless) WHERE item.Uid = ""2"" DELETE r"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\) WHERE node.Uid = ""2"" AND node.LastModifiedOn = )\d+( DELETE node)"));
+                Assert.IsTrue(consoleOutput.Contains(@"MATCH (in:Person { Uid: $inKey })-[r:LIVES_IN]->(out:City) DELETE r"));
+                Assert.IsTrue(consoleOutput.Contains(@"MATCH (in:Person { Uid: $inKey })-[r:EATS_AT]->(out:Restaurant) DELETE r"));
+                Assert.IsTrue(consoleOutput.Contains(@"MATCH (node:Person) WHERE node.Uid = $key AND node.LastModifiedOn = $lockId DELETE node"));
 
                 Person d;
                 using (Transaction.Begin())
                 {
                     // Load
-                    d = Person.Load("2");
+                    d = Person.Load(key);
                     Assert.IsNull(d);
                 }
             }

@@ -6,7 +6,7 @@ using neo4j = Neo4j.Driver;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.v5
 {
-    internal class Neo4jBookmark : Bookmark
+    public class Neo4jBookmark : Bookmark
     {
         internal Neo4jBookmark(string[] values)
         {
