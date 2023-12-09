@@ -335,7 +335,7 @@ namespace <#= Settings.FullQueryNamespace #>
 		if (property.PropertyType != PropertyType.Attribute)
 			continue;
 #>
-						{ "<#= property.Name #>", new <#= GetResultType(property.SystemReturnType) #>(this, "<#= property.Name #>", <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"], <#= Datastore.GetType().FullName #>.Model.Entities["<#= property.Parent.Name #>"].Properties["<#= property.Name #>"]) },
+						{ "<#= property.Name #>", new <#= GetResultType(property.SystemReturnType) #>(this, "<#= property.Name #>", <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"], <#= Datastore.GetType().FullName #>.Model.Entities["<#= property.Parent.Name #>"].Properties["<#= property.Name #>"]) },
 <#
 	}
 #>
@@ -396,7 +396,7 @@ namespace <#= Settings.FullQueryNamespace #>
 			get
 			{
 				if (m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> is null)
-					m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]);
+					m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"]);
 
 				return m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #>;
 			}

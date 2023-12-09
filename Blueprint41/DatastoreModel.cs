@@ -378,7 +378,7 @@ namespace Blueprint41
         void IRefactorGlobal.ApplyFullTextSearchIndexes(bool shouldRun)
         {
             EnsureSchemaMigration();
-            if (!Parser.ShouldExecute && !shouldRun)
+            if (!Parser.ShouldExecute || !shouldRun)
                 return;
 
             PersistenceProvider.Translator.ApplyFullTextSearchIndexes(Entities);

@@ -773,7 +773,7 @@ if (DALModel.IsAbstract)
             this.Write(" { get; } = ");
             
             #line 251 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
@@ -902,7 +902,7 @@ if (DALModel.IsAbstract)
             this.Write("))\r\n\t\t\t\t{\r\n\t\t\t\t\tif (entity is null)\r\n\t\t\t\t\t\tentity = ");
             
             #line 303 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden

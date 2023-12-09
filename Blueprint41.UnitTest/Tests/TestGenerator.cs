@@ -76,7 +76,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureFilesAreGenerated()
         {
-            string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
+            string projectFolder = Path.Combine(Environment.CurrentDirectory, "Generator", "Output");
             GeneratorSettings settings = new GeneratorSettings(projectFolder);
             GeneratorResult result = GenerateModel<MockGeneratorModel>(settings);
 
@@ -88,7 +88,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureFilesAreNotGeneratedWhenDeprecated()
         {
-            string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
+            string projectFolder = Path.Combine(Environment.CurrentDirectory, "Generator", "Output"); //Environment.CurrentDirectory + "\\..\\..\\..\\";
             GeneratorSettings settings = new GeneratorSettings(projectFolder);
             GeneratorResult result = GenerateModel<MockModelWithDeprecate>(settings);
 

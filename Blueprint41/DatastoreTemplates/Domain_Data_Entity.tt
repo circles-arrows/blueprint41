@@ -752,7 +752,7 @@ if (!DALModel.IsAbstract)
 		foreach (Property attr in inherited.Properties)
 		{
 #>
-			public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
+			public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
 <#
 		}
 #>
@@ -788,7 +788,7 @@ if (!DALModel.IsAbstract)
 		foreach (Property attr in DALModel.FullTextIndexProperties)
 		{
 #>
-			public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName #>.Model.Entities["<#= attr.Parent.Name #>"].Properties["<#= attr.Name #>"];
+			public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= attr.Parent.Name #>"].Properties["<#= attr.Name #>"];
 <#
 		}
 #>
@@ -801,7 +801,7 @@ if (!DALModel.IsAbstract)
 				lock (typeof(<#= DALModel.ClassName #>))
 				{
 					if (entity is null)
-						entity = <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"];
+						entity = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"];
 				}
 			}
 			return entity;

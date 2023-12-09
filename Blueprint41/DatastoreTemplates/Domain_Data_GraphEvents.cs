@@ -68,7 +68,7 @@ foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).Orde
             this.Write("\r\n\t\t\t{\r\n\t\t\t\tpublic static readonly Entity Entity = ");
             
             #line 35 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
@@ -284,7 +284,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             this.Write("\r\n\t\t\t{\r\n\t\t\t\tpublic static readonly Relationship Relationship = ");
             
             #line 105 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_GraphEvents.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
