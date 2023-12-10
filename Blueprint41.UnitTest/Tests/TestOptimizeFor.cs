@@ -23,13 +23,8 @@ namespace Blueprint41.UnitTest.Tests
 
             TearDown();
 
-            //string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
-            //GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            //_ = Generator.Execute<MockModel>(settings);
-
             MockModel model = new MockModel();
             model.Execute(true);
-
         }
 
         [TearDown]
