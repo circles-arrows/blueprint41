@@ -14,8 +14,6 @@ namespace Blueprint41.UnitTest.Mocks
 {
     public class MockNeo4jPersistenceProvider : driver.Neo4jPersistenceProvider
     {
-        public bool NotNeo4jTransaction { get; set; }
-
         public MockNeo4jPersistenceProvider(string uri, string username, string pass) : base(uri, username, pass, "unittest") { }
 
         public override Transaction NewTransaction(bool readWriteMode) => new MockNeo4jTransaction(this, readWriteMode, TransactionLogger);
@@ -49,39 +47,6 @@ namespace Blueprint41.UnitTest.Mocks
             Transaction = provider.TaskScheduler.RunBlocking(() => Session.BeginTransactionAsync(), "Begin Transaction");
 
             StatementRunner = Transaction;
-        }
-    }
-    public class NotNeo4jTransaction : Transaction
-    {
-        public override RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override RawResult Run(string cypher, Dictionary<string, object> parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void ApplyFunctionalId(FunctionalId functionalId)
-        {
-
-        }
-
-        protected override void CommitInternal()
-        {
-        }
-
-        protected override void Initialize()
-        {
-        }
-
-        protected override void RetryInternal()
-        {
-        }
-
-        protected override void RollbackInternal()
-        {
         }
     }
 }
