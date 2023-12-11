@@ -1,9 +1,12 @@
 ﻿using Blueprint41;
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence.Driver.v3;
+using Blueprint41.Neo4j.Persistence.Driver.v5;
 using Blueprint41.Query;
+
 using Domain.Data.Manipulation;
+
 using MovieGraph.Model;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,20 +18,20 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neo");
+            PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neoneoneo");
 
             // Execute only once
-            //CreateMovieGraph();
+            CreateMovieGraph();
 
-            FindActorTomHanks();
-            FindMovieCloudAtlas();
-            Find10People();
-            FindMoviesIn1990s();
+            //FindActorTomHanks();
+            //FindMovieCloudAtlas();
+            //Find10People();
+            //FindMoviesIn1990s();
 
-            ListAllTomHanksMovies();
-            DirectedCloutAtlas();
-            TomHanksCoActors();
-            SomeoneToIntroduceToTomHanks();
+            //ListAllTomHanksMovies();
+            //DirectedCloutAtlas();
+            //TomHanksCoActors();
+            //SomeoneToIntroduceToTomHanks();
 
             Console.WriteLine("Done. Press any key to exit.");
             Console.ReadLine();
@@ -75,7 +78,7 @@ namespace ConsoleApp
                 RawResult records = Transaction.RunningTransaction.Run(query.ToString());
 
                 foreach (RawRecord record in records)
-                {   
+                {
                     var tomH = record[0].As<RawNode>();
                     var movieWithTom = record[1].As<RawNode>();
                     var coActor = record[2].As<RawNode>();
