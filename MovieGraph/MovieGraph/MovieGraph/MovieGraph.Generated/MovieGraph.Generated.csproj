@@ -1,23 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Blueprint41\Blueprint41.csproj" />
-    <ProjectReference Include="..\MovieGraph.Model\MovieGraph.Model.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Generate.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Generate.txt</LastGenOutput>
-    </None>
-    <None Update="Generate.txt">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Generate.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\Blueprint41\Blueprint41.csproj" />
+		<ProjectReference Include="..\MovieGraph.Model\MovieGraph.Model.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Generate.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Generate.txt</LastGenOutput>
+		</None>
+		<None Update="Generate.txt">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Generate.tt</DependentUpon>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+	<!--<Import Project="Generate.targets" />
+	<Target Name="Generate" AfterTargets="Build">
+		<Generate />
+	</Target>-->
 </Project>
