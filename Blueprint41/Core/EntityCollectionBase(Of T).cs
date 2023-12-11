@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,10 +93,14 @@ namespace Blueprint41.Core
         private protected abstract int CountInternal { get; }
         public void Add(TEntity item)
         {
-            ForeignProperty?.ClearLookup(item);
-            Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
+            Add(item, null);
         }
-        internal abstract void Add(TEntity item, bool fireEvents);
+        public void Add(TEntity item, ExpandoObject? relationshipProperties)
+        {
+            ForeignProperty?.ClearLookup(item);
+            Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity), relationshipProperties);
+        }
+        internal abstract void Add(TEntity item, bool fireEvents, ExpandoObject? relationshipProperties = null);
         public void AddRange(IEnumerable<TEntity> items)
         {
             foreach (var item in items)
