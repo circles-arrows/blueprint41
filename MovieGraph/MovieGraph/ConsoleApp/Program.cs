@@ -1,6 +1,6 @@
 ﻿using Blueprint41;
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence.Driver.v3;
+using Blueprint41.Neo4j.Persistence.Driver.v5;
 using Blueprint41.Query;
 using Domain.Data.Manipulation;
 using MovieGraph.Model;
@@ -16,9 +16,10 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neo");
+            
 
             // Execute only once
-            //CreateMovieGraph();
+            CreateMovieGraph();
 
             FindActorTomHanks();
             FindMovieCloudAtlas();

@@ -7,12 +7,12 @@ using Blueprint41.DatastoreTemplates;
 namespace Domain.Data.Manipulation
 {
 	public static class GraphEvents
-    {
+	{
 		public static class Nodes
-        {
+		{
 			public static class Genre
-            {
-                private static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["Genre"];
+			{
+				public static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["Genre"];
 
 				#region OnNodeLoading
 
@@ -38,7 +38,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -50,7 +50,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -79,7 +79,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -91,7 +91,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -120,7 +120,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -132,7 +132,7 @@ namespace Domain.Data.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -161,7 +161,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -173,7 +173,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -202,7 +202,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -214,7 +214,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -243,7 +243,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -255,7 +255,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -284,7 +284,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -296,7 +296,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -325,7 +325,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -337,7 +337,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -366,7 +366,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -378,15 +378,15 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class Movie
-            {
-                private static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["Movie"];
+			{
+				public static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["Movie"];
 
 				#region OnNodeLoading
 
@@ -412,7 +412,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -424,7 +424,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -453,7 +453,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -465,7 +465,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -494,7 +494,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -506,7 +506,7 @@ namespace Domain.Data.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -535,7 +535,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -547,7 +547,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -576,7 +576,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -588,7 +588,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -617,7 +617,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -629,7 +629,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -658,7 +658,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -670,7 +670,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -699,7 +699,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -711,7 +711,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -740,7 +740,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -752,15 +752,15 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class MovieReview
-            {
-                private static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["MovieReview"];
+			{
+				public static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["MovieReview"];
 
 				#region OnNodeLoading
 
@@ -786,7 +786,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -798,7 +798,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -827,7 +827,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -839,7 +839,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -868,7 +868,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -880,7 +880,7 @@ namespace Domain.Data.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -909,7 +909,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -921,7 +921,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -950,7 +950,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -962,7 +962,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -991,7 +991,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -1003,7 +1003,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1032,7 +1032,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -1044,7 +1044,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1073,7 +1073,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -1085,7 +1085,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1114,7 +1114,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -1126,15 +1126,15 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class MovieRole
-            {
-                private static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["MovieRole"];
+			{
+				public static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["MovieRole"];
 
 				#region OnNodeLoading
 
@@ -1160,7 +1160,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -1172,7 +1172,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1201,7 +1201,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -1213,7 +1213,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1242,7 +1242,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -1254,7 +1254,7 @@ namespace Domain.Data.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1283,7 +1283,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -1295,7 +1295,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1324,7 +1324,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -1336,7 +1336,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1365,7 +1365,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -1377,7 +1377,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1406,7 +1406,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -1418,7 +1418,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1447,7 +1447,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -1459,7 +1459,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1488,7 +1488,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -1500,15 +1500,15 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class Person
-            {
-                private static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["Person"];
+			{
+				public static readonly Entity Entity = MovieGraph.Model.Datastore.Model.Entities["Person"];
 
 				#region OnNodeLoading
 
@@ -1534,7 +1534,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoading -= value;
-							if (onNodeLoading == null && onNodeLoadingIsRegistered)
+							if (onNodeLoading is null && onNodeLoadingIsRegistered)
 							{
 								Entity.Events.OnNodeLoading -= onNodeLoadingProxy;
 								onNodeLoadingIsRegistered = false;
@@ -1546,7 +1546,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadingProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoading;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1575,7 +1575,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeLoaded -= value;
-							if (onNodeLoaded == null && onNodeLoadedIsRegistered)
+							if (onNodeLoaded is null && onNodeLoadedIsRegistered)
 							{
 								Entity.Events.OnNodeLoaded -= onNodeLoadedProxy;
 								onNodeLoadedIsRegistered = false;
@@ -1587,7 +1587,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeLoadedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeLoaded;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1616,7 +1616,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onBatchFinished -= value;
-							if (onBatchFinished == null && onBatchFinishedIsRegistered)
+							if (onBatchFinished is null && onBatchFinishedIsRegistered)
 							{
 								Entity.Events.OnBatchFinished -= onBatchFinishedProxy;
 								onBatchFinishedIsRegistered = false;
@@ -1628,7 +1628,7 @@ namespace Domain.Data.Manipulation
 				private static void onBatchFinishedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onBatchFinished;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1657,7 +1657,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreate -= value;
-							if (onNodeCreate == null && onNodeCreateIsRegistered)
+							if (onNodeCreate is null && onNodeCreateIsRegistered)
 							{
 								Entity.Events.OnNodeCreate -= onNodeCreateProxy;
 								onNodeCreateIsRegistered = false;
@@ -1669,7 +1669,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1698,7 +1698,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeCreated -= value;
-							if (onNodeCreated == null && onNodeCreatedIsRegistered)
+							if (onNodeCreated is null && onNodeCreatedIsRegistered)
 							{
 								Entity.Events.OnNodeCreated -= onNodeCreatedProxy;
 								onNodeCreatedIsRegistered = false;
@@ -1710,7 +1710,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeCreatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1739,7 +1739,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdate -= value;
-							if (onNodeUpdate == null && onNodeUpdateIsRegistered)
+							if (onNodeUpdate is null && onNodeUpdateIsRegistered)
 							{
 								Entity.Events.OnNodeUpdate -= onNodeUpdateProxy;
 								onNodeUpdateIsRegistered = false;
@@ -1751,7 +1751,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdateProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1780,7 +1780,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeUpdated -= value;
-							if (onNodeUpdated == null && onNodeUpdatedIsRegistered)
+							if (onNodeUpdated is null && onNodeUpdatedIsRegistered)
 							{
 								Entity.Events.OnNodeUpdated -= onNodeUpdatedProxy;
 								onNodeUpdatedIsRegistered = false;
@@ -1792,7 +1792,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeUpdatedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeUpdated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1821,7 +1821,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDelete -= value;
-							if (onNodeDelete == null && onNodeDeleteIsRegistered)
+							if (onNodeDelete is null && onNodeDeleteIsRegistered)
 							{
 								Entity.Events.OnNodeDelete -= onNodeDeleteProxy;
 								onNodeDeleteIsRegistered = false;
@@ -1833,7 +1833,7 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeleteProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
@@ -1862,7 +1862,7 @@ namespace Domain.Data.Manipulation
 						lock (Entity)
 						{
 							onNodeDeleted -= value;
-							if (onNodeDeleted == null && onNodeDeletedIsRegistered)
+							if (onNodeDeleted is null && onNodeDeletedIsRegistered)
 							{
 								Entity.Events.OnNodeDeleted -= onNodeDeletedProxy;
 								onNodeDeletedIsRegistered = false;
@@ -1874,18 +1874,18 @@ namespace Domain.Data.Manipulation
 				private static void onNodeDeletedProxy(object sender, NodeEventArgs args)
 				{
 					EventHandler<Entity, NodeEventArgs> handler = onNodeDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Entity)sender, args);
 				}
 
 				#endregion
-            }
+			}
 		}
 		public static class Relationships
-        {
+		{
 			public static class ACTED_IN
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["ACTED_IN"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["ACTED_IN"];
 
 				#region OnRelationCreate
 
@@ -1911,7 +1911,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -1923,7 +1923,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1952,7 +1952,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -1964,7 +1964,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -1993,7 +1993,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -2005,7 +2005,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2034,7 +2034,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2046,15 +2046,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class CONTAINS_GENRE
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["CONTAINS_GENRE"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["CONTAINS_GENRE"];
 
 				#region OnRelationCreate
 
@@ -2080,7 +2080,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -2092,7 +2092,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2121,7 +2121,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -2133,7 +2133,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2162,7 +2162,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -2174,7 +2174,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2203,7 +2203,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2215,15 +2215,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class DIRECTED
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["DIRECTED"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["DIRECTED"];
 
 				#region OnRelationCreate
 
@@ -2249,7 +2249,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -2261,7 +2261,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2290,7 +2290,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -2302,7 +2302,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2331,7 +2331,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -2343,7 +2343,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2372,7 +2372,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2384,15 +2384,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class FOLLOWS
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["FOLLOWS"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["FOLLOWS"];
 
 				#region OnRelationCreate
 
@@ -2418,7 +2418,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -2430,7 +2430,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2459,7 +2459,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -2471,7 +2471,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2500,7 +2500,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -2512,7 +2512,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2541,7 +2541,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2553,15 +2553,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class MOVIE_REVIEWS
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["MOVIE_REVIEWS"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["MOVIE_REVIEWS"];
 
 				#region OnRelationCreate
 
@@ -2587,7 +2587,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -2599,7 +2599,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2628,7 +2628,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -2640,7 +2640,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2669,7 +2669,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -2681,7 +2681,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2710,7 +2710,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2722,15 +2722,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class MOVIE_ROLES
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["MOVIE_ROLES"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["MOVIE_ROLES"];
 
 				#region OnRelationCreate
 
@@ -2756,7 +2756,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -2768,7 +2768,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2797,7 +2797,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -2809,7 +2809,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2838,7 +2838,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -2850,7 +2850,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2879,7 +2879,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -2891,15 +2891,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class MOVIEREVIEW_HAS_MOVIE
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["MOVIEREVIEW_HAS_MOVIE"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["MOVIEREVIEW_HAS_MOVIE"];
 
 				#region OnRelationCreate
 
@@ -2925,7 +2925,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -2937,7 +2937,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -2966,7 +2966,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -2978,7 +2978,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3007,7 +3007,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -3019,7 +3019,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3048,7 +3048,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -3060,15 +3060,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class MOVIEROLE_HAS_MOVIE
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["MOVIEROLE_HAS_MOVIE"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["MOVIEROLE_HAS_MOVIE"];
 
 				#region OnRelationCreate
 
@@ -3094,7 +3094,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -3106,7 +3106,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3135,7 +3135,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -3147,7 +3147,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3176,7 +3176,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -3188,7 +3188,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3217,7 +3217,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -3229,15 +3229,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class PRODUCED
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["PRODUCED"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["PRODUCED"];
 
 				#region OnRelationCreate
 
@@ -3263,7 +3263,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -3275,7 +3275,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3304,7 +3304,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -3316,7 +3316,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3345,7 +3345,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -3357,7 +3357,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3386,7 +3386,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -3398,15 +3398,15 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
 			public static class WROTE
-            {
-				private static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["WROTE"];
+			{
+				public static readonly Relationship Relationship = MovieGraph.Model.Datastore.Model.Relations["WROTE"];
 
 				#region OnRelationCreate
 
@@ -3432,7 +3432,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreate -= value;
-							if (onRelationCreate == null && onRelationCreateIsRegistered)
+							if (onRelationCreate is null && onRelationCreateIsRegistered)
 							{
 								Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
 								onRelationCreateIsRegistered = false;
@@ -3444,7 +3444,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3473,7 +3473,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationCreated -= value;
-							if (onRelationCreated == null && onRelationCreatedIsRegistered)
+							if (onRelationCreated is null && onRelationCreatedIsRegistered)
 							{
 								Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
 								onRelationCreatedIsRegistered = false;
@@ -3485,7 +3485,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3514,7 +3514,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDelete -= value;
-							if (onRelationDelete == null && onRelationDeleteIsRegistered)
+							if (onRelationDelete is null && onRelationDeleteIsRegistered)
 							{
 								Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
 								onRelationDeleteIsRegistered = false;
@@ -3526,7 +3526,7 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
@@ -3555,7 +3555,7 @@ namespace Domain.Data.Manipulation
 						lock (Relationship)
 						{
 							onRelationDeleted -= value;
-							if (onRelationDeleted == null && onRelationDeletedIsRegistered)
+							if (onRelationDeleted is null && onRelationDeletedIsRegistered)
 							{
 								Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
 								onRelationDeletedIsRegistered = false;
@@ -3567,12 +3567,12 @@ namespace Domain.Data.Manipulation
 				private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
 				{
 					EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Relationship)sender, args);
 				}
 
 				#endregion
-            }
+			}
         }
 	}
 }

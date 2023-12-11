@@ -11,7 +11,7 @@ using q = Domain.Data.Query;
 namespace Domain.Data.Manipulation
 {
 	public interface IMovieOriginalData
-    {
+	{
 		string title { get; }
 		string tagline { get; }
 		int? released { get; }
@@ -21,88 +21,87 @@ namespace Domain.Data.Manipulation
 		IEnumerable<Person> Directors { get; }
 		IEnumerable<Person> Producers { get; }
 		IEnumerable<Person> Writers { get; }
-    }
+	}
 
 	public partial class Movie : OGM<Movie, Movie.MovieData, System.String>, IMovieOriginalData
 	{
-        #region Initialize
+		#region Initialize
 
-        static Movie()
-        {
-            Register.Types();
-        }
+		static Movie()
+		{
+			Register.Types();
+		}
 
-        protected override void RegisterGeneratedStoredQueries()
-        {
-            #region LoadByKeys
-            
-            RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
-                Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
-            #endregion
+		protected override void RegisterGeneratedStoredQueries()
+		{
+			#region LoadByKeys
+			
+			RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
+				Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
+
+			#endregion
 
 			#region LoadByUid
 
 			RegisterQuery(nameof(LoadByUid), (query, alias) => query.
-                Where(alias.Uid == Parameter.New<string>(Param0)));
+				Where(alias.Uid == Parameter.New<string>(Param0)));
 
 			#endregion
 
 			AdditionalGeneratedStoredQueries();
-        }
+		}
 		public static Movie LoadByUid(string uid)
 		{
 			return FromQuery(nameof(LoadByUid), new Parameter(Param0, uid)).FirstOrDefault();
 		}
-        partial void AdditionalGeneratedStoredQueries();
+		partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, Movie> LoadByKeys(IEnumerable<System.String> uids)
-        {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
-        }
+		public static Dictionary<System.String, Movie> LoadByKeys(IEnumerable<System.String> uids)
+		{
+			return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+		}
 
 		protected static void RegisterQuery(string name, Func<IMatchQuery, q.MovieAlias, IWhereQuery> query)
-        {
-            q.MovieAlias alias;
+		{
+			q.MovieAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Movie.Alias(out alias));
-            IWhereQuery partial = query.Invoke(matchQuery, alias);
-            ICompiled compiled = partial.Return(alias).Compile();
+			IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Movie.Alias(out alias, "node"));
+			IWhereQuery partial = query.Invoke(matchQuery, alias);
+			ICompiled compiled = partial.Return(alias).Compile();
 
 			RegisterQuery(name, compiled);
-        }
+		}
 
 		public override string ToString()
-        {
-            return $"Movie => title : {this.title?.ToString() ?? "null"}, tagline : {this.tagline?.ToString() ?? "null"}, released : {this.released?.ToString() ?? "null"}, Uid : {this.Uid}";
-        }
+		{
+			return $"Movie => title : {this.title?.ToString() ?? "null"}, tagline : {this.tagline?.ToString() ?? "null"}, released : {this.released?.ToString() ?? "null"}, Uid : {this.Uid}";
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		protected override void LazySet()
-        {
-            base.LazySet();
-            if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
-            {
-                if ((object)InnerData == (object)OriginalData)
-                    OriginalData = new MovieData(InnerData);
-            }
-        }
+		{
+			base.LazySet();
+			if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
+			{
+				if (ReferenceEquals(InnerData, OriginalData))
+					OriginalData = new MovieData(InnerData);
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 		#region Validations
 
 		protected override void ValidateSave()
 		{
-            bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
+			bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
-#pragma warning disable CS0472
-#pragma warning restore CS0472
 		}
 
 		protected override void ValidateDelete()
@@ -116,12 +115,12 @@ namespace Domain.Data.Manipulation
 		public class MovieData : Data<System.String>
 		{
 			public MovieData()
-            {
+			{
 
-            }
+			}
 
-            public MovieData(MovieData data)
-            {
+			public MovieData(MovieData data)
+			{
 				title = data.title;
 				tagline = data.tagline;
 				released = data.released;
@@ -131,10 +130,10 @@ namespace Domain.Data.Manipulation
 				Directors = data.Directors;
 				Producers = data.Producers;
 				Writers = data.Writers;
-            }
+			}
 
 
-            #region Initialize Collections
+			#region Initialize Collections
 
 			protected override void InitializeCollections()
 			{
@@ -241,229 +240,272 @@ namespace Domain.Data.Manipulation
 
 		#region Reflection
 
-        private static MovieMembers members = null;
-        public static MovieMembers Members
-        {
-            get
-            {
-                if (members == null)
-                {
-                    lock (typeof(Movie))
-                    {
-                        if (members == null)
-                            members = new MovieMembers();
-                    }
-                }
-                return members;
-            }
-        }
-        public class MovieMembers
-        {
-            internal MovieMembers() { }
+		private static MovieMembers members = null;
+		public static MovieMembers Members
+		{
+			get
+			{
+				if (members is null)
+				{
+					lock (typeof(Movie))
+					{
+						if (members is null)
+							members = new MovieMembers();
+					}
+				}
+				return members;
+			}
+		}
+		public class MovieMembers
+		{
+			internal MovieMembers() { }
 
 			#region Members for interface IMovie
 
-            public Property title { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["title"];
-            public Property tagline { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["tagline"];
-            public Property released { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["released"];
-            public Property Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Uid"];
-            public Property Genres { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Genres"];
-            public Property Actors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Actors"];
-            public Property Directors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Directors"];
-            public Property Producers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Producers"];
-            public Property Writers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Writers"];
+			public Property title { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["title"];
+			public Property tagline { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["tagline"];
+			public Property released { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["released"];
+			public Property Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Uid"];
+			public Property Genres { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Genres"];
+			public Property Actors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Actors"];
+			public Property Directors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Directors"];
+			public Property Producers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Producers"];
+			public Property Writers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Writers"];
 			#endregion
 
-        }
+		}
 
-        private static MovieFullTextMembers fullTextMembers = null;
-        public static MovieFullTextMembers FullTextMembers
-        {
-            get
-            {
-                if (fullTextMembers == null)
-                {
-                    lock (typeof(Movie))
-                    {
-                        if (fullTextMembers == null)
-                            fullTextMembers = new MovieFullTextMembers();
-                    }
-                }
-                return fullTextMembers;
-            }
-        }
+		private static MovieFullTextMembers fullTextMembers = null;
+		public static MovieFullTextMembers FullTextMembers
+		{
+			get
+			{
+				if (fullTextMembers is null)
+				{
+					lock (typeof(Movie))
+					{
+						if (fullTextMembers is null)
+							fullTextMembers = new MovieFullTextMembers();
+					}
+				}
+				return fullTextMembers;
+			}
+		}
 
-        public class MovieFullTextMembers
-        {
-            internal MovieFullTextMembers() { }
+		public class MovieFullTextMembers
+		{
+			internal MovieFullTextMembers() { }
 
-        }
+		}
 
 		sealed public override Entity GetEntity()
-        {
-            if (entity == null)
-            {
-                lock (typeof(Movie))
-                {
-                    if (entity == null)
-                        entity = MovieGraph.Model.Datastore.Model.Entities["Movie"];
-                }
-            }
-            return entity;
-        }
+		{
+			if (entity is null)
+			{
+				lock (typeof(Movie))
+				{
+					if (entity is null)
+						entity = MovieGraph.Model.Datastore.Model.Entities["Movie"];
+				}
+			}
+			return entity;
+		}
 
 		private static MovieEvents events = null;
-        public static MovieEvents Events
-        {
-            get
-            {
-                if (events == null)
-                {
-                    lock (typeof(Movie))
-                    {
-                        if (events == null)
-                            events = new MovieEvents();
-                    }
-                }
-                return events;
-            }
-        }
-        public class MovieEvents
-        {
+		public static MovieEvents Events
+		{
+			get
+			{
+				if (events is null)
+				{
+					lock (typeof(Movie))
+					{
+						if (events is null)
+							events = new MovieEvents();
+					}
+				}
+				return events;
+			}
+		}
+		public class MovieEvents
+		{
 
-            #region OnNew
+			#region OnNew
 
-            private bool onNewIsRegistered = false;
+			private bool onNewIsRegistered = false;
 
-            private EventHandler<Movie, EntityEventArgs> onNew;
-            public event EventHandler<Movie, EntityEventArgs> OnNew
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            Entity.Events.OnNew += onNewProxy;
-                            onNewIsRegistered = true;
-                        }
-                        onNew += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onNew -= value;
-                        if (onNew == null && onNewIsRegistered)
-                        {
-                            Entity.Events.OnNew -= onNewProxy;
-                            onNewIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Movie, EntityEventArgs> onNew;
+			public event EventHandler<Movie, EntityEventArgs> OnNew
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							Entity.Events.OnNew += onNewProxy;
+							onNewIsRegistered = true;
+						}
+						onNew += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onNew -= value;
+						if (onNew is null && onNewIsRegistered)
+						{
+							Entity.Events.OnNew -= onNewProxy;
+							onNewIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onNewProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Movie, EntityEventArgs> handler = onNew;
-                if ((object)handler != null)
-                    handler.Invoke((Movie)sender, args);
-            }
+			{
+				EventHandler<Movie, EntityEventArgs> handler = onNew;
+				if (handler is not null)
+					handler.Invoke((Movie)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnDelete
+			#region OnDelete
 
-            private bool onDeleteIsRegistered = false;
+			private bool onDeleteIsRegistered = false;
 
-            private EventHandler<Movie, EntityEventArgs> onDelete;
-            public event EventHandler<Movie, EntityEventArgs> OnDelete
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            Entity.Events.OnDelete += onDeleteProxy;
-                            onDeleteIsRegistered = true;
-                        }
-                        onDelete += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onDelete -= value;
-                        if (onDelete == null && onDeleteIsRegistered)
-                        {
-                            Entity.Events.OnDelete -= onDeleteProxy;
-                            onDeleteIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Movie, EntityEventArgs> onDelete;
+			public event EventHandler<Movie, EntityEventArgs> OnDelete
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							Entity.Events.OnDelete += onDeleteProxy;
+							onDeleteIsRegistered = true;
+						}
+						onDelete += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onDelete -= value;
+						if (onDelete is null && onDeleteIsRegistered)
+						{
+							Entity.Events.OnDelete -= onDeleteProxy;
+							onDeleteIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onDeleteProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Movie, EntityEventArgs> handler = onDelete;
-                if ((object)handler != null)
-                    handler.Invoke((Movie)sender, args);
-            }
+			{
+				EventHandler<Movie, EntityEventArgs> handler = onDelete;
+				if (handler is not null)
+					handler.Invoke((Movie)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnSave
+			#region OnSave
 
-            private bool onSaveIsRegistered = false;
+			private bool onSaveIsRegistered = false;
 
-            private EventHandler<Movie, EntityEventArgs> onSave;
-            public event EventHandler<Movie, EntityEventArgs> OnSave
-            {
-                add
-                {
-                    lock (this)
-                    {
-                        if (!onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            Entity.Events.OnSave += onSaveProxy;
-                            onSaveIsRegistered = true;
-                        }
-                        onSave += value;
-                    }
-                }
-                remove
-                {
-                    lock (this)
-                    {
-                        onSave -= value;
-                        if (onSave == null && onSaveIsRegistered)
-                        {
-                            Entity.Events.OnSave -= onSaveProxy;
-                            onSaveIsRegistered = false;
-                        }
-                    }
-                }
-            }
-            
+			private EventHandler<Movie, EntityEventArgs> onSave;
+			public event EventHandler<Movie, EntityEventArgs> OnSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							Entity.Events.OnSave += onSaveProxy;
+							onSaveIsRegistered = true;
+						}
+						onSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onSave -= value;
+						if (onSave is null && onSaveIsRegistered)
+						{
+							Entity.Events.OnSave -= onSaveProxy;
+							onSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
 			private void onSaveProxy(object sender, EntityEventArgs args)
-            {
-                EventHandler<Movie, EntityEventArgs> handler = onSave;
-                if ((object)handler != null)
-                    handler.Invoke((Movie)sender, args);
-            }
+			{
+				EventHandler<Movie, EntityEventArgs> handler = onSave;
+				if (handler is not null)
+					handler.Invoke((Movie)sender, args);
+			}
 
-            #endregion
+			#endregion
 
-            #region OnPropertyChange
+			#region OnAfterSave
 
-            public static class OnPropertyChange
-            {
+			private bool onAfterSaveIsRegistered = false;
+
+			private EventHandler<Movie, EntityEventArgs> onAfterSave;
+			public event EventHandler<Movie, EntityEventArgs> OnAfterSave
+			{
+				add
+				{
+					lock (this)
+					{
+						if (!onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							Entity.Events.OnAfterSave += onAfterSaveProxy;
+							onAfterSaveIsRegistered = true;
+						}
+						onAfterSave += value;
+					}
+				}
+				remove
+				{
+					lock (this)
+					{
+						onAfterSave -= value;
+						if (onAfterSave is null && onAfterSaveIsRegistered)
+						{
+							Entity.Events.OnAfterSave -= onAfterSaveProxy;
+							onAfterSaveIsRegistered = false;
+						}
+					}
+				}
+			}
+			
+			private void onAfterSaveProxy(object sender, EntityEventArgs args)
+			{
+				EventHandler<Movie, EntityEventArgs> handler = onAfterSave;
+				if (handler is not null)
+					handler.Invoke((Movie)sender, args);
+			}
+
+			#endregion
+
+			#region OnPropertyChange
+
+			public static class OnPropertyChange
+			{
 
 				#region Ontitle
 
@@ -490,7 +532,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							ontitle -= value;
-							if (ontitle == null && ontitleIsRegistered)
+							if (ontitle is null && ontitleIsRegistered)
 							{
 								Members.title.Events.OnChange -= ontitleProxy;
 								ontitleIsRegistered = false;
@@ -498,11 +540,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void ontitleProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = ontitle;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -533,7 +575,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							ontagline -= value;
-							if (ontagline == null && ontaglineIsRegistered)
+							if (ontagline is null && ontaglineIsRegistered)
 							{
 								Members.tagline.Events.OnChange -= ontaglineProxy;
 								ontaglineIsRegistered = false;
@@ -541,11 +583,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void ontaglineProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = ontagline;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -576,7 +618,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onreleased -= value;
-							if (onreleased == null && onreleasedIsRegistered)
+							if (onreleased is null && onreleasedIsRegistered)
 							{
 								Members.released.Events.OnChange -= onreleasedProxy;
 								onreleasedIsRegistered = false;
@@ -584,11 +626,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onreleasedProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = onreleased;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -619,7 +661,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onUid -= value;
-							if (onUid == null && onUidIsRegistered)
+							if (onUid is null && onUidIsRegistered)
 							{
 								Members.Uid.Events.OnChange -= onUidProxy;
 								onUidIsRegistered = false;
@@ -627,11 +669,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onUidProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = onUid;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -662,7 +704,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onGenres -= value;
-							if (onGenres == null && onGenresIsRegistered)
+							if (onGenres is null && onGenresIsRegistered)
 							{
 								Members.Genres.Events.OnChange -= onGenresProxy;
 								onGenresIsRegistered = false;
@@ -670,11 +712,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onGenresProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = onGenres;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -705,7 +747,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onActors -= value;
-							if (onActors == null && onActorsIsRegistered)
+							if (onActors is null && onActorsIsRegistered)
 							{
 								Members.Actors.Events.OnChange -= onActorsProxy;
 								onActorsIsRegistered = false;
@@ -713,11 +755,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onActorsProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = onActors;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -748,7 +790,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onDirectors -= value;
-							if (onDirectors == null && onDirectorsIsRegistered)
+							if (onDirectors is null && onDirectorsIsRegistered)
 							{
 								Members.Directors.Events.OnChange -= onDirectorsProxy;
 								onDirectorsIsRegistered = false;
@@ -756,11 +798,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onDirectorsProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = onDirectors;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -791,7 +833,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onProducers -= value;
-							if (onProducers == null && onProducersIsRegistered)
+							if (onProducers is null && onProducersIsRegistered)
 							{
 								Members.Producers.Events.OnChange -= onProducersProxy;
 								onProducersIsRegistered = false;
@@ -799,11 +841,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onProducersProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = onProducers;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -834,7 +876,7 @@ namespace Domain.Data.Manipulation
 						lock (typeof(OnPropertyChange))
 						{
 							onWriters -= value;
-							if (onWriters == null && onWritersIsRegistered)
+							if (onWriters is null && onWritersIsRegistered)
 							{
 								Members.Writers.Events.OnChange -= onWritersProxy;
 								onWritersIsRegistered = false;
@@ -842,11 +884,11 @@ namespace Domain.Data.Manipulation
 						}
 					}
 				}
-            
+			
 				private static void onWritersProxy(object sender, PropertyEventArgs args)
 				{
 					EventHandler<Movie, PropertyEventArgs> handler = onWriters;
-					if ((object)handler != null)
+					if (handler is not null)
 						handler.Invoke((Movie)sender, args);
 				}
 
@@ -855,9 +897,9 @@ namespace Domain.Data.Manipulation
 			}
 
 			#endregion
-        }
+		}
 
-        #endregion
+		#endregion
 
 		#region IMovieOriginalData
 
