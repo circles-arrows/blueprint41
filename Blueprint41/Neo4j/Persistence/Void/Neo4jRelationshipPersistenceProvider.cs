@@ -306,8 +306,21 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
-            parameters.Add("node", properties ?? new Dictionary<string, object>());
 
+            Dictionary<string, object> node = new Dictionary<string, object>();
+            if (properties is not null)
+            {
+                foreach (var kvp in properties)
+                {
+                    object? value = PersistenceProviderFactory.ConvertToStoredType(kvp.Value.GetType(), kvp.Value);
+                    if (value is null)
+                        continue;
+
+                    node.Add(kvp.Key, value!);
+                }
+            }
+
+            parameters.Add("node", node);
             parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
 
 
@@ -359,7 +372,11 @@ namespace Blueprint41.Neo4j.Persistence.Void
             {
                 foreach (var kvp in properties)
                 {
-                    node.Add(kvp.Key, kvp.Value);
+                    object? value = PersistenceProviderFactory.ConvertToStoredType(kvp.Value.GetType(), kvp.Value);
+                    if (value is null)
+                        continue;
+
+                    node.Add(kvp.Key, value!);
                 }
             }
 
