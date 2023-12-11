@@ -8,7 +8,7 @@
 
     Log("	executing {0} -> Merge property from {0} to {1}", this.GetType().Name, From.Name, To.Name);
 #>
-MATCH (node:<#= ConcreteParent.Label.Name #>) WHERE node.<#= From.Name #> IS NOT NULL
+MATCH (node:<#= Entity.Label.Name #>) WHERE node.<#= From.Name #> IS NOT NULL
 WITH node LIMIT 10000 
 SET node.<#= To.Name #> = node.<#= From.Name #>
 SET node.<#= From.Name #> = NULL

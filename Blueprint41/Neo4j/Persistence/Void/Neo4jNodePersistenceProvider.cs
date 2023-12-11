@@ -472,7 +472,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             return Load<T>(entity, args, result, trans);
         }
 
-        public override bool RelationshipExists(Property foreignProperty, OGM item)
+        public override bool RelationshipExists(EntityProperty foreignProperty, OGM item)
         {
             string pattern;
             if (foreignProperty.Direction == DirectionEnum.In)

@@ -27,7 +27,8 @@ namespace Blueprint41
         }
         internal Entity(DatastoreModel parent, string name, string label, FunctionalId? functionalId, Entity? inherits)
         {
-            Properties = new PropertyCollection(this);
+            _properties = new PropertyCollection(this);
+            Properties = new EntityPropertyCollection<EntityProperty, Entity>(this, _properties);
 
             Parent = parent;
             Name = name;
@@ -45,9 +46,9 @@ namespace Blueprint41
 
             this.functionalId = functionalId;
 
-            key = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey); }, true);
-            nodeType = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType); }, true);
-            rowVersion = new Lazy<Property>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
+            key = new Lazy<EntityProperty>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey); }, true);
+            nodeType = new Lazy<EntityProperty>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType); }, true);
+            rowVersion = new Lazy<EntityProperty>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
 
             Parent.SubModels["Main"].AddEntityInternal(this);
         }
@@ -138,7 +139,7 @@ namespace Blueprint41
 
         public Entity SetFullTextProperty(string propertyName)
         {
-            Property? property = Search(propertyName);
+            EntityProperty? property = Search(propertyName);
             if (property is null)
                 throw new NotSupportedException("Property does not exist.");
 
@@ -147,7 +148,7 @@ namespace Blueprint41
         }
         public Entity RemoveFullTextProperty(string propertyName)
         {
-            Property? property = Search(propertyName);
+            EntityProperty? property = Search(propertyName);
             if (property is null)
                 throw new NotSupportedException("Property does not exist.");
 
@@ -164,7 +165,7 @@ namespace Blueprint41
         {
             VerifyFromInheritedProperties(name);
 
-            Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            EntityProperty value = new EntityProperty(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
             Properties.Add(name, value);
 
             // StaticData
@@ -176,7 +177,7 @@ namespace Blueprint41
         {
             VerifyFromInheritedProperties(name);
 
-            Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            EntityProperty value = new EntityProperty(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
             Properties.Add(name, value);
 
             // StaticData
@@ -195,7 +196,7 @@ namespace Blueprint41
 
             VerifyFromInheritedProperties(name);
 
-            Property value = new Property(this, PropertyType.Attribute, name, type, nullable, indexType);
+            EntityProperty value = new EntityProperty(this, PropertyType.Attribute, name, type, nullable, indexType);
             Properties.Add(name, value);
 
             // StaticData
@@ -217,26 +218,28 @@ namespace Blueprint41
         }
         internal Entity AddLookup(string name, Entity type, bool nullable = true)
         {
-            Property value = new Property(this, PropertyType.Lookup, name, type, nullable, IndexType.None);
+            EntityProperty value = new EntityProperty(this, PropertyType.Lookup, name, type, nullable, IndexType.None);
             Properties.Add(name, value);
 
             return this;
         }
         internal Entity AddCollection(string name, Entity type)
         {
-            Property value = new Property(this, PropertyType.Collection, name, type, true, IndexType.None);
+            EntityProperty value = new EntityProperty(this, PropertyType.Collection, name, type, true, IndexType.None);
             Properties.Add(name, value);
 
             return this;
         }
 
-        public IReadOnlyList<Property> FullTextIndexProperties
+        public IReadOnlyList<EntityProperty> FullTextIndexProperties
         {
             get { return fullTextIndexProperties; }
         }
-        private List<Property> fullTextIndexProperties = new List<Property>();
+        private List<EntityProperty> fullTextIndexProperties = new List<EntityProperty>();
 
-        public PropertyCollection Properties { get; private set; }
+        public EntityPropertyCollection<EntityProperty, Entity> Properties { get; private set; }
+        private readonly PropertyCollection _properties;
+
         public string? UnidentifiedProperties { get; private set; }
 
         public Entity? InheritedUnidentifiedProperties()
@@ -248,8 +251,8 @@ namespace Blueprint41
         }
 
 
-        private Lazy<Property> key;
-        public Property Key
+        private Lazy<EntityProperty> key;
+        public EntityProperty Key
         {
             get
             {
@@ -259,8 +262,8 @@ namespace Blueprint41
                 return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey);
             }
         }
-        private Lazy<Property> nodeType;
-        public Property NodeType
+        private Lazy<EntityProperty> nodeType;
+        public EntityProperty NodeType
         {
             get
             {
@@ -277,8 +280,8 @@ namespace Blueprint41
                 return (NodeType is null) ? "NodeType" : NodeType.Name;
             }
         }
-        private Lazy<Property> rowVersion;
-        public Property RowVersion
+        private Lazy<EntityProperty> rowVersion;
+        public EntityProperty RowVersion
         {
             get
             {
@@ -493,7 +496,7 @@ namespace Blueprint41
 
                 Parent.Templates.SetDefaultConstantValue(template =>
                 {
-                    template.Entity = this;
+                    template.Caller = this;
                     template.Property = property;
                     template.Value = fields[key];
                 }).RunBatched();
@@ -521,7 +524,7 @@ namespace Blueprint41
             {
                 Parent.Templates.CopyProperty(template =>
                 {
-                    template.Entity = subClass;
+                    template.Caller = subClass;
                     template.From = source.Name;
                     template.To = target.Name;
                 }).RunBatched();
@@ -541,7 +544,7 @@ namespace Blueprint41
 
                 Parent.Templates.SetLabel(template =>
                 {
-                    template.Entity = this;
+                    template.Caller = this;
                     template.Label = baseClass.Label.Name;
                 }).RunBatched();
             }
@@ -557,7 +560,7 @@ namespace Blueprint41
                 {
                     Parent.Templates.CreateIndex(template =>
                     {
-                        template.Entity = this;
+                        template.Caller = this;
                         template.Property = property;
                     }).Run(false);
                 }
@@ -714,7 +717,7 @@ namespace Blueprint41
             {
                 Parent.Templates.ApplyFunctionalId(template =>
                 {
-                    template.Entity = this;
+                    template.Caller = this;
                     template.FunctionalId = functionalId;
                     template.Full = (algorithm == ApplyAlgorithm.ReapplyAll);
                 }).RunBatched();
@@ -1015,13 +1018,17 @@ namespace Blueprint41
 
         #region Helper Methods
 
-        public bool IsSubsclassOf(Entity baseType)
+        public bool IsSubsclassOf(IEntity baseType)
         {
+            Entity? baseEntity = baseType as Entity;
+            if (baseEntity is null)
+                return false;
+
             bool found = false;
 
             WalkBaseTypes(Inherits, delegate (Entity item)
             {
-                if (item == baseType)
+                if (item == baseEntity)
                 {
                     found = true;
                     return true; // cancel walking
@@ -1031,13 +1038,17 @@ namespace Blueprint41
 
             return found;
         }
-        public bool IsSelfOrSubclassOf(Entity baseType)
+        public bool IsSelfOrSubclassOf(IEntity baseType)
         {
+            Entity? baseEntity = baseType as Entity;
+            if (baseEntity is null)
+                return (baseType == this);
+
             bool found = false;
 
             WalkBaseTypes(this, delegate (Entity item)
             {
-                if (item.Name == baseType.Name)
+                if (item.Name == baseEntity.Name)
                 {
                     found = true;
                     return true; // cancel walking
@@ -1159,10 +1170,10 @@ namespace Blueprint41
             });
         }
 
-        private List<Property>? propertiesOfBaseTypesAndSelf = null;
-        public IReadOnlyList<Property> GetPropertiesOfBaseTypesAndSelf()
+        private List<EntityProperty>? propertiesOfBaseTypesAndSelf = null;
+        public IReadOnlyList<EntityProperty> GetPropertiesOfBaseTypesAndSelf()
         {
-            return InitSubList(ref propertiesOfBaseTypesAndSelf, delegate (List<Property> allProperties)
+            return InitSubList(ref propertiesOfBaseTypesAndSelf, delegate (List<EntityProperty> allProperties)
             {
                 foreach (Entity entity in this.GetBaseTypesAndSelf())
                 {
@@ -1211,21 +1222,21 @@ namespace Blueprint41
             return listReference;
         }
 
-        private IReadOnlyDictionary<string, Property>? namedPropertiesOfBaseTypesAndSelf = null;
-        public Property? Search(string name)
+        private IReadOnlyDictionary<string, EntityProperty>? namedPropertiesOfBaseTypesAndSelf = null;
+        public EntityProperty? Search(string name)
         {
             if (Parent.IsUpgraded)
             {
                 if (namedPropertiesOfBaseTypesAndSelf is null)
-                    namedPropertiesOfBaseTypesAndSelf = GetPropertiesOfBaseTypesAndSelf().ToDictionary(key => key.Name.ToLower(), value => value);
+                    namedPropertiesOfBaseTypesAndSelf = GetPropertiesOfBaseTypesAndSelf().Cast<EntityProperty>().ToDictionary(key => key.Name.ToLower(), value => value);
 
-                Property? foundProperty;
+                EntityProperty? foundProperty;
                 namedPropertiesOfBaseTypesAndSelf.TryGetValue(name.ToLower(), out foundProperty);
                 return foundProperty;
             }
             else
             {
-                return GetPropertiesOfBaseTypesAndSelf().FirstOrDefault(item => item.Name.ToLower() == name.ToLower());
+                return GetPropertiesOfBaseTypesAndSelf().Cast<EntityProperty>().FirstOrDefault(item => item.Name.ToLower() == name.ToLower());
             }
         }
 

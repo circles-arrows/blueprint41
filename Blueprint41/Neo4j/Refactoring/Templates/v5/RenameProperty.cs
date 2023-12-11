@@ -42,7 +42,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             this.Write("MATCH (node:");
             
             #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RenameProperty.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(ConcreteParent.Label.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden

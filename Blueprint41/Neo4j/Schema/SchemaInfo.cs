@@ -74,7 +74,7 @@ namespace Blueprint41.Neo4j.Schema
         {
             return Model.Entities.Where(entity => !entity.IsVirtual).Select(entity => GetConstraintDifferences(entity)).ToArray();
         }
-        public ApplyConstraintEntity GetConstraintDifferences(Entity entity)
+        public ApplyConstraintEntity GetConstraintDifferences(IEntity entity)
         {
             return NewApplyConstraintEntity(entity);
         }
@@ -187,7 +187,7 @@ namespace Blueprint41.Neo4j.Schema
         protected virtual ConstraintInfo   NewConstraintInfo(RawRecord rawRecord)   => new ConstraintInfo(rawRecord);
         protected virtual IndexInfo        NewIndexInfo(RawRecord rawRecord)        => new IndexInfo(rawRecord);
 
-        internal virtual ApplyConstraintEntity    NewApplyConstraintEntity(Entity entity)                                                                              => new ApplyConstraintEntity(this, entity);
+        internal virtual ApplyConstraintEntity    NewApplyConstraintEntity(IEntity entity)                                                                              => new ApplyConstraintEntity(this, entity);
         internal virtual ApplyFunctionalId        NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);
         internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty(parent, property, commands);
         internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty(parent, property, commands);

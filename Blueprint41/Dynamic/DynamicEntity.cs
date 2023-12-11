@@ -742,7 +742,7 @@ namespace Blueprint41.Dynamic
             }
         }
 
-        protected bool RelationshipExists(Property foreignProperty, OGM instance)
+        protected bool RelationshipExists(EntityProperty foreignProperty, OGM instance)
         {
             return RunningTransaction.NodePersistenceProvider.RelationshipExists(foreignProperty, instance);
         }

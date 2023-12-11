@@ -34,7 +34,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
 
 
-    Log("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, ConcreteParent.Label.Name, Name);
+    Log("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, Entity.Label.Name, Name);
 
             
             #line default
@@ -42,7 +42,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write("MATCH (node:");
             
             #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(ConcreteParent.Label.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden

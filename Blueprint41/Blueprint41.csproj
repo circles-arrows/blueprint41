@@ -89,9 +89,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ListAndDictConverters.cs</LastGenOutput>
     </None>
-    <None Update="Neo4j\Refactoring\Neo4jPersistenceProvider.tt">
+    <None Update="Neo4j\Refactoring\RefactorTemplates.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Neo4jPersistenceProvider.cs</LastGenOutput>
+      <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
     </None>
     <None Update="Neo4j\Refactoring\Templates\ApplyFunctionalId.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -301,10 +301,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ListAndDictConverters.tt</DependentUpon>
     </Compile>
-    <Compile Update="Neo4j\Refactoring\Neo4jPersistenceProvider.cs">
+    <Compile Update="Neo4j\Refactoring\RefactorTemplates.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Neo4jPersistenceProvider.tt</DependentUpon>
+      <DependentUpon>RefactorTemplates.tt</DependentUpon>
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\ApplyFunctionalId.cs">
       <DesignTime>True</DesignTime>

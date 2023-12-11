@@ -12,25 +12,28 @@ namespace Blueprint41.Neo4j.Schema.v5
 
         internal override List<string> ToCypher()
         {
+            // TODO: What about if the constraint is for a property on a relationship
+            Entity entity = (Entity)Parent.Entity;
+
             List<string> commands = new();
-            bool isEnterpriseEdition = Parent.Entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition;
+            bool isEnterpriseEdition = entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition;
             foreach ((ApplyConstraintAction actionEnum, string? constraintOrIndexName) in Commands)
             {
                 switch (actionEnum)
                 {
                     case ApplyConstraintAction.CreateIndex:
-                        commands.Add($"CREATE INDEX {Parent.Entity.Label.Name}_{Property}_RangeIndex FOR (node:{Parent.Entity.Label.Name}) ON (node.{Property})");
+                        commands.Add($"CREATE INDEX {entity.Label.Name}_{Property}_RangeIndex FOR (node:{entity.Label.Name}) ON (node.{Property})");
                         break;
                     case ApplyConstraintAction.CreateUniqueConstraint:
-                        commands.Add($"CREATE CONSTRAINT {Parent.Entity.Label.Name}_{Property}_UniqueConstraint FOR (node:{Parent.Entity.Label.Name}) REQUIRE node.{Property} IS UNIQUE");
+                        commands.Add($"CREATE CONSTRAINT {entity.Label.Name}_{Property}_UniqueConstraint FOR (node:{entity.Label.Name}) REQUIRE node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.CreateExistsConstraint:
                         if(isEnterpriseEdition)
-                            commands.Add($"CREATE CONSTRAINT {Parent.Entity.Label.Name}_{Property}_ExistsConstraint FOR (node:{Parent.Entity.Label.Name}) REQUIRE node.{Property} IS NOT NULL");
+                            commands.Add($"CREATE CONSTRAINT {entity.Label.Name}_{Property}_ExistsConstraint FOR (node:{entity.Label.Name}) REQUIRE node.{Property} IS NOT NULL");
                         break;
                     case ApplyConstraintAction.CreateKeyConstraint:
                         if (isEnterpriseEdition)
-                            commands.Add($"CREATE CONSTRAINT {Parent.Entity.Label.Name}_{Property}_KeyConstraint FOR (node:{Parent.Entity.Label.Name}) REQUIRE node.{Property} IS NODE KEY");
+                            commands.Add($"CREATE CONSTRAINT {entity.Label.Name}_{Property}_KeyConstraint FOR (node:{entity.Label.Name}) REQUIRE node.{Property} IS NODE KEY");
                         break;
                     case ApplyConstraintAction.DeleteIndex:
                         commands.Add($"DROP INDEX {constraintOrIndexName}");

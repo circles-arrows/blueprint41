@@ -33,7 +33,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             
             #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
 
-    Log("	executing {0} -> DROP CONSTRAINT ON for {1}.{2}", this.GetType().Name, Property.Parent.Label.Name, Property.Name);
+    Log("	executing {0} -> DROP CONSTRAINT ON for {1}.{2}", this.GetType().Name, Entity.Label.Name, Property.Name);
 
             
             #line default
@@ -41,7 +41,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             this.Write("DROP CONSTRAINT ON (node:");
             
             #line 10 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Parent.Label.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden

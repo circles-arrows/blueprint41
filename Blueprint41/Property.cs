@@ -20,7 +20,7 @@ namespace Blueprint41
     [DebuggerDisplay("{Parent.Name}.{Name}")]
     public partial class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
     {
-        internal Property(Entity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
+        internal Property(IEntity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
         {
             Parent = parent;
             PropertyType = storage;
@@ -33,7 +33,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = null;
         }
-        internal Property(Entity parent, PropertyType storage, string name, Property reference)
+        internal Property(IEntity parent, PropertyType storage, string name, EntityProperty reference)
         {
             Parent = parent;
             PropertyType = storage;
@@ -46,7 +46,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = null;
         }
-        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
+        internal Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
         {
             Parent = parent;
             PropertyType = storage;
@@ -59,7 +59,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(this, enumeration);
         }
-        internal Property(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
+        internal Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
         {
             Parent = parent;
             PropertyType = storage;
@@ -76,7 +76,7 @@ namespace Blueprint41
 
         #region Properties
 
-        public Entity Parent { get; private set; }
+        public IEntity Parent { get; private set; }
         public PropertyType PropertyType { get; private set; }
         public string Name { get; private set; }
         public IReadOnlyList<EnumerationValue>? EnumValues
@@ -244,7 +244,7 @@ namespace Blueprint41
                 }
             }
         }
-        public Property? ForeignProperty
+        public EntityProperty? ForeignProperty
         {
             get
             {
@@ -334,7 +334,7 @@ namespace Blueprint41
                 {
                     Parent.Parent.Templates.RenameProperty(template =>
                     {
-                        template.ConcreteParent = entity;
+                        template.Caller = entity; // ConcreteParent
                         template.From = this;
                         template.To = newName;
                     }).RunBatched();
@@ -503,7 +503,7 @@ namespace Blueprint41
                 {
                     template.From = this;
                     template.To = target;
-                    template.ConcreteParent = entity;
+                    template.Caller = entity; // ConcreteParent
                     template.MergeAlgorithm = mergeAlgorithm;
                 }).RunBatched();
             }
@@ -611,7 +611,7 @@ namespace Blueprint41
                     {
                         Parent.Parent.Templates.Convert(template =>
                         {
-                            template.Entity = entity;
+                            template.Caller = entity;
                             template.Property = this;
                             template.WhereScript = chkScript;
                             template.AssignScript = convScript;
@@ -674,7 +674,7 @@ namespace Blueprint41
                     Parent.Parent.Templates.RemoveProperty(template =>
                     {
                         template.Name = Name;
-                        template.ConcreteParent = entity;
+                        template.Caller = entity; // ConcreteParent
                     }).RunBatched();
                 }
             }
@@ -728,12 +728,12 @@ namespace Blueprint41
             NodePattern decoded = new NodePattern(Parent.Parent, pattern);
             decoded.Validate(EntityReturnType, strict);
 
-            Entity original = Parent;
+            Entity original = (Entity)Parent;
             Entity? target = decoded.GetToEntity();
 
             string left = (Direction == DirectionEnum.Out) ? "<-" : "-";
             string right = (Direction == DirectionEnum.In) ? "->" : "-";
-            string cypher = $"MATCH (anchor:{Parent.Label.Name}){left}[{Relationship.Neo4JRelationshipType}]{right}{decoded.Compile()} MERGE (anchor){left}[:{newNeo4jRelationshipType}]{right}(to)";
+            string cypher = $"MATCH (anchor:{original.Label.Name}){left}[{Relationship.Neo4JRelationshipType}]{right}{decoded.Compile()} MERGE (anchor){left}[:{newNeo4jRelationshipType}]{right}(to)";
 
             Parser.Execute(cypher, null);
 
@@ -829,11 +829,22 @@ namespace Blueprint41
 
             if (Parser.ShouldExecute)
             {
-                string cypher = string.Format("MATCH (n:{0}) WHERE n.{1} IS NULL RETURN count(n) as count", Parent.Label.Name, Name);
-                RawRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
-                bool hasNullProperty = record["count"].As<long>() > 0;
-                if (hasNullProperty)
-                    throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", Parent.Name, Name));
+                if (Parent is Entity entity)
+                {
+                    string cypher = string.Format("MATCH (n:{0}) WHERE n.{1} IS NULL RETURN count(n) as count", entity.Label.Name, Name);
+                    RawRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
+                    bool hasNullProperty = record["count"].As<long>() > 0;
+                    if (hasNullProperty)
+                        throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", entity.Name, Name));
+                }
+                else if (Parent is Relationship relationship)
+                {
+                    throw new NotSupportedException();
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
             }
         }
         void IRefactorProperty.MakeMandatory(object defaultValue)
@@ -850,7 +861,7 @@ namespace Blueprint41
                 {
                     Parent.Parent.Templates.SetDefaultConstantValue(template =>
                     {
-                        template.Entity = entity;
+                        template.Caller = entity;
                         template.Property = this;
                         template.Value = Parent.Parent.PersistenceProvider.ConvertToStoredType(SystemReturnType, defaultValue);
                     }).RunBatched();
@@ -911,7 +922,7 @@ namespace Blueprint41
                 {
                     Parent.Parent.Templates.SetDefaultConstantValue(template =>
                     {
-                        template.Entity = entity;
+                        template.Caller = entity;
                         template.Property = this;
                         template.Value = Parent.Parent.PersistenceProvider.ConvertToStoredType(SystemReturnType, defaultValue);
                     }).RunBatched();
@@ -1256,42 +1267,49 @@ namespace Blueprint41
 
         public object GetValue(OGM instance, DateTime? moment = null)
         {
-            if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
+            if (Parent is Entity entity)
             {
-                if (getValueWithMoment is null)
+                if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
                 {
-                    lock (this)
+                    if (getValueWithMoment is null)
                     {
-                        if (getValueWithMoment is null)
+                        lock (this)
                         {
-                            string name = string.Concat("Get", Name);
-                            MethodInfo? method = Parent.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
-                            if (method is null)
-                                throw new NotSupportedException("No get accessor exists");
+                            if (getValueWithMoment is null)
+                            {
+                                string name = string.Concat("Get", Name);
+                                MethodInfo? method = entity.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
+                                if (method is null)
+                                    throw new NotSupportedException("No get accessor exists");
 
-                            getValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, DateTime?, object>>(method, DelegateHelper.CreateOptions.Downcasting);
+                                getValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, DateTime?, object>>(method, DelegateHelper.CreateOptions.Downcasting);
+                            }
                         }
                     }
+                    return getValueWithMoment.Invoke(instance, moment ?? DateTime.UtcNow);
                 }
-                return getValueWithMoment.Invoke(instance, moment ?? DateTime.UtcNow);
+                else
+                {
+                    if (getValue is null)
+                    {
+                        lock (this)
+                        {
+                            if (getValue is null)
+                            {
+                                MethodInfo? method = entity.RuntimeReturnType!.GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
+                                if (method is null)
+                                    throw new NotSupportedException("No get accessor exists");
+
+                                getValue = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, object>>(method, DelegateHelper.CreateOptions.Downcasting);
+                            }
+                        }
+                    }
+                    return getValue.Invoke(instance);
+                }
             }
             else
             {
-                if (getValue is null)
-                {
-                    lock (this)
-                    {
-                        if (getValue is null)
-                        {
-                            MethodInfo? method = Parent.RuntimeReturnType!.GetProperties().FirstOrDefault(item => item.Name == Name)?.GetGetMethod();
-                            if (method is null)
-                                throw new NotSupportedException("No get accessor exists");
-
-                            getValue = DelegateHelper.CreateOpenInstanceDelegate<Func<OGM, object>>(method, DelegateHelper.CreateOptions.Downcasting);
-                        }
-                    }
-                }
-                return getValue.Invoke(instance);
+                throw new NotSupportedException("There is no OGM mapping generated for relationships or their properties.");
             }
         }
         private Func<OGM, object>? getValue = null;
@@ -1299,47 +1317,54 @@ namespace Blueprint41
 
         public void SetValue(OGM instance, object? value, DateTime? moment = null)
         {
-            if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
+            if (Parent is Entity entity)
             {
-                if (setValueWithMoment is null)
+                if (PropertyType == PropertyType.Lookup && (Relationship?.IsTimeDependent ?? false))
                 {
-                    lock (this)
+                    if (setValueWithMoment is null)
                     {
-                        if (setValueWithMoment is null)
+                        lock (this)
                         {
-                            string name = string.Concat("Set", Name);
-                            MethodInfo? method = Parent.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
-                            if (method is null)
-                                throw new NotSupportedException("No set accessor exists");
+                            if (setValueWithMoment is null)
+                            {
+                                string name = string.Concat("Set", Name);
+                                MethodInfo? method = entity.RuntimeReturnType!.GetMethods().FirstOrDefault(item => item.Name == name);
+                                if (method is null)
+                                    throw new NotSupportedException("No set accessor exists");
 
-                            setValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?, DateTime?>>(method, DelegateHelper.CreateOptions.Downcasting);
+                                setValueWithMoment = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?, DateTime?>>(method, DelegateHelper.CreateOptions.Downcasting);
+                            }
                         }
                     }
+                    setValueWithMoment.Invoke(instance, value, moment);
                 }
-                setValueWithMoment.Invoke(instance, value, moment);
+                else
+                {
+                    if (setValue is null)
+                    {
+                        lock (this)
+                        {
+                            if (setValue is null)
+                            {
+                                MethodInfo? method = entity.RuntimeReturnType!.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
+                                if (method is null)
+                                {
+                                    if (IsRowVersion)
+                                        method = typeof(OGM).GetMethod("SetRowVersion");
+
+                                    if (method is null)
+                                        throw new NotSupportedException("No set accessor exists");
+                                }
+                                setValue = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?>>(method, DelegateHelper.CreateOptions.Downcasting);
+                            }
+                        }
+                    }
+                    setValue.Invoke(instance, value);
+                }
             }
             else
             {
-                if (setValue is null)
-                {
-                    lock (this)
-                    {
-                        if (setValue is null)
-                        {
-                            MethodInfo? method = Parent.RuntimeReturnType!.GetProperties().First(item => item.Name == Name).GetSetMethod(true);
-                            if (method is null)
-                            {
-                                if (IsRowVersion)
-                                    method = typeof(OGM).GetMethod("SetRowVersion");
-
-                                if (method is null)
-                                    throw new NotSupportedException("No set accessor exists");
-                            }
-                            setValue = DelegateHelper.CreateOpenInstanceDelegate<Action<OGM, object?>>(method, DelegateHelper.CreateOptions.Downcasting);
-                        }
-                    }
-                }
-                setValue.Invoke(instance, value);
+                throw new NotSupportedException("There is no OGM mapping generated for relationships or their properties.");
             }
         }
         private Action<OGM, object?>? setValue = null;
@@ -1482,6 +1507,49 @@ namespace Blueprint41
         private Dictionary<string, Type> propertyEventArgsType = new Dictionary<string, Type>();
 
         #endregion
+    }
+
+    public class EntityProperty : Property
+    {
+        internal EntityProperty(Entity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType) 
+            : base(parent, storage, name, entityType, nullable, indexType)
+        {
+        }
+        internal EntityProperty(Entity parent, PropertyType storage, string name, EntityProperty reference) 
+            : base(parent, storage, name, reference)
+        {
+        }
+        internal EntityProperty(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null) 
+            : base (parent, storage, name, systemType, nullable, indexType, enumeration)
+        {
+        }
+        internal EntityProperty(Entity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration) 
+            : base(parent, storage, name, systemType, nullable, indexType, enumeration)
+        {
+        }
+
+        new public Entity Parent => (Entity)base.Parent;
+    }
+    public class RelationshipProperty : Property
+    {
+        internal RelationshipProperty(Relationship parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
+            : base(parent, storage, name, entityType, nullable, indexType)
+        {
+        }
+        internal RelationshipProperty(Relationship parent, PropertyType storage, string name, EntityProperty reference)
+            : base(parent, storage, name, reference)
+        {
+        }
+        internal RelationshipProperty(Relationship parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
+            : base(parent, storage, name, systemType, nullable, indexType, enumeration)
+        {
+        }
+        internal RelationshipProperty(Relationship parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
+            : base(parent, storage, name, systemType, nullable, indexType, enumeration)
+        {
+        }
+
+        new public Relationship Parent => (Relationship)base.Parent;
     }
 
     public interface IPropertyCondition

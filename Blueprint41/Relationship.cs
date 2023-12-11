@@ -28,6 +28,10 @@ namespace Blueprint41
             if (outEntity is not null && outInterface is not null)
                 throw new ArgumentException("You cannot have both the outEntity and the outInterface set at the same time.");
 
+            _self = new IEntity[] { this };
+            _properties = new PropertyCollection(this);
+            Properties = new EntityPropertyCollection<RelationshipProperty, Relationship>(this, _properties);
+
             Parent = parent;
             RelationshipType      = RelationshipType.None;
             Name                  = ComputeAliasName(name, neo4JRelationshipType, OutProperty);
@@ -48,18 +52,45 @@ namespace Blueprint41
 
         public Entity           InEntity              { get { return InInterface.BaseEntity; } }
         public Interface        InInterface           { get; private set; }
-        public Property?        InProperty            { get; private set; }
+        public EntityProperty?  InProperty            { get; private set; }
         public Entity           OutEntity             { get { return OutInterface.BaseEntity; } }
         public Interface        OutInterface          { get; private set; }
-        public Property?        OutProperty           { get; private set; }
+        public EntityProperty?  OutProperty           { get; private set; }
 
-        public string           CreationDate { get { return "CreationDate"; } }
+        public string           CreationDate          { get { return "CreationDate"; } }
 
         public string           StartDate             { get { return "StartDate"; } }
         public string           EndDate               { get { return "EndDate";  } }
         public bool             IsTimeDependent       { get; private set; }
 
         public Guid Guid { get; private set; }
+
+        public EntityPropertyCollection<RelationshipProperty, Relationship> Properties { get; private set; }
+        private readonly PropertyCollection _properties;
+
+        public Relationship SetFullTextProperty(string propertyName)
+        {
+            RelationshipProperty? property = Search(propertyName);
+            if (property is null)
+                throw new NotSupportedException("Property does not exist.");
+
+            fullTextIndexProperties.Add(property);
+            return this;
+        }
+        public Relationship RemoveFullTextProperty(string propertyName)
+        {
+            RelationshipProperty? property = Search(propertyName);
+            if (property is null)
+                throw new NotSupportedException("Property does not exist.");
+
+            fullTextIndexProperties.Remove(property);
+            return this;
+        }
+        public IReadOnlyList<RelationshipProperty> FullTextIndexProperties
+        {
+            get { return fullTextIndexProperties; }
+        }
+        private List<RelationshipProperty> fullTextIndexProperties = new List<RelationshipProperty>();
 
         #endregion
 
@@ -137,6 +168,50 @@ namespace Blueprint41
             return this;
         }
 
+        //public Relationship AddProperty(string name, Type type)
+        //{
+        //    return AddProperty(name, type, true, IndexType.None);
+        //}
+        //public Relationship AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        //{
+        //    VerifyInOrOutProeprtyIsAlreadySet();
+
+        //    Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+        //    Properties.Add(name, value);
+
+        //    return this;
+        //}
+        //public Relationship AddProperty(string name, Enumeration enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        //{
+        //    VerifyInOrOutProeprtyIsAlreadySet();
+
+        //    Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+        //    Properties.Add(name, value);
+
+        //    return this;
+        //}
+        //public Relationship AddProperty(string name, Type type, IndexType indexType)
+        //{
+        //    return AddProperty(name, type, true, indexType);
+        //}
+        //public Relationship AddProperty(string name, Type type, bool nullable, IndexType indexType = IndexType.None)
+        //{
+        //    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        //        throw new ArgumentException(string.Format("The type argument does not support the 'Nullable<{0}>' type. All types are considered nullable by default, but you can also set the 'nullable' argument explicitly.", type.GenericTypeArguments[0].Name));
+
+        //    VerifyInOrOutProeprtyIsAlreadySet();
+
+        //    Property value = new Property(this, PropertyType.Attribute, name, type, nullable, indexType);
+        //    Properties.Add(name, value);
+
+        //    return this;
+        //}
+        //private void VerifyInOrOutProeprtyIsAlreadySet()
+        //{
+        //    if (InProperty is null && OutProperty is null)
+        //        throw new InvalidOperationException("At least 1 in or out property needs to be set before primitive properties can be added.");
+        //}
+
         internal void ResetProperty(DirectionEnum direction)
         {
             if (direction == DirectionEnum.In)
@@ -176,7 +251,7 @@ namespace Blueprint41
             {
                 Parent.Templates.RenameRelationship(template =>
                 {
-                    template.Relationship = this;
+                    template.Caller = this;
                     template.OldName = oldName;
                     template.NewName = Neo4JRelationshipType;
                 }).RunBatched();
@@ -390,6 +465,28 @@ namespace Blueprint41
             add { onRelationDeleted += value; }
             remove { onRelationDeleted -= value; }
         }
+
+        #endregion
+
+        #region Helper Methods
+
+        public RelationshipProperty? Search(string name)
+        {
+            if (Parent.IsUpgraded)
+            {
+                if (namedProperties is null)
+                    namedProperties = Properties.ToDictionary(key => key.Name.ToLower(), value => value);
+
+                RelationshipProperty? foundProperty;
+                namedProperties.TryGetValue(name.ToLower(), out foundProperty);
+                return foundProperty;
+            }
+            else
+            {
+                return Properties.FirstOrDefault(item => item.Name.ToLower() == name.ToLower());
+            }
+        }
+        private IReadOnlyDictionary<string, RelationshipProperty>? namedProperties = null;
 
         #endregion
 

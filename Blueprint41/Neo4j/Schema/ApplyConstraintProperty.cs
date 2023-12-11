@@ -37,29 +37,32 @@ namespace Blueprint41.Neo4j.Schema
         /// <returns></returns>
         internal virtual List<string> ToCypher()
         {
+            // TODO: What about if the constraint is for a property on a relationship
+            Entity entity = (Entity)Parent.Entity;
+
             List<string> commands = new List<string>();
             foreach (var (actionEnum, constraintOrIndexName) in Commands)
             {
                 switch (actionEnum)
                 {
                     case ApplyConstraintAction.CreateIndex:
-                        commands.Add($"CREATE INDEX ON :{Parent.Entity.Label.Name}({Property})");
+                        commands.Add($"CREATE INDEX ON :{entity.Label.Name}({Property})");
                         break;
                     case ApplyConstraintAction.CreateUniqueConstraint:
-                        commands.Add($"CREATE CONSTRAINT ON (node:{Parent.Entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
+                        commands.Add($"CREATE CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.CreateExistsConstraint:
-                        if (Parent.Entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition)
-                            commands.Add($"CREATE CONSTRAINT ON (node:{Parent.Entity.Label.Name}) ASSERT exists(node.{Property})");
+                        if (entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition)
+                            commands.Add($"CREATE CONSTRAINT ON (node:{entity.Label.Name}) ASSERT exists(node.{Property})");
                         break;
                     case ApplyConstraintAction.DeleteIndex:
-                        commands.Add($"DROP INDEX ON :{Parent.Entity.Label.Name}({Property})");
+                        commands.Add($"DROP INDEX ON :{entity.Label.Name}({Property})");
                         break;
                     case ApplyConstraintAction.DeleteUniqueConstraint:
-                        commands.Add($"DROP CONSTRAINT ON (node:{Parent.Entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
+                        commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.DeleteExistsConstraint:
-                        commands.Add($"DROP CONSTRAINT ON (node:{Parent.Entity.Label.Name}) ASSERT exists(node.{Property})");
+                        commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT exists(node.{Property})");
                         break;
                     default:
                         break;
