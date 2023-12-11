@@ -15,21 +15,22 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neo");
-            
+            PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neoneoneo");
+            //PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neoneoneo", "movietest");
+
 
             // Execute only once
             CreateMovieGraph();
 
-            FindActorTomHanks();
-            FindMovieCloudAtlas();
-            Find10People();
-            FindMoviesIn1990s();
+            //FindActorTomHanks();
+            //FindMovieCloudAtlas();
+            //Find10People();
+            //FindMoviesIn1990s();
 
-            ListAllTomHanksMovies();
-            DirectedCloutAtlas();
-            TomHanksCoActors();
-            SomeoneToIntroduceToTomHanks();
+            //ListAllTomHanksMovies();
+            //DirectedCloutAtlas();
+            //TomHanksCoActors();
+            //SomeoneToIntroduceToTomHanks();
 
             Console.WriteLine("Done. Press any key to exit.");
             Console.ReadLine();
