@@ -61,12 +61,17 @@ namespace Blueprint41
     }
     partial class Relationship : IEntity
     {
-        bool IEntity.IsAbstract => false;
         PropertyCollection IEntity.Properties => _properties;
 
         IEntity IEntity.SetFullTextProperty(string propertyName) => SetFullTextProperty(propertyName);
         IEntity IEntity.RemoveFullTextProperty(string propertyName) => RemoveFullTextProperty(propertyName);
         IReadOnlyList<Property> IEntity.FullTextIndexProperties => FullTextIndexProperties;
+
+        #region Simplistic implementations for Relationship
+        
+        // Since Relationship doesn't support inheritance, it's either is or isn't itself
+
+        bool IEntity.IsAbstract => false;
 
         IReadOnlyList<IEntity> IEntity.GetBaseTypes() => _empty;
         IReadOnlyList<IEntity> IEntity.GetBaseTypesAndSelf() => _self;
@@ -80,14 +85,22 @@ namespace Blueprint41
         bool IEntity.IsSubsclassOf(IEntity baseType) => false;
         bool IEntity.IsSelfOrSubclassOf(IEntity baseType) => (baseType == this);
 
-
         private static readonly IReadOnlyList<IEntity> _empty = new IEntity[0];
         private readonly IReadOnlyList<IEntity> _self;
 
-        void IEntity.DynamicEntityPropertyAdded(Property property) => throw new NotImplementedException();
-        void IEntity.DynamicEntityPropertyRenamed(string oldname, Property property, MergeAlgorithm mergeAlgorithm) => throw new NotImplementedException();
-        void IEntity.DynamicEntityPropertyConverted(Property property, Type target) => throw new NotImplementedException();
-        void IEntity.DynamicEntityPropertyRerouted(string oldname, Entity to, Property property) => throw new NotImplementedException();
-        void IEntity.DynamicEntityPropertyRemoved(Property property) => throw new NotImplementedException();
+        #endregion
+
+        #region Irrelevant implementations for Relationship
+
+        // Since there is no OGM object for relationships, there is also no dynamic-OGM object that needs to get updated with Property changes.
+        // Especially since these updates have to do with static data, and for now we will not support static data on relationships.
+
+        void IEntity.DynamicEntityPropertyAdded(Property property) { }
+        void IEntity.DynamicEntityPropertyRenamed(string oldname, Property property, MergeAlgorithm mergeAlgorithm) { }
+        void IEntity.DynamicEntityPropertyConverted(Property property, Type target) { }
+        void IEntity.DynamicEntityPropertyRerouted(string oldname, Entity to, Property property) { }
+        void IEntity.DynamicEntityPropertyRemoved(Property property) { }
+
+        #endregion
     }
 }

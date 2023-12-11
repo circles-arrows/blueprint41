@@ -881,6 +881,7 @@ namespace Blueprint41
 
                 Parent.Parent.Templates.SetDefaultLookupValue(template =>
                 {
+                    template.Caller = Parent;
                     template.Property = this;
                     template.Value = (string)defaultValue;
                 }).RunBatched();
@@ -908,6 +909,7 @@ namespace Blueprint41
 
             Parent.Parent.Templates.SetDefaultLookupValue(template =>
             {
+                template.Caller = Parent;
                 template.Property = this;
                 template.Value = (string?)defaultValue.GetKey();
             }).RunBatched();
