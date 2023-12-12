@@ -230,6 +230,7 @@ namespace Blueprint41.UnitTest.Tests
 
                     Restaurant r = p.Restaurants[0];
 
+                    List<Person.EATS_AT> all = p.RestaurantsRelations();
                     List<Person.EATS_AT> eatsAt1 = p.RestaurantsWhere(alias => alias.Weight > 10);
                     List<Person.EATS_AT> eatsAt2 = p.RestaurantsWhere(alias => alias.Restaurant(r) & alias.Weight > 10);
                     IEnumerable<Restaurant> restaurants = eatsAt2.Select(rel => rel.Restaurant);
