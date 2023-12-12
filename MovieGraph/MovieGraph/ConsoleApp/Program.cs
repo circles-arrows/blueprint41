@@ -1,5 +1,6 @@
 ﻿using Blueprint41;
 using Blueprint41.Core;
+using Blueprint41.DatastoreTemplates;
 using Blueprint41.Neo4j.Persistence.Driver.v5;
 using Blueprint41.Query;
 
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace ConsoleApp
 {
@@ -18,10 +20,11 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neoneoneo");
+            LoadAssemblyTest();
+            //PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neoneoneo");
 
             // Execute only once
-            CreateMovieGraph();
+            //CreateMovieGraph();
 
             //FindActorTomHanks();
             //FindMovieCloudAtlas();
@@ -35,6 +38,52 @@ namespace ConsoleApp
 
             Console.WriteLine("Done. Press any key to exit.");
             Console.ReadLine();
+        }
+
+        private static void LoadAssemblyTest()
+        {
+            try
+            {
+                string blueprintPath = Path.Combine(@"C:\Users\Glenn\source\repos\circles-arrows\blueprint41\MovieGraph\MovieGraph\MovieGraph\MovieGraph.Model\bin\Debug\netstandard2.0", "Blueprint41.dll");
+                string modelPath = Path.Combine(@"C:\Users\Glenn\source\repos\circles-arrows\blueprint41\MovieGraph\MovieGraph\MovieGraph\MovieGraph.Model\bin\Debug\netstandard2.0", "MovieGraph.Model.dll");
+
+                Assembly blueprintAssembly = Assembly.LoadFile(blueprintPath);
+                Assembly datastoreAssembly = Assembly.LoadFile(modelPath);
+
+                // Obtain the types
+                Type generatorSettingsType = blueprintAssembly.GetType("Blueprint41.DatastoreTemplates.GeneratorSettings");
+                Type generatorType = blueprintAssembly.GetType("Blueprint41.DatastoreTemplates.Generator");
+                Type datastoreModelType = blueprintAssembly.GetType("Blueprint41.DatastoreModel`1");
+                Type datastoreType = datastoreAssembly.GetType("MovieGraph.Model.Datastore");
+
+
+                Type typeParameter = datastoreModelType.GetGenericArguments()[0];
+
+
+                object generatorSettingsInstance = Activator.CreateInstance(generatorSettingsType, Directory.GetCurrentDirectory(), "Domain.Data");
+
+                //Type closedGenericType = datastoreModelType.MakeGenericType(datastoreType);
+
+                MethodInfo executeMethodInfo = generatorType.GetMethod("Execute", BindingFlags.Public | BindingFlags.Static);
+
+                MethodInfo executeMethodInfoWithArgument = executeMethodInfo.MakeGenericMethod(datastoreType);
+
+                object[] parameters = { generatorSettingsInstance };
+                executeMethodInfoWithArgument.Invoke(null, parameters);
+
+                Console.WriteLine("Execute method invoked successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            //Generator.Execute<Datastore>(
+            //        new GeneratorSettings(
+            //            Directory.GetCurrentDirectory(),
+            //            "Domain.Data"
+            //        )
+            //    );
         }
 
         private static void SomeoneToIntroduceToTomHanks()
