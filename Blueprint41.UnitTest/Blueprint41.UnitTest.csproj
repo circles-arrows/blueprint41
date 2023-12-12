@@ -24,4 +24,20 @@
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Datastore.Generation.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Datastore.Generation.txt</LastGenOutput>
+    </None>
+    <None Update="Datastore.Generation.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Datastore.Generation.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
 </Project>

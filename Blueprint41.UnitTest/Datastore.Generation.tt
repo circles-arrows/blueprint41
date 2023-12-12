@@ -1,6 +1,5 @@
 ﻿<#@ template language="C#" hostSpecific="true" debug="true" #>
 <#@ assembly name="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" #>
-<!--#@ assembly name="$(ProjectDir)System.CodeDom.dll" #-->
 <#@ assembly name="$(ProjectDir)bin\Debug\net4.8\Blueprint41.dll"  #>
 <#@ assembly name="$(ProjectDir)bin\Debug\net4.8\Blueprint41.UnitTest.dll"  #>
 <#@ import namespace="System.IO" #>
@@ -13,7 +12,7 @@
 		Generator.Execute<MockModel>(
 			new GeneratorSettings(
 				Path.GetDirectoryName(Host.TemplateFile),
-				"DataStore"
+				"Datastore"
 			)
 		);
 #>

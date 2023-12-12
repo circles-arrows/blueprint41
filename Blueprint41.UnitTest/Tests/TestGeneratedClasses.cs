@@ -28,10 +28,6 @@ namespace Blueprint41.UnitTest.Tests
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();
-
-            //string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
-            //GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            //_ = Generator.Execute<MockModel>(settings);
         }
 
         [SetUp]
