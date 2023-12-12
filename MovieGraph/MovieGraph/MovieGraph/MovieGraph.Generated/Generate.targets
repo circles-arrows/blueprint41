@@ -28,6 +28,7 @@ catch (Exception e)
 {
 	Log.LogMessage(MessageImportance.High, e.Message);
 }
+Log.LogMessage(MessageImportance.High, "Generate DONE!!!");
 ]]>
 			</Code>
 		</Task>
