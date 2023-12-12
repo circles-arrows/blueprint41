@@ -29,9 +29,9 @@ namespace Blueprint41.UnitTest.Tests
 
             TearDown();
 
-            string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
-            GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            _ = Generator.Execute<MockModel>(settings);
+            //string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
+            //GeneratorSettings settings = new GeneratorSettings(projectFolder);
+            //_ = Generator.Execute<MockModel>(settings);
         }
 
         [SetUp]
@@ -136,7 +136,6 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void OGMImplCRUDWithRelationship()
         {
-            string consoleOutput;
             using (ConsoleOutput output = new ConsoleOutput())
             {
 
