@@ -13,7 +13,6 @@
 			<Using Namespace="Blueprint41.DatastoreTemplates"/>
 			<Code Type="Fragment" Language="cs">
 <![CDATA[
-// Display "Hello, world!"
 Log.LogMessage(MessageImportance.High, "Generate!!!");
 try
 {
