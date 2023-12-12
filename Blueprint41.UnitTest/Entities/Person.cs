@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Datastore.Manipulation
 {
@@ -190,7 +191,7 @@ namespace Datastore.Manipulation
 			}
 		}
 		public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
-		private void ClearRestaurants(DateTime? moment)
+        private void ClearRestaurants(DateTime? moment)
 		{
 			((ILookupHelper<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
 		}
@@ -822,7 +823,147 @@ namespace Datastore.Manipulation
 		string IBaseEntityOriginalData.Uid { get { return OriginalData.Uid; } }
 		System.DateTime IBaseEntityOriginalData.LastModifiedOn { get { return OriginalData.LastModifiedOn; } }
 
-		#endregion
-		#endregion
-	}
+        #endregion
+        #endregion
+
+        #region Relationship Properties
+
+        [return: NotNull] public List<EATS_AT> RestaurantsRelations()
+        {
+            return null;
+        }
+        [return: NotNull] public List<EATS_AT> RestaurantsWhere([NotNull] Func<EATS_AT_ALIAS, QueryCondition> alias)
+        {
+            return null;
+        }
+        [return: NotNull] public List<EATS_AT> RestaurantsWhere([NotNull] Func<EATS_AT_ALIAS, QueryCondition[]> alias)
+        {
+            return null;
+        }
+        public void RestaurantsAssign(JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
+        {
+        }
+        public void RestaurantsAssignWhere([NotNull] Func<EATS_AT_ALIAS, QueryCondition> alias, JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
+        {
+        }
+        public void RestaurantsAssignWhere([NotNull] Func<EATS_AT_ALIAS, QueryCondition[]> alias, JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
+        {
+        }
+        public void RestaurantsAddAndAssign(Restaurant restaurant, JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
+        {
+        }
+
+        public class EATS_AT
+        {
+            /// <summary>
+            /// Person (In Node)
+            /// </summary>
+            public Person Person => default;
+
+            /// <summary>
+            /// Restaurant (Out Node)
+            /// </summary>
+            public Restaurant Restaurant => default;
+
+            public DateTime CreatedOn => default;
+            public DateTime LastModifiedOn => default;
+            public int Weight => default;
+        }
+        public class EATS_AT_ALIAS
+        {
+            internal EATS_AT_ALIAS(Person parent)
+            {
+            }
+
+            public DateTimeResult CreatedOn => null;
+            public DateTimeResult LastModifiedOn => null;
+            public NumericResult Weight => null;
+
+            public QueryCondition[] Fields(JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
+            {
+                return null;
+            }
+            public QueryCondition Restaurant([NotNull] Restaurant restaurant)
+            {
+                return null;
+            }
+            public QueryCondition Restaurants([NotNull] IEnumerable<Restaurant> restaurants)
+            {
+                return null;
+            }
+        }
+
+        [return: MaybeNull] public LIVES_IN CityRelation()
+        {
+            return null;
+        }
+        [return: MaybeNull] public LIVES_IN CitiesWhere([NotNull] Func<LIVES_IN_ALIAS, QueryCondition> alias)
+        {
+            return null;
+        }
+        [return: MaybeNull] public LIVES_IN CitiesWhere([NotNull] Func<LIVES_IN_ALIAS, QueryCondition[]> alias)
+        {
+            return null;
+        }
+        public void CityAssign(JsNotation<DateTime> CreatedOn = default, JsNotation<string> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default)
+        {
+        }
+        public void CityAssignWhere([NotNull] Func<LIVES_IN_ALIAS, QueryCondition> alias, JsNotation<DateTime> CreatedOn = default, JsNotation<string> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default)
+        {
+        }
+        public void CityAssignWhere([NotNull] Func<LIVES_IN_ALIAS, QueryCondition[]> alias, JsNotation<DateTime> CreatedOn = default, JsNotation<string> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default)
+        {
+        }
+        public void CitySetAndAssign(City city, JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
+        {
+        }
+
+        public class LIVES_IN
+        {   
+            /// <summary>
+            /// Person (In Node)
+            /// </summary>
+            public Person Person => default;
+
+            /// <summary>
+            /// City (Out Node)
+            /// </summary>
+            public City City => default;
+
+            public DateTime CreatedOn => default;
+            public DateTime From => default;
+            public int HouseNr => default;
+            public DateTime LastModifiedOn => default;
+            public string Street => default;
+            public DateTime Till => default;
+        }
+        public class LIVES_IN_ALIAS
+        {
+            internal LIVES_IN_ALIAS(Person parent)
+            {
+            }
+
+            public DateTimeResult CreatedOn => null;
+            public DateTimeResult From => null;
+            public NumericResult HouseNr => null;
+            public DateTimeResult LastModifiedOn => null;
+            public StringResult Street => null;
+            public DateTimeResult Till => null;
+
+            public QueryCondition[] Fields(JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default)
+            {
+                return null;
+            }
+            public QueryCondition City(City city)
+            {
+                return null;
+            }
+            public QueryCondition Cities(IEnumerable<City> cities)
+            {
+                return null;
+            }
+        }
+
+        #endregion 
+    }
 }

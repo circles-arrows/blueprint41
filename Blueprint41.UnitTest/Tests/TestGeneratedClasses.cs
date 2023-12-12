@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using Blueprint41.Core;
@@ -226,6 +227,24 @@ namespace Blueprint41.UnitTest.Tests
                     p.Name = "Janice Smith";
                     p.City.Name = "California";
                     p.Restaurants[0].Name = "Shakeys Pizza";
+
+                    Restaurant r = p.Restaurants[0];
+
+                    List<Person.EATS_AT> eatsAt1 = p.RestaurantsWhere(alias => alias.Weight > 10);
+                    List<Person.EATS_AT> eatsAt2 = p.RestaurantsWhere(alias => alias.Restaurant(r) & alias.Weight > 10);
+                    IEnumerable<Restaurant> restaurants = eatsAt2.Select(rel => rel.Restaurant);
+
+                    p.RestaurantsAssign(Weight: 10);
+                    p.RestaurantsAssignWhere(alias => alias.Restaurant(r), Weight: 10);
+                    p.RestaurantsAssignWhere(alias => alias.Restaurants(restaurants), Weight: 10);
+                    p.RestaurantsAssignWhere(alias => alias.Weight < 10, Weight: 10, LastModifiedOn: DateTime.UtcNow);
+
+                    Person.LIVES_IN livesIn = p.CitiesWhere(alias => alias.Street == "San Nicolas Street" & alias.HouseNr == 8);
+                    if (livesIn is not null)
+                    {
+                        p.CityAssignWhere(alias => alias.City(livesIn.City), HouseNr: 6);
+                    }
+
 
                     Transaction.Commit();
                 }
