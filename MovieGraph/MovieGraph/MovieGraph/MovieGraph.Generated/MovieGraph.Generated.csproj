@@ -1,10 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+	  <TargetFramework>net8.0</TargetFramework>
 	  <LangVersion>10.0</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+  </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Blueprint41\Blueprint41.csproj" />
+		<ProjectReference Include="..\..\Blueprint41.Build\Blueprint41.Build.csproj" />
 		<ProjectReference Include="..\MovieGraph.Model\MovieGraph.Model.csproj" />
 	</ItemGroup>
 	<ItemGroup>
@@ -23,6 +27,6 @@
 	</ItemGroup>
 	<Import Project="Generate.targets" />
 	<Target Name="Generate" AfterTargets="Build">
-		<Generate />
+		<GenerateTask />
 	</Target>
 </Project>

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.Loader;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsoleApp1
+namespace Blueprint41.Build
 {
-    internal class AssemblyLoader : AssemblyLoadContext
+    public class AssemblyLoader : AssemblyLoadContext
     {
         private AssemblyLoader(string filename) : base(true)
         {
@@ -43,7 +38,7 @@ namespace ConsoleApp1
         }
         private Assembly? AssemblyResolver(AssemblyLoadContext context, AssemblyName assemblyName)
         {
-            string name= assemblyName.Name;
+            string name = assemblyName.Name;
 
             string assemblyPath = Path.Combine(InitialFolder, name + ".dll");
             if (name.ToLowerInvariant() == "netstandard")
