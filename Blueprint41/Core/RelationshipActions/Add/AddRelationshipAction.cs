@@ -9,17 +9,14 @@ namespace Blueprint41.Core
 {
     internal class AddRelationshipAction : RelationshipAction
     {
-        public IDictionary<string, object>? Properties { get; private set; }
-
-        internal AddRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, ExpandoObject? relationshipProperties = null)
+        internal AddRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem)
             : base(persistenceProvider, relationship, inItem, outItem)
         {
-            Properties = relationshipProperties?.ToDictionary(item => item.Key, item => item.Value);
         }
 
         protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.Add(relationship, Properties, InItem!, OutItem!, null, false);
+            PersistenceProvider.Add(relationship, InItem!, OutItem!, null, false);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)

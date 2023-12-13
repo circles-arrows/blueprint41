@@ -9,17 +9,14 @@ namespace Blueprint41.Core
 {
     internal class TimeDependentAddRelationshipAction : TimeDependentRelationshipAction
     {
-        public IDictionary<string, object>? Properties { get; private set; }
-
-        internal TimeDependentAddRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, ExpandoObject? relationshipProperties = null)
+        internal TimeDependentAddRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? moment)
             : base(persistenceProvider, relationship, inItem, outItem, moment)
         {
-            Properties = relationshipProperties?.ToDictionary(item => item.Key, item => item.Value);
         }
 
         protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.Add(relationship, Properties, InItem!, OutItem!, Moment, true);
+            PersistenceProvider.Add(relationship, InItem!, OutItem!, Moment, true);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)

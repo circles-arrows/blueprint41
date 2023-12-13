@@ -146,7 +146,7 @@ namespace Blueprint41.Core
         }
 
         internal abstract RelationshipAction RemoveAction(OGM item, DateTime? moment);
-        internal abstract RelationshipAction AddAction(OGM item, DateTime? moment, ExpandoObject? relationshipProperties = null);
+        internal abstract RelationshipAction AddAction(OGM item, DateTime? moment);
         internal abstract RelationshipAction ClearAction(DateTime? moment);
 
         #endregion

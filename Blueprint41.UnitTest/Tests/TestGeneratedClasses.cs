@@ -223,28 +223,48 @@ namespace Blueprint41.UnitTest.Tests
                 using (Transaction.Begin(true))
                 {
 
-                    Person p = Person.Load(key5);
-                    p.Name = "Janice Smith";
-                    p.City.Name = "California";
-                    p.Restaurants[0].Name = "Shakeys Pizza";
+                    Person person = Person.Load(key5);
+                    person.Name = "Janice Smith";
+                    person.City.Name = "California";
+                    person.Restaurants[0].Name = "Shakeys Pizza";
 
-                    Restaurant r = p.Restaurants[0];
+                    City city = person.City;
+                    Restaurant restaurant = person.Restaurants[0];
 
-                    List<Person.EATS_AT> all = p.RestaurantsRelations();
-                    List<Person.EATS_AT> eatsAt1 = p.RestaurantsWhere(alias => alias.Weight > 10);
-                    List<Person.EATS_AT> eatsAt2 = p.RestaurantsWhere(alias => alias.Restaurant(r) & alias.Weight > 10);
-                    IEnumerable<Restaurant> restaurants = eatsAt2.Select(rel => rel.Restaurant);
 
-                    p.RestaurantsAssign(Weight: 10);
-                    p.RestaurantsAssignWhere(alias => alias.Restaurant(r), Weight: 10);
-                    p.RestaurantsAssignWhere(alias => alias.Restaurants(restaurants), Weight: 10);
-                    p.RestaurantsAssignWhere(alias => alias.Weight < 10, Weight: 10, LastModifiedOn: DateTime.UtcNow);
 
-                    Person.LIVES_IN livesIn = p.CitiesWhere(alias => alias.Street == "San Nicolas Street" & alias.HouseNr == 8);
-                    if (livesIn is not null)
-                    {
-                        p.CityAssignWhere(alias => alias.City(livesIn.City), HouseNr: 6);
-                    }
+                    // Get all EATS_AT relations for the given person
+                    List<EATS_AT> all = person.RestaurantRelations();
+                    // And set their 'Weight' & 'LastModifiedOn' properties
+                    all.Assign(Weight: 10, LastModifiedOn: DateTime.UtcNow);
+
+                    // Get a sub-set of EATS_AT relations for the given person
+                    List<EATS_AT> subset = person.RestaurantsWhere(alias => alias.Restaurant(restaurant) & alias.Weight > 10);
+                    // And use LINQ to query restaurants
+                    IEnumerable<Restaurant> restaurants = subset.Select(rel => rel.Restaurant);
+
+                    // Get EATS_AT relations based on a JSON notated expression
+                    List<EATS_AT> relations = EATS_AT.Where(InNode: person, OutNode: restaurant);
+
+                    // Get EATS_AT relations based on a Bp41 notated expression
+                    List<EATS_AT> relations2 = EATS_AT.Where(alias => alias.Restaurants(restaurants) & alias.Person(person) & alias.Weight > 10);
+
+                    // Get EATS_AT relations based on Bp41 notated expression, and set their 'Weight' property
+                    EATS_AT.Where(alias => alias.Restaurants(restaurants)).Assign(Weight: 10);
+
+                    // Get a sub-set of EATS_AT relations for the given person, and set their 'Weight' property
+                    person.RestaurantsWhere(alias => alias.Weight > 10).Assign(Weight: 10);
+
+                    // Lookup: Query LIVES_IN relation for the city OR null, depending on the condition
+                    //         And potentially assign new values
+                    person.CityIf(alias => alias.Street == "San Nicolas Street" & alias.HouseNr == 8)?.Assign(HouseNr: 6);
+
+                    // Set city 
+                    person.SetCity(city, CreatedOn: DateTime.UtcNow, LastModifiedOn: DateTime.UtcNow, Street: "San Nicolas Street", HouseNr: 6);
+
+                    // Add restaurant
+                    person.Restaurants.Add(restaurant, CreatedOn: DateTime.UtcNow, LastModifiedOn: DateTime.UtcNow, Weight: 10);
+
 
 
                     Transaction.Commit();

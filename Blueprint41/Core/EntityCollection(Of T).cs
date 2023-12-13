@@ -33,7 +33,7 @@ namespace Blueprint41.Core
         private protected override int CountInternal { get { return Count; } }
         public int Count { get { LazyLoad(); return InnerData.Count; } }
 
-        internal sealed override void Add(TEntity item, bool fireEvents, ExpandoObject? relationshipProperties = null)
+        internal sealed override void Add(TEntity item, bool fireEvents)
         {
             if (item is null)
                 return;
@@ -47,7 +47,7 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                     return;
 
-            ExecuteAction(AddAction(item, null, relationshipProperties));
+            ExecuteAction(AddAction(item, null));
         }
         internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
         {
@@ -366,9 +366,9 @@ namespace Blueprint41.Core
         {
             return new RemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
         }
-        internal override RelationshipAction AddAction(OGM item, DateTime? moment, ExpandoObject? relationshipProperties = null)
+        internal override RelationshipAction AddAction(OGM item, DateTime? moment)
         {
-            return new AddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), relationshipProperties);
+            return new AddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
         }
         internal override RelationshipAction ClearAction(DateTime? moment)
         {

@@ -93,14 +93,10 @@ namespace Blueprint41.Core
         private protected abstract int CountInternal { get; }
         public void Add(TEntity item)
         {
-            Add(item, null);
-        }
-        public void Add(TEntity item, ExpandoObject? relationshipProperties)
-        {
             ForeignProperty?.ClearLookup(item);
-            Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity), relationshipProperties);
+            Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
         }
-        internal abstract void Add(TEntity item, bool fireEvents, ExpandoObject? relationshipProperties = null);
+        internal abstract void Add(TEntity item, bool fireEvents);
         public void AddRange(IEnumerable<TEntity> items)
         {
             foreach (var item in items)

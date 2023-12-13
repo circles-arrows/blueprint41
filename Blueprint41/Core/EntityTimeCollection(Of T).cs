@@ -52,7 +52,7 @@ namespace Blueprint41.Core
 			}
 		}
 
-		internal sealed override void Add(TEntity item, bool fireEvents, ExpandoObject? relationshipProperties = null)
+		internal sealed override void Add(TEntity item, bool fireEvents)
 		{
 			Add(item, RunningTransaction.TransactionDate, fireEvents);
 		}
@@ -61,7 +61,7 @@ namespace Blueprint41.Core
             ForeignProperty?.ClearLookup(item, moment);
             Add(item, moment, true);
 		}
-		internal void Add(TEntity item, DateTime? moment, bool fireEvents, ExpandoObject? relationshipProperties = null)
+		internal void Add(TEntity item, DateTime? moment, bool fireEvents)
 		{
 			if (item is null)
 				return;
@@ -468,9 +468,9 @@ namespace Blueprint41.Core
 		{
 			return new CollectionItem<TEntity>(parent, (TEntity)item, startDate, endDate);
 		}
-		internal override RelationshipAction AddAction(OGM item, DateTime? moment, ExpandoObject? relationshipProperties = null)
+		internal override RelationshipAction AddAction(OGM item, DateTime? moment)
 		{
-			return new TimeDependentAddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment, relationshipProperties);
+			return new TimeDependentAddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
 		}
 		internal override RelationshipAction RemoveAction(OGM item, DateTime? moment)
 		{

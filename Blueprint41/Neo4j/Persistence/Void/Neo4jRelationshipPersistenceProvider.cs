@@ -281,20 +281,20 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         private static AtomicDictionary<string, Type> typeCache = new AtomicDictionary<string, Type>();
 
-        public override void Add(Relationship relationship, IDictionary<string, object>? properties, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
+        public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
         {
             Transaction trans = Transaction.RunningTransaction;
 
             Checks(relationship, inItem, outItem);
 
             if (timedependent)
-                Add(trans, relationship, properties, inItem, outItem, moment ?? Conversion.MinDateTime);
+                Add(trans, relationship, inItem, outItem, moment ?? Conversion.MinDateTime);
             else
-                Add(trans, relationship, properties, inItem, outItem);
+                Add(trans, relationship, inItem, outItem);
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        protected virtual void Add(Transaction trans, Relationship relationship, IDictionary<string, object>? properties, OGM inItem, OGM outItem)
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem)
         {
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
@@ -308,18 +308,6 @@ namespace Blueprint41.Neo4j.Persistence.Void
             parameters.Add("outKey", outItem.GetKey());
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            if (properties is not null)
-            {
-                foreach (var kvp in properties)
-                {
-                    object? value = PersistenceProviderFactory.ConvertToStoredType(kvp.Value.GetType(), kvp.Value);
-                    if (value is null)
-                        continue;
-
-                    node.Add(kvp.Key, value!);
-                }
-            }
-
             parameters.Add("node", node);
             parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
 
@@ -329,7 +317,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             RawResult result = trans.Run(query, parameters);
         }
-        protected virtual void Add(Transaction trans, Relationship relationship, IDictionary<string, object>? properties, OGM inItem, OGM outItem, DateTime moment) 
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, DateTime moment) 
         {
             // Expected behavior time dependent relationship:
             // ----------------------------------------------
@@ -368,17 +356,6 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Dictionary<string, object> node = new Dictionary<string, object>();
             node.Add(relationship.StartDate, Conversion<DateTime, long>.Convert(moment));
             node.Add(relationship.EndDate, Conversion.MaxDateTimeInMS);
-            if(properties is not null)
-            {
-                foreach (var kvp in properties)
-                {
-                    object? value = PersistenceProviderFactory.ConvertToStoredType(kvp.Value.GetType(), kvp.Value);
-                    if (value is null)
-                        continue;
-
-                    node.Add(kvp.Key, value!);
-                }
-            }
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
