@@ -12,9 +12,10 @@
 	  TaskFactory="RoslynCodeTaskFactory"
 	  AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
 		<ParameterGroup>
+			<GeneratePath ParameterType="System.String"></GeneratePath>
 		</ParameterGroup>
 		<Task>
-			<Using Namespace="System.Runtime" />
+			
 			<Reference Include="$(ProjectDir)bin\Debug\net8.0\Blueprint41.Build.dll"/>
 			
 			<Using Namespace="System"/>
@@ -25,7 +26,7 @@
     try
     {
         string file = Path.Combine(@"C:\Users\Glenn\source\repos\circles-arrows\blueprint41\MovieGraph\MovieGraph\MovieGraph\MovieGraph.Model\bin\Debug\net8.0\MovieGraph.Model.dll");
-        Generator.Generate(file, Directory.GetCurrentDirectory());
+        Generator.Generate(file, GeneratePath);
     }
     catch (Exception e)
     {

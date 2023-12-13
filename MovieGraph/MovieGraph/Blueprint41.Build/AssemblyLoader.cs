@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Runtime.Loader;
 
 namespace Blueprint41.Build
@@ -16,7 +18,7 @@ namespace Blueprint41.Build
             AssemblyLoader loader = new AssemblyLoader(filename);
             try
             {
-                Assembly? assembly = loader.LoadAssembly(filename);
+                Assembly assembly = loader.LoadAssembly(filename);
                 if (assembly is null)
                     throw new FileNotFoundException("Better message here...");
 
@@ -25,18 +27,18 @@ namespace Blueprint41.Build
             finally
             {
                 loader.Resolving -= loader.AssemblyResolver;
-                loader.Unload();
+                //loader.Unload();
             }
         }
 
-        private Assembly? LoadAssembly(string filename)
+        private Assembly LoadAssembly(string filename)
         {
             if (!File.Exists(filename))
                 return null;
 
             return LoadFromAssemblyPath(filename);
         }
-        private Assembly? AssemblyResolver(AssemblyLoadContext context, AssemblyName assemblyName)
+        private Assembly AssemblyResolver(AssemblyLoadContext context, AssemblyName assemblyName)
         {
             string name = assemblyName.Name;
 
@@ -66,6 +68,8 @@ namespace Blueprint41.Build
             //}
             return null;
         }
+
+
         private readonly string InitialFolder;
     }
 }

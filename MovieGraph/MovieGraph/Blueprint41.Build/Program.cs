@@ -1,4 +1,8 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace Blueprint41.Build
 {
@@ -6,9 +10,11 @@ namespace Blueprint41.Build
     {
         static void Main(string[] args)
         {
+            //string file = Path.Combine(@"C:\Users\Glenn\source\repos\circles-arrows\blueprint41\MovieGraph\MovieGraph\MovieGraph\MovieGraph.Model\bin\Debug\net8.0\MovieGraph.Model.dll");
+            //Generator.Generate(file, Directory.GetCurrentDirectory());
             bool hasCommandlineArgumentErrors = false;
             Dictionary<string, string> arguments = args.Select(item => item.Split('=')).ToDictionary(item => item[0].TrimStart('-', '/', ' ').TrimEnd(' ').ToLowerInvariant(), item => (item.Length == 1) ? item[0].Trim(' ', '"').ToLowerInvariant() : string.Join("=", item.Skip(1)).Trim(' ', '"'));
-           
+
             if (Exists("?") || Exists("help"))
             {
                 Console.WriteLine("-help    Displays command line argument information");
