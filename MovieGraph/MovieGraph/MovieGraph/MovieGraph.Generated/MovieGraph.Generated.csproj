@@ -25,8 +25,8 @@
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
-	<Import Project="Generate.targets" />
+	<!--<Import Project="Generate.targets" />
 	<Target Name="Generate" AfterTargets="Build">
 		<GenerateTask GeneratePath="$(ProjectDir)" />
-	</Target>
+	</Target>-->
 </Project>

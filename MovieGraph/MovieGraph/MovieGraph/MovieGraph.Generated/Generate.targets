@@ -3,30 +3,26 @@
 	<PropertyGroup>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="System.Runtime" Version="4.3.1" />
-		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-	</ItemGroup>
 	<UsingTask
 	  TaskName="GenerateTask"
 	  TaskFactory="RoslynCodeTaskFactory"
 	  AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
 		<ParameterGroup>
+			<Blueprint41BuilderPath ParameterType="System.String"></Blueprint41BuilderPath>
+			<ModelPath ParameterType="System.String"></ModelPath>
 			<GeneratePath ParameterType="System.String"></GeneratePath>
 		</ParameterGroup>
 		<Task>
-			
-			<Reference Include="$(ProjectDir)bin\Debug\net8.0\Blueprint41.Build.dll"/>
-			
-			<Using Namespace="System"/>
-			<Using Namespace="Blueprint41.Build"/>
+			<Using Namespace="System" />
+			<Using Namespace="System.Diagnostics" />
+			<Using Namespace="System.IO" />
 			<Code Type="Fragment" Language="cs">
 				<![CDATA[
+				
+    Stopwatch stopWatch = Stopwatch.StartNew();
     Log.LogMessage(MessageImportance.High, "Generate!!!");
     try
     {
-        string file = Path.Combine(@"C:\Users\Glenn\source\repos\circles-arrows\blueprint41\MovieGraph\MovieGraph\MovieGraph\MovieGraph.Model\bin\Debug\net8.0\MovieGraph.Model.dll");
-        Generator.Generate(file, GeneratePath);
     }
     catch (Exception e)
     {

@@ -13,8 +13,6 @@ namespace Blueprint41.Build
 
         static void Main(string[] args)
         {
-            //string file = Path.Combine(@"C:\Users\Glenn\source\repos\circles-arrows\blueprint41\MovieGraph\MovieGraph\MovieGraph\MovieGraph.Model\bin\Debug\net8.0\MovieGraph.Model.dll");
-            //Generator.Generate(file, Directory.GetCurrentDirectory());
             bool hasCommandlineArgumentErrors = false;
             Dictionary<string, string> arguments = args.Select(item => item.Split('=')).ToDictionary(item => item[0].TrimStart('-', '/', ' ').TrimEnd(' ').ToLowerInvariant(), item => (item.Length == 1) ? item[0].Trim(' ', '"').ToLowerInvariant() : string.Join("=", item.Skip(1)).Trim(' ', '"'));
 
@@ -43,13 +41,25 @@ namespace Blueprint41.Build
                 if (modelPath == null || generatePath == null)
                 {
                     Console.WriteLine($"Please provide both {MODEL_PATH_ARG} and {GENERATE_PATH_ARG} arguments for the file path.");
-                    return;
+                    hasCommandlineArgumentErrors = true;
                 }
 
                 if (!hasCommandlineArgumentErrors)
-                    Generate(modelPath, generatePath);
+                {
+                    Console.WriteLine("Generate Task Starting...");
+                    try
+                    {
+                        Generate(modelPath, generatePath);
+                        Console.WriteLine("Generate Task Complete.");
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Generate Task Failed.");
+                        throw;
+                    }
+                }
             }
-
+            Console.WriteLine("Generate Task Exiting.");
             Environment.Exit(0);
 
             string GetMandatory(string argumentName)
