@@ -8,6 +8,9 @@ namespace Blueprint41.Build
 {
     public static class Generator
     {
+        private const string MODEL_PATH_ARG = "--modelPath=";
+        private const string GENERATE_PATH_ARG = "--generatePath=";
+
         static void Main(string[] args)
         {
             //string file = Path.Combine(@"C:\Users\Glenn\source\repos\circles-arrows\blueprint41\MovieGraph\MovieGraph\MovieGraph\MovieGraph.Model\bin\Debug\net8.0\MovieGraph.Model.dll");
@@ -18,20 +21,35 @@ namespace Blueprint41.Build
             if (Exists("?") || Exists("help"))
             {
                 Console.WriteLine("-help    Displays command line argument information");
-                Console.WriteLine("-modelPath ");
-                Console.WriteLine("-generatePath");
+                Console.WriteLine(MODEL_PATH_ARG);
+                Console.WriteLine(GENERATE_PATH_ARG);
             }
             else
             {
-                string modelPath = GetMandatory("modelPath");
-                string generatePath = GetMandatory("generatePath");
+                string modelPath = null;
+                string generatePath = null;
+
+                foreach (var arg in args)
+                {
+                    if (arg.StartsWith(MODEL_PATH_ARG))
+                    {
+                        modelPath = arg[MODEL_PATH_ARG.Length..];
+                    }
+                    else if (arg.StartsWith(GENERATE_PATH_ARG))
+                    {
+                        generatePath = arg[GENERATE_PATH_ARG.Length..];
+                    }
+                }
+                if (modelPath == null || generatePath == null)
+                {
+                    Console.WriteLine($"Please provide both {MODEL_PATH_ARG} and {GENERATE_PATH_ARG} arguments for the file path.");
+                    return;
+                }
 
                 if (!hasCommandlineArgumentErrors)
                     Generate(modelPath, generatePath);
             }
 
-            //string file = Path.Combine(@"C:\Users\Glenn\source\repos\circles-arrows\blueprint41\MovieGraph\MovieGraph\MovieGraph\MovieGraph.Model\bin\Debug\netstandard2.0", "MovieGraph.Model.dll");
-            //Generate(file);
             Environment.Exit(0);
 
             string GetMandatory(string argumentName)
@@ -55,15 +73,8 @@ namespace Blueprint41.Build
             bool Exists(string argumentName)
             {
                 string value = GetOptional(argumentName, null);
-                if (value is null)
-                    return false;
-
-                return true;
+                return value is not null;
             }
-        }
-        public static void DoNothing()
-        {
-
         }
         public static void Generate(string modelDllPath, string generatePath)
         {
@@ -84,11 +95,10 @@ namespace Blueprint41.Build
 
                     executeMethodGeneric.Invoke(null, new object[] { generatorSettingsInstance });
                 }
-
             });
         }
 
-        private static Assembly? GetDatastoreType(Type? type)
+        private static Assembly GetDatastoreType(Type? type)
         {
             while (type is not null)
             {
@@ -115,12 +125,3 @@ namespace Blueprint41.Build
         }
     }
 }
-
-
-
-//Generator.Execute<Datastore>(
-//        new GeneratorSettings(
-//            Directory.GetCurrentDirectory(),
-//            "Domain.Data"
-//        )
-//    );
