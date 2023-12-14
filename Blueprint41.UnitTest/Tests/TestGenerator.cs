@@ -74,6 +74,16 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
+        public void GenerateMockModel()
+        {
+            GeneratorResult result = GenerateModel<MockModel>(out string projectFolder, out GeneratorSettings settings);
+
+            FileExists(result.EntityResult, Path.Combine(projectFolder, settings.EntitiesFolder));
+            FileExists(result.RelationshipResult, Path.Combine(projectFolder, settings.RelationshipsFolder));
+            FileExists(result.NodeResult, Path.Combine(projectFolder, settings.NodesFolder));
+        }
+
+        [Test]
         public void EnsureFilesAreGenerated()
         {
             GeneratorResult result = GenerateModel<MockGeneratorModel>(out string projectFolder, out GeneratorSettings settings);

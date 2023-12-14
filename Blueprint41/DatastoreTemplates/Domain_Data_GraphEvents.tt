@@ -11,10 +11,10 @@ using Blueprint41.DatastoreTemplates;
 
 namespace <#= Settings.FullCRUDNamespace #>
 {
-	public static class GraphEvents
-	{
-		public static class Nodes
-		{
+    public static class GraphEvents
+    {
+        public static class Nodes
+        {
 <#
 List<string> nodeEvents = new List<string>();
 nodeEvents.Add("OnNodeLoading");
@@ -30,66 +30,66 @@ nodeEvents.Add("OnNodeDeleted");
 foreach (var DALModel in Datastore.Entities.Where(item => !item.IsAbstract).OrderBy(item => item.Name))
 {	
 #>
-			public static class <#= DALModel.Name #>
-			{
-				public static readonly Entity Entity = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"];
+            public static class <#= DALModel.Name #>
+            {
+                public static readonly Entity Entity = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"];
 
 <#
-	foreach (var evnt in nodeEvents)
-	{
-		string eventargs = "NodeEventArgs";
+    foreach (var evnt in nodeEvents)
+    {
+        string eventargs = "NodeEventArgs";
 #>
-				#region <#= evnt #>
+                #region <#= evnt #>
 
-				private static bool <#= evnt.ToCamelCase() #>IsRegistered = false;
+                private static bool <#= evnt.ToCamelCase() #>IsRegistered = false;
 
-				private static event EventHandler<Entity, <#= eventargs #>> <#= evnt.ToCamelCase() #>;
-				public static event EventHandler<Entity, <#= eventargs #>> <#= evnt #>
-				{
-					add
-					{
-						lock (Entity)
-						{
-							if (!<#= evnt.ToCamelCase() #>IsRegistered)
-							{
-								Entity.Events.<#= evnt #> += <#= evnt.ToCamelCase() #>Proxy;
-								<#= evnt.ToCamelCase() #>IsRegistered = true;
-							}
-							<#= evnt.ToCamelCase() #> += value;
-						}
-					}
-					remove
-					{
-						lock (Entity)
-						{
-							<#= evnt.ToCamelCase() #> -= value;
-							if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
-							{
-								Entity.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
-								<#= evnt.ToCamelCase() #>IsRegistered = false;
-							}
-						}
-					}
-				}
+                private static event EventHandler<Entity, <#= eventargs #>> <#= evnt.ToCamelCase() #>;
+                public static event EventHandler<Entity, <#= eventargs #>> <#= evnt #>
+                {
+                    add
+                    {
+                        lock (Entity)
+                        {
+                            if (!<#= evnt.ToCamelCase() #>IsRegistered)
+                            {
+                                Entity.Events.<#= evnt #> += <#= evnt.ToCamelCase() #>Proxy;
+                                <#= evnt.ToCamelCase() #>IsRegistered = true;
+                            }
+                            <#= evnt.ToCamelCase() #> += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (Entity)
+                        {
+                            <#= evnt.ToCamelCase() #> -= value;
+                            if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
+                            {
+                                Entity.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
+                                <#= evnt.ToCamelCase() #>IsRegistered = false;
+                            }
+                        }
+                    }
+                }
 
-				private static void <#= evnt.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
-				{
-					EventHandler<Entity, <#= eventargs #>> handler = <#= evnt.ToCamelCase() #>;
-					if (handler is not null)
-						handler.Invoke((Entity)sender, args);
-				}
+                private static void <#= evnt.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
+                {
+                    EventHandler<Entity, <#= eventargs #>> handler = <#= evnt.ToCamelCase() #>;
+                    if (handler is not null)
+                        handler.Invoke((Entity)sender, args);
+                }
 
-				#endregion
+                #endregion
 <#
-	}  
+    }  
 #>
-			}
+            }
 <#
 }
 #>
-		}
-		public static class Relationships
-		{
+        }
+        public static class Relationships
+        {
 <#
 List<string> relationEvents = new List<string>();
 relationEvents.Add("OnRelationCreate");
@@ -100,62 +100,62 @@ relationEvents.Add("OnRelationDeleted");
 foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
 {	
 #>
-			public static class <#= DALModel.Name #>
-			{
-				public static readonly Relationship Relationship = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Relations["<#= DALModel.Name #>"];
+            public static class <#= DALModel.Name #>
+            {
+                public static readonly Relationship Relationship = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Relations["<#= DALModel.Name #>"];
 
 <#
-	foreach (var evnt in relationEvents)
-	{
-		string eventargs = "RelationshipEventArgs";
+    foreach (var evnt in relationEvents)
+    {
+        string eventargs = "RelationshipEventArgs";
 #>
-				#region <#= evnt #>
+                #region <#= evnt #>
 
-				private static bool <#= evnt.ToCamelCase() #>IsRegistered = false;
+                private static bool <#= evnt.ToCamelCase() #>IsRegistered = false;
 
-				private static event EventHandler<Relationship, <#= eventargs #>> <#= evnt.ToCamelCase() #>;
-				public static event EventHandler<Relationship, <#= eventargs #>> <#= evnt #>
-				{
-					add
-					{
-						lock (Relationship)
-						{
-							if (!<#= evnt.ToCamelCase() #>IsRegistered)
-							{
-								Relationship.Events.<#= evnt #> += <#= evnt.ToCamelCase() #>Proxy;
-								<#= evnt.ToCamelCase() #>IsRegistered = true;
-							}
-							<#= evnt.ToCamelCase() #> += value;
-						}
-					}
-					remove
-					{
-						lock (Relationship)
-						{
-							<#= evnt.ToCamelCase() #> -= value;
-							if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
-							{
-								Relationship.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
-								<#= evnt.ToCamelCase() #>IsRegistered = false;
-							}
-						}
-					}
-				}
+                private static event EventHandler<Relationship, <#= eventargs #>> <#= evnt.ToCamelCase() #>;
+                public static event EventHandler<Relationship, <#= eventargs #>> <#= evnt #>
+                {
+                    add
+                    {
+                        lock (Relationship)
+                        {
+                            if (!<#= evnt.ToCamelCase() #>IsRegistered)
+                            {
+                                Relationship.Events.<#= evnt #> += <#= evnt.ToCamelCase() #>Proxy;
+                                <#= evnt.ToCamelCase() #>IsRegistered = true;
+                            }
+                            <#= evnt.ToCamelCase() #> += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (Relationship)
+                        {
+                            <#= evnt.ToCamelCase() #> -= value;
+                            if (<#= evnt.ToCamelCase() #> is null && <#= evnt.ToCamelCase() #>IsRegistered)
+                            {
+                                Relationship.Events.<#= evnt #> -= <#= evnt.ToCamelCase() #>Proxy;
+                                <#= evnt.ToCamelCase() #>IsRegistered = false;
+                            }
+                        }
+                    }
+                }
 
-				private static void <#= evnt.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
-				{
-					EventHandler<Relationship, <#= eventargs #>> handler = <#= evnt.ToCamelCase() #>;
-					if (handler is not null)
-						handler.Invoke((Relationship)sender, args);
-				}
+                private static void <#= evnt.ToCamelCase() #>Proxy(object sender, <#= eventargs #> args)
+                {
+                    EventHandler<Relationship, <#= eventargs #>> handler = <#= evnt.ToCamelCase() #>;
+                    if (handler is not null)
+                        handler.Invoke((Relationship)sender, args);
+                }
 
-				#endregion
+                #endregion
 <#
-	}  
+    }  
 #>
-			}
+            }
 <#
 }
 #>        }
-	}
+    }
 }

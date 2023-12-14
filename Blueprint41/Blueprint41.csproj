@@ -61,6 +61,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DatastoreTemplates\Domain_Data_Entity_Relation.tt">
+      <LastGenOutput>Domain_Data_Entity_Relation.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
     <None Update="DatastoreTemplates\Domain_Data_Entity.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>Domain_Data_Entity.cs</LastGenOutput>
@@ -266,6 +270,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Relation.cs">
+      <DependentUpon>Domain_Data_Entity_Relation.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="DatastoreTemplates\Domain_Data_Entity.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

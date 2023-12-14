@@ -64,12 +64,19 @@ namespace Blueprint41.DatastoreTemplates
 
             foreach (var relation in model.Relations)
             {
+                Domain_Data_Entity_Relation t4 = new Domain_Data_Entity_Relation();
+                t4.Settings = settings;
+                t4.DALRelation = relation;
+                t4.Datastore = model;
+                string content = t4.TransformText();
+                generatorResult.EntityResult.Add(relation.Name, content);
+
                 Domain_Data_Relationship relationship_template = new Domain_Data_Relationship();
                 relationship_template.Settings = settings;
                 relationship_template.DALRelation = relation;
                 relationship_template.Datastore = model;
-                string content = relationship_template.TransformText();
-                generatorResult.RelationshipResult.Add(relation.Name, content);
+                string relContent = relationship_template.TransformText();
+                generatorResult.RelationshipResult.Add(relation.Name, relContent);
             }
 
             #endregion
@@ -322,6 +329,15 @@ namespace Blueprint41.DatastoreTemplates
                 .Replace("&lt;", "<")
                 .Replace("&gt;", ">")
                 .Replace("&apos;", "'");
+        }
+
+        public static string ToJsonNotation(this IEnumerable<Property> properties)
+        {
+            return string.Join(", ", properties
+                                        .Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && p.SystemReturnType.Namespace == "System")
+                                        .OrderBy(p => p.Name)
+                                        .Select(p => $"JsNotation<{p.SystemReturnType!.ToCSharp()}{((p.SystemReturnType!.IsValueType && p.Nullable) ? "?" : "")}> {p.Name} = default")
+                                        );
         }
     }
 }

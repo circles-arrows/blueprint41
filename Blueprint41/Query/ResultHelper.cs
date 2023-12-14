@@ -130,8 +130,8 @@ namespace Blueprint41.Query
         public IResult NewFunctionResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType) => NewResultInternal(function, arguments, overridenReturnType);
         protected abstract IResult NewResultInternal(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType);
 
-        public IResult NewAliasResult(IPlainAliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) => NewResultInternal(alias, fieldName, entity, property, overridenReturnType);
-        protected abstract IResult NewResultInternal(IPlainAliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null);
+        public IResult NewAliasResult(IPlainAliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? overridenReturnType = null) => NewResultInternal(alias, fieldName, entity, property, overridenReturnType);
+        protected abstract IResult NewResultInternal(IPlainAliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? overridenReturnType = null);
 
         public IResult NewAliasResult(IPlainAliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null) => NewResultInternal(alias, function, arguments, overridenReturnType);
         protected abstract IResult NewResultInternal(IPlainAliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null);
@@ -231,10 +231,10 @@ namespace Blueprint41.Query
                 var exp = GetExp<T>(typeof(Func<QueryTranslator, string>), typeof(object[]), typeof(Type));
                 return Expression.Lambda<Func<Func<QueryTranslator, string?>?, object[]?, Type?, T>>(exp.body, exp.parameters).Compile();
             }, true);
-            newAliasResultCtor = new Lazy<Func<AliasResult, string?, Entity?, Property?, Type?, T>>(delegate ()
+            newAliasResultCtor = new Lazy<Func<AliasResult, string?, IEntity?, Property?, Type?, T>>(delegate ()
             {
                 var exp = GetExp<T>(typeof(AliasResult), typeof(string), typeof(Entity), typeof(Property), typeof(Type));
-                return Expression.Lambda<Func<AliasResult, string?, Entity?, Property?, Type?, T>>(exp.body, exp.parameters).Compile();
+                return Expression.Lambda<Func<AliasResult, string?, IEntity?, Property?, Type?, T>>(exp.body, exp.parameters).Compile();
             }, true);
             newAliasResult2Ctor = new Lazy<Func<AliasResult, Func<QueryTranslator, string?>?, object[]?, Type?, T>>(delegate ()
             {
@@ -305,15 +305,15 @@ namespace Blueprint41.Query
         protected sealed override IResult NewResultInternal(Func<QueryTranslator, string?>? function, object[]? arguments, Type? overridenReturnType) => NewFunctionResult(function, arguments, overridenReturnType);
         private static Lazy<Func<Func<QueryTranslator, string?>?, object[]?, Type?, T>>? newFunctionResultCtor = null;
 
-        new public T NewAliasResult(IPlainAliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null)
+        new public T NewAliasResult(IPlainAliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? overridenReturnType = null)
         {
             if (IsPrimitive)
                 return newAliasResultCtor!.Value.Invoke((AliasResult)alias, fieldName, entity, property, overridenReturnType);
 
             throw new NotSupportedException();
         }
-        protected sealed override IResult NewResultInternal(IPlainAliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) => NewAliasResult(alias, fieldName, entity, property, overridenReturnType);
-        private static Lazy<Func<AliasResult, string?, Entity?, Property?, Type?, T>>? newAliasResultCtor = null;
+        protected sealed override IResult NewResultInternal(IPlainAliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? overridenReturnType = null) => NewAliasResult(alias, fieldName, entity, property, overridenReturnType);
+        private static Lazy<Func<AliasResult, string?, IEntity?, Property?, Type?, T>>? newAliasResultCtor = null;
 
         new public T NewAliasResult(IPlainAliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? overridenReturnType = null)
         {

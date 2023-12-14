@@ -41,6 +41,8 @@ namespace Blueprint41
             OutInterface          = outInterface ?? new Interface(outEntity!);
             OutProperty           = null;
             Guid                  = parent.GenerateGuid(name);
+
+            _properties.Add("CreationDate", new RelationshipProperty(this, PropertyType.Attribute, "CreationDate", typeof(DateTime), false, IndexType.None));
         }
 
         #region Properties
@@ -114,6 +116,9 @@ namespace Blueprint41
 
             IsTimeDependent = true;
 
+            _properties.Add("StartDate", new RelationshipProperty(this, PropertyType.Attribute, "StartDate", typeof(DateTime), false, IndexType.None));
+            _properties.Add("EndDate", new RelationshipProperty(this, PropertyType.Attribute, "EndDate", typeof(DateTime), false, IndexType.None));
+
             return this;
         }
 
@@ -168,49 +173,49 @@ namespace Blueprint41
             return this;
         }
 
-        //public Relationship AddProperty(string name, Type type)
-        //{
-        //    return AddProperty(name, type, true, IndexType.None);
-        //}
-        //public Relationship AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
-        //{
-        //    VerifyInOrOutProeprtyIsAlreadySet();
+        public Relationship AddProperty(string name, Type type)
+        {
+            return AddProperty(name, type, true, IndexType.None);
+        }
+        public Relationship AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        {
+            VerifyInOrOutProeprtyIsAlreadySet();
 
-        //    Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
-        //    Properties.Add(name, value);
+            RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            _properties.Add(name, value);
 
-        //    return this;
-        //}
-        //public Relationship AddProperty(string name, Enumeration enumeration, bool nullable = true, IndexType indexType = IndexType.None)
-        //{
-        //    VerifyInOrOutProeprtyIsAlreadySet();
+            return this;
+        }
+        public Relationship AddProperty(string name, Enumeration enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        {
+            VerifyInOrOutProeprtyIsAlreadySet();
 
-        //    Property value = new Property(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
-        //    Properties.Add(name, value);
+            RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            _properties.Add(name, value);
 
-        //    return this;
-        //}
-        //public Relationship AddProperty(string name, Type type, IndexType indexType)
-        //{
-        //    return AddProperty(name, type, true, indexType);
-        //}
-        //public Relationship AddProperty(string name, Type type, bool nullable, IndexType indexType = IndexType.None)
-        //{
-        //    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-        //        throw new ArgumentException(string.Format("The type argument does not support the 'Nullable<{0}>' type. All types are considered nullable by default, but you can also set the 'nullable' argument explicitly.", type.GenericTypeArguments[0].Name));
+            return this;
+        }
+        public Relationship AddProperty(string name, Type type, IndexType indexType)
+        {
+            return AddProperty(name, type, true, indexType);
+        }
+        public Relationship AddProperty(string name, Type type, bool nullable, IndexType indexType = IndexType.None)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                throw new ArgumentException(string.Format("The type argument does not support the 'Nullable<{0}>' type. All types are considered nullable by default, but you can also set the 'nullable' argument explicitly.", type.GenericTypeArguments[0].Name));
 
-        //    VerifyInOrOutProeprtyIsAlreadySet();
+            VerifyInOrOutProeprtyIsAlreadySet();
 
-        //    Property value = new Property(this, PropertyType.Attribute, name, type, nullable, indexType);
-        //    Properties.Add(name, value);
+            RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, type, nullable, indexType);
+            _properties.Add(name, value);
 
-        //    return this;
-        //}
-        //private void VerifyInOrOutProeprtyIsAlreadySet()
-        //{
-        //    if (InProperty is null && OutProperty is null)
-        //        throw new InvalidOperationException("At least 1 in or out property needs to be set before primitive properties can be added.");
-        //}
+            return this;
+        }
+        private void VerifyInOrOutProeprtyIsAlreadySet()
+        {
+            if (InProperty is null && OutProperty is null)
+                throw new InvalidOperationException("At least 1 in or out property needs to be set before primitive properties can be added.");
+        }
 
         internal void ResetProperty(DirectionEnum direction)
         {
@@ -347,6 +352,9 @@ namespace Blueprint41
                 throw new NotSupportedException(string.Format("The relationship type '{0}' has no time dependence support yet.", Name));
 
             IsTimeDependent = false;
+
+            _properties.Remove("StartDate"); 
+            _properties.Remove("EndDate");
 
             throw new NotImplementedException("Apply logic to neo4j db...");
         }

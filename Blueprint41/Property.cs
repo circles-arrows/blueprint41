@@ -18,9 +18,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Blueprint41
 {
     [DebuggerDisplay("{Parent.Name}.{Name}")]
-    public partial class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
+    public abstract partial class Property : IRefactorProperty, IPropertyCondition, IPropertyEvents
     {
-        internal Property(IEntity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
+        private protected Property(IEntity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
         {
             Parent = parent;
             PropertyType = storage;
@@ -33,7 +33,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = null;
         }
-        internal Property(IEntity parent, PropertyType storage, string name, EntityProperty reference)
+        private protected Property(IEntity parent, PropertyType storage, string name, EntityProperty reference)
         {
             Parent = parent;
             PropertyType = storage;
@@ -46,7 +46,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = null;
         }
-        internal Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
+        private protected Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, string[]? enumeration = null)
         {
             Parent = parent;
             PropertyType = storage;
@@ -59,7 +59,7 @@ namespace Blueprint41
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(this, enumeration);
         }
-        internal Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
+        private protected Property(IEntity parent, PropertyType storage, string name, Type systemType, bool nullable, IndexType indexType, Enumeration enumeration)
         {
             Parent = parent;
             PropertyType = storage;

@@ -1,7 +1,8 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
+using NUnit.Framework;
 
 namespace Blueprint41.UnitTest.DataStore
 {
@@ -38,7 +39,11 @@ namespace Blueprint41.UnitTest.DataStore
                    .AddProperty("Title", typeof(string), IndexType.Unique);
 
             Relations.New(Entities["Person"], Entities["City"], "PERSON_LIVES_IN", "LIVES_IN")
-                .SetInProperty("City", PropertyType.Lookup);
+                .SetInProperty("City", PropertyType.Lookup)
+                .AddProperty("From", typeof(DateTime), false)
+                .AddProperty("HouseNr", typeof(int))
+                .AddProperty("Street", typeof(string))
+                .AddProperty("Till", typeof(DateTime), false);
 
             Relations.New(Entities["Restaurant"], Entities["City"], "RESTAURANT_LOCATED_AT", "LOCATED_AT")
                 .SetInProperty("City", PropertyType.Lookup)
@@ -46,7 +51,8 @@ namespace Blueprint41.UnitTest.DataStore
 
             Relations.New(Entities["Person"], Entities["Restaurant"], "PERSON_EATS_AT", "EATS_AT")
                 .SetInProperty("Restaurants", PropertyType.Collection)
-                .SetOutProperty("Persons", PropertyType.Collection);
+                .SetOutProperty("Persons", PropertyType.Collection)
+                .AddProperty("Weight", typeof(int), false);
 
             Relations.New(Entities["Person"], Entities["Movie"], "PERSON_DIRECTED", "DIRECTED_BY")
                 .SetInProperty("DirectedMovies", PropertyType.Collection)

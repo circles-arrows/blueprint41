@@ -7,8 +7,6 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections;
 
 namespace Datastore.Manipulation
 {
@@ -34,7 +32,7 @@ namespace Datastore.Manipulation
         protected override void RegisterGeneratedStoredQueries()
         {
             #region LoadByKeys
-
+            
             RegisterQuery(nameof(LoadByKeys), (query, alias) => query.
                 Where(alias.Uid.In(Parameter.New<System.String>(Param0))));
 
@@ -46,7 +44,7 @@ namespace Datastore.Manipulation
 
         public static Dictionary<System.String, Person> LoadByKeys(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item => item.Uid, item => item);
+            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.PersonAlias, IWhereQuery> query)
@@ -139,9 +137,9 @@ namespace Datastore.Manipulation
             sealed public override IDictionary<string, object> MapTo()
             {
                 IDictionary<string, object> dictionary = new Dictionary<string, object>();
-                dictionary.Add("Name", Name);
-                dictionary.Add("Uid", Uid);
-                dictionary.Add("LastModifiedOn", Conversion<System.DateTime, long>.Convert(LastModifiedOn));
+                dictionary.Add("Name",  Name);
+                dictionary.Add("Uid",  Uid);
+                dictionary.Add("LastModifiedOn",  Conversion<System.DateTime, long>.Convert(LastModifiedOn));
                 return dictionary;
             }
 
@@ -185,10 +183,10 @@ namespace Datastore.Manipulation
         public City City
         {
             get { return ((ILookupHelper<City>)InnerData.City).GetItem(null); }
-            set
-            {
+            set 
+            { 
                 if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItem(null), value))
-                    ((ILookupHelper<City>)InnerData.City).SetItem(value, null);
+                    ((ILookupHelper<City>)InnerData.City).SetItem(value, null); 
             }
         }
         public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
@@ -218,10 +216,134 @@ namespace Datastore.Manipulation
         #endregion
 
         #region Virtual Node Type
-
-        public string NodeType { get { return InnerData.NodeType; } }
+        
+        public string NodeType  { get { return InnerData.NodeType; } }
+        
+        #endregion
 
         #endregion
+
+        #region Relationship Properties
+
+        public PERSON_LIVES_IN CityRelation()
+        {
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN CityIf(Func<PERSON_LIVES_IN_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN CityIf(Func<PERSON_LIVES_IN_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN CityIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> From = default, JsNotation<int?> HouseNr = default, JsNotation<string> Street = default, JsNotation<System.DateTime> Till = default)
+        {
+            throw new NotImplementedException();
+        }
+        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> From = default, JsNotation<int?> HouseNr = default, JsNotation<string> Street = default, JsNotation<System.DateTime> Till = default)
+        {
+            throw new NotImplementedException();
+        }
+        public List<PERSON_EATS_AT> RestaurantsRelations()
+        {
+            throw new NotImplementedException();
+        }
+        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<PERSON_EATS_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<int> Weight = default)
+        {
+            throw new NotImplementedException();
+        }
+        public void AddRestaurants(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default, JsNotation<int> Weight = default)
+        {
+            throw new NotImplementedException();
+        }
+        public List<PERSON_DIRECTED> DirectedMoviesRelations()
+        {
+            throw new NotImplementedException();
+        }
+        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<PERSON_DIRECTED> DirectedMoviesWhere(JsNotation<System.DateTime> CreationDate = default)
+        {
+            throw new NotImplementedException();
+        }
+        public void AddDirectedMovies(Movie movie, JsNotation<System.DateTime> CreationDate = default)
+        {
+            throw new NotImplementedException();
+        }
+        public List<ACTED_IN> ActedInMoviesRelations()
+        {
+            throw new NotImplementedException();
+        }
+        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<ACTED_IN> ActedInMoviesWhere(JsNotation<System.DateTime> CreationDate = default)
+        {
+            throw new NotImplementedException();
+        }
+        public void AddActedInMovies(Movie movie, JsNotation<System.DateTime> CreationDate = default)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         #endregion
 
@@ -352,7 +474,7 @@ namespace Datastore.Manipulation
                     }
                 }
             }
-
+            
             private void onNewProxy(object sender, EntityEventArgs args)
             {
                 EventHandler<Person, EntityEventArgs> handler = onNew;
@@ -395,7 +517,7 @@ namespace Datastore.Manipulation
                     }
                 }
             }
-
+            
             private void onDeleteProxy(object sender, EntityEventArgs args)
             {
                 EventHandler<Person, EntityEventArgs> handler = onDelete;
@@ -438,7 +560,7 @@ namespace Datastore.Manipulation
                     }
                 }
             }
-
+            
             private void onSaveProxy(object sender, EntityEventArgs args)
             {
                 EventHandler<Person, EntityEventArgs> handler = onSave;
@@ -481,7 +603,7 @@ namespace Datastore.Manipulation
                     }
                 }
             }
-
+            
             private void onAfterSaveProxy(object sender, EntityEventArgs args)
             {
                 EventHandler<Person, EntityEventArgs> handler = onAfterSave;
@@ -529,7 +651,7 @@ namespace Datastore.Manipulation
                         }
                     }
                 }
-
+            
                 private static void onNameProxy(object sender, PropertyEventArgs args)
                 {
                     EventHandler<Person, PropertyEventArgs> handler = onName;
@@ -572,7 +694,7 @@ namespace Datastore.Manipulation
                         }
                     }
                 }
-
+            
                 private static void onCityProxy(object sender, PropertyEventArgs args)
                 {
                     EventHandler<Person, PropertyEventArgs> handler = onCity;
@@ -615,7 +737,7 @@ namespace Datastore.Manipulation
                         }
                     }
                 }
-
+            
                 private static void onRestaurantsProxy(object sender, PropertyEventArgs args)
                 {
                     EventHandler<Person, PropertyEventArgs> handler = onRestaurants;
@@ -658,7 +780,7 @@ namespace Datastore.Manipulation
                         }
                     }
                 }
-
+            
                 private static void onDirectedMoviesProxy(object sender, PropertyEventArgs args)
                 {
                     EventHandler<Person, PropertyEventArgs> handler = onDirectedMovies;
@@ -701,7 +823,7 @@ namespace Datastore.Manipulation
                         }
                     }
                 }
-
+            
                 private static void onActedInMoviesProxy(object sender, PropertyEventArgs args)
                 {
                     EventHandler<Person, PropertyEventArgs> handler = onActedInMovies;
@@ -744,7 +866,7 @@ namespace Datastore.Manipulation
                         }
                     }
                 }
-
+            
                 private static void onUidProxy(object sender, PropertyEventArgs args)
                 {
                     EventHandler<Person, PropertyEventArgs> handler = onUid;
@@ -787,7 +909,7 @@ namespace Datastore.Manipulation
                         }
                     }
                 }
-
+            
                 private static void onLastModifiedOnProxy(object sender, PropertyEventArgs args)
                 {
                     EventHandler<Person, PropertyEventArgs> handler = onLastModifiedOn;
@@ -826,257 +948,5 @@ namespace Datastore.Manipulation
 
         #endregion
         #endregion
-
-        #region Relationship Properties
-
-        public List<EATS_AT> RestaurantRelations()
-        {
-            throw new NotImplementedException();
-        }
-        public List<EATS_AT> RestaurantsWhere(Func<EATS_AT_ALIAS, QueryCondition> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public List<EATS_AT> RestaurantsWhere(Func<EATS_AT_ALIAS, QueryCondition[]> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public List<EATS_AT> RestaurantsWhere(JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public LIVES_IN CityRelation()
-        {
-            throw new NotImplementedException();
-        }
-        public LIVES_IN CityIf(Func<LIVES_IN_ALIAS, QueryCondition> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public LIVES_IN CityIf(Func<LIVES_IN_ALIAS, QueryCondition[]> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public LIVES_IN CityIf(JsNotation<DateTime> CreatedOn = default, JsNotation<string> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default)
-        {
-            throw new NotImplementedException();
-        }
-        public void SetCity(City city, JsNotation<DateTime> CreatedOn = default, JsNotation<string> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion 
-    }
-
-#pragma warning disable S101 // Types should be named in PascalCase
-
-    public class EATS_AT
-    {
-        /// <summary>
-        /// Person (In Node)
-        /// </summary>
-        public Person Person => default;
-
-        /// <summary>
-        /// Restaurant (Out Node)
-        /// </summary>
-        public Restaurant Restaurant => default;
-
-        public DateTime CreatedOn => default;
-        public DateTime LastModifiedOn => default;
-        public int Weight => default;
-
-        public void Assign(JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<EATS_AT> Where(Func<EATS_AT_ALIAS, QueryCondition> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<EATS_AT> Where(Func<EATS_AT_ALIAS, QueryCondition[]> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<EATS_AT> Where(JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    public class EATS_AT_ALIAS
-    {
-        internal EATS_AT_ALIAS(Person parent)
-        {
-            throw new NotImplementedException();
-        }
-        internal EATS_AT_ALIAS(Restaurant parent)
-        {
-            throw new NotImplementedException();
-        }
-
-        private StringResult ElementId => null;
-
-        public DateTimeResult CreatedOn => null;
-        public DateTimeResult LastModifiedOn => null;
-        public NumericResult Weight => null;
-
-        /// <summary>
-        /// Person in node: (Person)-[EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is the given person
-        /// </returns>
-        public QueryCondition Person(Person person)
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        /// Person in node: (Person)-[EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is in the given set of persons
-        /// </returns>
-        public QueryCondition Person(IEnumerable<Person> persons)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Restaurant out node: (Person)-[EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is the given restaurant
-        /// </returns>
-        public QueryCondition Restaurant(Restaurant restaurant)
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        /// Restaurant out node: (Person)-[EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is in the given set of restaurants
-        /// </returns>
-        public QueryCondition Restaurants(IEnumerable<Restaurant> restaurants)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class LIVES_IN
-    {
-        /// <summary>
-        /// Person (In Node)
-        /// </summary>
-        public Person Person => default;
-
-        /// <summary>
-        /// City (Out Node)
-        /// </summary>
-        public City City => default;
-
-        public DateTime CreatedOn => default;
-        public DateTime From => default;
-        public int HouseNr => default;
-        public DateTime LastModifiedOn => default;
-        public string Street => default;
-        public DateTime Till => default;
-
-        public void Assign(JsNotation<DateTime> CreatedOn = default, JsNotation<string> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<LIVES_IN> Where(Func<LIVES_IN_ALIAS, QueryCondition> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<LIVES_IN> Where(Func<LIVES_IN_ALIAS, QueryCondition[]> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<LIVES_IN> Where(JsNotation<DateTime> CreatedOn = default, JsNotation<string> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default, JsNotation<Person> InNode = default, JsNotation<City> OutNode = default)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    public class LIVES_IN_ALIAS
-    {
-        internal LIVES_IN_ALIAS(Person parent)
-        {
-            throw new NotImplementedException();
-        }
-        internal LIVES_IN_ALIAS(City parent)
-        {
-            throw new NotImplementedException();
-        }
-
-        private StringResult ElementId => null;
-
-        public DateTimeResult CreatedOn => null;
-        public DateTimeResult From => null;
-        public NumericResult HouseNr => null;
-        public DateTimeResult LastModifiedOn => null;
-        public StringResult Street => null;
-        public DateTimeResult Till => null;
-
-        /// <summary>
-        /// Person in node: (Person)-[LIVES_IN]->(City)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is the given person
-        /// </returns>
-        public QueryCondition Person(Person person)
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        /// Person in node: (Person)-[LIVES_IN]->(City)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is in the given set of persons
-        /// </returns>
-        public QueryCondition Person(IEnumerable<Person> persons)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// City out-node: (Person)-[LIVES_IN]->(City)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is the given city
-        /// </returns>
-        public QueryCondition City(City city)
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        /// City out-node: (Person)-[LIVES_IN]->(City)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is in the given set of cities
-        /// </returns>
-        public QueryCondition Cities(IEnumerable<City> cities)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public static class RelationshipAssignmentExtensions
-    {
-        public static void Assign(this IEnumerable<EATS_AT> @this, JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static void Assign(this IEnumerable<LIVES_IN> @this, JsNotation<DateTime> CreatedOn = default, JsNotation<string> From = default, JsNotation<int> HouseNr = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<string> Street = default, JsNotation<DateTime> Till = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static void Add(this EntityCollection<Restaurant> @this, Restaurant restaurant, JsNotation<DateTime> CreatedOn = default, JsNotation<DateTime> LastModifiedOn = default, JsNotation<int> Weight = default)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

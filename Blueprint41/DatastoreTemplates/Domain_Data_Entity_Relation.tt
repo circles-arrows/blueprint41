@@ -1,0 +1,150 @@
+﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+#pragma warning disable S101 // Types should be named in PascalCase
+
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+using Blueprint41;
+using Blueprint41.Core;
+using Blueprint41.Query;
+using Blueprint41.DatastoreTemplates;
+using q = <#= Settings.FullQueryNamespace #>;
+
+namespace <#= Settings.FullCRUDNamespace #>
+{
+    /// <summary>
+    /// Relationship: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+    /// </summary>
+    public partial class <#= DALRelation.Name #>
+    {
+        private string _elementId { get; set; }
+
+        /// <summary>
+        /// Person (In Node)
+        /// </summary>
+        public Person Person { get; private set; }
+
+        /// <summary>
+        /// Restaurant (Out Node)
+        /// </summary>
+        public Restaurant Restaurant { get; private set; }
+
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+#>
+        public <#= attr.OuterReturnType #> <#= attr.Name #> { get; private set; }
+<#
+    }
+#>
+
+        public void Assign(<#= DALRelation.Properties.ToJsonNotation() #>)
+        {
+            throw new NotImplementedException();
+        }
+        public static List<<#= DALRelation.Name #>> Where(Func<<#= DALRelation.Name #>_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public static List<<#= DALRelation.Name #>> Where(Func<<#= DALRelation.Name #>_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public static List<<#= DALRelation.Name #>> Where(<#= DALRelation.Properties.ToJsonNotation() #>, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Alias for relationship: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+    /// </summary>
+    public partial class <#= DALRelation.Name #>_ALIAS
+    {
+        internal <#= DALRelation.Name #>_ALIAS(OGM entity, DirectionEnum direction)
+        {
+        }
+        internal <#= DALRelation.Name #>_ALIAS(IEnumerable<OGM> entity, DirectionEnum direction)
+        {
+        }
+
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+#>
+        public <#= GetResultType(attr.SystemReturnType) #> <#= attr.Name #>
+        {
+            get
+            {
+                if (_<#= attr.Name.ToCamelCase() #> is null)
+                    _<#= attr.Name.ToCamelCase() #> = _alias.<#= attr.Name #>;
+
+                return _<#= attr.Name.ToCamelCase() #>;
+            }
+        }
+        private <#= GetResultType(attr.SystemReturnType) #> _<#= attr.Name.ToCamelCase() #> = null;
+<#
+    }
+#>
+
+        /// <summary>
+        /// <#= DALRelation.InEntity.Name #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+        /// </summary>
+        /// <returns>
+        /// Condition where in-node is the given <#= DALRelation.InEntity.Name.ToTitleCase().ToLowerCase() #>
+        /// </returns>
+        public QueryCondition <#= DALRelation.InEntity.Name #>(<#= DALRelation.InEntity.Name #> <#= DALRelation.InEntity.Name.ToCamelCase() #>)
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// <#= DALRelation.InEntity.Name #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+        /// </summary>
+        /// <returns>
+        /// Condition where in-node is in the given set of <#= DALRelation.InEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
+        /// </returns>
+        public QueryCondition <#= DALRelation.InEntity.Name.ToPlural() #>(IEnumerable<<#= DALRelation.InEntity.Name #>> <#= DALRelation.InEntity.Name.ToCamelCase() #>)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// <#= DALRelation.OutEntity.Name #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+        /// </summary>
+        /// <returns>
+        /// Condition where out-node is the given <#= DALRelation.OutEntity.Name.ToTitleCase().ToLowerCase() #>
+        /// </returns>
+        public QueryCondition <#= DALRelation.OutEntity.Name #>(<#= DALRelation.OutEntity.Name #> <#= DALRelation.OutEntity.Name.ToCamelCase() #>)
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// <#= DALRelation.OutEntity.Name #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+        /// </summary>
+        /// <returns>
+        /// Condition where out-node is in the given set of <#= DALRelation.OutEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
+        /// </returns>
+        public QueryCondition <#= DALRelation.OutEntity.Name.ToPlural() #>(IEnumerable<<#= DALRelation.OutEntity.Name #>> <#= DALRelation.OutEntity.Name.ToCamelCase() #>)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static readonly q.<#= DALRelation.Name #>_ALIAS _alias = new q.<#= DALRelation.Name #>_ALIAS(new q.<#= DALRelation.Name #>_REL(null, DirectionEnum.None));
+    }
+
+    public static partial class RelationshipAssignmentExtensions
+    {
+        public static void Assign(this IEnumerable<<#= DALRelation.Name #>> @this, <#= DALRelation.Properties.ToJsonNotation() #>)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

@@ -234,23 +234,23 @@ namespace Blueprint41.UnitTest.Tests
 
 
                     // Get all EATS_AT relations for the given person
-                    List<EATS_AT> all = person.RestaurantRelations();
+                    List<PERSON_EATS_AT> all = person.RestaurantsRelations();
                     // And set their 'Weight' & 'LastModifiedOn' properties
-                    all.Assign(Weight: 10, LastModifiedOn: DateTime.UtcNow);
+                    all.Assign(Weight: 10, CreationDate: DateTime.UtcNow);
 
                     // Get a sub-set of EATS_AT relations for the given person
-                    List<EATS_AT> subset = person.RestaurantsWhere(alias => alias.Restaurant(restaurant) & alias.Weight > 10);
+                    List<PERSON_EATS_AT> subset = person.RestaurantsWhere(alias => alias.Restaurant(restaurant) & alias.Weight > 10);
                     // And use LINQ to query restaurants
                     IEnumerable<Restaurant> restaurants = subset.Select(rel => rel.Restaurant);
 
                     // Get EATS_AT relations based on a JSON notated expression
-                    List<EATS_AT> relations = EATS_AT.Where(InNode: person, OutNode: restaurant);
+                    List<PERSON_EATS_AT> relations = PERSON_EATS_AT.Where(InNode: person, OutNode: restaurant);
 
                     // Get EATS_AT relations based on a Bp41 notated expression
-                    List<EATS_AT> relations2 = EATS_AT.Where(alias => alias.Restaurants(restaurants) & alias.Person(person) & alias.Weight > 10);
+                    List<PERSON_EATS_AT> relations2 = PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants) & alias.Person(person) & alias.Weight > 10);
 
                     // Get EATS_AT relations based on Bp41 notated expression, and set their 'Weight' property
-                    EATS_AT.Where(alias => alias.Restaurants(restaurants)).Assign(Weight: 10);
+                    PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants)).Assign(Weight: 10);
 
                     // Get a sub-set of EATS_AT relations for the given person, and set their 'Weight' property
                     person.RestaurantsWhere(alias => alias.Weight > 10).Assign(Weight: 10);
@@ -260,10 +260,10 @@ namespace Blueprint41.UnitTest.Tests
                     person.CityIf(alias => alias.Street == "San Nicolas Street" & alias.HouseNr == 8)?.Assign(HouseNr: 6);
 
                     // Set city 
-                    person.SetCity(city, CreatedOn: DateTime.UtcNow, LastModifiedOn: DateTime.UtcNow, Street: "San Nicolas Street", HouseNr: 6);
+                    person.SetCity(city, CreationDate: DateTime.UtcNow, Street: "San Nicolas Street", HouseNr: 6);
 
                     // Add restaurant
-                    person.Restaurants.Add(restaurant, CreatedOn: DateTime.UtcNow, LastModifiedOn: DateTime.UtcNow, Weight: 10);
+                    person.AddRestaurants(restaurant, CreationDate: DateTime.UtcNow, Weight: 10);
 
 
 

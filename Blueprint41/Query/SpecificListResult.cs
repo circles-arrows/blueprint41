@@ -13,7 +13,7 @@ namespace Blueprint41.Query
 		public MiscListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public MiscListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public MiscListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public MiscListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public MiscListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out MiscListResult alias)
 		{
@@ -41,7 +41,7 @@ namespace Blueprint41.Query
 		public StringListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public StringListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public StringListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public StringListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public StringListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out StringListResult alias)
 		{
@@ -69,7 +69,7 @@ namespace Blueprint41.Query
 		public BooleanListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public BooleanListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public BooleanListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public BooleanListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public BooleanListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out BooleanListResult alias)
 		{
@@ -97,7 +97,7 @@ namespace Blueprint41.Query
 		public DateTimeListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public DateTimeListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public DateTimeListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public DateTimeListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public DateTimeListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out DateTimeListResult alias)
 		{
@@ -125,7 +125,7 @@ namespace Blueprint41.Query
 		public FloatListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public FloatListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public FloatListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public FloatListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public FloatListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out FloatListResult alias)
 		{
@@ -153,7 +153,7 @@ namespace Blueprint41.Query
 		public NumericListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public NumericListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public NumericListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public NumericListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public NumericListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out NumericListResult alias)
 		{
@@ -181,7 +181,7 @@ namespace Blueprint41.Query
 		public MiscJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public MiscJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public MiscJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public MiscJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public MiscJaggedListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out MiscJaggedListResult alias)
 		{
@@ -205,7 +205,7 @@ namespace Blueprint41.Query
 		public StringJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public StringJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public StringJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public StringJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public StringJaggedListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out StringJaggedListResult alias)
 		{
@@ -229,7 +229,7 @@ namespace Blueprint41.Query
 		public BooleanJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public BooleanJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public BooleanJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public BooleanJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public BooleanJaggedListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out BooleanJaggedListResult alias)
 		{
@@ -253,7 +253,7 @@ namespace Blueprint41.Query
 		public DateTimeJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public DateTimeJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public DateTimeJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public DateTimeJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public DateTimeJaggedListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out DateTimeJaggedListResult alias)
 		{
@@ -277,7 +277,7 @@ namespace Blueprint41.Query
 		public FloatJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public FloatJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public FloatJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public FloatJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public FloatJaggedListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out FloatJaggedListResult alias)
 		{
@@ -301,7 +301,7 @@ namespace Blueprint41.Query
 		public NumericJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public NumericJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public NumericJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public NumericJaggedListResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public NumericJaggedListResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out NumericJaggedListResult alias)
 		{

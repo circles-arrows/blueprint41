@@ -42,7 +42,7 @@ namespace Blueprint41.Query
 		public <#= listType #>(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public <#= listType #>(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public <#= listType #>(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
-		public <#= listType #>(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
+		public <#= listType #>(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? type = null) : base(alias, fieldName, entity, property, type) { }
 
 		public AsResult As(string aliasName, out <#= listType #> alias)
 		{
