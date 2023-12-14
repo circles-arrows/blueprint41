@@ -27,7 +27,7 @@ namespace Blueprint41.Build
             finally
             {
                 loader.Resolving -= loader.AssemblyResolver;
-                //loader.Unload();
+                loader.Unload();
             }
         }
 
@@ -61,11 +61,6 @@ namespace Blueprint41.Build
             if (assembly != null && (name.ToLowerInvariant() == "netstandard" || assembly.FullName == assemblyName.FullName))
                 return assembly;
 
-            //Log.LogMessage(MessageImportance.High, string.Format("### Loading FAILED '{0}' ###", assemblyPath));
-            //if (assembly != null)
-            //{
-            //    Log.LogMessage(MessageImportance.High, string.Format("### Expected '{0}' actual '{1}' ###", eventArgs.Name, assembly.FullName));
-            //}
             return null;
         }
 

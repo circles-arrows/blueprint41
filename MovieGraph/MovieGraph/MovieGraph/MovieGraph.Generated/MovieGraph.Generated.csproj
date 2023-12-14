@@ -25,6 +25,9 @@
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="&quot;$(ProjectDir)Blueprint41.Build.exe&quot; --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\Debug\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
+	</Target>
 	<!--<Import Project="Generate.targets" />
 	<Target Name="Generate" AfterTargets="Build">
 		<GenerateTask GeneratePath="$(ProjectDir)" />

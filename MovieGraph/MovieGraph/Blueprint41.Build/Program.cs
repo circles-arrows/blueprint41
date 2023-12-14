@@ -31,11 +31,11 @@ namespace Blueprint41.Build
                 {
                     if (arg.StartsWith(MODEL_PATH_ARG))
                     {
-                        modelPath = arg[MODEL_PATH_ARG.Length..];
+                        modelPath = Path.GetFullPath(arg[MODEL_PATH_ARG.Length..]);
                     }
                     else if (arg.StartsWith(GENERATE_PATH_ARG))
                     {
-                        generatePath = arg[GENERATE_PATH_ARG.Length..];
+                        generatePath = Path.GetFullPath(arg[GENERATE_PATH_ARG.Length..]);
                     }
                 }
                 if (modelPath == null || generatePath == null)
@@ -47,6 +47,8 @@ namespace Blueprint41.Build
                 if (!hasCommandlineArgumentErrors)
                 {
                     Console.WriteLine("Generate Task Starting...");
+                    Console.WriteLine($"ModelPath: '{modelPath}'");
+                    Console.WriteLine($"GeneratePath: '{generatePath}'");
                     try
                     {
                         Generate(modelPath, generatePath);
@@ -54,7 +56,7 @@ namespace Blueprint41.Build
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine("Generate Task Failed.");
+                        Console.Error.WriteLine($"Generate Task Failed.");
                         throw;
                     }
                 }
@@ -88,12 +90,16 @@ namespace Blueprint41.Build
         }
         public static void Generate(string modelDllPath, string generatePath)
         {
+            Console.WriteLine("Load assembly.");
             AssemblyLoader.Load(modelDllPath, (Assembly assembly) =>
             {
+                Console.WriteLine($"Load types of {assembly.FullName}");
                 Type[] types = GetTypes(assembly);
-
+                Console.WriteLine(string.Concat($"Found {types.Length} types"));
+                Console.WriteLine(string.Join('|', types.Select(item => item.Name)));
                 foreach ((Type datastoreType, Assembly bp41assembly) in types.Select(type => (type, bp41: GetDatastoreType(type)!)).Where(item => item.bp41 is not null))
                 {
+                    Console.WriteLine("Load datastore.");
                     Type[] bp41types = GetTypes(bp41assembly);
                     Type generatorType = bp41types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.Generator");
                     MethodInfo executeMethod = generatorType.GetMethod("Execute", BindingFlags.Public | BindingFlags.Static)!;
@@ -103,6 +109,7 @@ namespace Blueprint41.Build
                     Type generatorSettingsType = bp41types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.GeneratorSettings");
                     object generatorSettingsInstance = Activator.CreateInstance(generatorSettingsType, generatePath, "Datastore")!;
 
+                    Console.WriteLine("Execute Generate.");
                     executeMethodGeneric.Invoke(null, new object[] { generatorSettingsInstance });
                 }
             });
@@ -129,6 +136,7 @@ namespace Blueprint41.Build
             }
             catch (ReflectionTypeLoadException ex)
             {
+                Console.Error.WriteLine(ex.StackTrace);
                 types = ex.Types.Where(type => type is not null).ToArray()!;
             }
             return types;
