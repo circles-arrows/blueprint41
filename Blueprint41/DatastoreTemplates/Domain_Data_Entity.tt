@@ -728,7 +728,7 @@ if (!DALModel.IsAbstract)
         if (property.PropertyType == PropertyType.Collection)
         {
 #>
-        public List<<#= property.Relationship.Name #>> <#= property.Name #>Relations()
+        public List<<#= property.Relationship.Name #>> <#= property.Name.ToSingular() #>Relations()
         {
             throw new NotImplementedException();
         }
@@ -744,7 +744,7 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public void Add<#= property.Name #>(<#= property.ForeignEntity.Name #> <#= property.ForeignEntity.Name.ToCamelCase() #>, <#= property.Relationship.Properties.ToJsonNotation() #>)
+        public void Add<#= property.Name.ToSingular() #>(<#= property.ForeignEntity.Name #> <#= property.ForeignEntity.Name.ToCamelCase() #>, <#= property.Relationship.Properties.ToJsonNotation() #>)
         {
             throw new NotImplementedException();
         }

@@ -47,7 +47,7 @@ namespace Blueprint41.UnitTest.DataStore
 
             Relations.New(Entities["Restaurant"], Entities["City"], "RESTAURANT_LOCATED_AT", "LOCATED_AT")
                 .SetInProperty("City", PropertyType.Lookup)
-                .SetOutProperty("Restraurants", PropertyType.Collection);
+                .SetOutProperty("Restaurants", PropertyType.Collection);
 
             Relations.New(Entities["Person"], Entities["Restaurant"], "PERSON_EATS_AT", "EATS_AT")
                 .SetInProperty("Restaurants", PropertyType.Collection)

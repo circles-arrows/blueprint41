@@ -13,7 +13,7 @@ namespace Datastore.Manipulation
     public interface ICityOriginalData : IBaseEntityOriginalData
     {
         string Name { get; }
-        IEnumerable<Restaurant> Restraurants { get; }
+        IEnumerable<Restaurant> Restaurants { get; }
     }
 
     public partial class City : OGM<City, City.CityData, System.String>, IBaseEntity, ICityOriginalData
@@ -115,7 +115,7 @@ namespace Datastore.Manipulation
             public CityData(CityData data)
             {
                 Name = data.Name;
-                Restraurants = data.Restraurants;
+                Restaurants = data.Restaurants;
                 Uid = data.Uid;
                 LastModifiedOn = data.LastModifiedOn;
             }
@@ -127,7 +127,7 @@ namespace Datastore.Manipulation
             {
                 NodeType = "City";
 
-                Restraurants = new EntityCollection<Restaurant>(Wrapper, Members.Restraurants, item => { if (Members.Restraurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
+                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -161,7 +161,7 @@ namespace Datastore.Manipulation
             #region Members for interface ICity
 
             public string Name { get; set; }
-            public EntityCollection<Restaurant> Restraurants { get; private set; }
+            public EntityCollection<Restaurant> Restaurants { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -179,10 +179,10 @@ namespace Datastore.Manipulation
         #region Members for interface ICity
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-        public EntityCollection<Restaurant> Restraurants { get { return InnerData.Restraurants; } }
-        private void ClearRestraurants(DateTime? moment)
+        public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
+        private void ClearRestaurants(DateTime? moment)
         {
-            ((ILookupHelper<Restaurant>)InnerData.Restraurants).ClearLookup(moment);
+            ((ILookupHelper<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
         }
 
         #endregion
@@ -205,23 +205,23 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
-        public List<RESTAURANT_LOCATED_AT> RestraurantsRelations()
+        public List<RESTAURANT_LOCATED_AT> RestaurantRelations()
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestraurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition> alias)
+        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestraurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition[]> alias)
+        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestraurantsWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
-        public void AddRestraurants(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default)
+        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
@@ -292,7 +292,7 @@ namespace Datastore.Manipulation
             #region Members for interface ICity
 
             public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"];
-            public Property Restraurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restraurants"];
+            public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restaurants"];
             #endregion
 
             #region Members for interface IBaseEntity
@@ -578,43 +578,43 @@ namespace Datastore.Manipulation
 
                 #endregion
 
-                #region OnRestraurants
+                #region OnRestaurants
 
-                private static bool onRestraurantsIsRegistered = false;
+                private static bool onRestaurantsIsRegistered = false;
 
-                private static EventHandler<City, PropertyEventArgs> onRestraurants;
-                public static event EventHandler<City, PropertyEventArgs> OnRestraurants
+                private static EventHandler<City, PropertyEventArgs> onRestaurants;
+                public static event EventHandler<City, PropertyEventArgs> OnRestaurants
                 {
                     add
                     {
                         lock (typeof(OnPropertyChange))
                         {
-                            if (!onRestraurantsIsRegistered)
+                            if (!onRestaurantsIsRegistered)
                             {
-                                Members.Restraurants.Events.OnChange -= onRestraurantsProxy;
-                                Members.Restraurants.Events.OnChange += onRestraurantsProxy;
-                                onRestraurantsIsRegistered = true;
+                                Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
+                                Members.Restaurants.Events.OnChange += onRestaurantsProxy;
+                                onRestaurantsIsRegistered = true;
                             }
-                            onRestraurants += value;
+                            onRestaurants += value;
                         }
                     }
                     remove
                     {
                         lock (typeof(OnPropertyChange))
                         {
-                            onRestraurants -= value;
-                            if (onRestraurants is null && onRestraurantsIsRegistered)
+                            onRestaurants -= value;
+                            if (onRestaurants is null && onRestaurantsIsRegistered)
                             {
-                                Members.Restraurants.Events.OnChange -= onRestraurantsProxy;
-                                onRestraurantsIsRegistered = false;
+                                Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
+                                onRestaurantsIsRegistered = false;
                             }
                         }
                     }
                 }
             
-                private static void onRestraurantsProxy(object sender, PropertyEventArgs args)
+                private static void onRestaurantsProxy(object sender, PropertyEventArgs args)
                 {
-                    EventHandler<City, PropertyEventArgs> handler = onRestraurants;
+                    EventHandler<City, PropertyEventArgs> handler = onRestaurants;
                     if (handler is not null)
                         handler.Invoke((City)sender, args);
                 }
@@ -721,7 +721,7 @@ namespace Datastore.Manipulation
         #region Members for interface ICity
 
         string ICityOriginalData.Name { get { return OriginalData.Name; } }
-        IEnumerable<Restaurant> ICityOriginalData.Restraurants { get { return OriginalData.Restraurants.OriginalData; } }
+        IEnumerable<Restaurant> ICityOriginalData.Restaurants { get { return OriginalData.Restaurants.OriginalData; } }
 
         #endregion
         #region Members for interface IBaseEntity

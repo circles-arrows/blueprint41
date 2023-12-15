@@ -2531,7 +2531,7 @@ if (!DALModel.IsAbstract)
             this.Write("> ");
             
             #line 731 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(property.Name.ToSingular()));
             
             #line default
             #line hidden
@@ -2605,7 +2605,7 @@ if (!DALModel.IsAbstract)
                     "  public void Add");
             
             #line 747 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(property.Name.ToSingular()));
             
             #line default
             #line hidden

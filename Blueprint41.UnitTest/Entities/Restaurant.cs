@@ -118,7 +118,7 @@ namespace Datastore.Manipulation
             {
                 NodeType = "Restaurant";
 
-                City = new EntityCollection<City>(Wrapper, Members.City, item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restraurants.Count; } });
+                City = new EntityCollection<City>(Wrapper, Members.City, item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
                 Persons = new EntityCollection<Person>(Wrapper, Members.Persons, item => { if (Members.Persons.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
             }
             public string NodeType { get; private set; }
@@ -231,7 +231,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> PersonsRelations()
+        public List<PERSON_EATS_AT> PersonRelations()
         {
             throw new NotImplementedException();
         }
@@ -247,7 +247,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddPersons(Person person, JsNotation<System.DateTime> CreationDate = default, JsNotation<int> Weight = default)
+        public void AddPerson(Person person, JsNotation<System.DateTime> CreationDate = default, JsNotation<int> Weight = default)
         {
             throw new NotImplementedException();
         }

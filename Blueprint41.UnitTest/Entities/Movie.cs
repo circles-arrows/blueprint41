@@ -242,7 +242,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<ACTED_IN> ActorsRelations()
+        public List<ACTED_IN> ActorRelations()
         {
             throw new NotImplementedException();
         }
@@ -258,7 +258,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddActors(Person person, JsNotation<System.DateTime> CreationDate = default)
+        public void AddActor(Person person, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }

@@ -245,7 +245,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> RestaurantsRelations()
+        public List<PERSON_EATS_AT> RestaurantRelations()
         {
             throw new NotImplementedException();
         }
@@ -261,11 +261,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddRestaurants(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default, JsNotation<int> Weight = default)
+        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default, JsNotation<int> Weight = default)
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_DIRECTED> DirectedMoviesRelations()
+        public List<PERSON_DIRECTED> DirectedMovieRelations()
         {
             throw new NotImplementedException();
         }
@@ -281,11 +281,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddDirectedMovies(Movie movie, JsNotation<System.DateTime> CreationDate = default)
+        public void AddDirectedMovie(Movie movie, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
-        public List<ACTED_IN> ActedInMoviesRelations()
+        public List<ACTED_IN> ActedInMovieRelations()
         {
             throw new NotImplementedException();
         }
@@ -301,7 +301,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddActedInMovies(Movie movie, JsNotation<System.DateTime> CreationDate = default)
+        public void AddActedInMovie(Movie movie, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }

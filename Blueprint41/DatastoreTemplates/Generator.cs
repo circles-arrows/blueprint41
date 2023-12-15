@@ -231,6 +231,10 @@ namespace Blueprint41.DatastoreTemplates
         {
             if (MatchAndReplace(ref Singular, "people", "", 0) == true) return Singular;
             if (MatchAndReplace(ref Singular, "craft", "", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "sheep", "", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "deer", "", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "series", "", 0) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "species", "", 0) == true) return Singular;
             if (MatchAndReplace(ref Singular, "tooth", "eeth", 4) == true) return Singular;
             if (MatchAndReplace(ref Singular, "goose", "eese", 4) == true) return Singular;
             if (MatchAndReplace(ref Singular, "trix", "ces", 1) == true) return Singular;
@@ -256,6 +260,47 @@ namespace Blueprint41.DatastoreTemplates
             if (MatchAndReplace(ref Singular, "y", "ies", 1) == true) return Singular;
             MatchAndReplace(ref Singular, "", "s", 0);
             return Singular;
+        }
+        public static string ToSingular(this string Plural)
+        {
+            if (MatchAndReplace(ref Plural, "people", "", 0) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "craft", "", 0) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "sheep", "", 0) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "deer", "", 0) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "series", "", 0) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "species", "", 0) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "teeth", "ooth", 4) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "geese", "oose", 4) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "trices", "x", 3) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "mice", "ouse", 3) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "lice", "ouce", 3) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "feet", "oot", 3) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "zoa", "on", 1) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "infos", "", 1) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "eaux", "", 1) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "ieux", "", 1) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "men", "an", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "cis", "es", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "sis", "es", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "xis", "es", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "ches", "", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "ves", "fe", 3) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "shes", "", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "oes", "", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "ves", "f", 3) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "ses", "", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "xes", "", 2) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "pies", "", 1) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "movies", "", 1) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "calories", "", 1) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "freebies", "", 1) == true) return Plural;
+            if (MatchAndReplace(ref Plural, "cookies", "", 1) == true) return Plural;
+
+            if (MatchAndReplace(ref Plural, "ies", "y", 3) == true) return Plural;
+            
+            
+            MatchAndReplace(ref Plural, "s", "", 1);
+            return Plural;
         }
         private static bool MatchAndReplace(ref string Text, string Match, string Replace, int Amount)
         {

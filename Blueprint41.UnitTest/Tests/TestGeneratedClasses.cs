@@ -234,7 +234,7 @@ namespace Blueprint41.UnitTest.Tests
 
 
                     // Get all EATS_AT relations for the given person
-                    List<PERSON_EATS_AT> all = person.RestaurantsRelations();
+                    List<PERSON_EATS_AT> all = person.RestaurantRelations();
                     // And set their 'Weight' & 'LastModifiedOn' properties
                     all.Assign(Weight: 10, CreationDate: DateTime.UtcNow);
 
@@ -263,7 +263,7 @@ namespace Blueprint41.UnitTest.Tests
                     person.SetCity(city, CreationDate: DateTime.UtcNow, Street: "San Nicolas Street", HouseNr: 6);
 
                     // Add restaurant
-                    person.AddRestaurants(restaurant, CreationDate: DateTime.UtcNow, Weight: 10);
+                    person.AddRestaurant(restaurant, CreationDate: DateTime.UtcNow, Weight: 10);
 
 
 
@@ -403,11 +403,11 @@ namespace Blueprint41.UnitTest.Tests
                         City = new City() { Name = "New York" }
                     };
 
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Mcdonalds" });
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Shakeys" });
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Starbucks" });
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Bo's Coffee" });
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Chattime" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Mcdonalds" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Shakeys" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Starbucks" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Bo's Coffee" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Chattime" });
 
                     Person p2 = new Person
                     {
@@ -421,30 +421,30 @@ namespace Blueprint41.UnitTest.Tests
                         City = p1.City
                     };
 
-                    p2.City.Restraurants.Add(new Restaurant { Name = "Pink's Hot Dogs" });
-                    p2.City.Restraurants.Add(new Restaurant { Name = "World Famous" });
-                    p2.City.Restraurants.Add(new Restaurant { Name = "Barone's" });
-                    p2.City.Restraurants.Add(new Restaurant { Name = "Providence" });
-                    p2.City.Restraurants.Add(new Restaurant { Name = "La Taqueria" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "Pink's Hot Dogs" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "World Famous" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "Barone's" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "Providence" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "La Taqueria" });
 
-                    p1.Restaurants.Add(p1.City.Restraurants[0]);
-                    p1.Restaurants.Add(p1.City.Restraurants[1]);
-                    p1.Restaurants.Add(p1.City.Restraurants[2]);
-                    p1.Restaurants.Add(p1.City.Restraurants[3]);
-                    p1.Restaurants.Add(p1.City.Restraurants[4]);
+                    p1.Restaurants.Add(p1.City.Restaurants[0]);
+                    p1.Restaurants.Add(p1.City.Restaurants[1]);
+                    p1.Restaurants.Add(p1.City.Restaurants[2]);
+                    p1.Restaurants.Add(p1.City.Restaurants[3]);
+                    p1.Restaurants.Add(p1.City.Restaurants[4]);
 
-                    p2.Restaurants.Add(p1.City.Restraurants[0]);
-                    p2.Restaurants.Add(p1.City.Restraurants[1]);
-                    p2.Restaurants.Add(p1.City.Restraurants[2]);
-                    p2.Restaurants.Add(p1.City.Restraurants[3]);
-                    p2.Restaurants.Add(p1.City.Restraurants[4]);
+                    p2.Restaurants.Add(p1.City.Restaurants[0]);
+                    p2.Restaurants.Add(p1.City.Restaurants[1]);
+                    p2.Restaurants.Add(p1.City.Restaurants[2]);
+                    p2.Restaurants.Add(p1.City.Restaurants[3]);
+                    p2.Restaurants.Add(p1.City.Restaurants[4]);
 
-                    p2.Restaurants.Add(p2.City.Restraurants[0]);
-                    p2.Restaurants.Add(p2.City.Restraurants[1]);
-                    p2.Restaurants.Add(p2.City.Restraurants[2]);
-                    p2.Restaurants.Add(p2.City.Restraurants[2]);
-                    p2.Restaurants.Add(p2.City.Restraurants[3]);
-                    p2.Restaurants.Add(p2.City.Restraurants[4]);
+                    p2.Restaurants.Add(p2.City.Restaurants[0]);
+                    p2.Restaurants.Add(p2.City.Restaurants[1]);
+                    p2.Restaurants.Add(p2.City.Restaurants[2]);
+                    p2.Restaurants.Add(p2.City.Restaurants[2]);
+                    p2.Restaurants.Add(p2.City.Restaurants[3]);
+                    p2.Restaurants.Add(p2.City.Restaurants[4]);
 
 
                     Transaction.Commit();
