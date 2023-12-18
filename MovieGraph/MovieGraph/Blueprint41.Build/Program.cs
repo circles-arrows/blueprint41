@@ -10,6 +10,7 @@ namespace Blueprint41.Build
     {
         private const string MODEL_PATH_ARG = "--modelPath=";
         private const string GENERATE_PATH_ARG = "--generatePath=";
+        private const string NAMESPACE_ARG = "--namespace=";
 
         static void Main(string[] args)
         {
@@ -21,11 +22,13 @@ namespace Blueprint41.Build
                 Console.WriteLine("-help    Displays command line argument information");
                 Console.WriteLine(MODEL_PATH_ARG);
                 Console.WriteLine(GENERATE_PATH_ARG);
+                Console.WriteLine(NAMESPACE_ARG);
             }
             else
             {
                 string modelPath = null;
                 string generatePath = null;
+                string namespaceName = "Datastore";
 
                 foreach (var arg in args)
                 {
@@ -36,6 +39,10 @@ namespace Blueprint41.Build
                     else if (arg.StartsWith(GENERATE_PATH_ARG))
                     {
                         generatePath = Path.GetFullPath(arg[GENERATE_PATH_ARG.Length..]);
+                    }
+                    else if (arg.StartsWith(NAMESPACE_ARG))
+                    {
+                        namespaceName = arg[NAMESPACE_ARG.Length..];
                     }
                 }
                 if (modelPath == null || generatePath == null)
@@ -49,14 +56,16 @@ namespace Blueprint41.Build
                     Console.WriteLine("Generate Task Starting...");
                     Console.WriteLine($"ModelPath: '{modelPath}'");
                     Console.WriteLine($"GeneratePath: '{generatePath}'");
+                    Console.WriteLine($"Namespace: '{namespaceName}'");
                     try
                     {
-                        Generate(modelPath, generatePath);
+                        Generate(modelPath, generatePath, namespaceName);
                         Console.WriteLine("Generate Task Complete.");
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         Console.Error.WriteLine($"Generate Task Failed.");
+                        Console.Error.WriteLine(ex.Message);
                         throw;
                     }
                 }
@@ -88,7 +97,7 @@ namespace Blueprint41.Build
                 return value is not null;
             }
         }
-        public static void Generate(string modelDllPath, string generatePath)
+        public static void Generate(string modelDllPath, string generatePath, string namespaceName)
         {
             Console.WriteLine("Load assembly.");
             AssemblyLoader.Load(modelDllPath, (Assembly assembly) =>
@@ -107,7 +116,7 @@ namespace Blueprint41.Build
                     MethodInfo executeMethodGeneric = executeMethod.MakeGenericMethod(datastoreType);
 
                     Type generatorSettingsType = bp41types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.GeneratorSettings");
-                    object generatorSettingsInstance = Activator.CreateInstance(generatorSettingsType, generatePath, "Datastore")!;
+                    object generatorSettingsInstance = Activator.CreateInstance(generatorSettingsType, generatePath, namespaceName)!;
 
                     Console.WriteLine("Execute Generate.");
                     executeMethodGeneric.Invoke(null, new object[] { generatorSettingsInstance });
