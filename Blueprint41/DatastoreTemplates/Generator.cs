@@ -115,6 +115,9 @@ namespace Blueprint41.DatastoreTemplates
 
         private static void CreateFilesFromDictionary(Dictionary<string, string> dictionary, string path)
         {
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
+
             Directory.CreateDirectory(path);
             foreach (KeyValuePair<string, string> item in dictionary)
             {
@@ -129,7 +132,7 @@ namespace Blueprint41.DatastoreTemplates
 
         private static void RecursiveDelete(string? currentDirectory)
         {
-            if (Directory.GetFiles(currentDirectory).Length == 0)
+            if (Directory.GetFiles(currentDirectory).Length > 0)
             {
                 string? parentDirectory = Path.GetDirectoryName(currentDirectory);
                 Directory.Delete(currentDirectory);
