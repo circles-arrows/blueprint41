@@ -60,7 +60,7 @@ namespace Blueprint41.Build
                     try
                     {
                         Generate(modelPath, generatePath, namespaceName);
-                        Console.WriteLine("Generate Task Complete.");
+                        Console.WriteLine("Generate Task Complete");
                     }
                     catch (Exception ex)
                     {
@@ -99,16 +99,15 @@ namespace Blueprint41.Build
         }
         public static void Generate(string modelDllPath, string generatePath, string namespaceName)
         {
-            Console.WriteLine("Load assembly.");
+            Console.WriteLine("Loading assembly");
             AssemblyLoader.Load(modelDllPath, (Assembly assembly) =>
             {
-                Console.WriteLine($"Load types of {assembly.FullName}");
                 Type[] types = GetTypes(assembly);
-                Console.WriteLine(string.Concat($"Found {types.Length} types"));
-                Console.WriteLine(string.Join('|', types.Select(item => item.Name)));
-                foreach ((Type datastoreType, Assembly bp41assembly) in types.Select(type => (type, bp41: GetDatastoreType(type)!)).Where(item => item.bp41 is not null))
+                if (types.Length == 0)
+                    throw new InvalidOperationException($"No types found in assembly '{assembly.FullName}'.");
+
+                foreach ((Type datastoreType, Assembly bp41assembly) in types.Select(type => (type, bp41: GetBlueprint41Assembly(type)!)).Where(item => item.bp41 is not null))
                 {
-                    Console.WriteLine("Load datastore.");
                     Type[] bp41types = GetTypes(bp41assembly);
                     Type generatorType = bp41types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.Generator");
                     MethodInfo executeMethod = generatorType.GetMethod("Execute", BindingFlags.Public | BindingFlags.Static)!;
@@ -118,13 +117,13 @@ namespace Blueprint41.Build
                     Type generatorSettingsType = bp41types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.GeneratorSettings");
                     object generatorSettingsInstance = Activator.CreateInstance(generatorSettingsType, generatePath, namespaceName)!;
 
-                    Console.WriteLine("Execute Generate.");
                     executeMethodGeneric.Invoke(null, new object[] { generatorSettingsInstance });
+                    Console.WriteLine("Generate Executed");
                 }
             });
         }
 
-        private static Assembly GetDatastoreType(Type? type)
+        private static Assembly GetBlueprint41Assembly(Type type)
         {
             while (type is not null)
             {

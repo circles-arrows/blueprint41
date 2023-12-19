@@ -9,18 +9,18 @@ namespace Blueprint41.Build
     {
         private AssemblyLoader(string filename) : base(true)
         {
-            InitialFolder = Path.GetDirectoryName(filename) ?? throw new FileLoadException("Logical error message here...");
+            InitialFolder = Path.GetDirectoryName(filename) ?? throw new DirectoryNotFoundException($"Directory '{filename}' not found.");
             Resolving += AssemblyResolver;
         }
 
         public static void Load(string filename, Action<Assembly> action)
         {
-            AssemblyLoader loader = new AssemblyLoader(filename);
+            AssemblyLoader loader = new(filename);
             try
             {
                 Assembly assembly = loader.LoadAssembly(filename);
                 if (assembly is null)
-                    throw new FileNotFoundException("Better message here...");
+                    throw new FileNotFoundException($"Failed to load datastore assembly from path '{filename}'.");
 
                 action?.Invoke(assembly);
             }
@@ -43,10 +43,10 @@ namespace Blueprint41.Build
             string name = assemblyName.Name;
 
             string assemblyPath = Path.Combine(InitialFolder, name + ".dll");
-            if (name.ToLowerInvariant() == "netstandard")
+            if (name.Equals("netstandard", StringComparison.InvariantCultureIgnoreCase))
             {
                 assemblyPath = InitialFolder;
-                while (assemblyPath != null && assemblyPath != "")
+                while (!string.IsNullOrEmpty(assemblyPath))
                 {
                     if (File.Exists(Path.Combine(assemblyPath, @"DLLs\netstandard\framework\netstandard.dll")))
                     {
@@ -58,7 +58,7 @@ namespace Blueprint41.Build
             }
 
             Assembly assembly = LoadAssembly(assemblyPath);
-            if (assembly != null && (name.ToLowerInvariant() == "netstandard" || assembly.FullName == assemblyName.FullName))
+            if (assembly != null && (name.Equals("netstandard", StringComparison.InvariantCultureIgnoreCase) || assembly.FullName == assemblyName.FullName))
                 return assembly;
 
             return null;
