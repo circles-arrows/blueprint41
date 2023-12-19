@@ -40,19 +40,20 @@ namespace Blueprint41.UnitTest.DataStore
 
             Relations.New(Entities["Person"], Entities["City"], "PERSON_LIVES_IN", "LIVES_IN")
                 .SetInProperty("City", PropertyType.Lookup)
-                .AddProperty("From", typeof(DateTime), false)
-                .AddProperty("HouseNr", typeof(int))
-                .AddProperty("Street", typeof(string))
-                .AddProperty("Till", typeof(DateTime), false);
+                .AddProperty("HouseNr", typeof(int), false)
+                .AddProperty("Street", typeof(string), false)
+                .AddProperty("StartDate", typeof(DateTime), false)
+                .AddProperty("EndDate", typeof(DateTime), false);
 
             Relations.New(Entities["Restaurant"], Entities["City"], "RESTAURANT_LOCATED_AT", "LOCATED_AT")
                 .SetInProperty("City", PropertyType.Lookup)
-                .SetOutProperty("Restaurants", PropertyType.Collection);
+                .SetOutProperty("Restaurants", PropertyType.Collection)
+                .AddTimeDependance();
 
             Relations.New(Entities["Person"], Entities["Restaurant"], "PERSON_EATS_AT", "EATS_AT")
                 .SetInProperty("Restaurants", PropertyType.Collection)
                 .SetOutProperty("Persons", PropertyType.Collection)
-                .AddProperty("Weight", typeof(int), false);
+                .AddProperty("Score", new[] { "Good", "Average", "Bad"}, true, IndexType.Indexed);
 
             Relations.New(Entities["Person"], Entities["Movie"], "PERSON_DIRECTED", "DIRECTED_BY")
                 .SetInProperty("DirectedMovies", PropertyType.Collection)

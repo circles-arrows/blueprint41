@@ -114,6 +114,9 @@ namespace Blueprint41
             if (IsTimeDependent)
                 throw new NotSupportedException(string.Format("The relationship type '{0}' already has time dependence support.", Name));
 
+            if (_properties.Any(item => item.Name != "CreationDate"))
+                throw new NotSupportedException(string.Format("Time dependence cannot be enabled since the relationship type '{0}' already has other properties.", Name));
+
             IsTimeDependent = true;
 
             _properties.Add("StartDate", new RelationshipProperty(this, PropertyType.Attribute, "StartDate", typeof(DateTime), false, IndexType.None));
@@ -124,6 +127,8 @@ namespace Blueprint41
 
         public Relationship SetInProperty(string name, PropertyType type, bool nullable = true)
         {
+            Parent.EnsureSchemaMigration();
+
             if (InProperty is not null)
                 throw new InvalidOperationException("There is already an in property defined.");
 
@@ -149,6 +154,8 @@ namespace Blueprint41
         }
         public Relationship SetOutProperty(string name, PropertyType type, bool nullable = true)
         {
+            Parent.EnsureSchemaMigration();
+
             if (OutProperty is not null)
                 throw new InvalidOperationException("There is already an in property defined.");
 
@@ -179,7 +186,7 @@ namespace Blueprint41
         }
         public Relationship AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
         {
-            VerifyInOrOutProeprtyIsAlreadySet();
+            VerifyPropertiesCanBeAdded();
 
             RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
             _properties.Add(name, value);
@@ -188,7 +195,7 @@ namespace Blueprint41
         }
         public Relationship AddProperty(string name, Enumeration enumeration, bool nullable = true, IndexType indexType = IndexType.None)
         {
-            VerifyInOrOutProeprtyIsAlreadySet();
+            VerifyPropertiesCanBeAdded();
 
             RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
             _properties.Add(name, value);
@@ -204,21 +211,28 @@ namespace Blueprint41
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 throw new ArgumentException(string.Format("The type argument does not support the 'Nullable<{0}>' type. All types are considered nullable by default, but you can also set the 'nullable' argument explicitly.", type.GenericTypeArguments[0].Name));
 
-            VerifyInOrOutProeprtyIsAlreadySet();
+            VerifyPropertiesCanBeAdded();
 
             RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, type, nullable, indexType);
             _properties.Add(name, value);
 
             return this;
         }
-        private void VerifyInOrOutProeprtyIsAlreadySet()
+        private void VerifyPropertiesCanBeAdded()
         {
+            Parent.EnsureSchemaMigration();
+
             if (InProperty is null && OutProperty is null)
                 throw new InvalidOperationException("At least 1 in or out property needs to be set before primitive properties can be added.");
+
+            if (IsTimeDependent)
+                throw new NotSupportedException(string.Format("Primitive properties cannot be added since the relationship type '{0}' already has time dependence enabled.", Name));
         }
 
         internal void ResetProperty(DirectionEnum direction)
         {
+            Parent.EnsureSchemaMigration();
+
             if (direction == DirectionEnum.In)
                 InProperty = null;
 
@@ -349,7 +363,7 @@ namespace Blueprint41
             Parent.EnsureSchemaMigration();
 
             if (!IsTimeDependent)
-                throw new NotSupportedException(string.Format("The relationship type '{0}' has no time dependence support yet.", Name));
+                throw new NotSupportedException(string.Format("The relationship type '{0}' has no time dependence set.", Name));
 
             IsTimeDependent = false;
 

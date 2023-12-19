@@ -237,11 +237,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN CityIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> From = default, JsNotation<int?> HouseNr = default, JsNotation<string> Street = default, JsNotation<System.DateTime> Till = default)
+        public PERSON_LIVES_IN CityIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<int> HouseNr = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> Street = default)
         {
             throw new NotImplementedException();
         }
-        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> From = default, JsNotation<int?> HouseNr = default, JsNotation<string> Street = default, JsNotation<System.DateTime> Till = default)
+        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<int> HouseNr = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> Street = default)
         {
             throw new NotImplementedException();
         }
@@ -257,11 +257,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<int> Weight = default)
+        public List<PERSON_EATS_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
         {
             throw new NotImplementedException();
         }
-        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default, JsNotation<int> Weight = default)
+        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
         {
             throw new NotImplementedException();
         }

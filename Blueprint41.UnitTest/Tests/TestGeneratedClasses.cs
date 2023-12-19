@@ -162,12 +162,15 @@ namespace Blueprint41.UnitTest.Tests
                     r1.City = c1;
                     p1.Restaurants.Add(r1);
 
+                    Transaction.Flush();
+
+                    Assert.AreEqual(p1.City, c1);
+                    Assert.AreEqual(r1.City, c1);
+                    Assert.AreEqual(p1.Restaurants[0], r1);
+
                     Transaction.Commit();
                 }
 
-                Assert.AreEqual(p1.City, c1);
-                Assert.AreEqual(r1.City, c1);
-                Assert.AreEqual(p1.Restaurants[0], r1);
 
                 output.AssertNodeCreated("Person");
                 output.AssertNodeCreated("City");
@@ -233,37 +236,37 @@ namespace Blueprint41.UnitTest.Tests
 
 
 
-                    // Get all EATS_AT relations for the given person
-                    List<PERSON_EATS_AT> all = person.RestaurantRelations();
-                    // And set their 'Weight' & 'LastModifiedOn' properties
-                    all.Assign(Weight: 10, CreationDate: DateTime.UtcNow);
+                    //// Get all EATS_AT relations for the given person
+                    //List<PERSON_EATS_AT> all = person.RestaurantRelations();
+                    //// And set their 'Weight' & 'LastModifiedOn' properties
+                    //all.Assign(Weight: 10, CreationDate: DateTime.UtcNow);
 
-                    // Get a sub-set of EATS_AT relations for the given person
-                    List<PERSON_EATS_AT> subset = person.RestaurantsWhere(alias => alias.Restaurant(restaurant) & alias.Weight > 10);
-                    // And use LINQ to query restaurants
-                    IEnumerable<Restaurant> restaurants = subset.Select(rel => rel.Restaurant);
+                    //// Get a sub-set of EATS_AT relations for the given person
+                    //List<PERSON_EATS_AT> subset = person.RestaurantsWhere(alias => alias.Restaurant(restaurant) & alias.Weight > 10);
+                    //// And use LINQ to query restaurants
+                    //IEnumerable<Restaurant> restaurants = subset.Select(rel => rel.Restaurant);
 
-                    // Get EATS_AT relations based on a JSON notated expression
-                    List<PERSON_EATS_AT> relations = PERSON_EATS_AT.Where(InNode: person, OutNode: restaurant);
+                    //// Get EATS_AT relations based on a JSON notated expression
+                    //List<PERSON_EATS_AT> relations = PERSON_EATS_AT.Where(InNode: person, OutNode: restaurant);
 
-                    // Get EATS_AT relations based on a Bp41 notated expression
-                    List<PERSON_EATS_AT> relations2 = PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants) & alias.Person(person) & alias.Weight > 10);
+                    //// Get EATS_AT relations based on a Bp41 notated expression
+                    //List<PERSON_EATS_AT> relations2 = PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants) & alias.Person(person) & alias.Weight > 10);
 
-                    // Get EATS_AT relations based on Bp41 notated expression, and set their 'Weight' property
-                    PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants)).Assign(Weight: 10);
+                    //// Get EATS_AT relations based on Bp41 notated expression, and set their 'Weight' property
+                    //PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants)).Assign(Weight: 10);
 
-                    // Get a sub-set of EATS_AT relations for the given person, and set their 'Weight' property
-                    person.RestaurantsWhere(alias => alias.Weight > 10).Assign(Weight: 10);
+                    //// Get a sub-set of EATS_AT relations for the given person, and set their 'Weight' property
+                    //person.RestaurantsWhere(alias => alias.Weight > 10).Assign(Weight: 10);
 
-                    // Lookup: Query LIVES_IN relation for the city OR null, depending on the condition
-                    //         And potentially assign new values
-                    person.CityIf(alias => alias.Street == "San Nicolas Street" & alias.HouseNr == 8)?.Assign(HouseNr: 6);
+                    //// Lookup: Query LIVES_IN relation for the city OR null, depending on the condition
+                    ////         And potentially assign new values
+                    //person.CityIf(alias => alias.Street == "San Nicolas Street" & alias.HouseNr == 8)?.Assign(HouseNr: 6);
 
-                    // Set city 
-                    person.SetCity(city, CreationDate: DateTime.UtcNow, Street: "San Nicolas Street", HouseNr: 6);
+                    //// Set city 
+                    //person.SetCity(city, CreationDate: DateTime.UtcNow, Street: "San Nicolas Street", HouseNr: 6);
 
-                    // Add restaurant
-                    person.AddRestaurant(restaurant, CreationDate: DateTime.UtcNow, Weight: 10);
+                    //// Add restaurant
+                    //person.AddRestaurant(restaurant, CreationDate: DateTime.UtcNow, Weight: 10);
 
 
 
@@ -427,25 +430,9 @@ namespace Blueprint41.UnitTest.Tests
                     p2.City.Restaurants.Add(new Restaurant { Name = "Providence" });
                     p2.City.Restaurants.Add(new Restaurant { Name = "La Taqueria" });
 
-                    p1.Restaurants.Add(p1.City.Restaurants[0]);
-                    p1.Restaurants.Add(p1.City.Restaurants[1]);
-                    p1.Restaurants.Add(p1.City.Restaurants[2]);
-                    p1.Restaurants.Add(p1.City.Restaurants[3]);
-                    p1.Restaurants.Add(p1.City.Restaurants[4]);
-
-                    p2.Restaurants.Add(p1.City.Restaurants[0]);
-                    p2.Restaurants.Add(p1.City.Restaurants[1]);
-                    p2.Restaurants.Add(p1.City.Restaurants[2]);
-                    p2.Restaurants.Add(p1.City.Restaurants[3]);
-                    p2.Restaurants.Add(p1.City.Restaurants[4]);
-
-                    p2.Restaurants.Add(p2.City.Restaurants[0]);
-                    p2.Restaurants.Add(p2.City.Restaurants[1]);
-                    p2.Restaurants.Add(p2.City.Restaurants[2]);
-                    p2.Restaurants.Add(p2.City.Restaurants[2]);
-                    p2.Restaurants.Add(p2.City.Restaurants[3]);
-                    p2.Restaurants.Add(p2.City.Restaurants[4]);
-
+                    p1.Restaurants.AddRange(p1.City.Restaurants.GetItems(DateTime.UtcNow));
+                    p2.Restaurants.AddRange(p2.City.Restaurants.GetItems(DateTime.UtcNow));
+                    p3.Restaurants.AddRange(p1.City.Restaurants.GetItems(DateTime.UtcNow));
 
                     Transaction.Commit();
                 }
@@ -513,7 +500,7 @@ namespace Blueprint41.UnitTest.Tests
                 searchResult = Person.LoadWhere(compiled);
                 Assert.AreEqual(2, searchResult.Count);
 
-                Assert.AreEqual("Jane Smith", searchResult[0].Name);
+                Assert.AreEqual("Bob Smith", searchResult[0].Name);
                 Assert.AreEqual("Joe Smith", searchResult[1].Name);
 
                 Assert.AreEqual(

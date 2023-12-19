@@ -111,28 +111,28 @@ public partial class PERSON_LIVES_IN_REL : RELATIONSHIP, IFromIn_PERSON_LIVES_IN
             Parent = parent;
 
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["CreationDate"]);
-            From = new DateTimeResult(this, "From", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["From"]);
             HouseNr = new NumericResult(this, "HouseNr", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["HouseNr"]);
             Street = new StringResult(this, "Street", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["Street"]);
-            Till = new DateTimeResult(this, "Till", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["Till"]);
+            StartDate = new DateTimeResult(this, "StartDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["StartDate"]);
+            EndDate = new DateTimeResult(this, "EndDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["EndDate"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> From = default, JsNotation<int?> HouseNr = default, JsNotation<string> Street = default, JsNotation<System.DateTime> Till = default)
+        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<int> HouseNr = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> Street = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
-            if (From.HasValue) assignments.Add(new Assignment(this.From, From));
             if (HouseNr.HasValue) assignments.Add(new Assignment(this.HouseNr, HouseNr));
             if (Street.HasValue) assignments.Add(new Assignment(this.Street, Street));
-            if (Till.HasValue) assignments.Add(new Assignment(this.Till, Till));
+            if (StartDate.HasValue) assignments.Add(new Assignment(this.StartDate, StartDate));
+            if (EndDate.HasValue) assignments.Add(new Assignment(this.EndDate, EndDate));
 
             return assignments.ToArray();
         }
 
         public DateTimeResult CreationDate { get; private set; } 
-        public DateTimeResult From { get; private set; } 
         public NumericResult HouseNr { get; private set; } 
         public StringResult Street { get; private set; } 
-        public DateTimeResult Till { get; private set; } 
+        public DateTimeResult StartDate { get; private set; } 
+        public DateTimeResult EndDate { get; private set; } 
     }
 }

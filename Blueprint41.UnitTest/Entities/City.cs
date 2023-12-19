@@ -127,7 +127,7 @@ namespace Datastore.Manipulation
             {
                 NodeType = "City";
 
-                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
+                Restaurants = new EntityTimeCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -161,7 +161,7 @@ namespace Datastore.Manipulation
             #region Members for interface ICity
 
             public string Name { get; set; }
-            public EntityCollection<Restaurant> Restaurants { get; private set; }
+            public EntityTimeCollection<Restaurant> Restaurants { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -179,7 +179,7 @@ namespace Datastore.Manipulation
         #region Members for interface ICity
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-        public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
+        public EntityTimeCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
         private void ClearRestaurants(DateTime? moment)
         {
             ((ILookupHelper<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
@@ -217,11 +217,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }
-        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default)
+        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }
