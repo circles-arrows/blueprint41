@@ -62,6 +62,40 @@ namespace <#= Settings.FullCRUDNamespace #>
         {
             throw new NotImplementedException();
         }
+<#
+    var enumProperties = DALRelation.Properties.Where(item => item.EnumValues is not null).ToList();
+
+    if (enumProperties.Count != 0)
+    {
+#>
+
+        #region Enumerations
+
+<#
+        foreach (Property attr in enumProperties)
+        {
+            if (attr.EnumValues is null)
+                continue;
+#>
+        public enum <#= attr.Name #>Enum
+        {
+<#
+            foreach (var value in attr.EnumValues)
+            {
+#>
+            <#= value.Name #> = <#= value.Value #>,
+<#
+            }
+#>
+        }
+
+<#
+        }
+#>
+        #endregion
+<#
+    }
+#>
     }
 
     /// <summary>

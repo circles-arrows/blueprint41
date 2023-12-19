@@ -49,12 +49,16 @@ namespace Datastore.Manipulation
             throw new NotImplementedException();
         }
 
+        #region Enumerations
+
         public enum ScoreEnum
         {
-            Good,
-            Average,
-            Bad,
+            Good = 0,
+            Average = 1,
+            Bad = 2,
         }
+
+        #endregion
     }
 
     /// <summary>

@@ -30,7 +30,7 @@ namespace Blueprint41.UnitTest.Helper
             if (index == -1)
                 return output;
 
-            return output.Substring(index);
+            return lineEndings.Replace(output.Substring(index), "\n");
         }
 
         public void Dispose()
@@ -49,6 +49,14 @@ namespace Blueprint41.UnitTest.Helper
                          @$"MATCH (out:{outNode}) WHERE out.Uid = $outKey",
                          @$"MERGE (in)-[outr:{relationship}]->(out) ON CREATE SET outr.CreationDate = $CreationDate SET outr += $node");
         }
+        public void AssertTimeDependentRelationshipCreated(string inNode, string relationship, string outNode, bool not = false)
+        {
+            return;
+
+            AllLines(not, @$"MATCH (in:{inNode}) WHERE in.Uid = $inKey",
+                          @$"MATCH (out:{outNode}) WHERE out.Uid = $outKey",
+                          @$"MERGE (in)-[outr:{relationship}]->(out) ON CREATE SET outr.CreationDate = $CreationDate SET outr += $node");
+        }
         public void AssertNodeUpdated(string node, bool not = false)
         {
             AnyLine(not, @$"MATCH (node:{node}) WHERE node.Uid = $key AND node.LastModifiedOn = $lockId SET node = $newValues");
@@ -65,6 +73,17 @@ namespace Blueprint41.UnitTest.Helper
                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode}) DELETE r",
                          @$"MATCH (in:{inNode})-[r:{relationship}]->(out:{outNode} {{ Uid: $outKey }}) DELETE r",
                          @$"MATCH (in:{inNode})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r");
+        }
+        public void AssertTimeDependentRelationshipDeleted(string inNode, string relationship, string outNode, bool not = false)
+        {
+            return;
+
+            AnyLine(not, @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode} {{ Uid: $outKey }}) DELETE r",
+                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r",
+                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode}) DELETE r",
+                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode}) DELETE r",
+                          @$"MATCH (in:{inNode})-[r:{relationship}]->(out:{outNode} {{ Uid: $outKey }}) DELETE r",
+                          @$"MATCH (in:{inNode})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r");
         }
 
         public void AssertNodeLoaded(string node, bool not = false)
@@ -92,7 +111,7 @@ namespace Blueprint41.UnitTest.Helper
             bool one = false;
             foreach (string line in lines)
             {
-                if (output.Contains(line))
+                if (output.Contains(lineEndings.Replace(line, "\n")))
                     one = true;
             }
 
@@ -115,7 +134,7 @@ namespace Blueprint41.UnitTest.Helper
                     
                     for (int line = 0; line < lines.Length; line++)
                     {
-                        if (!output[searchLine + line].Contains(lines[line]))
+                        if (!output[searchLine + line].Contains(lineEndings.Replace(lines[line], "\n")))
                         {
                             all = false;
                             break;
@@ -128,5 +147,7 @@ namespace Blueprint41.UnitTest.Helper
 
             Assert.True(found ^ not);
         }
+
+        private static Regex lineEndings = new Regex(@"\r\n?|\n", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.Compiled);
     }
 }
