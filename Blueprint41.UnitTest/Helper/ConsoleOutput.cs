@@ -53,9 +53,24 @@ namespace Blueprint41.UnitTest.Helper
         {
             return;
 
-            AllLines(not, @$"MATCH (in:{inNode}) WHERE in.Uid = $inKey",
-                          @$"MATCH (out:{outNode}) WHERE out.Uid = $outKey",
-                          @$"MERGE (in)-[outr:{relationship}]->(out) ON CREATE SET outr.CreationDate = $CreationDate SET outr += $node");
+            AllLines(not,   $$"""
+                            MATCH (in:{{inNode}} {Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} {Uid: $outKey })
+                            WHERE COALESCE(rel.StartDate, $min) >= $moment
+                            DELETE rel
+                            """,
+                            $$"""
+                            MATCH (in:{{inNode}} {Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} {Uid: $outKey })
+                            WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
+                            SET rel.EndDate = $max
+                            """,
+                            $$"""
+                            MATCH (in:{{inNode}} {Uid: $inKey }), (out:{{outNode}} {Uid: $outKey })
+                            OPTIONAL MATCH (in)-[rel:{{relationship}}]->(out)
+                            WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
+                            WITH in, out, rel
+                            WHERE rel is null
+                            CREATE (in)-[outr:{{relationship}}]->(out) SET outr.CreationDate = $create SET outr += $node
+                            """);
         }
         public void AssertNodeUpdated(string node, bool not = false)
         {
@@ -79,11 +94,11 @@ namespace Blueprint41.UnitTest.Helper
             return;
 
             AnyLine(not, @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode} {{ Uid: $outKey }}) DELETE r",
-                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r",
-                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode}) DELETE r",
-                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode}) DELETE r",
-                          @$"MATCH (in:{inNode})-[r:{relationship}]->(out:{outNode} {{ Uid: $outKey }}) DELETE r",
-                          @$"MATCH (in:{inNode})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r");
+                         @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r",
+                         @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode}) DELETE r",
+                         @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode}) DELETE r",
+                         @$"MATCH (in:{inNode})-[r:{relationship}]->(out:{outNode} {{ Uid: $outKey }}) DELETE r",
+                         @$"MATCH (in:{inNode})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r");
         }
 
         public void AssertNodeLoaded(string node, bool not = false)
