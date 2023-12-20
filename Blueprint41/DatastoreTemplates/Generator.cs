@@ -3,57 +3,62 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace Blueprint41.DatastoreTemplates
 {
     public static class Generator
     {
-        public static GeneratorResult Execute<T>(GeneratorSettings? settings = null)
+        public static GeneratorResult Execute<T>(GeneratorSettings settings)
             where T : DatastoreModel<T>, new()
         {
             if (settings is null)
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
 
             DatastoreModel model = DatastoreModel<T>.Model;
 
-            GeneratorResult generatorResult = new GeneratorResult();
+            GeneratorResult generatorResult = new();
 
             #region Entities and Nodes
 
             foreach (var entity in model.Entities.Where(item => item.IsAbstract))
             {
-                Domain_Data_Entity_Abstract t4 = new Domain_Data_Entity_Abstract();
-                t4.Settings = settings;
-                t4.DALModel = entity;
-                t4.Datastore = model;
+                Domain_Data_Entity_Abstract t4 = new()
+                {
+                    Settings = settings,
+                    DALModel = entity,
+                    Datastore = model
+                };
                 string content = t4.TransformText();
                 generatorResult.EntityResult.Add(entity.Name, content);
 
-                Domain_Data_Node node = new Domain_Data_Node();
-                node.Settings = settings;
-                node.DALModel = entity;
-                node.Datastore = model;
+                Domain_Data_Node node = new()
+                {
+                    Settings = settings,
+                    DALModel = entity,
+                    Datastore = model
+                };
                 string nodeContent = node.TransformText();
                 generatorResult.NodeResult.Add(string.Format("{0}Node", entity.Name), nodeContent);
-
             }
             foreach (var entity in model.Entities.Where(item => !item.IsAbstract))
             {
-                Domain_Data_Entity t4 = new Domain_Data_Entity();
-                t4.Settings = settings;
-                t4.DALModel = entity;
-                t4.Datastore = model;
+                Domain_Data_Entity t4 = new()
+                {
+                    Settings = settings,
+                    DALModel = entity,
+                    Datastore = model
+                };
                 string content = t4.TransformText();
                 generatorResult.EntityResult.Add(entity.Name, content);
 
-                Domain_Data_Node node = new Domain_Data_Node();
-                node.Settings = settings;
-                node.DALModel = entity;
-                node.Datastore = model;
+                Domain_Data_Node node = new()
+                {
+                    Settings = settings,
+                    DALModel = entity,
+                    Datastore = model
+                };
                 string nodeContent = node.TransformText();
                 generatorResult.NodeResult.Add(string.Format("{0}Node", entity.Name), nodeContent);
             }
@@ -64,10 +69,12 @@ namespace Blueprint41.DatastoreTemplates
 
             foreach (var relation in model.Relations)
             {
-                Domain_Data_Relationship relationship_template = new Domain_Data_Relationship();
-                relationship_template.Settings = settings;
-                relationship_template.DALRelation = relation;
-                relationship_template.Datastore = model;
+                Domain_Data_Relationship relationship_template = new()
+                {
+                    Settings = settings,
+                    DALRelation = relation,
+                    Datastore = model
+                };
                 string content = relationship_template.TransformText();
                 generatorResult.RelationshipResult.Add(relation.Name, content);
             }
@@ -76,10 +83,12 @@ namespace Blueprint41.DatastoreTemplates
 
             #region Register
 
-            Domain_Data_Register register = new Domain_Data_Register();
-            register.Settings = settings;
-            register.DALModel = null;
-            register.Datastore = model;
+            Domain_Data_Register register = new()
+            {
+                Settings = settings,
+                DALModel = null,
+                Datastore = model
+            };
             string registerContent = register.TransformText();
             generatorResult.EntityResult.Add("_Register", registerContent);
 
@@ -87,10 +96,12 @@ namespace Blueprint41.DatastoreTemplates
 
             #region GraphEvents
 
-            Domain_Data_GraphEvents ge = new Domain_Data_GraphEvents();
-            ge.Settings = settings;
-            ge.DALModel = null;
-            ge.Datastore = model;
+            Domain_Data_GraphEvents ge = new()
+            {
+                Settings = settings,
+                DALModel = null,
+                Datastore = model
+            };
             string geContent = ge.TransformText();
             generatorResult.EntityResult.Add("_GraphEvents", geContent);
 
@@ -122,11 +133,9 @@ namespace Blueprint41.DatastoreTemplates
             foreach (KeyValuePair<string, string> item in dictionary)
             {
                 string entityPath = Path.Combine(path, item.Key + ".cs");
-                using (FileStream fs = File.Create(entityPath))
-                {
-                    Byte[] info = new UTF8Encoding(true).GetBytes(item.Value);
-                    fs.Write(info, 0, info.Length);
-                }
+                using FileStream fs = File.Create(entityPath);
+                byte[] info = new UTF8Encoding(true).GetBytes(item.Value);
+                fs.Write(info, 0, info.Length);
             }
         }
 
@@ -196,7 +205,7 @@ namespace Blueprint41.DatastoreTemplates
         }
         public static string ToProperCase(this string value)
         {
-            StringBuilder retVal = new StringBuilder(32);
+            StringBuilder retVal = new(32);
 
             if (!string.IsNullOrEmpty(value))
             {
@@ -225,37 +234,37 @@ namespace Blueprint41.DatastoreTemplates
         }
         public static string ToPlural(this string Singular)
         {
-            if (MatchAndReplace(ref Singular, "people", "", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "craft", "", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "tooth", "eeth", 4) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "goose", "eese", 4) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "trix", "ces", 1) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "mouse", "ice", 4) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "louse", "ice", 4) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "foot", "eet", 3) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "zoon", "a", 2) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "info", "s", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "eau", "x", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "ieu", "x", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "man", "en", 2) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "cis", "es", 2) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "sis", "es", 2) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "xis", "es", 2) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "ies", "", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "ch", "es", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "fe", "ves", 2) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "sh", "es", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "o", "es", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "f", "ves", 1) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "s", "es", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "x", "es", 0) == true) return Singular;
-            if (MatchAndReplace(ref Singular, "y", "ies", 1) == true) return Singular;
+            if (MatchAndReplace(ref Singular, "people", "", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "craft", "", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "tooth", "eeth", 4)) return Singular;
+            if (MatchAndReplace(ref Singular, "goose", "eese", 4)) return Singular;
+            if (MatchAndReplace(ref Singular, "trix", "ces", 1)) return Singular;
+            if (MatchAndReplace(ref Singular, "mouse", "ice", 4)) return Singular;
+            if (MatchAndReplace(ref Singular, "louse", "ice", 4)) return Singular;
+            if (MatchAndReplace(ref Singular, "foot", "eet", 3)) return Singular;
+            if (MatchAndReplace(ref Singular, "zoon", "a", 2)) return Singular;
+            if (MatchAndReplace(ref Singular, "info", "s", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "eau", "x", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "ieu", "x", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "man", "en", 2)) return Singular;
+            if (MatchAndReplace(ref Singular, "cis", "es", 2)) return Singular;
+            if (MatchAndReplace(ref Singular, "sis", "es", 2)) return Singular;
+            if (MatchAndReplace(ref Singular, "xis", "es", 2)) return Singular;
+            if (MatchAndReplace(ref Singular, "ies", "", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "ch", "es", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "fe", "ves", 2)) return Singular;
+            if (MatchAndReplace(ref Singular, "sh", "es", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "o", "es", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "f", "ves", 1)) return Singular;
+            if (MatchAndReplace(ref Singular, "s", "es", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "x", "es", 0)) return Singular;
+            if (MatchAndReplace(ref Singular, "y", "ies", 1)) return Singular;
             MatchAndReplace(ref Singular, "", "s", 0);
             return Singular;
         }
         private static bool MatchAndReplace(ref string Text, string Match, string Replace, int Amount)
         {
-            if (Text.EndsWith(Match, System.StringComparison.CurrentCultureIgnoreCase) == true)
+            if (Text.EndsWith(Match, System.StringComparison.CurrentCultureIgnoreCase))
             {
                 if (Text.Length > 0 && Text.Substring(Text.Length - 1) == Text.Substring(Text.Length - 1).ToUpper())
                     Replace = Replace.ToUpper();
@@ -274,33 +283,24 @@ namespace Blueprint41.DatastoreTemplates
         }
         public static string ToNeo4jType(this string type)
         {
-            switch (type)
+            return type switch
             {
-                case "DateTime":
-                    return "long";
-                case "DateTime?":
-                    return "long?";
-                case "decimal":
-                    return "long";
-                case "decimal?":
-                    return "long?";
-                case "Guid":
-                    return "string";
-                case "Guid?":
-                    return "string";
-                default:
-                    return type;
-            }
+                "DateTime" => "long",
+                "DateTime?" => "long?",
+                "decimal" => "long",
+                "decimal?" => "long?",
+                "Guid" => "string",
+                "Guid?" => "string",
+                _ => type,
+            };
         }
         public static string ToXsdType(this string type)
         {
-            switch (type.Replace("?", ""))
+            return type.Replace("?", "") switch
             {
-                case "bool":
-                    return "xs:boolean";
-                default:
-                    return string.Concat("xs:", type.Replace("?", "").ToCamelCase());
-            }
+                "bool" => "xs:boolean",
+                _ => string.Concat("xs:", type.Replace("?", "").ToCamelCase()),
+            };
         }
 
         public static string ToXmlEscape(this string self)
