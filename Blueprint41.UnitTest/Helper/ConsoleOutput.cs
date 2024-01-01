@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -51,20 +52,18 @@ namespace Blueprint41.UnitTest.Helper
         }
         public void AssertTimeDependentRelationshipCreated(string inNode, string relationship, string outNode, bool not = false)
         {
-            return;
-
             AllLines(not,   $$"""
-                            MATCH (in:{{inNode}} {Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} {Uid: $outKey })
+                            MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
                             WHERE COALESCE(rel.StartDate, $min) >= $moment
                             DELETE rel
                             """,
                             $$"""
-                            MATCH (in:{{inNode}} {Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} {Uid: $outKey })
+                            MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
                             WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
                             SET rel.EndDate = $max
                             """,
                             $$"""
-                            MATCH (in:{{inNode}} {Uid: $inKey }), (out:{{outNode}} {Uid: $outKey })
+                            MATCH (in:{{inNode}} { Uid: $inKey }), (out:{{outNode}} { Uid: $outKey })
                             OPTIONAL MATCH (in)-[rel:{{relationship}}]->(out)
                             WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
                             WITH in, out, rel
@@ -91,8 +90,6 @@ namespace Blueprint41.UnitTest.Helper
         }
         public void AssertTimeDependentRelationshipDeleted(string inNode, string relationship, string outNode, bool not = false)
         {
-            return;
-
             AnyLine(not, @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode} {{ Uid: $outKey }}) DELETE r",
                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})<-[r:{relationship}]-(out:{outNode} {{ Uid: $outKey }}) DELETE r",
                          @$"MATCH (in:{inNode} {{ Uid: $inKey }})-[r:{relationship}]->(out:{outNode}) DELETE r",
@@ -137,27 +134,37 @@ namespace Blueprint41.UnitTest.Helper
             if (lines is null || lines.Length == 0)
                 throw new ArgumentNullException(nameof(lines));
 
-            string[] output = Regex.Split(GetOuput(true), "\r\n|\r|\n");
+            string[] output = Regex.Split(GetOuput(true), "\r\n|\r|\n").Select(item => item.Trim()).Where(item => !string.IsNullOrEmpty(item)).ToArray();
+            string[][] searches = lines.Select(line => Regex.Split(line, "\r\n|\r|\n").Select(item => item.Trim()).Where(item => !string.IsNullOrEmpty(item)).ToArray()).ToArray();
 
-            bool found = false;
-            int lastSearchLine = (output.Length - lines.Length);
-            if (lastSearchLine >= 0)
+            bool found = true;
+            foreach (string[] search in searches)
             {
-                for (int searchLine = 0; searchLine <= lastSearchLine; searchLine++)
-                {
-                    bool all = true;
-                    
-                    for (int line = 0; line < lines.Length; line++)
-                    {
-                        if (!output[searchLine + line].Contains(lineEndings.Replace(lines[line], "\n")))
-                        {
-                            all = false;
-                            break;
-                        }
-                    }
+                bool all = false;
 
-                    found = all || found;
+                int lastSearchLine = (output.Length - search.Length);
+                if (lastSearchLine >= 0)
+                {
+                    for (int searchLine = 0; searchLine <= lastSearchLine; searchLine++)
+                    {
+                        all = true;
+
+                        for (int line = 0; line < search.Length; line++)
+                        {
+                            if (!output[searchLine + line].Contains(search[line]))
+                            {
+                                all = false;
+                                break;
+                            }
+                        }
+
+                        if (all)
+                            break;
+                    }
                 }
+
+                if (!all)
+                    found = false;
             }
 
             Assert.True(found ^ not);
