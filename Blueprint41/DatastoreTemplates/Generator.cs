@@ -139,47 +139,6 @@ namespace Blueprint41.DatastoreTemplates
             }
         }
 
-        private static void RecursiveDelete(string? currentDirectory)
-        {
-            if (Directory.GetFiles(currentDirectory).Length > 0)
-            {
-                string? parentDirectory = Path.GetDirectoryName(currentDirectory);
-                Directory.Delete(currentDirectory);
-                RecursiveDelete(parentDirectory);
-            }
-        }
-
-        private static void GetDirectories(string folder, string[] paths, int index, List<string> directories, List<string> files)
-        {
-            if (paths.Length - 1 == index)
-            {
-                string[] filesToAdd = Directory.GetFiles(folder, paths[index]);
-                if (filesToAdd.Length > 0)
-                {
-                    directories.Add(folder);
-                    files.AddRange(filesToAdd);
-                }
-                return;
-            }
-
-            if (paths[index].Contains("?") || paths[index].Contains("*"))
-            {
-                string[] searchDirectories = Directory.GetDirectories(folder, paths[index]);
-                foreach (var subDirectory in searchDirectories)
-                {
-                    DirectoryInfo directory = new DirectoryInfo(subDirectory);
-                    if (directory.Name.StartsWith("_") == false)
-                        GetDirectories(subDirectory, paths, index + 1, directories, files);
-                }
-            }
-            else
-            {
-                DirectoryInfo directory = new DirectoryInfo(Path.Combine(folder, paths[index]));
-                if (directory.Exists && directory.Name.StartsWith("_") == false)
-                    GetDirectories(directory.FullName, paths, index + 1, directories, files);
-            }
-        }
-
         public static string ToCamelCase(this string value)
         {
             if (value.Length <= 2)
