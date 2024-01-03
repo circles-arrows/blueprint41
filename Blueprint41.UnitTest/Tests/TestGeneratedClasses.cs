@@ -176,7 +176,7 @@ namespace Blueprint41.UnitTest.Tests
                 output.AssertNodeCreated("City");
                 output.AssertNodeCreated("Restaurant");
                 output.AssertRelationshipCreated("Person", "LIVES_IN", "City");
-                output.AssertTimeDependentRelationshipCreated("Restaurant", "LOCATED_AT", "City");
+                output.AssertRelationshipCreated("Restaurant", "LOCATED_AT", "City");
                 output.AssertRelationshipCreated("Person", "EATS_AT", "Restaurant");
 
                 // Database assigned a valid Uids
@@ -213,7 +213,7 @@ namespace Blueprint41.UnitTest.Tests
                 output.AssertNodeCreated("City");
                 output.AssertNodeCreated("Restaurant");
                 output.AssertRelationshipCreated("Person", "LIVES_IN", "City");
-                output.AssertTimeDependentRelationshipCreated("Restaurant", "LOCATED_AT", "City");
+                output.AssertRelationshipCreated("Restaurant", "LOCATED_AT", "City");
                 output.AssertRelationshipCreated("Person", "EATS_AT", "Restaurant");
 
                 // Database assigned a valid Uids
@@ -233,42 +233,6 @@ namespace Blueprint41.UnitTest.Tests
 
                     City city = person.City;
                     Restaurant restaurant = person.Restaurants[0];
-
-
-
-                    //// Get all EATS_AT relations for the given person
-                    //List<PERSON_EATS_AT> all = person.RestaurantRelations();
-                    //// And set their 'Weight' & 'LastModifiedOn' properties
-                    //all.Assign(Score: "Good", CreationDate: DateTime.UtcNow);
-
-                    //// Get a sub-set of EATS_AT relations for the given person
-                    //List<PERSON_EATS_AT> subset = person.RestaurantsWhere(alias => alias.Restaurant(restaurant) & alias.Score != "Bad");
-                    //// And use LINQ to query restaurants
-                    //IEnumerable<Restaurant> restaurants = subset.Select(rel => rel.Restaurant);
-
-                    ////// Get EATS_AT relations based on a JSON notated expression
-                    //List<PERSON_EATS_AT> relations = PERSON_EATS_AT.Where(InNode: person, OutNode: restaurant);
-
-                    //// Get EATS_AT relations based on a Bp41 notated expression
-                    //List<PERSON_EATS_AT> relations2 = PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants) & alias.Person(person) & alias.Score != "Bad");
-
-                    //// Get EATS_AT relations based on Bp41 notated expression, and set their 'Weight' property
-                    //PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants)).Assign(Score: "Good");
-
-                    //// Get a sub-set of EATS_AT relations for the given person, and set their 'Weight' property
-                    //person.RestaurantsWhere(alias => alias.Score != "Bad").Assign(Score: "Good");
-
-                    //// Lookup: Query LIVES_IN relation for the city OR null, depending on the condition
-                    ////         And potentially assign new values
-                    //person.CityIf(alias => alias.Street == "San Nicolas Street" & alias.HouseNr == 8)?.Assign(HouseNr: 6);
-
-                    //// Set city 
-                    //person.SetCity(city, CreationDate: DateTime.UtcNow, Street: "San Nicolas Street", HouseNr: 6);
-
-                    //// Add restaurant
-                    //person.AddRestaurant(restaurant, CreationDate: DateTime.UtcNow, Score: "Good");
-
-
 
                     Transaction.Commit();
                 }
@@ -364,7 +328,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 output.AssertRelationshipDeleted("Person", "LIVES_IN", "City");
                 output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
-                output.AssertTimeDependentRelationshipDeleted("Restaurant", "LOCATED_AT", "City");
+                output.AssertRelationshipDeleted("Restaurant", "LOCATED_AT", "City");
 
                 output.AssertNodeDeleted("City");
                 output.AssertNodeDeleted("Restaurant");
@@ -389,7 +353,7 @@ namespace Blueprint41.UnitTest.Tests
                 }
 
                 output.AssertRelationshipDeleted("Person", "LIVES_IN", "City");
-                output.AssertTimeDependentRelationshipDeleted("Restaurant", "LOCATED_AT", "City");
+                output.AssertRelationshipDeleted("Restaurant", "LOCATED_AT", "City");
             }
         }
 
@@ -430,9 +394,9 @@ namespace Blueprint41.UnitTest.Tests
                     p2.City.Restaurants.Add(new Restaurant { Name = "Providence" });
                     p2.City.Restaurants.Add(new Restaurant { Name = "La Taqueria" });
 
-                    p1.Restaurants.AddRange(p1.City.Restaurants.GetItems(DateTime.UtcNow));
-                    p2.Restaurants.AddRange(p2.City.Restaurants.GetItems(DateTime.UtcNow));
-                    p3.Restaurants.AddRange(p1.City.Restaurants.GetItems(DateTime.UtcNow));
+                    p1.Restaurants.AddRange(p1.City.Restaurants);
+                    p2.Restaurants.AddRange(p2.City.Restaurants);
+                    p3.Restaurants.AddRange(p1.City.Restaurants);
 
                     Transaction.Commit();
                 }

@@ -30,10 +30,8 @@ namespace Datastore.Manipulation
         public Restaurant Restaurant { get; private set; }
 
         public System.DateTime CreationDate { get; private set; }
-        public System.DateTime StartDate { get; private set; }
-        public System.DateTime EndDate { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public void Assign(JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
@@ -45,7 +43,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public static List<RESTAURANT_LOCATED_AT> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<RESTAURANT_LOCATED_AT> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
             throw new NotImplementedException();
         }
@@ -74,28 +72,6 @@ namespace Datastore.Manipulation
             }
         }
         private DateTimeResult _creationDate = null;
-        public DateTimeResult StartDate
-        {
-            get
-            {
-                if (_startDate is null)
-                    _startDate = _alias.StartDate;
-
-                return _startDate;
-            }
-        }
-        private DateTimeResult _startDate = null;
-        public DateTimeResult EndDate
-        {
-            get
-            {
-                if (_endDate is null)
-                    _endDate = _alias.EndDate;
-
-                return _endDate;
-            }
-        }
-        private DateTimeResult _endDate = null;
 
         /// <summary>
         /// Restaurant in-node: (Restaurant)-[RESTAURANT_LOCATED_AT]->(City)
@@ -144,7 +120,7 @@ namespace Datastore.Manipulation
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<RESTAURANT_LOCATED_AT> @this, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public static void Assign(this IEnumerable<RESTAURANT_LOCATED_AT> @this, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }

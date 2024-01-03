@@ -30,9 +30,8 @@ namespace Datastore.Manipulation
         public Restaurant Restaurant { get; private set; }
 
         public System.DateTime CreationDate { get; private set; }
-        public PERSON_EATS_AT.ScoreEnum? Score { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
+        public void Assign(JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
@@ -44,21 +43,10 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public static List<PERSON_EATS_AT> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<PERSON_EATS_AT> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
             throw new NotImplementedException();
         }
-
-        #region Enumerations
-
-        public enum ScoreEnum
-        {
-            Good = 0,
-            Average = 1,
-            Bad = 2,
-        }
-
-        #endregion
     }
 
     /// <summary>
@@ -84,17 +72,6 @@ namespace Datastore.Manipulation
             }
         }
         private DateTimeResult _creationDate = null;
-        public StringResult Score
-        {
-            get
-            {
-                if (_score is null)
-                    _score = _alias.Score;
-
-                return _score;
-            }
-        }
-        private StringResult _score = null;
 
         /// <summary>
         /// Person in-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
@@ -143,7 +120,7 @@ namespace Datastore.Manipulation
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<PERSON_EATS_AT> @this, JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
+        public static void Assign(this IEnumerable<PERSON_EATS_AT> @this, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }

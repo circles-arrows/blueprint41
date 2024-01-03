@@ -237,11 +237,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN CityIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<int> HouseNr = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> Street = default)
+        public PERSON_LIVES_IN CityIf(JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
-        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<int> HouseNr = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> Street = default)
+        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
@@ -257,11 +257,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
+        public List<PERSON_EATS_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
-        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
+        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }

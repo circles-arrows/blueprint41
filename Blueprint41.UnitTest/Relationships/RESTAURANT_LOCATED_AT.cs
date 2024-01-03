@@ -111,22 +111,16 @@ public partial class RESTAURANT_LOCATED_AT_REL : RELATIONSHIP, IFromIn_RESTAURAN
             Parent = parent;
 
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"].Properties["CreationDate"]);
-            StartDate = new DateTimeResult(this, "StartDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"].Properties["StartDate"]);
-            EndDate = new DateTimeResult(this, "EndDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"].Properties["EndDate"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
-            if (StartDate.HasValue) assignments.Add(new Assignment(this.StartDate, StartDate));
-            if (EndDate.HasValue) assignments.Add(new Assignment(this.EndDate, EndDate));
 
             return assignments.ToArray();
         }
 
         public DateTimeResult CreationDate { get; private set; } 
-        public DateTimeResult StartDate { get; private set; } 
-        public DateTimeResult EndDate { get; private set; } 
     }
 }

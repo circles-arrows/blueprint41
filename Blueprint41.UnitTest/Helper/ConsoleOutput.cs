@@ -20,7 +20,6 @@ namespace Blueprint41.UnitTest.Helper
             Console.SetOut(stringWriter);
         }
 
-        //TODO: Implement to support 'lastTransactionOnly' argument
         public string GetOuput(bool lastTransactionOnly = false)
         {
             string output = stringWriter.ToString();

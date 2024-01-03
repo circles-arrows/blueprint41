@@ -118,7 +118,7 @@ namespace Datastore.Manipulation
             {
                 NodeType = "Restaurant";
 
-                City = new EntityTimeCollection<City>(Wrapper, Members.City, item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.CountAll; } });
+                City = new EntityCollection<City>(Wrapper, Members.City, item => { if (Members.City.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
                 Persons = new EntityCollection<Person>(Wrapper, Members.Persons, item => { if (Members.Persons.Events.HasRegisteredChangeHandlers) { int loadHack = item.Restaurants.Count; } });
             }
             public string NodeType { get; private set; }
@@ -153,7 +153,7 @@ namespace Datastore.Manipulation
             #region Members for interface IRestaurant
 
             public string Name { get; set; }
-            public EntityTimeCollection<City> City { get; private set; }
+            public EntityCollection<City> City { get; private set; }
             public EntityCollection<Person> Persons { get; private set; }
 
             #endregion
@@ -172,19 +172,14 @@ namespace Datastore.Manipulation
         #region Members for interface IRestaurant
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-        public City City { get { return GetCity(Transaction.RunningTransaction.TransactionDate); } set { SetCity(value, Transaction.RunningTransaction.TransactionDate); } }
-        public City GetCity(DateTime moment)
+        public City City
         {
-            return ((ILookupHelper<City>)InnerData.City).GetItem(moment);
-        }
-        public IEnumerable<CollectionItem<City>> GetCities(DateTime? from, DateTime? till)
-        {
-            return ((ILookupHelper<City>)InnerData.City).GetItems(from, till);
-        }
-        public void SetCity(City value, DateTime? moment)
-        {
-            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), value, moment))
-                ((ILookupHelper<City>)InnerData.City).SetItem(value, moment);
+            get { return ((ILookupHelper<City>)InnerData.City).GetItem(null); }
+            set 
+            { 
+                if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItem(null), value))
+                    ((ILookupHelper<City>)InnerData.City).SetItem(value, null); 
+            }
         }
         private void ClearCity(DateTime? moment)
         {
@@ -228,11 +223,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public RESTAURANT_LOCATED_AT CityIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public RESTAURANT_LOCATED_AT CityIf(JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
-        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
@@ -248,11 +243,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> PersonsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
+        public List<PERSON_EATS_AT> PersonsWhere(JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
-        public void AddPerson(Person person, JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
+        public void AddPerson(Person person, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
@@ -796,7 +791,7 @@ namespace Datastore.Manipulation
         #region Members for interface IRestaurant
 
         string IRestaurantOriginalData.Name { get { return OriginalData.Name; } }
-        City IRestaurantOriginalData.City { get { return ((ILookupHelper<City>)OriginalData.City).GetOriginalItem(DateTime.UtcNow); } }
+        City IRestaurantOriginalData.City { get { return ((ILookupHelper<City>)OriginalData.City).GetOriginalItem(null); } }
         IEnumerable<Person> IRestaurantOriginalData.Persons { get { return OriginalData.Persons.OriginalData; } }
 
         #endregion

@@ -111,19 +111,16 @@ public partial class PERSON_EATS_AT_REL : RELATIONSHIP, IFromIn_PERSON_EATS_AT_R
             Parent = parent;
 
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"].Properties["CreationDate"]);
-            Score = new StringResult(this, "Score", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"].Properties["Score"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Score = default)
+        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
-            if (Score.HasValue) assignments.Add(new Assignment(this.Score, Score));
 
             return assignments.ToArray();
         }
 
         public DateTimeResult CreationDate { get; private set; } 
-        public StringResult Score { get; private set; } 
     }
 }
