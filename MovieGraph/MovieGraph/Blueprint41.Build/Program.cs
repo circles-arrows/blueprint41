@@ -86,10 +86,7 @@ namespace Blueprint41.Build
             }
             string GetOptional(string argumentName, string defaultValue)
             {
-                if (!arguments.TryGetValue(argumentName.ToLowerInvariant(), out string value))
-                    return defaultValue;
-
-                return value;
+                return arguments.GetValueOrDefault(argumentName.ToLowerInvariant(), defaultValue);
             }
             bool Exists(string argumentName)
             {
@@ -100,7 +97,7 @@ namespace Blueprint41.Build
         public static void Generate(string modelDllPath, string generatePath, string namespaceName)
         {
             Console.WriteLine("Loading assembly");
-            AssemblyLoader.Load(modelDllPath, (Assembly assembly) =>
+            AssemblyLoader.Load(modelDllPath, assembly =>
             {
                 Type[] types = GetTypes(assembly);
                 if (types.Length == 0)

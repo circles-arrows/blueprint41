@@ -40,7 +40,7 @@ namespace Blueprint41.DatastoreTemplates
                     Datastore = model
                 };
                 string nodeContent = node.TransformText();
-                generatorResult.NodeResult.Add(string.Format("{0}Node", entity.Name), nodeContent);
+                generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
             }
             foreach (var entity in model.Entities.Where(item => !item.IsAbstract))
             {
@@ -60,7 +60,7 @@ namespace Blueprint41.DatastoreTemplates
                     Datastore = model
                 };
                 string nodeContent = node.TransformText();
-                generatorResult.NodeResult.Add(string.Format("{0}Node", entity.Name), nodeContent);
+                generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
             }
 
             #endregion
