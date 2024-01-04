@@ -49,7 +49,40 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void TimeDependentRelationshipCRUD()
         {
-            
+            DateTime[] dates = new[]
+            {
+                DateTime.MinValue,
+                new DateTime(1981, 4, 12, 12, 0, 4, DateTimeKind.Utc), // The first orbital flight of the space shuttle, NASA's reusable space vehicle.
+                new DateTime(1990, 4, 24, 12, 33, 51, DateTimeKind.Utc), // Apr 25, 1990 - Hubble Space Telescope launched into space.
+                new DateTime(2012, 8, 25, 0, 0, 0, DateTimeKind.Utc), // Aug 25, 2012 - Voyager 1 becomes the first spacecraft to reach interstellar space.
+                DateTime.MaxValue,
+            };
+
+            int bits = dates.Length - 1;
+
+            var test = new List<(int mask, List<(DateTime from, DateTime till)> relations)>();
+
+            foreach (int mask in Enumerable.Range(0, 1 << bits))
+            {
+                DateTime? from = null;
+                var relations = new List<(DateTime from, DateTime till)>();
+
+                for (int pos = 0; pos <= bits; pos++)
+                {
+                    int bit = (1 << pos) & mask;
+                    if (bit == 1 && from is null)
+                    {
+                        from = dates[pos];
+                    }
+                    else if (bit == 0 && from is not null)
+                    {
+                        relations.Add((from.Value, dates[pos]));
+                        from = null;
+                    }
+                }
+
+                test.Add((mask, relations));
+            }
 
 
 
@@ -72,7 +105,6 @@ namespace Blueprint41.UnitTest.Tests
 
         private void WriteRelation(OGM @in, Relationship relationship, OGM @out, DateTime? from, DateTime? till)
         {
-
             string cypher = $"""
                 MATCH (in:{relationship.InEntity.Label.Name}), (out:{relationship.OutEntity.Label.Name})
                 WHERE in.{@in.GetEntity().Key.Name} = $in AND out.{@out.GetEntity().Key.Name} = $out
