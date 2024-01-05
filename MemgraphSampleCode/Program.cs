@@ -33,6 +33,8 @@ namespace MemgraphSampleCode
             //CreateEntities();
             //UpdateEntities();
             QueryBuilderTest();
+            Console.WriteLine("Press any key to exit..");
+            Console.ReadKey();
         }
 
         private static void UpdateEntities()
@@ -62,24 +64,31 @@ namespace MemgraphSampleCode
 
         private static void QueryBuilderTest()
         {
+            //using (Transaction.Begin())
+            //{
+            //    Query query = (Query)Transaction.CompiledQuery
+            //        .Match(node.
+            //            Department.Alias(out var deptAlias)
+            //                .Out.WORKS_IN.In.
+            //            Employee.Alias(out var employeeAlias))
+            //        .Where(deptAlias.Uid == Parameter.Constant("DEP_BBBBB"))
+            //        .Return(employeeAlias.Uid.As("employeeID"), employeeAlias.FirstName.As("employeeName"))
+            //        .Compile();
+
+            //    QueryExecutionContext context = query.GetExecutionContext();
+            //    var employees = context.Execute().ConvertAll(item => ((string)item.employeeID, (string)item.employeeName));
+            //    foreach(var employee in employees)
+            //        Console.WriteLine($"{employee.Item1} - {employee.Item2}");
+            //}
+
             using (Transaction.Begin())
             {
-                Query query = (Query)Transaction.CompiledQuery
-                    .Match(node.
-                        Department.Alias(out var deptAlias)
-                            .Out.WORKS_IN.In.
-                        Employee.Alias(out var employeeAlias))
-                    .Where(deptAlias.Uid == Parameter.Constant("DEP_BBBBB"))
-                    .Return(employeeAlias.Uid.As("employeeID"), employeeAlias.FirstName.As("employeeName"))
-                    .Compile();
+                Department department = Department.Load("DEP_BBBBB");
+                List<Employee> employees = Employee.LoadWhere(getEmployeesForDepartment.Value, new Parameter("departmentID", department.Uid));
 
-                QueryExecutionContext context = query.GetExecutionContext();
-                var employees = context.Execute().ConvertAll(item => ((string)item.employeeID, (string)item.employeeName));
-            }
-
-            using (Transaction.Begin())
-            {
-                var employees = Employee.LoadWhere(getEmployeesForDepartment.Value, new Parameter("departmentID", "DEP_BBBBB"));
+                Console.WriteLine($"{department.Name} Department employees:");
+                foreach (Employee employee in employees)
+                    Console.WriteLine($"+ {employee.Uid} - {employee.FirstName} {employee.LastName}");
             }
         }
         private static readonly Lazy<ICompiled> getEmployeesForDepartment = new(delegate ()
