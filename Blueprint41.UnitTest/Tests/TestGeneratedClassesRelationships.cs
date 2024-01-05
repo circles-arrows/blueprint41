@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define CHECK_INITIAL_STATE_AND_EXPECTED_END_STATE
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -60,43 +62,38 @@ namespace Blueprint41.UnitTest.Tests
             int bits = dates.Length - 1;
             int count = (1 << bits);
 
-            var test = new List<(int mask, string aciiArt)>();
+#if CHECK_INITIAL_STATE_AND_EXPECTED_END_STATE
+
+            var test = new List<(int mask, string dbState, string moment, string action, string expected)>();
 
             for (int mask = 0; mask < count; mask++)
             {
                 var relations = RelationsFromMask(mask);
-                test.Add((mask, DrawAsciiArt(relations)));
-            }
 
-            List<(DateTime from, DateTime till)> RelationsFromMask(int mask)
-            {
-                DateTime? from = null;
-                var relations = new List<(DateTime from, DateTime till)>();
-
-                for (int pos = 0; pos <= bits; pos++)
+                foreach (DateTime moment in dates)
                 {
-                    bool bit = ((1 << pos) & mask) != 0;
-                    if (bit && from is null)
-                    {
-                        from = dates[pos];
-                    }
-                    else if (!bit && from is not null)
-                    {
-                        relations.Add((from.Value, dates[pos]));
-                        from = null;
-                    }
+                    var expected = RelationsFromMask(AdjustMaskForAdd(mask, moment));
+                    test.Add((mask, DrawAsciiArtState(relations), DrawAsciiArtMoment(moment), "Add same", DrawAsciiArtState(expected)));
                 }
 
-                return relations;
+                foreach (DateTime moment in dates)
+                {
+                    var expected = RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList();
+                    test.Add((mask, DrawAsciiArtState(relations), DrawAsciiArtMoment(moment), "Add diff", DrawAsciiArtState(expected)));
+                }
+
+                foreach (DateTime moment in dates)
+                {
+                    var expected = RelationsFromMask(AdjustMaskForRemove(mask, moment));
+                    test.Add((mask, DrawAsciiArtState(relations), DrawAsciiArtMoment(moment), "Remove", DrawAsciiArtState(expected)));
+                }
             }
 
-            string DrawAsciiArt(List<(DateTime from, DateTime till)> relations)
+            string DrawAsciiArtState(List<(DateTime from, DateTime till)> relations)
             {
-
-
                 char[] asciiArt = new char[(bits << 2) + 1];
-                for (int pos = 0; pos < asciiArt.Length; pos++)
-                    asciiArt[pos] = ' ';
+                for (int index = 0; index < asciiArt.Length; index++)
+                    asciiArt[index] = ' ';
 
                 foreach ((DateTime from, DateTime till) in relations)
                 {
@@ -121,6 +118,117 @@ namespace Blueprint41.UnitTest.Tests
                 }
 
                 return new string(asciiArt);
+            }
+            string DrawAsciiArtMoment(DateTime moment)
+            {
+                char[] asciiArt = new char[(bits << 2) + 1];
+                for (int index = 0; index < asciiArt.Length; index++)
+                    asciiArt[index] = ' ';
+
+                int idx = Array.IndexOf(dates, moment);
+                int pos = idx << 2;
+
+                char chr = '|';
+                if (idx == 0) chr = '<';
+                if (idx == bits) chr = '>';
+
+                asciiArt[pos] = chr;
+
+                return new string(asciiArt);
+            }
+
+            return;
+
+#endif
+
+            var prerequisites = new List<(List<(DateTime from, DateTime till)> initial, string key)>()
+            {
+                (RelationsFromMask(0b0100), "2"),
+                (RelationsFromMask(0b0010), "3"),
+                (RelationsFromMask(0b0101), "4"),
+                (RelationsFromMask(0b1010), "5"),
+                (RelationsFromMask(0b1001), "6"),
+                (RelationsFromMask(0b1111), "7"),
+            };
+
+            for (int mask = 0; mask < count; mask++)
+            {
+                var relations = RelationsFromMask(mask);
+
+                foreach (DateTime moment in dates)
+                {
+                    TestLookupAdd(relations, moment, RelationsFromMask(AdjustMaskForAdd(mask, moment)), false);
+                    TestLookupAdd(relations, moment, RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList(), true);
+                    TestLookupRemove(relations, moment, RelationsFromMask(AdjustMaskForRemove(mask, moment)));
+
+                    TestCollectionAdd(relations, moment, RelationsFromMask(AdjustMaskForAdd(mask, moment)), false);
+                    TestCollectionAdd(relations, moment, RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList(), true);
+                    TestCollectionRemove(relations, moment, RelationsFromMask(AdjustMaskForRemove(mask, moment)));
+                }
+            }
+
+            void TestLookupAdd(List<(DateTime from, DateTime till)> initial, DateTime moment, List< (DateTime from, DateTime till)> expected, bool differentProperties)
+            {
+            }
+
+            void TestLookupRemove(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected)
+            {
+            }
+
+            void TestCollectionAdd(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected, bool differentProperties)
+            {
+            }
+
+            void TestCollectionRemove(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected)
+            {
+            }
+
+            List<(DateTime from, DateTime till)> RelationsFromMask(int mask)
+            {
+                DateTime? from = null;
+                var relations = new List<(DateTime from, DateTime till)>();
+
+                for (int pos = 0; pos <= bits; pos++)
+                {
+                    bool bit = ((1 << pos) & mask) != 0;
+                    if (bit && from is null)
+                    {
+                        from = dates[pos];
+                    }
+                    else if (!bit && from is not null)
+                    {
+                        relations.Add((from.Value, dates[pos]));
+                        from = null;
+                    }
+                }
+
+                return relations;
+            }
+            int AdjustMaskForAdd(int mask, DateTime moment)
+            {
+                int retval = mask;
+
+                int idx = Array.IndexOf(dates, moment);
+                while (idx < bits)
+                {
+                    retval |= (1 << idx);
+                    idx++;
+                }
+
+                return retval;
+            }
+            int AdjustMaskForRemove(int mask, DateTime moment)
+            {
+                int retval = mask;
+
+                int idx = Array.IndexOf(dates, moment);
+                while (idx < bits)
+                {
+                    retval &= ~(1 << idx);
+                    idx++;
+                }
+
+                return retval;
             }
         }
 
