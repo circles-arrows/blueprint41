@@ -27,8 +27,8 @@ namespace MemgraphSampleCode
                 LogToDebugger = false,
             };
             model.Execute(true);
-            CreateEntities();
-            //UpdateEntities();
+            //CreateEntities();
+            UpdateEntities();
         }
 
         private static void UpdateEntities()
