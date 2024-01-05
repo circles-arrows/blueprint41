@@ -58,7 +58,6 @@ namespace MemgraphSampleCode
                 Transaction.Commit();
                 //Transaction.Rollback();
             }
-
         }
 
         private static void QueryBuilderTest()
@@ -77,7 +76,25 @@ namespace MemgraphSampleCode
                 QueryExecutionContext context = query.GetExecutionContext();
                 var employees = context.Execute().ConvertAll(item => ((string)item.employeeID, (string)item.employeeName));
             }
+
+            using (Transaction.Begin())
+            {
+                var employees = Employee.LoadWhere(getEmployeesForDepartment.Value, new Parameter("departmentID", "DEP_BBBBB"));
+            }
         }
+        private static readonly Lazy<ICompiled> getEmployeesForDepartment = new(delegate ()
+        {
+            Parameter departmentID = Parameter.New<string>("departmentID");
+
+            return (Query)Transaction.CompiledQuery
+                    .Match(node.
+                        Department.Alias(out var deptAlias)
+                            .Out.WORKS_IN.In.
+                        Employee.Alias(out var employeeAlias))
+                    .Where(deptAlias.Uid == departmentID)
+                    .Return(employeeAlias)
+                    .Compile();
+        });
 
         private static void CreateEntities()
         {
