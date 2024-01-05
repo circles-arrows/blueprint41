@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41", "..\Blueprint
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blueprint41.MemgraphDriver", "..\Blueprint41.Neo4jDriver.Memgraph\Blueprint41.MemgraphDriver.csproj", "{1D639C5C-6670-43AD-98C1-3047B0B101D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemgraphSampleCode", "..\MemgraphSampleCode\MemgraphSampleCode.csproj", "{3289A9D1-12C4-4E81-9039-77988B8ECE83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemgraphSampleCode", "..\MemgraphSampleCode\MemgraphSampleCode.csproj", "{3289A9D1-12C4-4E81-9039-77988B8ECE83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
