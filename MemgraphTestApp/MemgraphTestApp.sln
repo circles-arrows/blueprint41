@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Datastore", "Datastore", "{FC11FAEE-2A05-458F-B5F3-EC7B5A4ABEBF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemgraphTestApp", "MemgraphTestApp.Model\MemgraphTestApp.csproj", "{E1E8F985-D44A-4226-B749-EDDA701EE700}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemgraphTestApp.Model", "MemgraphTestApp.Model\MemgraphTestApp.Model.csproj", "{E1E8F985-D44A-4226-B749-EDDA701EE700}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemgraphTestApp.Generated", "MemgraphTestApp.Generated\MemgraphTestApp.Generated.csproj", "{A2F09E6F-BBA5-4BFC-A634-140746DAC46A}"
 EndProject

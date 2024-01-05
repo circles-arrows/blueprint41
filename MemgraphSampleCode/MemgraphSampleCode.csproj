@@ -61,7 +61,7 @@
       <Project>{a2f09e6f-bba5-4bfc-a634-140746dac46a}</Project>
       <Name>MemgraphTestApp.Generated</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MemgraphTestApp\MemgraphTestApp.Model\MemgraphTestApp.csproj">
+    <ProjectReference Include="..\MemgraphTestApp\MemgraphTestApp.Model\MemgraphTestApp.Model.csproj">
       <Project>{e1e8f985-d44a-4226-b749-edda701ee700}</Project>
       <Name>MemgraphTestApp</Name>
     </ProjectReference>
