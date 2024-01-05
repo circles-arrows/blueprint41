@@ -128,13 +128,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
                                 procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(Major)).Select(item => item.Values["name"].ValueAs<string>()));
                             }
 
-                            translator = Major switch
-                            {
-                                3 => new v3.Neo4jQueryTranslator(this),
-                                4 => new v4.Neo4jQueryTranslator(this),
-                                5 => new Persistence.Memgraph.Neo4jQueryTranslator(this),
-                                _ => throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.")
-                            };
+                            translator = new Persistence.Memgraph.Neo4jQueryTranslator(this);
                         }
                     }
                 }

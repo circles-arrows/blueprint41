@@ -42,10 +42,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
             TransactionLogger = advancedConfig?.GetLogger();
         }
 
-        public string Version { get; set; } = "0.0.0";
-        public int Major { get; set; } = 0;
-        public int Minor { get; set; } = 0;
-        public int? Revision { get;  set; } = null;
+        public string Version { get; internal set; } = "0.0.0";
+        public int Major { get; internal set; } = 0;
+        public int Minor { get; internal set; } = 0;
+        public int? Revision { get; internal set; } = null;
         public bool IsAura { get; set; } = false;
         public bool IsEnterpriseEdition { get; set; } = false;
 
