@@ -27,7 +27,8 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             {
                 bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
                 FunctionalIds = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
-                PropertyKeys = LoadSimpleData("CALL schema.node_type_properties() YIELD propertyName as propertyKey", "propertyKey");
+                //TODO: disabled while waiting for schema.node_type_properties fix
+                //PropertyKeys = LoadSimpleData("CALL schema.node_type_properties() YIELD propertyName as propertyKey", "propertyKey");
             }
         }
         protected IReadOnlyList<T> ImplicitLoadData<T>(string procedure, Func<RawRecord, T> processor)
