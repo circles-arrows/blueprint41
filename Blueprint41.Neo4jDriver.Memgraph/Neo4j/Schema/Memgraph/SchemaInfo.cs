@@ -24,7 +24,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             {
                 bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
                 FunctionalIds = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
-                Labels = LoadSimpleData("MATCH (n) Unwind labels(n) as label RETURN DISTINCT label", "label");
+                Labels = LoadSimpleData("SHOW NODE_LABELS INFO", "node labels");
                 PropertyKeys = LoadSimpleData("CALL schema.node_type_properties() YIELD propertyName as propertyKey", "propertyKey");
                 RelationshipTypes = LoadSimpleData("MATCH (in)-[r]->(out) RETURN DISTINCT type(r) as relationshipType", "relationshipType");
             }
