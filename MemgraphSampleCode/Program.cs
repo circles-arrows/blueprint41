@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Blueprint41;
 using Blueprint41.Core;
+using Blueprint41.Query;
 
 using Domain.Data.Manipulation;
 
 using MemgraphTestApp;
 
 using neo4j = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
+using node = Domain.Data.Query.Node;
 
 namespace MemgraphSampleCode
 {
@@ -28,7 +31,8 @@ namespace MemgraphSampleCode
             };
             model.Execute(true);
             //CreateEntities();
-            UpdateEntities();
+            //UpdateEntities();
+            QueryBuilderTest();
         }
 
         private static void UpdateEntities()
@@ -54,7 +58,27 @@ namespace MemgraphSampleCode
                 Transaction.Commit();
                 //Transaction.Rollback();
             }
+
         }
+
+        private static void QueryBuilderTest()
+        {
+            using (Transaction.Begin())
+            {
+                Query query = (Query)Transaction.CompiledQuery
+                    .Match(node.
+                        Department.Alias(out var deptAlias)
+                            .Out.WORKS_IN.In.
+                        Employee.Alias(out var employeeAlias))
+                    .Where(deptAlias.Uid == Parameter.Constant("DEP_BBBBB"))
+                    .Return(employeeAlias.Uid.As("employeeID"), employeeAlias.FirstName.As("employeeName"))
+                    .Compile();
+
+                QueryExecutionContext context = query.GetExecutionContext();
+                var employees = context.Execute().ConvertAll(item => ((string)item.employeeID, (string)item.employeeName));
+            }
+        }
+
         private static void CreateEntities()
         {
             using (Transaction.Begin())
