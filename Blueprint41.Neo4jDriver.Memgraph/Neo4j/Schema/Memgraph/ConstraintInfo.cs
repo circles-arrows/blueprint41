@@ -7,8 +7,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
 {
     public class ConstraintInfo_Memgraph : ConstraintInfo
     {
-        private bool isKey = false;
-        public override bool IsKey => isKey;
+        public override bool IsKey { get; }
 
         internal ConstraintInfo_Memgraph(RawRecord record) : base(record) { }
 

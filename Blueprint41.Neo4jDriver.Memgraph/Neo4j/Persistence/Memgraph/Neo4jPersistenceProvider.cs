@@ -25,11 +25,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             {
                 if (driver is null)
                 {
-                    lock (typeof(Neo4jPersistenceProvider))
+                    lock (_lockObject)
                     {
-                        if (driver is null)
-                        {
-                            driver = GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password), 
+                        driver ??= GraphDatabase.Driver(Uri, AuthTokens.Basic(Username, Password),
                                 o =>
                                 {
                                     o.WithFetchSize(Config.Infinite);
@@ -44,7 +42,6 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
                                         o.WithResolver(new HostResolver(AdvancedConfig));
                                 }
                             );
-                        }
                     }
                 }
                 return driver;
@@ -64,7 +61,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
                 return new HashSet<ServerAddress>(Config.DNSResolverHook!(new Neo4jHost() { Host = address.Host, Port = address.Port }).Select(host => ServerAddress.From(host.Host, host.Port)));
             }
         }
-    
+
         private Neo4jPersistenceProvider() : this(null, null, null) { }
         public Neo4jPersistenceProvider(string? uri, string? username, string? password, AdvancedConfig? advancedConfig = null) : base(uri, username, password, advancedConfig)
         {
@@ -76,18 +73,14 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
         }
-        public  RawResult RunImplicit(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public RawResult RunImplicit(string cypher)
         {
             IAsyncSession GetSession()
             {
-                return Driver.AsyncSession(delegate (SessionConfigBuilder builder)
-                {
-                    builder.WithFetchSize(Config.Infinite).WithDefaultAccessMode(AccessMode.Write);
-                });
+                return Driver.AsyncSession((SessionConfigBuilder builder) => builder.WithFetchSize(Config.Infinite).WithDefaultAccessMode(AccessMode.Write));
             }
-            
-            IResultCursor results = TaskScheduler.RunBlocking(() => GetSession()!.RunAsync(cypher), cypher);
 
+            IResultCursor results = TaskScheduler.RunBlocking(() => GetSession()!.RunAsync(cypher), cypher);
 
             //DebugQueryString(cypher, parameters);
             return new Neo4jRawResult(TaskScheduler, results);
@@ -99,7 +92,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             {
                 if (translator is null)
                 {
-                    lock (this)
+                    lock (_lockObject3)
                     {
                         if (translator is null)
                         {
@@ -115,12 +108,12 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
                                 var record = components.First();
 
                                 Version = record["version"].ValueAs<string>();
-                                IsEnterpriseEdition = (record["edition"].ValueAs<string>().ToLowerInvariant() == "enterprise");
+                                IsEnterpriseEdition = (string.Equals(record["edition"].ValueAs<string>(), "enterprise", StringComparison.InvariantCultureIgnoreCase));
 
                                 string[] parts = Version.Split(new[] { '.' });
                                 Major = int.Parse(parts[0]);
 
-                                if (parts[1].ToLower().Contains("-aura"))
+                                if (parts[1].IndexOf("-aura", StringComparison.OrdinalIgnoreCase) >= 0)
                                 {
                                     parts[1] = parts[1].Replace("-aura", "");
                                     IsAura = true;
@@ -162,16 +155,20 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         private QueryTranslator GetVoidTranslator()
         {
             if (voidTranslator is null)
-                lock (typeof(PersistenceProvider))
+            {
+                lock (_lockObject2)
+                {
                     voidTranslator ??= new Void.Neo4jQueryTranslator(this);
+                }
+            }
 
             return voidTranslator;
         }
         private static QueryTranslator? voidTranslator = null;
 
         public override Transaction NewTransaction(bool readWriteMode) => new Neo4jTransaction(this, readWriteMode, TransactionLogger);
-        public override Bookmark FromToken(string consistencyToken)    => Neo4jBookmark.FromTokenInternal(consistencyToken);
-        public override string ToToken(Bookmark consistency)           => Neo4jBookmark.ToTokenInternal(consistency);
+        public override Bookmark FromToken(string consistencyToken) => Neo4jBookmark.FromTokenInternal(consistencyToken);
+        public override string ToToken(Bookmark consistency) => Neo4jBookmark.ToTokenInternal(consistency);
 
         internal CustomTaskScheduler TaskScheduler
         {
@@ -183,8 +180,8 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
                     {
                         if (taskScheduler is null)
                         {
-                            CustomTaskQueueOptions main = new CustomTaskQueueOptions(10, 50);
-                            CustomTaskQueueOptions sub = new CustomTaskQueueOptions(4, 20);
+                            CustomTaskQueueOptions main = new(10, 50);
+                            CustomTaskQueueOptions sub = new(4, 20);
                             taskScheduler = new CustomThreadSafeTaskScheduler(main, sub);
                         }
                     }
@@ -194,7 +191,10 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             }
         }
         private CustomTaskScheduler? taskScheduler = null;
-        private static object sync = new object();
+        private static readonly object sync = new();
+        private readonly object _lockObject = new();
+        private readonly object _lockObject2 = new();
+        private readonly object _lockObject3 = new();
 
         public Neo4jPersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue) => ConfigureTaskScheduler(mainQueue, CustomTaskQueueOptions.Disabled);
         public Neo4jPersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue, CustomTaskQueueOptions subQueue)
