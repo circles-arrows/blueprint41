@@ -14,7 +14,6 @@ using System.IO;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
-
     public class Neo4jTransaction : Void.Neo4jTransaction
     {
         internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)

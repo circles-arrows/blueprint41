@@ -44,11 +44,8 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
                     RawResult result = (Model.PersistenceProvider as Neo4jPersistenceProvider)!.RunImplicit(procedure);
                     data = result.Select(processor).ToArray();
                 }
-                catch (Exception clientException)
+                catch (Exception clientException) when (clientException.Message.Contains("is still populating"))
                 {
-                    if (!clientException.Message.Contains("is still populating"))
-                        throw;
-
                     retry = true;
                     Thread.Sleep(500);
                 }
@@ -59,9 +56,9 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
         protected override long FindMaxId(FunctionalId functionalId)
         {
             bool first = true;
-            string templateNumeric = "MATCH (node:{0}) WHERE toInteger(node.Uid) IS NOT NULL WITH toInteger(node.Uid) AS decoded RETURN CASE WHEN Max(decoded) IS NULL THEN 0 ELSE Max(decoded) END as MaxId";
-            string templateHash = "MATCH (node:{0}) where node.Uid STARTS WITH '{1}' AND SIZE(node.Uid) = {2} CALL blueprint41.hashing.decode(replace(node.Uid, '{1}', '')) YIELD value as decoded RETURN CASE WHEN Max(decoded) IS NULL THEN 0 ELSE Max(decoded) END as MaxId";
-            string actualFidValue = "CALL blueprint41.functionalid.current('{0}') YIELD Sequence as sequence RETURN sequence";
+            const string templateNumeric = "MATCH (node:{0}) WHERE toInteger(node.Uid) IS NOT NULL WITH toInteger(node.Uid) AS decoded RETURN CASE WHEN Max(decoded) IS NULL THEN 0 ELSE Max(decoded) END as MaxId";
+            const string templateHash = "MATCH (node:{0}) where node.Uid STARTS WITH '{1}' AND SIZE(node.Uid) = {2} CALL blueprint41.hashing.decode(replace(node.Uid, '{1}', '')) YIELD value as decoded RETURN CASE WHEN Max(decoded) IS NULL THEN 0 ELSE Max(decoded) END as MaxId";
+            const string actualFidValue = "CALL blueprint41.functionalid.current('{0}') YIELD Sequence as sequence RETURN sequence";
             StringBuilder queryBuilder = new();
             foreach (var entity in Model.Entities.Where(entity => entity.FunctionalId?.Label == functionalId.Label))
             {
@@ -99,7 +96,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             ConstraintInfo? keyConstraint = entity.IsVirtual ? null : constraints.FirstOrDefault(item => item.IsKey);
             IndexInfo? indexInfo = entity.IsVirtual ? null : indexes.FirstOrDefault(item => item.IsIndexed);
 
-            List<(ApplyConstraintAction, string?)> commands = new List<(ApplyConstraintAction, string?)>();
+            List<(ApplyConstraintAction, string?)> commands = new();
 
             if (entity.IsAbstract && indexType == IndexType.Unique)
                 indexType = IndexType.Indexed;
@@ -156,7 +153,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             {
                 // Database has has a exists constraint, but we want a nullable field instead
                 commands.Add((ApplyConstraintAction.DeleteKeyConstraint, keyConstraint.Name));
-            }    
+            }
             else if (isKey && keyConstraint is null)
             {
                 // Database has has no exists constraint, but we want a non-nullable field instead
