@@ -57,35 +57,71 @@ namespace Blueprint41.UnitTest.Tests
                 new DateTime(2012, 8, 25, 0, 0, 0, DateTimeKind.Utc), // Aug 25, 2012 - Voyager 1 becomes the first spacecraft to reach interstellar space.
                 DateTime.MaxValue,
             };
-
             int bits = dates.Length - 1;
+            int count = (1 << bits);
 
-            var test = new List<(int mask, List<(DateTime from, DateTime till)> relations)>();
+            var test = new List<(int mask, string aciiArt)>();
 
-            foreach (int mask in Enumerable.Range(0, 1 << bits))
+            for (int mask = 0; mask < count; mask++)
+            {
+                var relations = RelationsFromMask(mask);
+                test.Add((mask, DrawAsciiArt(relations)));
+            }
+
+            List<(DateTime from, DateTime till)> RelationsFromMask(int mask)
             {
                 DateTime? from = null;
                 var relations = new List<(DateTime from, DateTime till)>();
 
                 for (int pos = 0; pos <= bits; pos++)
                 {
-                    int bit = (1 << pos) & mask;
-                    if (bit == 1 && from is null)
+                    bool bit = ((1 << pos) & mask) != 0;
+                    if (bit && from is null)
                     {
                         from = dates[pos];
                     }
-                    else if (bit == 0 && from is not null)
+                    else if (!bit && from is not null)
                     {
                         relations.Add((from.Value, dates[pos]));
                         from = null;
                     }
                 }
 
-                test.Add((mask, relations));
+                return relations;
             }
 
+            string DrawAsciiArt(List<(DateTime from, DateTime till)> relations)
+            {
 
 
+                char[] asciiArt = new char[(bits << 2) + 1];
+                for (int pos = 0; pos < asciiArt.Length; pos++)
+                    asciiArt[pos] = ' ';
+
+                foreach ((DateTime from, DateTime till) in relations)
+                {
+                    int fromIdx = Array.IndexOf(dates, from);
+                    int tillIdx = Array.IndexOf(dates, till);
+
+                    int fromPos = fromIdx << 2;
+                    int tillPos = tillIdx << 2;
+
+                    char fromChr = (fromIdx == 0) ? '<' : '|';
+                    char tillChr = (tillIdx == bits) ? '>' : '|';
+
+                    for (int pos = fromPos; pos <= tillPos; pos++)
+                    {
+                        if (pos == fromPos)
+                            asciiArt[pos] = fromChr;
+                        else if (pos == tillPos)
+                            asciiArt[pos] = tillChr;
+                        else
+                            asciiArt[pos] = '-';
+                    }
+                }
+
+                return new string(asciiArt);
+            }
         }
 
 
