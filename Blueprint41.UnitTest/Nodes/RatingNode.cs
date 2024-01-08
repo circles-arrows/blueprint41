@@ -55,7 +55,7 @@ namespace Datastore.Query
             NodeAlias = nodeAlias;
         }
 
-        public RatingNode Where(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
+        public RatingNode Where(JsNotation<string> Code = default, JsNotation<string> Description = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
         {
             if (InlineConditions is not null || InlineAssignments is not null)
                 throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
@@ -66,6 +66,8 @@ namespace Datastore.Query
                 return a;
             });
             List<QueryCondition> conditions = new List<QueryCondition>();
+            if (Code.HasValue) conditions.Add(new QueryCondition(alias.Value.Code, Operator.Equals, ((IValue)Code).GetValue()));
+            if (Description.HasValue) conditions.Add(new QueryCondition(alias.Value.Description, Operator.Equals, ((IValue)Description).GetValue()));
             if (LastModifiedOn.HasValue) conditions.Add(new QueryCondition(alias.Value.LastModifiedOn, Operator.Equals, ((IValue)LastModifiedOn).GetValue()));
             if (Name.HasValue) conditions.Add(new QueryCondition(alias.Value.Name, Operator.Equals, ((IValue)Name).GetValue()));
             if (Uid.HasValue) conditions.Add(new QueryCondition(alias.Value.Uid, Operator.Equals, ((IValue)Uid).GetValue()));
@@ -74,7 +76,7 @@ namespace Datastore.Query
 
             return this;
         }
-        public RatingNode Assign(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
+        public RatingNode Assign(JsNotation<string> Code = default, JsNotation<string> Description = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
         {
             if (InlineConditions is not null || InlineAssignments is not null)
                 throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
@@ -85,6 +87,8 @@ namespace Datastore.Query
                 return a;
             });
             List<Assignment> assignments = new List<Assignment>();
+            if (Code.HasValue) assignments.Add(new Assignment(alias.Value.Code, Code));
+            if (Description.HasValue) assignments.Add(new Assignment(alias.Value.Description, Description));
             if (LastModifiedOn.HasValue) assignments.Add(new Assignment(alias.Value.LastModifiedOn, LastModifiedOn));
             if (Name.HasValue) assignments.Add(new Assignment(alias.Value.Name, Name));
             if (Uid.HasValue) assignments.Add(new Assignment(alias.Value.Uid, Uid));
@@ -162,9 +166,11 @@ namespace Datastore.Query
             Node = alias.Node;
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
+        public Assignment[] Assign(JsNotation<string> Code = default, JsNotation<string> Description = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
         {
             List<Assignment> assignments = new List<Assignment>();
+            if (Code.HasValue) assignments.Add(new Assignment(this.Code, Code));
+            if (Description.HasValue) assignments.Add(new Assignment(this.Description, Description));
             if (LastModifiedOn.HasValue) assignments.Add(new Assignment(this.LastModifiedOn, LastModifiedOn));
             if (Name.HasValue) assignments.Add(new Assignment(this.Name, Name));
             if (Uid.HasValue) assignments.Add(new Assignment(this.Uid, Uid));
@@ -181,7 +187,9 @@ namespace Datastore.Query
                 {
                     m_AliasFields = new Dictionary<string, FieldResult>()
                     {
+                        { "Code", new StringResult(this, "Code", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Code"]) },
                         { "Name", new StringResult(this, "Name", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Name"]) },
+                        { "Description", new StringResult(this, "Description", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Description"]) },
                         { "Uid", new StringResult(this, "Uid", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"]) },
                         { "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"]) },
                     };
@@ -193,6 +201,17 @@ namespace Datastore.Query
 
         public RatingNode.RatingOut Out { get { return new RatingNode.RatingOut(new RatingNode(this, true)); } }
 
+        public StringResult Code
+        {
+            get
+            {
+                if (m_Code is null)
+                    m_Code = (StringResult)AliasFields["Code"];
+
+                return m_Code;
+            }
+        }
+        private StringResult m_Code = null;
         public StringResult Name
         {
             get
@@ -204,6 +223,17 @@ namespace Datastore.Query
             }
         }
         private StringResult m_Name = null;
+        public StringResult Description
+        {
+            get
+            {
+                if (m_Description is null)
+                    m_Description = (StringResult)AliasFields["Description"];
+
+                return m_Description;
+            }
+        }
+        private StringResult m_Description = null;
         public StringResult Uid
         {
             get

@@ -69,7 +69,10 @@ namespace Blueprint41.UnitTest.DataStore
                 .AddProperty("Name", typeof(string), false, IndexType.Unique);
 
             Entities.New("Rating", Entities["BaseEntity"])
-                .AddProperty("Name", typeof(string), false, IndexType.Unique);
+                .AddProperty("Code", typeof(string), false, IndexType.Unique)
+                .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                .AddProperty("Description", typeof(string), false);
+
 
             // Collection, time dependent:   (Person)-[SUBSCRIBED_TO { StartDate, EndDate, MonthlyFee }]->(StreamingService)
             Relations.New(Entities["Person"], Entities["StreamingService"], "SUBSCRIBED_TO_STREAMING_SERVICE", "SUBSCRIBED_TO")

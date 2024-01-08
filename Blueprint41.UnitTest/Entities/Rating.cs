@@ -12,7 +12,9 @@ namespace Datastore.Manipulation
 {
     public interface IRatingOriginalData : IBaseEntityOriginalData
     {
+        string Code { get; }
         string Name { get; }
+        string Description { get; }
     }
 
     public partial class Rating : OGM<Rating, Rating.RatingData, System.String>, IBaseEntity, IRatingOriginalData
@@ -34,6 +36,13 @@ namespace Datastore.Manipulation
 
             #endregion
 
+            #region LoadByCode
+
+            RegisterQuery(nameof(LoadByCode), (query, alias) => query.
+                Where(alias.Code == Parameter.New<string>(Param0)));
+
+            #endregion
+
             #region LoadByName
 
             RegisterQuery(nameof(LoadByName), (query, alias) => query.
@@ -42,6 +51,10 @@ namespace Datastore.Manipulation
             #endregion
 
             AdditionalGeneratedStoredQueries();
+        }
+        public static Rating LoadByCode(string code)
+        {
+            return FromQuery(nameof(LoadByCode), new Parameter(Param0, code)).FirstOrDefault();
         }
         public static Rating LoadByName(string name)
         {
@@ -67,7 +80,7 @@ namespace Datastore.Manipulation
 
         public override string ToString()
         {
-            return $"Rating => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Rating => Code : {this.Code}, Name : {this.Name}, Description : {this.Description}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -94,8 +107,12 @@ namespace Datastore.Manipulation
         {
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
+            if (InnerData.Code is null)
+                throw new PersistenceException(string.Format("Cannot save Rating with key '{0}' because the Code cannot be null.", this.Uid?.ToString() ?? "<null>"));
             if (InnerData.Name is null)
                 throw new PersistenceException(string.Format("Cannot save Rating with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
+            if (InnerData.Description is null)
+                throw new PersistenceException(string.Format("Cannot save Rating with key '{0}' because the Description cannot be null.", this.Uid?.ToString() ?? "<null>"));
         }
 
         protected override void ValidateDelete()
@@ -115,7 +132,9 @@ namespace Datastore.Manipulation
 
             public RatingData(RatingData data)
             {
+                Code = data.Code;
                 Name = data.Name;
+                Description = data.Description;
                 Uid = data.Uid;
                 LastModifiedOn = data.LastModifiedOn;
             }
@@ -138,7 +157,9 @@ namespace Datastore.Manipulation
             sealed public override IDictionary<string, object> MapTo()
             {
                 IDictionary<string, object> dictionary = new Dictionary<string, object>();
+                dictionary.Add("Code",  Code);
                 dictionary.Add("Name",  Name);
+                dictionary.Add("Description",  Description);
                 dictionary.Add("Uid",  Uid);
                 dictionary.Add("LastModifiedOn",  Conversion<System.DateTime, long>.Convert(LastModifiedOn));
                 return dictionary;
@@ -147,8 +168,12 @@ namespace Datastore.Manipulation
             sealed public override void MapFrom(IReadOnlyDictionary<string, object> properties)
             {
                 object value;
+                if (properties.TryGetValue("Code", out value))
+                    Code = (string)value;
                 if (properties.TryGetValue("Name", out value))
                     Name = (string)value;
+                if (properties.TryGetValue("Description", out value))
+                    Description = (string)value;
                 if (properties.TryGetValue("Uid", out value))
                     Uid = (string)value;
                 if (properties.TryGetValue("LastModifiedOn", out value))
@@ -159,7 +184,9 @@ namespace Datastore.Manipulation
 
             #region Members for interface IRating
 
+            public string Code { get; set; }
             public string Name { get; set; }
+            public string Description { get; set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -176,7 +203,9 @@ namespace Datastore.Manipulation
 
         #region Members for interface IRating
 
+        public string Code { get { LazyGet(); return InnerData.Code; } set { if (LazySet(Members.Code, InnerData.Code, value)) InnerData.Code = value; } }
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
+        public string Description { get { LazyGet(); return InnerData.Description; } set { if (LazySet(Members.Description, InnerData.Description, value)) InnerData.Description = value; } }
 
         #endregion
         #region Members for interface IBaseEntity
@@ -264,7 +293,9 @@ namespace Datastore.Manipulation
 
             #region Members for interface IRating
 
+            public Property Code { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Code"];
             public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Name"];
+            public Property Description { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Description"];
             #endregion
 
             #region Members for interface IBaseEntity
@@ -507,6 +538,49 @@ namespace Datastore.Manipulation
             public static class OnPropertyChange
             {
 
+                #region OnCode
+
+                private static bool onCodeIsRegistered = false;
+
+                private static EventHandler<Rating, PropertyEventArgs> onCode;
+                public static event EventHandler<Rating, PropertyEventArgs> OnCode
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onCodeIsRegistered)
+                            {
+                                Members.Code.Events.OnChange -= onCodeProxy;
+                                Members.Code.Events.OnChange += onCodeProxy;
+                                onCodeIsRegistered = true;
+                            }
+                            onCode += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onCode -= value;
+                            if (onCode is null && onCodeIsRegistered)
+                            {
+                                Members.Code.Events.OnChange -= onCodeProxy;
+                                onCodeIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onCodeProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<Rating, PropertyEventArgs> handler = onCode;
+                    if (handler is not null)
+                        handler.Invoke((Rating)sender, args);
+                }
+
+                #endregion
+
                 #region OnName
 
                 private static bool onNameIsRegistered = false;
@@ -544,6 +618,49 @@ namespace Datastore.Manipulation
                 private static void onNameProxy(object sender, PropertyEventArgs args)
                 {
                     EventHandler<Rating, PropertyEventArgs> handler = onName;
+                    if (handler is not null)
+                        handler.Invoke((Rating)sender, args);
+                }
+
+                #endregion
+
+                #region OnDescription
+
+                private static bool onDescriptionIsRegistered = false;
+
+                private static EventHandler<Rating, PropertyEventArgs> onDescription;
+                public static event EventHandler<Rating, PropertyEventArgs> OnDescription
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onDescriptionIsRegistered)
+                            {
+                                Members.Description.Events.OnChange -= onDescriptionProxy;
+                                Members.Description.Events.OnChange += onDescriptionProxy;
+                                onDescriptionIsRegistered = true;
+                            }
+                            onDescription += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onDescription -= value;
+                            if (onDescription is null && onDescriptionIsRegistered)
+                            {
+                                Members.Description.Events.OnChange -= onDescriptionProxy;
+                                onDescriptionIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onDescriptionProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<Rating, PropertyEventArgs> handler = onDescription;
                     if (handler is not null)
                         handler.Invoke((Rating)sender, args);
                 }
@@ -649,7 +766,9 @@ namespace Datastore.Manipulation
 
         #region Members for interface IRating
 
+        string IRatingOriginalData.Code { get { return OriginalData.Code; } }
         string IRatingOriginalData.Name { get { return OriginalData.Name; } }
+        string IRatingOriginalData.Description { get { return OriginalData.Description; } }
 
         #endregion
         #region Members for interface IBaseEntity

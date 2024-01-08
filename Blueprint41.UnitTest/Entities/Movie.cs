@@ -289,11 +289,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public MOVIE_CERTIFICATION CertificationIf(JsNotation<System.DateTime> CreationDate = default)
+        public MOVIE_CERTIFICATION CertificationIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             throw new NotImplementedException();
         }
-        public void SetCertification(Rating rating, JsNotation<System.DateTime> CreationDate = default)
+        public void SetCertification(Rating rating, JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             throw new NotImplementedException();
         }

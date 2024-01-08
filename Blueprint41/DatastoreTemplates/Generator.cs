@@ -379,7 +379,7 @@ namespace Blueprint41.DatastoreTemplates
         public static string ToJsonNotation(this IEnumerable<Property> properties)
         {
             return string.Join(", ", properties
-                                        .Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && p.SystemReturnType.Namespace == "System")
+                                        .Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && (p.SystemReturnType.Namespace == "System" || p.SystemReturnType.IsEnum))
                                         .OrderBy(p => p.Name)
                                         .Select(p => $"JsNotation<{p.SystemReturnType!.ToCSharp()}{((p.SystemReturnType!.IsValueType && p.Nullable) ? "?" : "")}> {p.Name} = default")
                                         );

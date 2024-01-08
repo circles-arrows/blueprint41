@@ -233,6 +233,43 @@ namespace Blueprint41.UnitTest.Tests
         }
 
 
+        private void SetupDb()
+        {
+            using (Transaction.Begin())
+            {
+                new Rating()
+                {
+                    Code = "G",
+                    Name = "Rated G",
+                    Description = "General audiences – All ages admitted.",
+                };
+                new Rating()
+                {
+                    Code = "PG",
+                    Name = "Rated PG",
+                    Description = "Parental guidance suggested – Some material may not be suitable for children.",
+                };
+                new Rating()
+                {
+                    Code = "PG-13",
+                    Name = "Rated PG-13",
+                    Description = "Parents strongly cautioned – Some material may be inappropriate for children under 13.",
+                };
+                new Rating()
+                {
+                    Code = "R",
+                    Name = "Rated R",
+                    Description = "Restricted – Under 17 requires accompanying parent or adult guardian.",
+                };
+                new Rating()
+                {
+                    Code = "NC-17",
+                    Name = "Rated NC-17",
+                    Description = "Adults Only – No one 17 and under admitted.",
+                };
+            }
+        }
+
         private void CleanupRelations(Relationship relationship)
         {
             string cypher = $"""

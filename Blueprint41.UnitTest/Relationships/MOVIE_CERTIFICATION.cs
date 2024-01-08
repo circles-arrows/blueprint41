@@ -118,15 +118,15 @@ public partial class MOVIE_CERTIFICATION_REL : RELATIONSHIP, IFromIn_MOVIE_CERTI
             SexAndNudity = new MiscResult(this, "SexAndNudity", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["SexAndNudity"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default)
+        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
-            //if (FrighteningIntense.HasValue) assignments.Add(new Assignment(this.FrighteningIntense, FrighteningIntense));
-            //if (ViolenceGore.HasValue) assignments.Add(new Assignment(this.ViolenceGore, ViolenceGore));
-            //if (Profanity.HasValue) assignments.Add(new Assignment(this.Profanity, Profanity));
-            //if (Substances.HasValue) assignments.Add(new Assignment(this.Substances, Substances));
-            //if (SexAndNudity.HasValue) assignments.Add(new Assignment(this.SexAndNudity, SexAndNudity));
+            if (FrighteningIntense.HasValue) assignments.Add(new Assignment(this.FrighteningIntense, FrighteningIntense));
+            if (ViolenceGore.HasValue) assignments.Add(new Assignment(this.ViolenceGore, ViolenceGore));
+            if (Profanity.HasValue) assignments.Add(new Assignment(this.Profanity, Profanity));
+            if (Substances.HasValue) assignments.Add(new Assignment(this.Substances, Substances));
+            if (SexAndNudity.HasValue) assignments.Add(new Assignment(this.SexAndNudity, SexAndNudity));
 
             return assignments.ToArray();
         }

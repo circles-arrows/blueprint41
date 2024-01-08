@@ -36,7 +36,7 @@ namespace Datastore.Manipulation
         public Blueprint41.UnitTest.DataStore.RatingComponent? Substances { get; private set; }
         public Blueprint41.UnitTest.DataStore.RatingComponent? SexAndNudity { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default)
+        public void Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             throw new NotImplementedException();
         }
@@ -48,7 +48,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public static List<MOVIE_CERTIFICATION> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<MOVIE_CERTIFICATION> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
             throw new NotImplementedException();
         }
@@ -180,7 +180,7 @@ namespace Datastore.Manipulation
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<MOVIE_CERTIFICATION> @this, JsNotation<System.DateTime> CreationDate = default)
+        public static void Assign(this IEnumerable<MOVIE_CERTIFICATION> @this, JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             throw new NotImplementedException();
         }
