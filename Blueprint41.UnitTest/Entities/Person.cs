@@ -13,10 +13,12 @@ namespace Datastore.Manipulation
     public interface IPersonOriginalData : IBaseEntityOriginalData
     {
         string Name { get; }
-        City City { get; }
         IEnumerable<Restaurant> Restaurants { get; }
         IEnumerable<Movie> DirectedMovies { get; }
         IEnumerable<Movie> ActedInMovies { get; }
+        IEnumerable<StreamingService> StreamingServiceSubscriptions { get; }
+        IEnumerable<Movie> WatchedMovies { get; }
+        City City { get; }
     }
 
     public partial class Person : OGM<Person, Person.PersonData, System.String>, IBaseEntity, IPersonOriginalData
@@ -60,7 +62,7 @@ namespace Datastore.Manipulation
 
         public override string ToString()
         {
-            return $"Person => Name : {this.Name?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Person => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -87,6 +89,8 @@ namespace Datastore.Manipulation
         {
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
+            if (InnerData.Name is null)
+                throw new PersistenceException(string.Format("Cannot save Person with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
         }
 
         protected override void ValidateDelete()
@@ -107,10 +111,12 @@ namespace Datastore.Manipulation
             public PersonData(PersonData data)
             {
                 Name = data.Name;
-                City = data.City;
                 Restaurants = data.Restaurants;
                 DirectedMovies = data.DirectedMovies;
                 ActedInMovies = data.ActedInMovies;
+                StreamingServiceSubscriptions = data.StreamingServiceSubscriptions;
+                WatchedMovies = data.WatchedMovies;
+                City = data.City;
                 Uid = data.Uid;
                 LastModifiedOn = data.LastModifiedOn;
             }
@@ -122,10 +128,12 @@ namespace Datastore.Manipulation
             {
                 NodeType = "Person";
 
-                City = new EntityCollection<City>(Wrapper, Members.City);
                 Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { int loadHack = item.Persons.Count; } });
                 DirectedMovies = new EntityCollection<Movie>(Wrapper, Members.DirectedMovies, item => { if (Members.DirectedMovies.Events.HasRegisteredChangeHandlers) { object loadHack = item.Director; } });
                 ActedInMovies = new EntityCollection<Movie>(Wrapper, Members.ActedInMovies, item => { if (Members.ActedInMovies.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actors.Count; } });
+                StreamingServiceSubscriptions = new EntityTimeCollection<StreamingService>(Wrapper, Members.StreamingServiceSubscriptions, item => { if (Members.StreamingServiceSubscriptions.Events.HasRegisteredChangeHandlers) { int loadHack = item.Subscribers.CountAll; } });
+                WatchedMovies = new EntityCollection<Movie>(Wrapper, Members.WatchedMovies);
+                City = new EntityTimeCollection<City>(Wrapper, Members.City);
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -159,10 +167,12 @@ namespace Datastore.Manipulation
             #region Members for interface IPerson
 
             public string Name { get; set; }
-            public EntityCollection<City> City { get; private set; }
             public EntityCollection<Restaurant> Restaurants { get; private set; }
             public EntityCollection<Movie> DirectedMovies { get; private set; }
             public EntityCollection<Movie> ActedInMovies { get; private set; }
+            public EntityTimeCollection<StreamingService> StreamingServiceSubscriptions { get; private set; }
+            public EntityCollection<Movie> WatchedMovies { get; private set; }
+            public EntityTimeCollection<City> City { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -180,15 +190,6 @@ namespace Datastore.Manipulation
         #region Members for interface IPerson
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-        public City City
-        {
-            get { return ((ILookupHelper<City>)InnerData.City).GetItem(null); }
-            set 
-            { 
-                if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItem(null), value))
-                    ((ILookupHelper<City>)InnerData.City).SetItem(value, null); 
-            }
-        }
         public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
         private void ClearRestaurants(DateTime? moment)
         {
@@ -203,6 +204,26 @@ namespace Datastore.Manipulation
         private void ClearActedInMovies(DateTime? moment)
         {
             ((ILookupHelper<Movie>)InnerData.ActedInMovies).ClearLookup(moment);
+        }
+        public EntityTimeCollection<StreamingService> StreamingServiceSubscriptions { get { return InnerData.StreamingServiceSubscriptions; } }
+        private void ClearStreamingServiceSubscriptions(DateTime? moment)
+        {
+            ((ILookupHelper<StreamingService>)InnerData.StreamingServiceSubscriptions).ClearLookup(moment);
+        }
+        public EntityCollection<Movie> WatchedMovies { get { return InnerData.WatchedMovies; } }
+        public City City { get { return GetCity(Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } set { SetCity(value, Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } }
+        public City GetCity(DateTime moment)
+        {
+            return ((ILookupHelper<City>)InnerData.City).GetItem(moment);
+        }
+        public IEnumerable<CollectionItem<City>> GetCities(DateTime? from, DateTime? till)
+        {
+            return ((ILookupHelper<City>)InnerData.City).GetItems(from, till);
+        }
+        public void SetCity(City value, DateTime? moment)
+        {
+            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), value, moment))
+                ((ILookupHelper<City>)InnerData.City).SetItem(value, moment);
         }
 
         #endregion
@@ -225,26 +246,6 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
-        public PERSON_LIVES_IN CityRelation()
-        {
-            throw new NotImplementedException();
-        }
-        public PERSON_LIVES_IN CityIf(Func<PERSON_LIVES_IN_ALIAS, QueryCondition> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public PERSON_LIVES_IN CityIf(Func<PERSON_LIVES_IN_ALIAS, QueryCondition[]> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public PERSON_LIVES_IN CityIf(JsNotation<System.DateTime> CreationDate = default)
-        {
-            throw new NotImplementedException();
-        }
-        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default)
-        {
-            throw new NotImplementedException();
-        }
         public List<PERSON_EATS_AT> RestaurantRelations()
         {
             throw new NotImplementedException();
@@ -302,6 +303,66 @@ namespace Datastore.Manipulation
             throw new NotImplementedException();
         }
         public void AddActedInMovie(Movie movie, JsNotation<System.DateTime> CreationDate = default)
+        {
+            throw new NotImplementedException();
+        }
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionRelations()
+        {
+            throw new NotImplementedException();
+        }
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        {
+            throw new NotImplementedException();
+        }
+        public void AddStreamingServiceSubscription(StreamingService streamingService, JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        {
+            throw new NotImplementedException();
+        }
+        public List<WATCHED_MOVIE> WatchedMovieRelations()
+        {
+            throw new NotImplementedException();
+        }
+        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<WATCHED_MOVIE> WatchedMoviesWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<int> MinutesWatched = default)
+        {
+            throw new NotImplementedException();
+        }
+        public void AddWatchedMovie(Movie movie, JsNotation<System.DateTime> CreationDate = default, JsNotation<int> MinutesWatched = default)
+        {
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN CityRelation()
+        {
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN CityIf(Func<PERSON_LIVES_IN_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN CityIf(Func<PERSON_LIVES_IN_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN CityIf(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> ZipCode = default)
+        {
+            throw new NotImplementedException();
+        }
+        public void SetCity(City city, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> ZipCode = default)
         {
             throw new NotImplementedException();
         }
@@ -372,10 +433,12 @@ namespace Datastore.Manipulation
             #region Members for interface IPerson
 
             public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Name"];
-            public Property City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["City"];
             public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Restaurants"];
             public Property DirectedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["DirectedMovies"];
             public Property ActedInMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["ActedInMovies"];
+            public Property StreamingServiceSubscriptions { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["StreamingServiceSubscriptions"];
+            public Property WatchedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["WatchedMovies"];
+            public Property City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["City"];
             #endregion
 
             #region Members for interface IBaseEntity
@@ -661,49 +724,6 @@ namespace Datastore.Manipulation
 
                 #endregion
 
-                #region OnCity
-
-                private static bool onCityIsRegistered = false;
-
-                private static EventHandler<Person, PropertyEventArgs> onCity;
-                public static event EventHandler<Person, PropertyEventArgs> OnCity
-                {
-                    add
-                    {
-                        lock (typeof(OnPropertyChange))
-                        {
-                            if (!onCityIsRegistered)
-                            {
-                                Members.City.Events.OnChange -= onCityProxy;
-                                Members.City.Events.OnChange += onCityProxy;
-                                onCityIsRegistered = true;
-                            }
-                            onCity += value;
-                        }
-                    }
-                    remove
-                    {
-                        lock (typeof(OnPropertyChange))
-                        {
-                            onCity -= value;
-                            if (onCity is null && onCityIsRegistered)
-                            {
-                                Members.City.Events.OnChange -= onCityProxy;
-                                onCityIsRegistered = false;
-                            }
-                        }
-                    }
-                }
-            
-                private static void onCityProxy(object sender, PropertyEventArgs args)
-                {
-                    EventHandler<Person, PropertyEventArgs> handler = onCity;
-                    if (handler is not null)
-                        handler.Invoke((Person)sender, args);
-                }
-
-                #endregion
-
                 #region OnRestaurants
 
                 private static bool onRestaurantsIsRegistered = false;
@@ -833,6 +853,135 @@ namespace Datastore.Manipulation
 
                 #endregion
 
+                #region OnStreamingServiceSubscriptions
+
+                private static bool onStreamingServiceSubscriptionsIsRegistered = false;
+
+                private static EventHandler<Person, PropertyEventArgs> onStreamingServiceSubscriptions;
+                public static event EventHandler<Person, PropertyEventArgs> OnStreamingServiceSubscriptions
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onStreamingServiceSubscriptionsIsRegistered)
+                            {
+                                Members.StreamingServiceSubscriptions.Events.OnChange -= onStreamingServiceSubscriptionsProxy;
+                                Members.StreamingServiceSubscriptions.Events.OnChange += onStreamingServiceSubscriptionsProxy;
+                                onStreamingServiceSubscriptionsIsRegistered = true;
+                            }
+                            onStreamingServiceSubscriptions += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onStreamingServiceSubscriptions -= value;
+                            if (onStreamingServiceSubscriptions is null && onStreamingServiceSubscriptionsIsRegistered)
+                            {
+                                Members.StreamingServiceSubscriptions.Events.OnChange -= onStreamingServiceSubscriptionsProxy;
+                                onStreamingServiceSubscriptionsIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onStreamingServiceSubscriptionsProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<Person, PropertyEventArgs> handler = onStreamingServiceSubscriptions;
+                    if (handler is not null)
+                        handler.Invoke((Person)sender, args);
+                }
+
+                #endregion
+
+                #region OnWatchedMovies
+
+                private static bool onWatchedMoviesIsRegistered = false;
+
+                private static EventHandler<Person, PropertyEventArgs> onWatchedMovies;
+                public static event EventHandler<Person, PropertyEventArgs> OnWatchedMovies
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onWatchedMoviesIsRegistered)
+                            {
+                                Members.WatchedMovies.Events.OnChange -= onWatchedMoviesProxy;
+                                Members.WatchedMovies.Events.OnChange += onWatchedMoviesProxy;
+                                onWatchedMoviesIsRegistered = true;
+                            }
+                            onWatchedMovies += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onWatchedMovies -= value;
+                            if (onWatchedMovies is null && onWatchedMoviesIsRegistered)
+                            {
+                                Members.WatchedMovies.Events.OnChange -= onWatchedMoviesProxy;
+                                onWatchedMoviesIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onWatchedMoviesProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<Person, PropertyEventArgs> handler = onWatchedMovies;
+                    if (handler is not null)
+                        handler.Invoke((Person)sender, args);
+                }
+
+                #endregion
+
+                #region OnCity
+
+                private static bool onCityIsRegistered = false;
+
+                private static EventHandler<Person, PropertyEventArgs> onCity;
+                public static event EventHandler<Person, PropertyEventArgs> OnCity
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onCityIsRegistered)
+                            {
+                                Members.City.Events.OnChange -= onCityProxy;
+                                Members.City.Events.OnChange += onCityProxy;
+                                onCityIsRegistered = true;
+                            }
+                            onCity += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onCity -= value;
+                            if (onCity is null && onCityIsRegistered)
+                            {
+                                Members.City.Events.OnChange -= onCityProxy;
+                                onCityIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onCityProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<Person, PropertyEventArgs> handler = onCity;
+                    if (handler is not null)
+                        handler.Invoke((Person)sender, args);
+                }
+
+                #endregion
+
                 #region OnUid
 
                 private static bool onUidIsRegistered = false;
@@ -933,10 +1082,12 @@ namespace Datastore.Manipulation
         #region Members for interface IPerson
 
         string IPersonOriginalData.Name { get { return OriginalData.Name; } }
-        City IPersonOriginalData.City { get { return ((ILookupHelper<City>)OriginalData.City).GetOriginalItem(null); } }
         IEnumerable<Restaurant> IPersonOriginalData.Restaurants { get { return OriginalData.Restaurants.OriginalData; } }
         IEnumerable<Movie> IPersonOriginalData.DirectedMovies { get { return OriginalData.DirectedMovies.OriginalData; } }
         IEnumerable<Movie> IPersonOriginalData.ActedInMovies { get { return OriginalData.ActedInMovies.OriginalData; } }
+        IEnumerable<StreamingService> IPersonOriginalData.StreamingServiceSubscriptions { get { return OriginalData.StreamingServiceSubscriptions.OriginalData; } }
+        IEnumerable<Movie> IPersonOriginalData.WatchedMovies { get { return OriginalData.WatchedMovies.OriginalData; } }
+        City IPersonOriginalData.City { get { return ((ILookupHelper<City>)OriginalData.City).GetOriginalItem(DateTime.UtcNow); } }
 
         #endregion
         #region Members for interface IBaseEntity

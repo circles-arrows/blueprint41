@@ -114,9 +114,6 @@ namespace Blueprint41
             if (IsTimeDependent)
                 throw new NotSupportedException(string.Format("The relationship type '{0}' already has time dependence support.", Name));
 
-            if (_properties.Any(item => item.Name != "CreationDate"))
-                throw new NotSupportedException(string.Format("Time dependence cannot be enabled since the relationship type '{0}' already has other properties.", Name));
-
             IsTimeDependent = true;
 
             _properties.Add("StartDate", new RelationshipProperty(this, PropertyType.Attribute, "StartDate", typeof(DateTime), false, IndexType.None));
@@ -225,8 +222,8 @@ namespace Blueprint41
             if (InProperty is null && OutProperty is null)
                 throw new InvalidOperationException("At least 1 in or out property needs to be set before primitive properties can be added.");
 
-            if (IsTimeDependent)
-                throw new NotSupportedException(string.Format("Primitive properties cannot be added since the relationship type '{0}' already has time dependence enabled.", Name));
+            //if (IsTimeDependent)
+            //    throw new NotSupportedException(string.Format("Primitive properties cannot be added since the relationship type '{0}' already has time dependence enabled.", Name));
         }
 
         internal void ResetProperty(DirectionEnum direction)

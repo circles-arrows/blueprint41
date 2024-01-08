@@ -10,17 +10,17 @@ using q = Datastore.Query;
 
 namespace Datastore.Manipulation
 {
-    public interface ICityOriginalData : IBaseEntityOriginalData
+    public interface IStreamingServiceOriginalData : IBaseEntityOriginalData
     {
         string Name { get; }
-        IEnumerable<Restaurant> Restaurants { get; }
+        IEnumerable<Person> Subscribers { get; }
     }
 
-    public partial class City : OGM<City, City.CityData, System.String>, IBaseEntity, ICityOriginalData
+    public partial class StreamingService : OGM<StreamingService, StreamingService.StreamingServiceData, System.String>, IBaseEntity, IStreamingServiceOriginalData
     {
         #region Initialize
 
-        static City()
+        static StreamingService()
         {
             Register.Types();
         }
@@ -44,22 +44,22 @@ namespace Datastore.Manipulation
 
             AdditionalGeneratedStoredQueries();
         }
-        public static City LoadByName(string name)
+        public static StreamingService LoadByName(string name)
         {
             return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, City> LoadByKeys(IEnumerable<System.String> uids)
+        public static Dictionary<System.String, StreamingService> LoadByKeys(IEnumerable<System.String> uids)
         {
             return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
-        protected static void RegisterQuery(string name, Func<IMatchQuery, q.CityAlias, IWhereQuery> query)
+        protected static void RegisterQuery(string name, Func<IMatchQuery, q.StreamingServiceAlias, IWhereQuery> query)
         {
-            q.CityAlias alias;
+            q.StreamingServiceAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.City.Alias(out alias, "node"));
+            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.StreamingService.Alias(out alias, "node"));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
@@ -68,7 +68,7 @@ namespace Datastore.Manipulation
 
         public override string ToString()
         {
-            return $"City => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"StreamingService => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -82,7 +82,7 @@ namespace Datastore.Manipulation
             if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
             {
                 if (ReferenceEquals(InnerData, OriginalData))
-                    OriginalData = new CityData(InnerData);
+                    OriginalData = new StreamingServiceData(InnerData);
             }
         }
 
@@ -96,7 +96,7 @@ namespace Datastore.Manipulation
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
             if (InnerData.Name is null)
-                throw new PersistenceException(string.Format("Cannot save City with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
+                throw new PersistenceException(string.Format("Cannot save StreamingService with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
         }
 
         protected override void ValidateDelete()
@@ -107,17 +107,17 @@ namespace Datastore.Manipulation
 
         #region Inner Data
 
-        public class CityData : Data<System.String>
+        public class StreamingServiceData : Data<System.String>
         {
-            public CityData()
+            public StreamingServiceData()
             {
 
             }
 
-            public CityData(CityData data)
+            public StreamingServiceData(StreamingServiceData data)
             {
                 Name = data.Name;
-                Restaurants = data.Restaurants;
+                Subscribers = data.Subscribers;
                 Uid = data.Uid;
                 LastModifiedOn = data.LastModifiedOn;
             }
@@ -127,9 +127,9 @@ namespace Datastore.Manipulation
 
             protected override void InitializeCollections()
             {
-                NodeType = "City";
+                NodeType = "StreamingService";
 
-                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
+                Subscribers = new EntityTimeCollection<Person>(Wrapper, Members.Subscribers, item => { if (Members.Subscribers.Events.HasRegisteredChangeHandlers) { int loadHack = item.StreamingServiceSubscriptions.CountAll; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -160,10 +160,10 @@ namespace Datastore.Manipulation
 
             #endregion
 
-            #region Members for interface ICity
+            #region Members for interface IStreamingService
 
             public string Name { get; set; }
-            public EntityCollection<Restaurant> Restaurants { get; private set; }
+            public EntityTimeCollection<Person> Subscribers { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -178,13 +178,13 @@ namespace Datastore.Manipulation
 
         #region Outer Data
 
-        #region Members for interface ICity
+        #region Members for interface IStreamingService
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-        public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
-        private void ClearRestaurants(DateTime? moment)
+        public EntityTimeCollection<Person> Subscribers { get { return InnerData.Subscribers; } }
+        private void ClearSubscribers(DateTime? moment)
         {
-            ((ILookupHelper<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
+            ((ILookupHelper<Person>)InnerData.Subscribers).ClearLookup(moment);
         }
 
         #endregion
@@ -207,23 +207,23 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
-        public List<RESTAURANT_LOCATED_AT> RestaurantRelations()
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscriberRelations()
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition[]> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }
-        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default)
+        public void AddSubscriber(Person person, JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }
@@ -271,30 +271,30 @@ namespace Datastore.Manipulation
 
         #region Reflection
 
-        private static CityMembers members = null;
-        public static CityMembers Members
+        private static StreamingServiceMembers members = null;
+        public static StreamingServiceMembers Members
         {
             get
             {
                 if (members is null)
                 {
-                    lock (typeof(City))
+                    lock (typeof(StreamingService))
                     {
                         if (members is null)
-                            members = new CityMembers();
+                            members = new StreamingServiceMembers();
                     }
                 }
                 return members;
             }
         }
-        public class CityMembers
+        public class StreamingServiceMembers
         {
-            internal CityMembers() { }
+            internal StreamingServiceMembers() { }
 
-            #region Members for interface ICity
+            #region Members for interface IStreamingService
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"];
-            public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restaurants"];
+            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["StreamingService"].Properties["Name"];
+            public Property Subscribers { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["StreamingService"].Properties["Subscribers"];
             #endregion
 
             #region Members for interface IBaseEntity
@@ -305,26 +305,26 @@ namespace Datastore.Manipulation
 
         }
 
-        private static CityFullTextMembers fullTextMembers = null;
-        public static CityFullTextMembers FullTextMembers
+        private static StreamingServiceFullTextMembers fullTextMembers = null;
+        public static StreamingServiceFullTextMembers FullTextMembers
         {
             get
             {
                 if (fullTextMembers is null)
                 {
-                    lock (typeof(City))
+                    lock (typeof(StreamingService))
                     {
                         if (fullTextMembers is null)
-                            fullTextMembers = new CityFullTextMembers();
+                            fullTextMembers = new StreamingServiceFullTextMembers();
                     }
                 }
                 return fullTextMembers;
             }
         }
 
-        public class CityFullTextMembers
+        public class StreamingServiceFullTextMembers
         {
-            internal CityFullTextMembers() { }
+            internal StreamingServiceFullTextMembers() { }
 
         }
 
@@ -332,40 +332,40 @@ namespace Datastore.Manipulation
         {
             if (entity is null)
             {
-                lock (typeof(City))
+                lock (typeof(StreamingService))
                 {
                     if (entity is null)
-                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"];
+                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["StreamingService"];
                 }
             }
             return entity;
         }
 
-        private static CityEvents events = null;
-        public static CityEvents Events
+        private static StreamingServiceEvents events = null;
+        public static StreamingServiceEvents Events
         {
             get
             {
                 if (events is null)
                 {
-                    lock (typeof(City))
+                    lock (typeof(StreamingService))
                     {
                         if (events is null)
-                            events = new CityEvents();
+                            events = new StreamingServiceEvents();
                     }
                 }
                 return events;
             }
         }
-        public class CityEvents
+        public class StreamingServiceEvents
         {
 
             #region OnNew
 
             private bool onNewIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onNew;
-            public event EventHandler<City, EntityEventArgs> OnNew
+            private EventHandler<StreamingService, EntityEventArgs> onNew;
+            public event EventHandler<StreamingService, EntityEventArgs> OnNew
             {
                 add
                 {
@@ -396,9 +396,9 @@ namespace Datastore.Manipulation
             
             private void onNewProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<City, EntityEventArgs> handler = onNew;
+                EventHandler<StreamingService, EntityEventArgs> handler = onNew;
                 if (handler is not null)
-                    handler.Invoke((City)sender, args);
+                    handler.Invoke((StreamingService)sender, args);
             }
 
             #endregion
@@ -407,8 +407,8 @@ namespace Datastore.Manipulation
 
             private bool onDeleteIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onDelete;
-            public event EventHandler<City, EntityEventArgs> OnDelete
+            private EventHandler<StreamingService, EntityEventArgs> onDelete;
+            public event EventHandler<StreamingService, EntityEventArgs> OnDelete
             {
                 add
                 {
@@ -439,9 +439,9 @@ namespace Datastore.Manipulation
             
             private void onDeleteProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<City, EntityEventArgs> handler = onDelete;
+                EventHandler<StreamingService, EntityEventArgs> handler = onDelete;
                 if (handler is not null)
-                    handler.Invoke((City)sender, args);
+                    handler.Invoke((StreamingService)sender, args);
             }
 
             #endregion
@@ -450,8 +450,8 @@ namespace Datastore.Manipulation
 
             private bool onSaveIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onSave;
-            public event EventHandler<City, EntityEventArgs> OnSave
+            private EventHandler<StreamingService, EntityEventArgs> onSave;
+            public event EventHandler<StreamingService, EntityEventArgs> OnSave
             {
                 add
                 {
@@ -482,9 +482,9 @@ namespace Datastore.Manipulation
             
             private void onSaveProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<City, EntityEventArgs> handler = onSave;
+                EventHandler<StreamingService, EntityEventArgs> handler = onSave;
                 if (handler is not null)
-                    handler.Invoke((City)sender, args);
+                    handler.Invoke((StreamingService)sender, args);
             }
 
             #endregion
@@ -493,8 +493,8 @@ namespace Datastore.Manipulation
 
             private bool onAfterSaveIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onAfterSave;
-            public event EventHandler<City, EntityEventArgs> OnAfterSave
+            private EventHandler<StreamingService, EntityEventArgs> onAfterSave;
+            public event EventHandler<StreamingService, EntityEventArgs> OnAfterSave
             {
                 add
                 {
@@ -525,9 +525,9 @@ namespace Datastore.Manipulation
             
             private void onAfterSaveProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<City, EntityEventArgs> handler = onAfterSave;
+                EventHandler<StreamingService, EntityEventArgs> handler = onAfterSave;
                 if (handler is not null)
-                    handler.Invoke((City)sender, args);
+                    handler.Invoke((StreamingService)sender, args);
             }
 
             #endregion
@@ -541,8 +541,8 @@ namespace Datastore.Manipulation
 
                 private static bool onNameIsRegistered = false;
 
-                private static EventHandler<City, PropertyEventArgs> onName;
-                public static event EventHandler<City, PropertyEventArgs> OnName
+                private static EventHandler<StreamingService, PropertyEventArgs> onName;
+                public static event EventHandler<StreamingService, PropertyEventArgs> OnName
                 {
                     add
                     {
@@ -573,52 +573,52 @@ namespace Datastore.Manipulation
             
                 private static void onNameProxy(object sender, PropertyEventArgs args)
                 {
-                    EventHandler<City, PropertyEventArgs> handler = onName;
+                    EventHandler<StreamingService, PropertyEventArgs> handler = onName;
                     if (handler is not null)
-                        handler.Invoke((City)sender, args);
+                        handler.Invoke((StreamingService)sender, args);
                 }
 
                 #endregion
 
-                #region OnRestaurants
+                #region OnSubscribers
 
-                private static bool onRestaurantsIsRegistered = false;
+                private static bool onSubscribersIsRegistered = false;
 
-                private static EventHandler<City, PropertyEventArgs> onRestaurants;
-                public static event EventHandler<City, PropertyEventArgs> OnRestaurants
+                private static EventHandler<StreamingService, PropertyEventArgs> onSubscribers;
+                public static event EventHandler<StreamingService, PropertyEventArgs> OnSubscribers
                 {
                     add
                     {
                         lock (typeof(OnPropertyChange))
                         {
-                            if (!onRestaurantsIsRegistered)
+                            if (!onSubscribersIsRegistered)
                             {
-                                Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
-                                Members.Restaurants.Events.OnChange += onRestaurantsProxy;
-                                onRestaurantsIsRegistered = true;
+                                Members.Subscribers.Events.OnChange -= onSubscribersProxy;
+                                Members.Subscribers.Events.OnChange += onSubscribersProxy;
+                                onSubscribersIsRegistered = true;
                             }
-                            onRestaurants += value;
+                            onSubscribers += value;
                         }
                     }
                     remove
                     {
                         lock (typeof(OnPropertyChange))
                         {
-                            onRestaurants -= value;
-                            if (onRestaurants is null && onRestaurantsIsRegistered)
+                            onSubscribers -= value;
+                            if (onSubscribers is null && onSubscribersIsRegistered)
                             {
-                                Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
-                                onRestaurantsIsRegistered = false;
+                                Members.Subscribers.Events.OnChange -= onSubscribersProxy;
+                                onSubscribersIsRegistered = false;
                             }
                         }
                     }
                 }
             
-                private static void onRestaurantsProxy(object sender, PropertyEventArgs args)
+                private static void onSubscribersProxy(object sender, PropertyEventArgs args)
                 {
-                    EventHandler<City, PropertyEventArgs> handler = onRestaurants;
+                    EventHandler<StreamingService, PropertyEventArgs> handler = onSubscribers;
                     if (handler is not null)
-                        handler.Invoke((City)sender, args);
+                        handler.Invoke((StreamingService)sender, args);
                 }
 
                 #endregion
@@ -627,8 +627,8 @@ namespace Datastore.Manipulation
 
                 private static bool onUidIsRegistered = false;
 
-                private static EventHandler<City, PropertyEventArgs> onUid;
-                public static event EventHandler<City, PropertyEventArgs> OnUid
+                private static EventHandler<StreamingService, PropertyEventArgs> onUid;
+                public static event EventHandler<StreamingService, PropertyEventArgs> OnUid
                 {
                     add
                     {
@@ -659,9 +659,9 @@ namespace Datastore.Manipulation
             
                 private static void onUidProxy(object sender, PropertyEventArgs args)
                 {
-                    EventHandler<City, PropertyEventArgs> handler = onUid;
+                    EventHandler<StreamingService, PropertyEventArgs> handler = onUid;
                     if (handler is not null)
-                        handler.Invoke((City)sender, args);
+                        handler.Invoke((StreamingService)sender, args);
                 }
 
                 #endregion
@@ -670,8 +670,8 @@ namespace Datastore.Manipulation
 
                 private static bool onLastModifiedOnIsRegistered = false;
 
-                private static EventHandler<City, PropertyEventArgs> onLastModifiedOn;
-                public static event EventHandler<City, PropertyEventArgs> OnLastModifiedOn
+                private static EventHandler<StreamingService, PropertyEventArgs> onLastModifiedOn;
+                public static event EventHandler<StreamingService, PropertyEventArgs> OnLastModifiedOn
                 {
                     add
                     {
@@ -702,9 +702,9 @@ namespace Datastore.Manipulation
             
                 private static void onLastModifiedOnProxy(object sender, PropertyEventArgs args)
                 {
-                    EventHandler<City, PropertyEventArgs> handler = onLastModifiedOn;
+                    EventHandler<StreamingService, PropertyEventArgs> handler = onLastModifiedOn;
                     if (handler is not null)
-                        handler.Invoke((City)sender, args);
+                        handler.Invoke((StreamingService)sender, args);
                 }
 
                 #endregion
@@ -716,14 +716,14 @@ namespace Datastore.Manipulation
 
         #endregion
 
-        #region ICityOriginalData
+        #region IStreamingServiceOriginalData
 
-        public ICityOriginalData OriginalVersion { get { return this; } }
+        public IStreamingServiceOriginalData OriginalVersion { get { return this; } }
 
-        #region Members for interface ICity
+        #region Members for interface IStreamingService
 
-        string ICityOriginalData.Name { get { return OriginalData.Name; } }
-        IEnumerable<Restaurant> ICityOriginalData.Restaurants { get { return OriginalData.Restaurants.OriginalData; } }
+        string IStreamingServiceOriginalData.Name { get { return OriginalData.Name; } }
+        IEnumerable<Person> IStreamingServiceOriginalData.Subscribers { get { return OriginalData.Subscribers.OriginalData; } }
 
         #endregion
         #region Members for interface IBaseEntity

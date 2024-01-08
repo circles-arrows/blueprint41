@@ -15,6 +15,7 @@ namespace Datastore.Manipulation
         string Title { get; }
         Person Director { get; }
         IEnumerable<Person> Actors { get; }
+        Rating Certification { get; }
     }
 
     public partial class Movie : OGM<Movie, Movie.MovieData, System.String>, IBaseEntity, IMovieOriginalData
@@ -69,7 +70,7 @@ namespace Datastore.Manipulation
 
         public override string ToString()
         {
-            return $"Movie => Title : {this.Title?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Movie => Title : {this.Title}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -96,6 +97,8 @@ namespace Datastore.Manipulation
         {
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
+            if (InnerData.Title is null)
+                throw new PersistenceException(string.Format("Cannot save Movie with key '{0}' because the Title cannot be null.", this.Uid?.ToString() ?? "<null>"));
         }
 
         protected override void ValidateDelete()
@@ -118,6 +121,7 @@ namespace Datastore.Manipulation
                 Title = data.Title;
                 Director = data.Director;
                 Actors = data.Actors;
+                Certification = data.Certification;
                 Uid = data.Uid;
                 LastModifiedOn = data.LastModifiedOn;
             }
@@ -131,6 +135,7 @@ namespace Datastore.Manipulation
 
                 Director = new EntityCollection<Person>(Wrapper, Members.Director, item => { if (Members.Director.Events.HasRegisteredChangeHandlers) { int loadHack = item.DirectedMovies.Count; } });
                 Actors = new EntityCollection<Person>(Wrapper, Members.Actors, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedInMovies.Count; } });
+                Certification = new EntityCollection<Rating>(Wrapper, Members.Certification);
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -166,6 +171,7 @@ namespace Datastore.Manipulation
             public string Title { get; set; }
             public EntityCollection<Person> Director { get; private set; }
             public EntityCollection<Person> Actors { get; private set; }
+            public EntityCollection<Rating> Certification { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -200,6 +206,15 @@ namespace Datastore.Manipulation
         private void ClearActors(DateTime? moment)
         {
             ((ILookupHelper<Person>)InnerData.Actors).ClearLookup(moment);
+        }
+        public Rating Certification
+        {
+            get { return ((ILookupHelper<Rating>)InnerData.Certification).GetItem(null); }
+            set 
+            { 
+                if (LazySet(Members.Certification, ((ILookupHelper<Rating>)InnerData.Certification).GetItem(null), value))
+                    ((ILookupHelper<Rating>)InnerData.Certification).SetItem(value, null); 
+            }
         }
 
         #endregion
@@ -259,6 +274,26 @@ namespace Datastore.Manipulation
             throw new NotImplementedException();
         }
         public void AddActor(Person person, JsNotation<System.DateTime> CreationDate = default)
+        {
+            throw new NotImplementedException();
+        }
+        public MOVIE_CERTIFICATION CertificationRelation()
+        {
+            throw new NotImplementedException();
+        }
+        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public MOVIE_CERTIFICATION CertificationIf(JsNotation<System.DateTime> CreationDate = default)
+        {
+            throw new NotImplementedException();
+        }
+        public void SetCertification(Rating rating, JsNotation<System.DateTime> CreationDate = default)
         {
             throw new NotImplementedException();
         }
@@ -331,6 +366,7 @@ namespace Datastore.Manipulation
             public Property Title { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Title"];
             public Property Director { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Director"];
             public Property Actors { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Actors"];
+            public Property Certification { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Certification"];
             #endregion
 
             #region Members for interface IBaseEntity
@@ -702,6 +738,49 @@ namespace Datastore.Manipulation
 
                 #endregion
 
+                #region OnCertification
+
+                private static bool onCertificationIsRegistered = false;
+
+                private static EventHandler<Movie, PropertyEventArgs> onCertification;
+                public static event EventHandler<Movie, PropertyEventArgs> OnCertification
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onCertificationIsRegistered)
+                            {
+                                Members.Certification.Events.OnChange -= onCertificationProxy;
+                                Members.Certification.Events.OnChange += onCertificationProxy;
+                                onCertificationIsRegistered = true;
+                            }
+                            onCertification += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onCertification -= value;
+                            if (onCertification is null && onCertificationIsRegistered)
+                            {
+                                Members.Certification.Events.OnChange -= onCertificationProxy;
+                                onCertificationIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onCertificationProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<Movie, PropertyEventArgs> handler = onCertification;
+                    if (handler is not null)
+                        handler.Invoke((Movie)sender, args);
+                }
+
+                #endregion
+
                 #region OnUid
 
                 private static bool onUidIsRegistered = false;
@@ -804,6 +883,7 @@ namespace Datastore.Manipulation
         string IMovieOriginalData.Title { get { return OriginalData.Title; } }
         Person IMovieOriginalData.Director { get { return ((ILookupHelper<Person>)OriginalData.Director).GetOriginalItem(null); } }
         IEnumerable<Person> IMovieOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
+        Rating IMovieOriginalData.Certification { get { return ((ILookupHelper<Rating>)OriginalData.Certification).GetOriginalItem(null); } }
 
         #endregion
         #region Members for interface IBaseEntity

@@ -141,6 +141,8 @@ namespace Datastore.Query
             public IFromIn_PERSON_DIRECTED_REL PERSON_DIRECTED { get { return new PERSON_DIRECTED_REL(Parent, DirectionEnum.In); } }
             public IFromIn_PERSON_EATS_AT_REL PERSON_EATS_AT { get { return new PERSON_EATS_AT_REL(Parent, DirectionEnum.In); } }
             public IFromIn_PERSON_LIVES_IN_REL PERSON_LIVES_IN { get { return new PERSON_LIVES_IN_REL(Parent, DirectionEnum.In); } }
+            public IFromIn_SUBSCRIBED_TO_STREAMING_SERVICE_REL SUBSCRIBED_TO_STREAMING_SERVICE { get { return new SUBSCRIBED_TO_STREAMING_SERVICE_REL(Parent, DirectionEnum.In); } }
+            public IFromIn_WATCHED_MOVIE_REL WATCHED_MOVIE { get { return new WATCHED_MOVIE_REL(Parent, DirectionEnum.In); } }
 
         }
     }

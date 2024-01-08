@@ -30,8 +30,14 @@ namespace Datastore.Manipulation
         public Restaurant Restaurant { get; private set; }
 
         public System.DateTime CreationDate { get; private set; }
+        public System.DateTime StartDate { get; private set; }
+        public System.DateTime EndDate { get; private set; }
+        public string AddressLine1 { get; private set; }
+        public string AddressLine2 { get; private set; }
+        public string AddressLine3 { get; private set; }
+        public string ZipCode { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default)
+        public void Assign(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> ZipCode = default)
         {
             throw new NotImplementedException();
         }
@@ -43,7 +49,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public static List<PERSON_LIVES_IN> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<PERSON_LIVES_IN> Where(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> ZipCode = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
             throw new NotImplementedException();
         }
@@ -72,6 +78,72 @@ namespace Datastore.Manipulation
             }
         }
         private DateTimeResult _creationDate = null;
+        public DateTimeResult StartDate
+        {
+            get
+            {
+                if (_startDate is null)
+                    _startDate = _alias.StartDate;
+
+                return _startDate;
+            }
+        }
+        private DateTimeResult _startDate = null;
+        public DateTimeResult EndDate
+        {
+            get
+            {
+                if (_endDate is null)
+                    _endDate = _alias.EndDate;
+
+                return _endDate;
+            }
+        }
+        private DateTimeResult _endDate = null;
+        public StringResult AddressLine1
+        {
+            get
+            {
+                if (_addressLine1 is null)
+                    _addressLine1 = _alias.AddressLine1;
+
+                return _addressLine1;
+            }
+        }
+        private StringResult _addressLine1 = null;
+        public StringResult AddressLine2
+        {
+            get
+            {
+                if (_addressLine2 is null)
+                    _addressLine2 = _alias.AddressLine2;
+
+                return _addressLine2;
+            }
+        }
+        private StringResult _addressLine2 = null;
+        public StringResult AddressLine3
+        {
+            get
+            {
+                if (_addressLine3 is null)
+                    _addressLine3 = _alias.AddressLine3;
+
+                return _addressLine3;
+            }
+        }
+        private StringResult _addressLine3 = null;
+        public StringResult ZipCode
+        {
+            get
+            {
+                if (_zipCode is null)
+                    _zipCode = _alias.ZipCode;
+
+                return _zipCode;
+            }
+        }
+        private StringResult _zipCode = null;
 
         /// <summary>
         /// Person in-node: (Person)-[PERSON_LIVES_IN]->(City)
@@ -120,7 +192,7 @@ namespace Datastore.Manipulation
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<PERSON_LIVES_IN> @this, JsNotation<System.DateTime> CreationDate = default)
+        public static void Assign(this IEnumerable<PERSON_LIVES_IN> @this, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> ZipCode = default)
         {
             throw new NotImplementedException();
         }

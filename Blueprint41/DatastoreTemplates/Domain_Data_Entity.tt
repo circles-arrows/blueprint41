@@ -621,7 +621,7 @@ if (!DALModel.IsAbstract)
                 if (attr.Relationship.IsTimeDependent)
                 {
 #>
-        public <#= attr.OuterReturnType #> <#= attr.Name #> { get { return Get<#= attr.Name #>(Transaction.RunningTransaction.TransactionDate); } set { Set<#= attr.Name #>(value, Transaction.RunningTransaction.TransactionDate); } }
+        public <#= attr.OuterReturnType #> <#= attr.Name #> { get { return Get<#= attr.Name #>(Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } set { Set<#= attr.Name #>(value, Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } }
         public <#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime moment)
         {
             return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItem(moment);

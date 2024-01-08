@@ -2023,14 +2023,15 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("(Transaction.RunningTransaction.TransactionDate); } set { Set");
+            this.Write("(Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } set { Set");
             
             #line 624 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
-            this.Write("(value, Transaction.RunningTransaction.TransactionDate); } }\r\n        public ");
+            this.Write("(value, Transaction.Current?.TransactionDate ?? DateTime.UtcNow); } }\r\n        pu" +
+                    "blic ");
             
             #line 625 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));

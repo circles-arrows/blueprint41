@@ -129,6 +129,17 @@ namespace Datastore.Query
             return this;
         }
 
+        public MovieIn  In  { get { return new MovieIn(this); } }
+        public class MovieIn
+        {
+            private MovieNode Parent;
+            internal MovieIn(MovieNode parent)
+            {
+                Parent = parent;
+            }
+            public IFromIn_MOVIE_CERTIFICATION_REL MOVIE_CERTIFICATION { get { return new MOVIE_CERTIFICATION_REL(Parent, DirectionEnum.In); } }
+
+        }
 
         public MovieOut Out { get { return new MovieOut(this); } }
         public class MovieOut
@@ -140,6 +151,7 @@ namespace Datastore.Query
             }
             public IFromOut_ACTED_IN_REL ACTED_IN { get { return new ACTED_IN_REL(Parent, DirectionEnum.Out); } }
             public IFromOut_PERSON_DIRECTED_REL PERSON_DIRECTED { get { return new PERSON_DIRECTED_REL(Parent, DirectionEnum.Out); } }
+            public IFromOut_WATCHED_MOVIE_REL WATCHED_MOVIE { get { return new WATCHED_MOVIE_REL(Parent, DirectionEnum.Out); } }
         }
     }
 
@@ -192,6 +204,7 @@ namespace Datastore.Query
         }
         private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
+        public MovieNode.MovieIn In { get { return new MovieNode.MovieIn(new MovieNode(this, true)); } }
         public MovieNode.MovieOut Out { get { return new MovieNode.MovieOut(new MovieNode(this, true)); } }
 
         public StringResult Title

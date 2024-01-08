@@ -19,27 +19,24 @@ namespace Blueprint41.UnitTest.DataStore
             FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
 
             Entities.New("BaseEntity")
-                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .Abstract(true)
-                   .Virtual(true)
-                   .SetKey("Uid", true)
-                   .AddProperty("LastModifiedOn", typeof(DateTime))
-                   .SetRowVersionField("LastModifiedOn");
+                .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                .Abstract(true)
+                .Virtual(true)
+                .SetKey("Uid", true)
+                .AddProperty("LastModifiedOn", typeof(DateTime))
+                .SetRowVersionField("LastModifiedOn");
 
             Entities.New("Person", Entities["BaseEntity"])
-                   .AddProperty("Name", typeof(string));
+                .AddProperty("Name", typeof(string), false);
 
             Entities.New("City", Entities["BaseEntity"])
-                   .AddProperty("Name", typeof(string), IndexType.Unique);
+                .AddProperty("Name", typeof(string), false, IndexType.Unique);
 
             Entities.New("Restaurant", Entities["BaseEntity"])
-                   .AddProperty("Name", typeof(string));
+                .AddProperty("Name", typeof(string));
 
             Entities.New("Movie", Entities["BaseEntity"])
-                   .AddProperty("Title", typeof(string), IndexType.Unique);
-
-            Relations.New(Entities["Person"], Entities["City"], "PERSON_LIVES_IN", "LIVES_IN")
-                .SetInProperty("City", PropertyType.Lookup);
+                   .AddProperty("Title", typeof(string), false, IndexType.Unique);
 
             Relations.New(Entities["Restaurant"], Entities["City"], "RESTAURANT_LOCATED_AT", "LOCATED_AT")
                 .SetInProperty("City", PropertyType.Lookup)
@@ -63,16 +60,82 @@ namespace Blueprint41.UnitTest.DataStore
             // Collection with properties
             // Time Dependent Lookup with properties
             // Time Dependent Collection with properties
-            // Lookup with properties & key-properties (Time Dependent == key-properties: StartDate + EndDate)
-            // Collection with properties & key-properties
+
 
             // Property types: string, int, datetime, Enum
             // Mandatory & Optional
 
+            Entities.New("StreamingService", Entities["BaseEntity"])
+                .AddProperty("Name", typeof(string), false, IndexType.Unique);
+
+            Entities.New("Rating", Entities["BaseEntity"])
+                .AddProperty("Name", typeof(string), false, IndexType.Unique);
+
             // Collection, time dependent:   (Person)-[SUBSCRIBED_TO { StartDate, EndDate, MonthlyFee }]->(StreamingService)
-            // Lookup, time dependent:       (Person)-[FAVORITE_STREAMING_SERVICE { StartDate, EndDate, Rating }]->(StreamingService)
+            Relations.New(Entities["Person"], Entities["StreamingService"], "SUBSCRIBED_TO_STREAMING_SERVICE", "SUBSCRIBED_TO")
+                .SetInProperty("StreamingServiceSubscriptions", PropertyType.Collection)
+                .SetOutProperty("Subscribers", PropertyType.Collection)
+                .AddProperty("MonthlyFee", typeof(decimal), false)
+                .AddProperty("Currency", typeof(string), false)
+                .AddTimeDependance();
+
             // Collection, time independent: (Person)-[WATCHED { Minutes }]->(Movie)
+            Relations.New(Entities["Person"], Entities["Movie"], "WATCHED_MOVIE", "WATCHED")
+                .SetInProperty("WatchedMovies", PropertyType.Collection)
+                .AddProperty("MinutesWatched", typeof(int), false);  // Not a key-property, because if minutes watched changes, it should overwrite
+
+            // Lookup, time dependent:       (Person)-[PERSON_LIVES_IN { AddressLine1..3, ZipCode }]->(City)
+            Relations.New(Entities["Person"], Entities["City"], "PERSON_LIVES_IN", "LIVES_IN")
+                .SetInProperty("City", PropertyType.Lookup)
+                .AddTimeDependance()
+                .AddProperty("AddressLine1", typeof(string))
+                .AddProperty("AddressLine2", typeof(string))
+                .AddProperty("AddressLine3", typeof(string))
+                .AddProperty("ZipCode", typeof(string));
+
             // Lookup, time independent:     (Movie)-[CERTIFICATION { SexNudity: Mild, ViolenceGore: Moderate, Profanity, AlcoholDrugsSmoking, FrighteningIntenseScenes }]->(Rating)
+            Relations.New(Entities["Movie"], Entities["Rating"], "MOVIE_CERTIFICATION", "CERTIFICATION")
+                .SetInProperty("Certification", PropertyType.Lookup)
+                .AddProperty("FrighteningIntense", typeof(RatingComponent))
+                .AddProperty("ViolenceGore", typeof(RatingComponent))
+                .AddProperty("Profanity", typeof(RatingComponent))
+                .AddProperty("Substances", typeof(RatingComponent)) // IMDB: AlcoholDrugsSmoking
+                .AddProperty("SexAndNudity", typeof(RatingComponent));
+
+            /*
+              
+                CURRENTLY NOT SUPPORTED:
+            
+                Relationship with key-properties and optionally other properties.
+                Time dependent relationships essentially NOT relationships with key-properties == StartDate + EndDate!!!!
+
+             */
         }
     }
+
+    public enum RatingComponent
+    {
+        None,
+        Mild,
+        Moderate,
+        Severe,
+    }
+
+
+    // (person-[]-(city)
+
+    // (P1)-[]-(C1)  prop: X = 1
+    // <------------->
+
+    // Code: P1.SetCity(C1, X: 2);
+    // (P1)-[]-(C1)  prop: X = 1
+    // <------|
+
+    // (P1)-[]-(C1)  prop: X = 2
+    //        |------>
+
+
+    // Code: P1.CityRelation().Assign(X: 2);
+    // (P1)-[]-(C1)  prop: X = 2
+    // <------------->
 }

@@ -80,7 +80,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 output.AssertNodeCreated("Person");
                 output.AssertNodeCreated("City");
-                output.AssertRelationshipCreated("Person", "LIVES_IN", "City");
+                output.AssertTimeDependentRelationshipCreated("Person", "LIVES_IN", "City");
 
                 Assert.IsInstanceOf<OGMImpl>(a);
                 Assert.AreEqual(a.Name, "Joe Smith");
@@ -117,7 +117,7 @@ namespace Blueprint41.UnitTest.Tests
                 }
 
                 output.AssertNodeDeleted("Person");
-                output.AssertRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
                 output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
 
                 Person d;
@@ -175,7 +175,7 @@ namespace Blueprint41.UnitTest.Tests
                 output.AssertNodeCreated("Person");
                 output.AssertNodeCreated("City");
                 output.AssertNodeCreated("Restaurant");
-                output.AssertRelationshipCreated("Person", "LIVES_IN", "City");
+                output.AssertTimeDependentRelationshipCreated("Person", "LIVES_IN", "City");
                 output.AssertRelationshipCreated("Restaurant", "LOCATED_AT", "City");
                 output.AssertRelationshipCreated("Person", "EATS_AT", "Restaurant");
 
@@ -212,7 +212,7 @@ namespace Blueprint41.UnitTest.Tests
                 output.AssertNodeCreated("Person");
                 output.AssertNodeCreated("City");
                 output.AssertNodeCreated("Restaurant");
-                output.AssertRelationshipCreated("Person", "LIVES_IN", "City");
+                output.AssertTimeDependentRelationshipCreated("Person", "LIVES_IN", "City");
                 output.AssertRelationshipCreated("Restaurant", "LOCATED_AT", "City");
                 output.AssertRelationshipCreated("Person", "EATS_AT", "Restaurant");
 
@@ -271,7 +271,7 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Rollback();
                 }
 
-                output.AssertRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
                 output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
 
 
@@ -296,7 +296,7 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Rollback();
                 }
 
-                output.AssertRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
                 output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
 
 
@@ -326,7 +326,7 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Rollback();
                 }
 
-                output.AssertRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
                 output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
                 output.AssertRelationshipDeleted("Restaurant", "LOCATED_AT", "City");
 
@@ -340,7 +340,7 @@ namespace Blueprint41.UnitTest.Tests
                     //load before deleting
                     Person p = Person.Load(key5);
 
-                    City.Load(key6).Delete(); // Side-effect Person NOT lazy loaded here yet, because it's properties were never accessed.
+                    City.Load(key6).ForceDelete(); // Side-effect Person NOT lazy loaded here yet, because it's properties were never accessed.
                     Transaction.Flush(); // Persist in DB & change PersistenceState from Delete to Deleted
 
                     //load after deleting
@@ -352,7 +352,7 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Rollback();
                 }
 
-                output.AssertRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
                 output.AssertRelationshipDeleted("Restaurant", "LOCATED_AT", "City");
             }
         }

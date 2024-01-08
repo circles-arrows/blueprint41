@@ -10,17 +10,16 @@ using q = Datastore.Query;
 
 namespace Datastore.Manipulation
 {
-    public interface ICityOriginalData : IBaseEntityOriginalData
+    public interface IRatingOriginalData : IBaseEntityOriginalData
     {
         string Name { get; }
-        IEnumerable<Restaurant> Restaurants { get; }
     }
 
-    public partial class City : OGM<City, City.CityData, System.String>, IBaseEntity, ICityOriginalData
+    public partial class Rating : OGM<Rating, Rating.RatingData, System.String>, IBaseEntity, IRatingOriginalData
     {
         #region Initialize
 
-        static City()
+        static Rating()
         {
             Register.Types();
         }
@@ -44,22 +43,22 @@ namespace Datastore.Manipulation
 
             AdditionalGeneratedStoredQueries();
         }
-        public static City LoadByName(string name)
+        public static Rating LoadByName(string name)
         {
             return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
-        public static Dictionary<System.String, City> LoadByKeys(IEnumerable<System.String> uids)
+        public static Dictionary<System.String, Rating> LoadByKeys(IEnumerable<System.String> uids)
         {
             return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
-        protected static void RegisterQuery(string name, Func<IMatchQuery, q.CityAlias, IWhereQuery> query)
+        protected static void RegisterQuery(string name, Func<IMatchQuery, q.RatingAlias, IWhereQuery> query)
         {
-            q.CityAlias alias;
+            q.RatingAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.City.Alias(out alias, "node"));
+            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Rating.Alias(out alias, "node"));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
@@ -68,7 +67,7 @@ namespace Datastore.Manipulation
 
         public override string ToString()
         {
-            return $"City => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"Rating => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -82,7 +81,7 @@ namespace Datastore.Manipulation
             if (PersistenceState == PersistenceState.NewAndChanged || PersistenceState == PersistenceState.LoadedAndChanged)
             {
                 if (ReferenceEquals(InnerData, OriginalData))
-                    OriginalData = new CityData(InnerData);
+                    OriginalData = new RatingData(InnerData);
             }
         }
 
@@ -96,7 +95,7 @@ namespace Datastore.Manipulation
             bool isUpdate = (PersistenceState != PersistenceState.New && PersistenceState != PersistenceState.NewAndChanged);
 
             if (InnerData.Name is null)
-                throw new PersistenceException(string.Format("Cannot save City with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
+                throw new PersistenceException(string.Format("Cannot save Rating with key '{0}' because the Name cannot be null.", this.Uid?.ToString() ?? "<null>"));
         }
 
         protected override void ValidateDelete()
@@ -107,17 +106,16 @@ namespace Datastore.Manipulation
 
         #region Inner Data
 
-        public class CityData : Data<System.String>
+        public class RatingData : Data<System.String>
         {
-            public CityData()
+            public RatingData()
             {
 
             }
 
-            public CityData(CityData data)
+            public RatingData(RatingData data)
             {
                 Name = data.Name;
-                Restaurants = data.Restaurants;
                 Uid = data.Uid;
                 LastModifiedOn = data.LastModifiedOn;
             }
@@ -127,9 +125,8 @@ namespace Datastore.Manipulation
 
             protected override void InitializeCollections()
             {
-                NodeType = "City";
+                NodeType = "Rating";
 
-                Restaurants = new EntityCollection<Restaurant>(Wrapper, Members.Restaurants, item => { if (Members.Restaurants.Events.HasRegisteredChangeHandlers) { object loadHack = item.City; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -160,10 +157,9 @@ namespace Datastore.Manipulation
 
             #endregion
 
-            #region Members for interface ICity
+            #region Members for interface IRating
 
             public string Name { get; set; }
-            public EntityCollection<Restaurant> Restaurants { get; private set; }
 
             #endregion
             #region Members for interface IBaseEntity
@@ -178,14 +174,9 @@ namespace Datastore.Manipulation
 
         #region Outer Data
 
-        #region Members for interface ICity
+        #region Members for interface IRating
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
-        public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
-        private void ClearRestaurants(DateTime? moment)
-        {
-            ((ILookupHelper<Restaurant>)InnerData.Restaurants).ClearLookup(moment);
-        }
 
         #endregion
         #region Members for interface IBaseEntity
@@ -207,26 +198,6 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
-        public List<RESTAURANT_LOCATED_AT> RestaurantRelations()
-        {
-            throw new NotImplementedException();
-        }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition[]> alias)
-        {
-            throw new NotImplementedException();
-        }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default)
-        {
-            throw new NotImplementedException();
-        }
-        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default)
-        {
-            throw new NotImplementedException();
-        }
 
 
 
@@ -271,30 +242,29 @@ namespace Datastore.Manipulation
 
         #region Reflection
 
-        private static CityMembers members = null;
-        public static CityMembers Members
+        private static RatingMembers members = null;
+        public static RatingMembers Members
         {
             get
             {
                 if (members is null)
                 {
-                    lock (typeof(City))
+                    lock (typeof(Rating))
                     {
                         if (members is null)
-                            members = new CityMembers();
+                            members = new RatingMembers();
                     }
                 }
                 return members;
             }
         }
-        public class CityMembers
+        public class RatingMembers
         {
-            internal CityMembers() { }
+            internal RatingMembers() { }
 
-            #region Members for interface ICity
+            #region Members for interface IRating
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"];
-            public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restaurants"];
+            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Name"];
             #endregion
 
             #region Members for interface IBaseEntity
@@ -305,26 +275,26 @@ namespace Datastore.Manipulation
 
         }
 
-        private static CityFullTextMembers fullTextMembers = null;
-        public static CityFullTextMembers FullTextMembers
+        private static RatingFullTextMembers fullTextMembers = null;
+        public static RatingFullTextMembers FullTextMembers
         {
             get
             {
                 if (fullTextMembers is null)
                 {
-                    lock (typeof(City))
+                    lock (typeof(Rating))
                     {
                         if (fullTextMembers is null)
-                            fullTextMembers = new CityFullTextMembers();
+                            fullTextMembers = new RatingFullTextMembers();
                     }
                 }
                 return fullTextMembers;
             }
         }
 
-        public class CityFullTextMembers
+        public class RatingFullTextMembers
         {
-            internal CityFullTextMembers() { }
+            internal RatingFullTextMembers() { }
 
         }
 
@@ -332,40 +302,40 @@ namespace Datastore.Manipulation
         {
             if (entity is null)
             {
-                lock (typeof(City))
+                lock (typeof(Rating))
                 {
                     if (entity is null)
-                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"];
+                        entity = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"];
                 }
             }
             return entity;
         }
 
-        private static CityEvents events = null;
-        public static CityEvents Events
+        private static RatingEvents events = null;
+        public static RatingEvents Events
         {
             get
             {
                 if (events is null)
                 {
-                    lock (typeof(City))
+                    lock (typeof(Rating))
                     {
                         if (events is null)
-                            events = new CityEvents();
+                            events = new RatingEvents();
                     }
                 }
                 return events;
             }
         }
-        public class CityEvents
+        public class RatingEvents
         {
 
             #region OnNew
 
             private bool onNewIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onNew;
-            public event EventHandler<City, EntityEventArgs> OnNew
+            private EventHandler<Rating, EntityEventArgs> onNew;
+            public event EventHandler<Rating, EntityEventArgs> OnNew
             {
                 add
                 {
@@ -396,9 +366,9 @@ namespace Datastore.Manipulation
             
             private void onNewProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<City, EntityEventArgs> handler = onNew;
+                EventHandler<Rating, EntityEventArgs> handler = onNew;
                 if (handler is not null)
-                    handler.Invoke((City)sender, args);
+                    handler.Invoke((Rating)sender, args);
             }
 
             #endregion
@@ -407,8 +377,8 @@ namespace Datastore.Manipulation
 
             private bool onDeleteIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onDelete;
-            public event EventHandler<City, EntityEventArgs> OnDelete
+            private EventHandler<Rating, EntityEventArgs> onDelete;
+            public event EventHandler<Rating, EntityEventArgs> OnDelete
             {
                 add
                 {
@@ -439,9 +409,9 @@ namespace Datastore.Manipulation
             
             private void onDeleteProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<City, EntityEventArgs> handler = onDelete;
+                EventHandler<Rating, EntityEventArgs> handler = onDelete;
                 if (handler is not null)
-                    handler.Invoke((City)sender, args);
+                    handler.Invoke((Rating)sender, args);
             }
 
             #endregion
@@ -450,8 +420,8 @@ namespace Datastore.Manipulation
 
             private bool onSaveIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onSave;
-            public event EventHandler<City, EntityEventArgs> OnSave
+            private EventHandler<Rating, EntityEventArgs> onSave;
+            public event EventHandler<Rating, EntityEventArgs> OnSave
             {
                 add
                 {
@@ -482,9 +452,9 @@ namespace Datastore.Manipulation
             
             private void onSaveProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<City, EntityEventArgs> handler = onSave;
+                EventHandler<Rating, EntityEventArgs> handler = onSave;
                 if (handler is not null)
-                    handler.Invoke((City)sender, args);
+                    handler.Invoke((Rating)sender, args);
             }
 
             #endregion
@@ -493,8 +463,8 @@ namespace Datastore.Manipulation
 
             private bool onAfterSaveIsRegistered = false;
 
-            private EventHandler<City, EntityEventArgs> onAfterSave;
-            public event EventHandler<City, EntityEventArgs> OnAfterSave
+            private EventHandler<Rating, EntityEventArgs> onAfterSave;
+            public event EventHandler<Rating, EntityEventArgs> OnAfterSave
             {
                 add
                 {
@@ -525,9 +495,9 @@ namespace Datastore.Manipulation
             
             private void onAfterSaveProxy(object sender, EntityEventArgs args)
             {
-                EventHandler<City, EntityEventArgs> handler = onAfterSave;
+                EventHandler<Rating, EntityEventArgs> handler = onAfterSave;
                 if (handler is not null)
-                    handler.Invoke((City)sender, args);
+                    handler.Invoke((Rating)sender, args);
             }
 
             #endregion
@@ -541,8 +511,8 @@ namespace Datastore.Manipulation
 
                 private static bool onNameIsRegistered = false;
 
-                private static EventHandler<City, PropertyEventArgs> onName;
-                public static event EventHandler<City, PropertyEventArgs> OnName
+                private static EventHandler<Rating, PropertyEventArgs> onName;
+                public static event EventHandler<Rating, PropertyEventArgs> OnName
                 {
                     add
                     {
@@ -573,52 +543,9 @@ namespace Datastore.Manipulation
             
                 private static void onNameProxy(object sender, PropertyEventArgs args)
                 {
-                    EventHandler<City, PropertyEventArgs> handler = onName;
+                    EventHandler<Rating, PropertyEventArgs> handler = onName;
                     if (handler is not null)
-                        handler.Invoke((City)sender, args);
-                }
-
-                #endregion
-
-                #region OnRestaurants
-
-                private static bool onRestaurantsIsRegistered = false;
-
-                private static EventHandler<City, PropertyEventArgs> onRestaurants;
-                public static event EventHandler<City, PropertyEventArgs> OnRestaurants
-                {
-                    add
-                    {
-                        lock (typeof(OnPropertyChange))
-                        {
-                            if (!onRestaurantsIsRegistered)
-                            {
-                                Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
-                                Members.Restaurants.Events.OnChange += onRestaurantsProxy;
-                                onRestaurantsIsRegistered = true;
-                            }
-                            onRestaurants += value;
-                        }
-                    }
-                    remove
-                    {
-                        lock (typeof(OnPropertyChange))
-                        {
-                            onRestaurants -= value;
-                            if (onRestaurants is null && onRestaurantsIsRegistered)
-                            {
-                                Members.Restaurants.Events.OnChange -= onRestaurantsProxy;
-                                onRestaurantsIsRegistered = false;
-                            }
-                        }
-                    }
-                }
-            
-                private static void onRestaurantsProxy(object sender, PropertyEventArgs args)
-                {
-                    EventHandler<City, PropertyEventArgs> handler = onRestaurants;
-                    if (handler is not null)
-                        handler.Invoke((City)sender, args);
+                        handler.Invoke((Rating)sender, args);
                 }
 
                 #endregion
@@ -627,8 +554,8 @@ namespace Datastore.Manipulation
 
                 private static bool onUidIsRegistered = false;
 
-                private static EventHandler<City, PropertyEventArgs> onUid;
-                public static event EventHandler<City, PropertyEventArgs> OnUid
+                private static EventHandler<Rating, PropertyEventArgs> onUid;
+                public static event EventHandler<Rating, PropertyEventArgs> OnUid
                 {
                     add
                     {
@@ -659,9 +586,9 @@ namespace Datastore.Manipulation
             
                 private static void onUidProxy(object sender, PropertyEventArgs args)
                 {
-                    EventHandler<City, PropertyEventArgs> handler = onUid;
+                    EventHandler<Rating, PropertyEventArgs> handler = onUid;
                     if (handler is not null)
-                        handler.Invoke((City)sender, args);
+                        handler.Invoke((Rating)sender, args);
                 }
 
                 #endregion
@@ -670,8 +597,8 @@ namespace Datastore.Manipulation
 
                 private static bool onLastModifiedOnIsRegistered = false;
 
-                private static EventHandler<City, PropertyEventArgs> onLastModifiedOn;
-                public static event EventHandler<City, PropertyEventArgs> OnLastModifiedOn
+                private static EventHandler<Rating, PropertyEventArgs> onLastModifiedOn;
+                public static event EventHandler<Rating, PropertyEventArgs> OnLastModifiedOn
                 {
                     add
                     {
@@ -702,9 +629,9 @@ namespace Datastore.Manipulation
             
                 private static void onLastModifiedOnProxy(object sender, PropertyEventArgs args)
                 {
-                    EventHandler<City, PropertyEventArgs> handler = onLastModifiedOn;
+                    EventHandler<Rating, PropertyEventArgs> handler = onLastModifiedOn;
                     if (handler is not null)
-                        handler.Invoke((City)sender, args);
+                        handler.Invoke((Rating)sender, args);
                 }
 
                 #endregion
@@ -716,14 +643,13 @@ namespace Datastore.Manipulation
 
         #endregion
 
-        #region ICityOriginalData
+        #region IRatingOriginalData
 
-        public ICityOriginalData OriginalVersion { get { return this; } }
+        public IRatingOriginalData OriginalVersion { get { return this; } }
 
-        #region Members for interface ICity
+        #region Members for interface IRating
 
-        string ICityOriginalData.Name { get { return OriginalData.Name; } }
-        IEnumerable<Restaurant> ICityOriginalData.Restaurants { get { return OriginalData.Restaurants.OriginalData; } }
+        string IRatingOriginalData.Name { get { return OriginalData.Name; } }
 
         #endregion
         #region Members for interface IBaseEntity

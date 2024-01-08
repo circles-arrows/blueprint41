@@ -165,6 +165,28 @@ namespace Datastore.Query
             return new MovieNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
         }
 
+        public StreamingServiceNode CastToStreamingService()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
+
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+
+            return new StreamingServiceNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
+
+        public RatingNode CastToRating()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
+
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+
+            return new RatingNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
+
     }
 
     public class BaseEntityAlias : AliasResult<BaseEntityAlias, BaseEntityListAlias>
