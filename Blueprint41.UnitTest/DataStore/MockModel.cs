@@ -57,6 +57,8 @@ namespace Blueprint41.UnitTest.DataStore
                 .SetInProperty("ActedInMovies", PropertyType.Collection)
                 .SetOutProperty("Actors", PropertyType.Collection);
 
+
+
             // Lookup with properties
             // Collection with properties
             // Time Dependent Lookup with properties
@@ -66,6 +68,11 @@ namespace Blueprint41.UnitTest.DataStore
 
             // Property types: string, int, datetime, Enum
             // Mandatory & Optional
+
+            // Collection, time dependent:   (Person)-[SUBSCRIBED_TO { StartDate, EndDate, MonthlyFee }]->(StreamingService)
+            // Lookup, time dependent:       (Person)-[FAVORITE_STREAMING_SERVICE { StartDate, EndDate, Rating }]->(StreamingService)
+            // Collection, time independent: (Person)-[WATCHED { Minutes }]->(Movie)
+            // Lookup, time independent:     (Movie)-[CERTIFICATION { SexNudity: Mild, ViolenceGore: Moderate, Profanity, AlcoholDrugsSmoking, FrighteningIntenseScenes }]->(Rating)
         }
     }
 }

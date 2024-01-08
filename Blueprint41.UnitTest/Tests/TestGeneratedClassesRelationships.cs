@@ -1,4 +1,4 @@
-﻿//#define CHECK_INITIAL_STATE_AND_EXPECTED_END_STATE
+﻿//#define DEBUG_INITIAL_STATE_AND_EXPECTED_END_STATE
 
 using System;
 using System.Collections.Generic;
@@ -62,7 +62,7 @@ namespace Blueprint41.UnitTest.Tests
             int bits = dates.Length - 1;
             int count = (1 << bits);
 
-#if CHECK_INITIAL_STATE_AND_EXPECTED_END_STATE
+#if DEBUG_INITIAL_STATE_AND_EXPECTED_END_STATE
 
             var test = new List<(int mask, string dbState, string moment, string action, string expected)>();
 
