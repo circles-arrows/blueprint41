@@ -1,4 +1,4 @@
-﻿//#define DEBUG_INITIAL_STATE_AND_EXPECTED_END_STATE
+﻿#define DEBUG_INITIAL_STATE_AND_EXPECTED_END_STATE
 
 using System;
 using System.Collections.Generic;
@@ -233,40 +233,217 @@ namespace Blueprint41.UnitTest.Tests
         }
 
 
-        private void SetupDb()
+        private Uids SetupDb()
         {
+            MovieUids movies;
+            RatingUids ratings;
+            PeopleUids persons;
+            CityUids cities;
+            StreamingServiceUids streamingServices;
+
             using (Transaction.Begin())
             {
-                new Rating()
+                Rating g = new Rating()
                 {
                     Code = "G",
                     Name = "Rated G",
                     Description = "General audiences – All ages admitted.",
                 };
-                new Rating()
+                Rating pg = new Rating()
                 {
                     Code = "PG",
                     Name = "Rated PG",
                     Description = "Parental guidance suggested – Some material may not be suitable for children.",
                 };
-                new Rating()
+                Rating pg13 = new Rating()
                 {
                     Code = "PG-13",
                     Name = "Rated PG-13",
                     Description = "Parents strongly cautioned – Some material may be inappropriate for children under 13.",
                 };
-                new Rating()
+                Rating r = new Rating()
                 {
                     Code = "R",
                     Name = "Rated R",
                     Description = "Restricted – Under 17 requires accompanying parent or adult guardian.",
                 };
-                new Rating()
+                Rating nc17 = new Rating()
                 {
                     Code = "NC-17",
                     Name = "Rated NC-17",
                     Description = "Adults Only – No one 17 and under admitted.",
                 };
+
+
+
+                Transaction.Commit();
+
+                return new Uids()
+                {
+                    Movies = new MovieUids()
+                    {
+                        Aliens = null,
+                        DieHard = null,
+                        Matrix = null,
+                        Serenity = null,
+                        Terminator = null,
+                        TheFifthElement = null,
+                        TopGunMaverick = null,
+                    },
+                    Ratings = new RatingUids()
+                    {
+                        G = g.Uid,
+                        PG = pg.Uid,
+                        PG13 = pg13.Uid,
+                        R = r.Uid,
+                        NC17 = nc17.Uid,
+                    },
+                    Persons = new PeopleUids()
+                    { 
+
+                    },
+                    Cities = new CityUids()
+                    {
+                        London = null,
+                        LittleWhinging = null,
+                        Springfield = null,
+                        HillValley = null,
+                        Sunnydale = null,
+                        Quahog = null,
+                        Muncie = null,
+                        Metropolis = null,
+                    },
+                    StreamingServices = new StreamingServiceUids()
+                    {
+                        Netflix = null,
+                        Hulu = null,
+                        Peacock = null,
+                        AmazonPrimeVideo = null,
+                        HboMax = null,
+                        DisneyPlus = null,
+                        HistoryVault = null,
+                    },
+                };
+            }
+        }
+
+        public record Uids
+        {
+            public MovieUids Movies;
+            public RatingUids Ratings;
+            public PeopleUids Persons;
+            public CityUids Cities;
+            public StreamingServiceUids StreamingServices;
+        }
+        public record MovieUids
+        {
+            public string Aliens;
+            public string DieHard;
+            public string Matrix;
+            public string Serenity;
+            public string Terminator;
+            public string TheFifthElement;
+            public string TopGunMaverick;
+        }
+        public record RatingUids
+        {
+            public string G;
+            public string PG;
+            public string PG13;
+            public string R;
+            public string NC17;
+        }
+        public record PeopleUids
+        {
+            public string AlanTuring;           // Inventor of the modern computer
+            public string DennisRitchie;        // Unix developer & Teacher
+            public string MartinFowler;         // Co creator of the Agile Manifesto
+            public string RobertCecilMartin;    // Uncle Bob
+            public string AdaLovelace;          // Inventor of the Ada language
+            public string LinusTorvalds;        // Developer of the Linux kernel
+            public string AlanKay;              // Smalltalk (first OO programming language)
+            public string SteveWozniak;         // Inventor of the Apple computer
+            public string BillGates;            // Programmed the most famous BASIC interpreter 
+        }
+        public record CityUids
+        {
+            public string London;
+            public string LittleWhinging;
+            public string Springfield;
+            public string HillValley;
+            public string Sunnydale;
+            public string Quahog;
+            public string Muncie;
+            public string Metropolis;
+
+            public static class Addresses
+            {
+                public static class London
+                {
+                    // Sherlock Holmes - 221B Baker Street, London
+                    public static readonly string[] SherlockHolmes = { "221B Baker Street" };
+
+                    // Hercule Poirot - Apt. 56B, Whitehaven Mansions, Sandhurst Square, London W1, UK
+                    public static readonly string[] HerculePoirot = { "Apt. 56B Whitehaven Mansions", "Sandhurst Square" };
+                }
+                public static class LittleWhinging
+                {
+                    // Harry Potter - The cupboard under the Stairs, 4 Privet Drive, Little Whinging, Surrey
+                    public static readonly string[] HarryPotter = { "The cupboard under the Stairs", "4 Privet Drive", "Little Whinging" };
+                }
+                public static class Springfield
+                {
+                    // the Simpsons - 742 Evergreen Terrace, Springfield
+                    public static readonly string[] TheSimpsons = { "742 Evergreen Terrace" };
+                }
+                public static class HillValley
+                {
+                    // Emmett Brown (Back to the Future) - 1640 Riverside Drive, Hill Valley, California
+                    public static readonly string[] EmmettBrown = { "1640 Riverside Drive" };
+                }
+                public static class Sunnydale
+                {
+                    // Buffy Summers (Buffy the Vampire Slayer) - 1630 Revello Drive, Sunnydale, CA
+                    public static readonly string[] BuffySummers = { "1630 Revello Drive" };
+                }
+                public static class Quahog
+                {
+                    // Peter Griffin (Family Guy) - 31 Spooner Street, Quahog, Rhode Island
+                    public static readonly string[] PeterGriffin = { "31 Spooner Street" };
+                }
+                public static class Muncie
+                {
+                    // Garfield - 711 Maple Street, Muncie, Indiana, USA
+                    public static readonly string[] Garfield = { "711 Maple Street" };
+                }
+                public static class Metropolis
+                {
+                    // Clark Kent (Superman) - 344 Clinton St., Apt. 3B, Metropolis, USA (later 1938 Sullivan Lane, Metropolis)
+                    public static readonly string[] ClarkKent_Earlier = { "Apt. 3B ", "344 Clinton St." };
+                    public static readonly string[] ClarkKent_Later = { "1938 Sullivan Lane" };
+                }
+            }
+        }
+        public record StreamingServiceUids
+        {
+            public string Netflix;
+            public string Hulu;
+            public string Peacock;
+            public string AmazonPrimeVideo;
+            public string HboMax;
+            public string DisneyPlus;
+            public string HistoryVault;
+
+            public static class Rates
+            {
+                public static readonly decimal Netflix          =  6.99m;
+                public static readonly decimal Hulu             =  7.99m;
+                public static readonly decimal HuluAdFree       = 17.99m;
+                public static readonly decimal Peacock          =  5.99m;
+                public static readonly decimal AmazonPrimeVideo =  8.99m;
+                public static readonly decimal HboMax           =  9.99m;
+                public static readonly decimal DisneyPlus       =  7.99m;
+                public static readonly decimal HistoryVault     =  4.99m;
             }
         }
 

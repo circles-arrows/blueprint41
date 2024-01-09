@@ -79,7 +79,6 @@ namespace Blueprint41.UnitTest.DataStore
                 .SetInProperty("StreamingServiceSubscriptions", PropertyType.Collection)
                 .SetOutProperty("Subscribers", PropertyType.Collection)
                 .AddProperty("MonthlyFee", typeof(decimal), false)
-                .AddProperty("Currency", typeof(string), false)
                 .AddTimeDependance();
 
             // Collection, time independent: (Person)-[WATCHED { Minutes }]->(Movie)
