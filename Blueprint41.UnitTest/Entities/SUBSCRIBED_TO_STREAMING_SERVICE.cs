@@ -31,11 +31,10 @@ namespace Datastore.Manipulation
 
         public System.DateTime CreationDate { get; private set; }
         public decimal MonthlyFee { get; private set; }
-        public string Currency { get; private set; }
         public System.DateTime StartDate { get; private set; }
         public System.DateTime EndDate { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public void Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }
@@ -47,7 +46,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
             throw new NotImplementedException();
         }
@@ -87,17 +86,6 @@ namespace Datastore.Manipulation
             }
         }
         private NumericResult _monthlyFee = null;
-        public StringResult Currency
-        {
-            get
-            {
-                if (_currency is null)
-                    _currency = _alias.Currency;
-
-                return _currency;
-            }
-        }
-        private StringResult _currency = null;
         public DateTimeResult StartDate
         {
             get
@@ -168,7 +156,7 @@ namespace Datastore.Manipulation
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<SUBSCRIBED_TO_STREAMING_SERVICE> @this, JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public static void Assign(this IEnumerable<SUBSCRIBED_TO_STREAMING_SERVICE> @this, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }

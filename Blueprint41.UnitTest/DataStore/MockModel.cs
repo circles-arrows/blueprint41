@@ -30,7 +30,9 @@ namespace Blueprint41.UnitTest.DataStore
                 .AddProperty("Name", typeof(string), false);
 
             Entities.New("City", Entities["BaseEntity"])
-                .AddProperty("Name", typeof(string), false, IndexType.Unique);
+                .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                .AddProperty("State", typeof(string))
+                .AddProperty("Country", typeof(string));
 
             Entities.New("Restaurant", Entities["BaseEntity"])
                 .AddProperty("Name", typeof(string));

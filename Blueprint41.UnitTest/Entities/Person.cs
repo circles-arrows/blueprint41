@@ -318,11 +318,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }
-        public void AddStreamingServiceSubscription(StreamingService streamingService, JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public void AddStreamingServiceSubscription(StreamingService streamingService, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }

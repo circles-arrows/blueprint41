@@ -55,7 +55,7 @@ namespace Datastore.Query
             NodeAlias = nodeAlias;
         }
 
-        public CityNode Where(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
+        public CityNode Where(JsNotation<string> Country = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> State = default, JsNotation<string> Uid = default)
         {
             if (InlineConditions is not null || InlineAssignments is not null)
                 throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
@@ -66,15 +66,17 @@ namespace Datastore.Query
                 return a;
             });
             List<QueryCondition> conditions = new List<QueryCondition>();
+            if (Country.HasValue) conditions.Add(new QueryCondition(alias.Value.Country, Operator.Equals, ((IValue)Country).GetValue()));
             if (LastModifiedOn.HasValue) conditions.Add(new QueryCondition(alias.Value.LastModifiedOn, Operator.Equals, ((IValue)LastModifiedOn).GetValue()));
             if (Name.HasValue) conditions.Add(new QueryCondition(alias.Value.Name, Operator.Equals, ((IValue)Name).GetValue()));
+            if (State.HasValue) conditions.Add(new QueryCondition(alias.Value.State, Operator.Equals, ((IValue)State).GetValue()));
             if (Uid.HasValue) conditions.Add(new QueryCondition(alias.Value.Uid, Operator.Equals, ((IValue)Uid).GetValue()));
 
             InlineConditions = conditions.ToArray();
 
             return this;
         }
-        public CityNode Assign(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
+        public CityNode Assign(JsNotation<string> Country = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> State = default, JsNotation<string> Uid = default)
         {
             if (InlineConditions is not null || InlineAssignments is not null)
                 throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
@@ -85,8 +87,10 @@ namespace Datastore.Query
                 return a;
             });
             List<Assignment> assignments = new List<Assignment>();
+            if (Country.HasValue) assignments.Add(new Assignment(alias.Value.Country, Country));
             if (LastModifiedOn.HasValue) assignments.Add(new Assignment(alias.Value.LastModifiedOn, LastModifiedOn));
             if (Name.HasValue) assignments.Add(new Assignment(alias.Value.Name, Name));
+            if (State.HasValue) assignments.Add(new Assignment(alias.Value.State, State));
             if (Uid.HasValue) assignments.Add(new Assignment(alias.Value.Uid, Uid));
 
             InlineAssignments = assignments.ToArray();
@@ -163,11 +167,13 @@ namespace Datastore.Query
             Node = alias.Node;
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> Uid = default)
+        public Assignment[] Assign(JsNotation<string> Country = default, JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Name = default, JsNotation<string> State = default, JsNotation<string> Uid = default)
         {
             List<Assignment> assignments = new List<Assignment>();
+            if (Country.HasValue) assignments.Add(new Assignment(this.Country, Country));
             if (LastModifiedOn.HasValue) assignments.Add(new Assignment(this.LastModifiedOn, LastModifiedOn));
             if (Name.HasValue) assignments.Add(new Assignment(this.Name, Name));
+            if (State.HasValue) assignments.Add(new Assignment(this.State, State));
             if (Uid.HasValue) assignments.Add(new Assignment(this.Uid, Uid));
             
             return assignments.ToArray();
@@ -183,6 +189,8 @@ namespace Datastore.Query
                     m_AliasFields = new Dictionary<string, FieldResult>()
                     {
                         { "Name", new StringResult(this, "Name", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"]) },
+                        { "State", new StringResult(this, "State", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["State"]) },
+                        { "Country", new StringResult(this, "Country", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Country"]) },
                         { "Uid", new StringResult(this, "Uid", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"]) },
                         { "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"]) },
                     };
@@ -205,6 +213,28 @@ namespace Datastore.Query
             }
         }
         private StringResult m_Name = null;
+        public StringResult State
+        {
+            get
+            {
+                if (m_State is null)
+                    m_State = (StringResult)AliasFields["State"];
+
+                return m_State;
+            }
+        }
+        private StringResult m_State = null;
+        public StringResult Country
+        {
+            get
+            {
+                if (m_Country is null)
+                    m_Country = (StringResult)AliasFields["Country"];
+
+                return m_Country;
+            }
+        }
+        private StringResult m_Country = null;
         public StringResult Uid
         {
             get

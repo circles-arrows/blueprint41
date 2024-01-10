@@ -112,17 +112,15 @@ public partial class SUBSCRIBED_TO_STREAMING_SERVICE_REL : RELATIONSHIP, IFromIn
 
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"].Properties["CreationDate"]);
             MonthlyFee = new NumericResult(this, "MonthlyFee", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"].Properties["MonthlyFee"]);
-            Currency = new StringResult(this, "Currency", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"].Properties["Currency"]);
             StartDate = new DateTimeResult(this, "StartDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"].Properties["StartDate"]);
             EndDate = new DateTimeResult(this, "EndDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"].Properties["EndDate"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<string> Currency = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
             if (MonthlyFee.HasValue) assignments.Add(new Assignment(this.MonthlyFee, MonthlyFee));
-            if (Currency.HasValue) assignments.Add(new Assignment(this.Currency, Currency));
             if (StartDate.HasValue) assignments.Add(new Assignment(this.StartDate, StartDate));
             if (EndDate.HasValue) assignments.Add(new Assignment(this.EndDate, EndDate));
 
@@ -131,7 +129,6 @@ public partial class SUBSCRIBED_TO_STREAMING_SERVICE_REL : RELATIONSHIP, IFromIn
 
         public DateTimeResult CreationDate { get; private set; } 
         public NumericResult MonthlyFee { get; private set; } 
-        public StringResult Currency { get; private set; } 
         public DateTimeResult StartDate { get; private set; } 
         public DateTimeResult EndDate { get; private set; } 
     }

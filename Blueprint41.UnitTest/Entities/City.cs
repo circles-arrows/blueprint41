@@ -13,6 +13,8 @@ namespace Datastore.Manipulation
     public interface ICityOriginalData : IBaseEntityOriginalData
     {
         string Name { get; }
+        string State { get; }
+        string Country { get; }
         IEnumerable<Restaurant> Restaurants { get; }
     }
 
@@ -68,7 +70,7 @@ namespace Datastore.Manipulation
 
         public override string ToString()
         {
-            return $"City => Name : {this.Name}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
+            return $"City => Name : {this.Name}, State : {this.State?.ToString() ?? "null"}, Country : {this.Country?.ToString() ?? "null"}, Uid : {this.Uid}, LastModifiedOn : {this.LastModifiedOn}";
         }
 
         public override int GetHashCode()
@@ -117,6 +119,8 @@ namespace Datastore.Manipulation
             public CityData(CityData data)
             {
                 Name = data.Name;
+                State = data.State;
+                Country = data.Country;
                 Restaurants = data.Restaurants;
                 Uid = data.Uid;
                 LastModifiedOn = data.LastModifiedOn;
@@ -142,6 +146,8 @@ namespace Datastore.Manipulation
             {
                 IDictionary<string, object> dictionary = new Dictionary<string, object>();
                 dictionary.Add("Name",  Name);
+                dictionary.Add("State",  State);
+                dictionary.Add("Country",  Country);
                 dictionary.Add("Uid",  Uid);
                 dictionary.Add("LastModifiedOn",  Conversion<System.DateTime, long>.Convert(LastModifiedOn));
                 return dictionary;
@@ -152,6 +158,10 @@ namespace Datastore.Manipulation
                 object value;
                 if (properties.TryGetValue("Name", out value))
                     Name = (string)value;
+                if (properties.TryGetValue("State", out value))
+                    State = (string)value;
+                if (properties.TryGetValue("Country", out value))
+                    Country = (string)value;
                 if (properties.TryGetValue("Uid", out value))
                     Uid = (string)value;
                 if (properties.TryGetValue("LastModifiedOn", out value))
@@ -163,6 +173,8 @@ namespace Datastore.Manipulation
             #region Members for interface ICity
 
             public string Name { get; set; }
+            public string State { get; set; }
+            public string Country { get; set; }
             public EntityCollection<Restaurant> Restaurants { get; private set; }
 
             #endregion
@@ -181,6 +193,8 @@ namespace Datastore.Manipulation
         #region Members for interface ICity
 
         public string Name { get { LazyGet(); return InnerData.Name; } set { if (LazySet(Members.Name, InnerData.Name, value)) InnerData.Name = value; } }
+        public string State { get { LazyGet(); return InnerData.State; } set { if (LazySet(Members.State, InnerData.State, value)) InnerData.State = value; } }
+        public string Country { get { LazyGet(); return InnerData.Country; } set { if (LazySet(Members.Country, InnerData.Country, value)) InnerData.Country = value; } }
         public EntityCollection<Restaurant> Restaurants { get { return InnerData.Restaurants; } }
         private void ClearRestaurants(DateTime? moment)
         {
@@ -294,6 +308,8 @@ namespace Datastore.Manipulation
             #region Members for interface ICity
 
             public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"];
+            public Property State { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["State"];
+            public Property Country { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Country"];
             public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restaurants"];
             #endregion
 
@@ -580,6 +596,92 @@ namespace Datastore.Manipulation
 
                 #endregion
 
+                #region OnState
+
+                private static bool onStateIsRegistered = false;
+
+                private static EventHandler<City, PropertyEventArgs> onState;
+                public static event EventHandler<City, PropertyEventArgs> OnState
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onStateIsRegistered)
+                            {
+                                Members.State.Events.OnChange -= onStateProxy;
+                                Members.State.Events.OnChange += onStateProxy;
+                                onStateIsRegistered = true;
+                            }
+                            onState += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onState -= value;
+                            if (onState is null && onStateIsRegistered)
+                            {
+                                Members.State.Events.OnChange -= onStateProxy;
+                                onStateIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onStateProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<City, PropertyEventArgs> handler = onState;
+                    if (handler is not null)
+                        handler.Invoke((City)sender, args);
+                }
+
+                #endregion
+
+                #region OnCountry
+
+                private static bool onCountryIsRegistered = false;
+
+                private static EventHandler<City, PropertyEventArgs> onCountry;
+                public static event EventHandler<City, PropertyEventArgs> OnCountry
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onCountryIsRegistered)
+                            {
+                                Members.Country.Events.OnChange -= onCountryProxy;
+                                Members.Country.Events.OnChange += onCountryProxy;
+                                onCountryIsRegistered = true;
+                            }
+                            onCountry += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onCountry -= value;
+                            if (onCountry is null && onCountryIsRegistered)
+                            {
+                                Members.Country.Events.OnChange -= onCountryProxy;
+                                onCountryIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onCountryProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<City, PropertyEventArgs> handler = onCountry;
+                    if (handler is not null)
+                        handler.Invoke((City)sender, args);
+                }
+
+                #endregion
+
                 #region OnRestaurants
 
                 private static bool onRestaurantsIsRegistered = false;
@@ -723,6 +825,8 @@ namespace Datastore.Manipulation
         #region Members for interface ICity
 
         string ICityOriginalData.Name { get { return OriginalData.Name; } }
+        string ICityOriginalData.State { get { return OriginalData.State; } }
+        string ICityOriginalData.Country { get { return OriginalData.Country; } }
         IEnumerable<Restaurant> ICityOriginalData.Restaurants { get { return OriginalData.Restaurants.OriginalData; } }
 
         #endregion
