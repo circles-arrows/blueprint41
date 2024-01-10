@@ -1,7 +1,6 @@
-﻿#define DEBUG_INITIAL_STATE_AND_EXPECTED_END_STATE
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -24,474 +23,49 @@ namespace Blueprint41.UnitTest.Tests
     [TestFixture]
     public class TestGeneratedClassesRelationships
     {
-        // Lookup with properties
-        // Collection with properties
-        // Time Dependent Lookup with properties
-        // Time Dependent Collection with properties
+        #region Initialize Test Class
 
-
-        /*
-
-        1       2       3       4       5
-        <-------|-------|-------|------->
-
-                                |------->
-                        |-------|
-                        |--------------->
-
-
-        00000
-        00001
-        00010
-      
-         
-         
-         */
-
-        [Test]
-        public void TimeDependentRelationshipCRUD()
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            DateTime[] dates = new[]
+            MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
+            PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+
+            TearDown();
+        }
+        
+        [SetUp]
+        public void Setup()
+        {
+            // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!
+            MockModel model = new MockModel()
             {
-                DateTime.MinValue,
-                new DateTime(1981, 4, 12, 12, 0, 4, DateTimeKind.Utc), // The first orbital flight of the space shuttle, NASA's reusable space vehicle.
-                new DateTime(1990, 4, 24, 12, 33, 51, DateTimeKind.Utc), // Apr 25, 1990 - Hubble Space Telescope launched into space.
-                new DateTime(2012, 8, 25, 0, 0, 0, DateTimeKind.Utc), // Aug 25, 2012 - Voyager 1 becomes the first spacecraft to reach interstellar space.
-                DateTime.MaxValue,
+                LogToConsole = true
             };
-            int bits = dates.Length - 1;
-            int count = (1 << bits);
+            model.Execute(true);
 
-#if DEBUG_INITIAL_STATE_AND_EXPECTED_END_STATE
-
-            var test = new List<(int mask, string dbState, string moment, string action, string expected)>();
-
-            for (int mask = 0; mask < count; mask++)
-            {
-                var relations = RelationsFromMask(mask);
-
-                foreach (DateTime moment in dates)
-                {
-                    var expected = RelationsFromMask(AdjustMaskForAdd(mask, moment));
-                    test.Add((mask, DrawAsciiArtState(relations), DrawAsciiArtMoment(moment), "Add same", DrawAsciiArtState(expected)));
-                }
-
-                foreach (DateTime moment in dates)
-                {
-                    var expected = RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList();
-                    test.Add((mask, DrawAsciiArtState(relations), DrawAsciiArtMoment(moment), "Add diff", DrawAsciiArtState(expected)));
-                }
-
-                foreach (DateTime moment in dates)
-                {
-                    var expected = RelationsFromMask(AdjustMaskForRemove(mask, moment));
-                    test.Add((mask, DrawAsciiArtState(relations), DrawAsciiArtMoment(moment), "Remove", DrawAsciiArtState(expected)));
-                }
-            }
-
-            string DrawAsciiArtState(List<(DateTime from, DateTime till)> relations)
-            {
-                char[] asciiArt = new char[(bits << 2) + 1];
-                for (int index = 0; index < asciiArt.Length; index++)
-                    asciiArt[index] = ' ';
-
-                foreach ((DateTime from, DateTime till) in relations)
-                {
-                    int fromIdx = Array.IndexOf(dates, from);
-                    int tillIdx = Array.IndexOf(dates, till);
-
-                    int fromPos = fromIdx << 2;
-                    int tillPos = tillIdx << 2;
-
-                    char fromChr = (fromIdx == 0) ? '<' : '|';
-                    char tillChr = (tillIdx == bits) ? '>' : '|';
-
-                    for (int pos = fromPos; pos <= tillPos; pos++)
-                    {
-                        if (pos == fromPos)
-                            asciiArt[pos] = fromChr;
-                        else if (pos == tillPos)
-                            asciiArt[pos] = tillChr;
-                        else
-                            asciiArt[pos] = '-';
-                    }
-                }
-
-                return new string(asciiArt);
-            }
-            string DrawAsciiArtMoment(DateTime moment)
-            {
-                char[] asciiArt = new char[(bits << 2) + 1];
-                for (int index = 0; index < asciiArt.Length; index++)
-                    asciiArt[index] = ' ';
-
-                int idx = Array.IndexOf(dates, moment);
-                int pos = idx << 2;
-
-                char chr = '|';
-                if (idx == 0) chr = '<';
-                if (idx == bits) chr = '>';
-
-                asciiArt[pos] = chr;
-
-                return new string(asciiArt);
-            }
-
-            return;
-
-#endif
-
-            var prerequisites = new List<(List<(DateTime from, DateTime till)> initial, string key)>()
-            {
-                (RelationsFromMask(0b0100), "2"),
-                (RelationsFromMask(0b0010), "3"),
-                (RelationsFromMask(0b0101), "4"),
-                (RelationsFromMask(0b1010), "5"),
-                (RelationsFromMask(0b1001), "6"),
-                (RelationsFromMask(0b1111), "7"),
-            };
-
-            for (int mask = 0; mask < count; mask++)
-            {
-                var relations = RelationsFromMask(mask);
-
-                foreach (DateTime moment in dates)
-                {
-                    TestLookupAdd(relations, moment, RelationsFromMask(AdjustMaskForAdd(mask, moment)), false);
-                    TestLookupAdd(relations, moment, RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList(), true);
-                    TestLookupRemove(relations, moment, RelationsFromMask(AdjustMaskForRemove(mask, moment)));
-
-                    TestCollectionAdd(relations, moment, RelationsFromMask(AdjustMaskForAdd(mask, moment)), false);
-                    TestCollectionAdd(relations, moment, RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList(), true);
-                    TestCollectionRemove(relations, moment, RelationsFromMask(AdjustMaskForRemove(mask, moment)));
-                }
-            }
-
-            void TestLookupAdd(List<(DateTime from, DateTime till)> initial, DateTime moment, List< (DateTime from, DateTime till)> expected, bool differentProperties)
-            {
-            }
-
-            void TestLookupRemove(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected)
-            {
-            }
-
-            void TestCollectionAdd(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected, bool differentProperties)
-            {
-            }
-
-            void TestCollectionRemove(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected)
-            {
-            }
-
-            List<(DateTime from, DateTime till)> RelationsFromMask(int mask)
-            {
-                DateTime? from = null;
-                var relations = new List<(DateTime from, DateTime till)>();
-
-                for (int pos = 0; pos <= bits; pos++)
-                {
-                    bool bit = ((1 << pos) & mask) != 0;
-                    if (bit && from is null)
-                    {
-                        from = dates[pos];
-                    }
-                    else if (!bit && from is not null)
-                    {
-                        relations.Add((from.Value, dates[pos]));
-                        from = null;
-                    }
-                }
-
-                return relations;
-            }
-            int AdjustMaskForAdd(int mask, DateTime moment)
-            {
-                int retval = mask;
-
-                int idx = Array.IndexOf(dates, moment);
-                while (idx < bits)
-                {
-                    retval |= (1 << idx);
-                    idx++;
-                }
-
-                return retval;
-            }
-            int AdjustMaskForRemove(int mask, DateTime moment)
-            {
-                int retval = mask;
-
-                int idx = Array.IndexOf(dates, moment);
-                while (idx < bits)
-                {
-                    retval &= ~(1 << idx);
-                    idx++;
-                }
-
-                return retval;
-            }
+            DatabaseUids = Uids.SetupDb();
         }
 
-
-        private Uids SetupDb()
+        [TearDown]
+        public void TearDown()
         {
-            MovieUids movies;
-            RatingUids ratings;
-            PersonUids persons;
-            CityUids cities;
-            StreamingServiceUids streamingServices;
-
             using (Transaction.Begin())
             {
-                #region Movies
-
-                Movie aliens = new Movie()
-                {
-                    Title = "Aliens",
-                };
-                Movie dieHard = new Movie()
-                {
-                    Title = "Die Hard",
-                };
-                Movie matrix = new Movie()
-                {
-                    Title = "The Matrix",
-                };
-                Movie serenity = new Movie()
-                {
-                    Title = "Serenity",
-                };
-                Movie terminator2 = new Movie()
-                {
-                    Title = "Terminator 2: Judgment Day",
-                };
-                Movie theFifthElement = new Movie()
-                {
-                    Title = "The Fifth Element",
-                };
-                Movie topGunMaverick = new Movie()
-                {
-                    Title = "Top Gun: Maverick",
-                };
-
-                #endregion
-
-                #region Ratings
-
-                Rating g = new Rating()
-                {
-                    Code = "G",
-                    Name = "Rated G",
-                    Description = "General audiences – All ages admitted.",
-                };
-                Rating pg = new Rating()
-                {
-                    Code = "PG",
-                    Name = "Rated PG",
-                    Description = "Parental guidance suggested – Some material may not be suitable for children.",
-                };
-                Rating pg13 = new Rating()
-                {
-                    Code = "PG-13",
-                    Name = "Rated PG-13",
-                    Description = "Parents strongly cautioned – Some material may be inappropriate for children under 13.",
-                };
-                Rating r = new Rating()
-                {
-                    Code = "R",
-                    Name = "Rated R",
-                    Description = "Restricted – Under 17 requires accompanying parent or adult guardian.",
-                };
-                Rating nc17 = new Rating()
-                {
-                    Code = "NC-17",
-                    Name = "Rated NC-17",
-                    Description = "Adults Only – No one 17 and under admitted.",
-                };
-
-                #endregion
-
-                #region Persons
-
-                Person alanTuring = new Person()
-                {
-                    Name = "Alan Turing",
-                };
-                Person dennisRitchie = new Person()
-                {
-                    Name = "Dennis Ritchie",
-                };
-                Person martinFowler = new Person()
-                {
-                    Name = "Martin Fowler",
-                };
-                Person uncleBob = new Person()
-                {
-                    Name = "Robert C. Martin",
-                };
-                Person adaLovelace = new Person()
-                {
-                    Name = "Ada Lovelace",
-                };
-                Person linusTorvalds = new Person()
-                {
-                    Name = "Linus Torvalds",
-                };
-                Person alanKay = new Person()
-                {
-                    Name = "Alan Kay",
-                };
-                Person steveWozniak = new Person()
-                {
-                    Name = "Steve Wozniak",
-                };
-                Person billGates = new Person()
-                {
-                    Name = "Bill Gates",
-                };
-
-                #endregion
-
-                #region Cities
-
-                City london = new City()
-                { 
-                    Name = "London",
-                    Country = "UK",
-                };
-                City littleWhinging = new City()
-                {
-                    Name = "Little Whinging",
-                    State = "Surrey",
-                    Country = "UK",
-                };
-                City springfield = new City()
-                {
-                    Name = "Springfield",
-                    Country = "US",
-                };
-                City hillValley = new City()
-                {
-                    Name = "Hill Valley",
-                    State = "CA",
-                    Country = "US",
-                };
-                City sunnydale = new City()
-                {
-                    Name = "Sunnydale",
-                    State = "CA",
-                    Country = "US",
-                };
-                City quahog = new City()
-                {
-                    Name = "Quahog",
-                    State = "Rhode Island",
-                    Country = "US",
-                };
-                City muncie = new City()
-                {
-                    Name = "Muncie",
-                    State = "Indiana",
-                    Country = "US",
-                };
-                City metropolis = new City()
-                {
-                    Name = "Metropolis",
-                    Country = "US",
-                };
-
-                #endregion
-
-                #region Streaming Services
-
-                StreamingService netflix = new StreamingService()
-                {
-                    Name = "Netflix",
-                };
-                StreamingService hulu = new StreamingService()
-                {
-                    Name = "Hulu",
-                };
-                StreamingService peacock = new StreamingService()
-                {
-                    Name = "Peacock",
-                };
-                StreamingService amazonPrimeVideo = new StreamingService()
-                {
-                    Name = "Amazon Prime Video",
-                };
-                StreamingService hboMax = new StreamingService()
-                {
-                    Name = "Max",
-                };
-                StreamingService disneyPlus = new StreamingService()
-                {
-                    Name = "Disney+",
-                };
-                StreamingService historyVault = new StreamingService()
-                {
-                    Name = "History Vault",
-                };
-
-                #endregion
+                string reset = "Match (n) detach delete n";
+                Transaction.RunningTransaction.Run(reset);
 
                 Transaction.Commit();
-
-                return new Uids(
-                    new MovieUids()
-                    {
-                        Aliens          = aliens.Uid,
-                        DieHard         = dieHard.Uid,
-                        Matrix          = matrix.Uid,
-                        Serenity        = serenity.Uid,
-                        Terminator2     = terminator2.Uid,
-                        TheFifthElement = theFifthElement.Uid,
-                        TopGunMaverick  = topGunMaverick.Uid,
-                    },
-                    new RatingUids()
-                    {
-                        G    = g.Uid,
-                        PG   = pg.Uid,
-                        PG13 = pg13.Uid,
-                        R    = r.Uid,
-                        NC17 = nc17.Uid,
-                    },
-                    new PersonUids()
-                    {
-                        AlanTuring        = alanTuring.Uid,
-                        DennisRitchie     = dennisRitchie.Uid,
-                        MartinFowler      = martinFowler.Uid,
-                        UncleBob          = uncleBob.Uid,
-                        AdaLovelace       = adaLovelace.Uid,
-                        LinusTorvalds     = linusTorvalds.Uid,
-                        AlanKay           = alanKay.Uid,
-                        SteveWozniak      = steveWozniak.Uid,
-                        BillGates         = billGates.Uid,
-                    },
-                    new CityUids()
-                    {
-                        London         = london.Uid,
-                        LittleWhinging = littleWhinging.Uid,
-                        Springfield    = springfield.Uid,
-                        HillValley     = hillValley.Uid,
-                        Sunnydale      = sunnydale.Uid,
-                        Quahog         = quahog.Uid,
-                        Muncie         = muncie.Uid,
-                        Metropolis     = metropolis.Uid,
-                    },
-                    new StreamingServiceUids()
-                    {
-                        Netflix          = netflix.Uid,
-                        Hulu             = hulu.Uid,
-                        Peacock          = peacock.Uid,
-                        AmazonPrimeVideo = amazonPrimeVideo.Uid,
-                        HboMax           = hboMax.Uid,
-                        DisneyPlus       = disneyPlus.Uid,
-                        HistoryVault     = historyVault.Uid,
-                    }
-                );
+            }
+            using (Transaction.Begin())
+            {
+                string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
+                Transaction.RunningTransaction.Run(clearSchema);
+                Transaction.Commit();
             }
         }
+
+        public Uids DatabaseUids;
 
         public record class Uids
         {
@@ -518,6 +92,266 @@ namespace Blueprint41.UnitTest.Tests
             public PersonUids Persons;
             public CityUids Cities;
             public StreamingServiceUids StreamingServices;
+
+            public static Uids SetupDb()
+            {
+                MovieUids movies;
+                RatingUids ratings;
+                PersonUids persons;
+                CityUids cities;
+                StreamingServiceUids streamingServices;
+
+                using (Transaction.Begin())
+                {
+                    #region Movies
+
+                    Movie aliens = new Movie()
+                    {
+                        Title = "Aliens",
+                    };
+                    Movie dieHard = new Movie()
+                    {
+                        Title = "Die Hard",
+                    };
+                    Movie matrix = new Movie()
+                    {
+                        Title = "The Matrix",
+                    };
+                    Movie serenity = new Movie()
+                    {
+                        Title = "Serenity",
+                    };
+                    Movie terminator2 = new Movie()
+                    {
+                        Title = "Terminator 2: Judgment Day",
+                    };
+                    Movie theFifthElement = new Movie()
+                    {
+                        Title = "The Fifth Element",
+                    };
+                    Movie topGunMaverick = new Movie()
+                    {
+                        Title = "Top Gun: Maverick",
+                    };
+
+                    #endregion
+
+                    #region Ratings
+
+                    Rating g = new Rating()
+                    {
+                        Code = "G",
+                        Name = "Rated G",
+                        Description = "General audiences – All ages admitted.",
+                    };
+                    Rating pg = new Rating()
+                    {
+                        Code = "PG",
+                        Name = "Rated PG",
+                        Description = "Parental guidance suggested – Some material may not be suitable for children.",
+                    };
+                    Rating pg13 = new Rating()
+                    {
+                        Code = "PG-13",
+                        Name = "Rated PG-13",
+                        Description = "Parents strongly cautioned – Some material may be inappropriate for children under 13.",
+                    };
+                    Rating r = new Rating()
+                    {
+                        Code = "R",
+                        Name = "Rated R",
+                        Description = "Restricted – Under 17 requires accompanying parent or adult guardian.",
+                    };
+                    Rating nc17 = new Rating()
+                    {
+                        Code = "NC-17",
+                        Name = "Rated NC-17",
+                        Description = "Adults Only – No one 17 and under admitted.",
+                    };
+
+                    #endregion
+
+                    #region Persons
+
+                    Person alanTuring = new Person()
+                    {
+                        Name = "Alan Turing",
+                    };
+                    Person dennisRitchie = new Person()
+                    {
+                        Name = "Dennis Ritchie",
+                    };
+                    Person martinFowler = new Person()
+                    {
+                        Name = "Martin Fowler",
+                    };
+                    Person uncleBob = new Person()
+                    {
+                        Name = "Robert C. Martin",
+                    };
+                    Person adaLovelace = new Person()
+                    {
+                        Name = "Ada Lovelace",
+                    };
+                    Person linusTorvalds = new Person()
+                    {
+                        Name = "Linus Torvalds",
+                    };
+                    Person alanKay = new Person()
+                    {
+                        Name = "Alan Kay",
+                    };
+                    Person steveWozniak = new Person()
+                    {
+                        Name = "Steve Wozniak",
+                    };
+                    Person billGates = new Person()
+                    {
+                        Name = "Bill Gates",
+                    };
+
+                    #endregion
+
+                    #region Cities
+
+                    City london = new City()
+                    {
+                        Name = "London",
+                        Country = "UK",
+                    };
+                    City littleWhinging = new City()
+                    {
+                        Name = "Little Whinging",
+                        State = "Surrey",
+                        Country = "UK",
+                    };
+                    City springfield = new City()
+                    {
+                        Name = "Springfield",
+                        Country = "US",
+                    };
+                    City hillValley = new City()
+                    {
+                        Name = "Hill Valley",
+                        State = "CA",
+                        Country = "US",
+                    };
+                    City sunnydale = new City()
+                    {
+                        Name = "Sunnydale",
+                        State = "CA",
+                        Country = "US",
+                    };
+                    City quahog = new City()
+                    {
+                        Name = "Quahog",
+                        State = "Rhode Island",
+                        Country = "US",
+                    };
+                    City muncie = new City()
+                    {
+                        Name = "Muncie",
+                        State = "Indiana",
+                        Country = "US",
+                    };
+                    City metropolis = new City()
+                    {
+                        Name = "Metropolis",
+                        Country = "US",
+                    };
+
+                    #endregion
+
+                    #region Streaming Services
+
+                    StreamingService netflix = new StreamingService()
+                    {
+                        Name = "Netflix",
+                    };
+                    StreamingService hulu = new StreamingService()
+                    {
+                        Name = "Hulu",
+                    };
+                    StreamingService peacock = new StreamingService()
+                    {
+                        Name = "Peacock",
+                    };
+                    StreamingService amazonPrimeVideo = new StreamingService()
+                    {
+                        Name = "Amazon Prime Video",
+                    };
+                    StreamingService hboMax = new StreamingService()
+                    {
+                        Name = "Max",
+                    };
+                    StreamingService disneyPlus = new StreamingService()
+                    {
+                        Name = "Disney+",
+                    };
+                    StreamingService historyVault = new StreamingService()
+                    {
+                        Name = "History Vault",
+                    };
+
+                    #endregion
+
+                    Transaction.Commit();
+
+                    return new Uids(
+                        new MovieUids()
+                        {
+                            Aliens = aliens.Uid,
+                            DieHard = dieHard.Uid,
+                            Matrix = matrix.Uid,
+                            Serenity = serenity.Uid,
+                            Terminator2 = terminator2.Uid,
+                            TheFifthElement = theFifthElement.Uid,
+                            TopGunMaverick = topGunMaverick.Uid,
+                        },
+                        new RatingUids()
+                        {
+                            G = g.Uid,
+                            PG = pg.Uid,
+                            PG13 = pg13.Uid,
+                            R = r.Uid,
+                            NC17 = nc17.Uid,
+                        },
+                        new PersonUids()
+                        {
+                            AlanTuring = alanTuring.Uid,
+                            DennisRitchie = dennisRitchie.Uid,
+                            MartinFowler = martinFowler.Uid,
+                            UncleBob = uncleBob.Uid,
+                            AdaLovelace = adaLovelace.Uid,
+                            LinusTorvalds = linusTorvalds.Uid,
+                            AlanKay = alanKay.Uid,
+                            SteveWozniak = steveWozniak.Uid,
+                            BillGates = billGates.Uid,
+                        },
+                        new CityUids()
+                        {
+                            London = london.Uid,
+                            LittleWhinging = littleWhinging.Uid,
+                            Springfield = springfield.Uid,
+                            HillValley = hillValley.Uid,
+                            Sunnydale = sunnydale.Uid,
+                            Quahog = quahog.Uid,
+                            Muncie = muncie.Uid,
+                            Metropolis = metropolis.Uid,
+                        },
+                        new StreamingServiceUids()
+                        {
+                            Netflix = netflix.Uid,
+                            Hulu = hulu.Uid,
+                            Peacock = peacock.Uid,
+                            AmazonPrimeVideo = amazonPrimeVideo.Uid,
+                            HboMax = hboMax.Uid,
+                            DisneyPlus = disneyPlus.Uid,
+                            HistoryVault = historyVault.Uid,
+                        }
+                    );
+                }
+            }
         }
         public record class MovieUids
         {
@@ -777,6 +611,34 @@ namespace Blueprint41.UnitTest.Tests
             public RatingComponent SexAndNudity = RatingComponent.None;
         }
 
+        #endregion
+
+        [Test]
+        public void TimeDependentRelationshipCRUD()
+        {
+            var testScenarios = TestScenario.Get(TestAction.AddSame, TestAction.AddDiff, TestAction.Remove);
+
+
+            void TestLookupAdd(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected, bool differentProperties)
+            {
+            }
+
+            void TestLookupRemove(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected)
+            {
+            }
+
+            void TestCollectionAdd(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected, bool differentProperties)
+            {
+            }
+
+            void TestCollectionRemove(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected)
+            {
+            }
+        }
+
+
+        #region Helper Methods
+
         private void CleanupRelations(Relationship relationship)
         {
             string cypher = $"""
@@ -817,6 +679,172 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
         }
+
+        #endregion
+    }
+
+    [DebuggerDisplay("{DebuggerDisplayString()}")]
+    public class TestScenario
+    {
+        private TestScenario(int mask, DateTime moment, TestAction action)
+        {
+            Mask = mask;
+            Initial = RelationsFromMask(mask);
+            InitialAsciiArt = DrawAsciiArtState(Initial);
+            Moment = moment;
+            MomentAsciiArt = DrawAsciiArtMoment(moment);
+            Expected = action switch
+            {
+                TestAction.AddSame => RelationsFromMask(AdjustMaskForAdd(mask, moment)),
+                TestAction.AddDiff => RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList(),
+                TestAction.Remove  => RelationsFromMask(AdjustMaskForRemove(mask, moment)),
+                _                  => throw new NotImplementedException(),
+            };
+            ExpectedAsciiArt = DrawAsciiArtState(Expected);
+            Action = action;
+        }
+
+        public int Mask { get; private set; }
+        public List<(DateTime from, DateTime till)> Initial { get; private set; }
+        public string InitialAsciiArt { get; private set; }
+        public DateTime Moment { get; private set; }
+        public string MomentAsciiArt { get; private set; }
+        public TestAction Action { get; private set; }
+        public List<(DateTime from, DateTime till)> Expected { get; private set; }
+        public string ExpectedAsciiArt { get; private set; }
+
+        public static List<(DateTime from, DateTime till)> RelationsFromMask(int mask)
+        {
+            DateTime? from = null;
+            var relations = new List<(DateTime from, DateTime till)>();
+
+            for (int pos = 0; pos <= bits; pos++)
+            {
+                bool bit = ((1 << pos) & mask) != 0;
+                if (bit && from is null)
+                {
+                    from = dates[pos];
+                }
+                else if (!bit && from is not null)
+                {
+                    relations.Add((from.Value, dates[pos]));
+                    from = null;
+                }
+            }
+
+            return relations;
+        }
+        private static int AdjustMaskForAdd(int mask, DateTime moment)
+        {
+            int retval = mask;
+
+            int idx = Array.IndexOf(dates, moment);
+            while (idx < bits)
+            {
+                retval |= (1 << idx);
+                idx++;
+            }
+
+            return retval;
+        }
+        private static int AdjustMaskForRemove(int mask, DateTime moment)
+        {
+            int retval = mask;
+
+            int idx = Array.IndexOf(dates, moment);
+            while (idx < bits)
+            {
+                retval &= ~(1 << idx);
+                idx++;
+            }
+
+            return retval;
+        }
+
+        private static string DrawAsciiArtState(List<(DateTime from, DateTime till)> relations)
+        {
+            char[] asciiArt = new char[(bits << 2) + 1];
+            for (int index = 0; index < asciiArt.Length; index++)
+                asciiArt[index] = ' ';
+
+            foreach ((DateTime from, DateTime till) in relations)
+            {
+                int fromIdx = Array.IndexOf(dates, from);
+                int tillIdx = Array.IndexOf(dates, till);
+
+                int fromPos = fromIdx << 2;
+                int tillPos = tillIdx << 2;
+
+                char fromChr = (fromIdx == 0) ? '<' : '|';
+                char tillChr = (tillIdx == bits) ? '>' : '|';
+
+                for (int pos = fromPos; pos <= tillPos; pos++)
+                {
+                    if (pos == fromPos)
+                        asciiArt[pos] = fromChr;
+                    else if (pos == tillPos)
+                        asciiArt[pos] = tillChr;
+                    else
+                        asciiArt[pos] = '-';
+                }
+            }
+
+            return new string(asciiArt);
+        }
+        private static string DrawAsciiArtMoment(DateTime moment)
+        {
+            char[] asciiArt = new char[(bits << 2) + 1];
+            for (int index = 0; index < asciiArt.Length; index++)
+                asciiArt[index] = ' ';
+
+            int idx = Array.IndexOf(dates, moment);
+            int pos = idx << 2;
+
+            char chr = '|';
+            if (idx == 0) chr = '<';
+            if (idx == bits) chr = '>';
+
+            asciiArt[pos] = chr;
+
+            return new string(asciiArt);
+        }
+
+        public static readonly DateTime[] dates = new[]
+        {
+                DateTime.MinValue,
+                new DateTime(1981, 4, 12, 12, 0, 4, DateTimeKind.Utc), // The first orbital flight of the space shuttle, NASA's reusable space vehicle.
+                new DateTime(1990, 4, 24, 12, 33, 51, DateTimeKind.Utc), // Apr 25, 1990 - Hubble Space Telescope launched into space.
+                new DateTime(2012, 8, 25, 0, 0, 0, DateTimeKind.Utc), // Aug 25, 2012 - Voyager 1 becomes the first spacecraft to reach interstellar space.
+                DateTime.MaxValue,
+            };
+        public static readonly int bits = dates.Length - 1;
+        public static readonly int count = (1 << bits);
+
+        public static List<TestScenario> Get(params TestAction[] actions)
+        {
+            List<TestScenario> result = new List<TestScenario>();
+
+            for (int mask = 0; mask < count; mask++)
+            {
+                foreach (TestAction action in actions)
+                {
+                    foreach (DateTime moment in dates)
+                    {
+                        result.Add(new TestScenario(mask, moment, action));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private string DebuggerDisplayString() => $"Initial: '{InitialAsciiArt}', Moment: '{MomentAsciiArt}', Action: {Action}, Expected: '{ExpectedAsciiArt}'";
+    }
+    public enum TestAction
+    {
+        AddSame,
+        AddDiff,
+        Remove,
     }
 }
 
