@@ -94,8 +94,7 @@ namespace Blueprint41.UnitTest.DataStore
                 .AddTimeDependance()
                 .AddProperty("AddressLine1", typeof(string))
                 .AddProperty("AddressLine2", typeof(string))
-                .AddProperty("AddressLine3", typeof(string))
-                .AddProperty("ZipCode", typeof(string));
+                .AddProperty("AddressLine3", typeof(string));
 
             // Lookup, time independent:     (Movie)-[CERTIFICATION { SexNudity: Mild, ViolenceGore: Moderate, Profanity, AlcoholDrugsSmoking, FrighteningIntenseScenes }]->(Rating)
             Relations.New(Entities["Movie"], Entities["Rating"], "MOVIE_CERTIFICATION", "CERTIFICATION")

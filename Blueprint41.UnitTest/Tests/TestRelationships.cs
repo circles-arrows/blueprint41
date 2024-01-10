@@ -21,7 +21,7 @@ using node = Datastore.Query.Node;
 namespace Blueprint41.UnitTest.Tests
 {
     [TestFixture]
-    public class TestGeneratedClassesRelationships
+    public class TestRelationships
     {
         #region Initialize Test Class
 
@@ -365,7 +365,7 @@ namespace Blueprint41.UnitTest.Tests
             public string TheFifthElement;
             public string TopGunMaverick;
 
-            public Ratings Ratings => Threadsafe.Assign(ref _ratings, () => new Ratings(Parent));
+            public Ratings Ratings => Threadsafe.LazyInit(ref _ratings, () => new Ratings(Parent));
             private Ratings _ratings = null;
 
             public (Movie movie, Rating rating, RatingComponent frighteningIntense, RatingComponent violenceGore, RatingComponent profanity, RatingComponent substances, RatingComponent sexAndNudity)[] Movies => new[]
@@ -614,26 +614,52 @@ namespace Blueprint41.UnitTest.Tests
         #endregion
 
         [Test]
-        public void TimeDependentRelationshipCRUD()
+        public void TimeDependentLookupSetLegacy()
         {
-            var testScenarios = TestScenario.Get(TestAction.AddSame, TestAction.AddDiff, TestAction.Remove);
+            List<TestScenario> scenarios = TestScenario.Get(TestAction.AddSame);
 
-
-            void TestLookupAdd(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected, bool differentProperties)
+            foreach (TestScenario scenario in scenarios)
             {
+                Debug.WriteLine($"Running: {scenario.ToString()}");
+
+                try
+                {
+                    using (Transaction.Begin())
+                    {
+                        var inNode = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                        var outNode = City.Load(DatabaseUids.Cities.Metropolis);
+
+                        CleanupRelations(PERSON_LIVES_IN.Relationship);
+
+                        foreach (var relation in scenario.Initial)
+                        {
+                            WriteRelation(inNode, PERSON_LIVES_IN.Relationship, outNode, relation.from, relation.till);
+                        }
+
+                        var before = ReadRelations(inNode, PERSON_LIVES_IN.Relationship, outNode);
+                        var beforeAsciiArt = TestScenario.DrawAsciiArtState(before);
+
+                        Assert.AreEqual(beforeAsciiArt, scenario.InitialAsciiArt);
+
+                        inNode.SetCity(outNode, scenario.Moment);
+
+                        Transaction.Flush();
+
+                        var after = ReadRelations(inNode, PERSON_LIVES_IN.Relationship, outNode);
+                        var afterAsciiArt = TestScenario.DrawAsciiArtState(after);
+
+                        Assert.AreEqual(afterAsciiArt, scenario.InitialAsciiArt);
+
+                        Transaction.Commit();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    scenario.SetError(ex);
+                }   
             }
 
-            void TestLookupRemove(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected)
-            {
-            }
-
-            void TestCollectionAdd(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected, bool differentProperties)
-            {
-            }
-
-            void TestCollectionRemove(List<(DateTime from, DateTime till)> initial, DateTime moment, List<(DateTime from, DateTime till)> expected)
-            {
-            }
+            scenarios.AssertSuccess();
         }
 
 
@@ -659,9 +685,9 @@ namespace Blueprint41.UnitTest.Tests
                 MATCH (in:{relationship.InEntity.Label.Name}), (out:{relationship.OutEntity.Label.Name})
                 WHERE in.{@in.GetEntity().Key.Name} = $in AND out.{@out.GetEntity().Key.Name} = $out
                 CREATE (in)-[r:{relationship.Neo4JRelationshipType}]->(out)
-                SET r.CreationDate = $now
+                SET r.CreationDate = $now,
                     r.StartDate = $from,
-                    r.EndDate = $till,
+                    r.EndDate = $till
                 """;
 
             var parameters = new Dictionary<string, object>()
@@ -680,171 +706,63 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
+        private List<(DateTime from, DateTime till)> ReadRelations(OGM @in, Relationship relationship, OGM @out)
+        {
+            string cypher = $"""
+                MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
+                WHERE in.{@in.GetEntity().Key.Name} = $in AND out.{@out.GetEntity().Key.Name} = $out
+                RETURN r.StartDate AS `From`, r.EndDate AS `Till`
+                """;
+
+            var parameters = new Dictionary<string, object>()
+            {
+                { "in", @in.GetKey() },
+                { "out", @out.GetKey() },
+            };
+
+            using (Transaction.Begin())
+            {
+                RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
+
+                return result.Select(delegate(RawRecord record)
+                {
+                    DateTime from = Conversion<long, DateTime>.Convert(record.Values["From"].As<long>());
+                    DateTime till = Conversion<long, DateTime>.Convert(record.Values["Till"].As<long>());
+
+                    return (from, till);
+                }).ToList();
+            }
+        }
+        private List<(DateTime from, DateTime till, Dictionary<string, object> properties)> ReadRelationsWithProperties(OGM @in, Relationship relationship, OGM @out)
+        {
+            string cypher = $"""
+                MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
+                WHERE in.{@in.GetEntity().Key.Name} = $in AND out.{@out.GetEntity().Key.Name} = $out
+                RETURN r.StartDate AS `From`, r.EndDate AS `Till`, apoc.map.removeKeys(r, ['StartDate','EndDate','CreationDate']) AS Properties
+                """;
+
+            var parameters = new Dictionary<string, object>()
+            {
+                { "in", @in.GetKey() },
+                { "out", @out.GetKey() },
+            };
+
+            using (Transaction.Begin())
+            {
+                RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
+
+                return result.Select(delegate (RawRecord record)
+                {
+                    DateTime from = Conversion<long, DateTime>.Convert(record.Values["From"].As<long>());
+                    DateTime till = Conversion<long, DateTime>.Convert(record.Values["Till"].As<long>());
+                    Dictionary<string, object> properties = record.Values["Properties"].As<Dictionary<string, object>>();
+
+                    return (from, till, properties);
+                }).ToList();
+            }
+        }
+
         #endregion
-    }
-
-    [DebuggerDisplay("{DebuggerDisplayString()}")]
-    public class TestScenario
-    {
-        private TestScenario(int mask, DateTime moment, TestAction action)
-        {
-            Mask = mask;
-            Initial = RelationsFromMask(mask);
-            InitialAsciiArt = DrawAsciiArtState(Initial);
-            Moment = moment;
-            MomentAsciiArt = DrawAsciiArtMoment(moment);
-            Expected = action switch
-            {
-                TestAction.AddSame => RelationsFromMask(AdjustMaskForAdd(mask, moment)),
-                TestAction.AddDiff => RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList(),
-                TestAction.Remove  => RelationsFromMask(AdjustMaskForRemove(mask, moment)),
-                _                  => throw new NotImplementedException(),
-            };
-            ExpectedAsciiArt = DrawAsciiArtState(Expected);
-            Action = action;
-        }
-
-        public int Mask { get; private set; }
-        public List<(DateTime from, DateTime till)> Initial { get; private set; }
-        public string InitialAsciiArt { get; private set; }
-        public DateTime Moment { get; private set; }
-        public string MomentAsciiArt { get; private set; }
-        public TestAction Action { get; private set; }
-        public List<(DateTime from, DateTime till)> Expected { get; private set; }
-        public string ExpectedAsciiArt { get; private set; }
-
-        public static List<(DateTime from, DateTime till)> RelationsFromMask(int mask)
-        {
-            DateTime? from = null;
-            var relations = new List<(DateTime from, DateTime till)>();
-
-            for (int pos = 0; pos <= bits; pos++)
-            {
-                bool bit = ((1 << pos) & mask) != 0;
-                if (bit && from is null)
-                {
-                    from = dates[pos];
-                }
-                else if (!bit && from is not null)
-                {
-                    relations.Add((from.Value, dates[pos]));
-                    from = null;
-                }
-            }
-
-            return relations;
-        }
-        private static int AdjustMaskForAdd(int mask, DateTime moment)
-        {
-            int retval = mask;
-
-            int idx = Array.IndexOf(dates, moment);
-            while (idx < bits)
-            {
-                retval |= (1 << idx);
-                idx++;
-            }
-
-            return retval;
-        }
-        private static int AdjustMaskForRemove(int mask, DateTime moment)
-        {
-            int retval = mask;
-
-            int idx = Array.IndexOf(dates, moment);
-            while (idx < bits)
-            {
-                retval &= ~(1 << idx);
-                idx++;
-            }
-
-            return retval;
-        }
-
-        private static string DrawAsciiArtState(List<(DateTime from, DateTime till)> relations)
-        {
-            char[] asciiArt = new char[(bits << 2) + 1];
-            for (int index = 0; index < asciiArt.Length; index++)
-                asciiArt[index] = ' ';
-
-            foreach ((DateTime from, DateTime till) in relations)
-            {
-                int fromIdx = Array.IndexOf(dates, from);
-                int tillIdx = Array.IndexOf(dates, till);
-
-                int fromPos = fromIdx << 2;
-                int tillPos = tillIdx << 2;
-
-                char fromChr = (fromIdx == 0) ? '<' : '|';
-                char tillChr = (tillIdx == bits) ? '>' : '|';
-
-                for (int pos = fromPos; pos <= tillPos; pos++)
-                {
-                    if (pos == fromPos)
-                        asciiArt[pos] = fromChr;
-                    else if (pos == tillPos)
-                        asciiArt[pos] = tillChr;
-                    else
-                        asciiArt[pos] = '-';
-                }
-            }
-
-            return new string(asciiArt);
-        }
-        private static string DrawAsciiArtMoment(DateTime moment)
-        {
-            char[] asciiArt = new char[(bits << 2) + 1];
-            for (int index = 0; index < asciiArt.Length; index++)
-                asciiArt[index] = ' ';
-
-            int idx = Array.IndexOf(dates, moment);
-            int pos = idx << 2;
-
-            char chr = '|';
-            if (idx == 0) chr = '<';
-            if (idx == bits) chr = '>';
-
-            asciiArt[pos] = chr;
-
-            return new string(asciiArt);
-        }
-
-        public static readonly DateTime[] dates = new[]
-        {
-                DateTime.MinValue,
-                new DateTime(1981, 4, 12, 12, 0, 4, DateTimeKind.Utc), // The first orbital flight of the space shuttle, NASA's reusable space vehicle.
-                new DateTime(1990, 4, 24, 12, 33, 51, DateTimeKind.Utc), // Apr 25, 1990 - Hubble Space Telescope launched into space.
-                new DateTime(2012, 8, 25, 0, 0, 0, DateTimeKind.Utc), // Aug 25, 2012 - Voyager 1 becomes the first spacecraft to reach interstellar space.
-                DateTime.MaxValue,
-            };
-        public static readonly int bits = dates.Length - 1;
-        public static readonly int count = (1 << bits);
-
-        public static List<TestScenario> Get(params TestAction[] actions)
-        {
-            List<TestScenario> result = new List<TestScenario>();
-
-            for (int mask = 0; mask < count; mask++)
-            {
-                foreach (TestAction action in actions)
-                {
-                    foreach (DateTime moment in dates)
-                    {
-                        result.Add(new TestScenario(mask, moment, action));
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private string DebuggerDisplayString() => $"Initial: '{InitialAsciiArt}', Moment: '{MomentAsciiArt}', Action: {Action}, Expected: '{ExpectedAsciiArt}'";
-    }
-    public enum TestAction
-    {
-        AddSame,
-        AddDiff,
-        Remove,
     }
 }
 

@@ -116,10 +116,9 @@ public partial class PERSON_LIVES_IN_REL : RELATIONSHIP, IFromIn_PERSON_LIVES_IN
             AddressLine1 = new StringResult(this, "AddressLine1", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["AddressLine1"]);
             AddressLine2 = new StringResult(this, "AddressLine2", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["AddressLine2"]);
             AddressLine3 = new StringResult(this, "AddressLine3", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["AddressLine3"]);
-            ZipCode = new StringResult(this, "ZipCode", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_LIVES_IN"].Properties["ZipCode"]);
         }
 
-        public Assignment[] Assign(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<string> ZipCode = default)
+        public Assignment[] Assign(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
@@ -128,7 +127,6 @@ public partial class PERSON_LIVES_IN_REL : RELATIONSHIP, IFromIn_PERSON_LIVES_IN
             if (AddressLine1.HasValue) assignments.Add(new Assignment(this.AddressLine1, AddressLine1));
             if (AddressLine2.HasValue) assignments.Add(new Assignment(this.AddressLine2, AddressLine2));
             if (AddressLine3.HasValue) assignments.Add(new Assignment(this.AddressLine3, AddressLine3));
-            if (ZipCode.HasValue) assignments.Add(new Assignment(this.ZipCode, ZipCode));
 
             return assignments.ToArray();
         }
@@ -139,6 +137,5 @@ public partial class PERSON_LIVES_IN_REL : RELATIONSHIP, IFromIn_PERSON_LIVES_IN
         public StringResult AddressLine1 { get; private set; } 
         public StringResult AddressLine2 { get; private set; } 
         public StringResult AddressLine3 { get; private set; } 
-        public StringResult ZipCode { get; private set; } 
     }
 }

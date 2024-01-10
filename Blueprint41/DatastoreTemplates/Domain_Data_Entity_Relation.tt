@@ -96,6 +96,9 @@ namespace <#= Settings.FullCRUDNamespace #>
 <#
     }
 #>
+
+        public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Relations["<#= DALRelation.Name #>"]);
+        private static Relationship _relationship = null;
     }
 
     /// <summary>

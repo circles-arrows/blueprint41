@@ -47,6 +47,9 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
+
+        public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["ACTED_IN"]);
+        private static Relationship _relationship = null;
     }
 
     /// <summary>
