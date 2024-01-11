@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using System.Threading;
 using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
 using Blueprint41.Query;
@@ -15,7 +15,7 @@ using Datastore.Manipulation;
 using Datastore.Query;
 
 using NUnit.Framework;
-
+using NUnit.Framework.Internal;
 using node = Datastore.Query.Node;
 
 namespace Blueprint41.UnitTest.Tests
@@ -616,50 +616,176 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void TimeDependentLookupSetLegacy()
         {
-            List<TestScenario> scenarios = TestScenario.Get(TestAction.AddSame);
+            #region Set Same City
 
-            foreach (TestScenario scenario in scenarios)
+            List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddSame);
+
+            foreach (TestScenario scenario in scenariosAdd.Where(item => item.Moment != DateTime.MaxValue)) // TODO: Where Clause -> Previously unsupported scenario with undetermined behavior
             {
-                Debug.WriteLine($"Running: {scenario.ToString()}");
+                Debug.WriteLine($"Set City: {scenario}");
 
-                try
+                using (Transaction.Begin())
                 {
-                    using (Transaction.Begin())
+                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    var city = City.Load(DatabaseUids.Cities.Metropolis);
+
+                    CleanupRelations(PERSON_LIVES_IN.Relationship);
+
+                    foreach (var relation in scenario.Initial)
                     {
-                        var inNode = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                        var outNode = City.Load(DatabaseUids.Cities.Metropolis);
-
-                        CleanupRelations(PERSON_LIVES_IN.Relationship);
-
-                        foreach (var relation in scenario.Initial)
-                        {
-                            WriteRelation(inNode, PERSON_LIVES_IN.Relationship, outNode, relation.from, relation.till);
-                        }
-
-                        var before = ReadRelations(inNode, PERSON_LIVES_IN.Relationship, outNode);
-                        var beforeAsciiArt = TestScenario.DrawAsciiArtState(before);
-
-                        Assert.AreEqual(beforeAsciiArt, scenario.InitialAsciiArt);
-
-                        inNode.SetCity(outNode, scenario.Moment);
-
-                        Transaction.Flush();
-
-                        var after = ReadRelations(inNode, PERSON_LIVES_IN.Relationship, outNode);
-                        var afterAsciiArt = TestScenario.DrawAsciiArtState(after);
-
-                        Assert.AreEqual(afterAsciiArt, scenario.InitialAsciiArt);
-
-                        Transaction.Commit();
+                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till);
                     }
+
+                    person.SetCity(city, scenario.Moment);
+
+                    Transaction.Flush();
+
+                    scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city));
+
+                    Transaction.Commit();
                 }
-                catch (Exception ex)
-                {
-                    scenario.SetError(ex);
-                }   
             }
 
-            scenarios.AssertSuccess();
+            scenariosAdd.AssertSuccess();
+
+            #endregion
+
+            #region Set NULL
+
+            List<TestScenario> scenariosRemove = TestScenario.Get(TestAction.Remove);
+
+            foreach (TestScenario scenario in scenariosRemove.Where(item => item.Moment != DateTime.MaxValue)) // TODO: Where Clause -> Previously unsupported scenario with undetermined behavior
+            {
+                Debug.WriteLine($"Set NULL: {scenario}");
+
+                using (Transaction.Begin())
+                {
+                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    var city = City.Load(DatabaseUids.Cities.Metropolis);
+
+                    CleanupRelations(PERSON_LIVES_IN.Relationship);
+
+                    foreach (var relation in scenario.Initial)
+                    {
+                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till);
+                    }
+
+                    person.SetCity(null, scenario.Moment);
+
+                    Transaction.Flush();
+
+                    scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city));
+
+                    Transaction.Commit();
+                }
+            }
+
+            scenariosRemove.AssertSuccess();
+
+            #endregion
+        }
+
+        [Test]
+        public void TimeDependentCollectionAddAndRemoveLegacy()
+        {
+            #region Set Same City
+
+            List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddSame);
+
+            foreach (TestScenario scenario in scenariosAdd.Where(item => item.Moment != DateTime.MaxValue)) // TODO: Where Clause -> Previously unsupported scenario with undetermined behavior
+            {
+                Debug.WriteLine($"Add Streaming Service: {scenario}");
+
+                using (Transaction.Begin())
+                {
+                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+
+                    var initial = GetState(scenario.Initial, netflix);
+                    var expected = GetState(scenario.Expected, netflix);
+
+                    CleanupRelations(PERSON_LIVES_IN.Relationship);
+
+                    foreach (var state in initial)
+                    {
+                        foreach (var relation in state.relations)
+                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till);
+                    }
+
+                    person.StreamingServiceSubscriptions.Add(netflix, scenario.Moment);
+
+                    Transaction.Flush();
+
+                    foreach (var state in expected.Skip(1))
+                    {
+                        var actual = ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
+                        var expectedAsciiArt = TestScenario.DrawAsciiArtState(state.relations);
+                        var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
+                        Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
+                    }
+                    scenario.SetActual(ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix));
+
+                    Transaction.Commit();
+                }
+            }
+
+            scenariosAdd.AssertSuccess();
+
+            #endregion
+
+            //#region Set NULL
+
+            //List<TestScenario> scenariosRemove = TestScenario.Get(TestAction.Remove);
+
+            //foreach (TestScenario scenario in scenariosRemove.Where(item => item.Moment != DateTime.MaxValue)) // TODO: Where Clause -> Previously unsupported scenario with undetermined behavior
+            //{
+            //    Debug.WriteLine($"Remove Streaming Service: {scenario}");
+
+            //    using (Transaction.Begin())
+            //    {
+            //        var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+            //        var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+
+            //        CleanupRelations(PERSON_LIVES_IN.Relationship);
+
+            //        foreach (var relation in scenario.Initial)
+            //        {
+            //            WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till);
+            //        }
+
+            //        person.SetCity(null, scenario.Moment);
+
+            //        Transaction.Flush();
+
+            //        scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city));
+
+            //        Transaction.Commit();
+            //    }
+            //}
+
+            //scenariosRemove.AssertSuccess();
+
+            //#endregion
+
+
+            List<(List<(DateTime from, DateTime till)> relations, StreamingService target)> GetState(List<(DateTime from, DateTime till)> scenario, StreamingService item)
+            {
+                var amazon  = StreamingService.Load(DatabaseUids.StreamingServices.AmazonPrimeVideo);
+                var hboMax  = StreamingService.Load(DatabaseUids.StreamingServices.HboMax);
+                var peacock = StreamingService.Load(DatabaseUids.StreamingServices.Peacock);
+                var hulu    = StreamingService.Load(DatabaseUids.StreamingServices.Hulu);
+                var history = StreamingService.Load(DatabaseUids.StreamingServices.HistoryVault);
+
+                return new List<(List<(DateTime, DateTime)> initial, StreamingService)>()
+                {
+                    (scenario, item),
+                    (TestScenario.RelationsFromMask(0b0010), amazon),
+                    (TestScenario.RelationsFromMask(0b0101), hboMax),
+                    (TestScenario.RelationsFromMask(0b1010), peacock),
+                    (TestScenario.RelationsFromMask(0b1001), hulu),
+                    (TestScenario.RelationsFromMask(0b1111), history),
+                };
+            }
         }
 
 
@@ -672,11 +798,7 @@ namespace Blueprint41.UnitTest.Tests
                 DELETE r
                 """;
 
-            using (Transaction.Begin())
-            {
-                Transaction.RunningTransaction.Run(cypher);
-                Transaction.Commit();
-            }
+            Transaction.RunningTransaction.Run(cypher);
         }
 
         private void WriteRelation(OGM @in, Relationship relationship, OGM @out, DateTime? from, DateTime? till)
@@ -699,11 +821,7 @@ namespace Blueprint41.UnitTest.Tests
                 { "till", PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(till) },
             };
 
-            using (Transaction.Begin())
-            {
-                Transaction.RunningTransaction.Run(cypher, parameters);
-                Transaction.Commit();
-            }
+            Transaction.RunningTransaction.Run(cypher, parameters);
         }
 
         private List<(DateTime from, DateTime till)> ReadRelations(OGM @in, Relationship relationship, OGM @out)
@@ -720,18 +838,15 @@ namespace Blueprint41.UnitTest.Tests
                 { "out", @out.GetKey() },
             };
 
-            using (Transaction.Begin())
+            RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
+
+            return result.Select(delegate(RawRecord record)
             {
-                RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
+                DateTime from = Conversion<long, DateTime>.Convert(record.Values["From"].As<long>());
+                DateTime till = Conversion<long, DateTime>.Convert(record.Values["Till"].As<long>());
 
-                return result.Select(delegate(RawRecord record)
-                {
-                    DateTime from = Conversion<long, DateTime>.Convert(record.Values["From"].As<long>());
-                    DateTime till = Conversion<long, DateTime>.Convert(record.Values["Till"].As<long>());
-
-                    return (from, till);
-                }).ToList();
-            }
+                return (from, till);
+            }).ToList();
         }
         private List<(DateTime from, DateTime till, Dictionary<string, object> properties)> ReadRelationsWithProperties(OGM @in, Relationship relationship, OGM @out)
         {

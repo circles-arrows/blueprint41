@@ -12,8 +12,7 @@ namespace Blueprint41.UnitTest
     {
         public static void AssertSuccess(this List<TestScenario> scenarios)
         {
-            Assert.IsFalse(scenarios.Exists(scenario => scenario.Error is not null));
+            Assert.IsFalse(scenarios.Exists(scenario => scenario.Error));
         }
-
     }
 }

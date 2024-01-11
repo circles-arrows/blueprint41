@@ -23,8 +23,24 @@ namespace Blueprint41.UnitTest.Tests
                 _                  => throw new NotImplementedException(),
             };
             ExpectedAsciiArt = DrawAsciiArtState(Expected);
+            Actual = null;
+            ActualAsciiArt = null;
             Action = action;
-            Error = null;
+            Error = false;
+        }
+        private TestScenario(TestScenario original)
+        {
+            Mask = original.Mask;
+            Initial = original.Initial;
+            InitialAsciiArt = original.InitialAsciiArt;
+            Moment = original.Moment;
+            MomentAsciiArt = original.MomentAsciiArt;
+            Expected = original.Expected;
+            ExpectedAsciiArt = original.ExpectedAsciiArt;
+            Actual = null;
+            ActualAsciiArt = null;
+            Action = original.Action;
+            Error = false;
         }
 
         public int Mask { get; private set; }
@@ -35,7 +51,9 @@ namespace Blueprint41.UnitTest.Tests
         public TestAction Action { get; private set; }
         public List<(DateTime from, DateTime till)> Expected { get; private set; }
         public string ExpectedAsciiArt { get; private set; }
-        public Exception Error { get; private set; }
+        public List<(DateTime from, DateTime till)> Actual { get; private set; }
+        public string ActualAsciiArt { get; private set; }
+        public bool Error { get; private set; }
 
         public static List<(DateTime from, DateTime till)> RelationsFromMask(int mask)
         {
@@ -144,9 +162,11 @@ namespace Blueprint41.UnitTest.Tests
         public static readonly int bits = dates.Length - 1;
         public static readonly int count = (1 << bits);
 
-        public void SetError(Exception ex)
+        public void SetActual(List<(DateTime from, DateTime till)> actual)
         {
-            Error = ex;
+            Actual = actual;
+            ActualAsciiArt = DrawAsciiArtState(actual);
+            Error = (ActualAsciiArt != ExpectedAsciiArt);
         }
 
         public static List<TestScenario> Get(params TestAction[] actions)
@@ -170,10 +190,14 @@ namespace Blueprint41.UnitTest.Tests
 
         public override string ToString()
         {
-            if (Error is not null)
-                return $"Initial: '{InitialAsciiArt}', Moment: '{MomentAsciiArt}', Action: {Action}, Error: {Error.Message}";
+            if (Error)
+                return $"Initial: '{InitialAsciiArt}', Moment: '{MomentAsciiArt}', Action: {Action}, Expected: '{ExpectedAsciiArt}', Actual: '{ActualAsciiArt}', UNEXPECTED STATE";
 
-            return $"Initial: '{InitialAsciiArt}', Moment: '{MomentAsciiArt}', Action: {Action}, Expected: '{ExpectedAsciiArt}'";
+            return $"Initial: '{InitialAsciiArt}', Moment: '{MomentAsciiArt}', Action: {Action}, Expected: '{ExpectedAsciiArt}', Actual: '{ActualAsciiArt}'";
+        }
+        public TestScenario Clone()
+        {
+            return new TestScenario(this);
         }
     }
     public enum TestAction
