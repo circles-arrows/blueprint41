@@ -301,7 +301,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr.CreationDate = ${1} SET outr += $node", relationship.Neo4JRelationshipType, relationship.CreationDate);
+            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr = $node", relationship.Neo4JRelationshipType);
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
@@ -319,6 +319,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, DateTime moment) 
         {
+            long momentConv = Conversion<DateTime, long>.Convert(moment);
+            if (momentConv >= Conversion.MaxDateTimeInMS)
+                return; // Adding a relationship in the infinite future is equal to not adding it at all.
+
             // Expected behavior time dependent relationship:
             // ----------------------------------------------
             //
@@ -350,20 +354,20 @@ namespace Blueprint41.Neo4j.Persistence.Void
             sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment");
             sb.AppendLine("WITH in, out, rel");
             sb.AppendLine("WHERE rel is null");
-            sb.AppendLine($"CREATE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out) SET outr.CreationDate = $create SET outr += $node");
+            sb.AppendLine($"CREATE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out) SET outr = $node");
             string create = sb.ToString();
 
             Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add(relationship.StartDate, Conversion<DateTime, long>.Convert(moment));
+            node.Add(relationship.StartDate, momentConv);
             node.Add(relationship.EndDate, Conversion.MaxDateTimeInMS);
+            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
-            parameters.Add("create", Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
             parameters.Add("min", Conversion.MinDateTimeInMS);
             parameters.Add("max", Conversion.MaxDateTimeInMS);
-            parameters.Add("moment", Conversion<DateTime, long>.Convert(moment));
+            parameters.Add("moment", momentConv);
             parameters.Add("node", node);
 
             relationship.RaiseOnRelationCreate(trans);
@@ -372,8 +376,8 @@ namespace Blueprint41.Neo4j.Persistence.Void
             RawResult updateResult = trans.Run(update, parameters);
             RawResult createResult = trans.Run(create, parameters);
 
-            if (updateResult.Statistics().PropertiesSet > 0 && createResult.Statistics().RelationshipsCreated > 0)
-                throw new InvalidOperationException($"Unable to create relation '{relationship.Neo4JRelationshipType}' between {inEntity.Label.Name}('{inItem.GetKey()}') and {outEntity.Label.Name}('{outItem.GetKey()}')");
+            //if (updateResult.Statistics().PropertiesSet > 0 && createResult.Statistics().RelationshipsCreated > 0)
+            //    throw new InvalidOperationException($"Unable to create relation '{relationship.Neo4JRelationshipType}' between {inEntity.Label.Name}('{inItem.GetKey()}') and {outEntity.Label.Name}('{outItem.GetKey()}')");
         }
 
         public override void Remove(Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment, bool timedependent)
@@ -412,6 +416,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         protected virtual void Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem, DateTime moment)
         {
+            long momentConv = Conversion<DateTime, long>.Convert(moment);
+            if (momentConv >= Conversion.MaxDateTimeInMS)
+                return; // Removing a relationship in the infinite future is equal to not adding it at all.
+
             // Expected behavior time dependent relationship:
             // ----------------------------------------------
             //
@@ -445,7 +453,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             parameters.Add("min", Conversion.MinDateTimeInMS);
             parameters.Add("max", Conversion.MaxDateTimeInMS);
-            parameters.Add("moment", Conversion<DateTime, long>.Convert(moment));
+            parameters.Add("moment", momentConv);
 
             relationship.RaiseOnRelationCreate(trans);
 

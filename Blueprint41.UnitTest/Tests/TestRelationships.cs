@@ -620,7 +620,7 @@ namespace Blueprint41.UnitTest.Tests
 
             List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddSame);
 
-            foreach (TestScenario scenario in scenariosAdd.Where(item => item.Moment != DateTime.MaxValue)) // TODO: Where Clause -> Previously unsupported scenario with undetermined behavior
+            foreach (TestScenario scenario in scenariosAdd)
             {
                 Debug.WriteLine($"Set City: {scenario}");
 
@@ -654,7 +654,7 @@ namespace Blueprint41.UnitTest.Tests
 
             List<TestScenario> scenariosRemove = TestScenario.Get(TestAction.Remove);
 
-            foreach (TestScenario scenario in scenariosRemove.Where(item => item.Moment != DateTime.MaxValue)) // TODO: Where Clause -> Previously unsupported scenario with undetermined behavior
+            foreach (TestScenario scenario in scenariosRemove)
             {
                 Debug.WriteLine($"Set NULL: {scenario}");
 
@@ -688,11 +688,11 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void TimeDependentCollectionAddAndRemoveLegacy()
         {
-            #region Set Same City
+            #region Add Same City
 
             List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddSame);
 
-            foreach (TestScenario scenario in scenariosAdd.Where(item => item.Moment != DateTime.MaxValue)) // TODO: Where Clause -> Previously unsupported scenario with undetermined behavior
+            foreach (TestScenario scenario in scenariosAdd)
             {
                 Debug.WriteLine($"Add Streaming Service: {scenario}");
 
@@ -704,7 +704,7 @@ namespace Blueprint41.UnitTest.Tests
                     var initial = GetState(scenario.Initial, netflix);
                     var expected = GetState(scenario.Expected, netflix);
 
-                    CleanupRelations(PERSON_LIVES_IN.Relationship);
+                    CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
                     foreach (var state in initial)
                     {
@@ -733,39 +733,50 @@ namespace Blueprint41.UnitTest.Tests
 
             #endregion
 
-            //#region Set NULL
+            #region Remove Same City
 
-            //List<TestScenario> scenariosRemove = TestScenario.Get(TestAction.Remove);
+            List<TestScenario> scenariosRemove = TestScenario.Get(TestAction.Remove);
 
-            //foreach (TestScenario scenario in scenariosRemove.Where(item => item.Moment != DateTime.MaxValue)) // TODO: Where Clause -> Previously unsupported scenario with undetermined behavior
-            //{
-            //    Debug.WriteLine($"Remove Streaming Service: {scenario}");
+            foreach (TestScenario scenario in scenariosRemove)
+            {
+                Debug.WriteLine($"Remove Streaming Service: {scenario}");
 
-            //    using (Transaction.Begin())
-            //    {
-            //        var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-            //        var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                using (Transaction.Begin())
+                {
+                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
 
-            //        CleanupRelations(PERSON_LIVES_IN.Relationship);
+                    var initial = GetState(scenario.Initial, netflix);
+                    var expected = GetState(scenario.Expected, netflix);
 
-            //        foreach (var relation in scenario.Initial)
-            //        {
-            //            WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till);
-            //        }
+                    CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
-            //        person.SetCity(null, scenario.Moment);
+                    foreach (var state in initial)
+                    {
+                        foreach (var relation in state.relations)
+                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till);
+                    }
 
-            //        Transaction.Flush();
+                    person.StreamingServiceSubscriptions.Remove(netflix, scenario.Moment);
 
-            //        scenario.SetActual(ReadRelations(person, PERSON_LIVES_IN.Relationship, city));
+                    Transaction.Flush();
 
-            //        Transaction.Commit();
-            //    }
-            //}
+                    foreach (var state in expected.Skip(1))
+                    {
+                        var actual = ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
+                        var expectedAsciiArt = TestScenario.DrawAsciiArtState(state.relations);
+                        var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
+                        Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
+                    }
+                    scenario.SetActual(ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix));
 
-            //scenariosRemove.AssertSuccess();
+                    Transaction.Commit();
+                }
+            }
 
-            //#endregion
+            scenariosRemove.AssertSuccess();
+
+            #endregion
 
 
             List<(List<(DateTime from, DateTime till)> relations, StreamingService target)> GetState(List<(DateTime from, DateTime till)> scenario, StreamingService item)

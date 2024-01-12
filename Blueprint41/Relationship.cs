@@ -42,7 +42,7 @@ namespace Blueprint41
             OutProperty           = null;
             Guid                  = parent.GenerateGuid(name);
 
-            _properties.Add("CreationDate", new RelationshipProperty(this, PropertyType.Attribute, "CreationDate", typeof(DateTime), false, IndexType.None));
+            _properties.Add(CreationDate, new RelationshipProperty(this, PropertyType.Attribute, CreationDate, typeof(DateTime), false, IndexType.None));
         }
 
         #region Properties
@@ -116,8 +116,8 @@ namespace Blueprint41
 
             IsTimeDependent = true;
 
-            _properties.Add("StartDate", new RelationshipProperty(this, PropertyType.Attribute, "StartDate", typeof(DateTime), false, IndexType.None));
-            _properties.Add("EndDate", new RelationshipProperty(this, PropertyType.Attribute, "EndDate", typeof(DateTime), false, IndexType.None));
+            _properties.Add(StartDate, new RelationshipProperty(this, PropertyType.Attribute, StartDate, typeof(DateTime), false, IndexType.None));
+            _properties.Add(EndDate, new RelationshipProperty(this, PropertyType.Attribute, EndDate, typeof(DateTime), false, IndexType.None));
 
             return this;
         }
@@ -364,8 +364,8 @@ namespace Blueprint41
 
             IsTimeDependent = false;
 
-            _properties.Remove("StartDate"); 
-            _properties.Remove("EndDate");
+            _properties.Remove(StartDate); 
+            _properties.Remove(EndDate);
 
             throw new NotImplementedException("Apply logic to neo4j db...");
         }

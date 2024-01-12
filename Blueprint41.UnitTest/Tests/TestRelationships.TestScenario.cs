@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Blueprint41.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -153,11 +154,11 @@ namespace Blueprint41.UnitTest.Tests
 
         public static readonly DateTime[] dates = new[]
         {
-                DateTime.MinValue,
+                Conversion.MinDateTime,
                 new DateTime(1981, 4, 12, 12, 0, 4, DateTimeKind.Utc), // The first orbital flight of the space shuttle, NASA's reusable space vehicle.
                 new DateTime(1990, 4, 24, 12, 33, 51, DateTimeKind.Utc), // Apr 25, 1990 - Hubble Space Telescope launched into space.
                 new DateTime(2012, 8, 25, 0, 0, 0, DateTimeKind.Utc), // Aug 25, 2012 - Voyager 1 becomes the first spacecraft to reach interstellar space.
-                DateTime.MaxValue,
+                Conversion.MaxDateTime,
             };
         public static readonly int bits = dates.Length - 1;
         public static readonly int count = (1 << bits);
