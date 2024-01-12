@@ -52,16 +52,16 @@ namespace Blueprint41.Core
             }
         }
 
-        internal sealed override void Add(TEntity item, bool fireEvents)
+        internal sealed override void Add(TEntity item, bool fireEvents, Dictionary<string, object>? properties)
         {
-            Add(item, RunningTransaction.TransactionDate, fireEvents);
+            Add(item, RunningTransaction.TransactionDate, fireEvents, properties);
         }
         public void Add(TEntity item, DateTime? moment)
         {
             ForeignProperty?.ClearLookup(item, moment);
-            Add(item, moment, true);
+            Add(item, moment, true, null);
         }
-        internal void Add(TEntity item, DateTime? moment, bool fireEvents)
+        internal void Add(TEntity item, DateTime? moment, bool fireEvents, Dictionary<string, object>? properties)
         {
             if (item is null)
                 return;
@@ -76,13 +76,13 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
                     return;
 
-            ExecuteAction(AddAction(item, moment));
+            ExecuteAction(AddAction(item, moment, properties));
         }
-        internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
+        internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents, Dictionary<string, object>? properties)
         {
-            AddRange(items, RunningTransaction.TransactionDate, fireEvents);
+            AddRange(items, RunningTransaction.TransactionDate, fireEvents, properties);
         }
-        internal void AddRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents)
+        internal void AddRange(IEnumerable<TEntity> items, DateTime? moment, bool fireEvents, Dictionary<string, object>? properties)
         {
             LazyLoad();
             LazySet();
@@ -100,14 +100,14 @@ namespace Blueprint41.Core
                     if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
                         continue;
 
-                actions.AddLast(AddAction(item, moment));
+                actions.AddLast(AddAction(item, moment, properties));
             }
 
             ExecuteAction(actions);
         }
-        public void AddUnmanaged(TEntity item, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
+        public void AddUnmanaged(TEntity item, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
         {
-            RunningTransaction.RelationshipPersistenceProvider.AddUnmanaged(Relationship, InItem(item), OutItem(item), startDate, endDate, fullyUnmanaged);
+            RunningTransaction.RelationshipPersistenceProvider.AddUnmanaged(Relationship, InItem(item), OutItem(item), startDate, endDate, properties, fullyUnmanaged);
         }
         public sealed override bool Contains(TEntity item)
         {
@@ -372,7 +372,7 @@ namespace Blueprint41.Core
 
             return LoadedData.Where(item => item.Overlaps(moment.Value)).Select(item => item.Item).FirstOrDefault();
         }
-        protected override void SetItem(TEntity? item, DateTime? moment)
+        protected override void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
             if (ParentProperty?.PropertyType != PropertyType.Lookup)
                 throw new NotSupportedException("You cannot use SetItem on a property thats not a lookup.");
@@ -426,7 +426,7 @@ namespace Blueprint41.Core
                     }
 
                     if (Count() == 0)
-                        Add(item, moment, false);
+                        Add(item, moment, false, properties);
                 }
             }
 
@@ -468,9 +468,9 @@ namespace Blueprint41.Core
         {
             return new CollectionItem<TEntity>(parent, (TEntity)item, startDate, endDate);
         }
-        internal override RelationshipAction AddAction(OGM item, DateTime? moment)
+        internal override RelationshipAction AddAction(OGM item, DateTime? moment, Dictionary<string, object>? properties)
         {
-            return new TimeDependentAddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment);
+            return new TimeDependentAddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), moment, properties);
         }
         internal override RelationshipAction RemoveAction(OGM item, DateTime? moment)
         {
@@ -489,9 +489,9 @@ namespace Blueprint41.Core
         {
             return new TimeDependentRemoveUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate);
         }
-        internal RelationshipAction AddUnmanagedAction(OGM item, DateTime? startDate, DateTime? endDate)
+        internal RelationshipAction AddUnmanagedAction(OGM item, Dictionary<string, object>? properties, DateTime? startDate, DateTime? endDate)
         {
-            return new TimeDependentAddUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate, endDate);
+            return new TimeDependentAddUnmanagedRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), startDate, endDate, properties);
         }
     }
 }

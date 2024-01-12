@@ -12,7 +12,7 @@ namespace Blueprint41.Core
         TInterface? GetOriginalItem(DateTime? moment);
         TInterface? GetItem(DateTime? moment);
         IEnumerable<CollectionItem<TInterface>> GetItems(DateTime? from, DateTime? till);
-        void SetItem(TInterface? item, DateTime? moment);
+        void SetItem(TInterface? item, DateTime? moment, Dictionary<string, object>? properties = null);
         bool IsNull(bool isUpdate);
         void ClearLookup(DateTime? moment);
     }

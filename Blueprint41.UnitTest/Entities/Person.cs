@@ -346,25 +346,62 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN CityRelation()
+        public PERSON_LIVES_IN CityRelation(DateTime? moment = null)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            throw new NotImplementedException();
+        }
+        public List<PERSON_LIVES_IN> CityRelations()
         {
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN CityIf(Func<PERSON_LIVES_IN_ALIAS, QueryCondition> alias)
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN_ALIAS, QueryCondition> alias)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN_ALIAS, QueryCondition[]> alias)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            throw new NotImplementedException();
+        }
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            throw new NotImplementedException();
+        }
+        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN CityIf(Func<PERSON_LIVES_IN_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN CityIf(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public List<PERSON_LIVES_IN> CityWhere(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
         {
             throw new NotImplementedException();
         }
-        public void SetCity(City city, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public void SetCity(City value, DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
         {
-            throw new NotImplementedException();
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            if (AddressLine1.HasValue) properties.Add("AddressLine1", AddressLine1.Value);
+            if (AddressLine2.HasValue) properties.Add("AddressLine2", AddressLine2.Value);
+            if (AddressLine3.HasValue) properties.Add("AddressLine3", AddressLine3.Value);
+
+            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), value, moment))
+                ((ILookupHelper<City>)InnerData.City).SetItem(value, moment, properties);
         }
 
 

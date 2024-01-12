@@ -281,20 +281,20 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         private static AtomicDictionary<string, Type> typeCache = new AtomicDictionary<string, Type>();
 
-        public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
+        public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent, Dictionary<string, object> properties)
         {
             Transaction trans = Transaction.RunningTransaction;
 
             Checks(relationship, inItem, outItem);
 
             if (timedependent)
-                Add(trans, relationship, inItem, outItem, moment ?? Conversion.MinDateTime);
+                Add(trans, relationship, inItem, outItem, properties, moment ?? Conversion.MinDateTime);
             else
-                Add(trans, relationship, inItem, outItem);
+                Add(trans, relationship, inItem, outItem, properties);
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem)
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object> properties)
         {
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
@@ -317,7 +317,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             RawResult result = trans.Run(query, parameters);
         }
-        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, DateTime moment) 
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object> properties, DateTime moment) 
         {
             long momentConv = Conversion<DateTime, long>.Convert(moment);
             if (momentConv >= Conversion.MaxDateTimeInMS)
@@ -461,8 +461,11 @@ namespace Blueprint41.Neo4j.Persistence.Void
             RawResult updateResult = trans.Run(update, parameters);
         }
 
-        public override void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
+        public override void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object> properties, bool fullyUnmanaged = false)
         {
+            if (properties is not null && properties.Count > 0) 
+                throw new NotImplementedException("Support for setting properties via the unmanaged relationship interface is not implemented yet.");
+
             Transaction trans = Transaction.RunningTransaction;
 
             Checks(relationship, inItem, outItem);

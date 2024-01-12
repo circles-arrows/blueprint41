@@ -723,57 +723,127 @@ if (!DALModel.IsAbstract)
         #region Relationship Properties
 
 <#
-    foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf().Where(property => property.PropertyType != PropertyType.Attribute))
+    foreach (var attr in DALModel.GetPropertiesOfBaseTypesAndSelf().Where(property => property.PropertyType != PropertyType.Attribute))
     {
-        if (property.PropertyType == PropertyType.Collection)
+        if (attr.PropertyType == PropertyType.Collection)
         {
 #>
-        public List<<#= property.Relationship.Name #>> <#= property.Name.ToSingular() #>Relations()
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations()
         {
             throw new NotImplementedException();
         }
-        public List<<#= property.Relationship.Name #>> <#= property.Name #>Where(Func<<#= property.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<<#= property.Relationship.Name #>> <#= property.Name #>Where(Func<<#= property.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
-        public List<<#= property.Relationship.Name #>> <#= property.Name #>Where(<#= property.Relationship.Properties.ToJsonNotation() #>)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
             throw new NotImplementedException();
         }
-        public void Add<#= property.Name.ToSingular() #>(<#= property.ForeignEntity.Name #> <#= property.ForeignEntity.Name.ToCamelCase() #>, <#= property.Relationship.Properties.ToJsonNotation() #>)
+        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, <#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
             throw new NotImplementedException();
         }
 <#
         }
-        else if (property.PropertyType == PropertyType.Lookup)
+        else if (attr.PropertyType == PropertyType.Lookup)
         {
+            if (!attr.Relationship.IsTimeDependent)
+            {
 #>
-        public <#= property.Relationship.Name #> <#= property.Name #>Relation()
+        public <#= attr.Relationship.Name #> <#= attr.Name #>Relation()
         {
             throw new NotImplementedException();
         }
-        public <#= property.Relationship.Name #> <#= property.Name #>If(Func<<#= property.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public <#= property.Relationship.Name #> <#= property.Name #>If(Func<<#= property.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
-        public <#= property.Relationship.Name #> <#= property.Name #>If(<#= property.Relationship.Properties.ToJsonNotation() #>)
+        public <#= attr.Relationship.Name #> <#= attr.Name #>If(<#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
             throw new NotImplementedException();
         }
-        public void Set<#= property.Name #>(<#= property.ForeignEntity.Name #> <#= property.ForeignEntity.Name.ToCamelCase() #>, <#= property.Relationship.Properties.ToJsonNotation() #>)
+        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, <#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
             throw new NotImplementedException();
         }
 <#
+            }
+            else
+            {
+#>
+        public <#= attr.Relationship.Name #> <#= attr.Name #>Relation(DateTime? moment = null)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            throw new NotImplementedException();
+        }
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Relations()
+        {
+            throw new NotImplementedException();
+        }
+        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            throw new NotImplementedException();
+        }
+        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            throw new NotImplementedException();
+        }
+        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, <#= attr.Relationship.Properties.ToJsonNotation() #>)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            throw new NotImplementedException();
+        }
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>)
+        {
+            throw new NotImplementedException();
+        }
+        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> value, DateTime? moment, <#= attr.Relationship.Properties.ToJsonNotation() #>)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+<#
+                foreach (var p in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
+                {
+#>
+            if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value);
+<#
+                }
+#>
+
+            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), value, moment))
+                ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(value, moment, properties);
+        }
+<#
+            }
         }
     }
 #>

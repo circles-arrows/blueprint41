@@ -33,7 +33,7 @@ namespace Blueprint41.Core
         private protected override int CountInternal { get { return Count; } }
         public int Count { get { LazyLoad(); return InnerData.Count; } }
 
-        internal sealed override void Add(TEntity item, bool fireEvents)
+        internal sealed override void Add(TEntity item, bool fireEvents, Dictionary<string, object>? properties)
         {
             if (item is null)
                 return;
@@ -47,9 +47,9 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                     return;
 
-            ExecuteAction(AddAction(item, null));
+            ExecuteAction(AddAction(item, null, properties));
         }
-        internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
+        internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents, Dictionary<string, object>? properties)
         {
             LazySet();
 
@@ -66,7 +66,7 @@ namespace Blueprint41.Core
                     if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                         return;
 
-                actions.AddLast(AddAction(item, null));
+                actions.AddLast(AddAction(item, null, properties));
             }
 
             ExecuteAction(actions);
@@ -290,7 +290,7 @@ namespace Blueprint41.Core
 
             return LoadedData.First().Item;
         }
-        protected override void SetItem(TEntity? item, DateTime? moment)
+        protected override void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
             if (ParentProperty?.PropertyType != PropertyType.Lookup)
                 throw new NotSupportedException("You cannot use SetItem on a property thats not a lookup.");
@@ -339,7 +339,7 @@ namespace Blueprint41.Core
                     }
 
                     if (Count == 0)
-                        Add(item, false);
+                        Add(item, false, properties);
                 }
             }
         }
@@ -366,9 +366,9 @@ namespace Blueprint41.Core
         {
             return new RemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
         }
-        internal override RelationshipAction AddAction(OGM item, DateTime? moment)
+        internal override RelationshipAction AddAction(OGM item, DateTime? moment, Dictionary<string, object>? properties)
         {
-            return new AddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
+            return new AddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), properties);
         }
         internal override RelationshipAction ClearAction(DateTime? moment)
         {

@@ -91,20 +91,22 @@ namespace Blueprint41.Core
 
         int ICollection<TEntity>.Count { get { return CountInternal; } }
         private protected abstract int CountInternal { get; }
-        public void Add(TEntity item)
+        public void Add(TEntity item) => Add(item, null);
+        internal void Add(TEntity item, Dictionary<string, object>? properties)
         {
             ForeignProperty?.ClearLookup(item);
-            Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
+            Add(item, typeof(TEntity) != typeof(Dynamic.DynamicEntity), properties);
         }
-        internal abstract void Add(TEntity item, bool fireEvents);
-        public void AddRange(IEnumerable<TEntity> items)
+        internal abstract void Add(TEntity item, bool fireEvents, Dictionary<string, object>? properties);
+        public void AddRange(IEnumerable<TEntity> items) => AddRange(items, null);
+        internal void AddRange(IEnumerable<TEntity> items, Dictionary<string, object>? properties)
         {
             foreach (var item in items)
                 ForeignProperty?.ClearLookup(item);
 
-            AddRange(items, typeof(TEntity) != typeof(Dynamic.DynamicEntity));
+            AddRange(items, typeof(TEntity) != typeof(Dynamic.DynamicEntity), properties);
         }
-        internal abstract void AddRange(IEnumerable<TEntity> items, bool fireEvents);
+        internal abstract void AddRange(IEnumerable<TEntity> items, bool fireEvents, Dictionary<string, object>? properties);
         public abstract bool Contains(TEntity item);
         public void Remove(TEntity item)
         {
@@ -182,7 +184,7 @@ namespace Blueprint41.Core
         protected abstract TEntity? GetOriginalItem(DateTime? moment);
         protected abstract IEnumerable<CollectionItem<TEntity>> GetItems(DateTime? from, DateTime? till);
         protected abstract TEntity? GetItem(DateTime? moment);
-        protected abstract void SetItem(TEntity? item, DateTime? moment);
+        protected abstract void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties);
         protected abstract bool IsNull(bool isUpdate);
         protected abstract void ClearLookup(DateTime? moment);
 
@@ -201,9 +203,9 @@ namespace Blueprint41.Core
             return GetItems(from, till);
         }
 
-        void ILookupHelper<TEntity>.SetItem(TEntity? item, DateTime? moment)
+        void ILookupHelper<TEntity>.SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
-            SetItem(item, moment);
+            SetItem(item, moment, properties);
         }
 
         bool ILookupHelper<TEntity>.IsNull(bool isUpdate)
