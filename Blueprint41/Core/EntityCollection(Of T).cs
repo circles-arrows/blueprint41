@@ -305,7 +305,7 @@ namespace Blueprint41.Core
                 EagerLoadLogic.Invoke(item);
 
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
-            if (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null))
+            if ((properties is not null && properties.Count > 0) || (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null)))
             {
                 if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
                 {

@@ -391,7 +391,7 @@ namespace Blueprint41.Core
                 EagerLoadLogic.Invoke(item);
 
             List<CollectionItem<TEntity>> currentItem = InnerData.Where(e => e.Overlaps(moment, null)).ToList();
-            if (NeedsToAssign(currentItem, item, moment))
+            if (NeedsToAssign(currentItem, item, moment, properties))
             {
                 if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
@@ -435,8 +435,11 @@ namespace Blueprint41.Core
             }
 
 
-            static bool NeedsToAssign(List<CollectionItem<TEntity>> currentItem, TEntity? assignValue, DateTime? moment)
+            static bool NeedsToAssign(List<CollectionItem<TEntity>> currentItem, TEntity? assignValue, DateTime? moment, Dictionary<string, object>? properties)
             {
+                if (properties is not null && properties.Count > 0)
+                    return true;
+
                 if (!currentItem.Any() && assignValue is null)
                     return false;
 

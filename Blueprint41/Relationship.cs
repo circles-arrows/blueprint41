@@ -507,6 +507,38 @@ namespace Blueprint41
         }
         private IReadOnlyDictionary<string, RelationshipProperty>? namedProperties = null;
 
+        internal IReadOnlyList<string> ExcludedProperties()
+        {
+            if (Parent.IsUpgraded)
+            {
+                if (excludedProperties is null)
+                    excludedProperties = Get();
+
+                return excludedProperties;
+            }
+            else
+            {
+                return Get();
+            }
+
+            List<string> Get()
+            {
+                List<string> excl = new List<string>();
+                
+                if (!string.IsNullOrEmpty(StartDate))
+                    excl.Add(StartDate);
+                
+                if (!string.IsNullOrEmpty(EndDate))
+                    excl.Add(EndDate);
+                
+                if (!string.IsNullOrEmpty(CreationDate))
+                    excl.Add(CreationDate);
+                
+                return excl;
+            }
+        }
+        private List<string>? excludedProperties = null;
+
         #endregion
 
         private string ComputeAliasName(string? name, string? neo4JRelationshipType, Property? outProperty)

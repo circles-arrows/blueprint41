@@ -430,8 +430,7 @@ namespace Datastore.Manipulation
             if (AddressLine2.HasValue) properties.Add("AddressLine2", AddressLine2.Value);
             if (AddressLine3.HasValue) properties.Add("AddressLine3", AddressLine3.Value);
 
-            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), city, moment))
-                ((ILookupHelper<City>)InnerData.City).SetItem(city, moment, properties);
+            ((ILookupHelper<City>)InnerData.City).SetItem(city, moment, properties);
         }
 
 

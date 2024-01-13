@@ -16,13 +16,25 @@ namespace Blueprint41.UnitTest.Tests
             InitialAsciiArt = DrawAsciiArtState(Initial);
             Moment = moment;
             MomentAsciiArt = DrawAsciiArtMoment(moment);
-            Expected = action switch
+            switch (action)
             {
-                TestAction.AddSame => RelationsFromMask(AdjustMaskForAdd(mask, moment)),
-                TestAction.AddDiff => RelationsFromMask(AdjustMaskForRemove(mask, moment)).Union(RelationsFromMask(AdjustMaskForAdd(0, moment))).ToList(),
-                TestAction.Remove  => RelationsFromMask(AdjustMaskForRemove(mask, moment)),
-                _                  => throw new NotImplementedException(),
-            };
+                case TestAction.AddSame:
+                    Expected = RelationsFromMask(AdjustMaskForAdd(mask, moment));
+                    ExpectedEx = Expected.Select(x => (x.from, x.till, PropertySet.Same)).ToList();
+                    break;
+                case TestAction.AddDiff:
+                    var set1 = RelationsFromMask(AdjustMaskForRemove(mask, moment));
+                    var set2 = RelationsFromMask(AdjustMaskForAdd(0, moment));
+                    Expected = set1.Union(set2).ToList();
+                    ExpectedEx = set1.Select(x => (x.from, x.till, PropertySet.Before)).Union(set2.Select(x => (x.from, x.till, PropertySet.After))).ToList();
+                    break;
+                case TestAction.Remove:
+                    Expected = RelationsFromMask(AdjustMaskForRemove(mask, moment));
+                    ExpectedEx = Expected.Select(x => (x.from, x.till, PropertySet.Same)).ToList();
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
             ExpectedAsciiArt = DrawAsciiArtState(Expected);
             Actual = null;
             ActualAsciiArt = null;
@@ -37,6 +49,7 @@ namespace Blueprint41.UnitTest.Tests
             Moment = original.Moment;
             MomentAsciiArt = original.MomentAsciiArt;
             Expected = original.Expected;
+            ExpectedEx = original.ExpectedEx;
             ExpectedAsciiArt = original.ExpectedAsciiArt;
             Actual = null;
             ActualAsciiArt = null;
@@ -51,6 +64,7 @@ namespace Blueprint41.UnitTest.Tests
         public string MomentAsciiArt { get; private set; }
         public TestAction Action { get; private set; }
         public List<(DateTime from, DateTime till)> Expected { get; private set; }
+        private List<(DateTime from, DateTime till, PropertySet set)> ExpectedEx { get; set; }
         public string ExpectedAsciiArt { get; private set; }
         public List<(DateTime from, DateTime till)> Actual { get; private set; }
         public string ActualAsciiArt { get; private set; }
@@ -169,6 +183,11 @@ namespace Blueprint41.UnitTest.Tests
             ActualAsciiArt = DrawAsciiArtState(actual);
             Error = (ActualAsciiArt != ExpectedAsciiArt);
         }
+        public PropertySet TestSet(DateTime from, DateTime till)
+        {
+            PropertySet? set = ExpectedEx.Where(x => x.from == from && x.till == till).Select(x => (PropertySet?)x.set).FirstOrDefault();
+            return set ?? PropertySet.Same;
+        }
 
         public static List<TestScenario> Get(params TestAction[] actions)
         {
@@ -206,5 +225,11 @@ namespace Blueprint41.UnitTest.Tests
         AddSame,
         AddDiff,
         Remove,
+    }
+    public enum PropertySet
+    {
+        Before,
+        After,
+        Same,
     }
 }

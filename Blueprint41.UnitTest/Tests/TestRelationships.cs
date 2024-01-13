@@ -774,7 +774,7 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
-        public void TimeDependentLookupSetWithSameProperties()
+        public void TimeDependentLookupSetWithProperties()
         {
             #region Set Same City
 
@@ -815,6 +815,68 @@ namespace Blueprint41.UnitTest.Tests
                         Assert.AreEqual(properties.Count, actual.Count);
                         foreach (var value in properties)
                             Assert.AreEqual(value.Value, actual.GetValue(value.Key));
+                    }
+
+                    Transaction.Commit();
+                }
+            }
+
+            scenariosAdd.AssertSuccess();
+
+            #endregion
+
+            #region Set Same City with Different Properties
+
+           scenariosAdd = TestScenario.Get(TestAction.AddDiff);
+
+            foreach (TestScenario scenario in scenariosAdd)
+            {
+                Debug.WriteLine($"Set City: {scenario}");
+
+                using (Transaction.Begin())
+                {
+                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    var city = City.Load(DatabaseUids.Cities.Metropolis);
+                    var addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
+                    var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
+                    var properties = new Dictionary<string, object>()
+                    {
+                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr1 },
+                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addr2 },
+                    };
+
+                    CleanupRelations(PERSON_LIVES_IN.Relationship);
+
+                    foreach (var relation in scenario.Initial)
+                    {
+                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till, properties);
+                    }
+
+                    var addr3 = CityUids.AddressLines.Metropolis.ClarkKent_Later[0];
+                    var properties2 = new Dictionary<string, object>()
+                    {
+                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr3 },
+                    };
+
+                    person.SetCity(city, scenario.Moment, AddressLine1: addr3);
+
+                    Transaction.Flush();
+
+                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city);
+                    scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
+
+                    foreach ((DateTime from, DateTime till, Dictionary<string, object> properties) actual in relationsWithProperties)
+                    {
+                        var p = scenario.TestSet(actual.from, actual.till) switch
+                        {
+                            PropertySet.Before => properties,
+                            PropertySet.After => properties2,
+                            _ => throw new NotSupportedException(),
+                        };
+
+                        Assert.AreEqual(p.Count, actual.properties.Count);
+                        foreach (var value in p)
+                            Assert.AreEqual(value.Value, actual.properties.GetValue(value.Key));
                     }
 
                     Transaction.Commit();
@@ -877,7 +939,7 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
-        public void TimeDependentCollectionAddAndRemoveWithSameProperties()
+        public void TimeDependentCollectionAddAndRemoveWithProperties()
         {
             #region Add Same Streaming Service
 
@@ -930,6 +992,76 @@ namespace Blueprint41.UnitTest.Tests
                             Assert.AreEqual(value.Value, actual.GetValue(value.Key));
                     }
 
+                    Transaction.Commit();
+                }
+            }
+
+            scenariosAdd.AssertSuccess();
+
+            #endregion
+
+            #region Add Same Streaming Service with Different Properties
+
+            scenariosAdd = TestScenario.Get(TestAction.AddDiff);
+
+            foreach (TestScenario scenario in scenariosAdd)
+            {
+                Debug.WriteLine($"Add Streaming Service: {scenario}");
+
+                using (Transaction.Begin())
+                {
+                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                    var price = StreamingServiceUids.Rates.Hulu;
+                    var properties = new Dictionary<string, object>()
+                    {
+                        { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price },
+                    };
+
+                    var initial = GetSubscribedToState(scenario.Initial, netflix, price);
+                    var expected = GetSubscribedToState(scenario.Expected, netflix, price);
+
+                    CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
+
+                    foreach (var state in initial)
+                    {
+                        foreach (var relation in state.relations)
+                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, properties);
+                    }
+                    var price2 = StreamingServiceUids.Rates.HuluAdFree;
+                    var properties2 = new Dictionary<string, object>()
+                    {
+                        { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price2 },
+                    };
+
+                    person.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price2);
+
+                    Transaction.Flush();
+
+                    foreach (var state in expected.Skip(1))
+                    {
+                        var actual = ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
+                        var expectedAsciiArt = TestScenario.DrawAsciiArtState(state.relations);
+                        var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
+                        Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
+                    }
+
+                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix);
+                    scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
+
+                    foreach ((DateTime from, DateTime till, Dictionary<string, object> properties) actual in relationsWithProperties)
+                    {
+                        var p = scenario.TestSet(actual.from, actual.till) switch
+                        {
+                            PropertySet.Before => properties,
+                            PropertySet.After => properties2,
+                            _ => throw new NotSupportedException(),
+                        };
+
+                        Assert.AreEqual(p.Count, actual.properties.Count);
+                        foreach (var value in p)
+                            Assert.AreEqual(value.Value, actual.properties.GetValue(value.Key));
+                    }
                     Transaction.Commit();
                 }
             }
@@ -994,188 +1126,6 @@ namespace Blueprint41.UnitTest.Tests
             }
 
             scenariosRemove.AssertSuccess();
-
-            #endregion
-        }
-
-        [Test]
-        public void TimeDependentLookupSetWithDifferentProperties()
-        {
-            #region Set Same City
-
-            List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddDiff);
-
-            foreach (TestScenario scenario in scenariosAdd)
-            {
-                Debug.WriteLine($"Set City: {scenario}");
-
-                using (Transaction.Begin())
-                {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var city = City.Load(DatabaseUids.Cities.Metropolis);
-                    var addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
-                    var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
-                    var properties = new Dictionary<string, object>()
-                    {
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr1 },
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addr2 },
-                    };
-
-                    CleanupRelations(PERSON_LIVES_IN.Relationship);
-
-                    foreach (var relation in scenario.Initial)
-                    {
-                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till, properties);
-                    }
-
-                    addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Later[0];
-                    addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Later[1];
-                    properties = new Dictionary<string, object>()
-                    {
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr1 },
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addr2 },
-                    };
-
-                    person.SetCity(city, scenario.Moment, AddressLine1: addr1, AddressLine2: addr2);
-
-                    Transaction.Flush();
-
-                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city);
-                    scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
-
-                    foreach (var actual in relationsWithProperties.Select(item => item.properties))
-                    {
-                        Assert.AreEqual(properties.Count, actual.Count);
-                        foreach (var value in properties)
-                            Assert.AreEqual(value.Value, actual.GetValue(value.Key));
-                    }
-
-                    Transaction.Commit();
-                }
-            }
-
-            scenariosAdd.AssertSuccess();
-
-            #endregion
-
-            #region Set NULL
-
-            List<TestScenario> scenariosRemove = TestScenario.Get(TestAction.Remove);
-
-            foreach (TestScenario scenario in scenariosRemove)
-            {
-                Debug.WriteLine($"Set NULL: {scenario}");
-
-                using (Transaction.Begin())
-                {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var city = City.Load(DatabaseUids.Cities.Metropolis);
-                    var addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[0];
-                    var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
-                    var properties = new Dictionary<string, object>()
-                    {
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr1 },
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addr2 },
-                    };
-
-                    CleanupRelations(PERSON_LIVES_IN.Relationship);
-
-                    foreach (var relation in scenario.Initial)
-                    {
-                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, relation.from, relation.till, properties);
-                    }
-
-                    addr1 = CityUids.AddressLines.Metropolis.ClarkKent_Later[0];
-                    addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Later[1];
-                    properties = new Dictionary<string, object>()
-                    {
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr1 },
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addr2 },
-                    };
-
-                    // person.SetCity(null, scenario.Moment); // We could use this overload, in theory it should do the same as below. However, it's already tested in the Legacy tests.
-                    person.SetCity(null, scenario.Moment, AddressLine1: addr1, AddressLine2: addr2);
-
-                    Transaction.Flush();
-
-                    var relationsWithProperties = ReadRelationsWithProperties(person, PERSON_LIVES_IN.Relationship, city);
-                    scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
-
-                    foreach (var actual in relationsWithProperties.Select(item => item.properties))
-                    {
-                        Assert.AreEqual(properties.Count, actual.Count);
-                        foreach (var value in properties)
-                            Assert.AreEqual(value.Value, actual.GetValue(value.Key));
-                    }
-
-                    Transaction.Commit();
-                }
-            }
-
-            scenariosRemove.AssertSuccess();
-
-            #endregion
-        }
-
-        [Test]
-        public void TimeDependentCollectionAddAndRemoveWithDifferentProperties()
-        {
-            #region Add Same Streaming Service with Different Properties
-
-            List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddDiff);
-
-            foreach (TestScenario scenario in scenariosAdd)
-            {
-                Debug.WriteLine($"Add Streaming Service: {scenario}");
-
-                using (Transaction.Begin())
-                {
-                    var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                    var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
-                    var price = StreamingServiceUids.Rates.Netflix;
-                    var properties = new Dictionary<string, object>()
-                    {
-                        { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), price },
-                    };
-
-                    var initial = GetSubscribedToState(scenario.Initial, netflix, price);
-                    var expected = GetSubscribedToState(scenario.Expected, netflix, price);
-
-                    CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
-
-                    foreach (var state in initial)
-                    {
-                        foreach (var relation in state.relations)
-                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, properties);
-                    }
-
-                    person.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price);
-
-                    Transaction.Flush();
-
-                    foreach (var state in expected.Skip(1))
-                    {
-                        var actual = ReadRelations(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target);
-                        var expectedAsciiArt = TestScenario.DrawAsciiArtState(state.relations);
-                        var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
-                        Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
-                    }
-
-                    var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix);
-                    scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
-
-                    foreach (var actual in relationsWithProperties.Select(item => item.properties))
-                    {
-                        Assert.AreEqual(properties.Count, actual.Count);
-                        foreach (var value in properties)
-                            Assert.AreEqual(value.Value, actual.GetValue(value.Key));
-                    }
-
-                    Transaction.Commit();
-                }
-            }
-
-            scenariosAdd.AssertSuccess();
 
             #endregion
         }
