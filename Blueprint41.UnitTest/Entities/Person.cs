@@ -262,9 +262,14 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default)
+        public void AddRestaurant(Restaurant restaurant)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            ((ILookupHelper<Restaurant>)InnerData.Restaurants).AddItem(restaurant, null, properties);
+        }
+        public void RemoveRestaurant(Restaurant restaurant)
+        {
+            Restaurants.Remove(restaurant);
         }
         public List<PERSON_DIRECTED> DirectedMovieRelations()
         {
@@ -282,9 +287,14 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddDirectedMovie(Movie movie, JsNotation<System.DateTime> CreationDate = default)
+        public void AddDirectedMovie(Movie movie)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            ((ILookupHelper<Movie>)InnerData.DirectedMovies).AddItem(movie, null, properties);
+        }
+        public void RemoveDirectedMovie(Movie movie)
+        {
+            DirectedMovies.Remove(movie);
         }
         public List<ACTED_IN> ActedInMovieRelations()
         {
@@ -302,9 +312,14 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddActedInMovie(Movie movie, JsNotation<System.DateTime> CreationDate = default)
+        public void AddActedInMovie(Movie movie)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            ((ILookupHelper<Movie>)InnerData.ActedInMovies).AddItem(movie, null, properties);
+        }
+        public void RemoveActedInMovie(Movie movie)
+        {
+            ActedInMovies.Remove(movie);
         }
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionRelations()
         {
@@ -322,9 +337,18 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddStreamingServiceSubscription(StreamingService streamingService, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public void AddStreamingServiceSubscription(StreamingService streamingService, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
-            throw new NotImplementedException();
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            if (MonthlyFee.HasValue) properties.Add("MonthlyFee", MonthlyFee.Value);
+            ((ILookupHelper<StreamingService>)InnerData.StreamingServiceSubscriptions).AddItem(streamingService, moment, properties);
+        }
+        public void RemoveStreamingServiceSubscription(StreamingService streamingService, DateTime? moment)
+        {
+            StreamingServiceSubscriptions.Remove(streamingService, moment);
         }
         public List<WATCHED_MOVIE> WatchedMovieRelations()
         {
@@ -342,9 +366,15 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddWatchedMovie(Movie movie, JsNotation<System.DateTime> CreationDate = default, JsNotation<int> MinutesWatched = default)
+        public void AddWatchedMovie(Movie movie, JsNotation<int> MinutesWatched = default)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            if (MinutesWatched.HasValue) properties.Add("MinutesWatched", MinutesWatched.Value);
+            ((ILookupHelper<Movie>)InnerData.WatchedMovies).AddItem(movie, null, properties);
+        }
+        public void RemoveWatchedMovie(Movie movie)
+        {
+            WatchedMovies.Remove(movie);
         }
         public PERSON_LIVES_IN CityRelation(DateTime? moment = null)
         {
@@ -390,7 +420,7 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void SetCity(City value, DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public void SetCity(City city, DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -400,8 +430,8 @@ namespace Datastore.Manipulation
             if (AddressLine2.HasValue) properties.Add("AddressLine2", AddressLine2.Value);
             if (AddressLine3.HasValue) properties.Add("AddressLine3", AddressLine3.Value);
 
-            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), value, moment))
-                ((ILookupHelper<City>)InnerData.City).SetItem(value, moment, properties);
+            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), city, moment))
+                ((ILookupHelper<City>)InnerData.City).SetItem(city, moment, properties);
         }
 
 

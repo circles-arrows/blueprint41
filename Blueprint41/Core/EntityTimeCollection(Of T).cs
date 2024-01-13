@@ -372,6 +372,10 @@ namespace Blueprint41.Core
 
             return LoadedData.Where(item => item.Overlaps(moment.Value)).Select(item => item.Item).FirstOrDefault();
         }
+        protected override void AddItem(TEntity item, DateTime? moment, Dictionary<string, object>? properties)
+        {
+            Add(item, moment, true, properties);
+        }
         protected override void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
             if (ParentProperty?.PropertyType != PropertyType.Lookup)

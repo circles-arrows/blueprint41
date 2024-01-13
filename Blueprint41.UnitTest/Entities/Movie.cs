@@ -253,9 +253,13 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void SetDirector(Person person, JsNotation<System.DateTime> CreationDate = default)
+        public void SetDirector(Person person)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+
+            if (LazySet(Members.Director, ((ILookupHelper<Person>)InnerData.Director).GetItems(null, null), person, null))
+                ((ILookupHelper<Person>)InnerData.Director).SetItem(person, null, properties);
+
         }
         public List<ACTED_IN> ActorRelations()
         {
@@ -273,9 +277,14 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddActor(Person person, JsNotation<System.DateTime> CreationDate = default)
+        public void AddActor(Person person)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            ((ILookupHelper<Person>)InnerData.Actors).AddItem(person, null, properties);
+        }
+        public void RemoveActor(Person person)
+        {
+            Actors.Remove(person);
         }
         public MOVIE_CERTIFICATION CertificationRelation()
         {
@@ -293,9 +302,18 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void SetCertification(Rating rating, JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
+        public void SetCertification(Rating rating, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            if (FrighteningIntense.HasValue) properties.Add("FrighteningIntense", FrighteningIntense.Value);
+            if (ViolenceGore.HasValue) properties.Add("ViolenceGore", ViolenceGore.Value);
+            if (Profanity.HasValue) properties.Add("Profanity", Profanity.Value);
+            if (Substances.HasValue) properties.Add("Substances", Substances.Value);
+            if (SexAndNudity.HasValue) properties.Add("SexAndNudity", SexAndNudity.Value);
+
+            if (LazySet(Members.Certification, ((ILookupHelper<Rating>)InnerData.Certification).GetItems(null, null), rating, null))
+                ((ILookupHelper<Rating>)InnerData.Certification).SetItem(rating, null, properties);
+
         }
 
 

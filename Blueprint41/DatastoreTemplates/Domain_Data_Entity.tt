@@ -727,6 +727,8 @@ if (!DALModel.IsAbstract)
     {
         if (attr.PropertyType == PropertyType.Collection)
         {
+            if (!attr.Relationship.IsTimeDependent)
+            {
 #>
         public List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations()
         {
@@ -744,11 +746,66 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, <#= attr.Relationship.Properties.ToJsonNotation() #>)
+        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship) #>)
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+<#
+                foreach (var p in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
+                {
+#>
+            if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value);
+<#
+                }
+#>
+            ((ILookupHelper<<#= attr.ForeignEntity.Name #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
+        }
+        public void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>)
+        {
+            <#= attr.Name #>.Remove(<#= attr.ForeignEntity.Name.ToCamelCase() #>);
+        }
+<#
+            }
+            else
+            {
+#>
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations()
         {
             throw new NotImplementedException();
         }
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        {
+            throw new NotImplementedException();
+        }
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>)
+        {
+            throw new NotImplementedException();
+        }
+        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship) #>)
+        {
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
+                foreach (var p in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
+                {
+#>
+            if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value);
+<#
+                }
+#>
+            ((ILookupHelper<<#= attr.ForeignEntity.Name #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
+        }
+        public void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment)
+        {
+            <#= attr.Name #>.Remove(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment);
+        }
+<#
+            }
         }
         else if (attr.PropertyType == PropertyType.Lookup)
         {
@@ -771,9 +828,21 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, <#= attr.Relationship.Properties.ToJsonNotation() #>)
+        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship) #>)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+<#
+                foreach (var p in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
+                {
+#>
+            if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value);
+<#
+                }
+#>
+
+            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(null, null), <#= attr.ForeignEntity.Name.ToCamelCase() #>, null))
+                ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
+
         }
 <#
             }
@@ -824,7 +893,7 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> value, DateTime? moment, <#= attr.Relationship.Properties.ToJsonNotation() #>)
+        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship) #>)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -839,8 +908,8 @@ if (!DALModel.IsAbstract)
                 }
 #>
 
-            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), value, moment))
-                ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(value, moment, properties);
+            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), <#= attr.ForeignEntity.Name.ToCamelCase() #>, moment))
+                ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
         }
 <#
             }

@@ -281,7 +281,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         private static AtomicDictionary<string, Type> typeCache = new AtomicDictionary<string, Type>();
 
-        public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent, Dictionary<string, object> properties)
+        public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent, Dictionary<string, object>? properties)
         {
             Transaction trans = Transaction.RunningTransaction;
 
@@ -294,7 +294,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object> properties)
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties)
         {
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
@@ -317,7 +317,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             RawResult result = trans.Run(query, parameters);
         }
-        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object> properties, DateTime moment) 
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties, DateTime moment) 
         {
             long momentConv = Conversion<DateTime, long>.Convert(moment);
             if (momentConv >= Conversion.MaxDateTimeInMS)
@@ -357,10 +357,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
             sb.AppendLine($"CREATE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out) SET outr = $node");
             string create = sb.ToString();
 
-            Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add(relationship.StartDate, momentConv);
-            node.Add(relationship.EndDate, Conversion.MaxDateTimeInMS);
-            node.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
+            Dictionary<string, object> node = properties ?? new Dictionary<string, object>();
+            node.AddOrSet(relationship.StartDate, momentConv);
+            node.AddOrSet(relationship.EndDate, Conversion.MaxDateTimeInMS);
+            node.AddOrSet(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());

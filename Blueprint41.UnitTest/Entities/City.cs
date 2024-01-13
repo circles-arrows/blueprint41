@@ -237,9 +237,14 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddRestaurant(Restaurant restaurant, JsNotation<System.DateTime> CreationDate = default)
+        public void AddRestaurant(Restaurant restaurant)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            ((ILookupHelper<Restaurant>)InnerData.Restaurants).AddItem(restaurant, null, properties);
+        }
+        public void RemoveRestaurant(Restaurant restaurant)
+        {
+            Restaurants.Remove(restaurant);
         }
 
 

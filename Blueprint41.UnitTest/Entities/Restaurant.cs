@@ -227,9 +227,13 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void SetCity(City city, JsNotation<System.DateTime> CreationDate = default)
+        public void SetCity(City city)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+
+            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(null, null), city, null))
+                ((ILookupHelper<City>)InnerData.City).SetItem(city, null, properties);
+
         }
         public List<PERSON_EATS_AT> PersonRelations()
         {
@@ -247,9 +251,14 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddPerson(Person person, JsNotation<System.DateTime> CreationDate = default)
+        public void AddPerson(Person person)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            ((ILookupHelper<Person>)InnerData.Persons).AddItem(person, null, properties);
+        }
+        public void RemovePerson(Person person)
+        {
+            Persons.Remove(person);
         }
 
 

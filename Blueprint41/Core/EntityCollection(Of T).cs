@@ -290,6 +290,10 @@ namespace Blueprint41.Core
 
             return LoadedData.First().Item;
         }
+        protected override void AddItem(TEntity item, DateTime? moment, Dictionary<string, object>? properties)
+        {
+            Add(item, true, properties);
+        }
         protected override void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
             if (ParentProperty?.PropertyType != PropertyType.Lookup)

@@ -184,6 +184,7 @@ namespace Blueprint41.Core
         protected abstract TEntity? GetOriginalItem(DateTime? moment);
         protected abstract IEnumerable<CollectionItem<TEntity>> GetItems(DateTime? from, DateTime? till);
         protected abstract TEntity? GetItem(DateTime? moment);
+        protected abstract void AddItem(TEntity item, DateTime? moment, Dictionary<string, object>? properties);
         protected abstract void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties);
         protected abstract bool IsNull(bool isUpdate);
         protected abstract void ClearLookup(DateTime? moment);
@@ -203,6 +204,10 @@ namespace Blueprint41.Core
             return GetItems(from, till);
         }
 
+        void ILookupHelper<TEntity>.AddItem(TEntity item, DateTime? moment, Dictionary<string, object>? properties)
+        {
+            AddItem(item, moment, properties);
+        }
         void ILookupHelper<TEntity>.SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
             SetItem(item, moment, properties);

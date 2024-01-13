@@ -223,9 +223,18 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public void AddSubscriber(Person person, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public void AddSubscriber(Person person, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
-            throw new NotImplementedException();
+            if (moment is null)
+                moment = DateTime.UtcNow;
+
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            if (MonthlyFee.HasValue) properties.Add("MonthlyFee", MonthlyFee.Value);
+            ((ILookupHelper<Person>)InnerData.Subscribers).AddItem(person, moment, properties);
+        }
+        public void RemoveSubscriber(Person person, DateTime? moment)
+        {
+            Subscribers.Remove(person, moment);
         }
 
 

@@ -376,13 +376,25 @@ namespace Blueprint41.DatastoreTemplates
                 .Replace("&apos;", "'");
         }
 
-        public static string ToJsonNotation(this IEnumerable<Property> properties)
+        public static string ToJsonNotation(this IEnumerable<Property> properties, Relationship? relation = null, bool prepend = false)
         {
-            return string.Join(", ", properties
-                                        .Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && (p.SystemReturnType.Namespace == "System" || p.SystemReturnType.IsEnum))
-                                        .OrderBy(p => p.Name)
-                                        .Select(p => $"JsNotation<{p.SystemReturnType!.ToCSharp()}{((p.SystemReturnType!.IsValueType && p.Nullable) ? "?" : "")}> {p.Name} = default")
-                                        );
+            if (relation is not null)
+                prepend = true;
+
+            IEnumerable<Property> items = properties
+                .Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && (p.SystemReturnType.Namespace == "System" || p.SystemReturnType.IsEnum))
+                .OrderBy(p => p.Name);
+
+            if (relation is not null)
+                items = items.Where(p => p.Name != relation.StartDate && p.Name != relation.EndDate && p.Name != relation.CreationDate);
+
+            string[] content = items.Select(p => $"JsNotation<{p.SystemReturnType!.ToCSharp()}{((p.SystemReturnType!.IsValueType && p.Nullable) ? "?" : "")}> {p.Name} = default").ToArray();
+            if (content.Length == 0)
+                return string.Empty;
+            else if (prepend)
+                return string.Concat(", ", string.Join(", ", content));
+            else
+                return string.Join(", ", content);
         }
     }
 }
