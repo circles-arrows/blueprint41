@@ -9,6 +9,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation
 {
@@ -17,6 +18,16 @@ namespace Datastore.Manipulation
     /// </summary>
     public partial class ACTED_IN
     {
+        private ACTED_IN(string elementId, Person @in, Movie @out, Dictionary<string, object> properties)
+        {
+            _elementId = elementId;
+            
+            Person = @in;
+            Movie = @out;
+            
+            CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
+        }
+
         private string _elementId { get; set; }
 
         /// <summary>
@@ -27,7 +38,7 @@ namespace Datastore.Manipulation
         /// <summary>
         /// Restaurant (Out Node)
         /// </summary>
-        public Restaurant Restaurant { get; private set; }
+        public Movie Movie { get; private set; }
 
         public System.DateTime CreationDate { get; private set; }
 
@@ -35,17 +46,41 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public static List<ACTED_IN> Where(Func<ACTED_IN_ALIAS, QueryCondition> alias)
+        public static List<ACTED_IN> Where(Func<(q.PersonAlias In, q.ACTED_IN_ALIAS Rel, q.MovieAlias Out), QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return Load(query);
         }
-        public static List<ACTED_IN> Where(Func<ACTED_IN_ALIAS, QueryCondition[]> alias)
+        public static List<ACTED_IN> Where(Func<(q.PersonAlias In, q.ACTED_IN_ALIAS Rel, q.MovieAlias Out), QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return Load(query);
         }
         public static List<ACTED_IN> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
             throw new NotImplementedException();
+        }
+        private static List<ACTED_IN> Load(ICompiled query)
+        {
+            var context = query.GetExecutionContext();
+            var results = context.Execute(NodeMapping.AsWritableEntity);
+
+            return results.Select(result => new ACTED_IN(
+                result.elementId,
+                result.@in,
+                result.@out,
+                result.properties
+            )).ToList();
         }
 
         public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["ACTED_IN"]);

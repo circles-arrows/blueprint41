@@ -231,8 +231,7 @@ namespace Datastore.Manipulation
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 
-            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(null, null), city, null))
-                ((ILookupHelper<City>)InnerData.City).SetItem(city, null, properties);
+            ((ILookupHelper<City>)InnerData.City).SetItem(city, null, properties);
 
         }
         public List<PERSON_EATS_AT> PersonRelations()

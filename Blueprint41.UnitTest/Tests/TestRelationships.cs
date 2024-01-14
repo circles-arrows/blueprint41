@@ -27,7 +27,7 @@ namespace Blueprint41.UnitTest.Tests
 
             TearDown();
         }
-        
+
         [SetUp]
         public void Setup()
         {
@@ -498,14 +498,14 @@ namespace Blueprint41.UnitTest.Tests
 
             public static class Rates
             {
-                public static readonly decimal Netflix          =  6.99m;
-                public static readonly decimal Hulu             =  7.99m;
-                public static readonly decimal HuluAdFree       = 17.99m;
-                public static readonly decimal Peacock          =  5.99m;
-                public static readonly decimal AmazonPrimeVideo =  8.99m;
-                public static readonly decimal HboMax           =  9.99m;
-                public static readonly decimal DisneyPlus       =  7.99m;
-                public static readonly decimal HistoryVault     =  4.99m;
+                public static readonly decimal Netflix = 6.99m;
+                public static readonly decimal Hulu = 7.99m;
+                public static readonly decimal HuluAdFree = 17.99m;
+                public static readonly decimal Peacock = 5.99m;
+                public static readonly decimal AmazonPrimeVideo = 8.99m;
+                public static readonly decimal HboMax = 9.99m;
+                public static readonly decimal DisneyPlus = 7.99m;
+                public static readonly decimal HistoryVault = 4.99m;
             }
 
             public (StreamingService streamingService, decimal monthlyFee, decimal? monthlyFeeChanged)[] StreamingServices => new[]
@@ -606,6 +606,8 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         #endregion
+
+        #region CRUD
 
         [Test]
         public void TimeDependentLookupSetLegacy()
@@ -827,7 +829,7 @@ namespace Blueprint41.UnitTest.Tests
 
             #region Set Same City with Different Properties
 
-           scenariosAdd = TestScenario.Get(TestAction.AddDiff);
+            scenariosAdd = TestScenario.Get(TestAction.AddDiff);
 
             foreach (TestScenario scenario in scenariosAdd)
             {
@@ -1110,7 +1112,7 @@ namespace Blueprint41.UnitTest.Tests
                         var actualAsciiArt = TestScenario.DrawAsciiArtState(actual);
                         Assert.AreEqual(expectedAsciiArt, actualAsciiArt);
                     }
-                    
+
                     var relationsWithProperties = ReadRelationsWithProperties(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, netflix);
                     scenario.SetActual(relationsWithProperties.Select(item => (item.from, item.till)).ToList());
 
@@ -1129,6 +1131,35 @@ namespace Blueprint41.UnitTest.Tests
 
             #endregion
         }
+
+        #endregion
+
+        #region Load
+
+        [Test]
+        public void RelationDirectLoad()
+        {
+            using (Transaction.Begin())
+            {
+                CleanupRelations(PERSON_LIVES_IN.Relationship);
+
+                foreach ((Person person, List<(DateTime from, DateTime till)> relations, City city, Dictionary<string, object> properties) in SampleDataLivesIn())
+                {
+                    foreach ((DateTime from, DateTime till) in relations)
+                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, from, till, properties);
+                }   
+
+                Transaction.Flush();
+
+
+
+                List<PERSON_LIVES_IN> livesIn = PERSON_LIVES_IN.Where(alias => alias.In.Uid == DatabaseUids.Persons.LinusTorvalds);
+            }
+
+            
+        }
+
+        #endregion
 
         #region Helper Methods
 
@@ -1183,7 +1214,7 @@ namespace Blueprint41.UnitTest.Tests
 
             RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
 
-            return result.Select(delegate(RawRecord record)
+            return result.Select(delegate (RawRecord record)
             {
                 DateTime from = Conversion<long, DateTime>.Convert(record.Values["From"].As<long>());
                 DateTime till = Conversion<long, DateTime>.Convert(record.Values["Till"].As<long>());
@@ -1221,6 +1252,32 @@ namespace Blueprint41.UnitTest.Tests
             }).ToList();
         }
 
+        private List<(Person person, List<(DateTime from, DateTime till)> relations, City city, Dictionary<string, object> properties)> SampleDataLivesIn()
+        {
+            return new List<(Person, List<(DateTime, DateTime)>, City, Dictionary<string, object>)>()
+            {
+                (Person.Load(DatabaseUids.Persons.AdaLovelace),   TestScenario.RelationsFromMask(0b1111), City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.HerculePoirot)),
+                (Person.Load(DatabaseUids.Persons.AlanKay),       TestScenario.RelationsFromMask(0b0111), City.Load(DatabaseUids.Cities.HillValley),     GetAddrLines(CityUids.AddressLines.HillValley.EmmettBrown)),
+                (Person.Load(DatabaseUids.Persons.AlanTuring),    TestScenario.RelationsFromMask(0b0011), City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.SherlockHolmes)),
+                (Person.Load(DatabaseUids.Persons.BillGates),     TestScenario.RelationsFromMask(0b0110), City.Load(DatabaseUids.Cities.LittleWhinging), GetAddrLines(CityUids.AddressLines.LittleWhinging.HarryPotter)),
+                (Person.Load(DatabaseUids.Persons.DennisRitchie), TestScenario.RelationsFromMask(0b1010), City.Load(DatabaseUids.Cities.Muncie),         GetAddrLines(CityUids.AddressLines.Muncie.Garfield)),
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b1100), City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Earlier)),
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b0011), City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Later)),
+                (Person.Load(DatabaseUids.Persons.MartinFowler),  TestScenario.RelationsFromMask(0b0101), City.Load(DatabaseUids.Cities.Quahog),         GetAddrLines(CityUids.AddressLines.Quahog.PeterGriffin)),
+                (Person.Load(DatabaseUids.Persons.SteveWozniak),  TestScenario.RelationsFromMask(0b0111), City.Load(DatabaseUids.Cities.Springfield),    GetAddrLines(CityUids.AddressLines.Springfield.TheSimpsons)),
+                (Person.Load(DatabaseUids.Persons.UncleBob),      TestScenario.RelationsFromMask(0b1111), City.Load(DatabaseUids.Cities.Sunnydale),      GetAddrLines(CityUids.AddressLines.Sunnydale.BuffySummers)),
+            };
+
+            Dictionary<string, object> GetAddrLines(string[] addressLines)
+            {
+                Dictionary<string, object> properties = new Dictionary<string, object>();
+                if (addressLines.Length > 0) properties.Add(nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addressLines[0]);
+                if (addressLines.Length > 1) properties.Add(nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addressLines[1]);
+                if (addressLines.Length > 2) properties.Add(nameof(PERSON_LIVES_IN_ALIAS.AddressLine3), addressLines[2]);
+                
+                return properties;
+            }
+        }
         private List<(List<(DateTime from, DateTime till)> relations, StreamingService target, decimal price)> GetSubscribedToState(List<(DateTime from, DateTime till)> scenario, StreamingService item, decimal price = 0m)
         {
             var amazon  = StreamingService.Load(DatabaseUids.StreamingServices.AmazonPrimeVideo);

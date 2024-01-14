@@ -9,6 +9,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation
 {
@@ -17,6 +18,19 @@ namespace Datastore.Manipulation
     /// </summary>
     public partial class SUBSCRIBED_TO_STREAMING_SERVICE
     {
+        private SUBSCRIBED_TO_STREAMING_SERVICE(string elementId, Person @in, StreamingService @out, Dictionary<string, object> properties)
+        {
+            _elementId = elementId;
+            
+            Person = @in;
+            StreamingService = @out;
+            
+            CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
+            MonthlyFee = (decimal)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(decimal), properties.GetValue("MonthlyFee"));
+            StartDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("StartDate"));
+            EndDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("EndDate"));
+        }
+
         private string _elementId { get; set; }
 
         /// <summary>
@@ -27,7 +41,7 @@ namespace Datastore.Manipulation
         /// <summary>
         /// Restaurant (Out Node)
         /// </summary>
-        public Restaurant Restaurant { get; private set; }
+        public StreamingService StreamingService { get; private set; }
 
         public System.DateTime CreationDate { get; private set; }
         public decimal MonthlyFee { get; private set; }
@@ -38,17 +52,41 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition> alias)
+        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<(q.PersonAlias In, q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS Rel, q.StreamingServiceAlias Out), QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return Load(query);
         }
-        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition[]> alias)
+        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<(q.PersonAlias In, q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS Rel, q.StreamingServiceAlias Out), QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return Load(query);
         }
         public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
             throw new NotImplementedException();
+        }
+        private static List<SUBSCRIBED_TO_STREAMING_SERVICE> Load(ICompiled query)
+        {
+            var context = query.GetExecutionContext();
+            var results = context.Execute(NodeMapping.AsWritableEntity);
+
+            return results.Select(result => new SUBSCRIBED_TO_STREAMING_SERVICE(
+                result.elementId,
+                result.@in,
+                result.@out,
+                result.properties
+            )).ToList();
         }
 
         public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"]);

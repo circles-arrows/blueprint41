@@ -527,6 +527,7 @@ namespace Blueprint41.Neo4j.Model
 
         public virtual string FnParam1                    => "{0}";
         public virtual string FnAsIs                      => "{base}";
+        public virtual string FnElementId                 => "elementId({0})";
         public virtual string FnToBoolean                 => "toBoolean({base})";
         public virtual string FnToInteger                 => "toInteger({base})";
         public virtual string FnToFloat                   => "toFloat({base})";

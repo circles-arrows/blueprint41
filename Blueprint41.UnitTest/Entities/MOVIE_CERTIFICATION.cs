@@ -9,6 +9,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation
 {
@@ -17,17 +18,32 @@ namespace Datastore.Manipulation
     /// </summary>
     public partial class MOVIE_CERTIFICATION
     {
+        private MOVIE_CERTIFICATION(string elementId, Movie @in, Rating @out, Dictionary<string, object> properties)
+        {
+            _elementId = elementId;
+            
+            Movie = @in;
+            Rating = @out;
+            
+            CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
+            FrighteningIntense = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("FrighteningIntense"));
+            ViolenceGore = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("ViolenceGore"));
+            Profanity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Profanity"));
+            Substances = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Substances"));
+            SexAndNudity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("SexAndNudity"));
+        }
+
         private string _elementId { get; set; }
 
         /// <summary>
         /// Person (In Node)
         /// </summary>
-        public Person Person { get; private set; }
+        public Movie Movie { get; private set; }
 
         /// <summary>
         /// Restaurant (Out Node)
         /// </summary>
-        public Restaurant Restaurant { get; private set; }
+        public Rating Rating { get; private set; }
 
         public System.DateTime CreationDate { get; private set; }
         public Blueprint41.UnitTest.DataStore.RatingComponent? FrighteningIntense { get; private set; }
@@ -40,17 +56,41 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public static List<MOVIE_CERTIFICATION> Where(Func<MOVIE_CERTIFICATION_ALIAS, QueryCondition> alias)
+        public static List<MOVIE_CERTIFICATION> Where(Func<(q.MovieAlias In, q.MOVIE_CERTIFICATION_ALIAS Rel, q.RatingAlias Out), QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
+                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return Load(query);
         }
-        public static List<MOVIE_CERTIFICATION> Where(Func<MOVIE_CERTIFICATION_ALIAS, QueryCondition[]> alias)
+        public static List<MOVIE_CERTIFICATION> Where(Func<(q.MovieAlias In, q.MOVIE_CERTIFICATION_ALIAS Rel, q.RatingAlias Out), QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
+                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return Load(query);
         }
         public static List<MOVIE_CERTIFICATION> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
             throw new NotImplementedException();
+        }
+        private static List<MOVIE_CERTIFICATION> Load(ICompiled query)
+        {
+            var context = query.GetExecutionContext();
+            var results = context.Execute(NodeMapping.AsWritableEntity);
+
+            return results.Select(result => new MOVIE_CERTIFICATION(
+                result.elementId,
+                result.@in,
+                result.@out,
+                result.properties
+            )).ToList();
         }
 
         public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"]);
