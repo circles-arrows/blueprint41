@@ -1,4 +1,4 @@
-﻿#define DEBUG_QUERY
+﻿//#define DEBUG_QUERY
 
 using System;
 using System.Collections.Generic;
@@ -345,7 +345,6 @@ namespace Blueprint41.Neo4j.Persistence.Void
             sb.AppendLine("DELETE rel");
             string delete = sb.ToString();
 
-            // Update goes wrong if properties don't match...
             sb.Clear();
             sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }})-[rel:{relationship.Neo4JRelationshipType}]->(out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
             sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment");

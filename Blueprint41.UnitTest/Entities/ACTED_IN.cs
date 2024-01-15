@@ -42,33 +42,56 @@ namespace Datastore.Manipulation
 
         public System.DateTime CreationDate { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<ACTED_IN> Where(Func<(q.PersonAlias In, q.ACTED_IN_ALIAS Rel, q.MovieAlias Out), QueryCondition> expression)
+        public void Assign()
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(inAlias.Uid == Person.Uid, outAlias.Uid == Movie.Uid, relAlias.ElementId == _elementId)
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.ACTED_IN_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+               
+                return assignments.ToArray();
+            }
+        }
+        public static List<ACTED_IN> Where(Func<ACTED_IN_CRUD_ALIAS, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(expression.Invoke(new ACTED_IN_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<ACTED_IN> Where(Func<(q.PersonAlias In, q.ACTED_IN_ALIAS Rel, q.MovieAlias Out), QueryCondition[]> expression)
+        public static List<ACTED_IN> Where(Func<ACTED_IN_CRUD_ALIAS, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(expression.Invoke(new ACTED_IN_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<ACTED_IN> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<ACTED_IN> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Movie> OutNode = default)
         {
-            throw new NotImplementedException();
+            return Where(delegate(ACTED_IN_CRUD_ALIAS alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (InNode.HasValue) conditions.Add(alias.Person(InNode.Value));
+                if (OutNode.HasValue) conditions.Add(alias.Movie(OutNode.Value));
+
+                return conditions.ToArray();
+            });
         }
         private static List<ACTED_IN> Load(ICompiled query)
         {
@@ -88,15 +111,15 @@ namespace Datastore.Manipulation
     }
 
     /// <summary>
-    /// Alias for relationship: (Person)-[ACTED_IN]->(Movie)
+    /// CRUD Specific alias for relationship: (Person)-[ACTED_IN]->(Movie)
     /// </summary>
-    public partial class ACTED_IN_ALIAS
+    public partial class ACTED_IN_CRUD_ALIAS
     {
-        internal ACTED_IN_ALIAS(OGM entity, DirectionEnum direction)
+        internal ACTED_IN_CRUD_ALIAS(q.ACTED_IN_ALIAS relAlias, q.PersonAlias inAlias, q.MovieAlias outAlias)
         {
-        }
-        internal ACTED_IN_ALIAS(IEnumerable<OGM> entity, DirectionEnum direction)
-        {
+            _relAlias = relAlias;
+            _inAlias = inAlias;
+            _outAlias = outAlias;
         }
 
         public DateTimeResult CreationDate
@@ -104,7 +127,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_creationDate is null)
-                    _creationDate = _alias.CreationDate;
+                    _creationDate = _relAlias.CreationDate;
 
                 return _creationDate;
             }
@@ -119,7 +142,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition Person(Person person)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid == person.Uid;
         }
         /// <summary>
         /// Person in-node: (Person)-[ACTED_IN]->(Movie)
@@ -127,9 +150,19 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where in-node is in the given set of persons
         /// </returns>
-        public QueryCondition Persons(IEnumerable<Person> person)
+        public QueryCondition Persons(IEnumerable<Person> persons)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid.In(persons.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// Person in-node: (Person)-[ACTED_IN]->(Movie)
+        /// </summary>
+        /// <returns>
+        /// Condition where in-node is in the given set of persons
+        /// </returns>
+        public QueryCondition Persons(params Person[] persons)
+        {
+            return _inAlias.Uid.In(persons.Select(item => item.Uid));
         }
 
         /// <summary>
@@ -140,7 +173,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition Movie(Movie movie)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid == movie.Uid;
         }
         /// <summary>
         /// Movie out-node: (Person)-[ACTED_IN]->(Movie)
@@ -148,17 +181,29 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where out-node is in the given set of movies
         /// </returns>
-        public QueryCondition Movies(IEnumerable<Movie> movie)
+        public QueryCondition Movies(IEnumerable<Movie> movies)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid.In(movies.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// Movie out-node: (Person)-[ACTED_IN]->(Movie)
+        /// </summary>
+        /// <returns>
+        /// Condition where out-node is in the given set of movies
+        /// </returns>
+        public QueryCondition Movies(params Movie[] movies)
+        {
+            return _outAlias.Uid.In(movies.Select(item => item.Uid));
         }
 
-        private static readonly q.ACTED_IN_ALIAS _alias = new q.ACTED_IN_ALIAS(new q.ACTED_IN_REL(null, DirectionEnum.None));
+        private readonly q.ACTED_IN_ALIAS _relAlias;
+        private readonly q.PersonAlias _inAlias;
+        private readonly q.MovieAlias _outAlias;
     }
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<ACTED_IN> @this, JsNotation<System.DateTime> CreationDate = default)
+        public static void Assign(this IEnumerable<ACTED_IN> @this)
         {
             throw new NotImplementedException();
         }

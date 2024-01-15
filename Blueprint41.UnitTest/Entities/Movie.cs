@@ -241,11 +241,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED_ALIAS, QueryCondition> alias)
+        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED_ALIAS, QueryCondition[]> alias)
+        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -264,11 +264,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN_ALIAS, QueryCondition> alias)
+        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN_ALIAS, QueryCondition[]> alias)
+        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -289,11 +289,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION_ALIAS, QueryCondition> alias)
+        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION_ALIAS, QueryCondition[]> alias)
+        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }

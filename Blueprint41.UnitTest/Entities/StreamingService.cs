@@ -211,11 +211,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition[]> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }

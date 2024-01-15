@@ -250,11 +250,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT_ALIAS, QueryCondition> alias)
+        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -275,11 +275,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED_ALIAS, QueryCondition> alias)
+        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -300,11 +300,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN_ALIAS, QueryCondition> alias)
+        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN_ALIAS, QueryCondition[]> alias)
+        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -325,11 +325,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS, QueryCondition[]> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -354,11 +354,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE_ALIAS, QueryCondition> alias)
+        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE_ALIAS, QueryCondition[]> alias)
+        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -387,14 +387,14 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN_ALIAS, QueryCondition> alias)
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition> alias)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN_ALIAS, QueryCondition[]> alias)
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition[]> alias)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -408,11 +408,11 @@ namespace Datastore.Manipulation
 
             throw new NotImplementedException();
         }
-        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN_ALIAS, QueryCondition> alias)
+        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }

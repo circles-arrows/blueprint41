@@ -52,33 +52,66 @@ namespace Datastore.Manipulation
         public Blueprint41.UnitTest.DataStore.RatingComponent? Substances { get; private set; }
         public Blueprint41.UnitTest.DataStore.RatingComponent? SexAndNudity { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<MOVIE_CERTIFICATION> Where(Func<(q.MovieAlias In, q.MOVIE_CERTIFICATION_ALIAS Rel, q.RatingAlias Out), QueryCondition> expression)
+        public void Assign(JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(inAlias.Uid == Movie.Uid, outAlias.Uid == Rating.Uid, relAlias.ElementId == _elementId)
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.MOVIE_CERTIFICATION_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+                if (FrighteningIntense.HasValue) assignments.Add(new Assignment(alias.FrighteningIntense, FrighteningIntense));
+                if (ViolenceGore.HasValue) assignments.Add(new Assignment(alias.ViolenceGore, ViolenceGore));
+                if (Profanity.HasValue) assignments.Add(new Assignment(alias.Profanity, Profanity));
+                if (Substances.HasValue) assignments.Add(new Assignment(alias.Substances, Substances));
+                if (SexAndNudity.HasValue) assignments.Add(new Assignment(alias.SexAndNudity, SexAndNudity));
+               
+                return assignments.ToArray();
+            }
+        }
+        public static List<MOVIE_CERTIFICATION> Where(Func<MOVIE_CERTIFICATION_CRUD_ALIAS, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
+                .Where(expression.Invoke(new MOVIE_CERTIFICATION_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<MOVIE_CERTIFICATION> Where(Func<(q.MovieAlias In, q.MOVIE_CERTIFICATION_ALIAS Rel, q.RatingAlias Out), QueryCondition[]> expression)
+        public static List<MOVIE_CERTIFICATION> Where(Func<MOVIE_CERTIFICATION_CRUD_ALIAS, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(expression.Invoke(new MOVIE_CERTIFICATION_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<MOVIE_CERTIFICATION> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<MOVIE_CERTIFICATION> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default, JsNotation<Movie> InNode = default, JsNotation<Rating> OutNode = default)
         {
-            throw new NotImplementedException();
+            return Where(delegate(MOVIE_CERTIFICATION_CRUD_ALIAS alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (FrighteningIntense.HasValue) conditions.Add(alias.FrighteningIntense == FrighteningIntense.Value?.ToString());
+                if (ViolenceGore.HasValue) conditions.Add(alias.ViolenceGore == ViolenceGore.Value?.ToString());
+                if (Profanity.HasValue) conditions.Add(alias.Profanity == Profanity.Value?.ToString());
+                if (Substances.HasValue) conditions.Add(alias.Substances == Substances.Value?.ToString());
+                if (SexAndNudity.HasValue) conditions.Add(alias.SexAndNudity == SexAndNudity.Value?.ToString());
+                if (InNode.HasValue) conditions.Add(alias.Movie(InNode.Value));
+                if (OutNode.HasValue) conditions.Add(alias.Rating(OutNode.Value));
+
+                return conditions.ToArray();
+            });
         }
         private static List<MOVIE_CERTIFICATION> Load(ICompiled query)
         {
@@ -98,15 +131,15 @@ namespace Datastore.Manipulation
     }
 
     /// <summary>
-    /// Alias for relationship: (Movie)-[MOVIE_CERTIFICATION]->(Rating)
+    /// CRUD Specific alias for relationship: (Movie)-[MOVIE_CERTIFICATION]->(Rating)
     /// </summary>
-    public partial class MOVIE_CERTIFICATION_ALIAS
+    public partial class MOVIE_CERTIFICATION_CRUD_ALIAS
     {
-        internal MOVIE_CERTIFICATION_ALIAS(OGM entity, DirectionEnum direction)
+        internal MOVIE_CERTIFICATION_CRUD_ALIAS(q.MOVIE_CERTIFICATION_ALIAS relAlias, q.MovieAlias inAlias, q.RatingAlias outAlias)
         {
-        }
-        internal MOVIE_CERTIFICATION_ALIAS(IEnumerable<OGM> entity, DirectionEnum direction)
-        {
+            _relAlias = relAlias;
+            _inAlias = inAlias;
+            _outAlias = outAlias;
         }
 
         public DateTimeResult CreationDate
@@ -114,67 +147,67 @@ namespace Datastore.Manipulation
             get
             {
                 if (_creationDate is null)
-                    _creationDate = _alias.CreationDate;
+                    _creationDate = _relAlias.CreationDate;
 
                 return _creationDate;
             }
         }
         private DateTimeResult _creationDate = null;
-        public MiscResult FrighteningIntense
+        public StringResult FrighteningIntense
         {
             get
             {
                 if (_frighteningIntense is null)
-                    _frighteningIntense = _alias.FrighteningIntense;
+                    _frighteningIntense = _relAlias.FrighteningIntense;
 
                 return _frighteningIntense;
             }
         }
-        private MiscResult _frighteningIntense = null;
-        public MiscResult ViolenceGore
+        private StringResult _frighteningIntense = null;
+        public StringResult ViolenceGore
         {
             get
             {
                 if (_violenceGore is null)
-                    _violenceGore = _alias.ViolenceGore;
+                    _violenceGore = _relAlias.ViolenceGore;
 
                 return _violenceGore;
             }
         }
-        private MiscResult _violenceGore = null;
-        public MiscResult Profanity
+        private StringResult _violenceGore = null;
+        public StringResult Profanity
         {
             get
             {
                 if (_profanity is null)
-                    _profanity = _alias.Profanity;
+                    _profanity = _relAlias.Profanity;
 
                 return _profanity;
             }
         }
-        private MiscResult _profanity = null;
-        public MiscResult Substances
+        private StringResult _profanity = null;
+        public StringResult Substances
         {
             get
             {
                 if (_substances is null)
-                    _substances = _alias.Substances;
+                    _substances = _relAlias.Substances;
 
                 return _substances;
             }
         }
-        private MiscResult _substances = null;
-        public MiscResult SexAndNudity
+        private StringResult _substances = null;
+        public StringResult SexAndNudity
         {
             get
             {
                 if (_sexAndNudity is null)
-                    _sexAndNudity = _alias.SexAndNudity;
+                    _sexAndNudity = _relAlias.SexAndNudity;
 
                 return _sexAndNudity;
             }
         }
-        private MiscResult _sexAndNudity = null;
+        private StringResult _sexAndNudity = null;
 
         /// <summary>
         /// Movie in-node: (Movie)-[MOVIE_CERTIFICATION]->(Rating)
@@ -184,7 +217,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition Movie(Movie movie)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid == movie.Uid;
         }
         /// <summary>
         /// Movie in-node: (Movie)-[MOVIE_CERTIFICATION]->(Rating)
@@ -192,9 +225,19 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where in-node is in the given set of movies
         /// </returns>
-        public QueryCondition Movies(IEnumerable<Movie> movie)
+        public QueryCondition Movies(IEnumerable<Movie> movies)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid.In(movies.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// Movie in-node: (Movie)-[MOVIE_CERTIFICATION]->(Rating)
+        /// </summary>
+        /// <returns>
+        /// Condition where in-node is in the given set of movies
+        /// </returns>
+        public QueryCondition Movies(params Movie[] movies)
+        {
+            return _inAlias.Uid.In(movies.Select(item => item.Uid));
         }
 
         /// <summary>
@@ -205,7 +248,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition Rating(Rating rating)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid == rating.Uid;
         }
         /// <summary>
         /// Rating out-node: (Movie)-[MOVIE_CERTIFICATION]->(Rating)
@@ -213,17 +256,29 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where out-node is in the given set of ratings
         /// </returns>
-        public QueryCondition Ratings(IEnumerable<Rating> rating)
+        public QueryCondition Ratings(IEnumerable<Rating> ratings)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid.In(ratings.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// Rating out-node: (Movie)-[MOVIE_CERTIFICATION]->(Rating)
+        /// </summary>
+        /// <returns>
+        /// Condition where out-node is in the given set of ratings
+        /// </returns>
+        public QueryCondition Ratings(params Rating[] ratings)
+        {
+            return _outAlias.Uid.In(ratings.Select(item => item.Uid));
         }
 
-        private static readonly q.MOVIE_CERTIFICATION_ALIAS _alias = new q.MOVIE_CERTIFICATION_ALIAS(new q.MOVIE_CERTIFICATION_REL(null, DirectionEnum.None));
+        private readonly q.MOVIE_CERTIFICATION_ALIAS _relAlias;
+        private readonly q.MovieAlias _inAlias;
+        private readonly q.RatingAlias _outAlias;
     }
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<MOVIE_CERTIFICATION> @this, JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
+        public static void Assign(this IEnumerable<MOVIE_CERTIFICATION> @this, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             throw new NotImplementedException();
         }

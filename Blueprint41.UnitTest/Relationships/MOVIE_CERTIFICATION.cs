@@ -111,11 +111,11 @@ public partial class MOVIE_CERTIFICATION_REL : RELATIONSHIP, IFromIn_MOVIE_CERTI
             Parent = parent;
 
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["CreationDate"]);
-            FrighteningIntense = new MiscResult(this, "FrighteningIntense", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["FrighteningIntense"]);
-            ViolenceGore = new MiscResult(this, "ViolenceGore", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["ViolenceGore"]);
-            Profanity = new MiscResult(this, "Profanity", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["Profanity"]);
-            Substances = new MiscResult(this, "Substances", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["Substances"]);
-            SexAndNudity = new MiscResult(this, "SexAndNudity", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["SexAndNudity"]);
+            FrighteningIntense = new StringResult(this, "FrighteningIntense", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["FrighteningIntense"]);
+            ViolenceGore = new StringResult(this, "ViolenceGore", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["ViolenceGore"]);
+            Profanity = new StringResult(this, "Profanity", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["Profanity"]);
+            Substances = new StringResult(this, "Substances", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["Substances"]);
+            SexAndNudity = new StringResult(this, "SexAndNudity", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["MOVIE_CERTIFICATION"].Properties["SexAndNudity"]);
         }
 
         public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
@@ -132,10 +132,10 @@ public partial class MOVIE_CERTIFICATION_REL : RELATIONSHIP, IFromIn_MOVIE_CERTI
         }
 
         public DateTimeResult CreationDate { get; private set; } 
-        public MiscResult FrighteningIntense { get; private set; } 
-        public MiscResult ViolenceGore { get; private set; } 
-        public MiscResult Profanity { get; private set; } 
-        public MiscResult Substances { get; private set; } 
-        public MiscResult SexAndNudity { get; private set; } 
+        public StringResult FrighteningIntense { get; private set; } 
+        public StringResult ViolenceGore { get; private set; } 
+        public StringResult Profanity { get; private set; } 
+        public StringResult Substances { get; private set; } 
+        public StringResult SexAndNudity { get; private set; } 
     }
 }

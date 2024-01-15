@@ -52,33 +52,64 @@ namespace Datastore.Manipulation
         public string AddressLine2 { get; private set; }
         public string AddressLine3 { get; private set; }
 
-        public void Assign(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<PERSON_LIVES_IN> Where(Func<(q.PersonAlias In, q.PERSON_LIVES_IN_ALIAS Rel, q.CityAlias Out), QueryCondition> expression)
+        public void Assign(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(inAlias.Uid == Person.Uid, outAlias.Uid == City.Uid, relAlias.ElementId == _elementId)
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.PERSON_LIVES_IN_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+                if (AddressLine1.HasValue) assignments.Add(new Assignment(alias.AddressLine1, AddressLine1));
+                if (AddressLine2.HasValue) assignments.Add(new Assignment(alias.AddressLine2, AddressLine2));
+                if (AddressLine3.HasValue) assignments.Add(new Assignment(alias.AddressLine3, AddressLine3));
+               
+                return assignments.ToArray();
+            }
+        }
+        public static List<PERSON_LIVES_IN> Where(Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(expression.Invoke(new PERSON_LIVES_IN_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<PERSON_LIVES_IN> Where(Func<(q.PersonAlias In, q.PERSON_LIVES_IN_ALIAS Rel, q.CityAlias Out), QueryCondition[]> expression)
+        public static List<PERSON_LIVES_IN> Where(Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(expression.Invoke(new PERSON_LIVES_IN_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<PERSON_LIVES_IN> Where(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<PERSON_LIVES_IN> Where(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<City> OutNode = default)
         {
-            throw new NotImplementedException();
+            return Where(delegate(PERSON_LIVES_IN_CRUD_ALIAS alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (StartDate.HasValue) conditions.Add(alias.StartDate == StartDate.Value);
+                if (EndDate.HasValue) conditions.Add(alias.EndDate == EndDate.Value);
+                if (AddressLine1.HasValue) conditions.Add(alias.AddressLine1 == AddressLine1.Value);
+                if (AddressLine2.HasValue) conditions.Add(alias.AddressLine2 == AddressLine2.Value);
+                if (AddressLine3.HasValue) conditions.Add(alias.AddressLine3 == AddressLine3.Value);
+                if (InNode.HasValue) conditions.Add(alias.Person(InNode.Value));
+                if (OutNode.HasValue) conditions.Add(alias.City(OutNode.Value));
+
+                return conditions.ToArray();
+            });
         }
         private static List<PERSON_LIVES_IN> Load(ICompiled query)
         {
@@ -98,15 +129,15 @@ namespace Datastore.Manipulation
     }
 
     /// <summary>
-    /// Alias for relationship: (Person)-[PERSON_LIVES_IN]->(City)
+    /// CRUD Specific alias for relationship: (Person)-[PERSON_LIVES_IN]->(City)
     /// </summary>
-    public partial class PERSON_LIVES_IN_ALIAS
+    public partial class PERSON_LIVES_IN_CRUD_ALIAS
     {
-        internal PERSON_LIVES_IN_ALIAS(OGM entity, DirectionEnum direction)
+        internal PERSON_LIVES_IN_CRUD_ALIAS(q.PERSON_LIVES_IN_ALIAS relAlias, q.PersonAlias inAlias, q.CityAlias outAlias)
         {
-        }
-        internal PERSON_LIVES_IN_ALIAS(IEnumerable<OGM> entity, DirectionEnum direction)
-        {
+            _relAlias = relAlias;
+            _inAlias = inAlias;
+            _outAlias = outAlias;
         }
 
         public DateTimeResult CreationDate
@@ -114,7 +145,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_creationDate is null)
-                    _creationDate = _alias.CreationDate;
+                    _creationDate = _relAlias.CreationDate;
 
                 return _creationDate;
             }
@@ -125,7 +156,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_startDate is null)
-                    _startDate = _alias.StartDate;
+                    _startDate = _relAlias.StartDate;
 
                 return _startDate;
             }
@@ -136,7 +167,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_endDate is null)
-                    _endDate = _alias.EndDate;
+                    _endDate = _relAlias.EndDate;
 
                 return _endDate;
             }
@@ -147,7 +178,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_addressLine1 is null)
-                    _addressLine1 = _alias.AddressLine1;
+                    _addressLine1 = _relAlias.AddressLine1;
 
                 return _addressLine1;
             }
@@ -158,7 +189,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_addressLine2 is null)
-                    _addressLine2 = _alias.AddressLine2;
+                    _addressLine2 = _relAlias.AddressLine2;
 
                 return _addressLine2;
             }
@@ -169,7 +200,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_addressLine3 is null)
-                    _addressLine3 = _alias.AddressLine3;
+                    _addressLine3 = _relAlias.AddressLine3;
 
                 return _addressLine3;
             }
@@ -184,7 +215,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition Person(Person person)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid == person.Uid;
         }
         /// <summary>
         /// Person in-node: (Person)-[PERSON_LIVES_IN]->(City)
@@ -192,9 +223,19 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where in-node is in the given set of persons
         /// </returns>
-        public QueryCondition Persons(IEnumerable<Person> person)
+        public QueryCondition Persons(IEnumerable<Person> persons)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid.In(persons.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// Person in-node: (Person)-[PERSON_LIVES_IN]->(City)
+        /// </summary>
+        /// <returns>
+        /// Condition where in-node is in the given set of persons
+        /// </returns>
+        public QueryCondition Persons(params Person[] persons)
+        {
+            return _inAlias.Uid.In(persons.Select(item => item.Uid));
         }
 
         /// <summary>
@@ -205,7 +246,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition City(City city)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid == city.Uid;
         }
         /// <summary>
         /// City out-node: (Person)-[PERSON_LIVES_IN]->(City)
@@ -213,17 +254,29 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where out-node is in the given set of cities
         /// </returns>
-        public QueryCondition Cities(IEnumerable<City> city)
+        public QueryCondition Cities(IEnumerable<City> cities)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid.In(cities.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// City out-node: (Person)-[PERSON_LIVES_IN]->(City)
+        /// </summary>
+        /// <returns>
+        /// Condition where out-node is in the given set of cities
+        /// </returns>
+        public QueryCondition Cities(params City[] cities)
+        {
+            return _outAlias.Uid.In(cities.Select(item => item.Uid));
         }
 
-        private static readonly q.PERSON_LIVES_IN_ALIAS _alias = new q.PERSON_LIVES_IN_ALIAS(new q.PERSON_LIVES_IN_REL(null, DirectionEnum.None));
+        private readonly q.PERSON_LIVES_IN_ALIAS _relAlias;
+        private readonly q.PersonAlias _inAlias;
+        private readonly q.CityAlias _outAlias;
     }
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<PERSON_LIVES_IN> @this, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public static void Assign(this IEnumerable<PERSON_LIVES_IN> @this, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
         {
             throw new NotImplementedException();
         }

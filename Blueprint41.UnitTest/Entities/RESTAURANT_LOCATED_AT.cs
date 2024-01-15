@@ -42,33 +42,56 @@ namespace Datastore.Manipulation
 
         public System.DateTime CreationDate { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<RESTAURANT_LOCATED_AT> Where(Func<(q.RestaurantAlias In, q.RESTAURANT_LOCATED_AT_ALIAS Rel, q.CityAlias Out), QueryCondition> expression)
+        public void Assign()
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(inAlias.Uid == Restaurant.Uid, outAlias.Uid == City.Uid, relAlias.ElementId == _elementId)
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.RESTAURANT_LOCATED_AT_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+               
+                return assignments.ToArray();
+            }
+        }
+        public static List<RESTAURANT_LOCATED_AT> Where(Func<RESTAURANT_LOCATED_AT_CRUD_ALIAS, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(expression.Invoke(new RESTAURANT_LOCATED_AT_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<RESTAURANT_LOCATED_AT> Where(Func<(q.RestaurantAlias In, q.RESTAURANT_LOCATED_AT_ALIAS Rel, q.CityAlias Out), QueryCondition[]> expression)
+        public static List<RESTAURANT_LOCATED_AT> Where(Func<RESTAURANT_LOCATED_AT_CRUD_ALIAS, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(expression.Invoke(new RESTAURANT_LOCATED_AT_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<RESTAURANT_LOCATED_AT> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<RESTAURANT_LOCATED_AT> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Restaurant> InNode = default, JsNotation<City> OutNode = default)
         {
-            throw new NotImplementedException();
+            return Where(delegate(RESTAURANT_LOCATED_AT_CRUD_ALIAS alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (InNode.HasValue) conditions.Add(alias.Restaurant(InNode.Value));
+                if (OutNode.HasValue) conditions.Add(alias.City(OutNode.Value));
+
+                return conditions.ToArray();
+            });
         }
         private static List<RESTAURANT_LOCATED_AT> Load(ICompiled query)
         {
@@ -88,15 +111,15 @@ namespace Datastore.Manipulation
     }
 
     /// <summary>
-    /// Alias for relationship: (Restaurant)-[RESTAURANT_LOCATED_AT]->(City)
+    /// CRUD Specific alias for relationship: (Restaurant)-[RESTAURANT_LOCATED_AT]->(City)
     /// </summary>
-    public partial class RESTAURANT_LOCATED_AT_ALIAS
+    public partial class RESTAURANT_LOCATED_AT_CRUD_ALIAS
     {
-        internal RESTAURANT_LOCATED_AT_ALIAS(OGM entity, DirectionEnum direction)
+        internal RESTAURANT_LOCATED_AT_CRUD_ALIAS(q.RESTAURANT_LOCATED_AT_ALIAS relAlias, q.RestaurantAlias inAlias, q.CityAlias outAlias)
         {
-        }
-        internal RESTAURANT_LOCATED_AT_ALIAS(IEnumerable<OGM> entity, DirectionEnum direction)
-        {
+            _relAlias = relAlias;
+            _inAlias = inAlias;
+            _outAlias = outAlias;
         }
 
         public DateTimeResult CreationDate
@@ -104,7 +127,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_creationDate is null)
-                    _creationDate = _alias.CreationDate;
+                    _creationDate = _relAlias.CreationDate;
 
                 return _creationDate;
             }
@@ -119,7 +142,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition Restaurant(Restaurant restaurant)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid == restaurant.Uid;
         }
         /// <summary>
         /// Restaurant in-node: (Restaurant)-[RESTAURANT_LOCATED_AT]->(City)
@@ -127,9 +150,19 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where in-node is in the given set of restaurants
         /// </returns>
-        public QueryCondition Restaurants(IEnumerable<Restaurant> restaurant)
+        public QueryCondition Restaurants(IEnumerable<Restaurant> restaurants)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid.In(restaurants.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// Restaurant in-node: (Restaurant)-[RESTAURANT_LOCATED_AT]->(City)
+        /// </summary>
+        /// <returns>
+        /// Condition where in-node is in the given set of restaurants
+        /// </returns>
+        public QueryCondition Restaurants(params Restaurant[] restaurants)
+        {
+            return _inAlias.Uid.In(restaurants.Select(item => item.Uid));
         }
 
         /// <summary>
@@ -140,7 +173,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition City(City city)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid == city.Uid;
         }
         /// <summary>
         /// City out-node: (Restaurant)-[RESTAURANT_LOCATED_AT]->(City)
@@ -148,17 +181,29 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where out-node is in the given set of cities
         /// </returns>
-        public QueryCondition Cities(IEnumerable<City> city)
+        public QueryCondition Cities(IEnumerable<City> cities)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid.In(cities.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// City out-node: (Restaurant)-[RESTAURANT_LOCATED_AT]->(City)
+        /// </summary>
+        /// <returns>
+        /// Condition where out-node is in the given set of cities
+        /// </returns>
+        public QueryCondition Cities(params City[] cities)
+        {
+            return _outAlias.Uid.In(cities.Select(item => item.Uid));
         }
 
-        private static readonly q.RESTAURANT_LOCATED_AT_ALIAS _alias = new q.RESTAURANT_LOCATED_AT_ALIAS(new q.RESTAURANT_LOCATED_AT_REL(null, DirectionEnum.None));
+        private readonly q.RESTAURANT_LOCATED_AT_ALIAS _relAlias;
+        private readonly q.RestaurantAlias _inAlias;
+        private readonly q.CityAlias _outAlias;
     }
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<RESTAURANT_LOCATED_AT> @this, JsNotation<System.DateTime> CreationDate = default)
+        public static void Assign(this IEnumerable<RESTAURANT_LOCATED_AT> @this)
         {
             throw new NotImplementedException();
         }

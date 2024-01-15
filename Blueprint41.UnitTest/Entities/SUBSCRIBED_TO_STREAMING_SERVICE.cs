@@ -48,33 +48,60 @@ namespace Datastore.Manipulation
         public System.DateTime StartDate { get; private set; }
         public System.DateTime EndDate { get; private set; }
 
-        public void Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
-        {
-            throw new NotImplementedException();
-        }
-        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<(q.PersonAlias In, q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS Rel, q.StreamingServiceAlias Out), QueryCondition> expression)
+        public void Assign(JsNotation<decimal> MonthlyFee = default)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(inAlias.Uid == Person.Uid, outAlias.Uid == StreamingService.Uid, relAlias.ElementId == _elementId)
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+                if (MonthlyFee.HasValue) assignments.Add(new Assignment(alias.MonthlyFee, MonthlyFee));
+               
+                return assignments.ToArray();
+            }
+        }
+        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(expression.Invoke(new SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<(q.PersonAlias In, q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS Rel, q.StreamingServiceAlias Out), QueryCondition[]> expression)
+        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
-                .Where(expression.Invoke((inAlias, relAlias, outAlias)))
+                .Where(expression.Invoke(new SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
+        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<StreamingService> OutNode = default)
         {
-            throw new NotImplementedException();
+            return Where(delegate(SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (MonthlyFee.HasValue) conditions.Add(alias.MonthlyFee == MonthlyFee.Value);
+                if (StartDate.HasValue) conditions.Add(alias.StartDate == StartDate.Value);
+                if (EndDate.HasValue) conditions.Add(alias.EndDate == EndDate.Value);
+                if (InNode.HasValue) conditions.Add(alias.Person(InNode.Value));
+                if (OutNode.HasValue) conditions.Add(alias.StreamingService(OutNode.Value));
+
+                return conditions.ToArray();
+            });
         }
         private static List<SUBSCRIBED_TO_STREAMING_SERVICE> Load(ICompiled query)
         {
@@ -94,15 +121,15 @@ namespace Datastore.Manipulation
     }
 
     /// <summary>
-    /// Alias for relationship: (Person)-[SUBSCRIBED_TO_STREAMING_SERVICE]->(StreamingService)
+    /// CRUD Specific alias for relationship: (Person)-[SUBSCRIBED_TO_STREAMING_SERVICE]->(StreamingService)
     /// </summary>
-    public partial class SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS
+    public partial class SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS
     {
-        internal SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS(OGM entity, DirectionEnum direction)
+        internal SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS(q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS relAlias, q.PersonAlias inAlias, q.StreamingServiceAlias outAlias)
         {
-        }
-        internal SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS(IEnumerable<OGM> entity, DirectionEnum direction)
-        {
+            _relAlias = relAlias;
+            _inAlias = inAlias;
+            _outAlias = outAlias;
         }
 
         public DateTimeResult CreationDate
@@ -110,7 +137,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_creationDate is null)
-                    _creationDate = _alias.CreationDate;
+                    _creationDate = _relAlias.CreationDate;
 
                 return _creationDate;
             }
@@ -121,7 +148,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_monthlyFee is null)
-                    _monthlyFee = _alias.MonthlyFee;
+                    _monthlyFee = _relAlias.MonthlyFee;
 
                 return _monthlyFee;
             }
@@ -132,7 +159,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_startDate is null)
-                    _startDate = _alias.StartDate;
+                    _startDate = _relAlias.StartDate;
 
                 return _startDate;
             }
@@ -143,7 +170,7 @@ namespace Datastore.Manipulation
             get
             {
                 if (_endDate is null)
-                    _endDate = _alias.EndDate;
+                    _endDate = _relAlias.EndDate;
 
                 return _endDate;
             }
@@ -158,7 +185,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition Person(Person person)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid == person.Uid;
         }
         /// <summary>
         /// Person in-node: (Person)-[SUBSCRIBED_TO_STREAMING_SERVICE]->(StreamingService)
@@ -166,9 +193,19 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where in-node is in the given set of persons
         /// </returns>
-        public QueryCondition Persons(IEnumerable<Person> person)
+        public QueryCondition Persons(IEnumerable<Person> persons)
         {
-            throw new NotImplementedException();
+            return _inAlias.Uid.In(persons.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// Person in-node: (Person)-[SUBSCRIBED_TO_STREAMING_SERVICE]->(StreamingService)
+        /// </summary>
+        /// <returns>
+        /// Condition where in-node is in the given set of persons
+        /// </returns>
+        public QueryCondition Persons(params Person[] persons)
+        {
+            return _inAlias.Uid.In(persons.Select(item => item.Uid));
         }
 
         /// <summary>
@@ -179,7 +216,7 @@ namespace Datastore.Manipulation
         /// </returns>
         public QueryCondition StreamingService(StreamingService streamingService)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid == streamingService.Uid;
         }
         /// <summary>
         /// StreamingService out-node: (Person)-[SUBSCRIBED_TO_STREAMING_SERVICE]->(StreamingService)
@@ -187,17 +224,29 @@ namespace Datastore.Manipulation
         /// <returns>
         /// Condition where out-node is in the given set of streaming  services
         /// </returns>
-        public QueryCondition StreamingServices(IEnumerable<StreamingService> streamingService)
+        public QueryCondition StreamingServices(IEnumerable<StreamingService> streamingServices)
         {
-            throw new NotImplementedException();
+            return _outAlias.Uid.In(streamingServices.Select(item => item.Uid));
+        }
+        /// <summary>
+        /// StreamingService out-node: (Person)-[SUBSCRIBED_TO_STREAMING_SERVICE]->(StreamingService)
+        /// </summary>
+        /// <returns>
+        /// Condition where out-node is in the given set of streaming  services
+        /// </returns>
+        public QueryCondition StreamingServices(params StreamingService[] streamingServices)
+        {
+            return _outAlias.Uid.In(streamingServices.Select(item => item.Uid));
         }
 
-        private static readonly q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS _alias = new q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS(new q.SUBSCRIBED_TO_STREAMING_SERVICE_REL(null, DirectionEnum.None));
+        private readonly q.SUBSCRIBED_TO_STREAMING_SERVICE_ALIAS _relAlias;
+        private readonly q.PersonAlias _inAlias;
+        private readonly q.StreamingServiceAlias _outAlias;
     }
 
     public static partial class RelationshipAssignmentExtensions
     {
-        public static void Assign(this IEnumerable<SUBSCRIBED_TO_STREAMING_SERVICE> @this, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public static void Assign(this IEnumerable<SUBSCRIBED_TO_STREAMING_SERVICE> @this, JsNotation<decimal> MonthlyFee = default)
         {
             throw new NotImplementedException();
         }

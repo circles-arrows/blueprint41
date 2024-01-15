@@ -215,11 +215,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition> alias)
+        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition[]> alias)
+        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -238,11 +238,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT_ALIAS, QueryCondition> alias)
+        public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }

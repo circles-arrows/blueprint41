@@ -2560,8 +2560,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition> alias)\r\n        {\r\n            throw new NotImplementedEx" +
-                    "ception();\r\n        }\r\n        public List<");
+            this.Write("_CRUD_ALIAS, QueryCondition> alias)\r\n        {\r\n            throw new NotImplemen" +
+                    "tedException();\r\n        }\r\n        public List<");
             
             #line 741 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -2582,8 +2582,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            throw new NotImplemented" +
-                    "Exception();\r\n        }\r\n        public List<");
+            this.Write("_CRUD_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            throw new NotImplem" +
+                    "entedException();\r\n        }\r\n        public List<");
             
             #line 745 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -2628,7 +2628,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             
             #line 749 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Properties.ToJsonNotation(attr.Relationship)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true)));
             
             #line default
             #line hidden
@@ -2776,8 +2776,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition> alias)\r\n        {\r\n            throw new NotImplementedEx" +
-                    "ception();\r\n        }\r\n        public List<");
+            this.Write("_CRUD_ALIAS, QueryCondition> alias)\r\n        {\r\n            throw new NotImplemen" +
+                    "tedException();\r\n        }\r\n        public List<");
             
             #line 779 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -2798,8 +2798,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            throw new NotImplemented" +
-                    "Exception();\r\n        }\r\n        public List<");
+            this.Write("_CRUD_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            throw new NotImplem" +
+                    "entedException();\r\n        }\r\n        public List<");
             
             #line 783 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -2845,7 +2845,7 @@ if (!DALModel.IsAbstract)
             this.Write(", DateTime? moment");
             
             #line 787 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Properties.ToJsonNotation(attr.Relationship)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true)));
             
             #line default
             #line hidden
@@ -2997,8 +2997,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition> alias)\r\n        {\r\n            throw new NotImplementedEx" +
-                    "ception();\r\n        }\r\n        public ");
+            this.Write("_CRUD_ALIAS, QueryCondition> alias)\r\n        {\r\n            throw new NotImplemen" +
+                    "tedException();\r\n        }\r\n        public ");
             
             #line 823 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -3019,8 +3019,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            throw new NotImplemented" +
-                    "Exception();\r\n        }\r\n        public ");
+            this.Write("_CRUD_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            throw new NotImplem" +
+                    "entedException();\r\n        }\r\n        public ");
             
             #line 827 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -3065,7 +3065,7 @@ if (!DALModel.IsAbstract)
             #line hidden
             
             #line 831 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Properties.ToJsonNotation(attr.Relationship)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true)));
             
             #line default
             #line hidden
@@ -3194,9 +3194,9 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition> alias)\r\n        {\r\n            if (moment is null)\r\n     " +
-                    "           moment = DateTime.UtcNow;\r\n\r\n            throw new NotImplementedExce" +
-                    "ption();\r\n        }\r\n        public ");
+            this.Write("_CRUD_ALIAS, QueryCondition> alias)\r\n        {\r\n            if (moment is null)\r\n" +
+                    "                moment = DateTime.UtcNow;\r\n\r\n            throw new NotImplemente" +
+                    "dException();\r\n        }\r\n        public ");
             
             #line 869 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -3217,9 +3217,9 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            if (moment is null)\r\n   " +
-                    "             moment = DateTime.UtcNow;\r\n\r\n            throw new NotImplementedEx" +
-                    "ception();\r\n        }\r\n        public ");
+            this.Write("_CRUD_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            if (moment is null)" +
+                    "\r\n                moment = DateTime.UtcNow;\r\n\r\n            throw new NotImplemen" +
+                    "tedException();\r\n        }\r\n        public ");
             
             #line 876 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -3263,8 +3263,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition> alias)\r\n        {\r\n            throw new NotImplementedEx" +
-                    "ception();\r\n        }\r\n        public List<");
+            this.Write("_CRUD_ALIAS, QueryCondition> alias)\r\n        {\r\n            throw new NotImplemen" +
+                    "tedException();\r\n        }\r\n        public List<");
             
             #line 887 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -3285,8 +3285,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            throw new NotImplemented" +
-                    "Exception();\r\n        }\r\n        public List<");
+            this.Write("_CRUD_ALIAS, QueryCondition[]> alias)\r\n        {\r\n            throw new NotImplem" +
+                    "entedException();\r\n        }\r\n        public List<");
             
             #line 891 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Name));
@@ -3332,7 +3332,7 @@ if (!DALModel.IsAbstract)
             this.Write(", DateTime? moment");
             
             #line 895 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Properties.ToJsonNotation(attr.Relationship)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true)));
             
             #line default
             #line hidden

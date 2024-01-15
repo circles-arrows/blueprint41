@@ -225,11 +225,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition> alias)
+        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_ALIAS, QueryCondition[]> alias)
+        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }

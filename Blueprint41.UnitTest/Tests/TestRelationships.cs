@@ -794,8 +794,8 @@ namespace Blueprint41.UnitTest.Tests
                     var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
                     var properties = new Dictionary<string, object>()
                     {
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr1 },
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addr2 },
+                        { nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine1), addr1 },
+                        { nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine2), addr2 },
                     };
 
                     CleanupRelations(PERSON_LIVES_IN.Relationship);
@@ -843,8 +843,8 @@ namespace Blueprint41.UnitTest.Tests
                     var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
                     var properties = new Dictionary<string, object>()
                     {
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr1 },
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addr2 },
+                        { nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine1), addr1 },
+                        { nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine2), addr2 },
                     };
 
                     CleanupRelations(PERSON_LIVES_IN.Relationship);
@@ -857,7 +857,7 @@ namespace Blueprint41.UnitTest.Tests
                     var addr3 = CityUids.AddressLines.Metropolis.ClarkKent_Later[0];
                     var properties2 = new Dictionary<string, object>()
                     {
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr3 },
+                        { nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine1), addr3 },
                     };
 
                     person.SetCity(city, scenario.Moment, AddressLine1: addr3);
@@ -905,8 +905,8 @@ namespace Blueprint41.UnitTest.Tests
                     var addr2 = CityUids.AddressLines.Metropolis.ClarkKent_Earlier[1];
                     var properties = new Dictionary<string, object>()
                     {
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addr1 },
-                        { nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addr2 },
+                        { nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine1), addr1 },
+                        { nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine2), addr2 },
                     };
 
                     CleanupRelations(PERSON_LIVES_IN.Relationship);
@@ -1151,12 +1151,18 @@ namespace Blueprint41.UnitTest.Tests
 
                 Transaction.Flush();
 
+                var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
 
+                List<PERSON_LIVES_IN> livesIn1 = PERSON_LIVES_IN.Where(alias => alias.Person(linus));
+                List<PERSON_LIVES_IN> livesIn2 = PERSON_LIVES_IN.Where(InNode: linus);
+                List<PERSON_LIVES_IN> livesIn3= PERSON_LIVES_IN.Where(AddressLine1: "1630 Revello Drive");
 
-                List<PERSON_LIVES_IN> livesIn = PERSON_LIVES_IN.Where(alias => alias.In.Uid == DatabaseUids.Persons.LinusTorvalds);
+                livesIn3.First().Assign(AddressLine1: "OTHER");
+
+                List<PERSON_LIVES_IN> livesIn4 = PERSON_LIVES_IN.Where(AddressLine1: "OTHER");
             }
 
-            
+
         }
 
         #endregion
@@ -1271,9 +1277,9 @@ namespace Blueprint41.UnitTest.Tests
             Dictionary<string, object> GetAddrLines(string[] addressLines)
             {
                 Dictionary<string, object> properties = new Dictionary<string, object>();
-                if (addressLines.Length > 0) properties.Add(nameof(PERSON_LIVES_IN_ALIAS.AddressLine1), addressLines[0]);
-                if (addressLines.Length > 1) properties.Add(nameof(PERSON_LIVES_IN_ALIAS.AddressLine2), addressLines[1]);
-                if (addressLines.Length > 2) properties.Add(nameof(PERSON_LIVES_IN_ALIAS.AddressLine3), addressLines[2]);
+                if (addressLines.Length > 0) properties.Add(nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine1), addressLines[0]);
+                if (addressLines.Length > 1) properties.Add(nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine2), addressLines[1]);
+                if (addressLines.Length > 2) properties.Add(nameof(PERSON_LIVES_IN_CRUD_ALIAS.AddressLine3), addressLines[2]);
                 
                 return properties;
             }

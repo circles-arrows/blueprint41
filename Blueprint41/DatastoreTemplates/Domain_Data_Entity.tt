@@ -734,11 +734,11 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -746,7 +746,7 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship) #>)
+        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
@@ -772,11 +772,11 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -784,7 +784,7 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship) #>)
+        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -816,11 +816,11 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -828,7 +828,7 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship) #>)
+        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
@@ -859,14 +859,14 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
             throw new NotImplementedException();
         }
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -880,11 +880,11 @@ if (!DALModel.IsAbstract)
 
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
         {
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_ALIAS, QueryCondition[]> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
         {
             throw new NotImplementedException();
         }
@@ -892,7 +892,7 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship) #>)
+        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;

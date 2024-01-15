@@ -378,8 +378,8 @@ namespace Blueprint41.DatastoreTemplates
 
         public static string ToJsonNotation(this IEnumerable<Property> properties, Relationship? relation = null, bool prepend = false)
         {
-            if (relation is not null)
-                prepend = true;
+            //if (relation is not null)
+            //    prepend = true;
 
             IEnumerable<Property> items = properties
                 .Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && (p.SystemReturnType.Namespace == "System" || p.SystemReturnType.IsEnum))

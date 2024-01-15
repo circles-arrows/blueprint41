@@ -166,6 +166,9 @@ namespace Blueprint41.DatastoreTemplates
                     else
                         return "ListResult";
                 default:
+                    if (type.IsEnum)
+                        return "StringResult";
+
                     return "MiscResult";
             }
         }
