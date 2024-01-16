@@ -305,7 +305,7 @@ namespace Blueprint41.Core
                 EagerLoadLogic.Invoke(item);
 
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
-            if ((properties is not null && properties.Count > 0) || (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null)))
+            if (NeedsToAssign(ParentProperty?.Relationship) || (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null)))
             {
                 if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
@@ -345,6 +345,14 @@ namespace Blueprint41.Core
                     if (Count == 0)
                         Add(item, false, properties);
                 }
+            }
+
+            static bool NeedsToAssign(Relationship? relationship)
+            {
+                if (relationship is null || (relationship.Properties.Count - relationship.ExcludedProperties().Count) > 0)
+                    return true;
+
+                return false;
             }
         }
         protected override bool IsNull(bool isUpdate)
