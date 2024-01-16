@@ -15,6 +15,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = <#= Settings.FullQueryNamespace #>;
+using node = <#= Settings.FullQueryNamespace #>.Node;
 
 namespace <#= Settings.FullCRUDNamespace #>
 {
@@ -734,17 +735,54 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
+                .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return <#= attr.Relationship.Name #>.Load(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
+                .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return <#= attr.Relationship.Name #>.Load(query);
         }
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
-            throw new NotImplementedException();
+            return <#= attr.Name #>Where(delegate(<#= attr.Relationship.Name #>.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+<#
+    foreach (var argument in attr.Relationship.Properties)
+    {
+        if (argument.SystemReturnType.IsEnum)
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value?.ToString());
+<#
+        }
+        else
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value);
+<#
+        }
+    }
+#>
+
+                return conditions.ToArray();
+            });
         }
         public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
@@ -772,17 +810,54 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
+                .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return <#= attr.Relationship.Name #>.Load(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
+                .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return <#= attr.Relationship.Name #>.Load(query);
         }
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
-            throw new NotImplementedException();
+            return <#= attr.Name #>Where(delegate(<#= attr.Relationship.Name #>.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+<#
+    foreach (var argument in attr.Relationship.Properties)
+    {
+        if (argument.SystemReturnType.IsEnum)
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value?.ToString());
+<#
+        }
+        else
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value);
+<#
+        }
+    }
+#>
+
+                return conditions.ToArray();
+            });
         }
         public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
@@ -816,11 +891,11 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
+        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             throw new NotImplementedException();
         }
-        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
+        public <#= attr.Relationship.Name #> <#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             throw new NotImplementedException();
         }
@@ -859,14 +934,14 @@ if (!DALModel.IsAbstract)
         {
             throw new NotImplementedException();
         }
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
+        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
             throw new NotImplementedException();
         }
-        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
+        public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -880,17 +955,54 @@ if (!DALModel.IsAbstract)
 
             throw new NotImplementedException();
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
+                .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return <#= attr.Relationship.Name #>.Load(query);
         }
-        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
+                .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return <#= attr.Relationship.Name #>.Load(query);
         }
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>)
         {
-            throw new NotImplementedException();
+            return <#= attr.Name #>Where(delegate(<#= attr.Relationship.Name #>.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+<#
+    foreach (var argument in attr.Relationship.Properties)
+    {
+        if (argument.SystemReturnType.IsEnum)
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value?.ToString());
+<#
+        }
+        else
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value);
+<#
+        }
+    }
+#>
+
+                return conditions.ToArray();
+            });
         }
         public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
@@ -899,10 +1011,10 @@ if (!DALModel.IsAbstract)
 
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
-                foreach (var p in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
+                foreach (var argument in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
                 {
 #>
-            if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value);
+            if (<#= argument.Name #>.HasValue) properties.Add("<#= argument.Name #>", <#= argument.Name #>.Value);
 <#
                 }
 #>
@@ -1241,7 +1353,7 @@ if (!DALModel.IsAbstract)
                 continue;
 #>
             /// <summary>
-            /// Get the 'Uid' value for the corresponding <#= property.Name #>
+            /// Get the 'Key' value for the corresponding <#= property.Name #>
             /// </summary>
             public static class <#= property.Name #>
             {

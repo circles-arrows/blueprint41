@@ -28,7 +28,7 @@ namespace Datastore.Manipulation
             CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
         }
 
-        private string _elementId { get; set; }
+        internal string _elementId { get; private set; }
 
         /// <summary>
         /// Person (In Node)
@@ -60,21 +60,21 @@ namespace Datastore.Manipulation
                 return assignments.ToArray();
             }
         }
-        public static List<PERSON_EATS_AT> Where(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition> expression)
+        public static List<PERSON_EATS_AT> Where(Func<Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
-                .Where(expression.Invoke(new PERSON_EATS_AT_CRUD_ALIAS(relAlias, inAlias, outAlias)))
+                .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<PERSON_EATS_AT> Where(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition[]> expression)
+        public static List<PERSON_EATS_AT> Where(Func<Alias, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
-                .Where(expression.Invoke(new PERSON_EATS_AT_CRUD_ALIAS(relAlias, inAlias, outAlias)))
+                .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
@@ -82,7 +82,7 @@ namespace Datastore.Manipulation
         }
         public static List<PERSON_EATS_AT> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Restaurant> OutNode = default)
         {
-            return Where(delegate(PERSON_EATS_AT_CRUD_ALIAS alias)
+            return Where(delegate(Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -93,7 +93,7 @@ namespace Datastore.Manipulation
                 return conditions.ToArray();
             });
         }
-        private static List<PERSON_EATS_AT> Load(ICompiled query)
+        internal static List<PERSON_EATS_AT> Load(ICompiled query)
         {
             var context = query.GetExecutionContext();
             var results = context.Execute(NodeMapping.AsWritableEntity);
@@ -108,104 +108,118 @@ namespace Datastore.Manipulation
 
         public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"]);
         private static Relationship _relationship = null;
-    }
 
-    /// <summary>
-    /// CRUD Specific alias for relationship: (Person)-[PERSON_EATS_AT]->(Restaurant)
-    /// </summary>
-    public partial class PERSON_EATS_AT_CRUD_ALIAS
-    {
-        internal PERSON_EATS_AT_CRUD_ALIAS(q.PERSON_EATS_AT_ALIAS relAlias, q.PersonAlias inAlias, q.RestaurantAlias outAlias)
+        /// <summary>
+        /// CRUD Specific alias for relationship: (Person)-[PERSON_EATS_AT]->(Restaurant)
+        /// </summary>
+        public partial class Alias
         {
-            _relAlias = relAlias;
-            _inAlias = inAlias;
-            _outAlias = outAlias;
-        }
-
-        public DateTimeResult CreationDate
-        {
-            get
+            internal Alias(q.PERSON_EATS_AT_ALIAS relAlias, q.PersonAlias inAlias, q.RestaurantAlias outAlias)
             {
-                if (_creationDate is null)
-                    _creationDate = _relAlias.CreationDate;
-
-                return _creationDate;
+                _relAlias = relAlias;
+                _inAlias = inAlias;
+                _outAlias = outAlias;
             }
-        }
-        private DateTimeResult _creationDate = null;
 
-        /// <summary>
-        /// Person in-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is the given person
-        /// </returns>
-        public QueryCondition Person(Person person)
-        {
-            return _inAlias.Uid == person.Uid;
-        }
-        /// <summary>
-        /// Person in-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is in the given set of persons
-        /// </returns>
-        public QueryCondition Persons(IEnumerable<Person> persons)
-        {
-            return _inAlias.Uid.In(persons.Select(item => item.Uid));
-        }
-        /// <summary>
-        /// Person in-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is in the given set of persons
-        /// </returns>
-        public QueryCondition Persons(params Person[] persons)
-        {
-            return _inAlias.Uid.In(persons.Select(item => item.Uid));
-        }
+            public DateTimeResult CreationDate
+            {
+                get
+                {
+                    if (_creationDate is null)
+                        _creationDate = _relAlias.CreationDate;
 
-        /// <summary>
-        /// Restaurant out-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is the given restaurant
-        /// </returns>
-        public QueryCondition Restaurant(Restaurant restaurant)
-        {
-            return _outAlias.Uid == restaurant.Uid;
-        }
-        /// <summary>
-        /// Restaurant out-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is in the given set of restaurants
-        /// </returns>
-        public QueryCondition Restaurants(IEnumerable<Restaurant> restaurants)
-        {
-            return _outAlias.Uid.In(restaurants.Select(item => item.Uid));
-        }
-        /// <summary>
-        /// Restaurant out-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is in the given set of restaurants
-        /// </returns>
-        public QueryCondition Restaurants(params Restaurant[] restaurants)
-        {
-            return _outAlias.Uid.In(restaurants.Select(item => item.Uid));
-        }
+                    return _creationDate;
+                }
+            }
+            private DateTimeResult _creationDate = null;
 
-        private readonly q.PERSON_EATS_AT_ALIAS _relAlias;
-        private readonly q.PersonAlias _inAlias;
-        private readonly q.RestaurantAlias _outAlias;
+            /// <summary>
+            /// Person in-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is the given person
+            /// </returns>
+            public QueryCondition Person(Person person)
+            {
+                return _inAlias.Uid == person.Uid;
+            }
+            /// <summary>
+            /// Person in-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is in the given set of persons
+            /// </returns>
+            public QueryCondition Persons(IEnumerable<Person> persons)
+            {
+                return _inAlias.Uid.In(persons.Select(item => item.Uid));
+            }
+            /// <summary>
+            /// Person in-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is in the given set of persons
+            /// </returns>
+            public QueryCondition Persons(params Person[] persons)
+            {
+                return _inAlias.Uid.In(persons.Select(item => item.Uid));
+            }
+
+            /// <summary>
+            /// Restaurant out-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is the given restaurant
+            /// </returns>
+            public QueryCondition Restaurant(Restaurant restaurant)
+            {
+                return _outAlias.Uid == restaurant.Uid;
+            }
+            /// <summary>
+            /// Restaurant out-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is in the given set of restaurants
+            /// </returns>
+            public QueryCondition Restaurants(IEnumerable<Restaurant> restaurants)
+            {
+                return _outAlias.Uid.In(restaurants.Select(item => item.Uid));
+            }
+            /// <summary>
+            /// Restaurant out-node: (Person)-[PERSON_EATS_AT]->(Restaurant)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is in the given set of restaurants
+            /// </returns>
+            public QueryCondition Restaurants(params Restaurant[] restaurants)
+            {
+                return _outAlias.Uid.In(restaurants.Select(item => item.Uid));
+            }
+
+            private readonly q.PERSON_EATS_AT_ALIAS _relAlias;
+            private readonly q.PersonAlias _inAlias;
+            private readonly q.RestaurantAlias _outAlias;
+        }
     }
 
     public static partial class RelationshipAssignmentExtensions
     {
         public static void Assign(this IEnumerable<PERSON_EATS_AT> @this)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
+                .Where(relAlias.ElementId.In(@this.Select(item => item._elementId)))
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.PERSON_EATS_AT_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+               
+                return assignments.ToArray();
+            }
         }
     }
 }

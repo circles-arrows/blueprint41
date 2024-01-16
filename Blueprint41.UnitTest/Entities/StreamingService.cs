@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation
 {
@@ -211,17 +212,41 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new SUBSCRIBED_TO_STREAMING_SERVICE.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new SUBSCRIBED_TO_STREAMING_SERVICE.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
         }
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
-            throw new NotImplementedException();
+            return SubscribersWhere(delegate(SUBSCRIBED_TO_STREAMING_SERVICE.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (MonthlyFee.HasValue) conditions.Add(alias.MonthlyFee == MonthlyFee.Value);
+                if (StartDate.HasValue) conditions.Add(alias.StartDate == StartDate.Value);
+                if (EndDate.HasValue) conditions.Add(alias.EndDate == EndDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void AddSubscriber(Person person, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {

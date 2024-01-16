@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation
 {
@@ -241,11 +242,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED_CRUD_ALIAS, QueryCondition> alias)
+        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED.Alias, QueryCondition> expression)
         {
             throw new NotImplementedException();
         }
-        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED_CRUD_ALIAS, QueryCondition[]> alias)
+        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED.Alias, QueryCondition[]> expression)
         {
             throw new NotImplementedException();
         }
@@ -264,17 +265,38 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN_CRUD_ALIAS, QueryCondition> alias)
+        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return ACTED_IN.Load(query);
         }
-        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return ACTED_IN.Load(query);
         }
         public List<ACTED_IN> ActorsWhere(JsNotation<System.DateTime> CreationDate = default)
         {
-            throw new NotImplementedException();
+            return ActorsWhere(delegate(ACTED_IN.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void AddActor(Person person)
         {
@@ -289,11 +311,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION_CRUD_ALIAS, QueryCondition> alias)
+        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION.Alias, QueryCondition> expression)
         {
             throw new NotImplementedException();
         }
-        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION_CRUD_ALIAS, QueryCondition[]> alias)
+        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION.Alias, QueryCondition[]> expression)
         {
             throw new NotImplementedException();
         }

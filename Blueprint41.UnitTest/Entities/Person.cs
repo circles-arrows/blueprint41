@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation
 {
@@ -250,17 +251,38 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition> alias)
+        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_EATS_AT.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_EATS_AT.Load(query);
         }
-        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_EATS_AT.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_EATS_AT.Load(query);
         }
         public List<PERSON_EATS_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default)
         {
-            throw new NotImplementedException();
+            return RestaurantsWhere(delegate(PERSON_EATS_AT.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void AddRestaurant(Restaurant restaurant)
         {
@@ -275,17 +297,38 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED_CRUD_ALIAS, QueryCondition> alias)
+        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_DIRECTED.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_DIRECTED.Load(query);
         }
-        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_DIRECTED.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_DIRECTED.Load(query);
         }
         public List<PERSON_DIRECTED> DirectedMoviesWhere(JsNotation<System.DateTime> CreationDate = default)
         {
-            throw new NotImplementedException();
+            return DirectedMoviesWhere(delegate(PERSON_DIRECTED.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void AddDirectedMovie(Movie movie)
         {
@@ -300,17 +343,38 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN_CRUD_ALIAS, QueryCondition> alias)
+        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return ACTED_IN.Load(query);
         }
-        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return ACTED_IN.Load(query);
         }
         public List<ACTED_IN> ActedInMoviesWhere(JsNotation<System.DateTime> CreationDate = default)
         {
-            throw new NotImplementedException();
+            return ActedInMoviesWhere(delegate(ACTED_IN.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void AddActedInMovie(Movie movie)
         {
@@ -325,17 +389,41 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new SUBSCRIBED_TO_STREAMING_SERVICE.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new SUBSCRIBED_TO_STREAMING_SERVICE.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
         }
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
         {
-            throw new NotImplementedException();
+            return StreamingServiceSubscriptionsWhere(delegate(SUBSCRIBED_TO_STREAMING_SERVICE.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (MonthlyFee.HasValue) conditions.Add(alias.MonthlyFee == MonthlyFee.Value);
+                if (StartDate.HasValue) conditions.Add(alias.StartDate == StartDate.Value);
+                if (EndDate.HasValue) conditions.Add(alias.EndDate == EndDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void AddStreamingServiceSubscription(StreamingService streamingService, DateTime? moment, JsNotation<decimal> MonthlyFee = default)
         {
@@ -354,17 +442,39 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE_CRUD_ALIAS, QueryCondition> alias)
+        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new WATCHED_MOVIE.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return WATCHED_MOVIE.Load(query);
         }
-        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new WATCHED_MOVIE.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return WATCHED_MOVIE.Load(query);
         }
         public List<WATCHED_MOVIE> WatchedMoviesWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<int> MinutesWatched = default)
         {
-            throw new NotImplementedException();
+            return WatchedMoviesWhere(delegate(WATCHED_MOVIE.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (MinutesWatched.HasValue) conditions.Add(alias.MinutesWatched == MinutesWatched.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void AddWatchedMovie(Movie movie, JsNotation<int> MinutesWatched = default)
         {
@@ -387,14 +497,14 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition> alias)
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN.Alias, QueryCondition> expression)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
             throw new NotImplementedException();
         }
-        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition[]> alias)
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN.Alias, QueryCondition[]> expression)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -408,17 +518,43 @@ namespace Datastore.Manipulation
 
             throw new NotImplementedException();
         }
-        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition> alias)
+        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_LIVES_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_LIVES_IN.Load(query);
         }
-        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_LIVES_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_LIVES_IN.Load(query);
         }
         public List<PERSON_LIVES_IN> CityWhere(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
         {
-            throw new NotImplementedException();
+            return CityWhere(delegate(PERSON_LIVES_IN.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (StartDate.HasValue) conditions.Add(alias.StartDate == StartDate.Value);
+                if (EndDate.HasValue) conditions.Add(alias.EndDate == EndDate.Value);
+                if (AddressLine1.HasValue) conditions.Add(alias.AddressLine1 == AddressLine1.Value);
+                if (AddressLine2.HasValue) conditions.Add(alias.AddressLine2 == AddressLine2.Value);
+                if (AddressLine3.HasValue) conditions.Add(alias.AddressLine3 == AddressLine3.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void SetCity(City city, DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default)
         {

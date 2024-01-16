@@ -28,7 +28,7 @@ namespace Datastore.Manipulation
             CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
         }
 
-        private string _elementId { get; set; }
+        internal string _elementId { get; private set; }
 
         /// <summary>
         /// Person (In Node)
@@ -60,21 +60,21 @@ namespace Datastore.Manipulation
                 return assignments.ToArray();
             }
         }
-        public static List<ACTED_IN> Where(Func<ACTED_IN_CRUD_ALIAS, QueryCondition> expression)
+        public static List<ACTED_IN> Where(Func<Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
-                .Where(expression.Invoke(new ACTED_IN_CRUD_ALIAS(relAlias, inAlias, outAlias)))
+                .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
             return Load(query);
         }
-        public static List<ACTED_IN> Where(Func<ACTED_IN_CRUD_ALIAS, QueryCondition[]> expression)
+        public static List<ACTED_IN> Where(Func<Alias, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
-                .Where(expression.Invoke(new ACTED_IN_CRUD_ALIAS(relAlias, inAlias, outAlias)))
+                .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
 
@@ -82,7 +82,7 @@ namespace Datastore.Manipulation
         }
         public static List<ACTED_IN> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Person> InNode = default, JsNotation<Movie> OutNode = default)
         {
-            return Where(delegate(ACTED_IN_CRUD_ALIAS alias)
+            return Where(delegate(Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
@@ -93,7 +93,7 @@ namespace Datastore.Manipulation
                 return conditions.ToArray();
             });
         }
-        private static List<ACTED_IN> Load(ICompiled query)
+        internal static List<ACTED_IN> Load(ICompiled query)
         {
             var context = query.GetExecutionContext();
             var results = context.Execute(NodeMapping.AsWritableEntity);
@@ -108,104 +108,118 @@ namespace Datastore.Manipulation
 
         public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["ACTED_IN"]);
         private static Relationship _relationship = null;
-    }
 
-    /// <summary>
-    /// CRUD Specific alias for relationship: (Person)-[ACTED_IN]->(Movie)
-    /// </summary>
-    public partial class ACTED_IN_CRUD_ALIAS
-    {
-        internal ACTED_IN_CRUD_ALIAS(q.ACTED_IN_ALIAS relAlias, q.PersonAlias inAlias, q.MovieAlias outAlias)
+        /// <summary>
+        /// CRUD Specific alias for relationship: (Person)-[ACTED_IN]->(Movie)
+        /// </summary>
+        public partial class Alias
         {
-            _relAlias = relAlias;
-            _inAlias = inAlias;
-            _outAlias = outAlias;
-        }
-
-        public DateTimeResult CreationDate
-        {
-            get
+            internal Alias(q.ACTED_IN_ALIAS relAlias, q.PersonAlias inAlias, q.MovieAlias outAlias)
             {
-                if (_creationDate is null)
-                    _creationDate = _relAlias.CreationDate;
-
-                return _creationDate;
+                _relAlias = relAlias;
+                _inAlias = inAlias;
+                _outAlias = outAlias;
             }
-        }
-        private DateTimeResult _creationDate = null;
 
-        /// <summary>
-        /// Person in-node: (Person)-[ACTED_IN]->(Movie)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is the given person
-        /// </returns>
-        public QueryCondition Person(Person person)
-        {
-            return _inAlias.Uid == person.Uid;
-        }
-        /// <summary>
-        /// Person in-node: (Person)-[ACTED_IN]->(Movie)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is in the given set of persons
-        /// </returns>
-        public QueryCondition Persons(IEnumerable<Person> persons)
-        {
-            return _inAlias.Uid.In(persons.Select(item => item.Uid));
-        }
-        /// <summary>
-        /// Person in-node: (Person)-[ACTED_IN]->(Movie)
-        /// </summary>
-        /// <returns>
-        /// Condition where in-node is in the given set of persons
-        /// </returns>
-        public QueryCondition Persons(params Person[] persons)
-        {
-            return _inAlias.Uid.In(persons.Select(item => item.Uid));
-        }
+            public DateTimeResult CreationDate
+            {
+                get
+                {
+                    if (_creationDate is null)
+                        _creationDate = _relAlias.CreationDate;
 
-        /// <summary>
-        /// Movie out-node: (Person)-[ACTED_IN]->(Movie)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is the given movie
-        /// </returns>
-        public QueryCondition Movie(Movie movie)
-        {
-            return _outAlias.Uid == movie.Uid;
-        }
-        /// <summary>
-        /// Movie out-node: (Person)-[ACTED_IN]->(Movie)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is in the given set of movies
-        /// </returns>
-        public QueryCondition Movies(IEnumerable<Movie> movies)
-        {
-            return _outAlias.Uid.In(movies.Select(item => item.Uid));
-        }
-        /// <summary>
-        /// Movie out-node: (Person)-[ACTED_IN]->(Movie)
-        /// </summary>
-        /// <returns>
-        /// Condition where out-node is in the given set of movies
-        /// </returns>
-        public QueryCondition Movies(params Movie[] movies)
-        {
-            return _outAlias.Uid.In(movies.Select(item => item.Uid));
-        }
+                    return _creationDate;
+                }
+            }
+            private DateTimeResult _creationDate = null;
 
-        private readonly q.ACTED_IN_ALIAS _relAlias;
-        private readonly q.PersonAlias _inAlias;
-        private readonly q.MovieAlias _outAlias;
+            /// <summary>
+            /// Person in-node: (Person)-[ACTED_IN]->(Movie)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is the given person
+            /// </returns>
+            public QueryCondition Person(Person person)
+            {
+                return _inAlias.Uid == person.Uid;
+            }
+            /// <summary>
+            /// Person in-node: (Person)-[ACTED_IN]->(Movie)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is in the given set of persons
+            /// </returns>
+            public QueryCondition Persons(IEnumerable<Person> persons)
+            {
+                return _inAlias.Uid.In(persons.Select(item => item.Uid));
+            }
+            /// <summary>
+            /// Person in-node: (Person)-[ACTED_IN]->(Movie)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is in the given set of persons
+            /// </returns>
+            public QueryCondition Persons(params Person[] persons)
+            {
+                return _inAlias.Uid.In(persons.Select(item => item.Uid));
+            }
+
+            /// <summary>
+            /// Movie out-node: (Person)-[ACTED_IN]->(Movie)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is the given movie
+            /// </returns>
+            public QueryCondition Movie(Movie movie)
+            {
+                return _outAlias.Uid == movie.Uid;
+            }
+            /// <summary>
+            /// Movie out-node: (Person)-[ACTED_IN]->(Movie)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is in the given set of movies
+            /// </returns>
+            public QueryCondition Movies(IEnumerable<Movie> movies)
+            {
+                return _outAlias.Uid.In(movies.Select(item => item.Uid));
+            }
+            /// <summary>
+            /// Movie out-node: (Person)-[ACTED_IN]->(Movie)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is in the given set of movies
+            /// </returns>
+            public QueryCondition Movies(params Movie[] movies)
+            {
+                return _outAlias.Uid.In(movies.Select(item => item.Uid));
+            }
+
+            private readonly q.ACTED_IN_ALIAS _relAlias;
+            private readonly q.PersonAlias _inAlias;
+            private readonly q.MovieAlias _outAlias;
+        }
     }
 
     public static partial class RelationshipAssignmentExtensions
     {
         public static void Assign(this IEnumerable<ACTED_IN> @this)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(relAlias.ElementId.In(@this.Select(item => item._elementId)))
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.ACTED_IN_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+               
+                return assignments.ToArray();
+            }
         }
     }
 }

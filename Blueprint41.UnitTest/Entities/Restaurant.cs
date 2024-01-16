@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
+using node = Datastore.Query.Node;
 
 namespace Datastore.Manipulation
 {
@@ -215,11 +216,11 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT_CRUD_ALIAS, QueryCondition> alias)
+        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition> expression)
         {
             throw new NotImplementedException();
         }
-        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT_CRUD_ALIAS, QueryCondition[]> alias)
+        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition[]> expression)
         {
             throw new NotImplementedException();
         }
@@ -238,17 +239,38 @@ namespace Datastore.Manipulation
         {
             throw new NotImplementedException();
         }
-        public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition> alias)
+        public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT.Alias, QueryCondition> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_EATS_AT.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_EATS_AT.Load(query);
         }
-        public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT_CRUD_ALIAS, QueryCondition[]> alias)
+        public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_EATS_AT.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_EATS_AT.Load(query);
         }
         public List<PERSON_EATS_AT> PersonsWhere(JsNotation<System.DateTime> CreationDate = default)
         {
-            throw new NotImplementedException();
+            return PersonsWhere(delegate(PERSON_EATS_AT.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void AddPerson(Person person)
         {
