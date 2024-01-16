@@ -212,21 +212,52 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
+        #region City (Lookup)
+
         public RESTAURANT_LOCATED_AT CityRelation()
         {
-            throw new NotImplementedException();
+            return RESTAURANT_LOCATED_AT.Load(_queryCityRelation.Value, ("key", Uid)).FirstOrDefault();
         }
-        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition> expression)
+        private readonly Lazy<ICompiled> _queryCityRelation = new Lazy<ICompiled>(delegate()
         {
-            throw new NotImplementedException();
+            return Transaction.CompiledQuery
+                .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
+        public RESTAURANT_LOCATED_AT GetCityIf(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new RESTAURANT_LOCATED_AT.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return RESTAURANT_LOCATED_AT.Load(query).FirstOrDefault();
         }
-        public RESTAURANT_LOCATED_AT CityIf(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition[]> expression)
+        public RESTAURANT_LOCATED_AT GetCityIf(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new RESTAURANT_LOCATED_AT.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return RESTAURANT_LOCATED_AT.Load(query).FirstOrDefault();
         }
-        public RESTAURANT_LOCATED_AT CityIf(JsNotation<System.DateTime> CreationDate = default)
+        public RESTAURANT_LOCATED_AT GetCityIf(JsNotation<System.DateTime> CreationDate = default)
         {
-            throw new NotImplementedException();
+            return GetCityIf(delegate(RESTAURANT_LOCATED_AT.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void SetCity(City city)
         {
@@ -235,10 +266,23 @@ namespace Datastore.Manipulation
             ((ILookupHelper<City>)InnerData.City).SetItem(city, null, properties);
 
         }
+
+        #endregion
+
+        #region Persons (Collection)
+
         public List<PERSON_EATS_AT> PersonRelations()
         {
-            throw new NotImplementedException();
+            return PERSON_EATS_AT.Load(_queryPersonRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryPersonRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
+                .Where(outAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<PERSON_EATS_AT> PersonsWhere(Func<PERSON_EATS_AT.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -282,44 +326,10 @@ namespace Datastore.Manipulation
             Persons.Remove(person);
         }
 
+        #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private static readonly Parameter key = Parameter.New<string>("key");
+        private static readonly Parameter moment = Parameter.New<DateTime>("moment");
 
         #endregion
 

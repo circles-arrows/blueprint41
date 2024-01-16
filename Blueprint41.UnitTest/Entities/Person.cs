@@ -247,10 +247,20 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
+        #region Restaurants (Collection)
+
         public List<PERSON_EATS_AT> RestaurantRelations()
         {
-            throw new NotImplementedException();
+            return PERSON_EATS_AT.Load(_queryRestaurantRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryRestaurantRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -293,10 +303,23 @@ namespace Datastore.Manipulation
         {
             Restaurants.Remove(restaurant);
         }
+
+        #endregion
+
+        #region DirectedMovies (Collection)
+
         public List<PERSON_DIRECTED> DirectedMovieRelations()
         {
-            throw new NotImplementedException();
+            return PERSON_DIRECTED.Load(_queryDirectedMovieRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryDirectedMovieRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -339,10 +362,23 @@ namespace Datastore.Manipulation
         {
             DirectedMovies.Remove(movie);
         }
+
+        #endregion
+
+        #region ActedInMovies (Collection)
+
         public List<ACTED_IN> ActedInMovieRelations()
         {
-            throw new NotImplementedException();
+            return ACTED_IN.Load(_queryActedInMovieRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryActedInMovieRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -385,10 +421,23 @@ namespace Datastore.Manipulation
         {
             ActedInMovies.Remove(movie);
         }
+
+        #endregion
+
+        #region StreamingServiceSubscriptions (Time Dependent Collection)
+
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionRelations()
         {
-            throw new NotImplementedException();
+            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(_queryStreamingServiceSubscriptionRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryStreamingServiceSubscriptionRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -411,7 +460,7 @@ namespace Datastore.Manipulation
 
             return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(JsNotation<DateTime?> Moment = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<decimal> MonthlyFee = default)
         {
             return StreamingServiceSubscriptionsWhere(delegate(SUBSCRIBED_TO_STREAMING_SERVICE.Alias alias)
             {
@@ -419,8 +468,7 @@ namespace Datastore.Manipulation
 
                 if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
                 if (MonthlyFee.HasValue) conditions.Add(alias.MonthlyFee == MonthlyFee.Value);
-                if (StartDate.HasValue) conditions.Add(alias.StartDate == StartDate.Value);
-                if (EndDate.HasValue) conditions.Add(alias.EndDate == EndDate.Value);
+                if (Moment.HasValue) conditions.AddRange(alias.Moment(Moment.Value));
 
                 return conditions.ToArray();
             });
@@ -438,10 +486,23 @@ namespace Datastore.Manipulation
         {
             StreamingServiceSubscriptions.Remove(streamingService, moment);
         }
+
+        #endregion
+
+        #region WatchedMovies (Collection)
+
         public List<WATCHED_MOVIE> WatchedMovieRelations()
         {
-            throw new NotImplementedException();
+            return WATCHED_MOVIE.Load(_queryWatchedMovieRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryWatchedMovieRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -486,37 +547,82 @@ namespace Datastore.Manipulation
         {
             WatchedMovies.Remove(movie);
         }
+
+        #endregion
+
+        #region City (Time Dependent Lookup)
+
         public PERSON_LIVES_IN CityRelation(DateTime? moment = null)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
-            throw new NotImplementedException();
+            return PERSON_LIVES_IN.Load(_queryCityRelation.Value, ("key", Uid), ("moment", moment)).FirstOrDefault();
         }
+        private readonly Lazy<ICompiled> _queryCityRelation = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .And(relAlias.Moment(moment))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<PERSON_LIVES_IN> CityRelations()
         {
-            throw new NotImplementedException();
+            return PERSON_LIVES_IN.Load(_queryCityRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryCityRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN.Alias, QueryCondition> expression)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_LIVES_IN.Alias(relAlias, inAlias, outAlias)))
+                .And(relAlias.Moment(moment))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_LIVES_IN.Load(query).FirstOrDefault();
         }
         public PERSON_LIVES_IN GetCityIf(DateTime? moment, Func<PERSON_LIVES_IN.Alias, QueryCondition[]> expression)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
 
-            throw new NotImplementedException();
-        }
-        public PERSON_LIVES_IN GetCityIf(DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
-        {
-            if (moment is null)
-                moment = DateTime.UtcNow;
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_LIVES_IN.Alias(relAlias, inAlias, outAlias)))
+                .And(relAlias.Moment(moment))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
 
-            throw new NotImplementedException();
+            return PERSON_LIVES_IN.Load(query).FirstOrDefault();
+        }
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default)
+        {
+            return GetCityIf(moment, delegate(PERSON_LIVES_IN.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (AddressLine1.HasValue) conditions.Add(alias.AddressLine1 == AddressLine1.Value);
+                if (AddressLine2.HasValue) conditions.Add(alias.AddressLine2 == AddressLine2.Value);
+                if (AddressLine3.HasValue) conditions.Add(alias.AddressLine3 == AddressLine3.Value);
+
+                return conditions.ToArray();
+            });
         }
         public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN.Alias, QueryCondition> expression)
         {
@@ -540,18 +646,17 @@ namespace Datastore.Manipulation
 
             return PERSON_LIVES_IN.Load(query);
         }
-        public List<PERSON_LIVES_IN> CityWhere(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default)
+        public List<PERSON_LIVES_IN> CityWhere(JsNotation<DateTime?> Moment = default, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default)
         {
             return CityWhere(delegate(PERSON_LIVES_IN.Alias alias)
             {
                 List<QueryCondition> conditions = new List<QueryCondition>();
 
                 if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
-                if (StartDate.HasValue) conditions.Add(alias.StartDate == StartDate.Value);
-                if (EndDate.HasValue) conditions.Add(alias.EndDate == EndDate.Value);
                 if (AddressLine1.HasValue) conditions.Add(alias.AddressLine1 == AddressLine1.Value);
                 if (AddressLine2.HasValue) conditions.Add(alias.AddressLine2 == AddressLine2.Value);
                 if (AddressLine3.HasValue) conditions.Add(alias.AddressLine3 == AddressLine3.Value);
+                if (Moment.HasValue) conditions.AddRange(alias.Moment(Moment.Value));
 
                 return conditions.ToArray();
             });
@@ -569,44 +674,10 @@ namespace Datastore.Manipulation
             ((ILookupHelper<City>)InnerData.City).SetItem(city, moment, properties);
         }
 
+        #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private static readonly Parameter key = Parameter.New<string>("key");
+        private static readonly Parameter moment = Parameter.New<DateTime>("moment");
 
         #endregion
 

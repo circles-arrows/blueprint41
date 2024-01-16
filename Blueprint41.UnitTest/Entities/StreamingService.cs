@@ -208,10 +208,20 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
+        #region Subscribers (Time Dependent Collection)
+
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscriberRelations()
         {
-            throw new NotImplementedException();
+            return SUBSCRIBED_TO_STREAMING_SERVICE.Load(_querySubscriberRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _querySubscriberRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+                .Where(outAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -234,7 +244,7 @@ namespace Datastore.Manipulation
 
             return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(JsNotation<DateTime?> Moment = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<decimal> MonthlyFee = default)
         {
             return SubscribersWhere(delegate(SUBSCRIBED_TO_STREAMING_SERVICE.Alias alias)
             {
@@ -242,8 +252,7 @@ namespace Datastore.Manipulation
 
                 if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
                 if (MonthlyFee.HasValue) conditions.Add(alias.MonthlyFee == MonthlyFee.Value);
-                if (StartDate.HasValue) conditions.Add(alias.StartDate == StartDate.Value);
-                if (EndDate.HasValue) conditions.Add(alias.EndDate == EndDate.Value);
+                if (Moment.HasValue) conditions.AddRange(alias.Moment(Moment.Value));
 
                 return conditions.ToArray();
             });
@@ -262,44 +271,10 @@ namespace Datastore.Manipulation
             Subscribers.Remove(person, moment);
         }
 
+        #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private static readonly Parameter key = Parameter.New<string>("key");
+        private static readonly Parameter moment = Parameter.New<DateTime>("moment");
 
         #endregion
 

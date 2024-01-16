@@ -228,45 +228,8 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private static readonly Parameter key = Parameter.New<string>("key");
+        private static readonly Parameter moment = Parameter.New<DateTime>("moment");
 
         #endregion
 

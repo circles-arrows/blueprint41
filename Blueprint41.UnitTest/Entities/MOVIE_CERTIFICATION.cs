@@ -113,9 +113,16 @@ namespace Datastore.Manipulation
                 return conditions.ToArray();
             });
         }
-        internal static List<MOVIE_CERTIFICATION> Load(ICompiled query)
+        internal static List<MOVIE_CERTIFICATION> Load(ICompiled query) => Load(query, null);
+        internal static List<MOVIE_CERTIFICATION> Load(ICompiled query, params (string name, object value)[] arguments)
         {
             var context = query.GetExecutionContext();
+            if (arguments is not null && arguments.Length > 0)
+            {
+                foreach ((string name, object value) in arguments)
+                    context.SetParameter(name, value);
+            }
+
             var results = context.Execute(NodeMapping.AsWritableEntity);
 
             return results.Select(result => new MOVIE_CERTIFICATION(

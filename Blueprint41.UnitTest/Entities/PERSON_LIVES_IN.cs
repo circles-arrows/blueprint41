@@ -111,9 +111,16 @@ namespace Datastore.Manipulation
                 return conditions.ToArray();
             });
         }
-        internal static List<PERSON_LIVES_IN> Load(ICompiled query)
+        internal static List<PERSON_LIVES_IN> Load(ICompiled query) => Load(query, null);
+        internal static List<PERSON_LIVES_IN> Load(ICompiled query, params (string name, object value)[] arguments)
         {
             var context = query.GetExecutionContext();
+            if (arguments is not null && arguments.Length > 0)
+            {
+                foreach ((string name, object value) in arguments)
+                    context.SetParameter(name, value);
+            }
+
             var results = context.Execute(NodeMapping.AsWritableEntity);
 
             return results.Select(result => new PERSON_LIVES_IN(
@@ -267,6 +274,10 @@ namespace Datastore.Manipulation
             {
                 return _outAlias.Uid.In(cities.Select(item => item.Uid));
             }
+
+            public QueryCondition[] Moment(DateTime? moment)      => _relAlias.Moment(moment);
+            public QueryCondition[] Moment(DateTimeResult moment) => _relAlias.Moment(moment);
+            public QueryCondition[] Moment(Parameter moment)      => _relAlias.Moment(moment);
 
             private readonly q.PERSON_LIVES_IN_ALIAS _relAlias;
             private readonly q.PersonAlias _inAlias;

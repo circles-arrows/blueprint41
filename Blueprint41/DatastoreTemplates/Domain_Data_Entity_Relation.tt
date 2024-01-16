@@ -140,9 +140,16 @@ namespace <#= Settings.FullCRUDNamespace #>
                 return conditions.ToArray();
             });
         }
-        internal static List<<#= DALRelation.Name #>> Load(ICompiled query)
+        internal static List<<#= DALRelation.Name #>> Load(ICompiled query) => Load(query, null);
+        internal static List<<#= DALRelation.Name #>> Load(ICompiled query, params (string name, object value)[] arguments)
         {
             var context = query.GetExecutionContext();
+            if (arguments is not null && arguments.Length > 0)
+            {
+                foreach ((string name, object value) in arguments)
+                    context.SetParameter(name, value);
+            }
+
             var results = context.Execute(NodeMapping.AsWritableEntity);
 
             return results.Select(result => new <#= DALRelation.Name #>(
@@ -283,6 +290,17 @@ namespace <#= Settings.FullCRUDNamespace #>
                 return _outAlias.<#= DALRelation.OutEntity.Key.Name #>.In(<#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.OutEntity.Key.Name #>));
             }
 
+<#
+    if (DALRelation.IsTimeDependent)
+    {
+#>
+            public QueryCondition[] Moment(DateTime? moment)      => _relAlias.Moment(moment);
+            public QueryCondition[] Moment(DateTimeResult moment) => _relAlias.Moment(moment);
+            public QueryCondition[] Moment(Parameter moment)      => _relAlias.Moment(moment);
+
+<#
+    }
+#>
             private readonly q.<#= DALRelation.Name #>_ALIAS _relAlias;
             private readonly q.<#= DALRelation.InEntity.Name #>Alias _inAlias;
             private readonly q.<#= DALRelation.OutEntity.Name #>Alias _outAlias;

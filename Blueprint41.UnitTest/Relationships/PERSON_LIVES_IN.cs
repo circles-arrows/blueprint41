@@ -137,5 +137,18 @@ public partial class PERSON_LIVES_IN_REL : RELATIONSHIP, IFromIn_PERSON_LIVES_IN
         public StringResult AddressLine1 { get; private set; } 
         public StringResult AddressLine2 { get; private set; } 
         public StringResult AddressLine3 { get; private set; } 
+
+        public QueryCondition[] Moment(DateTime? moment)
+        {
+            return new QueryCondition[] { StartDate <= moment, EndDate > moment };
+        }
+        public QueryCondition[] Moment(DateTimeResult moment)
+        {
+            return new QueryCondition[] { StartDate <= moment, EndDate > moment };
+        }
+        public QueryCondition[] Moment(Parameter moment)
+        {
+            return new QueryCondition[] { StartDate <= moment, EndDate > moment };
+        }
     }
 }

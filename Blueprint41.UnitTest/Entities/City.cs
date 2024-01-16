@@ -222,10 +222,20 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
+        #region Restaurants (Collection)
+
         public List<RESTAURANT_LOCATED_AT> RestaurantRelations()
         {
-            throw new NotImplementedException();
+            return RESTAURANT_LOCATED_AT.Load(_queryRestaurantRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryRestaurantRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+                .Where(outAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -269,44 +279,10 @@ namespace Datastore.Manipulation
             Restaurants.Remove(restaurant);
         }
 
+        #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private static readonly Parameter key = Parameter.New<string>("key");
+        private static readonly Parameter moment = Parameter.New<DateTime>("moment");
 
         #endregion
 

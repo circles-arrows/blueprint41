@@ -1160,6 +1160,10 @@ namespace Blueprint41.UnitTest.Tests
                 livesIn1.Assign(AddressLine1: "OTHER");
 
                 List<PERSON_LIVES_IN> livesIn4 = PERSON_LIVES_IN.Where(AddressLine1: "OTHER");
+                
+                PERSON_LIVES_IN livesIn5 = linus.GetCityIf(null, AddressLine1: "OTHER");
+                List<PERSON_LIVES_IN> livesIn6 = linus.CityWhere(AddressLine1: "OTHER");
+                List<PERSON_LIVES_IN> livesIn7 = linus.CityWhere(Moment: DateTime.UtcNow, AddressLine1: "OTHER");
             }
 
 

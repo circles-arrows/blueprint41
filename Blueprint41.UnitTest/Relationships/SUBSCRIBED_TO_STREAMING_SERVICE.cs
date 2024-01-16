@@ -131,5 +131,18 @@ public partial class SUBSCRIBED_TO_STREAMING_SERVICE_REL : RELATIONSHIP, IFromIn
         public NumericResult MonthlyFee { get; private set; } 
         public DateTimeResult StartDate { get; private set; } 
         public DateTimeResult EndDate { get; private set; } 
+
+        public QueryCondition[] Moment(DateTime? moment)
+        {
+            return new QueryCondition[] { StartDate <= moment, EndDate > moment };
+        }
+        public QueryCondition[] Moment(DateTimeResult moment)
+        {
+            return new QueryCondition[] { StartDate <= moment, EndDate > moment };
+        }
+        public QueryCondition[] Moment(Parameter moment)
+        {
+            return new QueryCondition[] { StartDate <= moment, EndDate > moment };
+        }
     }
 }

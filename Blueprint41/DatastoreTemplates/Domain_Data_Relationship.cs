@@ -946,6 +946,62 @@ namespace Blueprint41.DatastoreTemplates
             #line 230 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
 
     }
+    if (DALRelation.IsTimeDependent)
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n        public QueryCondition[] Moment(DateTime? moment)\r\n        {\r\n          " +
+                    "  return new QueryCondition[] { ");
+            
+            #line 238 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.StartDate));
+            
+            #line default
+            #line hidden
+            this.Write(" <= moment, ");
+            
+            #line 238 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.EndDate));
+            
+            #line default
+            #line hidden
+            this.Write(" > moment };\r\n        }\r\n        public QueryCondition[] Moment(DateTimeResult mo" +
+                    "ment)\r\n        {\r\n            return new QueryCondition[] { ");
+            
+            #line 242 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.StartDate));
+            
+            #line default
+            #line hidden
+            this.Write(" <= moment, ");
+            
+            #line 242 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.EndDate));
+            
+            #line default
+            #line hidden
+            this.Write(" > moment };\r\n        }\r\n        public QueryCondition[] Moment(Parameter moment)" +
+                    "\r\n        {\r\n            return new QueryCondition[] { ");
+            
+            #line 246 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.StartDate));
+            
+            #line default
+            #line hidden
+            this.Write(" <= moment, ");
+            
+            #line 246 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.EndDate));
+            
+            #line default
+            #line hidden
+            this.Write(" > moment };\r\n        }\r\n");
+            
+            #line 248 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+
+    }
 
             
             #line default

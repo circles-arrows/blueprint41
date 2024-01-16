@@ -238,21 +238,52 @@ namespace Datastore.Manipulation
 
         #region Relationship Properties
 
+        #region Director (Lookup)
+
         public PERSON_DIRECTED DirectorRelation()
         {
-            throw new NotImplementedException();
+            return PERSON_DIRECTED.Load(_queryDirectorRelation.Value, ("key", Uid)).FirstOrDefault();
         }
-        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED.Alias, QueryCondition> expression)
+        private readonly Lazy<ICompiled> _queryDirectorRelation = new Lazy<ICompiled>(delegate()
         {
-            throw new NotImplementedException();
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
+        public PERSON_DIRECTED GetDirectorIf(Func<PERSON_DIRECTED.Alias, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_DIRECTED.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_DIRECTED.Load(query).FirstOrDefault();
         }
-        public PERSON_DIRECTED DirectorIf(Func<PERSON_DIRECTED.Alias, QueryCondition[]> expression)
+        public PERSON_DIRECTED GetDirectorIf(Func<PERSON_DIRECTED.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new PERSON_DIRECTED.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return PERSON_DIRECTED.Load(query).FirstOrDefault();
         }
-        public PERSON_DIRECTED DirectorIf(JsNotation<System.DateTime> CreationDate = default)
+        public PERSON_DIRECTED GetDirectorIf(JsNotation<System.DateTime> CreationDate = default)
         {
-            throw new NotImplementedException();
+            return GetDirectorIf(delegate(PERSON_DIRECTED.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+
+                return conditions.ToArray();
+            });
         }
         public void SetDirector(Person person)
         {
@@ -261,10 +292,23 @@ namespace Datastore.Manipulation
             ((ILookupHelper<Person>)InnerData.Director).SetItem(person, null, properties);
 
         }
+
+        #endregion
+
+        #region Actors (Collection)
+
         public List<ACTED_IN> ActorRelations()
         {
-            throw new NotImplementedException();
+            return ACTED_IN.Load(_queryActorRelations.Value, ("key", Uid));
         }
+        private readonly Lazy<ICompiled> _queryActorRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
         public List<ACTED_IN> ActorsWhere(Func<ACTED_IN.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
@@ -307,21 +351,60 @@ namespace Datastore.Manipulation
         {
             Actors.Remove(person);
         }
+
+        #endregion
+
+        #region Certification (Lookup)
+
         public MOVIE_CERTIFICATION CertificationRelation()
         {
-            throw new NotImplementedException();
+            return MOVIE_CERTIFICATION.Load(_queryCertificationRelation.Value, ("key", Uid)).FirstOrDefault();
         }
-        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION.Alias, QueryCondition> expression)
+        private readonly Lazy<ICompiled> _queryCertificationRelation = new Lazy<ICompiled>(delegate()
         {
-            throw new NotImplementedException();
+            return Transaction.CompiledQuery
+                .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
+        public MOVIE_CERTIFICATION GetCertificationIf(Func<MOVIE_CERTIFICATION.Alias, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new MOVIE_CERTIFICATION.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return MOVIE_CERTIFICATION.Load(query).FirstOrDefault();
         }
-        public MOVIE_CERTIFICATION CertificationIf(Func<MOVIE_CERTIFICATION.Alias, QueryCondition[]> expression)
+        public MOVIE_CERTIFICATION GetCertificationIf(Func<MOVIE_CERTIFICATION.Alias, QueryCondition[]> expression)
         {
-            throw new NotImplementedException();
+            var query = Transaction.CompiledQuery
+                .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new MOVIE_CERTIFICATION.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return MOVIE_CERTIFICATION.Load(query).FirstOrDefault();
         }
-        public MOVIE_CERTIFICATION CertificationIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
+        public MOVIE_CERTIFICATION GetCertificationIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
-            throw new NotImplementedException();
+            return GetCertificationIf(delegate(MOVIE_CERTIFICATION.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (FrighteningIntense.HasValue) conditions.Add(alias.FrighteningIntense == FrighteningIntense.Value?.ToString());
+                if (ViolenceGore.HasValue) conditions.Add(alias.ViolenceGore == ViolenceGore.Value?.ToString());
+                if (Profanity.HasValue) conditions.Add(alias.Profanity == Profanity.Value?.ToString());
+                if (Substances.HasValue) conditions.Add(alias.Substances == Substances.Value?.ToString());
+                if (SexAndNudity.HasValue) conditions.Add(alias.SexAndNudity == SexAndNudity.Value?.ToString());
+
+                return conditions.ToArray();
+            });
         }
         public void SetCertification(Rating rating, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
@@ -336,44 +419,10 @@ namespace Datastore.Manipulation
 
         }
 
+        #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private static readonly Parameter key = Parameter.New<string>("key");
+        private static readonly Parameter moment = Parameter.New<DateTime>("moment");
 
         #endregion
 

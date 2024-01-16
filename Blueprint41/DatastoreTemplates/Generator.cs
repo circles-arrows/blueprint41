@@ -376,7 +376,7 @@ namespace Blueprint41.DatastoreTemplates
                 .Replace("&apos;", "'");
         }
 
-        public static string ToJsonNotation(this IEnumerable<Property> properties, Relationship? relation = null, bool prepend = false)
+        public static string ToJsonNotation(this IEnumerable<Property> properties, Relationship? relation = null, bool prepend = false, bool creationDate = false)
         {
             //if (relation is not null)
             //    prepend = true;
@@ -386,7 +386,7 @@ namespace Blueprint41.DatastoreTemplates
                 .OrderBy(p => p.Name);
 
             if (relation is not null)
-                items = items.Where(p => p.Name != relation.StartDate && p.Name != relation.EndDate && p.Name != relation.CreationDate);
+                items = items.Where(p => p.Name != relation.StartDate && p.Name != relation.EndDate && (p.Name != relation.CreationDate || creationDate));
 
             string[] content = items.Select(p => $"JsNotation<{p.SystemReturnType!.ToCSharp()}{((p.SystemReturnType!.IsValueType && p.Nullable) ? "?" : "")}> {p.Name} = default").ToArray();
             if (content.Length == 0)

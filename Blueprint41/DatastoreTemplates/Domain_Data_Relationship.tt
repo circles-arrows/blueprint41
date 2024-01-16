@@ -229,6 +229,24 @@ public partial class <#= DALRelation.Name #>_REL : RELATIONSHIP, IFromIn_<#= DAL
         public <#= GetResultType(attr.SystemReturnType) #> <#= attr.Name #> { get; private set; } 
 <#
     }
+    if (DALRelation.IsTimeDependent)
+    {
+#>
+
+        public QueryCondition[] Moment(DateTime? moment)
+        {
+            return new QueryCondition[] { <#= DALRelation.StartDate #> <= moment, <#= DALRelation.EndDate #> > moment };
+        }
+        public QueryCondition[] Moment(DateTimeResult moment)
+        {
+            return new QueryCondition[] { <#= DALRelation.StartDate #> <= moment, <#= DALRelation.EndDate #> > moment };
+        }
+        public QueryCondition[] Moment(Parameter moment)
+        {
+            return new QueryCondition[] { <#= DALRelation.StartDate #> <= moment, <#= DALRelation.EndDate #> > moment };
+        }
+<#
+    }
 #>
     }
 }
