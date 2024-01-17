@@ -10,7 +10,9 @@ namespace Blueprint41
         DatastoreModel Parent { get; }
         Guid Guid { get; }
         string Name { get; }
+        string Neo4jName { get; }
         bool IsAbstract { get; }
+        bool IsVirtual { get; }
 
         PropertyCollection Properties { get; }
         IReadOnlyList<Property> FullTextIndexProperties { get; }
@@ -38,6 +40,7 @@ namespace Blueprint41
 
     partial class Entity : IEntity
     {
+        string IEntity.Neo4jName => Label.Name;
         PropertyCollection IEntity.Properties => _properties;
         
         IEntity IEntity.SetFullTextProperty(string propertyName) => SetFullTextProperty(propertyName);
@@ -61,6 +64,7 @@ namespace Blueprint41
     }
     partial class Relationship : IEntity
     {
+        string IEntity.Neo4jName => Neo4JRelationshipType;
         PropertyCollection IEntity.Properties => _properties;
 
         IEntity IEntity.SetFullTextProperty(string propertyName) => SetFullTextProperty(propertyName);
@@ -72,6 +76,7 @@ namespace Blueprint41
         // Since Relationship doesn't support inheritance, it's either is or isn't itself
 
         bool IEntity.IsAbstract => false;
+        bool IEntity.IsVirtual => false;
 
         IReadOnlyList<IEntity> IEntity.GetBaseTypes() => _empty;
         IReadOnlyList<IEntity> IEntity.GetBaseTypesAndSelf() => _self;

@@ -20,13 +20,13 @@ namespace Blueprint41.Neo4j.Schema
         internal virtual List<ApplyConstraintProperty> Initialize()
         {
             // TODO: What about if the constraint is for a property on a relationship
-            Entity entity = (Entity)Entity;
+            IEntity entity = Entity;
 
             // TODO: Only applies indexes and constraints on a single field, composite indexes and constraints are ignored.
 
             List<ApplyConstraintProperty> actions = new List<ApplyConstraintProperty>();
-            IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity.Count == 1 && item.Entity[0] == entity.Label.Name);
-            IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity.Count == 1 && item.Entity[0] == entity.Label.Name);
+            IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity.Count == 1 && item.Entity[0] == entity.Neo4jName);
+            IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity.Count == 1 && item.Entity[0] == entity.Neo4jName);
             IReadOnlyList<Property> properties = entity.GetPropertiesOfBaseTypesAndSelf();
 
             foreach (Property property in properties)

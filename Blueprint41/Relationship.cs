@@ -42,7 +42,7 @@ namespace Blueprint41
             OutProperty           = null;
             Guid                  = parent.GenerateGuid(name);
 
-            _properties.Add(CreationDate, new RelationshipProperty(this, PropertyType.Attribute, CreationDate, typeof(DateTime), false, IndexType.None));
+            _properties.Add(CreationDate, new RelationshipProperty(this, PropertyType.Attribute, CreationDate, typeof(DateTime), true, IndexType.None));
         }
 
         #region Properties
@@ -116,8 +116,8 @@ namespace Blueprint41
 
             IsTimeDependent = true;
 
-            _properties.Add(StartDate, new RelationshipProperty(this, PropertyType.Attribute, StartDate, typeof(DateTime), false, IndexType.None));
-            _properties.Add(EndDate, new RelationshipProperty(this, PropertyType.Attribute, EndDate, typeof(DateTime), false, IndexType.None));
+            _properties.Add(StartDate, new RelationshipProperty(this, PropertyType.Attribute, StartDate, typeof(DateTime), true, IndexType.None));
+            _properties.Add(EndDate, new RelationshipProperty(this, PropertyType.Attribute, EndDate, typeof(DateTime), true, IndexType.None));
 
             return this;
         }

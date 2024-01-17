@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Refactoring;
 using Blueprint41.Neo4j.Schema.v4;
@@ -12,36 +13,110 @@ namespace Blueprint41.Neo4j.Schema.v5
 
         internal override List<string> ToCypher()
         {
-            // TODO: What about if the constraint is for a property on a relationship
-            Entity entity = (Entity)Parent.Entity;
+            // TODO: Fix case where constraint is for a property on a relationship
+            //       https://neo4j.com/docs/cypher-manual/current/constraints/
+            IEntity entity = Parent.Entity;
 
             List<string> commands = new();
-            bool isEnterpriseEdition = entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition;
             foreach ((ApplyConstraintAction actionEnum, string? constraintOrIndexName) in Commands)
             {
                 switch (actionEnum)
                 {
                     case ApplyConstraintAction.CreateIndex:
-                        commands.Add($"CREATE INDEX {entity.Label.Name}_{Property}_RangeIndex FOR (node:{entity.Label.Name}) ON (node.{Property})");
+                        if (Parent.Entity is Entity)
+                        {
+                            if (PersistenceProvider.NodePropertyFeatures.Index)
+                                commands.Add($"CREATE INDEX {entity.Neo4jName}_{Property}_RangeIndex FOR (node:{entity.Neo4jName}) ON (node.{Property})");
+                        }
+                        else if (Parent.Entity is Relationship)
+                        {
+                            if (PersistenceProvider.RelationshipPropertyFeatures.Index)
+                                commands.Add($"CREATE INDEX {entity.Neo4jName}_{Property}_RangeIndex FOR ()-[rel:{entity.Neo4jName}]-() ON (rel.{Property})");
+                        }
                         break;
                     case ApplyConstraintAction.CreateUniqueConstraint:
-                        commands.Add($"CREATE CONSTRAINT {entity.Label.Name}_{Property}_UniqueConstraint FOR (node:{entity.Label.Name}) REQUIRE node.{Property} IS UNIQUE");
+                        if (Parent.Entity is Entity)
+                        {
+                            if (PersistenceProvider.NodePropertyFeatures.Unique)
+                                commands.Add($"CREATE CONSTRAINT {entity.Neo4jName}_{Property}_UniqueConstraint FOR (node:{entity.Neo4jName}) REQUIRE node.{Property} IS UNIQUE");
+                        }
+                        else if (Parent.Entity is Relationship)
+                        {
+                            if (PersistenceProvider.RelationshipPropertyFeatures.Unique)
+                                commands.Add($"CREATE CONSTRAINT {entity.Neo4jName}_{Property}_UniqueConstraint FOR ()-[rel:{entity.Neo4jName}]-() REQUIRE rel.{Property} IS UNIQUE");
+                        }
                         break;
                     case ApplyConstraintAction.CreateExistsConstraint:
-                        if(isEnterpriseEdition)
-                            commands.Add($"CREATE CONSTRAINT {entity.Label.Name}_{Property}_ExistsConstraint FOR (node:{entity.Label.Name}) REQUIRE node.{Property} IS NOT NULL");
+                        if (Parent.Entity is Entity)
+                        {
+                            if (PersistenceProvider.NodePropertyFeatures.Exists)
+                                commands.Add($"CREATE CONSTRAINT {entity.Neo4jName}_{Property}_ExistsConstraint FOR (node:{entity.Neo4jName}) REQUIRE node.{Property} IS NOT NULL");
+                        }
+                        else if (Parent.Entity is Relationship)
+                        {
+                            if (PersistenceProvider.RelationshipPropertyFeatures.Exists)
+                                commands.Add($"CREATE CONSTRAINT {entity.Neo4jName}_{Property}_ExistsConstraint FOR ()-[rel:{entity.Neo4jName}]-() REQUIRE rel.{Property} IS NOT NULL");
+                        }
                         break;
                     case ApplyConstraintAction.CreateKeyConstraint:
-                        if (isEnterpriseEdition)
-                            commands.Add($"CREATE CONSTRAINT {entity.Label.Name}_{Property}_KeyConstraint FOR (node:{entity.Label.Name}) REQUIRE node.{Property} IS NODE KEY");
+                        if (Parent.Entity is Entity)
+                        {
+                            if (PersistenceProvider.NodePropertyFeatures.Key)
+                                commands.Add($"CREATE CONSTRAINT {entity.Neo4jName}_{Property}_KeyConstraint FOR (node:{entity.Neo4jName}) REQUIRE node.{Property} IS NODE KEY");
+                        }
+                        else if (Parent.Entity is Relationship)
+                        {
+                            if (PersistenceProvider.RelationshipPropertyFeatures.Key)
+                                commands.Add($"CREATE CONSTRAINT {entity.Neo4jName}_{Property}_KeyConstraint FOR ()-[rel:{entity.Neo4jName}]-() REQUIRE rel.{Property} IS RELATIONSHIP KEY");
+                        }
                         break;
                     case ApplyConstraintAction.DeleteIndex:
-                        commands.Add($"DROP INDEX {constraintOrIndexName}");
+                        if (Parent.Entity is Entity)
+                        {
+                            if (PersistenceProvider.NodePropertyFeatures.Index)
+                                commands.Add($"DROP INDEX {constraintOrIndexName}");
+                        }
+                        else if (Parent.Entity is Relationship)
+                        {
+                            if (PersistenceProvider.RelationshipPropertyFeatures.Index)
+                                commands.Add($"DROP INDEX {constraintOrIndexName}");
+                        }
                         break;
                     case ApplyConstraintAction.DeleteUniqueConstraint:
+                        if (Parent.Entity is Entity)
+                        {
+                            if (PersistenceProvider.NodePropertyFeatures.Unique)
+                                commands.Add($"DROP CONSTRAINT {constraintOrIndexName}");
+                        }
+                        else if (Parent.Entity is Relationship)
+                        {
+                            if (PersistenceProvider.RelationshipPropertyFeatures.Unique)
+                                commands.Add($"DROP CONSTRAINT {constraintOrIndexName}");
+                        }
+                        break;
                     case ApplyConstraintAction.DeleteKeyConstraint:
+                        if (Parent.Entity is Entity)
+                        {
+                            if (PersistenceProvider.NodePropertyFeatures.Key)
+                                commands.Add($"DROP CONSTRAINT {constraintOrIndexName}");
+                        }
+                        else if (Parent.Entity is Relationship)
+                        {
+                            if (PersistenceProvider.RelationshipPropertyFeatures.Key)
+                                commands.Add($"DROP CONSTRAINT {constraintOrIndexName}");
+                        }
+                        break;
                     case ApplyConstraintAction.DeleteExistsConstraint:
-                        commands.Add($"DROP CONSTRAINT {constraintOrIndexName}");
+                        if (Parent.Entity is Entity)
+                        {
+                            if (PersistenceProvider.NodePropertyFeatures.Exists)
+                                commands.Add($"DROP CONSTRAINT {constraintOrIndexName}");
+                        }
+                        else if (Parent.Entity is Relationship)
+                        {
+                            if (PersistenceProvider.RelationshipPropertyFeatures.Exists)
+                                commands.Add($"DROP CONSTRAINT {constraintOrIndexName}");
+                        }
                         break;
                     default:
                         break;

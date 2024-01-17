@@ -5,15 +5,21 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema
 {
     public class IndexInfo
     {
-        internal IndexInfo(RawRecord record)
+        internal IndexInfo(RawRecord record, Neo4jPersistenceProvider persistenceProvider)
         {
+            PersistenceProvider = persistenceProvider;
             Initialize(record);
         }
+
+        protected Neo4jPersistenceProvider PersistenceProvider { get; private set; }
+        protected bool SupportsRelationshipIndexes => PersistenceProvider.VersionGreaterOrEqual(5, 7);
+
         protected virtual void Initialize(RawRecord record)
         {
             Name = record.Values["description"].As<string>();

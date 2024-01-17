@@ -2,13 +2,14 @@
 using System.Linq;
 
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Schema;
 
 namespace Blueprint41.Neo4j.Persistence.v5
 {
     internal class Neo4jQueryTranslator : v4.Neo4jQueryTranslator
     {
-        internal Neo4jQueryTranslator(PersistenceProvider persistenceProvider) : base(persistenceProvider)
+        internal Neo4jQueryTranslator(Neo4jPersistenceProvider persistenceProvider) : base(persistenceProvider)
         {
         }
 
@@ -20,7 +21,7 @@ namespace Blueprint41.Neo4j.Persistence.v5
 
         internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v5();
 
-        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.v5.SchemaInfo_v5(datastoreModel);
+        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.v5.SchemaInfo_v5(datastoreModel, PersistenceProvider);
 
         #endregion
 

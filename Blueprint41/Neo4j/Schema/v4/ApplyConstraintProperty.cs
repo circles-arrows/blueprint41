@@ -26,23 +26,28 @@ namespace Blueprint41.Neo4j.Schema.v4
                 switch (actionEnum)
                 {
                     case ApplyConstraintAction.CreateIndex:
-                        commands.Add($"CREATE INDEX ON :{entity.Label.Name}({Property})");
+                        if (PersistenceProvider.NodePropertyFeatures.Index)
+                            commands.Add($"CREATE INDEX ON :{entity.Label.Name}({Property})");
                         break;
                     case ApplyConstraintAction.CreateUniqueConstraint:
-                        commands.Add($"CREATE CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
+                        if (PersistenceProvider.NodePropertyFeatures.Unique)
+                            commands.Add($"CREATE CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.CreateExistsConstraint:
-                        if (entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition)
+                        if (PersistenceProvider.NodePropertyFeatures.Exists)
                             commands.Add($"CREATE CONSTRAINT ON (node:{entity.Label.Name}) ASSERT exists(node.{Property})");
                         break;
                     case ApplyConstraintAction.DeleteIndex:
-                        commands.Add($"DROP INDEX ON :{entity.Label.Name}({Property})");
+                        if (PersistenceProvider.NodePropertyFeatures.Index)
+                            commands.Add($"DROP INDEX ON :{entity.Label.Name}({Property})");
                         break;
                     case ApplyConstraintAction.DeleteUniqueConstraint:
-                        commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
+                        if (PersistenceProvider.NodePropertyFeatures.Unique)
+                            commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.DeleteExistsConstraint:
-                        commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT exists(node.{Property})");
+                        if (PersistenceProvider.NodePropertyFeatures.Exists)
+                            commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT exists(node.{Property})");
                         break;
                     default:
                         break;

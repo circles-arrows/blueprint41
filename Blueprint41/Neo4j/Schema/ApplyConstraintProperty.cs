@@ -17,6 +17,8 @@ namespace Blueprint41.Neo4j.Schema
             Parent = parent;
             Property = property.Name;
             Commands = commands;
+
+            PersistenceProvider = (Neo4jPersistenceProvider)Parent.Entity.Parent.PersistenceProvider;
         }
 
         internal ApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands)
@@ -24,9 +26,12 @@ namespace Blueprint41.Neo4j.Schema
             Parent = parent;
             Property = property;
             Commands = commands;
+
+            PersistenceProvider = (Neo4jPersistenceProvider)Parent.Entity.Parent.PersistenceProvider;
         }
 
-        protected ApplyConstraintEntity Parent { get; set; }
+        protected ApplyConstraintEntity Parent { get; private set; }
+        protected Neo4jPersistenceProvider PersistenceProvider { get; private set; }
 
         public string Property { get; protected set; }
         public IReadOnlyList<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> Commands { get; protected set; }
@@ -46,23 +51,28 @@ namespace Blueprint41.Neo4j.Schema
                 switch (actionEnum)
                 {
                     case ApplyConstraintAction.CreateIndex:
-                        commands.Add($"CREATE INDEX ON :{entity.Label.Name}({Property})");
+                        if (PersistenceProvider.NodePropertyFeatures.Index)
+                            commands.Add($"CREATE INDEX ON :{entity.Label.Name}({Property})");
                         break;
                     case ApplyConstraintAction.CreateUniqueConstraint:
-                        commands.Add($"CREATE CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
+                        if (PersistenceProvider.NodePropertyFeatures.Unique)
+                            commands.Add($"CREATE CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.CreateExistsConstraint:
-                        if (entity.Parent.PersistenceProvider is Neo4jPersistenceProvider neo4j && neo4j.IsEnterpriseEdition)
+                        if (PersistenceProvider.NodePropertyFeatures.Exists)
                             commands.Add($"CREATE CONSTRAINT ON (node:{entity.Label.Name}) ASSERT exists(node.{Property})");
                         break;
                     case ApplyConstraintAction.DeleteIndex:
-                        commands.Add($"DROP INDEX ON :{entity.Label.Name}({Property})");
+                        if (PersistenceProvider.NodePropertyFeatures.Index)
+                            commands.Add($"DROP INDEX ON :{entity.Label.Name}({Property})");
                         break;
                     case ApplyConstraintAction.DeleteUniqueConstraint:
-                        commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
+                        if (PersistenceProvider.NodePropertyFeatures.Unique)
+                            commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT node.{Property} IS UNIQUE");
                         break;
                     case ApplyConstraintAction.DeleteExistsConstraint:
-                        commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT exists(node.{Property})");
+                        if (PersistenceProvider.NodePropertyFeatures.Exists)
+                            commands.Add($"DROP CONSTRAINT ON (node:{entity.Label.Name}) ASSERT exists(node.{Property})");
                         break;
                     default:
                         break;

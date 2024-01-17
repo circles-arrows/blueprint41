@@ -5,15 +5,20 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema
 {
     public class ConstraintInfo
     {
-        internal ConstraintInfo(RawRecord record)
+        internal ConstraintInfo(RawRecord record, Neo4jPersistenceProvider persistenceProvider)
         {
+            PersistenceProvider = persistenceProvider;
             Initialize(record);
         }
+
+        protected Neo4jPersistenceProvider PersistenceProvider { get; private set; }
+
         protected virtual void Initialize(RawRecord record)
         {
             Name = record.Values["description"].As<string>();
