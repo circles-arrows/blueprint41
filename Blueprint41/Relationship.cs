@@ -369,24 +369,6 @@ namespace Blueprint41
 
             throw new NotImplementedException("Apply logic to neo4j db...");
         }
-        void IRefactorRelationship.Merge(Relationship target)
-        {
-            Parent.EnsureSchemaMigration();
-
-            if (this.IsTimeDependent != target.IsTimeDependent)
-                throw new InvalidOperationException("You cannot merge 2 relationships with different time dependence settings.");
-
-            if (this.IsTimeDependent)
-                throw new NotImplementedException("Merging time dependent relationships is not implemented because I found it annoying to program... You add it yourself if you really want it :oP");
-
-            Parent.Templates.MergeRelationship(template =>
-            {
-                template.From = this;
-                template.To = target;
-            }).RunBatched();
-
-            Parent.Relations.Remove(Name);
-        }
         void IRefactorRelationship.Deprecate()
         {
             Parent.EnsureSchemaMigration();

@@ -34,45 +34,111 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v4
             
             #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
 
-
     Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
 
-	// Setup Cypher Parameters
-	OutputParameters.Add(Property.Name, Value);
+    // Setup Cypher Parameters
+    OutputParameters.Add(Property.Name, Value);
 
+    if (IsEntity)
+    {
 
             
             #line default
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
-            this.Write(") WHERE NOT EXISTS(node.");
+            this.Write(")\r\nWHERE NOT EXISTS(node.");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 18 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
-            this.Write(") WITH node LIMIT 10000 SET node.");
+            this.Write(")\r\nWITH node LIMIT 10000\r\nSET node.");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 20 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = $");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            #line 20 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write("\r\n");
+            
+            #line 21 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+
+    }
+    else if (IsRelationship)
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write("MATCH (:");
+            
+            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.InEntity.Label.Name));
+            
+            #line default
+            #line hidden
+            this.Write(")-[rel:");
+            
+            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.Neo4JRelationshipType));
+            
+            #line default
+            #line hidden
+            this.Write("]->(:");
+            
+            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.OutEntity.Label.Name));
+            
+            #line default
+            #line hidden
+            this.Write(")\r\nWHERE NOT EXISTS(rel.");
+            
+            #line 27 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
+            
+            #line default
+            #line hidden
+            this.Write(")\r\nWITH rel LIMIT 10000\r\nSET rel.");
+            
+            #line 29 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" = $");
+            
+            #line 29 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n");
+            
+            #line 30 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt"
+
+    }
+    else
+    {
+        throw new NotSupportedException();
+    }
+
+            
+            #line default
+            #line hidden
             return this.GenerationEnvironment.ToString();
         }
     }

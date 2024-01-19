@@ -20,7 +20,6 @@ namespace Blueprint41.Neo4j.Refactoring
 
         void ApplyLabels();
         void ChangeInheritance(Entity entity);
-        void CreateIndexes();
 
         dynamic CreateNode(object node);
         dynamic? MatchNode(object key);

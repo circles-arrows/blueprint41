@@ -76,8 +76,8 @@ namespace Blueprint41
 
         #region Properties
 
-        public IEntity Parent { get; private set; }
-        public PropertyType PropertyType { get; private set; }
+        public IEntity Parent { get; protected internal set; }
+        public PropertyType PropertyType { get; protected internal set; }
         public string Name { get; private set; }
         public IReadOnlyList<EnumerationValue>? EnumValues
         {
@@ -108,7 +108,7 @@ namespace Blueprint41
             }
         }
         public Entity? EntityReturnType { get; private set; }
-        public bool Nullable { get; private set; }
+        public bool Nullable { get; protected internal set; }
         public IndexType IndexType { get; private set; }
         public bool IsKey { get; internal set; }
         public bool IsNodeType { get; internal set; }
@@ -304,6 +304,10 @@ namespace Blueprint41
 
         #region Refactor Actions
 
+        /// <summary>
+        /// Removes the property from the data model, but leaves the current dat in the database.
+        /// (Use Refactor.Deprecate() if you also want the data to be deleted)
+        /// </summary>
         public void Remove()
         {
 
@@ -312,7 +316,6 @@ namespace Blueprint41
             // No changes in DB needed for this action!!!
             Parent.Properties.Remove(Name);
         }
-        public IRefactorProperty Refactor { get { return this; } }
 
         void IRefactorProperty.Rename(string newName)
         {
@@ -378,48 +381,6 @@ namespace Blueprint41
             }
         }
 
-        void IRefactorProperty.Move(Entity target)
-        {
-            Parent.Parent.EnsureSchemaMigration();
-
-            if (PropertyType != PropertyType.Attribute)
-                throw new NotSupportedException("Consider using the refactor action 'SetInEntity' or 'SetOutEntity' on the relationship.");
-
-            if (Parent.IsSubsclassOf(target) && !this.Nullable)
-                throw new ArgumentException("If we move the property to a base type, it should be checked the property is at least nullable.");
-
-            if (!Parent.IsSubsclassOf(target) && !target.IsSubsclassOf(Parent))
-                throw new ArgumentException(string.Format("Target {0} is not a base-type or sub-type of {1}", target.Name, Parent.Name), "baseType");
-
-            if (target.IsSubsclassOf(Parent))
-            {
-                foreach (var subClass in Parent.GetSubclasses())
-                {
-                    if (subClass == target)
-                        continue;
-
-                    subClass.Properties.Remove(Name);
-                }
-            }
-
-            Parent.Properties.Remove(Name);
-            target.Properties.Add(Name, this);
-            this.Parent = target;
-        }
-        void IRefactorProperty.MoveToSubClasses()
-        {
-            Parent.Parent.EnsureSchemaMigration();
-
-            if (PropertyType != PropertyType.Attribute)
-                throw new NotSupportedException("Consider using the refactor action 'SetInEntity' or 'SetOutEntity' on the relationship.");
-
-            Parent.Properties.Remove(Name);
-            foreach (var subClass in Parent.GetSubclasses())
-            {
-                subClass.Properties.Add(Name, this);
-                this.Parent = subClass;
-            }
-        }
         //void IRefactorProperty.Move(string pattern, string newPropertyName)
         //{
         //    throw new NotImplementedException();
@@ -440,14 +401,7 @@ namespace Blueprint41
 
             Parent.Properties.Remove(Name); // remove this property
 
-            if (target.PropertyType == PropertyType.Collection || target.PropertyType == PropertyType.Lookup)
-            {
-                MergeRelationship(target, mergeAlgorithm);
-            }
-            else
-            {
-                MergeProperty(target, mergeAlgorithm);
-            }
+            MergeProperty(target, mergeAlgorithm);
 
             //switch (target.StorageModel)
             //{
@@ -472,6 +426,68 @@ namespace Blueprint41
 
             // StaticData
             Parent.DynamicEntityPropertyRenamed(Name, target, mergeAlgorithm);
+        }
+
+        protected internal void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            if (Relationship is null || EntityReturnType is null)
+                throw new NotSupportedException("This operation can only be done on an relationship property");
+
+            if (string.IsNullOrWhiteSpace(pattern))
+                throw new FormatException("The pattern cannot be empty.");
+
+            string oldname = Name;
+
+            NodePattern decoded = new NodePattern(Parent.Parent, pattern);
+            decoded.Validate(EntityReturnType, strict);
+
+            Entity original = (Entity)Parent;
+            Entity? target = decoded.GetToEntity();
+
+            string left = (Direction == DirectionEnum.Out) ? "<-" : "-";
+            string right = (Direction == DirectionEnum.In) ? "->" : "-";
+            string cypher = $"MATCH (anchor:{original.Label.Name}){left}[{Relationship.Neo4JRelationshipType}]{right}{decoded.Compile()} MERGE (anchor){left}[:{newNeo4jRelationshipType}]{right}(to)";
+
+            Parser.Execute(cypher, null);
+
+            Entity? inEntity = Relationship.InEntity;
+            Property? inProperty = Relationship.InProperty;
+            Entity? outEntity = Relationship.OutEntity;
+            Property? outProperty = Relationship.OutProperty;
+            switch (Direction)
+            {
+                case DirectionEnum.In:
+                    outEntity = target;
+                    break;
+                case DirectionEnum.Out:
+                    inEntity = target;
+                    break;
+            }
+
+            Relationship.Refactor.Deprecate();
+
+            this.Name = newPropertyName;
+
+            Relationship rel = Parent.Parent.Relations.New(inEntity, outEntity, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName);
+            if (inProperty is not null)
+                rel.SetInProperty(inProperty.Name, inProperty.PropertyType, inProperty.Nullable);
+            if (outProperty is not null)
+                rel.SetOutProperty(outProperty.Name, outProperty.PropertyType, outProperty.Nullable);
+
+            // StaticData
+            Property? targetProperty = null;
+            switch (Direction)
+            {
+                case DirectionEnum.In:
+                    targetProperty = rel.OutProperty;
+                    break;
+                case DirectionEnum.Out:
+                    targetProperty = rel.InProperty;
+                    break;
+            }
+            original.DynamicEntityPropertyRerouted(oldname, target, targetProperty!);
         }
 
         ///// <summary>
@@ -507,28 +523,6 @@ namespace Blueprint41
                     template.MergeAlgorithm = mergeAlgorithm;
                 }).RunBatched();
             }
-        }
-
-        private void MergeRelationship(Property target, MergeAlgorithm mergeAlgorithm)
-        {
-            Parent.Parent.EnsureSchemaMigration();
-
-            if (PropertyType != PropertyType.Attribute || Relationship is null)
-                throw new NotImplementedException();
-
-            if (!Relationship.RelationshipType.IsCompatible(target.Relationship?.RelationshipType ?? RelationshipType.None))
-                throw new NotSupportedException(string.Format("Merging is not supported between relationships of type {0} and {1}.", this.Relationship.RelationshipType.ToString(), (target.Relationship?.RelationshipType ?? RelationshipType.None).ToString()));
-
-            if (Relationship.RelationshipType.IsImplicitLookup() || (target.Relationship?.RelationshipType ?? RelationshipType.None).IsImplicitLookup())
-                if (mergeAlgorithm == MergeAlgorithm.NotApplicable)
-                    throw new NotSupportedException("You cannot ignore conflicts on lookup properties.");
-
-            Parent.Parent.Templates.MergeRelationship(template =>
-            {
-                template.From = this.Relationship;
-                template.To = target.Relationship;
-                template.MergeAlgorithm = mergeAlgorithm;
-            }).RunBatched();
         }
 
         void IRefactorProperty.ToCompressedString(int batchSize)
@@ -702,107 +696,6 @@ namespace Blueprint41
             // commit to db is automatic after any script ran during upgrade...
         }
 
-        void IRefactorProperty.Reroute(string pattern, string newPropertyName, bool strict)
-        {
-            if (Relationship is null || EntityReturnType is null)
-                throw new NotSupportedException("This operation can only be done on an relationship property");
-
-            Reroute(pattern, newPropertyName, Relationship.Name, Relationship.Neo4JRelationshipType, strict);
-        }
-        void IRefactorProperty.Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
-        {
-            Reroute(pattern, newPropertyName, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName, strict);
-        }
-        private void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
-        {
-            Parent.Parent.EnsureSchemaMigration();
-
-            if (Relationship is null || EntityReturnType is null)
-                throw new NotSupportedException("This operation can only be done on an relationship property");
-
-            if (string.IsNullOrWhiteSpace(pattern))
-                throw new FormatException("The pattern cannot be empty.");
-
-            string oldname = Name;
-
-            NodePattern decoded = new NodePattern(Parent.Parent, pattern);
-            decoded.Validate(EntityReturnType, strict);
-
-            Entity original = (Entity)Parent;
-            Entity? target = decoded.GetToEntity();
-
-            string left = (Direction == DirectionEnum.Out) ? "<-" : "-";
-            string right = (Direction == DirectionEnum.In) ? "->" : "-";
-            string cypher = $"MATCH (anchor:{original.Label.Name}){left}[{Relationship.Neo4JRelationshipType}]{right}{decoded.Compile()} MERGE (anchor){left}[:{newNeo4jRelationshipType}]{right}(to)";
-
-            Parser.Execute(cypher, null);
-
-            Entity? inEntity = Relationship.InEntity;
-            Property? inProperty = Relationship.InProperty;
-            Entity? outEntity = Relationship.OutEntity;
-            Property? outProperty = Relationship.OutProperty;
-            switch (Direction)
-            {
-                case DirectionEnum.In:
-                    outEntity = target;
-                    break;
-                case DirectionEnum.Out:
-                    inEntity = target;
-                    break;
-            }
-
-            Relationship.Refactor.Deprecate();
-
-            this.Name = newPropertyName;
-
-            Relationship rel = Parent.Parent.Relations.New(inEntity, outEntity, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName);
-            if (inProperty is not null)
-                rel.SetInProperty(inProperty.Name, inProperty.PropertyType, inProperty.Nullable);
-            if (outProperty is not null)
-                rel.SetOutProperty(outProperty.Name, outProperty.PropertyType, outProperty.Nullable);
-
-            // StaticData
-            Property? targetProperty = null;
-            switch (Direction)
-            {
-                case DirectionEnum.In:
-                    targetProperty = rel.OutProperty;
-                    break;
-                case DirectionEnum.Out:
-                    targetProperty = rel.InProperty;
-                    break;
-            }
-            original.DynamicEntityPropertyRerouted(oldname, target, targetProperty!);
-        }
-
-        void IRefactorProperty.ConvertToCollection()
-        {
-            Parent.Parent.EnsureSchemaMigration();
-
-            PropertyType = PropertyType.Collection;
-            Nullable = true;
-        }
-
-        void IRefactorProperty.ConvertToCollection(string newName)
-        {
-            Refactor.ConvertToCollection();
-            Refactor.Rename(newName);
-        }
-        void IRefactorProperty.ConvertToLookup(ConvertAlgorithm conversionAlgorithm)
-        {
-            Parent.Parent.EnsureSchemaMigration();
-
-            PropertyType = PropertyType.Lookup;
-            Nullable = true;
-
-            throw new NotImplementedException("Apply the conversion algorithm");
-        }
-        void IRefactorProperty.ConvertToLookup(string newName, ConvertAlgorithm conversionAlgorithm)
-        {
-            Refactor.ConvertToLookup(conversionAlgorithm);
-            Refactor.Rename(newName);
-        }
-
         void IRefactorProperty.MakeNullable()
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -888,31 +781,6 @@ namespace Blueprint41
 
                 MandatoryDefaultValue = defaultValue;
             }
-        }
-        void IRefactorProperty.MakeMandatory(DynamicEntity defaultValue)
-        {
-            Parent.Parent.EnsureSchemaMigration();
-
-            if (Nullable == false)
-                throw new NotSupportedException("The property is already mandatory.");
-
-            if (PropertyType == PropertyType.Collection)
-                throw new NotSupportedException("A collection cannot be made mandatory.");
-
-            if (PropertyType == PropertyType.Attribute || ForeignEntity is null)
-                throw new ArgumentException("The property type does not match the type of the supplied 'defaultValue'.");
-
-            if(defaultValue.GetEntity().Name != ForeignEntity.Name)
-                throw new ArgumentException("The supplied default value does not match the entity type of the property.");
-
-            Nullable = false;
-
-            Parent.Parent.Templates.SetDefaultLookupValue(template =>
-            {
-                template.Caller = Parent;
-                template.Property = this;
-                template.Value = (string?)defaultValue.GetKey();
-            }).RunBatched();
         }
         void IRefactorProperty.SetDefaultValue(object defaultValue)
         {
@@ -1511,8 +1379,123 @@ namespace Blueprint41
         #endregion
     }
 
-    public class EntityProperty : Property
+    public class EntityProperty : Property, IRefactorEntityProperty
     {
+        public IRefactorEntityProperty Refactor { get { return this; } }
+
+        #region Refactoring Entity Properties
+
+        void IRefactorEntityProperty.Reroute(string pattern, string newPropertyName, bool strict)
+        {
+            if (Relationship is null || EntityReturnType is null)
+                throw new NotSupportedException("This operation can only be done on an relationship property");
+
+            Reroute(pattern, newPropertyName, Relationship.Name, Relationship.Neo4JRelationshipType, strict);
+        }
+        void IRefactorEntityProperty.Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
+        {
+            Reroute(pattern, newPropertyName, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName, strict);
+        }
+
+        void IRefactorEntityProperty.Move(Entity target)
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            if (PropertyType != PropertyType.Attribute)
+                throw new NotSupportedException("Consider using the refactor action 'SetInEntity' or 'SetOutEntity' on the relationship.");
+
+            if (Parent.IsSubsclassOf(target) && !this.Nullable)
+                throw new ArgumentException("If we move the property to a base type, it should be checked the property is at least nullable.");
+
+            if (!Parent.IsSubsclassOf(target) && !target.IsSubsclassOf(Parent))
+                throw new ArgumentException(string.Format("Target {0} is not a base-type or sub-type of {1}", target.Name, Parent.Name), "baseType");
+
+            if (target.IsSubsclassOf(Parent))
+            {
+                foreach (var subClass in Parent.GetSubclasses())
+                {
+                    if (subClass == target)
+                        continue;
+
+                    subClass.Properties.Remove(Name);
+                }
+            }
+
+            Parent.Properties.Remove(Name);
+            target.Properties.Add(Name, this);
+            base.Parent = target;
+        }
+        void IRefactorEntityProperty.MoveToSubClasses()
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            if (PropertyType != PropertyType.Attribute)
+                throw new NotSupportedException("Consider using the refactor action 'SetInEntity' or 'SetOutEntity' on the relationship.");
+
+            Parent.Properties.Remove(Name);
+            foreach (var subClass in Parent.GetSubclasses())
+            {
+                subClass.Properties.Add(Name, this);
+                base.Parent = subClass;
+            }
+        }
+
+        void IRefactorEntityProperty.ConvertToCollection()
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            PropertyType = PropertyType.Collection;
+            Nullable = true;
+        }
+
+        void IRefactorEntityProperty.ConvertToCollection(string newName)
+        {
+            Refactor.ConvertToCollection();
+            Refactor.Rename(newName);
+        }
+        void IRefactorEntityProperty.ConvertToLookup(ConvertAlgorithm conversionAlgorithm)
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            PropertyType = PropertyType.Lookup;
+            Nullable = true;
+
+            throw new NotImplementedException("Apply the conversion algorithm");
+        }
+        void IRefactorEntityProperty.ConvertToLookup(string newName, ConvertAlgorithm conversionAlgorithm)
+        {
+            Refactor.ConvertToLookup(conversionAlgorithm);
+            Refactor.Rename(newName);
+        }
+
+        void IRefactorEntityProperty.MakeMandatory(DynamicEntity defaultValue)
+        {
+            Parent.Parent.EnsureSchemaMigration();
+
+            if (Nullable == false)
+                throw new NotSupportedException("The property is already mandatory.");
+
+            if (PropertyType == PropertyType.Collection)
+                throw new NotSupportedException("A collection cannot be made mandatory.");
+
+            if (PropertyType == PropertyType.Attribute || ForeignEntity is null)
+                throw new ArgumentException("The property type does not match the type of the supplied 'defaultValue'.");
+
+            if (defaultValue.GetEntity().Name != ForeignEntity.Name)
+                throw new ArgumentException("The supplied default value does not match the entity type of the property.");
+
+            Nullable = false;
+
+            Parent.Parent.Templates.SetDefaultLookupValue(template =>
+            {
+                template.Caller = Parent;
+                template.Property = this;
+                template.Value = (string?)defaultValue.GetKey();
+            }).RunBatched();
+        }
+
+        #endregion
+
         internal EntityProperty(Entity parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType) 
             : base(parent, storage, name, entityType, nullable, indexType)
         {
@@ -1534,6 +1517,8 @@ namespace Blueprint41
     }
     public class RelationshipProperty : Property
     {
+        public IRefactorProperty Refactor { get { return this; } }
+
         internal RelationshipProperty(Relationship parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
             : base(parent, storage, name, entityType, nullable, indexType)
         {

@@ -17,8 +17,6 @@ namespace Blueprint41.Neo4j.Refactoring
 
         void RemoveTimeDependance();
 
-        void Merge(Relationship target);
-
         void Deprecate();
     }
 }

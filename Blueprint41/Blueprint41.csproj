@@ -110,36 +110,13 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
     </None>
-    <None Update="Neo4j\Refactoring\Templates\CreateIndex.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>CreateIndex.cs</LastGenOutput>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\DropExistConstraint.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>DropExistConstraint.cs</LastGenOutput>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\SetCreationDate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>SetCreationDate.cs</LastGenOutput>
-    </None>
     <None Update="Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>SetDefaultLookupValue.cs</LastGenOutput>
     </None>
-    <None Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>CreateUniqueConstraint.cs</LastGenOutput>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
     <None Update="Neo4j\Refactoring\Templates\MergeProperty.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>MergeProperty.cs</LastGenOutput>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\MergeRelationship.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>MergeRelationship.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
     </None>
     <None Update="Neo4j\Refactoring\Templates\RemoveEntity.tt">
@@ -182,11 +159,6 @@
       <LastGenOutput>SetLabel.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
     </None>
-    <None Update="Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
-      <CustomToolNamespace></CustomToolNamespace>
-    </None>
     <None Update="Neo4j\Refactoring\Templates\v4\RefactorTemplates.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
@@ -195,24 +167,8 @@
       <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.tt">
-      <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
     <None Update="Neo4j\Refactoring\Templates\v5\CopyProperty.tt">
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\v5\CreateIndex.tt">
-      <LastGenOutput>CreateIndex.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\v5\CreateUniqueConstraint.tt">
-      <LastGenOutput>CreateUniqueConstraint.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\v5\DropExistConstraint.tt">
-      <LastGenOutput>DropExistConstraint.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
     <None Update="Neo4j\Refactoring\Templates\v5\MergeProperty.tt">
@@ -231,16 +187,8 @@
       <LastGenOutput>RenameProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Neo4j\Refactoring\Templates\v5\SetCreationDate.tt">
-      <LastGenOutput>SetCreationDate.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
     <None Update="Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt">
       <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
-    <None Update="Neo4j\Refactoring\Templates\v5\SetRelationshipPropertyValue.tt">
-      <LastGenOutput>SetRelationshipPropertyValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
     <None Update="Query\Result.Partial.tt">
@@ -330,40 +278,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>CopyProperty.tt</DependentUpon>
     </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\CreateIndex.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CreateIndex.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\DropExistConstraint.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>DropExistConstraint.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\SetCreationDate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SetCreationDate.tt</DependentUpon>
-    </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\SetDefaultLookupValue.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SetDefaultLookupValue.tt</DependentUpon>
     </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\CreateUniqueConstraint.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CreateUniqueConstraint.tt</DependentUpon>
-    </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\MergeProperty.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MergeProperty.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\MergeRelationship.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MergeRelationship.tt</DependentUpon>
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\RemoveEntity.cs">
       <DesignTime>True</DesignTime>
@@ -405,11 +328,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>SetLabel.tt</DependentUpon>
     </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\SetRelationshipPropertyValue.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
-    </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\v4\RefactorTemplates.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -420,28 +338,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
     </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\v4\SetRelationshipPropertyValue.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
-    </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\v5\CopyProperty.cs">
       <DependentUpon>CopyProperty.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\v5\CreateIndex.cs">
-      <DependentUpon>CreateIndex.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\v5\CreateUniqueConstraint.cs">
-      <DependentUpon>CreateUniqueConstraint.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\v5\DropExistConstraint.cs">
-      <DependentUpon>DropExistConstraint.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
@@ -465,18 +363,8 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\v5\SetCreationDate.cs">
-      <DependentUpon>SetCreationDate.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.cs">
       <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\v5\SetRelationshipPropertyValue.cs">
-      <DependentUpon>SetRelationshipPropertyValue.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>

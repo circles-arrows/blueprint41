@@ -6,11 +6,31 @@
 <#@ import namespace="Blueprint41" #>
 <#@ import namespace="Blueprint41.Neo4j.Refactoring.Templates" #>
 <#
-
     Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
 
-	// Setup Cypher Parameters
-	OutputParameters.Add(Property.Name, Value);
+    // Setup Cypher Parameters
+    OutputParameters.Add(Property.Name, Value);
 
+    if (IsEntity)
+    {
 #>
-MATCH (node:<#= Entity.Label.Name #>) WHERE NOT EXISTS(node.<#= Property.Name #>) WITH node LIMIT 10000 SET node.<#= Property.Name #> = $<#= Property.Name #>
+MATCH (node:<#= Entity.Label.Name #>)
+WHERE NOT EXISTS(node.<#= Property.Name #>)
+WITH node LIMIT 10000
+SET node.<#= Property.Name #> = $<#= Property.Name #>
+<#
+    }
+    else if (IsRelationship)
+    {
+#>
+MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
+WHERE NOT EXISTS(rel.<#= Property.Name #>)
+WITH rel LIMIT 10000
+SET rel.<#= Property.Name #> = $<#= Property.Name #>
+<#
+    }
+    else
+    {
+        throw new NotSupportedException();
+    }
+#>

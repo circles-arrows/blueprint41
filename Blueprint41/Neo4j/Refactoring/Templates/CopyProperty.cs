@@ -34,55 +34,136 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             
             #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
 
-
     Log("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Entity.Label.Name);
+
+    if (IsEntity)
+    {
 
             
             #line default
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")\r\nWHERE NOT EXISTS(node.");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To));
             
             #line default
             #line hidden
             this.Write(") OR node.");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From));
             
             #line default
             #line hidden
             this.Write(" <> node.");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To));
             
             #line default
             #line hidden
             this.Write("\r\nWITH node limit 10000 \r\nSET node.");
             
-            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To));
             
             #line default
             #line hidden
             this.Write(" = node.");
             
-            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From));
             
             #line default
             #line hidden
             this.Write("\r\n");
+            
+            #line 18 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+
+    }
+    else if (IsRelationship)
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write("MATCH (:");
+            
+            #line 23 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.InEntity.Label.Name));
+            
+            #line default
+            #line hidden
+            this.Write(")-[rel:");
+            
+            #line 23 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.Neo4JRelationshipType));
+            
+            #line default
+            #line hidden
+            this.Write("]->(:");
+            
+            #line 23 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.OutEntity.Label.Name));
+            
+            #line default
+            #line hidden
+            this.Write(")\r\nWHERE NOT EXISTS(rel.");
+            
+            #line 24 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(To));
+            
+            #line default
+            #line hidden
+            this.Write(") OR rel.");
+            
+            #line 24 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(From));
+            
+            #line default
+            #line hidden
+            this.Write(" <> rel.");
+            
+            #line 24 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(To));
+            
+            #line default
+            #line hidden
+            this.Write("\r\nWITH rel limit 10000 \r\nSET rel.");
+            
+            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(To));
+            
+            #line default
+            #line hidden
+            this.Write(" = rel.");
+            
+            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(From));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n");
+            
+            #line 27 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\CopyProperty.tt"
+
+    }
+    else
+    {
+        throw new NotSupportedException();
+    }
+
+            
+            #line default
+            #line hidden
             return this.GenerationEnvironment.ToString();
         }
     }

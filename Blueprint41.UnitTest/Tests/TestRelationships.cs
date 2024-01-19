@@ -1164,9 +1164,27 @@ namespace Blueprint41.UnitTest.Tests
                 PERSON_LIVES_IN livesIn5 = linus.GetCityIf(null, AddressLine1: "OTHER");
                 List<PERSON_LIVES_IN> livesIn6 = linus.CityWhere(AddressLine1: "OTHER");
                 List<PERSON_LIVES_IN> livesIn7 = linus.CityWhere(Moment: DateTime.UtcNow, AddressLine1: "OTHER");
+
+                Transaction.Commit();
             }
 
+            MockModel model = new MockModel()
+            {
+                LogToConsole = true
+            };
+            ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(nameof(Script_0_0_1)));
 
+            using (Transaction.Begin())
+            {
+                var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                var rels = ReadRelationsWithProperties(linus, PERSON_LIVES_IN.Relationship, linus.City);
+            }
+        }
+
+        [Version(0, 0, 1)]
+        public static void Script_0_0_1(DatastoreModel @this)
+        {
+            @this.Relations["PERSON_LIVES_IN"].Properties["AddressLine1"].Refactor.Rename("WTF");
         }
 
         #endregion

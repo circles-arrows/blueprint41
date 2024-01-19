@@ -550,23 +550,6 @@ namespace Blueprint41
             }
         }
 
-        void IRefactorEntity.CreateIndexes()
-        {
-            Parent.EnsureSchemaMigration();
-
-            foreach (var property in GetPropertiesOfBaseTypesAndSelf())
-            {
-                if (property.IndexType == IndexType.Indexed || (property.IndexType == IndexType.Unique && property.Parent.IsAbstract))
-                {
-                    Parent.Templates.CreateIndex(template =>
-                    {
-                        template.Caller = this;
-                        template.Property = property;
-                    }).Run(false);
-                }
-            }
-        }
-
         dynamic IRefactorEntity.CreateNode(object node)
         {
             //Parent.EnsureSchemaMigration();
