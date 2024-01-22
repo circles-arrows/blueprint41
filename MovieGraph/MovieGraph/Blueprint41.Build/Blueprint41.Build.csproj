@@ -7,6 +7,7 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<StartupObject>Blueprint41.Build.Generator</StartupObject>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+		<EnableDynamicLoading>true</EnableDynamicLoading>
 	</PropertyGroup>
 
 	<ItemGroup>

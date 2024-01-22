@@ -26,7 +26,7 @@
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 	<Target Name="PreBuild" BeforeTargets="Build">
-	  <Exec Command="&quot;$(ProjectDir)Blueprint41.Build.exe&quot; --namespace=Domain.Data --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\$(Configuration)\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
+	  <Exec Command="dotnet &quot;$(ProjectDir)Blueprint41.Build.dll&quot; --namespace=Domain.Data --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\$(Configuration)\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
 	</Target>
 	<!--<Import Project="Generate.targets" />
 	<Target Name="Generate" AfterTargets="Build">

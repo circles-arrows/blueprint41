@@ -12,7 +12,7 @@ namespace Blueprint41.Build
         private const string GENERATE_PATH_ARG = "--generatePath=";
         private const string NAMESPACE_ARG = "--namespace=";
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             bool hasCommandlineArgumentErrors = false;
             Dictionary<string, string> arguments = args.Select(item => item.Split('=')).ToDictionary(item => item[0].TrimStart('-', '/', ' ').TrimEnd(' ').ToLowerInvariant(), item => (item.Length == 1) ? item[0].Trim(' ', '"').ToLowerInvariant() : string.Join("=", item.Skip(1)).Trim(' ', '"'));
