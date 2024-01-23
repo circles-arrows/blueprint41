@@ -248,7 +248,7 @@ namespace Datastore.Manipulation
 
             return RESTAURANT_LOCATED_AT.Load(query).FirstOrDefault();
         }
-        public RESTAURANT_LOCATED_AT GetCityIf(JsNotation<System.DateTime> CreationDate = default)
+        public RESTAURANT_LOCATED_AT GetCityIf(JsNotation<System.DateTime?> CreationDate = default)
         {
             return GetCityIf(delegate(RESTAURANT_LOCATED_AT.Alias alias)
             {
@@ -305,7 +305,7 @@ namespace Datastore.Manipulation
 
             return PERSON_EATS_AT.Load(query);
         }
-        public List<PERSON_EATS_AT> PersonsWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<PERSON_EATS_AT> PersonsWhere(JsNotation<System.DateTime?> CreationDate = default)
         {
             return PersonsWhere(delegate(PERSON_EATS_AT.Alias alias)
             {

@@ -283,7 +283,7 @@ namespace Datastore.Manipulation
 
             return PERSON_EATS_AT.Load(query);
         }
-        public List<PERSON_EATS_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<PERSON_EATS_AT> RestaurantsWhere(JsNotation<System.DateTime?> CreationDate = default)
         {
             return RestaurantsWhere(delegate(PERSON_EATS_AT.Alias alias)
             {
@@ -342,7 +342,7 @@ namespace Datastore.Manipulation
 
             return PERSON_DIRECTED.Load(query);
         }
-        public List<PERSON_DIRECTED> DirectedMoviesWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<PERSON_DIRECTED> DirectedMoviesWhere(JsNotation<System.DateTime?> CreationDate = default)
         {
             return DirectedMoviesWhere(delegate(PERSON_DIRECTED.Alias alias)
             {
@@ -401,7 +401,7 @@ namespace Datastore.Manipulation
 
             return ACTED_IN.Load(query);
         }
-        public List<ACTED_IN> ActedInMoviesWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<ACTED_IN> ActedInMoviesWhere(JsNotation<System.DateTime?> CreationDate = default)
         {
             return ActedInMoviesWhere(delegate(ACTED_IN.Alias alias)
             {
@@ -460,7 +460,7 @@ namespace Datastore.Manipulation
 
             return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(JsNotation<DateTime?> Moment = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<decimal> MonthlyFee = default)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(JsNotation<DateTime?> Moment = default, JsNotation<System.DateTime?> CreationDate = default, JsNotation<decimal> MonthlyFee = default)
         {
             return StreamingServiceSubscriptionsWhere(delegate(SUBSCRIBED_TO_STREAMING_SERVICE.Alias alias)
             {
@@ -525,7 +525,7 @@ namespace Datastore.Manipulation
 
             return WATCHED_MOVIE.Load(query);
         }
-        public List<WATCHED_MOVIE> WatchedMoviesWhere(JsNotation<System.DateTime> CreationDate = default, JsNotation<int> MinutesWatched = default)
+        public List<WATCHED_MOVIE> WatchedMoviesWhere(JsNotation<System.DateTime?> CreationDate = default, JsNotation<int> MinutesWatched = default)
         {
             return WatchedMoviesWhere(delegate(WATCHED_MOVIE.Alias alias)
             {
@@ -610,7 +610,7 @@ namespace Datastore.Manipulation
 
             return PERSON_LIVES_IN.Load(query).FirstOrDefault();
         }
-        public PERSON_LIVES_IN GetCityIf(DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default)
+        public PERSON_LIVES_IN GetCityIf(DateTime? moment, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime?> CreationDate = default)
         {
             return GetCityIf(moment, delegate(PERSON_LIVES_IN.Alias alias)
             {
@@ -646,7 +646,7 @@ namespace Datastore.Manipulation
 
             return PERSON_LIVES_IN.Load(query);
         }
-        public List<PERSON_LIVES_IN> CityWhere(JsNotation<DateTime?> Moment = default, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default)
+        public List<PERSON_LIVES_IN> CityWhere(JsNotation<DateTime?> Moment = default, JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime?> CreationDate = default)
         {
             return CityWhere(delegate(PERSON_LIVES_IN.Alias alias)
             {

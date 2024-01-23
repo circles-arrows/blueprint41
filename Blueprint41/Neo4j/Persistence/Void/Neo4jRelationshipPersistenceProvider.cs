@@ -304,16 +304,19 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr = $node", relationship.Neo4JRelationshipType);
+            string create = $"""
+                MERGE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out)
+                ON CREATE SET outr = $map
+                ON MATCH SET outr = apoc.map.setEntry($map, '{relationship.CreationDate}', outr.{relationship.CreationDate})
+                """;
+
+            Dictionary<string, object> map = properties ?? new Dictionary<string, object>();
+            map.AddOrSet(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
-
-            Dictionary<string, object> node = new Dictionary<string, object>();
-            parameters.Add("node", node);
-            parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
-
+            parameters.Add("map", map);
 
             string query = match + "\r\n" + create;
             relationship.RaiseOnRelationCreate(trans);

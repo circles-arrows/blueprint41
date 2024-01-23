@@ -113,7 +113,7 @@ public partial class PERSON_DIRECTED_REL : RELATIONSHIP, IFromIn_PERSON_DIRECTED
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_DIRECTED"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_DIRECTED"].Properties["CreationDate"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default)
+        public Assignment[] Assign(JsNotation<System.DateTime?> CreationDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));

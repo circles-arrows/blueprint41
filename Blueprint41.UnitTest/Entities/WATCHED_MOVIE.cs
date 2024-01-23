@@ -25,7 +25,7 @@ namespace Datastore.Manipulation
             Person = @in;
             Movie = @out;
             
-            CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
+            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
             MinutesWatched = (int)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(int), properties.GetValue("MinutesWatched"));
         }
 
@@ -41,7 +41,7 @@ namespace Datastore.Manipulation
         /// </summary>
         public Movie Movie { get; private set; }
 
-        public System.DateTime CreationDate { get; private set; }
+        public System.DateTime? CreationDate { get; private set; }
         public int MinutesWatched { get; private set; }
 
         public void Assign(JsNotation<int> MinutesWatched = default)
@@ -83,7 +83,7 @@ namespace Datastore.Manipulation
 
             return Load(query);
         }
-        public static List<WATCHED_MOVIE> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<int> MinutesWatched = default, JsNotation<Person> InNode = default, JsNotation<Movie> OutNode = default)
+        public static List<WATCHED_MOVIE> Where(JsNotation<System.DateTime?> CreationDate = default, JsNotation<int> MinutesWatched = default, JsNotation<Person> InNode = default, JsNotation<Movie> OutNode = default)
         {
             return Where(delegate(Alias alias)
             {

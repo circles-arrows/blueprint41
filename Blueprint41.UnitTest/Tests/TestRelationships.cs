@@ -610,7 +610,379 @@ namespace Blueprint41.UnitTest.Tests
         #region CRUD
 
         [Test]
-        public void TimeDependentLookupSetLegacy()
+        public void LookupSetLegacy()
+        {
+            #region Set Movie Certification
+
+            using (Transaction.Begin())
+            {
+                Rating rating = Rating.Load(DatabaseUids.Ratings.PG);
+
+                CleanupRelations(MOVIE_CERTIFICATION.Relationship);
+
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    Debug.WriteLine($"Set {certification.movie.Title} certification to {certification.rating.Name}");
+                    certification.movie.Certification = rating;
+                }
+
+                Transaction.Flush();
+
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    certification.movie.Certification = certification.rating;
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    Assert.IsTrue(certification.movie.Certification == certification.rating);
+                }
+            }
+
+            #endregion
+
+            #region Set NULL
+
+
+            using (Transaction.Begin())
+            {
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    Debug.WriteLine($"Set {certification.movie.Title} certification to NULL");
+                    certification.movie.Certification = null;
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    Assert.IsTrue(certification.movie.Certification is null);
+                }
+            }
+
+            #endregion
+        }
+
+        [Test]
+        public void CollAddAndRemoveLegacy()
+        {
+            #region Add Watched Movie
+
+            using (Transaction.Begin())
+            {
+                CleanupRelations(WATCHED_MOVIE.Relationship);
+
+                var watched = SampleDataWatchedMovies().First();
+                watched.person.WatchedMovies.Add(watched.movie);
+
+                Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
+                Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
+            }
+
+            #region Strip Constraint from MinutesWatched
+
+            MockModel model = new MockModel()
+            {
+                LogToConsole = true
+            };
+            ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(nameof(Script_RemoveMinutesWatchedConstraint)));
+
+            #endregion
+
+            using (Transaction.Begin())
+            {
+                CleanupRelations(WATCHED_MOVIE.Relationship);
+
+                foreach (var watched in SampleDataWatchedMovies())
+                {
+                    Debug.WriteLine($"Add Watched Movie {watched.movie.Title} for {watched.person.Name}");
+
+                    watched.person.WatchedMovies.Add(watched.movie);
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person:item.Key, watchedMovies:item.ToList())))
+                {
+                    List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
+                    List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
+
+                    Assert.AreEqual(excpected.Count, actual.Count);
+                    Assert.AreEqual(0, excpected.Except(actual).Count());
+                    Assert.AreEqual(0, actual.Except(excpected).Count());
+                }
+
+                Transaction.Commit();
+            }
+
+            #endregion
+
+            #region Remove Watched Movie
+
+            using (Transaction.Begin())
+            {
+                foreach (var notWatched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => item.First()))
+                {
+                    Debug.WriteLine($"Remove Watched Movie {notWatched.movie} for {notWatched.person.Name}");
+
+                    notWatched.person.WatchedMovies.Remove(notWatched.movie);
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
+                {
+                    List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
+                    List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
+
+                    Assert.AreEqual(excpected.Count, actual.Count);
+                    Assert.AreEqual(0, excpected.Except(actual).Count());
+                    Assert.AreEqual(0, actual.Except(excpected).Count());
+                }
+
+                Transaction.Commit();
+            }
+
+            #endregion
+        }
+        public static void Script_RemoveMinutesWatchedConstraint(DatastoreModel @this)
+        {
+            @this.Relations["WATCHED_MOVIE"].Properties["MinutesWatched"].Refactor.MakeNullable();
+        }
+
+        [Test]
+        public void LookupSetWithProperties()
+        {
+            #region Set Movie Certification
+
+            using (Transaction.Begin())
+            {
+                Rating rating = Rating.Load(DatabaseUids.Ratings.PG);
+
+                CleanupRelations(MOVIE_CERTIFICATION.Relationship);
+
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    Debug.WriteLine($"Set {certification.movie.Title} certification to {certification.rating.Name}");
+                    certification.movie.SetCertification(
+                        rating,
+                        FrighteningIntense: RatingComponent.None,
+                        Profanity:          RatingComponent.None,
+                        SexAndNudity:       RatingComponent.None,
+                        Substances:         RatingComponent.None,
+                        ViolenceGore:       RatingComponent.None);
+                }
+
+                Transaction.Flush();
+
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    certification.movie.SetCertification(
+                        certification.rating,
+                        FrighteningIntense: certification.frighteningIntense,
+                        Profanity:          certification.profanity,
+                        SexAndNudity:       certification.sexAndNudity,
+                        Substances:         certification.substances,
+                        ViolenceGore:       certification.violenceGore);
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    var details = ReadRelationsWithProperties(certification.movie, MOVIE_CERTIFICATION.Relationship, certification.rating);
+                    Assert.AreEqual(1, details.Count);
+                    Assert.AreEqual(Conversion.MinDateTime, details[0].from);
+                    Assert.AreEqual(Conversion.MaxDateTime, details[0].till);
+                    Assert.AreEqual(5, details[0].properties.Count);
+                    Assert.AreEqual(certification.frighteningIntense.ToString(), details[0].properties["FrighteningIntense"]);
+                    Assert.AreEqual(certification.profanity.ToString(),          details[0].properties["Profanity"]);
+                    Assert.AreEqual(certification.sexAndNudity.ToString(),       details[0].properties["SexAndNudity"]);
+                    Assert.AreEqual(certification.substances.ToString(),         details[0].properties["Substances"]);
+                    Assert.AreEqual(certification.violenceGore.ToString(),       details[0].properties["ViolenceGore"]);
+                }
+            }
+
+            #endregion
+
+            #region Set NULL
+
+
+            using (Transaction.Begin())
+            {
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    Debug.WriteLine($"Set {certification.movie.Title} certification to NULL");
+                    certification.movie.SetCertification(
+                        null,
+                        FrighteningIntense: certification.frighteningIntense,
+                        Profanity:          certification.profanity,
+                        SexAndNudity:       certification.sexAndNudity,
+                        Substances:         certification.substances,
+                        ViolenceGore:       certification.violenceGore);
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    Assert.IsTrue(certification.movie.Certification is null);
+                }
+            }
+
+            #endregion
+        }
+
+        [Test]
+        public void CollAddAndRemoveWithProperties()
+        {
+            #region Add Watched Movie
+
+            using (Transaction.Begin())
+            {
+                CleanupRelations(WATCHED_MOVIE.Relationship);
+
+                foreach (var watched in SampleDataWatchedMovies())
+                {
+                    Debug.WriteLine($"Add Watched Movie {watched.movie.Title} for {watched.person.Name}");
+
+                    watched.person.AddWatchedMovie(watched.movie, MinutesWatched: watched.minutes);
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.ToList())))
+                {
+                    List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
+                    List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
+
+                    Assert.AreEqual(excpected.Count, actual.Count);
+                    Assert.AreEqual(0, excpected.Except(actual).Count());
+                    Assert.AreEqual(0, actual.Except(excpected).Count());
+
+                    foreach (var watchedMovie in watched.watchedMovies)
+                    {
+                        var relations = ReadRelationsWithProperties(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
+                        Assert.AreEqual(1, relations.Count);
+                        Assert.That(relations.First().properties.ContainsKey("MinutesWatched"));
+                        Assert.AreEqual(watchedMovie.minutes, relations.First().properties["MinutesWatched"]);
+                    }
+                }
+
+                Transaction.Commit();
+            }
+
+            #endregion
+
+            #region Remove Watched Movie
+
+            using (Transaction.Begin())
+            {
+                foreach (var notWatched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => item.First()))
+                {
+                    Debug.WriteLine($"Remove Watched Movie {notWatched.movie} for {notWatched.person.Name}");
+
+                    notWatched.person.WatchedMovies.Remove(notWatched.movie);
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
+                {
+                    List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
+                    List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
+
+                    Assert.AreEqual(excpected.Count, actual.Count);
+                    Assert.AreEqual(0, excpected.Except(actual).Count());
+                    Assert.AreEqual(0, actual.Except(excpected).Count());
+
+                    foreach (var watchedMovie in watched.watchedMovies)
+                    {
+                        var relations = ReadRelationsWithProperties(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
+                        Assert.AreEqual(1, relations.Count);
+                        Assert.That(relations.First().properties.ContainsKey("MinutesWatched"));
+                        Assert.AreEqual(watchedMovie.minutes, relations.First().properties["MinutesWatched"]);
+                    }
+                }
+
+                Transaction.Commit();
+            }
+
+            #endregion
+
+            #region Mutate Watched Movie
+
+            using (Transaction.Begin())
+            {
+                foreach (var mutate in SampleDataWatchedMoviesMutations())
+                {
+                    Debug.WriteLine($"Mutate Watched Movie {mutate.movie} for {mutate.person.Name}");
+
+                    var relations = WATCHED_MOVIE.Where(InNode: mutate.person, OutNode: mutate.movie);
+                    Assert.AreEqual(1, relations.Count);
+
+                    mutate.person.AddWatchedMovie(mutate.movie, MinutesWatched: relations.First().MinutesWatched + mutate.minutes);
+
+                    Transaction.Flush();
+                }
+
+                Transaction.Commit();
+            }
+
+            using (Transaction.Begin())
+            {
+                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
+                {
+                    List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
+                    List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
+
+                    Assert.AreEqual(excpected.Count, actual.Count);
+                    Assert.AreEqual(0, excpected.Except(actual).Count());
+                    Assert.AreEqual(0, actual.Except(excpected).Count());
+
+                    foreach (var watchedMovie in watched.watchedMovies)
+                    {
+                        var relations = ReadRelationsWithProperties(watchedMovie.person, WATCHED_MOVIE.Relationship, watchedMovie.movie);
+                        Assert.AreEqual(1, relations.Count);
+                        Assert.That(relations.First().properties.ContainsKey("MinutesWatched"));
+                        Assert.AreEqual(watchedMovie.total, relations.First().properties["MinutesWatched"]);
+                    }
+                }
+
+                Transaction.Commit();
+            }
+
+            #endregion
+        }
+
+        [Test]
+        public void TimeDepLookupSetLegacy()
         {
             #region Set Same City
 
@@ -682,9 +1054,32 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
-        public void TimeDependentCollectionAddAndRemoveLegacy()
+        public void TimeDepCollAddAndRemoveLegacy()
         {
             #region Add Same Streaming Service
+
+            using (Transaction.Begin())
+            {
+                CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
+
+                var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+
+                person.StreamingServiceSubscriptions.Add(netflix, DateTime.UtcNow);
+
+                Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
+                Assert.That(() => ex.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
+            }
+
+            #region Strip Constraint from MonthlyFee
+
+            MockModel model = new MockModel()
+            {
+                LogToConsole = true
+            };
+            ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(nameof(Script_RemoveMonthlyFeeConstraint)));
+
+            #endregion
 
             List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddSame);
 
@@ -774,9 +1169,13 @@ namespace Blueprint41.UnitTest.Tests
 
             #endregion
         }
+        public static void Script_RemoveMonthlyFeeConstraint(DatastoreModel @this)
+        {
+            @this.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"].Properties["MonthlyFee"].Refactor.MakeNullable();
+        }
 
         [Test]
-        public void TimeDependentLookupSetWithProperties()
+        public void TimeDepLookupSetWithProperties()
         {
             #region Set Same City
 
@@ -941,7 +1340,7 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
-        public void TimeDependentCollectionAddAndRemoveWithProperties()
+        public void TimeDepCollAddAndRemoveWithProperties()
         {
             #region Add Same Streaming Service
 
@@ -1181,7 +1580,6 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
-        [Version(0, 0, 1)]
         public static void Script_0_0_1(DatastoreModel @this)
         {
             @this.Relations["PERSON_LIVES_IN"].Properties["AddressLine1"].Refactor.Rename("WTF");
@@ -1244,8 +1642,8 @@ namespace Blueprint41.UnitTest.Tests
 
             return result.Select(delegate (RawRecord record)
             {
-                DateTime from = Conversion<long, DateTime>.Convert(record.Values["From"].As<long>());
-                DateTime till = Conversion<long, DateTime>.Convert(record.Values["Till"].As<long>());
+                DateTime from = Conversion<long?, DateTime?>.Convert(record.Values["From"]?.As<long?>()) ?? Conversion.MinDateTime;
+                DateTime till = Conversion<long?, DateTime?>.Convert(record.Values["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
 
                 return (from, till);
             }).ToList();
@@ -1268,8 +1666,8 @@ namespace Blueprint41.UnitTest.Tests
 
             return result.Select(delegate (RawRecord record)
             {
-                DateTime from = Conversion<long, DateTime>.Convert(record.Values["From"].As<long>());
-                DateTime till = Conversion<long, DateTime>.Convert(record.Values["Till"].As<long>());
+                DateTime from = Conversion<long?, DateTime?>.Convert(record.Values["From"]?.As<long?>()) ?? Conversion.MinDateTime;
+                DateTime till = Conversion<long?, DateTime?>.Convert(record.Values["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
                 Dictionary<string, object> properties = record
                     .Values["Properties"]
                     .As<Dictionary<string, object>>()
@@ -1306,6 +1704,32 @@ namespace Blueprint41.UnitTest.Tests
                 return properties;
             }
         }
+        private List<(Person person, Movie movie, int minutes, int total)> SampleDataWatchedMovies()
+        {
+            return new List<(Person person, Movie movie, int minutes, int total)>()
+            {
+                (Person.Load(DatabaseUids.Persons.AlanKay),       Movie.Load(DatabaseUids.Movies.Aliens),          137, 137),
+                (Person.Load(DatabaseUids.Persons.DennisRitchie), Movie.Load(DatabaseUids.Movies.DieHard),         132, 132),
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Aliens),          137, 137),
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity),        34,  119),
+                (Person.Load(DatabaseUids.Persons.MartinFowler),  Movie.Load(DatabaseUids.Movies.Matrix),          136, 136),
+                (Person.Load(DatabaseUids.Persons.MartinFowler),  Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137),
+                (Person.Load(DatabaseUids.Persons.SteveWozniak),  Movie.Load(DatabaseUids.Movies.Matrix),          136, 136),
+                (Person.Load(DatabaseUids.Persons.SteveWozniak),  Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137),
+                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.TheFifthElement), 126, 126),
+                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.Serenity),        119, 119),
+                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.TopGunMaverick),  130, 130),
+            };
+        }
+        private List<(Person person, Movie movie, int minutes)> SampleDataWatchedMoviesMutations()
+        {
+            return new List<(Person person, Movie movie, int minutes)>()
+            {
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity), 52),
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity), 33),
+            };
+        }
+
         private List<(List<(DateTime from, DateTime till)> relations, StreamingService target, decimal price)> GetSubscribedToState(List<(DateTime from, DateTime till)> scenario, StreamingService item, decimal price = 0m)
         {
             var amazon  = StreamingService.Load(DatabaseUids.StreamingServices.AmazonPrimeVideo);
@@ -1328,39 +1752,3 @@ namespace Blueprint41.UnitTest.Tests
         #endregion
     }
 }
-
-#region Sample Interface
-
-//// Get all EATS_AT relations for the given person
-//List<PERSON_EATS_AT> all = person.RestaurantRelations();
-//// And set their 'Weight' & 'LastModifiedOn' properties
-//all.Assign(Score: "Good", CreationDate: DateTime.UtcNow);
-
-//// Get a sub-set of EATS_AT relations for the given person
-//List<PERSON_EATS_AT> subset = person.RestaurantsWhere(alias => alias.Restaurant(restaurant) & alias.Score != "Bad");
-//// And use LINQ to query restaurants
-//IEnumerable<Restaurant> restaurants = subset.Select(rel => rel.Restaurant);
-
-////// Get EATS_AT relations based on a JSON notated expression
-//List<PERSON_EATS_AT> relations = PERSON_EATS_AT.Where(InNode: person, OutNode: restaurant);
-
-//// Get EATS_AT relations based on a Bp41 notated expression
-//List<PERSON_EATS_AT> relations2 = PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants) & alias.Person(person) & alias.Score != "Bad");
-
-//// Get EATS_AT relations based on Bp41 notated expression, and set their 'Weight' property
-//PERSON_EATS_AT.Where(alias => alias.Restaurants(restaurants)).Assign(Score: "Good");
-
-//// Get a sub-set of EATS_AT relations for the given person, and set their 'Weight' property
-//person.RestaurantsWhere(alias => alias.Score != "Bad").Assign(Score: "Good");
-
-//// Lookup: Query LIVES_IN relation for the city OR null, depending on the condition
-////         And potentially assign new values
-//person.CityIf(alias => alias.Street == "San Nicolas Street" & alias.HouseNr == 8)?.Assign(HouseNr: 6);
-
-//// Set city 
-//person.SetCity(city, CreationDate: DateTime.UtcNow, Street: "San Nicolas Street", HouseNr: 6);
-
-//// Add restaurant
-//person.AddRestaurant(restaurant, CreationDate: DateTime.UtcNow, Score: "Good");
-
-#endregion

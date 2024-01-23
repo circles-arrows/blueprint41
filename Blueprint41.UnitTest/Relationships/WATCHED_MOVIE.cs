@@ -114,7 +114,7 @@ public partial class WATCHED_MOVIE_REL : RELATIONSHIP, IFromIn_WATCHED_MOVIE_REL
             MinutesWatched = new NumericResult(this, "MinutesWatched", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["WATCHED_MOVIE"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["WATCHED_MOVIE"].Properties["MinutesWatched"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<int> MinutesWatched = default)
+        public Assignment[] Assign(JsNotation<System.DateTime?> CreationDate = default, JsNotation<int> MinutesWatched = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));

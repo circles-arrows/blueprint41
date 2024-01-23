@@ -274,7 +274,7 @@ namespace Datastore.Manipulation
 
             return PERSON_DIRECTED.Load(query).FirstOrDefault();
         }
-        public PERSON_DIRECTED GetDirectorIf(JsNotation<System.DateTime> CreationDate = default)
+        public PERSON_DIRECTED GetDirectorIf(JsNotation<System.DateTime?> CreationDate = default)
         {
             return GetDirectorIf(delegate(PERSON_DIRECTED.Alias alias)
             {
@@ -331,7 +331,7 @@ namespace Datastore.Manipulation
 
             return ACTED_IN.Load(query);
         }
-        public List<ACTED_IN> ActorsWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<ACTED_IN> ActorsWhere(JsNotation<System.DateTime?> CreationDate = default)
         {
             return ActorsWhere(delegate(ACTED_IN.Alias alias)
             {
@@ -390,7 +390,7 @@ namespace Datastore.Manipulation
 
             return MOVIE_CERTIFICATION.Load(query).FirstOrDefault();
         }
-        public MOVIE_CERTIFICATION GetCertificationIf(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
+        public MOVIE_CERTIFICATION GetCertificationIf(JsNotation<System.DateTime?> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             return GetCertificationIf(delegate(MOVIE_CERTIFICATION.Alias alias)
             {
@@ -409,11 +409,11 @@ namespace Datastore.Manipulation
         public void SetCertification(Rating rating, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
-            if (FrighteningIntense.HasValue) properties.Add("FrighteningIntense", FrighteningIntense.Value);
-            if (ViolenceGore.HasValue) properties.Add("ViolenceGore", ViolenceGore.Value);
-            if (Profanity.HasValue) properties.Add("Profanity", Profanity.Value);
-            if (Substances.HasValue) properties.Add("Substances", Substances.Value);
-            if (SexAndNudity.HasValue) properties.Add("SexAndNudity", SexAndNudity.Value);
+            if (FrighteningIntense.HasValue) properties.Add("FrighteningIntense", FrighteningIntense.Value?.ToString());
+            if (ViolenceGore.HasValue) properties.Add("ViolenceGore", ViolenceGore.Value?.ToString());
+            if (Profanity.HasValue) properties.Add("Profanity", Profanity.Value?.ToString());
+            if (Substances.HasValue) properties.Add("Substances", Substances.Value?.ToString());
+            if (SexAndNudity.HasValue) properties.Add("SexAndNudity", SexAndNudity.Value?.ToString());
 
             ((ILookupHelper<Rating>)InnerData.Certification).SetItem(rating, null, properties);
 

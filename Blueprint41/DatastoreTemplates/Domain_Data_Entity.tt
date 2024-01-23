@@ -805,9 +805,18 @@ if (!DALModel.IsAbstract)
 <#
                 foreach (var p in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
                 {
+                    if (p.SystemReturnType.IsEnum)
+                    {
+#>
+            if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value?.ToString());
+<#
+                    }
+                    else
+                    {
 #>
             if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value);
 <#
+                    }
                 }
 #>
             ((ILookupHelper<<#= attr.ForeignEntity.Name #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
@@ -905,9 +914,18 @@ if (!DALModel.IsAbstract)
 <#
                 foreach (var p in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
                 {
+                    if (p.SystemReturnType.IsEnum)
+                    {
+#>
+            if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value?.ToString());
+<#
+                    }
+                    else
+                    {
 #>
             if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value);
 <#
+                    }
                 }
 #>
             ((ILookupHelper<<#= attr.ForeignEntity.Name #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
@@ -1001,9 +1019,18 @@ if (!DALModel.IsAbstract)
 <#
                 foreach (var p in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
                 {
+                    if (p.SystemReturnType.IsEnum)
+                    {
+#>
+            if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value?.ToString());
+<#
+                    }
+                    else
+                    {
 #>
             if (<#= p.Name #>.HasValue) properties.Add("<#= p.Name #>", <#= p.Name #>.Value);
 <#
+                    }
                 }
 #>
 
@@ -1175,9 +1202,18 @@ if (!DALModel.IsAbstract)
 <#
                 foreach (var argument in attr.Relationship.Properties.Where(item => item.Name != attr.Relationship.StartDate && item.Name != attr.Relationship.EndDate && item.Name != attr.Relationship.CreationDate))
                 {
+                    if (argument.SystemReturnType.IsEnum)
+                    {
+#>
+            if (<#= argument.Name #>.HasValue) properties.Add("<#= argument.Name #>", <#= argument.Name #>.Value?.ToString());
+<#
+                    }
+                    else
+                    {
 #>
             if (<#= argument.Name #>.HasValue) properties.Add("<#= argument.Name #>", <#= argument.Name #>.Value);
 <#
+                    }
                 }
 #>
 

@@ -244,7 +244,7 @@ namespace Datastore.Manipulation
 
             return SUBSCRIBED_TO_STREAMING_SERVICE.Load(query);
         }
-        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(JsNotation<DateTime?> Moment = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<decimal> MonthlyFee = default)
+        public List<SUBSCRIBED_TO_STREAMING_SERVICE> SubscribersWhere(JsNotation<DateTime?> Moment = default, JsNotation<System.DateTime?> CreationDate = default, JsNotation<decimal> MonthlyFee = default)
         {
             return SubscribersWhere(delegate(SUBSCRIBED_TO_STREAMING_SERVICE.Alias alias)
             {

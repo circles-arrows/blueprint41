@@ -258,7 +258,7 @@ namespace Datastore.Manipulation
 
             return RESTAURANT_LOCATED_AT.Load(query);
         }
-        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(JsNotation<System.DateTime> CreationDate = default)
+        public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(JsNotation<System.DateTime?> CreationDate = default)
         {
             return RestaurantsWhere(delegate(RESTAURANT_LOCATED_AT.Alias alias)
             {

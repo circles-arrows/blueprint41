@@ -116,7 +116,7 @@ public partial class SUBSCRIBED_TO_STREAMING_SERVICE_REL : RELATIONSHIP, IFromIn
             EndDate = new DateTimeResult(this, "EndDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"].Properties["EndDate"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default)
+        public Assignment[] Assign(JsNotation<System.DateTime?> CreationDate = default, JsNotation<System.DateTime?> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime?> StartDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));

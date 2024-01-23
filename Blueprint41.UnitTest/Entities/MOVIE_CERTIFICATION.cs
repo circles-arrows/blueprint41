@@ -25,7 +25,7 @@ namespace Datastore.Manipulation
             Movie = @in;
             Rating = @out;
             
-            CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
+            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
             FrighteningIntense = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("FrighteningIntense"));
             ViolenceGore = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("ViolenceGore"));
             Profanity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Profanity"));
@@ -45,7 +45,7 @@ namespace Datastore.Manipulation
         /// </summary>
         public Rating Rating { get; private set; }
 
-        public System.DateTime CreationDate { get; private set; }
+        public System.DateTime? CreationDate { get; private set; }
         public Blueprint41.UnitTest.DataStore.RatingComponent? FrighteningIntense { get; private set; }
         public Blueprint41.UnitTest.DataStore.RatingComponent? ViolenceGore { get; private set; }
         public Blueprint41.UnitTest.DataStore.RatingComponent? Profanity { get; private set; }
@@ -95,7 +95,7 @@ namespace Datastore.Manipulation
 
             return Load(query);
         }
-        public static List<MOVIE_CERTIFICATION> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default, JsNotation<Movie> InNode = default, JsNotation<Rating> OutNode = default)
+        public static List<MOVIE_CERTIFICATION> Where(JsNotation<System.DateTime?> CreationDate = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default, JsNotation<Movie> InNode = default, JsNotation<Rating> OutNode = default)
         {
             return Where(delegate(Alias alias)
             {

@@ -25,10 +25,10 @@ namespace Datastore.Manipulation
             Person = @in;
             StreamingService = @out;
             
-            CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
+            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
             MonthlyFee = (decimal)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(decimal), properties.GetValue("MonthlyFee"));
-            StartDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("StartDate"));
-            EndDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("EndDate"));
+            StartDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("StartDate"));
+            EndDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("EndDate"));
         }
 
         internal string _elementId { get; private set; }
@@ -43,10 +43,10 @@ namespace Datastore.Manipulation
         /// </summary>
         public StreamingService StreamingService { get; private set; }
 
-        public System.DateTime CreationDate { get; private set; }
+        public System.DateTime? CreationDate { get; private set; }
         public decimal MonthlyFee { get; private set; }
-        public System.DateTime StartDate { get; private set; }
-        public System.DateTime EndDate { get; private set; }
+        public System.DateTime? StartDate { get; private set; }
+        public System.DateTime? EndDate { get; private set; }
 
         public void Assign(JsNotation<decimal> MonthlyFee = default)
         {
@@ -87,7 +87,7 @@ namespace Datastore.Manipulation
 
             return Load(query);
         }
-        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<StreamingService> OutNode = default)
+        public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(JsNotation<System.DateTime?> CreationDate = default, JsNotation<System.DateTime?> EndDate = default, JsNotation<decimal> MonthlyFee = default, JsNotation<System.DateTime?> StartDate = default, JsNotation<Person> InNode = default, JsNotation<StreamingService> OutNode = default)
         {
             return Where(delegate(Alias alias)
             {

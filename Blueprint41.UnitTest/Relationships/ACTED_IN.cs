@@ -113,7 +113,7 @@ public partial class ACTED_IN_REL : RELATIONSHIP, IFromIn_ACTED_IN_REL, IFromOut
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["ACTED_IN"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["ACTED_IN"].Properties["CreationDate"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default)
+        public Assignment[] Assign(JsNotation<System.DateTime?> CreationDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));

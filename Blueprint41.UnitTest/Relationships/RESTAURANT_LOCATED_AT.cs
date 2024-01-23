@@ -113,7 +113,7 @@ public partial class RESTAURANT_LOCATED_AT_REL : RELATIONSHIP, IFromIn_RESTAURAN
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"].Properties["CreationDate"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default)
+        public Assignment[] Assign(JsNotation<System.DateTime?> CreationDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));

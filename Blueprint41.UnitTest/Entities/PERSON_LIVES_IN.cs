@@ -25,9 +25,9 @@ namespace Datastore.Manipulation
             Person = @in;
             City = @out;
             
-            CreationDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("CreationDate"));
-            StartDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("StartDate"));
-            EndDate = (System.DateTime)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime), properties.GetValue("EndDate"));
+            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            StartDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("StartDate"));
+            EndDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("EndDate"));
             AddressLine1 = (string)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine1"));
             AddressLine2 = (string)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine2"));
             AddressLine3 = (string)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine3"));
@@ -45,9 +45,9 @@ namespace Datastore.Manipulation
         /// </summary>
         public City City { get; private set; }
 
-        public System.DateTime CreationDate { get; private set; }
-        public System.DateTime StartDate { get; private set; }
-        public System.DateTime EndDate { get; private set; }
+        public System.DateTime? CreationDate { get; private set; }
+        public System.DateTime? StartDate { get; private set; }
+        public System.DateTime? EndDate { get; private set; }
         public string AddressLine1 { get; private set; }
         public string AddressLine2 { get; private set; }
         public string AddressLine3 { get; private set; }
@@ -93,7 +93,7 @@ namespace Datastore.Manipulation
 
             return Load(query);
         }
-        public static List<PERSON_LIVES_IN> Where(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime> CreationDate = default, JsNotation<System.DateTime> EndDate = default, JsNotation<System.DateTime> StartDate = default, JsNotation<Person> InNode = default, JsNotation<City> OutNode = default)
+        public static List<PERSON_LIVES_IN> Where(JsNotation<string> AddressLine1 = default, JsNotation<string> AddressLine2 = default, JsNotation<string> AddressLine3 = default, JsNotation<System.DateTime?> CreationDate = default, JsNotation<System.DateTime?> EndDate = default, JsNotation<System.DateTime?> StartDate = default, JsNotation<Person> InNode = default, JsNotation<City> OutNode = default)
         {
             return Where(delegate(Alias alias)
             {

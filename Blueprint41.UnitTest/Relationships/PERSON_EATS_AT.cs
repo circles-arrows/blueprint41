@@ -113,7 +113,7 @@ public partial class PERSON_EATS_AT_REL : RELATIONSHIP, IFromIn_PERSON_EATS_AT_R
             CreationDate = new DateTimeResult(this, "CreationDate", Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"], Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["PERSON_EATS_AT"].Properties["CreationDate"]);
         }
 
-        public Assignment[] Assign(JsNotation<System.DateTime> CreationDate = default)
+        public Assignment[] Assign(JsNotation<System.DateTime?> CreationDate = default)
         {
             List<Assignment> assignments = new List<Assignment>();
             if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
