@@ -49,7 +49,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
     }
-    public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base()
+        public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base()
         {
             Uri = uri;
             Username = username;

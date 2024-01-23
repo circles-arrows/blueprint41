@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,16 @@ namespace Blueprint41.Neo4j.Persistence.Void
 {
     internal partial class Neo4jRelationshipPersistenceProvider : RelationshipPersistenceProvider
     {
-        public Neo4jRelationshipPersistenceProvider(PersistenceProvider factory) : base(factory) { }
+        public Neo4jRelationshipPersistenceProvider(PersistenceProvider factory) : base(factory)
+        {
+            HasApocMapRemoveKeys = new Lazy<bool>(() => HasFunction("apoc.map.removeKeys"));
 
+            bool HasFunction(string name)
+            {
+                Neo4jPersistenceProvider? provider = PersistenceProviderFactory as Neo4jPersistenceProvider;
+                return provider?.HasFunction(name) ?? false;
+            }
+        }
         private void Checks(Relationship relationship, OGM? inItem, OGM? outItem)
         {
             if (inItem is null && outItem is null)
@@ -304,19 +313,23 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
+
             string create = $"""
                 MERGE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out)
                 ON CREATE SET outr = $map
-                ON MATCH SET outr = apoc.map.setEntry($map, '{relationship.CreationDate}', outr.{relationship.CreationDate})
+                ON MATCH SET outr = $map, outr.CreationDate = $created
                 """;
 
+            long createdDate = Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate);
+
             Dictionary<string, object> map = properties ?? new Dictionary<string, object>();
-            map.AddOrSet(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
+            map.AddOrSet(relationship.CreationDate, createdDate);
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
             parameters.Add("map", map);
+            parameters.Add("created", createdDate);
 
             string query = match + "\r\n" + create;
             relationship.RaiseOnRelationCreate(trans);
@@ -342,26 +355,27 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Entity inEntity = inItem.GetEntity();
             Entity outEntity = outItem.GetEntity();
 
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }})-[rel:{relationship.Neo4JRelationshipType}]->(out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
-            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) >= $moment");
-            sb.AppendLine("DELETE rel");
-            string delete = sb.ToString();
+            string delete = $$"""
+                MATCH (in:{{inEntity.Label.Name}} { {{inEntity.Key.Name}}: $inKey })-[rel:{{relationship.Neo4JRelationshipType}}]->(out:{{outEntity.Label.Name}} { {{outEntity.Key.Name}}: $outKey })
+                WHERE COALESCE(rel.StartDate, $min) >= $moment
+                DELETE rel
+                """;
 
-            sb.Clear();
-            sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }})-[rel:{relationship.Neo4JRelationshipType}]->(out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
-            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment");
-            sb.AppendLine("SET rel.EndDate = CASE WHEN apoc.map.removeKeys(properties(rel), $excl) = apoc.map.removeKeys($map, $excl) THEN $max ELSE $moment END");
-            string update = sb.ToString();
+            string update = $$"""
+                MATCH (in:{{inEntity.Label.Name}} { {{inEntity.Key.Name}}: $inKey })-[rel:{{relationship.Neo4JRelationshipType}}]->(out:{{outEntity.Label.Name}} { {{outEntity.Key.Name}}: $outKey })
+                WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
+                WITH rel, properties(rel) AS map1, $map AS map2
+                SET rel.EndDate = CASE WHEN {{MapRemoveKeys("map1", "$excl", relationship.ExcludedProperties())}} = {{MapRemoveKeys("map2", "$excl", relationship.ExcludedProperties())}} THEN $max ELSE $moment END
+                """;
 
-            sb.Clear();
-            sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}), (out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
-            sb.AppendLine($"OPTIONAL MATCH (in)-[rel:{relationship.Neo4JRelationshipType}]->(out)");
-            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) > $moment");
-            sb.AppendLine("WITH in, out, rel");
-            sb.AppendLine("WHERE rel is null");
-            sb.AppendLine($"CREATE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out) SET outr = $map");
-            string create = sb.ToString();
+            string create = $$"""
+                MATCH (in:{{inEntity.Label.Name}} { {{inEntity.Key.Name}}: $inKey }), (out:{{outEntity.Label.Name}} { {{outEntity.Key.Name}}: $outKey })
+                OPTIONAL MATCH (in)-[rel:{{relationship.Neo4JRelationshipType}}]->(out)
+                WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) > $moment
+                WITH in, out, rel
+                WHERE rel is null
+                CREATE (in)-[outr:{{relationship.Neo4JRelationshipType}}]->(out) SET outr = $map
+                """;
 
 #if DEBUG_QUERY
             sb.Clear();
@@ -422,6 +436,15 @@ namespace Blueprint41.Neo4j.Persistence.Void
             }
 #endif
         }
+
+        protected virtual string MapRemoveKeys(string map, string exclList, IReadOnlyList<string> entries)
+        {
+            if (HasApocMapRemoveKeys.Value)
+                return $"apoc.map.removeKeys({map}, {exclList})";
+
+            return $"{map} {{ {string.Join(", ", entries.Select(entry => $"{entry}: 0"))}, .* }}"; // WATCH OUT: This one is going to be tricky on Memgraph!!!!
+        }
+        protected readonly Lazy<bool> HasApocMapRemoveKeys;
 
         public override void Remove(Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment, bool timedependent)
         {

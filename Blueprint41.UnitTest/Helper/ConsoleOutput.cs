@@ -47,7 +47,9 @@ namespace Blueprint41.UnitTest.Helper
         {
             AllLines(not,@$"MATCH (in:{inNode}) WHERE in.Uid = $inKey",
                          @$"MATCH (out:{outNode}) WHERE out.Uid = $outKey",
-                         @$"MERGE (in)-[outr:{relationship}]->(out) ON CREATE SET outr.CreationDate = $CreationDate SET outr += $node");
+                         @$"MERGE (in)-[outr:{relationship}]->(out)",
+                         "ON CREATE SET outr = $map",
+                         "ON MATCH SET outr = $map, outr.CreationDate = $created");
         }
         public void AssertTimeDependentRelationshipCreated(string inNode, string relationship, string outNode, bool not = false)
         {
@@ -59,15 +61,16 @@ namespace Blueprint41.UnitTest.Helper
                             $$"""
                             MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
                             WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
-                            SET rel.EndDate = $max
+                            WITH rel, properties(rel) AS map1, $map AS map2
+                            SET rel.EndDate = CASE WHEN apoc.map.removeKeys(map1, $excl) = apoc.map.removeKeys(map2, $excl) THEN $max ELSE $moment END
                             """,
                             $$"""
                             MATCH (in:{{inNode}} { Uid: $inKey }), (out:{{outNode}} { Uid: $outKey })
                             OPTIONAL MATCH (in)-[rel:{{relationship}}]->(out)
-                            WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
+                            WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) > $moment
                             WITH in, out, rel
                             WHERE rel is null
-                            CREATE (in)-[outr:{{relationship}}]->(out) SET outr.CreationDate = $create SET outr += $node
+                            CREATE (in)-[outr:{{relationship}}]->(out) SET outr = $map
                             """);
         }
         public void AssertNodeUpdated(string node, bool not = false)

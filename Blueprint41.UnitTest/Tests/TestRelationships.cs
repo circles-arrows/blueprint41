@@ -8,9 +8,9 @@ using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
 using Datastore.Manipulation;
-
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using ClientException = Neo4j.Driver.ClientException;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -684,16 +684,16 @@ namespace Blueprint41.UnitTest.Tests
                 watched.person.WatchedMovies.Add(watched.movie);
 
                 Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
+#if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
+#else
+                Assert.That(() => ex.InnerException.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
+#endif
             }
 
             #region Strip Constraint from MinutesWatched
 
-            MockModel model = new MockModel()
-            {
-                LogToConsole = true
-            };
-            ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(nameof(Script_RemoveMinutesWatchedConstraint)));
+            RefactorActionScripts.Execute(nameof(RefactorActionScripts.RemoveMinutesWatchedConstraint));
 
             #endregion
 
@@ -713,7 +713,7 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person:item.Key, watchedMovies:item.ToList())))
+                foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.ToList())))
                 {
                     List<string> excpected = watched.watchedMovies.Select(item => item.movie.Title).ToList();
                     List<string> actual = watched.person.WatchedMovies.Select(item => item.Title).ToList();
@@ -726,7 +726,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            #endregion
+#endregion
 
             #region Remove Watched Movie
 
@@ -759,10 +759,6 @@ namespace Blueprint41.UnitTest.Tests
 
             #endregion
         }
-        public static void Script_RemoveMinutesWatchedConstraint(DatastoreModel @this)
-        {
-            @this.Relations["WATCHED_MOVIE"].Properties["MinutesWatched"].Refactor.MakeNullable();
-        }
 
         [Test]
         public void LookupSetWithProperties()
@@ -781,10 +777,10 @@ namespace Blueprint41.UnitTest.Tests
                     certification.movie.SetCertification(
                         rating,
                         FrighteningIntense: RatingComponent.None,
-                        Profanity:          RatingComponent.None,
-                        SexAndNudity:       RatingComponent.None,
-                        Substances:         RatingComponent.None,
-                        ViolenceGore:       RatingComponent.None);
+                        Profanity: RatingComponent.None,
+                        SexAndNudity: RatingComponent.None,
+                        Substances: RatingComponent.None,
+                        ViolenceGore: RatingComponent.None);
                 }
 
                 Transaction.Flush();
@@ -794,10 +790,10 @@ namespace Blueprint41.UnitTest.Tests
                     certification.movie.SetCertification(
                         certification.rating,
                         FrighteningIntense: certification.frighteningIntense,
-                        Profanity:          certification.profanity,
-                        SexAndNudity:       certification.sexAndNudity,
-                        Substances:         certification.substances,
-                        ViolenceGore:       certification.violenceGore);
+                        Profanity: certification.profanity,
+                        SexAndNudity: certification.sexAndNudity,
+                        Substances: certification.substances,
+                        ViolenceGore: certification.violenceGore);
                 }
 
                 Transaction.Commit();
@@ -813,10 +809,10 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.AreEqual(Conversion.MaxDateTime, details[0].till);
                     Assert.AreEqual(5, details[0].properties.Count);
                     Assert.AreEqual(certification.frighteningIntense.ToString(), details[0].properties["FrighteningIntense"]);
-                    Assert.AreEqual(certification.profanity.ToString(),          details[0].properties["Profanity"]);
-                    Assert.AreEqual(certification.sexAndNudity.ToString(),       details[0].properties["SexAndNudity"]);
-                    Assert.AreEqual(certification.substances.ToString(),         details[0].properties["Substances"]);
-                    Assert.AreEqual(certification.violenceGore.ToString(),       details[0].properties["ViolenceGore"]);
+                    Assert.AreEqual(certification.profanity.ToString(), details[0].properties["Profanity"]);
+                    Assert.AreEqual(certification.sexAndNudity.ToString(), details[0].properties["SexAndNudity"]);
+                    Assert.AreEqual(certification.substances.ToString(), details[0].properties["Substances"]);
+                    Assert.AreEqual(certification.violenceGore.ToString(), details[0].properties["ViolenceGore"]);
                 }
             }
 
@@ -833,10 +829,10 @@ namespace Blueprint41.UnitTest.Tests
                     certification.movie.SetCertification(
                         null,
                         FrighteningIntense: certification.frighteningIntense,
-                        Profanity:          certification.profanity,
-                        SexAndNudity:       certification.sexAndNudity,
-                        Substances:         certification.substances,
-                        ViolenceGore:       certification.violenceGore);
+                        Profanity: certification.profanity,
+                        SexAndNudity: certification.sexAndNudity,
+                        Substances: certification.substances,
+                        ViolenceGore: certification.violenceGore);
                 }
 
                 Transaction.Commit();
@@ -1068,16 +1064,16 @@ namespace Blueprint41.UnitTest.Tests
                 person.StreamingServiceSubscriptions.Add(netflix, DateTime.UtcNow);
 
                 Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
+#if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
+#else
+                Assert.That(() => ex.InnerException.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
+#endif
             }
 
             #region Strip Constraint from MonthlyFee
 
-            MockModel model = new MockModel()
-            {
-                LogToConsole = true
-            };
-            ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(nameof(Script_RemoveMonthlyFeeConstraint)));
+            RefactorActionScripts.Execute(nameof(RefactorActionScripts.RemoveMonthlyFeeConstraint));
 
             #endregion
 
@@ -1122,7 +1118,7 @@ namespace Blueprint41.UnitTest.Tests
 
             scenariosAdd.AssertSuccess();
 
-            #endregion
+#endregion
 
             #region Remove Same Streaming Service
 
@@ -1168,10 +1164,6 @@ namespace Blueprint41.UnitTest.Tests
             scenariosRemove.AssertSuccess();
 
             #endregion
-        }
-        public static void Script_RemoveMonthlyFeeConstraint(DatastoreModel @this)
-        {
-            @this.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"].Properties["MonthlyFee"].Refactor.MakeNullable();
         }
 
         [Test]
@@ -1368,7 +1360,12 @@ namespace Blueprint41.UnitTest.Tests
                     foreach (var state in initial)
                     {
                         foreach (var relation in state.relations)
-                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, properties);
+                        {
+                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                            {
+                                { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
+                            });
+                        }
                     }
 
                     person.AddStreamingServiceSubscription(netflix, scenario.Moment, MonthlyFee: price);
@@ -1427,7 +1424,12 @@ namespace Blueprint41.UnitTest.Tests
                     foreach (var state in initial)
                     {
                         foreach (var relation in state.relations)
-                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, properties);
+                        {
+                            WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                            {
+                                { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
+                            });
+                        }
                     }
                     var price2 = StreamingServiceUids.Rates.HuluAdFree;
                     var properties2 = new Dictionary<string, object>()
@@ -1531,35 +1533,27 @@ namespace Blueprint41.UnitTest.Tests
             #endregion
         }
 
-        #endregion
+#endregion
 
         #region Load
 
         [Test]
         public void RelationDirectLoad()
         {
+            SetupTestDataSet();
+
             using (Transaction.Begin())
             {
-                CleanupRelations(PERSON_LIVES_IN.Relationship);
-
-                foreach ((Person person, List<(DateTime from, DateTime till)> relations, City city, Dictionary<string, object> properties) in SampleDataLivesIn())
-                {
-                    foreach ((DateTime from, DateTime till) in relations)
-                        WriteRelation(person, PERSON_LIVES_IN.Relationship, city, from, till, properties);
-                }   
-
-                Transaction.Flush();
-
                 var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
 
                 List<PERSON_LIVES_IN> livesIn1 = PERSON_LIVES_IN.Where(alias => alias.Person(linus));
                 List<PERSON_LIVES_IN> livesIn2 = PERSON_LIVES_IN.Where(InNode: linus);
-                List<PERSON_LIVES_IN> livesIn3= PERSON_LIVES_IN.Where(AddressLine1: "1630 Revello Drive");
+                List<PERSON_LIVES_IN> livesIn3 = PERSON_LIVES_IN.Where(AddressLine1: "1630 Revello Drive");
 
                 livesIn1.Assign(AddressLine1: "OTHER");
 
                 List<PERSON_LIVES_IN> livesIn4 = PERSON_LIVES_IN.Where(AddressLine1: "OTHER");
-                
+
                 PERSON_LIVES_IN livesIn5 = linus.GetCityIf(null, AddressLine1: "OTHER");
                 List<PERSON_LIVES_IN> livesIn6 = linus.CityWhere(AddressLine1: "OTHER");
                 List<PERSON_LIVES_IN> livesIn7 = linus.CityWhere(Moment: DateTime.UtcNow, AddressLine1: "OTHER");
@@ -1567,22 +1561,63 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            MockModel model = new MockModel()
-            {
-                LogToConsole = true
-            };
-            ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(nameof(Script_0_0_1)));
+            RefactorActionScripts.Execute(nameof(RefactorActionScripts.RenameAddressLine1));
 
             using (Transaction.Begin())
             {
                 var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                 var rels = ReadRelationsWithProperties(linus, PERSON_LIVES_IN.Relationship, linus.City);
+                Assert.That(rels.All(r => r.properties.ContainsKey("NewName")));
             }
         }
 
-        public static void Script_0_0_1(DatastoreModel @this)
+        private void SetupTestDataSet()
         {
-            @this.Relations["PERSON_LIVES_IN"].Properties["AddressLine1"].Refactor.Rename("WTF");
+            using (Transaction.Begin())
+            {
+                // Person lives in
+                foreach ((Person person, List<(DateTime from, DateTime till)> relations, City city, Dictionary<string, object> properties) data in SampleDataLivesIn())
+                {
+                    foreach ((DateTime from, DateTime till) in data.relations)
+                        WriteRelation(data.person, PERSON_LIVES_IN.Relationship, data.city, from, till, data.properties);
+                }
+
+                // Movie certifications
+                foreach (var certification in DatabaseUids.Movies.Movies)
+                {
+                    certification.movie.SetCertification(
+                        certification.rating,
+                        FrighteningIntense: certification.frighteningIntense,
+                        Profanity: certification.profanity,
+                        SexAndNudity: certification.sexAndNudity,
+                        Substances: certification.substances,
+                        ViolenceGore: certification.violenceGore);
+                }
+
+                // Subscribed streaming service
+                var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                var price = StreamingServiceUids.Rates.Netflix;
+
+                foreach (var state in GetSubscribedToState(TestScenario.RelationsFromMask(0b1111), netflix, price))
+                {
+                    foreach (var relation in state.relations)
+                    {
+                        WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                        {
+                            { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
+                        });
+                    }
+                }
+
+                // Watched minutes
+                foreach (var watched in SampleDataWatchedMovies())
+                {
+                    watched.person.AddWatchedMovie(watched.movie, MinutesWatched: watched.minutes);
+                }
+
+                Transaction.Commit();
+            }
         }
 
         #endregion
@@ -1700,7 +1735,7 @@ namespace Blueprint41.UnitTest.Tests
                 if (addressLines.Length > 0) properties.Add(nameof(PERSON_LIVES_IN.AddressLine1), addressLines[0]);
                 if (addressLines.Length > 1) properties.Add(nameof(PERSON_LIVES_IN.AddressLine2), addressLines[1]);
                 if (addressLines.Length > 2) properties.Add(nameof(PERSON_LIVES_IN.AddressLine3), addressLines[2]);
-                
+
                 return properties;
             }
         }
@@ -1732,10 +1767,10 @@ namespace Blueprint41.UnitTest.Tests
 
         private List<(List<(DateTime from, DateTime till)> relations, StreamingService target, decimal price)> GetSubscribedToState(List<(DateTime from, DateTime till)> scenario, StreamingService item, decimal price = 0m)
         {
-            var amazon  = StreamingService.Load(DatabaseUids.StreamingServices.AmazonPrimeVideo);
-            var hboMax  = StreamingService.Load(DatabaseUids.StreamingServices.HboMax);
+            var amazon = StreamingService.Load(DatabaseUids.StreamingServices.AmazonPrimeVideo);
+            var hboMax = StreamingService.Load(DatabaseUids.StreamingServices.HboMax);
             var peacock = StreamingService.Load(DatabaseUids.StreamingServices.Peacock);
-            var hulu    = StreamingService.Load(DatabaseUids.StreamingServices.Hulu);
+            var hulu = StreamingService.Load(DatabaseUids.StreamingServices.Hulu);
             var history = StreamingService.Load(DatabaseUids.StreamingServices.HistoryVault);
 
             return new List<(List<(DateTime, DateTime)> initial, StreamingService, decimal)>()
