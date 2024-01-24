@@ -22,7 +22,7 @@ namespace Blueprint41.UnitTest.Tests
             ((IDatastoreUnitTesting)model).Execute(true, typeof(TestRelationships).GetMethod(name));
         }
 
-        #region RenameProperty
+        #region RenameProperty          -> PERSON_LIVES_IN.AddressLine1
 
         public static void RenameAddressLine1(DatastoreModel model)
         {
@@ -31,27 +31,27 @@ namespace Blueprint41.UnitTest.Tests
 
         #endregion
 
-        #region MergeProperty()
+        #region MergeProperty()         -> PERSON_LIVES_IN.AddressLine2 -> PERSON_LIVES_IN.AddressLine1
 
         #endregion
 
-        #region ToCompressedString()
+        #region ToCompressedString()    -> PERSON_LIVES_IN.AddressLine1
 
         #endregion
 
-        #region Convert()
+        #region Convert()               -> WATCHED_MOVIE.MinutesWatched
 
         #endregion
 
-        #region SetIndexType()
+        #region SetIndexType()          -> PERSON_LIVES_IN.AddressLine1
 
         #endregion
 
-        #region Deprecate()
+        #region Deprecate()             -> PERSON_LIVES_IN.AddressLine2 + PERSON_LIVES_IN.AddressLine3
 
         #endregion
 
-        #region MakeNullable
+        #region MakeNullable            -> WATCHED_MOVIE.MinutesWatched & SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee
 
         public static void MakeMinutesWatchedNullable(DatastoreModel model)
         {
@@ -64,11 +64,11 @@ namespace Blueprint41.UnitTest.Tests
 
         #endregion
 
-        #region MakeMandatory()
+        #region MakeMandatory()         -> PERSON_LIVES_IN.AddressLine1
 
         #endregion
 
-        #region SetDefaultValue()
+        #region SetDefaultValue()       -> WATCHED_MOVIE.MinutesWatched
 
         #endregion
     }
