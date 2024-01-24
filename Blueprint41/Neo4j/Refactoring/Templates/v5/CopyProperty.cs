@@ -34,7 +34,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             
             #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\CopyProperty.tt"
 
-    Log("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Entity.Label.Name);
+    Log("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Caller.Name);
 
     if (IsEntity)
     {

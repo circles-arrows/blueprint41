@@ -5,7 +5,7 @@
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="Blueprint41" #>
 <#
-    Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
+    Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Caller.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
 
     // Setup Cypher Parameters
     OutputParameters.Add(Property.Name, Value);

@@ -21,17 +21,37 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
             
-            Execute(RenameAddressLine1);
+            Execute(RenameAddrLine1);
 
             // Assert...
         }
 
         [Test]
-        public void MergeProperty()
+        public void MergePropertyPreferSource()
         {
             SetupTestDataSet();
 
-            Execute(RenameAddressLine1);
+            Execute(MergeAddrLine1And2IntoAddrLine1);
+
+            // Assert...
+        }
+
+        [Test]
+        public void MergePropertyPreferTarget()
+        {
+            SetupTestDataSet();
+
+            Execute(MergeAddrLine1And2IntoAddrLine2);
+
+            // Assert...
+        }
+
+        [Test]
+        public void MergeAddrLine1And2AndFail()
+        {
+            SetupTestDataSet();
+
+            Execute(MergeAddrLine1And2AndThrow);
 
             // Assert...
         }
@@ -41,7 +61,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            Execute(RenameAddressLine1);
+            Execute(CompressAddrLine1);
 
             // Assert...
         }
@@ -51,17 +71,27 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            Execute(RenameAddressLine1);
+            Execute(ConvertMinsWatchedToString);
 
             // Assert...
         }
 
         [Test]
-        public void SetIndexType()
+        public void SetIndexTypeToIndex()
         {
             SetupTestDataSet();
 
-            Execute(RenameAddressLine1);
+            Execute(IndexAddrLine1);
+
+            // Assert...
+        }
+
+        [Test]
+        public void SetIndexTypeToUnique()
+        {
+            SetupTestDataSet();
+
+            Execute(UniqueAddrLine1);
 
             // Assert...
         }
@@ -71,7 +101,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            Execute(RenameAddressLine1);
+            Execute(DeprecateAddrLine2And3);
 
             // Assert...
         }
@@ -81,19 +111,38 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            Execute(RenameAddressLine1);
+            Execute(MakeMinutesWatchedNullable);
 
             // Assert...
         }
 
         [Test]
-        public void MakeMandatory()
+        public void MakeMandatoryWithoutDefaultNoThrow()
         {
             SetupTestDataSet();
 
-            Execute(RenameAddressLine1);
+            Execute(MakeAddrLine1Mandatory);
 
             // Assert...
+        }
+
+        [Test]
+        public void MakeMandatoryWithDefaultNoThrow()
+        {
+            SetupTestDataSet();
+
+            Execute(MakeAddrLine2MandatoryWithDefault);
+
+            // Assert...
+        }
+
+        [Test]
+        public void MakeMandatoryWithoutDefaultAndThrow()
+        {
+            SetupTestDataSet();
+
+            Exception ex = Assert.Throws<InvalidOperationException>(() => Execute(MakeAddrLine3MandatoryAndThrow));
+            Assert.That(ex.Message.Contains("Some nodes in the database contains null values for PERSON_LIVES_IN.AddressLine3."));
         }
 
         [Test]
@@ -101,7 +150,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            Execute(RenameAddressLine1);
+            Execute(SetMinsWatchedFromNullToZero);
 
             // Assert...
         }

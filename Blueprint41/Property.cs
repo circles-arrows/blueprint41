@@ -535,33 +535,69 @@ namespace Blueprint41
             if (Parser.ShouldExecute)
             {
 
-                foreach (Entity entity in Parent.GetConcreteClasses())
+                foreach (IEntity iEntity in Parent.GetConcreteClasses())
                 {
+                    string cypherRead, cypherWrite;
                     List<object> list;
-                    string cypherRead = $"MATCH (node:{entity.Label.Name}) WHERE [x IN node.`{Name}` | x] <> node.`{Name}` RETURN DISTINCT node.`{Name}` as Text LIMIT {batchSize}";
-                    string cypherWrite = $"UNWIND $Batch as map MATCH (node:{entity.Label.Name}) WHERE node.`{Name}` = map['Text'] SET node.`{Name}` = map['Blob']";
+
+                    if (iEntity is Entity entity)
+                    {
+                        cypherRead = $"""
+                            MATCH (node:{entity.Label.Name})
+                            WHERE [x IN node.`{Name}` | x] <> node.`{Name}`
+                            RETURN DISTINCT node.`{Name}` as Text
+                            LIMIT {batchSize}
+                            """;
+                        cypherWrite = $"""
+                            UNWIND $Batch as map
+                            MATCH (node:{entity.Label.Name})
+                            WHERE node.`{Name}` = map['Text']
+                            SET node.`{Name}` = map['Blob']
+                            """;
+                    }
+                    else if (iEntity is Relationship relationship)
+                    {
+                        cypherRead = $"""
+                            MATCH (:{relationship.InEntity.Label.Name})-[rel:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name})
+                            WHERE [x IN rel.`{Name}` | x] <> rel.`{Name}`
+                            RETURN DISTINCT rel.`{Name}` as Text
+                            LIMIT {batchSize}
+                            """;
+                        cypherWrite = $"""
+                            UNWIND $Batch as map
+                            MATCH (:{relationship.InEntity.Label.Name})-[rel:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name})
+                            WHERE rel.`{Name}` = map['Text']
+                            SET rel.`{Name}` = map['Blob']
+                            """;
+                    }
+                    else
+                    {
+                        throw new NotSupportedException();
+                    }
 
                     do
                     {
                         list = new List<object>();
 
-                        RawResult result = Parser.Execute(cypherRead, null);
-                        foreach (RawRecord item in result)
+                        Parser.Execute(cypherRead, null, true, delegate (RawResult result)
                         {
-                            string text = item["Text"].As<string>();
+                            foreach (RawRecord item in result)
+                            {
+                                string text = item["Text"].As<string>();
 
-                            Dictionary<string, object?> map = new Dictionary<string, object?>();
-                            map.Add("Text", text);
-                            map.Add("Blob", (byte[]?)(CompressedString?)text);
-                            list.Add(map);
-                        }
+                                Dictionary<string, object?> map = new Dictionary<string, object?>();
+                                map.Add("Text", text);
+                                map.Add("Blob", (byte[]?)(CompressedString?)text);
+                                list.Add(map);
+                            }
+                        });
 
                         if (list.Count > 0)
                         {
                             Dictionary<string, object?> batch = new Dictionary<string, object?>();
                             batch.Add("Batch", list);
 
-                            Parser.Execute(cypherWrite, batch);
+                            Parser.Execute(cypherWrite, batch, true);
                         }
                     }
                     while (list.Count > 0);
@@ -724,7 +760,7 @@ namespace Blueprint41
             {
                 if (Parent is Entity entity)
                 {
-                    string cypher = string.Format("MATCH (n:{0}) WHERE n.{1} IS NULL RETURN count(n) as count", entity.Label.Name, Name);
+                    string cypher = $"MATCH (n:{entity.Label.Name}) WHERE n.{Name} IS NULL RETURN count(n) as count";
                     RawRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
                     bool hasNullProperty = record["count"].As<long>() > 0;
                     if (hasNullProperty)
@@ -732,7 +768,11 @@ namespace Blueprint41
                 }
                 else if (Parent is Relationship relationship)
                 {
-                    throw new NotSupportedException();
+                    string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
+                    RawRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
+                    bool hasNullProperty = record["count"].As<long>() > 0;
+                    if (hasNullProperty)
+                        throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", relationship.Name, Name));
                 }
                 else
                 {

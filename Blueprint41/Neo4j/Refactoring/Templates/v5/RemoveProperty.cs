@@ -33,7 +33,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             
             #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\RemoveProperty.tt"
 
-    Log("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, Entity.Label.Name, Name);
+    Log("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, Caller.Name, Name);
 
     if (IsEntity)
     {

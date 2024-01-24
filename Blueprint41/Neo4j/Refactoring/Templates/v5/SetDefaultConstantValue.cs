@@ -33,7 +33,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
             
             #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
 
-    Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
+    Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Caller.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
 
     // Setup Cypher Parameters
     OutputParameters.Add(Property.Name, Value);

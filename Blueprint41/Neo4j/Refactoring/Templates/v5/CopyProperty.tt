@@ -6,7 +6,7 @@
 <#@ import namespace="Blueprint41" #>
 <#@ import namespace="System.Linq.Expressions" #>
 <#
-    Log("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Entity.Label.Name);
+    Log("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Caller.Name);
 
     if (IsEntity)
     {

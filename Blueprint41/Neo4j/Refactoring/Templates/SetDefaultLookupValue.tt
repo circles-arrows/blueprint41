@@ -7,7 +7,7 @@
 <#@ import namespace="Blueprint41.Dynamic" #>
 <#
 
-    Log("	executing {0} -> Set Default Lookup Value for {1}.{2}", this.GetType().Name, Entity.Name, Property.Name);
+    Log("	executing {0} -> Set Default Lookup Value for {1}.{2}", this.GetType().Name, Caller.Name, Property.Name);
 #>
 MATCH (in:<#= Entity.Label.Name #>)
 MATCH (target:<#= Property.ForeignEntity.Label.Name #> { <#= Property.ForeignEntity.Key.Name #> : '<#= Value #>'})

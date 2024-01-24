@@ -40,7 +40,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            Execute(RenameAddressLine1);
+            Execute(RenameAddrLine1);
 
             using (Transaction.Begin())
             {
