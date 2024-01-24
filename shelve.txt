@@ -1,0 +1,9 @@
+download
+	https://git-scm.com/download/win
+
+install
+	disable "Windows Explorer integration"
+	enable "Git from command line and also from 3rd-party software"
+
+stage your changes and run "shelve.cmd"
+copy "shelveset.patch" to the new machine and run "unshelve.cmd"
