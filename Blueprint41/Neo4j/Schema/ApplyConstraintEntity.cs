@@ -19,15 +19,11 @@ namespace Blueprint41.Neo4j.Schema
 
         internal virtual List<ApplyConstraintProperty> Initialize()
         {
-            // TODO: What about if the constraint is for a property on a relationship
-            IEntity entity = Entity;
-
-            // TODO: Only applies indexes and constraints on a single field, composite indexes and constraints are ignored.
 
             List<ApplyConstraintProperty> actions = new List<ApplyConstraintProperty>();
-            IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity.Count == 1 && item.Entity[0] == entity.Neo4jName);
-            IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity.Count == 1 && item.Entity[0] == entity.Neo4jName);
-            IReadOnlyList<Property> properties = entity.GetPropertiesOfBaseTypesAndSelf();
+            IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity.Count == 1 && item.Entity[0] == Entity.Neo4jName);
+            IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity.Count == 1 && item.Entity[0] == Entity.Neo4jName);
+            IReadOnlyList<Property> properties = Entity.GetPropertiesOfBaseTypesAndSelf();
 
             foreach (Property property in properties)
             {
@@ -37,7 +33,7 @@ namespace Blueprint41.Neo4j.Schema
                 IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field.Count == 1 && item.Field[0] == property.Name);
                 IEnumerable<IndexInfo> indexes = entityIndexes.Where(item => item.Field.Count == 1 && item.Field[0] == property.Name);
 
-                List<(ApplyConstraintAction, string?)> commands = Parent.ComputeCommands(entity, property.IndexType, property.Nullable, property.IsKey, constraints, indexes);
+                List<(ApplyConstraintAction, string?)> commands = Parent.ComputeCommands(Entity, property.IndexType, property.Nullable, property.IsKey, constraints, indexes);
 
                 if (commands.Count > 0)
                     actions.Add(Parent.NewApplyConstraintProperty(this, property, commands));
@@ -51,7 +47,7 @@ namespace Blueprint41.Neo4j.Schema
                 IEnumerable<ConstraintInfo> constraints = entityConstraints.Where(item => item.Field.Count == 1 && item.Field[0] == property);
                 IEnumerable<IndexInfo> indexes = entityIndexes.Where(item => item.Field.Count == 1 && item.Field[0] == property);
 
-                List<(ApplyConstraintAction, string?)> commands = Parent.ComputeCommands(entity, IndexType.None, true, false, constraints, indexes);
+                List<(ApplyConstraintAction, string?)> commands = Parent.ComputeCommands(Entity, IndexType.None, true, false, constraints, indexes);
 
                 if (commands.Count > 0)
                     actions.Add(Parent.NewApplyConstraintProperty(this, property, commands));

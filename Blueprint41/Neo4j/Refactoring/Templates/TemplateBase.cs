@@ -304,23 +304,39 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
 
         internal Func<TSelf> CreateInstance { get; set; }
         internal Action<TSelf> Setup { get; set; }
-        public void Run(bool withTransaction = true)
+        public long Run(bool withTransaction = false)
         {
+            long retval = 0;
+
             if (!Parser.ShouldExecute)
-                return;
+                return 0;
 
             if (withTransaction)
             {
                 using (Transaction.Begin(withTransaction))
                 {
-                    Execute();
+                    RawResult result = Execute();
+                    if (result != null)
+                    {
+                        RawRecord record = result.FirstOrDefault();
+                        if (record is not null && record.Values.TryGetValue("Count", out object cnt))
+                            retval = cnt.As<long>();
+                    }
                     Transaction.Commit();
                 }
             }
             else
             {
-                Execute();
+                RawResult result = Execute();
+                if (result != null)
+                {
+                    RawRecord record = result.FirstOrDefault();
+                    if (record is not null && record.Values.TryGetValue("Count", out object cnt))
+                        retval = cnt.As<long>();
+                }
             }
+
+            return retval;
         }
         public void RunBatched()
         {

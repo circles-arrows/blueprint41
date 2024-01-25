@@ -17,6 +17,7 @@ namespace Blueprint41.Neo4j.Schema.v4
 
         protected override void Initialize(RawRecord record)
         {
+            EntityType = "NODE";
             Name = record.Values["name"].As<string>();
             State = record.Values["state"].As<string>();
             Type = record.Values["type"].As<string>();

@@ -15,9 +15,8 @@ namespace Blueprint41.Neo4j.Schema.v5
 
         protected override void Initialize(RawRecord record)
         {
-            // TODO: Fix case where constraint is for a property on a relationship
-            //       https://neo4j.com/docs/cypher-manual/current/constraints/
             Name = record.Values["name"].As<string>();
+            EntityType = record.Values["entityType"].As<string>();
             IsUnique = false;
             IsMandatory = false;
 

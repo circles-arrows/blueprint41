@@ -339,6 +339,7 @@ namespace Blueprint41
         {
             return PersistenceProvider.GetSchemaInfo(this);
         }
+        SchemaInfo IDatastoreUnitTesting.GetSchemaInfo() => GetSchema();
 
         protected IRefactorGlobal Refactor { get { return this; } }
 
@@ -542,5 +543,6 @@ namespace Blueprint41
     public interface IDatastoreUnitTesting
     {
         void Execute(bool upgradeDatastore, MethodInfo? unitTestScript);
+        SchemaInfo GetSchemaInfo();
     }
 }

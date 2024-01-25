@@ -75,7 +75,7 @@ namespace Blueprint41.Neo4j.Schema
 
         public IReadOnlyList<ApplyConstraintEntity> GetConstraintDifferences()
         {
-            return Model.Entities.Where(entity => !entity.IsVirtual).Select(entity => GetConstraintDifferences(entity)).Union(Model.Relations.Select(entity => GetConstraintDifferences(entity))).ToArray();
+            return Model.Entities.Where(entity => !entity.IsVirtual).Select(GetConstraintDifferences).Union(Model.Relations.Select(GetConstraintDifferences)).ToArray();
         }
         public ApplyConstraintEntity GetConstraintDifferences(IEntity entity)
         {
@@ -166,21 +166,18 @@ namespace Blueprint41.Neo4j.Schema
         }
         internal void UpdateConstraints()
         {
-            using (Transaction.Begin())
+            foreach (var diff in GetConstraintDifferences())
             {
-                foreach (var diff in GetConstraintDifferences())
+                foreach (var action in diff.Actions)
                 {
-                    foreach (var action in diff.Actions)
+                    foreach (var cql in action.ToCypher())
                     {
-                        foreach (var cql in action.ToCypher())
-                        {
-                            Parser.Log(cql);
-                            Transaction.RunningTransaction.Run(cql);
-                        }
+                        Parser.Log(cql);
+                        Transaction.RunningTransaction.Run(cql);
                     }
                 }
-                Transaction.Commit();
             }
+            //Transaction.Commit();
         }
 
         protected virtual FunctionalIdInfo NewFunctionalIdInfo(RawRecord rawRecord)                                               => new FunctionalIdInfo(rawRecord);

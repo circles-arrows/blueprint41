@@ -9,23 +9,81 @@
 
     if (IsEntity)
     {
+        switch (MergeAlgorithm)
+        {
+            case MergeAlgorithm.NotApplicable:
 #>
 MATCH (node:<#= Entity.Label.Name #>)
-WHERE node.<#= From.Name #> IS NOT NULL
 WITH node LIMIT 10000 
 SET node.<#= To.Name #> = node.<#= From.Name #>
 SET node.<#= From.Name #> = NULL
 <#
+                break;
+            case MergeAlgorithm.ThrowOnConflict:
+#>
+MATCH (node:<#= Entity.Label.Name #>)
+WHERE node.<#= To.Name #> IS NOT NULL
+RETURN count(node) AS Count
+<#
+                break;
+            case MergeAlgorithm.PreferSource:
+#>
+MATCH (node:<#= Entity.Label.Name #>)
+WHERE node.<#= From.Name #> IS NOT NULL
+WITH node LIMIT 10000 
+SET node.<#= To.Name #> = COALESCE(node.<#= From.Name #>, node.<#= To.Name #>)
+SET node.<#= From.Name #> = NULL
+<#
+                break;
+            case MergeAlgorithm.PreferTarget:
+#>
+MATCH (node:<#= Entity.Label.Name #>)
+WHERE node.<#= From.Name #> IS NOT NULL
+WITH node LIMIT 10000 
+SET node.<#= To.Name #> = COALESCE(node.<#= To.Name #>, node.<#= From.Name #>)
+SET node.<#= From.Name #> = NULL
+<#
+                break;
+        }
     }
     else if (IsRelationship)
     {
+        switch (MergeAlgorithm)
+        {
+            case MergeAlgorithm.NotApplicable:
 #>
 MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
-WHERE rel.<#= From.Name #> IS NOT NULL
 WITH rel LIMIT 10000 
 SET rel.<#= To.Name #> = rel.<#= From.Name #>
 SET rel.<#= From.Name #> = NULL
 <#
+                break;
+            case MergeAlgorithm.ThrowOnConflict:
+#>
+MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
+WHERE rel.<#= To.Name #> IS NOT NULL
+RETURN count(rel) AS Count
+<#
+                break;
+            case MergeAlgorithm.PreferSource:
+#>
+MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
+WHERE rel.<#= From.Name #> IS NOT NULL
+WITH rel LIMIT 10000 
+SET rel.<#= To.Name #> = COALESCE(rel.<#= From.Name #>, rel.<#= To.Name #>)
+SET rel.<#= From.Name #> = NULL
+<#
+                break;
+            case MergeAlgorithm.PreferTarget:
+#>
+MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
+WHERE rel.<#= From.Name #> IS NOT NULL
+WITH rel LIMIT 10000 
+SET rel.<#= To.Name #> = COALESCE(rel.<#= To.Name #>, rel.<#= From.Name #>)
+SET rel.<#= From.Name #> = NULL
+<#
+                break;
+        }
     }
     else
     {

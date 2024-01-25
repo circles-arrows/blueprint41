@@ -513,6 +513,24 @@ namespace Blueprint41
             if (PropertyType != PropertyType.Attribute)
                 throw new NotImplementedException();
 
+            if (mergeAlgorithm == MergeAlgorithm.ThrowOnConflict)
+            {
+                foreach (var entity in Parent.GetConcreteClasses())
+                {
+                    long conflicts = Parent.Parent.Templates.MergeProperty(template =>
+                    {
+                        template.From = this;
+                        template.To = target;
+                        template.Caller = entity; // ConcreteParent
+                        template.MergeAlgorithm = mergeAlgorithm;
+                    }).Run();
+
+                    if (conflicts > 0)
+                        throw new InvalidOperationException($"MergeProperty detected {conflicts} conflicts.");
+                }
+                mergeAlgorithm = MergeAlgorithm.NotApplicable;
+            }
+
             foreach (var entity in Parent.GetConcreteClasses())
             {
                 Parent.Parent.Templates.MergeProperty(template =>

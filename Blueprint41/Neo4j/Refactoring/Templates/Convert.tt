@@ -13,7 +13,7 @@
     {
 #>
 MATCH (node:<#= Entity.Label.Name #>)
-WHERE node.<#= Property.Name #> <> <#= string.Format(WhereScript, string.Concat("node.", Property.Name)) #> 
+WHERE node.<#= Property.Name #> = <#= string.Format(WhereScript, string.Concat("node.", Property.Name)) #> 
 WITH node LIMIT 10000
 SET node.<#= Property.Name #> = <#= string.Format(AssignScript, string.Concat("node.", Property.Name)) #>
 <#
@@ -22,7 +22,7 @@ SET node.<#= Property.Name #> = <#= string.Format(AssignScript, string.Concat("n
     {
 #>
 MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
-WHERE rel.<#= Property.Name #> <> <#= string.Format(WhereScript, string.Concat("rel.", Property.Name)) #> 
+WHERE rel.<#= Property.Name #> = <#= string.Format(WhereScript, string.Concat("rel.", Property.Name)) #> 
 WITH rel LIMIT 10000
 SET rel.<#= Property.Name #> = <#= string.Format(AssignScript, string.Concat("rel.", Property.Name)) #>
 <#

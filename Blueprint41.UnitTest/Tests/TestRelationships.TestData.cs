@@ -745,6 +745,30 @@ namespace Blueprint41.UnitTest.Tests
                 return (from, till, properties);
             }).ToList();
         }
+        private List<(object inNodeKey, string[] inNodeLabels, object outNodeKey, string[] outNodeLabels, Dictionary<string, object> properties)> ReadAllRelations(Relationship relationship)
+        {
+            string cypher = $"""
+                MATCH (in:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(out:{relationship.OutEntity.Label.Name})
+                RETURN  in.{relationship.InEntity.Key.Name} AS InNodeKey,
+                        labels(in) AS InNodeLabels,
+                        out.{relationship.OutEntity.Key.Name} AS OutNodeKey,
+                        labels(out) AS OutNodeLabels,
+                        properties(r) AS Properties
+                """;
+
+            RawResult result = Transaction.RunningTransaction.Run(cypher);
+
+            return result.Select(delegate (RawRecord record)
+            {
+                object inNodeKey = record.Values["InNodeKey"];
+                string[] inNodeLabels = record.Values["InNodeLabels"].As<List<string>>().ToArray();
+                object outNodeKey = record.Values["OutNodeKey"];
+                string[] outNodeLabels = record.Values["OutNodeLabels"].As<List<string>>().ToArray();
+                Dictionary<string, object> properties = record.Values["Properties"].As<Dictionary<string, object>>();
+
+                return (inNodeKey, inNodeLabels, outNodeKey, outNodeLabels, properties);
+            }).ToList();
+        }
 
         private List<(Person person, List<(DateTime from, DateTime till)> relations, City city, Dictionary<string, object> properties)> SampleDataLivesIn()
         {

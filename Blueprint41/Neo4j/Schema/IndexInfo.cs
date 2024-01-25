@@ -22,6 +22,7 @@ namespace Blueprint41.Neo4j.Schema
 
         protected virtual void Initialize(RawRecord record)
         {
+            EntityType = "NODE";
             Name = record.Values["description"].As<string>();
             State = record.Values["state"].As<string>();
             Type = record.Values["type"].As<string>();
@@ -50,12 +51,13 @@ namespace Blueprint41.Neo4j.Schema
         public string Name { get; protected set; } = null!;
         public string State { get; protected set; } = null!;
         public string Type { get; protected set; } = null!;
+        public string EntityType { get; protected set; } = null!;
         public string OwningConstraint { get; protected set; } = null!;
 
         public IReadOnlyList<string> Entity { get; protected set; } = null!;
         public IReadOnlyList<string> Field { get; protected set; } = null!;
 
-        [Obsolete("Your code should prefer the use of Constraint.IsUnique to check if a field is unique.", true)]
+        [Obsolete("Your code should prefer the use of Constraint.IsUnique to check if a field is unique.", false)]
         public bool IsUnique { get { return isUnique; } }
         protected bool isUnique = false;
         public bool IsIndexed { get; protected set; }
@@ -83,7 +85,7 @@ namespace Blueprint41.Neo4j.Schema
             if (isUnique)
                 desc = "unique";
 
-            return $"{Entity}.{Field} -> {desc}";
+            return $"{string.Join("/", Entity)}.{string.Join("/", Field)} -> {desc}";
         }
     }
 }
