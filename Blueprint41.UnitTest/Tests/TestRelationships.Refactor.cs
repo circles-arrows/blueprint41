@@ -12,6 +12,7 @@ using Datastore.Manipulation;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using ClientException = Neo4j.Driver.ClientException;
+using DatabaseException = Neo4j.Driver.DatabaseException;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -190,11 +191,12 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
 
-            Execute(UniqueAddrLine1);
-
-            schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
-            Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
-            Assert.That(schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
+            var ex = Assert.Throws<AggregateException>(() => Execute(UniqueAddrLine1));
+#if NET5_0_OR_GREATER
+            Assert.That(ex.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
+#else
+            Assert.That(ex.InnerException.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
+#endif
         }
 
         [Test]
