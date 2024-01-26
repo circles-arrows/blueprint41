@@ -638,7 +638,8 @@ namespace Blueprint41.UnitTest.Tests
                         Profanity: certification.profanity,
                         SexAndNudity: certification.sexAndNudity,
                         Substances: certification.substances,
-                        ViolenceGore: certification.violenceGore);
+                        ViolenceGore: certification.violenceGore
+                    );
                 }
 
                 // Subscribed streaming service

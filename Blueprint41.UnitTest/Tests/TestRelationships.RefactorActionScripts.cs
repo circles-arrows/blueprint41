@@ -119,7 +119,7 @@ namespace Blueprint41.UnitTest.Tests
         }
         public static void MakeAddrLine2MandatoryWithDefault(DatastoreModel model)
         {
-            model.Relations["PERSON_LIVES_IN"].Properties["AddressLine2"].Refactor.MakeMandatory("NULL");
+            model.Relations["PERSON_LIVES_IN"].Properties["AddressLine2"].Refactor.MakeMandatory("DEFAULT");
         }
         public static void MakeAddrLine3MandatoryAndThrow(DatastoreModel model)
         {
@@ -130,9 +130,9 @@ namespace Blueprint41.UnitTest.Tests
 
         #region SetDefaultValue()       -> WATCHED_MOVIE.MinutesWatched
 
-        public static void SetMinsWatchedFromNullToZero(DatastoreModel model)
+        public static void SetAddrLine3FromNullToDEFAULT(DatastoreModel model)
         {
-            model.Relations["WATCHED_MOVIE"].Properties["MinutesWatched"].Refactor.SetDefaultValue(0);
+            model.Relations["PERSON_LIVES_IN"].Properties["AddressLine2"].Refactor.SetDefaultValue("DEFAULT");
         }
 
         #endregion

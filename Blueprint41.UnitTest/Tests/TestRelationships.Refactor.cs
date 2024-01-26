@@ -178,7 +178,7 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
         }
 
-        [Test]
+        [Test] // Asserts done
         public void SetIndexTypeToUnique()
         {
             var persistenceProvider = PersistenceProvider.CurrentPersistenceProvider as Neo4jPersistenceProvider;
@@ -199,47 +199,100 @@ namespace Blueprint41.UnitTest.Tests
 #endif
         }
 
-        [Test]
+        [Test] // Asserts done
         public void Deprecate()
         {
             SetupTestDataSet();
 
+            using (Transaction.Begin())
+            {
+                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) != null), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine3), null) != null), "Unexpected test-data");
+            }
+
             Execute(DeprecateAddrLine2And3);
 
-            // Assert...
+            using (Transaction.Begin())
+            {
+                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) != null), "There should not have been 'AddressLine3' properties.");
+                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine3), null) != null), "There should not have been 'AddressLine3' properties.");
+            }
         }
 
-        [Test]
+        [Test] // Asserts done
         public void MakeNullable()
         {
-            SetupTestDataSet();
+            using (Transaction.Begin())
+            {
+                var watched = SampleDataWatchedMovies().First();
+                watched.person.WatchedMovies.Add(watched.movie);
+
+                Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
+#if NET5_0_OR_GREATER
+                Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
+#else
+                Assert.That(() => ex.InnerException.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
+#endif
+            }
 
             Execute(MakeMinutesWatchedNullable);
 
-            // Assert...
+            using (Transaction.Begin())
+            {
+                var watched = SampleDataWatchedMovies().First();
+                watched.person.WatchedMovies.Add(watched.movie);
+
+                Assert.DoesNotThrow(() => Transaction.Commit());
+            }
         }
 
-        [Test]
+        [Test] // Asserts done
         public void MakeMandatoryWithoutDefaultNoThrow()
         {
             SetupTestDataSet();
 
+            using (Transaction.Begin())
+            {
+                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "There should have been 'AddressLine1' properties with value '1640 Riverside Drive'.");
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
+            }
+
             Execute(MakeAddrLine1Mandatory);
 
-            // Assert...
+            var schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
+            Assert.That(schema.Constraints.Any(constraint => constraint.IsMandatory && !constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
         }
 
-        [Test]
+        [Test] // Asserts done
         public void MakeMandatoryWithDefaultNoThrow()
         {
             SetupTestDataSet();
 
+            using (Transaction.Begin())
+            {
+                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
+            }
+
             Execute(MakeAddrLine2MandatoryWithDefault);
 
-            // Assert...
+            using (Transaction.Begin())
+            {
+                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+
+                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "There should not have been 'AddressLine2' properties with value NULL.");
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "DEFAULT"), "There should have been 'AddressLine2' properties with value 'DEFAULT'.");
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
+            }
         }
 
-        [Test]
+        [Test] // Asserts done
         public void MakeMandatoryWithoutDefaultAndThrow()
         {
             SetupTestDataSet();
@@ -248,14 +301,29 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(ex.Message.Contains("Some nodes in the database contains null values for PERSON_LIVES_IN.AddressLine3."));
         }
 
-        [Test]
+        [Test] // Asserts done
         public void SetDefaultValue()
         {
             SetupTestDataSet();
 
-            Execute(SetMinsWatchedFromNullToZero);
+            using (Transaction.Begin())
+            {
+                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
 
-            // Assert...
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
+            }
+
+            Execute(SetAddrLine3FromNullToDEFAULT);
+
+            using (Transaction.Begin())
+            {
+                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+
+                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "There should not have been 'AddressLine2' properties with value NULL.");
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "DEFAULT"), "There should have been 'AddressLine2' properties with value 'DEFAULT'.");
+                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
+            }
         }
     }
 }
