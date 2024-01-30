@@ -13,232 +13,240 @@ using Blueprint41.Query;
 namespace <#= Settings.FullQueryNamespace #>
 {
 public partial class <#= DALRelation.Name #>_REL : RELATIONSHIP, IFromIn_<#= DALRelation.Name #>_REL, IFromOut_<#= DALRelation.Name #>_REL<# if (DALRelation.InEntity == DALRelation.OutEntity) { #>, IFromAny_<#= DALRelation.Name #>_REL<# }#>
-	{
-		public override string NEO4J_TYPE
-		{
-			get
-			{
-				return "<#= DALRelation.Neo4JRelationshipType #>";
-			}
-		}
-		public override AliasResult RelationshipAlias { get; protected set; }
-		
-		internal <#= DALRelation.Name #>_REL(Blueprint41.Query.Node parent, DirectionEnum direction) : base(parent, direction) { }
+    {
+        public override string NEO4J_TYPE
+        {
+            get
+            {
+                return "<#= DALRelation.Neo4JRelationshipType #>";
+            }
+        }
+        public override AliasResult RelationshipAlias { get; protected set; }
+        
+        internal <#= DALRelation.Name #>_REL(Blueprint41.Query.Node parent, DirectionEnum direction) : base(parent, direction) { }
 
-		public <#= DALRelation.Name #>_REL Alias(out <#= DALRelation.Name #>_ALIAS alias)
-		{
-			alias = new <#= DALRelation.Name #>_ALIAS(this);
-			RelationshipAlias = alias;
-			return this;
-		} 
-		public <#= DALRelation.Name #>_REL Repeat(int maxHops)
-		{
-			return Repeat(1, maxHops);
-		}
-		public new <#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops)
-		{
-			base.Repeat(minHops, maxHops);
-			return this;
-		}
+        public <#= DALRelation.Name #>_REL Alias(out <#= DALRelation.Name #>_ALIAS alias)
+        {
+            alias = new <#= DALRelation.Name #>_ALIAS(this);
+            RelationshipAlias = alias;
+            return this;
+        } 
+        public <#= DALRelation.Name #>_REL Repeat(int maxHops)
+        {
+            return Repeat(1, maxHops);
+        }
+        public new <#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops)
+        {
+            base.Repeat(minHops, maxHops);
+            return this;
+        }
 
-		IFromIn_<#= DALRelation.Name #>_REL IFromIn_<#= DALRelation.Name #>_REL.Alias(out <#= DALRelation.Name #>_ALIAS alias)
-		{
-			return Alias(out alias);
-		}
-		IFromOut_<#= DALRelation.Name #>_REL IFromOut_<#= DALRelation.Name #>_REL.Alias(out <#= DALRelation.Name #>_ALIAS alias)
-		{
-			return Alias(out alias);
-		}
-		IFromIn_<#= DALRelation.Name #>_REL IFromIn_<#= DALRelation.Name #>_REL.Repeat(int maxHops)
-		{
-			return Repeat(maxHops);
-		}
-		IFromIn_<#= DALRelation.Name #>_REL IFromIn_<#= DALRelation.Name #>_REL.Repeat(int minHops, int maxHops)
-		{
-			return Repeat(minHops, maxHops);
-		}
-		IFromOut_<#= DALRelation.Name #>_REL IFromOut_<#= DALRelation.Name #>_REL.Repeat(int maxHops)
-		{
-			return Repeat(maxHops);
-		}
-		IFromOut_<#= DALRelation.Name #>_REL IFromOut_<#= DALRelation.Name #>_REL.Repeat(int minHops, int maxHops)
-		{
-			return Repeat(minHops, maxHops);
-		}
-
-<#
-	if (DALRelation.InEntity == DALRelation.OutEntity)
-	{
-#>
-		IFromAny_<#= DALRelation.Name #>_REL IFromAny_<#= DALRelation.Name #>_REL.Alias(out <#= DALRelation.Name #>_ALIAS alias)
-		{
-			return Alias(out alias);
-		}
-		IFromAny_<#= DALRelation.Name #>_REL IFromAny_<#= DALRelation.Name #>_REL.Repeat(int maxHops)
-		{
-			return Repeat(maxHops);
-		}
-		IFromAny_<#= DALRelation.Name #>_REL IFromAny_<#= DALRelation.Name #>_REL.Repeat(int minHops, int maxHops)
-		{
-			return Repeat(minHops, maxHops);
-		}
-<#
-	}
-#>
-
-		public <#= DALRelation.Name #>_IN In { get { return new <#= DALRelation.Name #>_IN(this); } }
-		public class <#= DALRelation.Name #>_IN
-		{
-			private <#= DALRelation.Name #>_REL Parent;
-			internal <#= DALRelation.Name #>_IN(<#= DALRelation.Name #>_REL parent)
-			{
-				Parent = parent;
-			}
+        IFromIn_<#= DALRelation.Name #>_REL IFromIn_<#= DALRelation.Name #>_REL.Alias(out <#= DALRelation.Name #>_ALIAS alias)
+        {
+            return Alias(out alias);
+        }
+        IFromOut_<#= DALRelation.Name #>_REL IFromOut_<#= DALRelation.Name #>_REL.Alias(out <#= DALRelation.Name #>_ALIAS alias)
+        {
+            return Alias(out alias);
+        }
+        IFromIn_<#= DALRelation.Name #>_REL IFromIn_<#= DALRelation.Name #>_REL.Repeat(int maxHops)
+        {
+            return Repeat(maxHops);
+        }
+        IFromIn_<#= DALRelation.Name #>_REL IFromIn_<#= DALRelation.Name #>_REL.Repeat(int minHops, int maxHops)
+        {
+            return Repeat(minHops, maxHops);
+        }
+        IFromOut_<#= DALRelation.Name #>_REL IFromOut_<#= DALRelation.Name #>_REL.Repeat(int maxHops)
+        {
+            return Repeat(maxHops);
+        }
+        IFromOut_<#= DALRelation.Name #>_REL IFromOut_<#= DALRelation.Name #>_REL.Repeat(int minHops, int maxHops)
+        {
+            return Repeat(minHops, maxHops);
+        }
 
 <#
-	foreach (Entity entity in DALRelation.InEntity.GetSubclassesOrSelf())
-	{
+    if (DALRelation.InEntity == DALRelation.OutEntity)
+    {
 #>
-			public <#= entity.Name #>Node <#= entity.Name #> { get { return new <#= entity.Name #>Node(Parent, DirectionEnum.In); } }
+        IFromAny_<#= DALRelation.Name #>_REL IFromAny_<#= DALRelation.Name #>_REL.Alias(out <#= DALRelation.Name #>_ALIAS alias)
+        {
+            return Alias(out alias);
+        }
+        IFromAny_<#= DALRelation.Name #>_REL IFromAny_<#= DALRelation.Name #>_REL.Repeat(int maxHops)
+        {
+            return Repeat(maxHops);
+        }
+        IFromAny_<#= DALRelation.Name #>_REL IFromAny_<#= DALRelation.Name #>_REL.Repeat(int minHops, int maxHops)
+        {
+            return Repeat(minHops, maxHops);
+        }
 <#
-	}
-#>
-		}
-
-		public <#= DALRelation.Name #>_OUT Out { get { return new <#= DALRelation.Name #>_OUT(this); } }
-		public class <#= DALRelation.Name #>_OUT
-		{
-			private <#= DALRelation.Name #>_REL Parent;
-			internal <#= DALRelation.Name #>_OUT(<#= DALRelation.Name #>_REL parent)
-			{
-				Parent = parent;
-			}
-
-<#
-	foreach (Entity entity in DALRelation.OutEntity.GetSubclassesOrSelf())
-	{
-		if(entity.IsVirtual && DALRelation.OutEntity != entity)
-		{
-#>
-			[Obsolete("This relationship is virtual, consider making entity <#= entity.Name #> concrete or exit this relationship via <#= DALRelation.OutEntity.Name #>.", true)]
-<#
-		}
-#>
-			public <#= entity.Name #>Node <#= entity.Name #> { get { return new <#= entity.Name #>Node(Parent, DirectionEnum.Out); } }
-<#
-	}
-#>
-		}
-<#
-	if (DALRelation.InEntity == DALRelation.OutEntity)
-	{
+    }
 #>
 
-		public <#= DALRelation.Name #>_ANY Any { get { return new <#= DALRelation.Name #>_ANY(this); } }
-		public class <#= DALRelation.Name #>_ANY
-		{
-			private <#= DALRelation.Name #>_REL Parent;
-			internal <#= DALRelation.Name #>_ANY(<#= DALRelation.Name #>_REL parent)
-			{
-				Parent = parent;
-			}
+        public <#= DALRelation.Name #>_IN In { get { return new <#= DALRelation.Name #>_IN(this); } }
+        public class <#= DALRelation.Name #>_IN
+        {
+            private <#= DALRelation.Name #>_REL Parent;
+            internal <#= DALRelation.Name #>_IN(<#= DALRelation.Name #>_REL parent)
+            {
+                Parent = parent;
+            }
 
 <#
-	foreach (Entity entity in DALRelation.InEntity.GetSubclassesOrSelf())
-	{
+    foreach (Entity entity in DALRelation.InEntity.GetSubclassesOrSelf())
+    {
 #>
-			public <#= entity.Name #>Node <#= entity.Name #> { get { return new <#= entity.Name #>Node(Parent, DirectionEnum.None); } }
+            public <#= entity.Name #>Node <#= entity.Name #> { get { return new <#= entity.Name #>Node(Parent, DirectionEnum.In); } }
 <#
-	}
+    }
 #>
-		}
+        }
+
+        public <#= DALRelation.Name #>_OUT Out { get { return new <#= DALRelation.Name #>_OUT(this); } }
+        public class <#= DALRelation.Name #>_OUT
+        {
+            private <#= DALRelation.Name #>_REL Parent;
+            internal <#= DALRelation.Name #>_OUT(<#= DALRelation.Name #>_REL parent)
+            {
+                Parent = parent;
+            }
+
 <#
-	}
+    foreach (Entity entity in DALRelation.OutEntity.GetSubclassesOrSelf())
+    {
+        if(entity.IsVirtual && DALRelation.OutEntity != entity)
+        {
 #>
-	}
-
-	public interface IFromIn_<#= DALRelation.Name #>_REL
-	{
-		IFromIn_<#= DALRelation.Name #>_REL Alias(out <#= DALRelation.Name #>_ALIAS alias);
-		IFromIn_<#= DALRelation.Name #>_REL Repeat(int maxHops);
-		IFromIn_<#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops);
-
-		<#= DALRelation.Name #>_REL.<#= DALRelation.Name #>_OUT Out { get; }
-	}
-	public interface IFromOut_<#= DALRelation.Name #>_REL
-	{
-		IFromOut_<#= DALRelation.Name #>_REL Alias(out <#= DALRelation.Name #>_ALIAS alias);
-		IFromOut_<#= DALRelation.Name #>_REL Repeat(int maxHops);
-		IFromOut_<#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops);
-
-		<#= DALRelation.Name #>_REL.<#= DALRelation.Name #>_IN In { get; }
-	}
+            [Obsolete("This relationship is virtual, consider making entity <#= entity.Name #> concrete or exit this relationship via <#= DALRelation.OutEntity.Name #>.", true)]
 <#
-	if (DALRelation.InEntity == DALRelation.OutEntity)
-	{
+        }
 #>
-	public interface IFromAny_<#= DALRelation.Name #>_REL
-	{
-		IFromAny_<#= DALRelation.Name #>_REL Alias(out <#= DALRelation.Name #>_ALIAS alias);
-		IFromAny_<#= DALRelation.Name #>_REL Repeat(int maxHops);
-		IFromAny_<#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops);
-
-		<#= DALRelation.Name #>_REL.<#= DALRelation.Name #>_ANY Any { get; }
-	}
+            public <#= entity.Name #>Node <#= entity.Name #> { get { return new <#= entity.Name #>Node(Parent, DirectionEnum.Out); } }
 <#
-	}
+    }
 #>
-
-	public class <#= DALRelation.Name #>_ALIAS : AliasResult
-	{
-		private <#= DALRelation.Name #>_REL Parent;
-
-		internal <#= DALRelation.Name #>_ALIAS(<#= DALRelation.Name #>_REL parent)
-		{
-			Parent = parent;
-
-			CreationDate = new RelationFieldResult(this, "CreationDate");
+        }
 <#
-	List<string> fields = new List<string>() { "CreationDate" };
-
-	if (DALRelation.IsTimeDependent)
-	{
-		fields.Add("StartDate");
-		fields.Add("EndDate");
+    if (DALRelation.InEntity == DALRelation.OutEntity)
+    {
 #>
-			StartDate    = new RelationFieldResult(this, "StartDate");
-			EndDate      = new RelationFieldResult(this, "EndDate");
+
+        public <#= DALRelation.Name #>_ANY Any { get { return new <#= DALRelation.Name #>_ANY(this); } }
+        public class <#= DALRelation.Name #>_ANY
+        {
+            private <#= DALRelation.Name #>_REL Parent;
+            internal <#= DALRelation.Name #>_ANY(<#= DALRelation.Name #>_REL parent)
+            {
+                Parent = parent;
+            }
+
 <#
-	}
+    foreach (Entity entity in DALRelation.InEntity.GetSubclassesOrSelf())
+    {
 #>
-		}
+            public <#= entity.Name #>Node <#= entity.Name #> { get { return new <#= entity.Name #>Node(Parent, DirectionEnum.None); } }
+<#
+    }
+#>
+        }
+<#
+    }
+#>
+    }
 
-        public Assignment[] Assign(<#= string.Join(", ", fields.Select(item => $"JsNotation<DateTime> {item} = default")) #>)
+    public interface IFromIn_<#= DALRelation.Name #>_REL
+    {
+        IFromIn_<#= DALRelation.Name #>_REL Alias(out <#= DALRelation.Name #>_ALIAS alias);
+        IFromIn_<#= DALRelation.Name #>_REL Repeat(int maxHops);
+        IFromIn_<#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops);
+
+        <#= DALRelation.Name #>_REL.<#= DALRelation.Name #>_OUT Out { get; }
+    }
+    public interface IFromOut_<#= DALRelation.Name #>_REL
+    {
+        IFromOut_<#= DALRelation.Name #>_REL Alias(out <#= DALRelation.Name #>_ALIAS alias);
+        IFromOut_<#= DALRelation.Name #>_REL Repeat(int maxHops);
+        IFromOut_<#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops);
+
+        <#= DALRelation.Name #>_REL.<#= DALRelation.Name #>_IN In { get; }
+    }
+<#
+    if (DALRelation.InEntity == DALRelation.OutEntity)
+    {
+#>
+    public interface IFromAny_<#= DALRelation.Name #>_REL
+    {
+        IFromAny_<#= DALRelation.Name #>_REL Alias(out <#= DALRelation.Name #>_ALIAS alias);
+        IFromAny_<#= DALRelation.Name #>_REL Repeat(int maxHops);
+        IFromAny_<#= DALRelation.Name #>_REL Repeat(int minHops, int maxHops);
+
+        <#= DALRelation.Name #>_REL.<#= DALRelation.Name #>_ANY Any { get; }
+    }
+<#
+    }
+#>
+
+    public class <#= DALRelation.Name #>_ALIAS : AliasResult
+    {
+        private <#= DALRelation.Name #>_REL Parent;
+
+        internal <#= DALRelation.Name #>_ALIAS(<#= DALRelation.Name #>_REL parent)
+        {
+            Parent = parent;
+
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+#>
+            <#= attr.Name #> = new <#= GetResultType(attr.SystemReturnType) #>(this, "<#= attr.Name #>", <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Relations["<#= DALRelation.Name #>"], <#= Datastore.GetType().FullName #>.Model.Relations["<#= attr.Parent.Name #>"].Properties["<#= attr.Name #>"]);
+<#
+    }
+#>
+        }
+
+        public Assignment[] Assign(<#= DALRelation.Properties.ToJsonNotation() #>)
         {
             List<Assignment> assignments = new List<Assignment>();
-            if (CreationDate.HasValue) assignments.Add(new Assignment(this.CreationDate, CreationDate));
 <#
-	if (DALRelation.IsTimeDependent)
-	{
+    foreach (var attr in DALRelation.Properties)
+    {
 #>
-            if (StartDate.HasValue) assignments.Add(new Assignment(this.StartDate, StartDate));
-            if (EndDate.HasValue) assignments.Add(new Assignment(this.EndDate, EndDate));
+            if (<#= attr.Name #>.HasValue) assignments.Add(new Assignment(this.<#= attr.Name #>, <#= attr.Name #>));
 <#
-	}
+    }
 #>
 
             return assignments.ToArray();
         }
 
-		public RelationFieldResult CreationDate { get; private set; } 
 <#
-	if (DALRelation.IsTimeDependent)
-	{
+    foreach (var attr in DALRelation.Properties)
+    {
 #>
-		public RelationFieldResult StartDate { get; private set; } 
-		public RelationFieldResult EndDate   { get; private set; } 
+        public <#= GetResultType(attr.SystemReturnType) #> <#= attr.Name #> { get; private set; } 
 <#
-	}
+    }
+    if (DALRelation.IsTimeDependent)
+    {
 #>
-	}
+
+        public QueryCondition[] Moment(DateTime? moment)
+        {
+            return new QueryCondition[] { <#= DALRelation.StartDate #> <= moment, <#= DALRelation.EndDate #> > moment };
+        }
+        public QueryCondition[] Moment(DateTimeResult moment)
+        {
+            return new QueryCondition[] { <#= DALRelation.StartDate #> <= moment, <#= DALRelation.EndDate #> > moment };
+        }
+        public QueryCondition[] Moment(Parameter moment)
+        {
+            return new QueryCondition[] { <#= DALRelation.StartDate #> <= moment, <#= DALRelation.EndDate #> > moment };
+        }
+<#
+    }
+#>
+    }
 }

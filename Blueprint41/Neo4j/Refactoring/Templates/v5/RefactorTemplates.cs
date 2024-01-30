@@ -16,24 +16,6 @@ namespace Blueprint41.Core
             template.CreateInstance = CopyProperty;
             return template;
         }
-        public override t.CreateIndexBase CreateIndex()
-        {
-            t.CreateIndexBase template = new t.v5.CreateIndex();
-            template.CreateInstance = CreateIndex;
-            return template;
-        }
-        public override t.CreateUniqueConstraintBase CreateUniqueConstraint()
-        {
-            t.CreateUniqueConstraintBase template = new t.v5.CreateUniqueConstraint();
-            template.CreateInstance = CreateUniqueConstraint;
-            return template;
-        }
-        public override t.DropExistConstraintBase DropExistConstraint()
-        {
-            t.DropExistConstraintBase template = new t.v5.DropExistConstraint();
-            template.CreateInstance = DropExistConstraint;
-            return template;
-        }
         public override t.MergePropertyBase MergeProperty()
         {
             t.MergePropertyBase template = new t.v5.MergeProperty();
@@ -52,22 +34,10 @@ namespace Blueprint41.Core
             template.CreateInstance = RenameProperty;
             return template;
         }
-        public override t.SetCreationDateBase SetCreationDate()
-        {
-            t.SetCreationDateBase template = new t.v5.SetCreationDate();
-            template.CreateInstance = SetCreationDate;
-            return template;
-        }
         public override t.SetDefaultConstantValueBase SetDefaultConstantValue()
         {
             t.SetDefaultConstantValueBase template = new t.v5.SetDefaultConstantValue();
             template.CreateInstance = SetDefaultConstantValue;
-            return template;
-        }
-        public override t.SetRelationshipPropertyValueBase SetRelationshipPropertyValue()
-        {
-            t.SetRelationshipPropertyValueBase template = new t.v5.SetRelationshipPropertyValue();
-            template.CreateInstance = SetRelationshipPropertyValue;
             return template;
         }
     }

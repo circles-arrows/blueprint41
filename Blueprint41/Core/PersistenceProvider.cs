@@ -27,10 +27,18 @@ namespace Blueprint41.Core
                 return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.PersistedType, item.ReturnType));
 
             }, true);
+
+            _nodePersistenceProvider = new Lazy<NodePersistenceProvider>(() => Translator.GetNodePersistenceProvider());
+            _relationshipPersistenceProvider = new Lazy<RelationshipPersistenceProvider>(() => Translator.GetRelationshipPersistenceProvider());
+            _templates = new Lazy<RefactorTemplates>(() => Translator.GetTemplates());
         }
 
-        internal NodePersistenceProvider NodePersistenceProvider => Translator.GetNodePersistenceProvider();
-        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => Translator.GetRelationshipPersistenceProvider();
+        internal NodePersistenceProvider NodePersistenceProvider => _nodePersistenceProvider.Value;
+        private readonly Lazy<NodePersistenceProvider> _nodePersistenceProvider;
+
+        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => _relationshipPersistenceProvider.Value;
+        private readonly Lazy<RelationshipPersistenceProvider> _relationshipPersistenceProvider;
+
         public abstract Transaction NewTransaction(bool withTransaction);
         public virtual string ToToken(Bookmark consistency) => string.Empty;
         public virtual Bookmark FromToken(string consistencyToken) => Bookmark.NullBookmark;
@@ -44,7 +52,7 @@ namespace Blueprint41.Core
         internal Dictionary<Type, Conversion?> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
 
         public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4jPersistenceProvider(null, null, null);
-        public static bool IsConfigured => (((Neo4jPersistenceProvider)CurrentPersistenceProvider).Uri is not null); 
+        public static bool IsConfigured => ((CurrentPersistenceProvider as Neo4jPersistenceProvider)?.Uri is not null); 
 
         public static bool IsNeo4j
         {
@@ -127,7 +135,7 @@ namespace Blueprint41.Core
             if (!ConvertFromStoredTypeCache.TryGetValue(returnType, out converter))
                 return null;
 
-            return converter?.FromType;
+            return converter?.FromType ?? returnType;
         }
 
         private class ConvertToStoredTypeCacheVia<TReturnType>
@@ -195,7 +203,8 @@ namespace Blueprint41.Core
 
         #region Factory: Refactoring Templates
 
-        internal RefactorTemplates Templates => Translator.GetTemplates();
+        internal RefactorTemplates Templates => _templates.Value;
+        private readonly Lazy<RefactorTemplates> _templates;
 
         #endregion
 

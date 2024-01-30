@@ -101,7 +101,7 @@ namespace Blueprint41.Query
 
 
         private object[] emptyArguments = new object[0];
-        private FieldResult(AliasResult? alias, string? fieldName, Entity? entity, Property? property, FieldResult? field, Func<QueryTranslator, string?>? function, object[]? arguments, Type? type)
+        private FieldResult(AliasResult? alias, string? fieldName, IEntity? entity, Property? property, FieldResult? field, Func<QueryTranslator, string?>? function, object[]? arguments, Type? type)
         {
             Alias = alias;
             FieldName = fieldName;
@@ -113,7 +113,7 @@ namespace Blueprint41.Query
             OverridenReturnType = type;
         }
         protected FieldResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this(null, null, null, null, null, function, arguments, type) { }
-        protected FieldResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : this(alias, fieldName, entity, property, null, null, null, null) { OverridenReturnType = overridenReturnType; }
+        protected FieldResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? overridenReturnType = null) : this(alias, fieldName, entity, property, null, null, null, null) { OverridenReturnType = overridenReturnType; }
         protected FieldResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this(alias, null, null, null, null, function, arguments, type) { }
         protected FieldResult(FieldResult? field, Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : this(field?.Alias, field?.FieldName, field?.Entity, field?.Property, field, function, arguments, type) { }
         protected FieldResult(FieldResult field)
@@ -130,7 +130,7 @@ namespace Blueprint41.Query
 
         public AliasResult? Alias { get; private set; }
         public string? FieldName { get; private set; }
-        internal Entity? Entity { get; private set; }
+        internal IEntity? Entity { get; private set; }
         internal Property? Property { get; private set; }
         public FieldResult? Field { get; private set; }
         internal Func<QueryTranslator, string?> FunctionText { get; private set; }
@@ -245,7 +245,7 @@ namespace Blueprint41.Query
     {
         internal FieldResult(FieldResult field) : base(field) { }
         public FieldResult(Func<QueryTranslator, string?>? function, object[]? arguments, Type? type) : base(function, arguments, type) { }
-        public FieldResult(AliasResult alias, string? fieldName, Entity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
+        public FieldResult(AliasResult alias, string? fieldName, IEntity? entity, Property? property, Type? overridenReturnType = null) : base(alias, fieldName, entity, property, overridenReturnType) { }
         public FieldResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
         public FieldResult(FieldResult field, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(field, function, arguments, type) { }
 

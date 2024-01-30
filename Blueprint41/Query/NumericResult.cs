@@ -30,6 +30,14 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
         }
+        public static QueryCondition operator ==(NumericResult left, decimal right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(NumericResult left, decimal? right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
         public static QueryCondition operator ==(NumericResult left, Parameter right)
         {
             return new QueryCondition(left, Operator.Equals, right);
@@ -48,6 +56,14 @@ namespace Blueprint41.Query
             return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
         }
         public static QueryCondition operator !=(NumericResult left, long? right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(NumericResult left, decimal right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(NumericResult left, decimal? right)
         {
             return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
         }
@@ -72,6 +88,14 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(left, Operator.Less, Parameter.Constant(right));
         }
+        public static QueryCondition operator <(NumericResult left, decimal right)
+        {
+            return new QueryCondition(left, Operator.Less, Parameter.Constant(right));
+        }
+        public static QueryCondition operator <(NumericResult left, decimal? right)
+        {
+            return new QueryCondition(left, Operator.Less, Parameter.Constant(right));
+        }
         public static QueryCondition operator <(NumericResult left, Parameter right)
         {
             return new QueryCondition(left, Operator.Less, right);
@@ -90,6 +114,14 @@ namespace Blueprint41.Query
             return new QueryCondition(left, Operator.LessOrEqual, Parameter.Constant(right));
         }
         public static QueryCondition operator <=(NumericResult left, long? right)
+        {
+            return new QueryCondition(left, Operator.LessOrEqual, Parameter.Constant(right));
+        }
+        public static QueryCondition operator <=(NumericResult left, decimal right)
+        {
+            return new QueryCondition(left, Operator.LessOrEqual, Parameter.Constant(right));
+        }
+        public static QueryCondition operator <=(NumericResult left, decimal? right)
         {
             return new QueryCondition(left, Operator.LessOrEqual, Parameter.Constant(right));
         }
@@ -114,6 +146,14 @@ namespace Blueprint41.Query
         {
             return new QueryCondition(left, Operator.Greater, Parameter.Constant(right));
         }
+        public static QueryCondition operator >(NumericResult left, decimal right)
+        {
+            return new QueryCondition(left, Operator.Greater, Parameter.Constant(right));
+        }
+        public static QueryCondition operator >(NumericResult left, decimal? right)
+        {
+            return new QueryCondition(left, Operator.Greater, Parameter.Constant(right));
+        }
         public static QueryCondition operator >(NumericResult left, Parameter right)
         {
             return new QueryCondition(left, Operator.Greater, right);
@@ -132,6 +172,14 @@ namespace Blueprint41.Query
             return new QueryCondition(left, Operator.GreaterOrEqual, Parameter.Constant(right));
         }
         public static QueryCondition operator >=(NumericResult left, long? right)
+        {
+            return new QueryCondition(left, Operator.GreaterOrEqual, Parameter.Constant(right));
+        }
+        public static QueryCondition operator >=(NumericResult left, decimal right)
+        {
+            return new QueryCondition(left, Operator.GreaterOrEqual, Parameter.Constant(right));
+        }
+        public static QueryCondition operator >=(NumericResult left, decimal? right)
         {
             return new QueryCondition(left, Operator.GreaterOrEqual, Parameter.Constant(right));
         }
@@ -171,6 +219,15 @@ namespace Blueprint41.Query
         public static NumericResult operator ^(NumericResult left, long right)
         {
             return new NumericResult(left, t => t.FnPower, new[] { Parameter.Constant(right) });
+        }
+
+        public static NumericResult operator +(NumericResult left, decimal right)
+        {
+            return new NumericResult(left, t => t.FnAdd, new[] { Parameter.Constant(right) });
+        }
+        public static NumericResult operator -(NumericResult left, decimal right)
+        {
+            return new NumericResult(left, t => t.FnSubtract, new[] { Parameter.Constant(right) });
         }
 
         public static NumericResult operator +(NumericResult left, NumericResult right)

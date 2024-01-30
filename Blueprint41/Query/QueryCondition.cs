@@ -31,7 +31,7 @@ namespace Blueprint41.Query
 
         public QueryCondition(object left, Operator op, object right)
         {
-            if (op == Operator.Boolean && (left as BooleanResult) is null)
+            if (op == Operator.Boolean && left is not BooleanResult)
                 throw new InvalidOperationException("The left side of an boolean operator must be of type BooleanResult");
 
             Left = left;

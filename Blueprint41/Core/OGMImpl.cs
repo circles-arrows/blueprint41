@@ -84,7 +84,7 @@ namespace Blueprint41.Core
         protected virtual void ValidateSave() { }
 
         protected virtual void ValidateDelete() { }
-        protected bool RelationshipExists(Property foreignProperty, OGM instance)
+        protected bool RelationshipExists(EntityProperty foreignProperty, OGM instance)
         {
             return PersistenceProvider.NodePersistenceProvider.RelationshipExists(foreignProperty, instance);
         }

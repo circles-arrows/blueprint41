@@ -68,7 +68,7 @@ namespace Blueprint41.Dynamic
                         if (item.GetEntity() != property.EntityReturnType)
                             throw new InvalidCastException("Wrong type of object inserted in collection...");
 
-                        collection.Add(item, false);
+                        collection.Add(item, false, null);
                     }
                 }
             }
@@ -299,7 +299,7 @@ namespace Blueprint41.Dynamic
 
                             // TODO: add nice error for value not being a IEnumerable<DynamicEntity>
                             foreach (DynamicEntity item in (IEnumerable<DynamicEntity>)value)
-                                collection?.Add(item, false);
+                                collection?.Add(item, false, null);
 
                             break;
                         }
@@ -314,7 +314,7 @@ namespace Blueprint41.Dynamic
 
                             EntityCollectionBase<DynamicEntity>? collection;
                             DynamicEntityLinks.TryGetValue(name, out collection);
-                            ((ILookupHelper<DynamicEntity>?)collection)?.SetItem(node, null);
+                            ((ILookupHelper<DynamicEntity>?)collection)?.SetItem(node, null, null);
 
                             break;
                         }
@@ -742,7 +742,7 @@ namespace Blueprint41.Dynamic
             }
         }
 
-        protected bool RelationshipExists(Property foreignProperty, OGM instance)
+        protected bool RelationshipExists(EntityProperty foreignProperty, OGM instance)
         {
             return RunningTransaction.NodePersistenceProvider.RelationshipExists(foreignProperty, instance);
         }

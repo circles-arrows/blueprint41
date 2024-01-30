@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,14 +9,17 @@ namespace Blueprint41.Core
 {
     internal class TimeDependentAddRelationshipAction : TimeDependentRelationshipAction
     {
-        internal TimeDependentAddRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? moment)
+        internal TimeDependentAddRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, Dictionary<string, object>? properties)
             : base(persistenceProvider, relationship, inItem, outItem, moment)
         {
+            Properties = properties;
         }
+
+        public Dictionary<string, object>? Properties { get; private set; }
 
         protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.Add(relationship, InItem!, OutItem!, Moment, true);
+            PersistenceProvider.Add(relationship, InItem!, OutItem!, Moment, true, Properties);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)

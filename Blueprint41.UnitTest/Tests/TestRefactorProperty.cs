@@ -390,7 +390,7 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.DoesNotThrow(() => Entities["Scene"].Properties["DoubleToLong"].Refactor.Convert(typeof(long)));
                 Assert.DoesNotThrow(() => Entities["Scene"].Properties["DoubleToString"].Refactor.Convert(typeof(string)));
 
-                Assert.DoesNotThrow(() => Entities["Scene"].Properties["StringToBool"].Refactor.Convert(typeof(bool)));
+                Assert.Throws<NotSupportedException>(() => Entities["Scene"].Properties["StringToBool"].Refactor.Convert(typeof(bool)));
                 Assert.DoesNotThrow(() => Entities["Scene"].Properties["StringToLong"].Refactor.Convert(typeof(long)));
                 Assert.DoesNotThrow(() => Entities["Scene"].Properties["StringToDouble"].Refactor.Convert(typeof(double)));
             }

@@ -6,7 +6,7 @@
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="Blueprint41" #>
 <#
-    Log("	executing {0} -> Apply FunctionalId on entity {1}", this.GetType().Name, Entity.Label.Name);
+    Log("	executing {0} -> Apply FunctionalId on entity {1}", this.GetType().Name, Caller.Name);
 #>
 MATCH (node:<#= Entity.Label.Name #>)
 <# if(! this.Full) 

@@ -5,17 +5,23 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema
 {
     public class ConstraintInfo
     {
-        internal ConstraintInfo(RawRecord record)
+        internal ConstraintInfo(RawRecord record, Neo4jPersistenceProvider persistenceProvider)
         {
+            PersistenceProvider = persistenceProvider;
             Initialize(record);
         }
+
+        protected Neo4jPersistenceProvider PersistenceProvider { get; private set; }
+
         protected virtual void Initialize(RawRecord record)
         {
+            EntityType = "NODE";
             Name = record.Values["description"].As<string>();
             IsUnique = false;
             IsMandatory = false;
@@ -40,6 +46,7 @@ namespace Blueprint41.Neo4j.Schema
         }
 
         public string Name { get; protected set; } = null!;
+        public string EntityType { get; protected set; } = null!;
         public IReadOnlyList<string> Entity { get; protected set; } = null!;
         public IReadOnlyList<string> Field { get; protected set; } = null!;
 
@@ -99,7 +106,7 @@ namespace Blueprint41.Neo4j.Schema
             if (IsMandatory)
                 desc = "mandatory";
 
-            return $"{Entity}.{string.Join("/", Field)} -> {desc}";
+            return $"{string.Join("/", Entity)}.{string.Join("/", Field)} -> {desc}";
         }
     }
 }

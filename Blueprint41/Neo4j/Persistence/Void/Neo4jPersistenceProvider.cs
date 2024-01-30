@@ -12,7 +12,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 {
     public partial class Neo4jPersistenceProvider : PersistenceProvider
     {
-        // Precision (roughly) 11.8
+        // Precision (roughly) 10.8
         internal const decimal DECIMAL_FACTOR = 100000000m;
 
         public TransactionLogger? TransactionLogger { get; private set; }
@@ -31,7 +31,24 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Database = null;
             AdvancedConfig = advancedConfig;
             TransactionLogger = advancedConfig?.GetLogger();
-        }
+
+            _nodePropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
+            {
+                Index = true,
+                Exists = IsEnterpriseEdition,
+                Unique = true,
+                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+            });
+            _relationshipPropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
+            {
+                Index = VersionGreaterOrEqual(4, 3),
+                Exists = IsEnterpriseEdition,
+                Unique = VersionGreaterOrEqual(5, 7),
+                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+            });
+    }
         public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base()
         {
             Uri = uri;
@@ -40,6 +57,23 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Database = database;
             AdvancedConfig = advancedConfig;
             TransactionLogger = advancedConfig?.GetLogger();
+
+            _nodePropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
+            {
+                Index = true,
+                Exists = IsEnterpriseEdition,
+                Unique = true,
+                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+            });
+            _relationshipPropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
+            {
+                Index = VersionGreaterOrEqual(4, 3),
+                Exists = IsEnterpriseEdition,
+                Unique = VersionGreaterOrEqual(5, 7),
+                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+            });
         }
 
         public string Version { get; private set; } = "0.0.0";
@@ -48,6 +82,21 @@ namespace Blueprint41.Neo4j.Persistence.Void
         public int? Revision { get; private set; } = null;
         public bool IsAura { get; set; } = false;
         public bool IsEnterpriseEdition { get; private set; } = false;
+
+        public FeatureSupport NodePropertyFeatures => _nodePropertyFeatures.Value;
+        private readonly Lazy<FeatureSupport> _nodePropertyFeatures;
+
+        public FeatureSupport RelationshipPropertyFeatures => _relationshipPropertyFeatures.Value;
+        private readonly Lazy<FeatureSupport> _relationshipPropertyFeatures;
+
+        public bool VersionGreaterOrEqual(int major, int minor = 0, int revision = 0)
+        {
+            if (Major > major) return true;
+            if (Major == major && Minor > minor) return true;
+            if (Major == major && Minor == minor && Revision >= revision) return true;
+
+            return false;
+        }
 
         public bool HasFunction(string function)
         {
@@ -151,6 +200,15 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 return supportedTypeMappings;
             }
         }
+    }
+
+    public record FeatureSupport
+    {
+        public bool Index;
+        public bool Exists;
+        public bool Unique;
+        public bool Key;
+        public bool Type;
     }
 }
 /*

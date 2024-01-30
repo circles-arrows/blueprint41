@@ -74,11 +74,19 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
+        public void GenerateMockModel()
+        {
+            GeneratorResult result = GenerateModel<MockModel>(out string projectFolder, out GeneratorSettings settings);
+
+            FileExists(result.EntityResult, Path.Combine(projectFolder, settings.EntitiesFolder));
+            FileExists(result.RelationshipResult, Path.Combine(projectFolder, settings.RelationshipsFolder));
+            FileExists(result.NodeResult, Path.Combine(projectFolder, settings.NodesFolder));
+        }
+
+        [Test]
         public void EnsureFilesAreGenerated()
         {
-            string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
-            GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            GeneratorResult result = GenerateModel<MockGeneratorModel>(settings);
+            GeneratorResult result = GenerateModel<MockGeneratorModel>(out string projectFolder, out GeneratorSettings settings);
 
             FileExists(result.EntityResult, Path.Combine(projectFolder, settings.EntitiesFolder));
             FileExists(result.RelationshipResult, Path.Combine(projectFolder, settings.RelationshipsFolder));
@@ -88,9 +96,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureFilesAreNotGeneratedWhenDeprecated()
         {
-            string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
-            GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            GeneratorResult result = GenerateModel<MockModelWithDeprecate>(settings);
+            GeneratorResult result = GenerateModel<MockModelWithDeprecate>(out string projectFolder, out GeneratorSettings settings);
 
             // The person entity is deprecated so it should be excluded in the entity result
             bool exist = result.EntityResult.Select(x => x.Key).SingleOrDefault(x => x == "PersonEntity") != null;
@@ -109,8 +115,12 @@ namespace Blueprint41.UnitTest.Tests
                 File.Delete(baseNodePath);
         }
 
-        private GeneratorResult GenerateModel<T>(GeneratorSettings settings) where T : DatastoreModel<T>, new()
+        private GeneratorResult GenerateModel<T>(out string projectFolder, out GeneratorSettings settings)
+            where T : DatastoreModel<T>, new()
         {
+            projectFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Generator", "Output");
+            settings = new GeneratorSettings(projectFolder);
+
             return Generator.Execute<T>(settings);
         }
 

@@ -20,7 +20,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class SetDefaultConstantValue : SetDefaultConstantValueBase
     {
@@ -31,47 +31,113 @@ namespace Blueprint41.Neo4j.Refactoring.Templates.v5
         public override string TransformText()
         {
             
-            #line 7 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
 
+    Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Caller.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
 
-    Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Entity.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
+    // Setup Cypher Parameters
+    OutputParameters.Add(Property.Name, Value);
 
-	// Setup Cypher Parameters
-	OutputParameters.Add(Property.Name, Value);
-
+    if (IsEntity)
+    {
 
             
             #line default
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 15 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
-            this.Write(") WHERE node.");
+            this.Write(")\r\nWHERE node.");
             
-            #line 15 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
-            this.Write(" IS NULL WITH node LIMIT 10000 SET node.");
+            this.Write(" IS NULL\r\nWITH node LIMIT 10000\r\nSET node.");
             
-            #line 15 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            #line 19 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = $");
             
-            #line 15 "C:\Users\Glenn\source\repos\circles-arrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            #line 19 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write("\r\n");
+            
+            #line 20 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+
+    }
+    else if (IsRelationship)
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write("MATCH (:");
+            
+            #line 25 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.InEntity.Label.Name));
+            
+            #line default
+            #line hidden
+            this.Write(")-[rel:");
+            
+            #line 25 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.Neo4JRelationshipType));
+            
+            #line default
+            #line hidden
+            this.Write("]->(:");
+            
+            #line 25 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.OutEntity.Label.Name));
+            
+            #line default
+            #line hidden
+            this.Write(")\r\nWHERE rel.");
+            
+            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" IS NULL\r\nWITH rel LIMIT 10000\r\nSET rel.");
+            
+            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" = $");
+            
+            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n");
+            
+            #line 29 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt"
+
+    }
+    else
+    {
+        throw new NotSupportedException();
+    }
+
+            
+            #line default
+            #line hidden
             return this.GenerationEnvironment.ToString();
         }
     }

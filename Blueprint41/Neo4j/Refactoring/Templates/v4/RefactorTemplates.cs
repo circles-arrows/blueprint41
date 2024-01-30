@@ -16,11 +16,5 @@ namespace Blueprint41.Core
             template.CreateInstance = SetDefaultConstantValue;
             return template;
         }
-        public override t.SetRelationshipPropertyValueBase SetRelationshipPropertyValue()
-        {
-            t.SetRelationshipPropertyValueBase template = new t.v4.SetRelationshipPropertyValue();
-            template.CreateInstance = SetRelationshipPropertyValue;
-            return template;
-        }
     }
 }

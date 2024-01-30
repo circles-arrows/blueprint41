@@ -5,6 +5,7 @@ using System.Text;
 
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Model;
+using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Schema;
 using Blueprint41.Query;
 
@@ -14,7 +15,7 @@ namespace Blueprint41.Neo4j.Persistence.v4
 {
     internal class Neo4jQueryTranslator : QueryTranslator
     {
-        internal Neo4jQueryTranslator(PersistenceProvider persistenceProvider) : base(persistenceProvider) { }
+        internal Neo4jQueryTranslator(Neo4jPersistenceProvider persistenceProvider) : base(persistenceProvider) { }
 
         #region Compile Query Parts
 
@@ -115,7 +116,7 @@ namespace Blueprint41.Neo4j.Persistence.v4
         internal override NodePersistenceProvider GetNodePersistenceProvider() => new v3.Neo4jNodePersistenceProvider(PersistenceProvider);
         internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider() => new v3.Neo4jRelationshipPersistenceProvider(PersistenceProvider);
         internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v4();
-        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.v4.SchemaInfo_v4(datastoreModel);
+        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.v4.SchemaInfo_v4(datastoreModel, PersistenceProvider);
 
         #endregion
     }

@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace Blueprint41
 {
-    public abstract partial class DatastoreModel : IRefactorGlobal
+    public abstract partial class DatastoreModel : IRefactorGlobal, IDatastoreUnitTesting
     {
         protected DatastoreModel(PersistenceProvider persistence)
         {
@@ -122,6 +122,7 @@ namespace Blueprint41
         {
             Execute(upgradeDatastore, null);
         }
+        void IDatastoreUnitTesting.Execute(bool upgradeDatastore, MethodInfo? unitTestScript) => Execute(upgradeDatastore, unitTestScript);
         internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript)
         {
             if (isExecuting)
@@ -338,6 +339,7 @@ namespace Blueprint41
         {
             return PersistenceProvider.GetSchemaInfo(this);
         }
+        SchemaInfo IDatastoreUnitTesting.GetSchemaInfo() => GetSchema();
 
         protected IRefactorGlobal Refactor { get { return this; } }
 
@@ -361,15 +363,6 @@ namespace Blueprint41
             GetSchema().UpdateConstraints();
         }
 
-        void IRefactorGlobal.SetCreationDate()
-        {
-            EnsureSchemaMigration();
-            if (!Parser.ShouldExecute)
-                return;
-
-            Templates.SetCreationDate().RunBatched();
-        }
-
         void IRefactorGlobal.ApplyFullTextSearchIndexes()
         {
             Refactor.ApplyFullTextSearchIndexes(false);
@@ -378,7 +371,7 @@ namespace Blueprint41
         void IRefactorGlobal.ApplyFullTextSearchIndexes(bool shouldRun)
         {
             EnsureSchemaMigration();
-            if (!Parser.ShouldExecute && !shouldRun)
+            if (!Parser.ShouldExecute || !shouldRun)
                 return;
 
             PersistenceProvider.Translator.ApplyFullTextSearchIndexes(Entities);
@@ -545,5 +538,11 @@ namespace Blueprint41
 
         public bool LogToConsole { get => Parser.LogToConsole; set => Parser.LogToConsole = value; }
         public bool LogToDebugger { get => Parser.LogToDebugger; set => Parser.LogToDebugger= value; }
+    }
+
+    public interface IDatastoreUnitTesting
+    {
+        void Execute(bool upgradeDatastore, MethodInfo? unitTestScript);
+        SchemaInfo GetSchemaInfo();
     }
 }

@@ -5,7 +5,28 @@
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="Blueprint41" #>
 <#
+    Log("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, Caller.Name, Name);
 
-    Log("	executing {0} -> Remove property from {1}.{2}", this.GetType().Name, ConcreteParent.Label.Name, Name);
+    if (IsEntity)
+    {
 #>
-MATCH (node:<#= ConcreteParent.Label.Name #>) WHERE node.<#= Name #> IS NOT NULL WITH node LIMIT 10000 REMOVE node.<#= Name #>
+MATCH (node:<#= Entity.Label.Name #>)
+WHERE node.<#= Name #> IS NOT NULL
+WITH node LIMIT 10000
+REMOVE node.<#= Name #>
+<#
+    }
+    else if (IsRelationship)
+    {
+#>
+MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
+WHERE rel.<#= Name #> IS NOT NULL
+WITH rel LIMIT 10000
+REMOVE rel.<#= Name #>
+<#
+    }
+    else
+    {
+        throw new NotSupportedException();
+    }
+#>

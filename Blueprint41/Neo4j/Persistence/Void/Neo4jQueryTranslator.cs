@@ -12,13 +12,13 @@ namespace Blueprint41.Neo4j.Persistence.Void
 {
     internal class Neo4jQueryTranslator : QueryTranslator
     {
-        internal Neo4jQueryTranslator(PersistenceProvider persistenceProvider) : base(persistenceProvider) { }
+        internal Neo4jQueryTranslator(Neo4jPersistenceProvider persistenceProvider) : base(persistenceProvider) { }
 
         #region
 
-        internal override NodePersistenceProvider GetNodePersistenceProvider() => new Persistence.Void.Neo4jNodePersistenceProvider(PersistenceProvider);
-        internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider() => new Persistence.Void.Neo4jRelationshipPersistenceProvider(PersistenceProvider);
-        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new SchemaInfo(datastoreModel);
+        internal override NodePersistenceProvider GetNodePersistenceProvider() => new Neo4jNodePersistenceProvider(PersistenceProvider);
+        internal override RelationshipPersistenceProvider GetRelationshipPersistenceProvider() => new Neo4jRelationshipPersistenceProvider(PersistenceProvider);
+        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new SchemaInfo(datastoreModel, PersistenceProvider);
         internal override RefactorTemplates GetTemplates() => new RefactorTemplates();
 
         #endregion
