@@ -247,23 +247,21 @@ namespace Blueprint41.Core
         {
             if (variable is null)
             {
-                lock (SyncLock<T>.Instance)
+#pragma warning disable S2551 // Shared resources should not be used for locking
+                lock (typeof(SyncLock<T>))
                 {
                     if (variable is null)
                         variable = factoryMethod.Invoke();
                 }
+#pragma warning restore S2551 // Shared resources should not be used for locking
             }
             return variable;
         }
 
 #pragma warning disable S2326 // Unused type parameters should be removed
-        private sealed class SyncLock<T>
+#pragma warning disable S2094 // Classes should not be empty
+        private sealed class SyncLock<T> { }
+#pragma warning restore S2094 // Classes should not be empty
 #pragma warning restore S2326 // Unused type parameters should be removed
-        {
-#pragma warning disable S2743 // Static fields should not be used in generic types
-            internal static readonly object Instance = new object();
-#pragma warning restore S2743 // Static fields should not be used in generic types
-        }
     }
-
 }
