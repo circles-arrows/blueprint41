@@ -610,6 +610,7 @@ namespace Blueprint41
                             }
                         });
 
+#pragma warning disable S2583 // Conditionally executed code should be reachable
                         if (list.Count > 0)
                         {
                             Dictionary<string, object?> batch = new Dictionary<string, object?>();
@@ -617,6 +618,7 @@ namespace Blueprint41
 
                             Parser.Execute(cypherWrite, batch, true);
                         }
+#pragma warning restore S2583 // Conditionally executed code should be reachable
                     }
                     while (list.Count > 0);
                 }
@@ -769,7 +771,7 @@ namespace Blueprint41
             if (PropertyType == PropertyType.Collection)
                 throw new NotSupportedException("A collection cannot be made mandatory.");
 
-            if (Nullable == false)
+            if (!Nullable)
                 throw new NotSupportedException("The property is already mandatory.");
 
             Nullable = false;
@@ -779,7 +781,7 @@ namespace Blueprint41
                 if (Parent is Entity entity)
                 {
                     string cypher = $"MATCH (n:{entity.Label.Name}) WHERE n.{Name} IS NULL RETURN count(n) as count";
-                    RawRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
+                    RawRecord record = Parser.Execute(cypher, null, false).First();
                     bool hasNullProperty = record["count"].As<long>() > 0;
                     if (hasNullProperty)
                         throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", entity.Name, Name));
@@ -787,7 +789,7 @@ namespace Blueprint41
                 else if (Parent is Relationship relationship)
                 {
                     string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
-                    RawRecord record = Parser.Execute(cypher, null, false).FirstOrDefault();
+                    RawRecord record = Parser.Execute(cypher, null, false).First();
                     bool hasNullProperty = record["count"].As<long>() > 0;
                     if (hasNullProperty)
                         throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", relationship.Name, Name));
