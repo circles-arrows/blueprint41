@@ -241,13 +241,13 @@ namespace Blueprint41.Core
         private static readonly AtomicDictionary<Type, Func<Task, Task?>?> getTaskResultMethods = new AtomicDictionary<Type, Func<Task, Task?>?>();
         private static readonly AtomicDictionary<Type, Func<Task, IEnumerable<Task>?>?> getTaskResultsMethods = new AtomicDictionary<Type, Func<Task, IEnumerable<Task>?>?>();
     }
-    public static class Threadsafe
+    public static class ThreadSafe
     {
         public static T LazyInit<T>(ref T variable, Func<T> factoryMethod)
         {
             if (variable is null)
             {
-                lock (typeof(SyncLock<T>))
+                lock (SyncLock<T>.Instance)
                 {
                     if (variable is null)
                         variable = factoryMethod.Invoke();
@@ -256,8 +256,13 @@ namespace Blueprint41.Core
             return variable;
         }
 
-        private class SyncLock<T>
+#pragma warning disable S2326 // Unused type parameters should be removed
+        private sealed class SyncLock<T>
+#pragma warning restore S2326 // Unused type parameters should be removed
         {
+#pragma warning disable S2743 // Static fields should not be used in generic types
+            internal static readonly object Instance = new object();
+#pragma warning restore S2743 // Static fields should not be used in generic types
         }
     }
 
