@@ -113,7 +113,7 @@ namespace Datastore.Manipulation
             )).ToList();
         }
 
-        public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"]);
+        public static Relationship Relationship => ThreadSafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["RESTAURANT_LOCATED_AT"]);
         private static Relationship _relationship = null;
 
         /// <summary>

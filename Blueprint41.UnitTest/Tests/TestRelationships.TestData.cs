@@ -359,7 +359,7 @@ namespace Blueprint41.UnitTest.Tests
             public string TheFifthElement;
             public string TopGunMaverick;
 
-            public Ratings Ratings => Threadsafe.LazyInit(ref _ratings, () => new Ratings(Parent));
+            public Ratings Ratings => ThreadSafe.LazyInit(ref _ratings, () => new Ratings(Parent));
             private Ratings _ratings = null;
 
             public (Movie movie, Rating rating, RatingComponent frighteningIntense, RatingComponent violenceGore, RatingComponent profanity, RatingComponent substances, RatingComponent sexAndNudity)[] Movies => new[]

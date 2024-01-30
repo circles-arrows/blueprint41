@@ -123,7 +123,7 @@ namespace Datastore.Manipulation
             )).ToList();
         }
 
-        public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"]);
+        public static Relationship Relationship => ThreadSafe.LazyInit(ref _relationship, () => Blueprint41.UnitTest.DataStore.MockModel.Model.Relations["SUBSCRIBED_TO_STREAMING_SERVICE"]);
         private static Relationship _relationship = null;
 
         /// <summary>
