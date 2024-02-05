@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -145,7 +146,7 @@ namespace Blueprint41.Core
         }
 
         internal abstract RelationshipAction RemoveAction(OGM item, DateTime? moment);
-        internal abstract RelationshipAction AddAction(OGM item, DateTime? moment);
+        internal abstract RelationshipAction AddAction(OGM item, DateTime? moment, Dictionary<string, object>? properties);
         internal abstract RelationshipAction ClearAction(DateTime? moment);
 
         #endregion

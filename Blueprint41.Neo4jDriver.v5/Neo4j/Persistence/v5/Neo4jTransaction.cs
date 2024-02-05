@@ -88,14 +88,14 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
         public neo4j.IAsyncTransaction? Transaction { get; set; }
         public neo4j.IAsyncQueryRunner? StatementRunner { get; set; }
 
-        private List<Neo4jBookmark>? Consistency;
+        protected internal List<Neo4jBookmark>? Consistency;
 
         protected override void Initialize()
         {
             neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
 
             if ((Provider ?? PersistenceProvider.CurrentPersistenceProvider) is not Neo4jPersistenceProvider provider)
-                throw new NullReferenceException("CurrentPersistenceProvider is null");
+                throw new InvalidOperationException("CurrentPersistenceProvider is null");
 
             Session = provider.Driver.AsyncSession(c =>
             {

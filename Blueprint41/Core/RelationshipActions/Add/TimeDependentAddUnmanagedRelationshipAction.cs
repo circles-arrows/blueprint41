@@ -9,15 +9,18 @@ namespace Blueprint41.Core
     internal class TimeDependentAddUnmanagedRelationshipAction : TimeDependentRelationshipAction
     {
         public DateTime EndDate { get; set; }
-        internal TimeDependentAddUnmanagedRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate)
+        internal TimeDependentAddUnmanagedRelationshipAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties)
             : base(persistenceProvider, relationship, inItem, outItem, startDate)
         {
             EndDate = (endDate.HasValue) ? endDate.Value : DateTime.MaxValue;
+            Properties = properties;
         }
+
+        public Dictionary<string, object>? Properties { get; private set; }
 
         protected override void InDatastoreLogic(Relationship relationship)
         {
-            PersistenceProvider.AddUnmanaged(relationship, InItem!, OutItem!, Moment, EndDate);
+            PersistenceProvider.AddUnmanaged(relationship, InItem!, OutItem!, Moment, EndDate, Properties);
         }
 
         protected override void InMemoryLogic(EntityCollectionBase target)

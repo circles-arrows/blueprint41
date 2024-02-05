@@ -67,63 +67,6 @@ namespace Blueprint41.Core
 
         #endregion
 
-        #region CreateIndex
-
-        public virtual t.CreateIndexBase CreateIndex()
-        {
-            t.CreateIndexBase template = new t.CreateIndex();
-            template.CreateInstance = CreateIndex;
-            return template;
-        }
-        public t.CreateIndexBase CreateIndex(Action<t.CreateIndexBase> setup)
-        {
-            t.CreateIndexBase template = CreateIndex();
-            template.Setup = setup;
-            if (setup is not null)
-                setup.Invoke(template);
-            return template;
-        }
-
-        #endregion
-
-        #region CreateUniqueConstraint
-
-        public virtual t.CreateUniqueConstraintBase CreateUniqueConstraint()
-        {
-            t.CreateUniqueConstraintBase template = new t.CreateUniqueConstraint();
-            template.CreateInstance = CreateUniqueConstraint;
-            return template;
-        }
-        public t.CreateUniqueConstraintBase CreateUniqueConstraint(Action<t.CreateUniqueConstraintBase> setup)
-        {
-            t.CreateUniqueConstraintBase template = CreateUniqueConstraint();
-            template.Setup = setup;
-            if (setup is not null)
-                setup.Invoke(template);
-            return template;
-        }
-
-        #endregion
-
-        #region DropExistConstraint
-
-        public virtual t.DropExistConstraintBase DropExistConstraint()
-        {
-            t.DropExistConstraintBase template = new t.DropExistConstraint();
-            template.CreateInstance = DropExistConstraint;
-            return template;
-        }
-        public t.DropExistConstraintBase DropExistConstraint(Action<t.DropExistConstraintBase> setup)
-        {
-            t.DropExistConstraintBase template = DropExistConstraint();
-            template.Setup = setup;
-            if (setup is not null)
-                setup.Invoke(template);
-            return template;
-        }
-
-        #endregion
-
         #region MergeProperty
 
         public virtual t.MergePropertyBase MergeProperty()
@@ -135,25 +78,6 @@ namespace Blueprint41.Core
         public t.MergePropertyBase MergeProperty(Action<t.MergePropertyBase> setup)
         {
             t.MergePropertyBase template = MergeProperty();
-            template.Setup = setup;
-            if (setup is not null)
-                setup.Invoke(template);
-            return template;
-        }
-
-        #endregion
-
-        #region MergeRelationship
-
-        public virtual t.MergeRelationshipBase MergeRelationship()
-        {
-            t.MergeRelationshipBase template = new t.MergeRelationship();
-            template.CreateInstance = MergeRelationship;
-            return template;
-        }
-        public t.MergeRelationshipBase MergeRelationship(Action<t.MergeRelationshipBase> setup)
-        {
-            t.MergeRelationshipBase template = MergeRelationship();
             template.Setup = setup;
             if (setup is not null)
                 setup.Invoke(template);
@@ -276,25 +200,6 @@ namespace Blueprint41.Core
 
         #endregion
 
-        #region SetCreationDate
-
-        public virtual t.SetCreationDateBase SetCreationDate()
-        {
-            t.SetCreationDateBase template = new t.SetCreationDate();
-            template.CreateInstance = SetCreationDate;
-            return template;
-        }
-        public t.SetCreationDateBase SetCreationDate(Action<t.SetCreationDateBase> setup)
-        {
-            t.SetCreationDateBase template = SetCreationDate();
-            template.Setup = setup;
-            if (setup is not null)
-                setup.Invoke(template);
-            return template;
-        }
-
-        #endregion
-
         #region SetDefaultConstantValue
 
         public virtual t.SetDefaultConstantValueBase SetDefaultConstantValue()
@@ -344,25 +249,6 @@ namespace Blueprint41.Core
         public t.SetLabelBase SetLabel(Action<t.SetLabelBase> setup)
         {
             t.SetLabelBase template = SetLabel();
-            template.Setup = setup;
-            if (setup is not null)
-                setup.Invoke(template);
-            return template;
-        }
-
-        #endregion
-
-        #region SetRelationshipPropertyValue
-
-        public virtual t.SetRelationshipPropertyValueBase SetRelationshipPropertyValue()
-        {
-            t.SetRelationshipPropertyValueBase template = new t.SetRelationshipPropertyValue();
-            template.CreateInstance = SetRelationshipPropertyValue;
-            return template;
-        }
-        public t.SetRelationshipPropertyValueBase SetRelationshipPropertyValue(Action<t.SetRelationshipPropertyValueBase> setup)
-        {
-            t.SetRelationshipPropertyValueBase template = SetRelationshipPropertyValue();
             template.Setup = setup;
             if (setup is not null)
                 setup.Invoke(template);

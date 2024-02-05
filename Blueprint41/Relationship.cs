@@ -28,6 +28,10 @@ namespace Blueprint41
             if (outEntity is not null && outInterface is not null)
                 throw new ArgumentException("You cannot have both the outEntity and the outInterface set at the same time.");
 
+            _self = new IEntity[] { this };
+            _properties = new PropertyCollection(this);
+            Properties = new EntityPropertyCollection<RelationshipProperty, Relationship>(this, _properties);
+
             Parent = parent;
             RelationshipType      = RelationshipType.None;
             Name                  = ComputeAliasName(name, neo4JRelationshipType, OutProperty);
@@ -37,6 +41,8 @@ namespace Blueprint41
             OutInterface          = outInterface ?? new Interface(outEntity!);
             OutProperty           = null;
             Guid                  = parent.GenerateGuid(name);
+
+            _properties.Add(CreationDate, new RelationshipProperty(this, PropertyType.Attribute, CreationDate, typeof(DateTime), true, IndexType.None));
         }
 
         #region Properties
@@ -48,18 +54,45 @@ namespace Blueprint41
 
         public Entity           InEntity              { get { return InInterface.BaseEntity; } }
         public Interface        InInterface           { get; private set; }
-        public Property?        InProperty            { get; private set; }
+        public EntityProperty?  InProperty            { get; private set; }
         public Entity           OutEntity             { get { return OutInterface.BaseEntity; } }
         public Interface        OutInterface          { get; private set; }
-        public Property?        OutProperty           { get; private set; }
+        public EntityProperty?  OutProperty           { get; private set; }
 
-        public string           CreationDate { get { return "CreationDate"; } }
+        public string           CreationDate          { get { return "CreationDate"; } }
 
         public string           StartDate             { get { return "StartDate"; } }
         public string           EndDate               { get { return "EndDate";  } }
         public bool             IsTimeDependent       { get; private set; }
 
         public Guid Guid { get; private set; }
+
+        public EntityPropertyCollection<RelationshipProperty, Relationship> Properties { get; private set; }
+        private readonly PropertyCollection _properties;
+
+        public Relationship SetFullTextProperty(string propertyName)
+        {
+            RelationshipProperty? property = Search(propertyName);
+            if (property is null)
+                throw new NotSupportedException("Property does not exist.");
+
+            fullTextIndexProperties.Add(property);
+            return this;
+        }
+        public Relationship RemoveFullTextProperty(string propertyName)
+        {
+            RelationshipProperty? property = Search(propertyName);
+            if (property is null)
+                throw new NotSupportedException("Property does not exist.");
+
+            fullTextIndexProperties.Remove(property);
+            return this;
+        }
+        public IReadOnlyList<RelationshipProperty> FullTextIndexProperties
+        {
+            get { return fullTextIndexProperties; }
+        }
+        private List<RelationshipProperty> fullTextIndexProperties = new List<RelationshipProperty>();
 
         #endregion
 
@@ -83,11 +116,16 @@ namespace Blueprint41
 
             IsTimeDependent = true;
 
+            _properties.Add(StartDate, new RelationshipProperty(this, PropertyType.Attribute, StartDate, typeof(DateTime), true, IndexType.None));
+            _properties.Add(EndDate, new RelationshipProperty(this, PropertyType.Attribute, EndDate, typeof(DateTime), true, IndexType.None));
+
             return this;
         }
 
         public Relationship SetInProperty(string name, PropertyType type, bool nullable = true)
         {
+            Parent.EnsureSchemaMigration();
+
             if (InProperty is not null)
                 throw new InvalidOperationException("There is already an in property defined.");
 
@@ -113,6 +151,8 @@ namespace Blueprint41
         }
         public Relationship SetOutProperty(string name, PropertyType type, bool nullable = true)
         {
+            Parent.EnsureSchemaMigration();
+
             if (OutProperty is not null)
                 throw new InvalidOperationException("There is already an in property defined.");
 
@@ -137,8 +177,59 @@ namespace Blueprint41
             return this;
         }
 
+        public Relationship AddProperty(string name, Type type)
+        {
+            return AddProperty(name, type, true, IndexType.None);
+        }
+        public Relationship AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        {
+            VerifyPropertiesCanBeAdded();
+
+            RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            _properties.Add(name, value);
+
+            return this;
+        }
+        public Relationship AddProperty(string name, Enumeration enumeration, bool nullable = true, IndexType indexType = IndexType.None)
+        {
+            VerifyPropertiesCanBeAdded();
+
+            RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, typeof(string), nullable, indexType, enumeration);
+            _properties.Add(name, value);
+
+            return this;
+        }
+        public Relationship AddProperty(string name, Type type, IndexType indexType)
+        {
+            return AddProperty(name, type, true, indexType);
+        }
+        public Relationship AddProperty(string name, Type type, bool nullable, IndexType indexType = IndexType.None)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                throw new ArgumentException(string.Format("The type argument does not support the 'Nullable<{0}>' type. All types are considered nullable by default, but you can also set the 'nullable' argument explicitly.", type.GenericTypeArguments[0].Name));
+
+            VerifyPropertiesCanBeAdded();
+
+            RelationshipProperty value = new RelationshipProperty(this, PropertyType.Attribute, name, type, nullable, indexType);
+            _properties.Add(name, value);
+
+            return this;
+        }
+        private void VerifyPropertiesCanBeAdded()
+        {
+            Parent.EnsureSchemaMigration();
+
+            if (InProperty is null && OutProperty is null)
+                throw new InvalidOperationException("At least 1 in or out property needs to be set before primitive properties can be added.");
+
+            //if (IsTimeDependent)
+            //    throw new NotSupportedException(string.Format("Primitive properties cannot be added since the relationship type '{0}' already has time dependence enabled.", Name));
+        }
+
         internal void ResetProperty(DirectionEnum direction)
         {
+            Parent.EnsureSchemaMigration();
+
             if (direction == DirectionEnum.In)
                 InProperty = null;
 
@@ -176,7 +267,7 @@ namespace Blueprint41
             {
                 Parent.Templates.RenameRelationship(template =>
                 {
-                    template.Relationship = this;
+                    template.Caller = this;
                     template.OldName = oldName;
                     template.NewName = Neo4JRelationshipType;
                 }).RunBatched();
@@ -269,29 +360,14 @@ namespace Blueprint41
             Parent.EnsureSchemaMigration();
 
             if (!IsTimeDependent)
-                throw new NotSupportedException(string.Format("The relationship type '{0}' has no time dependence support yet.", Name));
+                throw new NotSupportedException(string.Format("The relationship type '{0}' has no time dependence set.", Name));
 
             IsTimeDependent = false;
 
+            _properties.Remove(StartDate); 
+            _properties.Remove(EndDate);
+
             throw new NotImplementedException("Apply logic to neo4j db...");
-        }
-        void IRefactorRelationship.Merge(Relationship target)
-        {
-            Parent.EnsureSchemaMigration();
-
-            if (this.IsTimeDependent != target.IsTimeDependent)
-                throw new InvalidOperationException("You cannot merge 2 relationships with different time dependence settings.");
-
-            if (this.IsTimeDependent)
-                throw new NotImplementedException("Merging time dependent relationships is not implemented because I found it annoying to program... You add it yourself if you really want it :oP");
-
-            Parent.Templates.MergeRelationship(template =>
-            {
-                template.From = this;
-                template.To = target;
-            }).RunBatched();
-
-            Parent.Relations.Remove(Name);
         }
         void IRefactorRelationship.Deprecate()
         {
@@ -390,6 +466,60 @@ namespace Blueprint41
             add { onRelationDeleted += value; }
             remove { onRelationDeleted -= value; }
         }
+
+        #endregion
+
+        #region Helper Methods
+
+        public RelationshipProperty? Search(string name)
+        {
+            if (Parent.IsUpgraded)
+            {
+                if (namedProperties is null)
+                    namedProperties = Properties.ToDictionary(key => key.Name.ToLower(), value => value);
+
+                RelationshipProperty? foundProperty;
+                namedProperties.TryGetValue(name.ToLower(), out foundProperty);
+                return foundProperty;
+            }
+            else
+            {
+                return Properties.FirstOrDefault(item => item.Name.ToLower() == name.ToLower());
+            }
+        }
+        private IReadOnlyDictionary<string, RelationshipProperty>? namedProperties = null;
+
+        internal IReadOnlyList<string> ExcludedProperties()
+        {
+            if (Parent.IsUpgraded)
+            {
+                if (excludedProperties is null)
+                    excludedProperties = Get();
+
+                return excludedProperties;
+            }
+            else
+            {
+                return Get();
+            }
+
+            List<string> Get()
+            {
+                List<string> excl = new List<string>();
+                
+                if (!string.IsNullOrEmpty(StartDate))
+                    excl.Add(StartDate);
+                
+                if (!string.IsNullOrEmpty(EndDate))
+                    excl.Add(EndDate);
+                
+                if (!string.IsNullOrEmpty(CreationDate))
+                    excl.Add(CreationDate);
+                
+                return excl;
+            }
+        }
+        private List<string>? excludedProperties = null;
 
         #endregion
 

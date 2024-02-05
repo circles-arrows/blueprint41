@@ -13,11 +13,14 @@ namespace Blueprint41.Neo4j.Schema
 {
     public class SchemaInfo
     {
-        internal SchemaInfo(DatastoreModel model)
+        internal SchemaInfo(DatastoreModel model, Neo4jPersistenceProvider persistenceProvider)
         {
             Model = model;
+            PersistenceProvider = persistenceProvider;
             Initialize();
         }
+        public Neo4jPersistenceProvider PersistenceProvider { get; protected set; }
+
         protected virtual void Initialize()
         {
             using (Transaction.Begin())
@@ -25,8 +28,8 @@ namespace Blueprint41.Neo4j.Schema
                 bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41Plugin.Value;
 
                 FunctionalIds     = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
-                Constraints       = LoadData("CALL db.constraints()", record => NewConstraintInfo(record));
-                Indexes           = LoadData("CALL db.indexes()", record => NewIndexInfo(record));
+                Constraints       = LoadData("CALL db.constraints()", record => NewConstraintInfo(record, PersistenceProvider));
+                Indexes           = LoadData("CALL db.indexes()", record => NewIndexInfo(record, PersistenceProvider));
                 Labels            = LoadSimpleData("CALL db.labels()", "label");
                 PropertyKeys      = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
                 RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
@@ -72,9 +75,9 @@ namespace Blueprint41.Neo4j.Schema
 
         public IReadOnlyList<ApplyConstraintEntity> GetConstraintDifferences()
         {
-            return Model.Entities.Where(entity => !entity.IsVirtual).Select(entity => GetConstraintDifferences(entity)).ToArray();
+            return Model.Entities.Where(entity => !entity.IsVirtual).Select(GetConstraintDifferences).Union(Model.Relations.Select(GetConstraintDifferences)).ToArray();
         }
-        public ApplyConstraintEntity GetConstraintDifferences(Entity entity)
+        public ApplyConstraintEntity GetConstraintDifferences(IEntity entity)
         {
             return NewApplyConstraintEntity(entity);
         }
@@ -103,10 +106,7 @@ namespace Blueprint41.Neo4j.Schema
             if (queryBuilder.Length != 0)
             {
                 var ids = LoadData(queryBuilder.ToString(), record => record.Values["MaxId"].As<long>());
-                if (ids.Count == 0)
-                    return 0;
-                else
-                    return ids.Max() + 1;
+                return ids.Count == 0 ? 0 : ids.Max() + 1;
             }
             else
             {
@@ -166,33 +166,30 @@ namespace Blueprint41.Neo4j.Schema
         }
         internal void UpdateConstraints()
         {
-            using (Transaction.Begin())
+            foreach (var diff in GetConstraintDifferences())
             {
-                foreach (var diff in GetConstraintDifferences())
+                foreach (var action in diff.Actions)
                 {
-                    foreach (var action in diff.Actions)
+                    foreach (var cql in action.ToCypher())
                     {
-                        foreach (var cql in action.ToCypher())
-                        {
-                            Parser.Log(cql);
-                            Transaction.RunningTransaction.Run(cql);
-                        }
+                        Parser.Log(cql);
+                        Transaction.RunningTransaction.Run(cql);
                     }
                 }
-                Transaction.Commit();
             }
+            //Transaction.Commit();
         }
 
-        protected virtual FunctionalIdInfo NewFunctionalIdInfo(RawRecord rawRecord) => new FunctionalIdInfo(rawRecord);
-        protected virtual ConstraintInfo   NewConstraintInfo(RawRecord rawRecord)   => new ConstraintInfo(rawRecord);
-        protected virtual IndexInfo        NewIndexInfo(RawRecord rawRecord)        => new IndexInfo(rawRecord);
+        protected virtual FunctionalIdInfo NewFunctionalIdInfo(RawRecord rawRecord)                                               => new FunctionalIdInfo(rawRecord);
+        protected virtual ConstraintInfo   NewConstraintInfo(RawRecord rawRecord, Neo4jPersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
+        protected virtual IndexInfo        NewIndexInfo(RawRecord rawRecord, Neo4jPersistenceProvider persistenceProvider)        => new IndexInfo(rawRecord, persistenceProvider);
 
-        internal virtual ApplyConstraintEntity    NewApplyConstraintEntity(Entity entity)                                                                              => new ApplyConstraintEntity(this, entity);
+        internal virtual ApplyConstraintEntity    NewApplyConstraintEntity(IEntity entity)                                                                              => new ApplyConstraintEntity(this, entity);
         internal virtual ApplyFunctionalId        NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);
         internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty(parent, property, commands);
         internal virtual ApplyConstraintProperty  NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty(parent, property, commands);
 
-        internal virtual List<(ApplyConstraintAction, string?)> ComputeCommands(Entity entity, IndexType indexType, bool nullable, bool isKey, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
+        internal virtual List<(ApplyConstraintAction, string?)> ComputeCommands(IEntity entity, IndexType indexType, bool nullable, bool isKey, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
         {
             bool isUnique = entity.IsVirtual ? false : constraints.Any(item => item.IsUnique);
             bool isIndexed = entity.IsVirtual ? false : indexes.Any(item => item.IsIndexed);
@@ -254,7 +251,7 @@ namespace Blueprint41.Neo4j.Schema
 
             if (isMandatory && nullable)
             {
-                // Database has has a exists constraint, but we want a nullable field instead
+                // Database has a exists constraint, but we want a nullable field instead
                 commands.Add((ApplyConstraintAction.DeleteExistsConstraint, existsConstraintName));
             }
             else if (!isMandatory && !nullable)

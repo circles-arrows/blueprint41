@@ -10,14 +10,14 @@ using m = Datastore.Manipulation;
 
 namespace Datastore.Query
 {
-	public partial class Node
-	{
-		[Obsolete("This entity is virtual, consider making entity BaseEntity concrete or use another entity as your starting point.", true)]
-		public static BaseEntityNode BaseEntity { get { return new BaseEntityNode(); } }
-	}
+    public partial class Node
+    {
+        [Obsolete("This entity is virtual, consider making entity BaseEntity concrete or use another entity as your starting point.", true)]
+        public static BaseEntityNode BaseEntity { get { return new BaseEntityNode(); } }
+    }
 
-	public partial class BaseEntityNode : Blueprint41.Query.Node
-	{
+    public partial class BaseEntityNode : Blueprint41.Query.Node
+    {
         public static implicit operator QueryCondition(BaseEntityNode a)
         {
             return new QueryCondition(a);
@@ -27,27 +27,27 @@ namespace Datastore.Query
             return new QueryCondition(a, true);
         } 
 
-		protected override string GetNeo4jLabel()
-		{
-			return null;
-		}
-
-		protected override Entity GetEntity()
+        protected override string GetNeo4jLabel()
         {
-			return null;
+            return null;
         }
 
-		internal BaseEntityNode() { }
-		internal BaseEntityNode(BaseEntityAlias alias, bool isReference = false)
-		{
-			NodeAlias = alias;
-			IsReference = isReference;
-		}
-		internal BaseEntityNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
-		internal BaseEntityNode(RELATIONSHIP relationship, DirectionEnum direction, AliasResult nodeAlias, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity)
-		{
-			NodeAlias = nodeAlias;
-		}
+        protected override Entity GetEntity()
+        {
+            return null;
+        }
+
+        internal BaseEntityNode() { }
+        internal BaseEntityNode(BaseEntityAlias alias, bool isReference = false)
+        {
+            NodeAlias = alias;
+            IsReference = isReference;
+        }
+        internal BaseEntityNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
+        internal BaseEntityNode(RELATIONSHIP relationship, DirectionEnum direction, AliasResult nodeAlias, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity)
+        {
+            NodeAlias = nodeAlias;
+        }
 
         public BaseEntityNode Where(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Uid = default)
         {
@@ -86,7 +86,7 @@ namespace Datastore.Query
             return this;
         }
 
-		public BaseEntityNode Alias(out BaseEntityAlias alias)
+        public BaseEntityNode Alias(out BaseEntityAlias alias)
         {
             if (NodeAlias is BaseEntityAlias a)
             {
@@ -99,7 +99,7 @@ namespace Datastore.Query
             }
             return this;
         }
-		public BaseEntityNode Alias(out BaseEntityAlias alias, string name)
+        public BaseEntityNode Alias(out BaseEntityAlias alias, string name)
         {
             if (NodeAlias is BaseEntityAlias a)
             {
@@ -114,149 +114,171 @@ namespace Datastore.Query
             return this;
         }
 
-		public BaseEntityNode UseExistingAlias(AliasResult alias)
-		{
-			NodeAlias = alias;
+        public BaseEntityNode UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
             IsReference = true;
-			return this;
-		}
+            return this;
+        }
 
-		public PersonNode CastToPerson()
-		{
-			if (this.Neo4jLabel is null)
-				throw new InvalidOperationException("Casting is not supported for virtual entities.");
+        public PersonNode CastToPerson()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
 
-			if (FromRelationship is null)
-				throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
-			return new PersonNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
-		}
+            return new PersonNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
 
-		public CityNode CastToCity()
-		{
-			if (this.Neo4jLabel is null)
-				throw new InvalidOperationException("Casting is not supported for virtual entities.");
+        public CityNode CastToCity()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
 
-			if (FromRelationship is null)
-				throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
-			return new CityNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
-		}
+            return new CityNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
 
-		public RestaurantNode CastToRestaurant()
-		{
-			if (this.Neo4jLabel is null)
-				throw new InvalidOperationException("Casting is not supported for virtual entities.");
+        public RestaurantNode CastToRestaurant()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
 
-			if (FromRelationship is null)
-				throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
-			return new RestaurantNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
-		}
+            return new RestaurantNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
 
-		public MovieNode CastToMovie()
-		{
-			if (this.Neo4jLabel is null)
-				throw new InvalidOperationException("Casting is not supported for virtual entities.");
+        public MovieNode CastToMovie()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
 
-			if (FromRelationship is null)
-				throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
-			return new MovieNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
-		}
+            return new MovieNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
 
-	}
+        public StreamingServiceNode CastToStreamingService()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
 
-	public class BaseEntityAlias : AliasResult<BaseEntityAlias, BaseEntityListAlias>
-	{
-		internal BaseEntityAlias(BaseEntityNode parent)
-		{
-			Node = parent;
-		}
-		internal BaseEntityAlias(BaseEntityNode parent, string name)
-		{
-			Node = parent;
-			AliasName = name;
-		}
-		internal void SetAlias(string name) => AliasName = name;
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
-		private  BaseEntityAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private  BaseEntityAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private  BaseEntityAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type)
-		{
-			Node = alias.Node;
-		}
+            return new StreamingServiceNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
 
-		public Assignment[] Assign(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Uid = default)
+        public RatingNode CastToRating()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
+
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+
+            return new RatingNode(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
+
+    }
+
+    public class BaseEntityAlias : AliasResult<BaseEntityAlias, BaseEntityListAlias>
+    {
+        internal BaseEntityAlias(BaseEntityNode parent)
+        {
+            Node = parent;
+        }
+        internal BaseEntityAlias(BaseEntityNode parent, string name)
+        {
+            Node = parent;
+            AliasName = name;
+        }
+        internal void SetAlias(string name) => AliasName = name;
+
+        private  BaseEntityAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private  BaseEntityAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private  BaseEntityAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type)
+        {
+            Node = alias.Node;
+        }
+
+        public Assignment[] Assign(JsNotation<System.DateTime> LastModifiedOn = default, JsNotation<string> Uid = default)
         {
             List<Assignment> assignments = new List<Assignment>();
-			if (LastModifiedOn.HasValue) assignments.Add(new Assignment(this.LastModifiedOn, LastModifiedOn));
-			if (Uid.HasValue) assignments.Add(new Assignment(this.Uid, Uid));
+            if (LastModifiedOn.HasValue) assignments.Add(new Assignment(this.LastModifiedOn, LastModifiedOn));
+            if (Uid.HasValue) assignments.Add(new Assignment(this.Uid, Uid));
             
             return assignments.ToArray();
         }
 
 
-		public override IReadOnlyDictionary<string, FieldResult> AliasFields
-		{
-			get
-			{
-				if (m_AliasFields is null)
-				{
-					m_AliasFields = new Dictionary<string, FieldResult>()
-					{
-						{ "Uid", new StringResult(this, "Uid", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"]) },
-						{ "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"]) },
-					};
-				}
-				return m_AliasFields;
-			}
-		}
-		private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields is null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+                        { "Uid", new StringResult(this, "Uid", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"]) },
+                        { "LastModifiedOn", new DateTimeResult(this, "LastModifiedOn", Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"], Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"]) },
+                    };
+                }
+                return m_AliasFields;
+            }
+        }
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
 
-		public StringResult Uid
-		{
-			get
-			{
-				if (m_Uid is null)
-					m_Uid = (StringResult)AliasFields["Uid"];
+        public StringResult Uid
+        {
+            get
+            {
+                if (m_Uid is null)
+                    m_Uid = (StringResult)AliasFields["Uid"];
 
-				return m_Uid;
-			}
-		}
-		private StringResult m_Uid = null;
-		public DateTimeResult LastModifiedOn
-		{
-			get
-			{
-				if (m_LastModifiedOn is null)
-					m_LastModifiedOn = (DateTimeResult)AliasFields["LastModifiedOn"];
+                return m_Uid;
+            }
+        }
+        private StringResult m_Uid = null;
+        public DateTimeResult LastModifiedOn
+        {
+            get
+            {
+                if (m_LastModifiedOn is null)
+                    m_LastModifiedOn = (DateTimeResult)AliasFields["LastModifiedOn"];
 
-				return m_LastModifiedOn;
-			}
-		}
-		private DateTimeResult m_LastModifiedOn = null;
-		public AsResult As(string aliasName, out BaseEntityAlias alias)
-		{
-			alias = new BaseEntityAlias((BaseEntityNode)Node)
-			{
-				AliasName = aliasName
-			};
-			return this.As(aliasName);
-		}
-	}
+                return m_LastModifiedOn;
+            }
+        }
+        private DateTimeResult m_LastModifiedOn = null;
+        public AsResult As(string aliasName, out BaseEntityAlias alias)
+        {
+            alias = new BaseEntityAlias((BaseEntityNode)Node)
+            {
+                AliasName = aliasName
+            };
+            return this.As(aliasName);
+        }
+    }
 
-	public class BaseEntityListAlias : ListResult<BaseEntityListAlias, BaseEntityAlias>, IAliasListResult
-	{
-		private BaseEntityListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private BaseEntityListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private BaseEntityListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
-	}
-	public class BaseEntityJaggedListAlias : ListResult<BaseEntityJaggedListAlias, BaseEntityListAlias>, IAliasJaggedListResult
-	{
-		private BaseEntityJaggedListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private BaseEntityJaggedListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private BaseEntityJaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
-	}
+    public class BaseEntityListAlias : ListResult<BaseEntityListAlias, BaseEntityAlias>, IAliasListResult
+    {
+        private BaseEntityListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private BaseEntityListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private BaseEntityListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
+    }
+    public class BaseEntityJaggedListAlias : ListResult<BaseEntityJaggedListAlias, BaseEntityListAlias>, IAliasJaggedListResult
+    {
+        private BaseEntityJaggedListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private BaseEntityJaggedListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private BaseEntityJaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
+    }
 }

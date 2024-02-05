@@ -1,0 +1,341 @@
+﻿<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+#pragma warning disable S101 // Types should be named in PascalCase
+
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+using Blueprint41;
+using Blueprint41.Core;
+using Blueprint41.Query;
+using Blueprint41.DatastoreTemplates;
+using q = <#= Settings.FullQueryNamespace #>;
+using node = <#= Settings.FullQueryNamespace #>.Node;
+
+namespace <#= Settings.FullCRUDNamespace #>
+{
+    /// <summary>
+    /// Relationship: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+    /// </summary>
+    public partial class <#= DALRelation.Name #>
+    {
+        private <#= DALRelation.Name #>(string elementId, <#= DALRelation.InEntity.Name #> @in, <#= DALRelation.OutEntity.Name #> @out, Dictionary<string, object> properties)
+        {
+            _elementId = elementId;
+            
+            <#= DALRelation.InEntity.Name #> = @in;
+            <#= DALRelation.OutEntity.Name #> = @out;
+            
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+#>
+            <#= attr.Name #> = (<#= attr.OuterReturnType #>)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnType #>), properties.GetValue("<#= attr.Name #>"));
+<#
+    }
+#>        }
+
+        internal string _elementId { get; private set; }
+
+        /// <summary>
+        /// Person (In Node)
+        /// </summary>
+        public <#= DALRelation.InEntity.Name #> <#= DALRelation.InEntity.Name #> { get; private set; }
+
+        /// <summary>
+        /// Restaurant (Out Node)
+        /// </summary>
+        public <#= DALRelation.OutEntity.Name #> <#= DALRelation.OutEntity.Name #> { get; private set; }
+
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+#>
+        public <#= attr.OuterReturnType #> <#= attr.Name #> { get; private set; }
+<#
+    }
+#>
+
+        public void Assign(<#= DALRelation.Properties.ToJsonNotation(DALRelation) #>)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= DALRelation.InEntity.Name #>.Alias(out var inAlias).In.<#= DALRelation.Name #>.Alias(out var relAlias).Out.<#= DALRelation.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(inAlias.<#= DALRelation.InEntity.Key.Name #> == <#= DALRelation.InEntity.Name #>.<#= DALRelation.InEntity.Key.Name #>, outAlias.<#= DALRelation.OutEntity.Key.Name #> == <#= DALRelation.OutEntity.Name #>.<#= DALRelation.OutEntity.Key.Name #>, relAlias.ElementId == _elementId)
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.<#= DALRelation.Name #>_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+        if (DALRelation.ExcludedProperties().Contains(attr.Name))
+            continue;
+#>
+                if (<#= attr.Name #>.HasValue) assignments.Add(new Assignment(alias.<#= attr.Name #>, <#= attr.Name #>));
+<#
+    }
+#>
+               
+                return assignments.ToArray();
+            }
+        }
+        public static List<<#= DALRelation.Name #>> Where(Func<Alias, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= DALRelation.InEntity.Name #>.Alias(out var inAlias).In.<#= DALRelation.Name #>.Alias(out var relAlias).Out.<#= DALRelation.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return Load(query);
+        }
+        public static List<<#= DALRelation.Name #>> Where(Func<Alias, QueryCondition[]> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= DALRelation.InEntity.Name #>.Alias(out var inAlias).In.<#= DALRelation.Name #>.Alias(out var relAlias).Out.<#= DALRelation.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return Load(query);
+        }
+        public static List<<#= DALRelation.Name #>> Where(<#= DALRelation.Properties.ToJsonNotation() #>, JsNotation<<#= DALRelation.InEntity.Name #>> InNode = default, JsNotation<<#= DALRelation.OutEntity.Name #>> OutNode = default)
+        {
+            return Where(delegate(Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+        if (attr.SystemReturnType.IsEnum)
+        {
+#>
+                if (<#= attr.Name #>.HasValue) conditions.Add(alias.<#= attr.Name #> == <#= attr.Name #>.Value?.ToString());
+<#
+        }
+        else
+        {
+#>
+                if (<#= attr.Name #>.HasValue) conditions.Add(alias.<#= attr.Name #> == <#= attr.Name #>.Value);
+<#
+        }
+    }
+#>
+                if (InNode.HasValue) conditions.Add(alias.<#= DALRelation.InEntity.Name #>(InNode.Value));
+                if (OutNode.HasValue) conditions.Add(alias.<#= DALRelation.OutEntity.Name #>(OutNode.Value));
+
+                return conditions.ToArray();
+            });
+        }
+        internal static List<<#= DALRelation.Name #>> Load(ICompiled query) => Load(query, null);
+        internal static List<<#= DALRelation.Name #>> Load(ICompiled query, params (string name, object value)[] arguments)
+        {
+            var context = query.GetExecutionContext();
+            if (arguments is not null && arguments.Length > 0)
+            {
+                foreach ((string name, object value) in arguments)
+                    context.SetParameter(name, value);
+            }
+
+            var results = context.Execute(NodeMapping.AsWritableEntity);
+
+            return results.Select(result => new <#= DALRelation.Name #>(
+                result.elementId,
+                result.@in,
+                result.@out,
+                result.properties
+            )).ToList();
+        }
+<#
+    var enumProperties = DALRelation.Properties.Where(item => item.EnumValues is not null).ToList();
+
+    if (enumProperties.Count != 0)
+    {
+#>
+
+        #region Enumerations
+
+<#
+        foreach (Property attr in enumProperties)
+        {
+            if (attr.EnumValues is null)
+                continue;
+#>
+        public enum <#= attr.Name #>Enum
+        {
+<#
+            foreach (var value in attr.EnumValues)
+            {
+#>
+            <#= value.Name #> = <#= value.Value #>,
+<#
+            }
+#>
+        }
+
+<#
+        }
+#>
+        #endregion
+<#
+    }
+#>
+
+        public static Relationship Relationship => Threadsafe.LazyInit(ref _relationship, () => <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Relations["<#= DALRelation.Name #>"]);
+        private static Relationship _relationship = null;
+
+        /// <summary>
+        /// CRUD Specific alias for relationship: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+        /// </summary>
+        public partial class Alias
+        {
+            internal Alias(q.<#= DALRelation.Name #>_ALIAS relAlias, q.<#= DALRelation.InEntity.Name #>Alias inAlias, q.<#= DALRelation.OutEntity.Name #>Alias outAlias)
+            {
+                _relAlias = relAlias;
+                _inAlias = inAlias;
+                _outAlias = outAlias;
+            }
+
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+#>
+            public <#= GetResultType(attr.SystemReturnType) #> <#= attr.Name #>
+            {
+                get
+                {
+                    if (_<#= attr.Name.ToCamelCase() #> is null)
+                        _<#= attr.Name.ToCamelCase() #> = _relAlias.<#= attr.Name #>;
+
+                    return _<#= attr.Name.ToCamelCase() #>;
+                }
+            }
+            private <#= GetResultType(attr.SystemReturnType) #> _<#= attr.Name.ToCamelCase() #> = null;
+<#
+    }
+#>
+
+            /// <summary>
+            /// <#= DALRelation.InEntity.Name #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is the given <#= DALRelation.InEntity.Name.ToTitleCase().ToLowerCase() #>
+            /// </returns>
+            public QueryCondition <#= DALRelation.InEntity.Name #>(<#= DALRelation.InEntity.Name #> <#= DALRelation.InEntity.Name.ToCamelCase() #>)
+            {
+                return _inAlias.<#= DALRelation.InEntity.Key.Name #> == <#= DALRelation.InEntity.Name.ToCamelCase() #>.<#= DALRelation.InEntity.Key.Name #>;
+            }
+            /// <summary>
+            /// <#= DALRelation.InEntity.Name #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is in the given set of <#= DALRelation.InEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
+            /// </returns>
+            public QueryCondition <#= DALRelation.InEntity.Name.ToPlural() #>(IEnumerable<<#= DALRelation.InEntity.Name #>> <#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>)
+            {
+                return _inAlias.<#= DALRelation.InEntity.Key.Name #>.In(<#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.InEntity.Key.Name #>));
+            }
+            /// <summary>
+            /// <#= DALRelation.InEntity.Name #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// </summary>
+            /// <returns>
+            /// Condition where in-node is in the given set of <#= DALRelation.InEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
+            /// </returns>
+            public QueryCondition <#= DALRelation.InEntity.Name.ToPlural() #>(params <#= DALRelation.InEntity.Name #>[] <#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>)
+            {
+                return _inAlias.<#= DALRelation.InEntity.Key.Name #>.In(<#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.InEntity.Key.Name #>));
+            }
+
+            /// <summary>
+            /// <#= DALRelation.OutEntity.Name #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is the given <#= DALRelation.OutEntity.Name.ToTitleCase().ToLowerCase() #>
+            /// </returns>
+            public QueryCondition <#= DALRelation.OutEntity.Name #>(<#= DALRelation.OutEntity.Name #> <#= DALRelation.OutEntity.Name.ToCamelCase() #>)
+            {
+                return _outAlias.<#= DALRelation.OutEntity.Key.Name #> == <#= DALRelation.OutEntity.Name.ToCamelCase() #>.<#= DALRelation.OutEntity.Key.Name #>;
+            }
+            /// <summary>
+            /// <#= DALRelation.OutEntity.Name #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is in the given set of <#= DALRelation.OutEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
+            /// </returns>
+            public QueryCondition <#= DALRelation.OutEntity.Name.ToPlural() #>(IEnumerable<<#= DALRelation.OutEntity.Name #>> <#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>)
+            {
+                return _outAlias.<#= DALRelation.OutEntity.Key.Name #>.In(<#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.OutEntity.Key.Name #>));
+            }
+            /// <summary>
+            /// <#= DALRelation.OutEntity.Name #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// </summary>
+            /// <returns>
+            /// Condition where out-node is in the given set of <#= DALRelation.OutEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
+            /// </returns>
+            public QueryCondition <#= DALRelation.OutEntity.Name.ToPlural() #>(params <#= DALRelation.OutEntity.Name #>[] <#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>)
+            {
+                return _outAlias.<#= DALRelation.OutEntity.Key.Name #>.In(<#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.OutEntity.Key.Name #>));
+            }
+
+<#
+    if (DALRelation.IsTimeDependent)
+    {
+#>
+            public QueryCondition[] Moment(DateTime? moment)      => _relAlias.Moment(moment);
+            public QueryCondition[] Moment(DateTimeResult moment) => _relAlias.Moment(moment);
+            public QueryCondition[] Moment(Parameter moment)      => _relAlias.Moment(moment);
+
+<#
+    }
+#>
+            private readonly q.<#= DALRelation.Name #>_ALIAS _relAlias;
+            private readonly q.<#= DALRelation.InEntity.Name #>Alias _inAlias;
+            private readonly q.<#= DALRelation.OutEntity.Name #>Alias _outAlias;
+        }
+    }
+
+    public static partial class RelationshipAssignmentExtensions
+    {
+        public static void Assign(this IEnumerable<<#= DALRelation.Name #>> @this<#= DALRelation.Properties.ToJsonNotation(DALRelation, true) #>)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.<#= DALRelation.InEntity.Name #>.Alias(out var inAlias).In.<#= DALRelation.Name #>.Alias(out var relAlias).Out.<#= DALRelation.OutEntity.Name #>.Alias(out var outAlias))
+                .Where(relAlias.ElementId.In(@this.Select(item => item._elementId)))
+                .Set(GetAssignments(relAlias))
+                .Compile();
+
+            var context = query.GetExecutionContext();
+            context.Execute();
+
+            Assignment[] GetAssignments(q.<#= DALRelation.Name #>_ALIAS alias)
+            {
+                List<Assignment> assignments = new List<Assignment>();
+<#
+    foreach (var attr in DALRelation.Properties)
+    {
+        if (DALRelation.ExcludedProperties().Contains(attr.Name))
+            continue;
+#>
+                if (<#= attr.Name #>.HasValue) assignments.Add(new Assignment(alias.<#= attr.Name #>, <#= attr.Name #>));
+<#
+    }
+#>
+               
+                return assignments.ToArray();
+            }
+        }
+    }
+}

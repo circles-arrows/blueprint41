@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace Blueprint41.Core
         private protected override int CountInternal { get { return Count; } }
         public int Count { get { LazyLoad(); return InnerData.Count; } }
 
-        internal sealed override void Add(TEntity item, bool fireEvents)
+        internal sealed override void Add(TEntity item, bool fireEvents, Dictionary<string, object>? properties)
         {
             if (item is null)
                 return;
@@ -46,9 +47,9 @@ namespace Blueprint41.Core
                 if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                     return;
 
-            ExecuteAction(AddAction(item, null));
+            ExecuteAction(AddAction(item, null, properties));
         }
-        internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents)
+        internal sealed override void AddRange(IEnumerable<TEntity> items, bool fireEvents, Dictionary<string, object>? properties)
         {
             LazySet();
 
@@ -65,7 +66,7 @@ namespace Blueprint41.Core
                     if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                         return;
 
-                actions.AddLast(AddAction(item, null));
+                actions.AddLast(AddAction(item, null, properties));
             }
 
             ExecuteAction(actions);
@@ -289,7 +290,11 @@ namespace Blueprint41.Core
 
             return LoadedData.First().Item;
         }
-        protected override void SetItem(TEntity? item, DateTime? moment)
+        protected override void AddItem(TEntity item, DateTime? moment, Dictionary<string, object>? properties)
+        {
+            Add(item, true, properties);
+        }
+        protected override void SetItem(TEntity? item, DateTime? moment, Dictionary<string, object>? properties)
         {
             if (ParentProperty?.PropertyType != PropertyType.Lookup)
                 throw new NotSupportedException("You cannot use SetItem on a property thats not a lookup.");
@@ -300,7 +305,7 @@ namespace Blueprint41.Core
                 EagerLoadLogic.Invoke(item);
 
             List<CollectionItem<TEntity>> currentItem = InnerData.ToList();
-            if (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null))
+            if (NeedsToAssign(ParentProperty?.Relationship) || (!currentItem.FirstOrDefault()?.Item?.Equals(item) ?? !ReferenceEquals(item, null)))
             {
                 if (ForeignProperty is not null && ForeignProperty.PropertyType == PropertyType.Lookup)
                 {
@@ -338,8 +343,16 @@ namespace Blueprint41.Core
                     }
 
                     if (Count == 0)
-                        Add(item, false);
+                        Add(item, false, properties);
                 }
+            }
+
+            static bool NeedsToAssign(Relationship? relationship)
+            {
+                if (relationship is null || (relationship.Properties.Count - relationship.ExcludedProperties().Count) > 0)
+                    return true;
+
+                return false;
             }
         }
         protected override bool IsNull(bool isUpdate)
@@ -365,9 +378,9 @@ namespace Blueprint41.Core
         {
             return new RemoveRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
         }
-        internal override RelationshipAction AddAction(OGM item, DateTime? moment)
+        internal override RelationshipAction AddAction(OGM item, DateTime? moment, Dictionary<string, object>? properties)
         {
-            return new AddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item));
+            return new AddRelationshipAction(RelationshipPersistenceProvider, Relationship, InItem(item), OutItem(item), properties);
         }
         internal override RelationshipAction ClearAction(DateTime? moment)
         {

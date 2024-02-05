@@ -241,4 +241,27 @@ namespace Blueprint41.Core
         private static readonly AtomicDictionary<Type, Func<Task, Task?>?> getTaskResultMethods = new AtomicDictionary<Type, Func<Task, Task?>?>();
         private static readonly AtomicDictionary<Type, Func<Task, IEnumerable<Task>?>?> getTaskResultsMethods = new AtomicDictionary<Type, Func<Task, IEnumerable<Task>?>?>();
     }
+    public static class ThreadSafe
+    {
+        public static T LazyInit<T>(ref T variable, Func<T> factoryMethod)
+        {
+            if (variable is null)
+            {
+#pragma warning disable S2551 // Shared resources should not be used for locking
+                lock (typeof(SyncLock<T>))
+                {
+                    if (variable is null)
+                        variable = factoryMethod.Invoke();
+                }
+#pragma warning restore S2551 // Shared resources should not be used for locking
+            }
+            return variable;
+        }
+
+#pragma warning disable S2326 // Unused type parameters should be removed
+#pragma warning disable S2094 // Classes should not be empty
+        private sealed class SyncLock<T> { }
+#pragma warning restore S2094 // Classes should not be empty
+#pragma warning restore S2326 // Unused type parameters should be removed
+    }
 }

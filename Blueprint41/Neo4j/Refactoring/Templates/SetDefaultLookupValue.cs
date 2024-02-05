@@ -35,7 +35,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
 
 
-    Log("	executing {0} -> Set Default Lookup Value for {1}.{2}", this.GetType().Name, Property.Parent.Name, Property.Name);
+    Log("	executing {0} -> Set Default Lookup Value for {1}.{2}", this.GetType().Name, Caller.Name, Property.Name);
 
             
             #line default
@@ -43,7 +43,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             this.Write("MATCH (in:");
             
             #line 12 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Property.Parent.Label.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden

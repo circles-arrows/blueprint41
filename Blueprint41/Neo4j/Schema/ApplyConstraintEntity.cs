@@ -9,7 +9,7 @@ namespace Blueprint41.Neo4j.Schema
 {
     public class ApplyConstraintEntity
     {
-        internal ApplyConstraintEntity(SchemaInfo parent, Entity entity)
+        internal ApplyConstraintEntity(SchemaInfo parent, IEntity entity)
         {
             Parent = parent;
             Entity = entity;
@@ -19,11 +19,10 @@ namespace Blueprint41.Neo4j.Schema
 
         internal virtual List<ApplyConstraintProperty> Initialize()
         {
-            // TODO: Only applies indexes and constraints on a single field, composite indexes and constraints are ignored.
 
             List<ApplyConstraintProperty> actions = new List<ApplyConstraintProperty>();
-            IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity.Count == 1 && item.Entity[0] == Entity.Label.Name);
-            IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity.Count == 1 && item.Entity[0] == Entity.Label.Name);
+            IEnumerable<ConstraintInfo> entityConstraints = Parent.Constraints.Where(item => item.Entity.Count == 1 && item.Entity[0] == Entity.Neo4jName);
+            IEnumerable<IndexInfo> entityIndexes = Parent.Indexes.Where(item => item.Entity.Count == 1 && item.Entity[0] == Entity.Neo4jName);
             IReadOnlyList<Property> properties = Entity.GetPropertiesOfBaseTypesAndSelf();
 
             foreach (Property property in properties)
@@ -58,7 +57,7 @@ namespace Blueprint41.Neo4j.Schema
         }        
 
         protected SchemaInfo Parent { get; set; }
-        public Entity Entity { get; protected set; }
+        public IEntity Entity { get; protected set; }
         public IReadOnlyList<ApplyConstraintProperty> Actions { get; protected set; }
 
         public override string ToString()

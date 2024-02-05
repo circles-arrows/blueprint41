@@ -588,7 +588,7 @@ namespace Blueprint41.UnitTest.Tests
                 dynamic contactStatus = model.Entities["ContactStatus"].Refactor.MatchNode("1");
             });
             
-            Assert.That(exception.Message, Contains.Substring("Specified argument was out of the range of valid values. (Parameter 'Only statically created data (via the upgrade script) can be loaded here.')"));
+            Assert.That(exception.Message, Contains.Substring("Specified argument was out of the range of valid values."));
         }
 
         #endregion

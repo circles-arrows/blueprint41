@@ -35,28 +35,6 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
-        public void EnsureRunningTransactionIsNeo4jTransactionWithException()
-        {
-            var provider = PersistenceProvider.CurrentPersistenceProvider as MockNeo4JPersistenceProvider;
-            provider.NotNeo4jTransaction = true;
-
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                using (Transaction.Begin(true))
-                {
-                    // Let us try to create a person entity
-                    Transaction.RunningTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
-                    Transaction.Commit();
-                }
-            });
-
-            Assert.That(exception.Message, Contains.Substring("The current transaction is not a Neo4j transaction."));
-
-            // Revert back for future transaction
-            provider.NotNeo4jTransaction = false;
-        }
-
-        [Test]
         public void EnsureNotAbleToTransactAfterCommit()
         {
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>

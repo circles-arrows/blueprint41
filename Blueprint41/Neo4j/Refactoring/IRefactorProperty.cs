@@ -15,15 +15,17 @@ namespace Blueprint41.Neo4j.Refactoring
     {
         void Rename(string newName);
 
-        [RestrictedTo(PropertyType.Attribute)]
-        void Move(Entity target);
         //void Move(string pattern, string newPropertyName);
-        [RestrictedTo(PropertyType.Attribute)]
-        void MoveToSubClasses();
 
+        /// <summary>
+        /// Merges two properties according to the chosen algorithm
+        /// </summary>
         [RestrictedTo(PropertyType.Attribute)]
         void Merge(Property target, MergeAlgorithm mergeAlgorithm);
 
+        /// <summary>
+        /// Converts the string property to a compressed-string property
+        /// </summary>
         [RestrictedTo(PropertyType.Attribute)]
         void ToCompressedString(int batchSize = 100);
 
@@ -33,31 +35,88 @@ namespace Blueprint41.Neo4j.Refactoring
         [RestrictedTo(PropertyType.Attribute)]
         void SetIndexType(IndexType indexType);
 
+        /// <summary>
+        /// Removes the property from the data model and deletes the existing data in the database
+        /// </summary>
         void Deprecate();
 
+        /// <summary>
+        /// Make the property nullable
+        /// </summary>
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
+        void MakeNullable();
+
+        /// <summary>
+        /// Make the property mandatory, throw an error if there are any instances where the value is currently NULL
+        /// </summary>
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
+        void MakeMandatory();
+
+        /// <summary>
+        /// Make the property mandatory and set the default value for instances where the value is currently NULL
+        /// </summary>
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
+        void MakeMandatory(object defaultValue);
+        
+        /// <summary>
+        /// Set the default value for instances where the value is currently NULL
+        /// </summary>
+        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
+        void SetDefaultValue(object defaultValue);
+    }
+
+    public partial interface IRefactorEntityProperty : IRefactorProperty
+    {
+        /// <summary>
+        /// Moves the property to a base or sub-class
+        /// </summary>
+        [RestrictedTo(PropertyType.Attribute)]
+        void Move(Entity target);
+
+        /// <summary>
+        /// Moves/duplicates the property to every sub-class of the current class
+        /// </summary>
+        [RestrictedTo(PropertyType.Attribute)]
+        void MoveToSubClasses();
+
+        /// <summary>
+        /// Move a relationship property to another node and migrate the existing relations according to the supplied pattern
+        /// </summary>
         [RestrictedTo(PropertyType.Lookup, PropertyType.Collection)]
         void Reroute(string pattern, string newPropertyName, bool strict = true);
+        /// <summary>
+        /// Move a relationship property to another node and migrate the existing relations according to the supplied pattern
+        /// (You can rename the relationship at the same time)
+        /// </summary>
         [RestrictedTo(PropertyType.Lookup, PropertyType.Collection)]
         void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType = null, bool strict = true);
 
-		[RestrictedTo(PropertyType.Lookup)]
+        /// <summary>
+        /// Convert a Lookup to a Collection
+        /// </summary>
+        [RestrictedTo(PropertyType.Lookup)]
         void ConvertToCollection();
-		[RestrictedTo(PropertyType.Lookup)]
+        /// <summary>
+        /// Convert a Lookup to a Collection
+        /// </summary>
+        [RestrictedTo(PropertyType.Lookup)]
         void ConvertToCollection(string newName);
-		[RestrictedTo(PropertyType.Lookup)]
+
+        /// <summary>
+        /// Convert a Collection to a Lookup
+        /// </summary>
+        [RestrictedTo(PropertyType.Lookup)]
         void ConvertToLookup(ConvertAlgorithm conversionAlgorithm);
-		[RestrictedTo(PropertyType.Lookup)]
+        /// <summary>
+        /// Convert a Collection to a Lookup
+        /// </summary>
+        [RestrictedTo(PropertyType.Lookup)]
         void ConvertToLookup(string newName, ConvertAlgorithm conversionAlgorithm);
 
-        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
-        void MakeNullable();
-        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
-        void MakeMandatory();
-        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
-        void MakeMandatory(object defaultValue);
+        /// <summary>
+        /// Make the property mandatory and set the default lookup value for instances where the value is currently NULL
+        /// </summary>
         [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
         void MakeMandatory(DynamicEntity defaultValue);
-        [RestrictedTo(PropertyType.Attribute, PropertyType.Lookup)]
-        void SetDefaultValue(object defaultValue);
     }
 }

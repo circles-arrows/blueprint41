@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Blueprint41.Core;
-using Blueprint41.Modeller.Schemas;
+//using Blueprint41.Modeller.Schemas;
 
 namespace Blueprint41Test
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using Blueprint41.Core;
@@ -24,15 +25,16 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockNeo4JPersistenceProvider persistenceProvider = new MockNeo4JPersistenceProvider("bolt://localhost:7687", "neo4j", "neo4j");
+            MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
             PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
 
             TearDown();
+        }
 
-            string projectFolder = Environment.CurrentDirectory + "\\..\\..\\..\\";
-            GeneratorSettings settings = new GeneratorSettings(projectFolder);
-            _ = Generator.Execute<MockModel>(settings);
-
+        [SetUp]
+        public void Setup()
+        {
+            // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!
             MockModel model = new MockModel()
             {
                 LogToConsole = true
@@ -67,7 +69,7 @@ namespace Blueprint41.UnitTest.Tests
                 Person a;
                 using (Transaction.Begin(true))
                 {
-                    
+
                     a = new Person()
                     {
                         Name = "Joe Smith",
@@ -76,26 +78,25 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Commit();
                 }
 
-                string consoleOutput = output.GetOuput();
-
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Person {""Name"":""Joe Smith"",""LastModifiedOn"":)\d+}(\) SET inserted.Uid = key Return inserted)"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City {""Name"":""New York"",""LastModifiedOn"":)\d+}(\) SET inserted.Uid = key Return inserted)"));
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (in:Person {Uid:""2"" })"));
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (out:City {Uid:""3"" })"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LIVES_IN\]->\(out\) ON CREATE SET outr \+= {""CreationDate"":)\d+(\})"));
+                output.AssertNodeCreated("Person");
+                output.AssertNodeCreated("City");
+                output.AssertTimeDependentRelationshipCreated("Person", "LIVES_IN", "City");
 
                 Assert.IsInstanceOf<OGMImpl>(a);
                 Assert.AreEqual(a.Name, "Joe Smith");
                 Assert.AreEqual(a.City.Name, "New York");
 
+                // Database assigned a valid Uid
+                string key = GetAndCheckKey(a);
+
                 // Without transaction
-                Assert.Throws<InvalidOperationException>(() => Person.Load("2"));
+                Assert.Throws<InvalidOperationException>(() => Person.Load(key));
 
                 Person b;
                 using (Transaction.Begin(true))
                 {
                     // Load
-                    b = Person.Load("2");
+                    b = Person.Load(key);
                     Assert.AreEqual(a, b);
 
                     // Update
@@ -103,31 +104,27 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Commit();
                 }
 
-                consoleOutput = output.GetOuput();
-
                 Assert.AreEqual(b.Name, "Jaden Smith");
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\) WHERE node.Uid = ""2"" AND node.LastModifiedOn = )\d+( SET node = \{""Name"":""Jaden Smith"",""Uid"":""2"",""LastModifiedOn"":)\d+(\})"));
+                output.AssertNodeUpdated("Person");
 
                 Person c;
                 using (Transaction.Begin(true))
                 {
-                    c = Person.Load("2");
+                    c = Person.Load(key);
 
                     c.Delete();
                     Transaction.Commit();
                 }
 
-                consoleOutput = output.GetOuput();
-
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (item:Person)-[r:LIVES_IN]->(useless) WHERE item.Uid = ""2"" DELETE r"));
-                Assert.That(consoleOutput, Contains.Substring(@"MATCH (item:Person)-[r:EATS_AT]->(useless) WHERE item.Uid = ""2"" DELETE r"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\) WHERE node.Uid = ""2"" AND node.LastModifiedOn = )\d+( DELETE node)"));
+                output.AssertNodeDeleted("Person");
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
 
                 Person d;
                 using (Transaction.Begin())
                 {
                     // Load
-                    d = Person.Load("2");
+                    d = Person.Load(key);
                     Assert.IsNull(d);
                 }
             }
@@ -136,13 +133,12 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void OGMImplCRUDWithRelationship()
         {
-            string consoleOutput;
             using (ConsoleOutput output = new ConsoleOutput())
             {
 
-                Person p1;
-                City c1;
-                Restaurant r1;
+                Person p1, p2;
+                City c1, c2;
+                Restaurant r1, r2;
 
                 // adding relationships per entity
                 using (Transaction.Begin(true))
@@ -166,78 +162,94 @@ namespace Blueprint41.UnitTest.Tests
                     r1.City = c1;
                     p1.Restaurants.Add(r1);
 
+                    Transaction.Flush();
+
+                    Assert.AreEqual(p1.City, c1);
+                    Assert.AreEqual(r1.City, c1);
+                    Assert.AreEqual(p1.Restaurants[0], r1);
+
                     Transaction.Commit();
                 }
 
-                Assert.AreEqual(p1.City, c1);
-                Assert.AreEqual(r1.City, c1);
-                Assert.AreEqual(p1.Restaurants[0], r1);
 
-                consoleOutput = output.GetOuput();
+                output.AssertNodeCreated("Person");
+                output.AssertNodeCreated("City");
+                output.AssertNodeCreated("Restaurant");
+                output.AssertTimeDependentRelationshipCreated("Person", "LIVES_IN", "City");
+                output.AssertRelationshipCreated("Restaurant", "LOCATED_AT", "City");
+                output.AssertRelationshipCreated("Person", "EATS_AT", "Restaurant");
 
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Person \{""Name"":""Joe Smith"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City \{""Name"":""New York"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Restaurant \{""Name"":""Pizza House Inc."",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
+                // Database assigned a valid Uids
+                string key2 = GetAndCheckKey(p1); 
+                string key3 = GetAndCheckKey(c1); 
+                string key4 = GetAndCheckKey(r1);
 
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:City \{Uid:""3"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LIVES_IN\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Restaurant \{Uid:""4"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:City \{Uid:""3"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LOCATED_AT\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""2"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:Restaurant \{Uid:""4"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:EATS_AT\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
 
                 using (Transaction.Begin(true))
                 {
-                    Person p2 = new Person()
+                    p2 = new Person()
                     {
                         Name = "Jane Smith",
-                        City = new City { Name = "San Francisco" }
                     };
-                    p2.Restaurants.Add(new Restaurant { Name = "Tadich Grill", City = p2.City });
+
+                    c2 = new City()
+                    {
+                        Name = "San Francisco"
+                    };
+
+                    r2 = new Restaurant
+                    {
+                        Name = "Tadich Grill",
+                    };
+
+                    p2.City = c2;
+                    r2.City = c2;
+                    p2.Restaurants.Add(r2);
 
                     Transaction.Commit();
                 }
 
-                consoleOutput = output.GetOuput();
+                output.AssertNodeCreated("Person");
+                output.AssertNodeCreated("City");
+                output.AssertNodeCreated("Restaurant");
+                output.AssertTimeDependentRelationshipCreated("Person", "LIVES_IN", "City");
+                output.AssertRelationshipCreated("Restaurant", "LOCATED_AT", "City");
+                output.AssertRelationshipCreated("Person", "EATS_AT", "Restaurant");
 
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Person \{""Name"":""Jane Smith"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:City \{""Name"":""San Francisco"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(CREATE \(inserted:Restaurant \{""Name"":""Tadich Grill"",""LastModifiedOn"":)\d+(\}\) SET inserted.Uid = key Return inserted)"));
+                // Database assigned a valid Uids
+                string key5 = GetAndCheckKey(p2);
+                string key6 = GetAndCheckKey(c2);
+                string key7 = GetAndCheckKey(r2);
 
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:City \{Uid:""6"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LIVES_IN\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Restaurant \{Uid:""7"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:City \{Uid:""6"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:LOCATED_AT\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(in:Person \{Uid:""5"" \}\))[^a-zA-Z,0-9]*(MATCH \(out:Restaurant \{Uid:""7"" \}\))"));
-                Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MERGE \(in\)-\[outr:EATS_AT\]->\(out\) ON CREATE SET outr \+= \{""CreationDate"":)\d+(\})"));
 
                 // Update
-
                 using (Transaction.Begin(true))
                 {
 
-                    Person p = Person.Load("5");
-                    p.Name = "Janice Smith";
-                    p.City.Name = "California";
-                    p.Restaurants[0].Name = "Shakeys Pizza";
+                    Person person = Person.Load(key5);
+                    person.Name = "Janice Smith";
+                    person.City.Name = "California";
+                    person.Restaurants[0].Name = "Shakeys Pizza";
+
+                    City city = person.City;
+                    Restaurant restaurant = person.Restaurants[0];
 
                     Transaction.Commit();
-
-                    consoleOutput = output.GetOuput();
-
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\) WHERE node.Uid = ""5"" RETURN node)"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\)-\[rel:LIVES_IN\]->\(out:City\) WHERE node.Uid = ""5"" RETURN out, rel)"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\)-\[rel:EATS_AT\]->\(out:Restaurant\) WHERE node.Uid = ""5"" RETURN out, rel)"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Person\) WHERE node.Uid = ""5"" AND node.LastModifiedOn = )\d+( SET node = \{""Name"":""Janice Smith"",""Uid"":""5"",""LastModifiedOn"":)\d+(\})"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" AND node.LastModifiedOn = )\d+( SET node = \{""Name"":""California"",""Uid"":""6"",""LastModifiedOn"":)\d+(\})"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:Restaurant\) WHERE node.Uid = ""7"" AND node.LastModifiedOn = )\d+( SET node = \{""Name"":""Shakeys Pizza"",""Uid"":""7"",""LastModifiedOn"":)\d+(\})"));
                 }
 
+                output.AssertNodeLoaded("Person");
+                output.AssertRelationshipLoaded("Person", "LIVES_IN", "City");
+                output.AssertRelationshipLoaded("Person", "EATS_AT", "Restaurant");
+                output.AssertNodeUpdated("Person");
+                output.AssertNodeUpdated("City");
+                output.AssertNodeUpdated("Restaurant");
+
+                // Check properties are updated after reloading
                 using (Transaction.Begin())
                 {
-                    Person p = Person.Load("5");
-                    City c = City.Load("6");
-                    Restaurant r = Restaurant.Load("7");
+                    Person p = Person.Load(key5);
+                    City c = City.Load(key6);
+                    Restaurant r = Restaurant.Load(key7);
 
                     Assert.AreEqual(p.Name, "Janice Smith");
                     Assert.AreEqual(c.Name, "California");
@@ -247,7 +259,7 @@ namespace Blueprint41.UnitTest.Tests
                 // Removing relationships by setting
                 using (Transaction.Begin(true))
                 {
-                    Person p = Person.Load("5");
+                    Person p = Person.Load(key5);
                     p.City = null;
                     p.Restaurants.Clear();
 
@@ -256,70 +268,92 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.IsNull(p.City);
                     Assert.IsTrue(p.Restaurants.Count == 0);
 
-                    consoleOutput = output.GetOuput();
-
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Person\)-\[r:LIVES_IN\]->\(useless\) WHERE item.Uid = ""5"" DELETE r)"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Person\)-\[r:EATS_AT\]->\(useless\) WHERE item.Uid = ""5"" DELETE r)"));
-
                     Transaction.Rollback();
                 }
+
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
+
 
                 // Removing relationships via properties
                 using (Transaction.Begin(true))
                 {
-                    Person p = Person.Load("5");
-                    p.City.Delete();
-                    p.Restaurants[0].Delete();
+                    Person p = Person.Load(key5);
+                    City c = p.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
+                    Restaurant r = p.Restaurants[0];
+
+                    p.City = null;
+                    p.Restaurants.Remove(r);
 
                     Transaction.Flush();
 
-                    consoleOutput = output.GetOuput();
-
+                    Assert.IsTrue(c.PersistenceState == PersistenceState.Loaded);
+                    Assert.IsTrue(r.PersistenceState == PersistenceState.Loaded);
+ 
                     Assert.IsNull(p.City);
-                    Assert.IsTrue(p.Restaurants.Count == 0);
-
-                    // Removing Person -> City Relationship
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LIVES_IN\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
-                    // Removing City -> Restaurant Relationship
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LOCATED_AT\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
-
-                    // Removing Restaurant -> City Relationship
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Restaurant\)-\[r:LOCATED_AT\]->\(useless\) WHERE item.Uid = ""7"" DELETE r)"));
-                    // Removing Person -> Restaurant Relationship
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:Restaurant\)-\[r:EATS_AT\]->\(useless\) WHERE item.Uid = ""7"" DELETE r)"));
-
-                    // Deleting the node
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" AND node.LastModifiedOn = )\d+( DELETE node)"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" AND node.LastModifiedOn = )\d+( DELETE node)"));
+                    Assert.True(p.Restaurants.Count == 0);
 
                     Transaction.Rollback();
                 }
+
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
+
+
+                // Removing relationships and nodes via properties
+                using (Transaction.Begin(true))
+                {
+                    Person p = Person.Load(key5);
+                    City c = p.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
+                    Restaurant r = p.Restaurants[0];
+
+                    p.City = null;
+                    p.Restaurants.Delete(r);
+
+                    c.Delete();
+
+                    Transaction.Flush();
+
+                    Assert.IsTrue(c.PersistenceState == PersistenceState.Deleted);
+                    Assert.Throws<InvalidOperationException>(() => c.Name = "New Name", "The object has been deleted, you cannot make changes to it anymore.");
+
+                    Assert.IsTrue(r.PersistenceState == PersistenceState.Deleted);
+                    Assert.Throws<InvalidOperationException>(() => r.Name = "New Name", "The object has been deleted, you cannot make changes to it anymore.");
+
+                    Assert.IsNull(p.City);
+                    //Assert.True(p.Restaurants.Count == 0); //TODO: Expected 0?
+
+                    Transaction.Rollback();
+                }
+
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
+                output.AssertRelationshipDeleted("Restaurant", "LOCATED_AT", "City");
+
+                output.AssertNodeDeleted("City");
+                output.AssertNodeDeleted("Restaurant");
+
 
                 // Removing node with existing relationship
                 using (Transaction.Begin(true))
                 {
                     //load before deleting
-                    Person p = Person.Load("5");
+                    Person p = Person.Load(key5);
 
-                    City.Load("6").Delete();
+                    City.Load(key6).ForceDelete(); // Side-effect Person NOT lazy loaded here yet, because it's properties were never accessed.
+                    Transaction.Flush(); // Persist in DB & change PersistenceState from Delete to Deleted
 
                     //load after deleting
-                    Restaurant r = Restaurant.Load("7");
+                    Restaurant r = Restaurant.Load(key7);
 
                     Assert.IsNull(p.City);
                     Assert.IsNull(r.City);
 
-                    Transaction.Flush();
-
-                    consoleOutput = output.GetOuput();
-
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" RETURN node)"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LIVES_IN\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(item:City\)-\[r:LOCATED_AT\]->\(useless\) WHERE item.Uid = ""6"" DELETE r)"));
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(node:City\) WHERE node.Uid = ""6"" AND node.LastModifiedOn = )\d+( DELETE node)"));
-
                     Transaction.Rollback();
                 }
+
+                output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
+                output.AssertRelationshipDeleted("Restaurant", "LOCATED_AT", "City");
             }
         }
 
@@ -336,11 +370,11 @@ namespace Blueprint41.UnitTest.Tests
                         City = new City() { Name = "New York" }
                     };
 
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Mcdonalds" });
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Shakeys" });
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Starbucks" });
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Bo's Coffee" });
-                    p1.City.Restraurants.Add(new Restaurant { Name = "Chattime" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Mcdonalds" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Shakeys" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Starbucks" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Bo's Coffee" });
+                    p1.City.Restaurants.Add(new Restaurant { Name = "Chattime" });
 
                     Person p2 = new Person
                     {
@@ -354,42 +388,20 @@ namespace Blueprint41.UnitTest.Tests
                         City = p1.City
                     };
 
-                    p2.City.Restraurants.Add(new Restaurant { Name = "Pink's Hot Dogs" });
-                    p2.City.Restraurants.Add(new Restaurant { Name = "World Famous" });
-                    p2.City.Restraurants.Add(new Restaurant { Name = "Barone's" });
-                    p2.City.Restraurants.Add(new Restaurant { Name = "Providence" });
-                    p2.City.Restraurants.Add(new Restaurant { Name = "La Taqueria" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "Pink's Hot Dogs" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "World Famous" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "Barone's" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "Providence" });
+                    p2.City.Restaurants.Add(new Restaurant { Name = "La Taqueria" });
 
-                    p1.Restaurants.Add(p1.City.Restraurants[0]);
-                    p1.Restaurants.Add(p1.City.Restraurants[1]);
-                    p1.Restaurants.Add(p1.City.Restraurants[2]);
-                    p1.Restaurants.Add(p1.City.Restraurants[3]);
-                    p1.Restaurants.Add(p1.City.Restraurants[4]);
-
-                    //p1.Restaurants.Add(p2.City.Restraurants[0]);
-                    //p1.Restaurants.Add(p2.City.Restraurants[1]);
-                    //p1.Restaurants.Add(p2.City.Restraurants[2]);
-                    //p1.Restaurants.Add(p2.City.Restraurants[3]);
-                    //p1.Restaurants.Add(p2.City.Restraurants[4]);
-
-                    p2.Restaurants.Add(p1.City.Restraurants[0]);
-                    p2.Restaurants.Add(p1.City.Restraurants[1]);
-                    p2.Restaurants.Add(p1.City.Restraurants[2]);
-                    p2.Restaurants.Add(p1.City.Restraurants[3]);
-                    p2.Restaurants.Add(p1.City.Restraurants[4]);
-
-                    p2.Restaurants.Add(p2.City.Restraurants[0]);
-                    p2.Restaurants.Add(p2.City.Restraurants[1]);
-                    p2.Restaurants.Add(p2.City.Restraurants[2]);
-                    p2.Restaurants.Add(p2.City.Restraurants[2]);
-                    p2.Restaurants.Add(p2.City.Restraurants[3]);
-                    p2.Restaurants.Add(p2.City.Restraurants[4]);
-
+                    p1.Restaurants.AddRange(p1.City.Restaurants);
+                    p2.Restaurants.AddRange(p2.City.Restaurants);
+                    p3.Restaurants.AddRange(p1.City.Restaurants);
 
                     Transaction.Commit();
                 }
             }
-            string queryString;
+
             using (Transaction.Begin())
             {
                 ICompiled compiled = Transaction.CompiledQuery
@@ -412,9 +424,16 @@ namespace Blueprint41.UnitTest.Tests
                 List<Person> searchResult = Person.LoadWhere(compiled);
                 Assert.Greater(searchResult.Count, 0);
 
-                queryString = compiled.ToString();
-
-                Assert.IsTrue(Regex.IsMatch(queryString, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS 'Smith'\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)"));
+                Assert.AreEqual(
+                    """
+                    MATCH (n0:Person)
+                    WITH DISTINCT n0, COLLECT{MATCH (n0)-[:EATS_AT]->(n1:Restaurant)
+                    WHERE (COUNT{MATCH (n0)-[:EATS_AT]->(:Restaurant)} = $param0)
+                    RETURN DISTINCT n1.Name AS Column1} AS restaurants
+                    WHERE (EXISTS{MATCH (n0)-[:EATS_AT]->(:Restaurant)} = $param1)
+                    RETURN DISTINCT n0 AS Column1, restaurants AS Column2
+                    """,
+                    compiled.CompiledQuery.QueryText);
 
                 compiled = Transaction.CompiledQuery
                     .Match(node.Person.Alias(out PersonAlias pWithLimit))
@@ -424,11 +443,16 @@ namespace Blueprint41.UnitTest.Tests
                     .Compile();
 
                 searchResult = Person.LoadWhere(compiled);
-                Assert.AreEqual(searchResult.Count, 1);
+                Assert.AreEqual(1, searchResult.Count);
 
-                queryString = compiled.ToString();
-
-                Assert.IsTrue(Regex.IsMatch(queryString, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0.Name CONTAINS 'Smith'\)[^a-zA-Z,0-9]*RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(LIMIT 1)"));
+                Assert.AreEqual(
+                    """
+                    MATCH (n0:Person)
+                    WHERE (n0.Name CONTAINS $param0)
+                    RETURN DISTINCT n0 AS Column1
+                    LIMIT $param1
+                    """,
+                    compiled.CompiledQuery.QueryText);
 
                 compiled = Transaction.CompiledQuery
                     .Match(node.Person.Alias(out var pR).In.PERSON_EATS_AT.Out.Restaurant.Alias(out var rP))
@@ -438,14 +462,19 @@ namespace Blueprint41.UnitTest.Tests
                     .Compile();
 
                 searchResult = Person.LoadWhere(compiled);
-                Assert.AreEqual(searchResult.Count, 2);
+                Assert.AreEqual(2, searchResult.Count);
 
-                Assert.AreEqual(searchResult[0].Name, "Jane Smith");
-                Assert.AreEqual(searchResult[1].Name, "Joe Smith");
+                Assert.AreEqual("Bob Smith", searchResult[0].Name);
+                Assert.AreEqual("Joe Smith", searchResult[1].Name);
 
-                queryString = compiled.ToString();
-
-                Assert.IsTrue(Regex.IsMatch(queryString, @"(MATCH \(n0:Person\)-\[:EATS_AT\]->\(n1:Restaurant\))[^a-zA-Z,0-9]*(WHERE \(n1\.Name = 'Shakeys'\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0 AS Column1)[^a-zA-Z,0-9]*(ORDER BY n0.Name)"));
+                Assert.AreEqual(
+                    """
+                    MATCH (n0:Person)-[:EATS_AT]->(n1:Restaurant)
+                    WHERE (n1.Name = $param0)
+                    RETURN DISTINCT n0 AS Column1
+                    ORDER BY n0.Name
+                    """,
+                    compiled.CompiledQuery.QueryText);
             }
         }
 
@@ -501,7 +530,6 @@ namespace Blueprint41.UnitTest.Tests
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                string outputConsole;
                 using (Transaction.Begin())
                 {
                     ICompiled compiled = Transaction.CompiledQuery
@@ -520,9 +548,14 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.AreEqual(a["Column1"], "The American President");
                     Assert.AreEqual(b["Column1"], "Wall Street");
 
-                    outputConsole = output.GetOuput();
-
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Martin Sheen""\))[^a-zA-Z,0-9]*(OPTIONAL MATCH \(n1:Movie\))[^a-zA-Z,0-9]*(RETURN DISTINCT n1\.Title AS Column1)[^a-zA-Z,0-9]*(ORDER BY n1\.Title)"));
+                    output.AssertQuery(
+                        """
+                        MATCH (n0:Person)
+                        WHERE (n0.Name CONTAINS $param0)
+                        OPTIONAL MATCH (n1:Movie)
+                        RETURN DISTINCT n1.Title AS Column1
+                        ORDER BY n1.Title
+                        """);
 
                     compiled = Transaction.CompiledQuery
                             .Match(node.Person.Alias(out PersonAlias pa))
@@ -538,8 +571,19 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.AreEqual(a["Column1"], "Martin Sheen");
                     Assert.IsNull(a["Column2"]);
 
-                    outputConsole = output.GetOuput();
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Martin Sheen""\))[^a-zA-Z,0-9]*(OPTIONAL MATCH \(n0\)-\[\:DIRECTED_BY\]\-\>\(n1:Movie\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0\.Name AS Column1, n1\.Title AS Column2)[^a-zA-Z,0-9]*(ORDER BY n1\.Title)"));
+                    output.AssertQuery(
+                        """
+                        MATCH (n0:Person)
+                        WHERE (n0.Name CONTAINS $param0)
+                        OPTIONAL MATCH (n1:Movie)
+                        RETURN DISTINCT n1.Title AS Column1
+                        ORDER BY n1.Title
+                        MATCH (n0:Person)
+                        WHERE (n0.Name CONTAINS $param0)
+                        OPTIONAL MATCH (n0)-[:DIRECTED_BY]->(n1:Movie)
+                        RETURN DISTINCT n0.Name AS Column1, n1.Title AS Column2
+                        ORDER BY n1.Title
+                        """);
 
                     compiled = Transaction.CompiledQuery
                                 .Match(node.Person.Alias(out PersonAlias pap).In.PERSON_DIRECTED.Out.Movie.Alias(out MovieAlias mam))
@@ -551,8 +595,23 @@ namespace Blueprint41.UnitTest.Tests
                     result = compiled.GetExecutionContext().Execute();
                     Assert.Zero(result.Count);
 
-                    outputConsole = output.GetOuput();
-                    Assert.IsTrue(Regex.IsMatch(outputConsole, @"(MATCH \(n0:Person\)-\[\:DIRECTED_BY\]\-\>\(n1:Movie\))[^a-zA-Z,0-9]*(WHERE \(n0\.Name CONTAINS ""Martin Sheen""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n1\.Title AS Column1)[^a-zA-Z,0-9]*(ORDER BY n1\.Title)"));
+                    output.AssertQuery(
+                        """
+                        MATCH (n0:Person)
+                        WHERE (n0.Name CONTAINS $param0)
+                        OPTIONAL MATCH (n1:Movie)
+                        RETURN DISTINCT n1.Title AS Column1
+                        ORDER BY n1.Title
+                        MATCH (n0:Person)
+                        WHERE (n0.Name CONTAINS $param0)
+                        OPTIONAL MATCH (n0)-[:DIRECTED_BY]->(n1:Movie)
+                        RETURN DISTINCT n0.Name AS Column1, n1.Title AS Column2
+                        ORDER BY n1.Title
+                        MATCH (n0:Person)-[:DIRECTED_BY]->(n1:Movie)
+                        WHERE (n0.Name CONTAINS $param0)
+                        RETURN DISTINCT n1.Title AS Column1
+                        ORDER BY n1.Title
+                        """);
                 }
             }
         }
@@ -609,7 +668,6 @@ namespace Blueprint41.UnitTest.Tests
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                string consoleOutput;
                 using (Transaction.Begin())
                 {
                     // Force to use index
@@ -625,8 +683,13 @@ namespace Blueprint41.UnitTest.Tests
                     var a = result[0] as IDictionary<string, object>;
                     Assert.AreEqual(a["Column1"], "Wall Street");
 
-                    consoleOutput = output.GetOuput();
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\))[^a-zA-Z,0-9]*(USING INDEX n0:Movie\(Title\))[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1)"));
+                    output.AssertQuery(
+                        """
+                        MATCH (n0:Movie)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        """);
 
                     // With relationship
                     compiled = Transaction.CompiledQuery
@@ -642,8 +705,17 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.AreEqual(a["Column1"], "Wall Street");
                     Assert.AreEqual(a["Column2"], "Oliver Stone");
 
-                    consoleOutput = output.GetOuput();
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\)<-\[:DIRECTED_BY\]-\(n1:Person\))[^a-zA-Z,0-9]*(USING INDEX n0:Movie\(Title\))[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2)"));
+                    output.AssertQuery(
+                        """
+                        MATCH (n0:Movie)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        MATCH (n0:Movie)<-[:DIRECTED_BY]-(n1:Person)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
+                        """);
 
                     // Use label scan
                     compiled = Transaction.CompiledQuery
@@ -658,8 +730,21 @@ namespace Blueprint41.UnitTest.Tests
                     a = result[0] as IDictionary<string, object>;
                     Assert.AreEqual(a["Column1"], "Wall Street");
 
-                    consoleOutput = output.GetOuput();
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\))[^a-zA-Z,0-9]*(USING SCAN n0:Movie)[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1)"));
+                    output.AssertQuery(
+                        """
+                        MATCH (n0:Movie)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        MATCH (n0:Movie)<-[:DIRECTED_BY]-(n1:Person)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
+                        MATCH (n0:Movie)
+                        USING SCAN n0:Movie
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        """);
 
                     // use label scan with relationship
                     compiled = Transaction.CompiledQuery
@@ -676,8 +761,26 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.AreEqual(a["Column1"], "Wall Street");
                     Assert.AreEqual(a["Column2"], "Oliver Stone");
 
-                    consoleOutput = output.GetOuput();
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\)<-\[:DIRECTED_BY\]-\(n1:Person\))[^a-zA-Z,0-9]*(USING SCAN n0:Movie)[^a-zA-Z,0-9]*(USING SCAN n1:Person)[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2)"));
+                    output.AssertQuery(
+                        """
+                        MATCH (n0:Movie)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        MATCH (n0:Movie)<-[:DIRECTED_BY]-(n1:Person)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
+                        MATCH (n0:Movie)
+                        USING SCAN n0:Movie
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        MATCH (n0:Movie)<-[:DIRECTED_BY]-(n1:Person)
+                        USING SCAN n0:Movie
+                        USING SCAN n1:Person
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
+                        """);
 
                     // use label scan and index
                     compiled = Transaction.CompiledQuery
@@ -694,10 +797,44 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.AreEqual(a["Column1"], "Wall Street");
                     Assert.AreEqual(a["Column2"], "Oliver Stone");
 
-                    consoleOutput = output.GetOuput();
-                    Assert.IsTrue(Regex.IsMatch(consoleOutput, @"(MATCH \(n0:Movie\)<-\[:DIRECTED_BY\]-\(n1:Person\))[^a-zA-Z,0-9]*(USING INDEX n0:Movie\(Title\))[^a-zA-Z,0-9]*(USING SCAN n1:Person)[^a-zA-Z,0-9]*(WHERE \(n0.Title = ""Wall Street""\))[^a-zA-Z,0-9]*(RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2)"));
+                    output.AssertQuery(
+                        """
+                        MATCH (n0:Movie)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        MATCH (n0:Movie)<-[:DIRECTED_BY]-(n1:Person)
+                        USING INDEX n0:Movie(Title)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
+                        MATCH (n0:Movie)
+                        USING SCAN n0:Movie
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        MATCH (n0:Movie)<-[:DIRECTED_BY]-(n1:Person)
+                        USING SCAN n0:Movie
+                        USING SCAN n1:Person
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
+                        MATCH (n0:Movie)<-[:DIRECTED_BY]-(n1:Person)
+                        USING INDEX n0:Movie(Title)
+                        USING SCAN n1:Person
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
+                        """);
                 }
             }
+        }
+
+        private static string GetAndCheckKey<T>(T a)
+            where T : OGM
+        {
+            string key = a.GetKey()?.ToString();
+            Assert.IsNotNull(key);
+            Assert.IsNotEmpty(key);
+            Assert.DoesNotThrow(() => int.Parse(key));
+
+            return key;
         }
     }
 }

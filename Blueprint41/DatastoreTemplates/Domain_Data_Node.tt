@@ -16,22 +16,22 @@ using m = <#= Settings.FullCRUDNamespace #>;
 
 namespace <#= Settings.FullQueryNamespace #>
 {
-	public partial class Node
-	{
+    public partial class Node
+    {
 <#
-	Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
-	if (DALModel.IsVirtual)
-	{
+    Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
+    if (DALModel.IsVirtual)
+    {
 #>
-		[Obsolete("This entity is virtual, consider making entity <#= DALModel.Name #> concrete or use another entity as your starting point.", true)]
+        [Obsolete("This entity is virtual, consider making entity <#= DALModel.Name #> concrete or use another entity as your starting point.", true)]
 <#
-	}
+    }
 #>
-		public static <#= DALModel.Name #>Node <#= DALModel.Name #> { get { return new <#= DALModel.Name #>Node(); } }
-	}
+        public static <#= DALModel.Name #>Node <#= DALModel.Name #> { get { return new <#= DALModel.Name #>Node(); } }
+    }
 
-	public partial class <#= DALModel.Name #>Node : Blueprint41.Query.Node
-	{
+    public partial class <#= DALModel.Name #>Node : Blueprint41.Query.Node
+    {
         public static implicit operator QueryCondition(<#= DALModel.Name #>Node a)
         {
             return new QueryCondition(a);
@@ -41,46 +41,46 @@ namespace <#= Settings.FullQueryNamespace #>
             return new QueryCondition(a, true);
         } 
 
-		protected override string GetNeo4jLabel()
-		{
-<#
-	if (DALModel.IsVirtual)
-	{
-#>
-			return null;
-<#
-	}
-	else
-	{
-#>
-			return "<#= DALModel.Label.Name #>";
-<#
-	}
-#>
-		}
-
-		protected override Entity GetEntity()
+        protected override string GetNeo4jLabel()
         {
 <#
-	if (DALModel.IsVirtual)
-	{
+    if (DALModel.IsVirtual)
+    {
 #>
-			return null;
+            return null;
 <#
-	}
-	else
-	{
+    }
+    else
+    {
 #>
-			return m.<#= DALModel.Label.Name #>.Entity;
+            return "<#= DALModel.Label.Name #>";
 <#
-	}
+    }
+#>
+        }
+
+        protected override Entity GetEntity()
+        {
+<#
+    if (DALModel.IsVirtual)
+    {
+#>
+            return null;
+<#
+    }
+    else
+    {
+#>
+            return m.<#= DALModel.Label.Name #>.Entity;
+<#
+    }
 #>
         }
 <#
-	if (DALModel.FunctionalId is not null)
-	{
+    if (DALModel.FunctionalId is not null)
+    {
 #>
-		public FunctionalId FunctionalId
+        public FunctionalId FunctionalId
         {
             get
             {
@@ -88,25 +88,25 @@ namespace <#= Settings.FullQueryNamespace #>
             }
         }
 <#
-	}
+    }
 #>
 
-		internal <#= DALModel.Name #>Node() { }
-		internal <#= DALModel.Name #>Node(<#= DALModel.Name #>Alias alias, bool isReference = false)
-		{
-			NodeAlias = alias;
-			IsReference = isReference;
-		}
-		internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
-		internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction, AliasResult nodeAlias, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity)
-		{
-			NodeAlias = nodeAlias;
-		}
+        internal <#= DALModel.Name #>Node() { }
+        internal <#= DALModel.Name #>Node(<#= DALModel.Name #>Alias alias, bool isReference = false)
+        {
+            NodeAlias = alias;
+            IsReference = isReference;
+        }
+        internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
+        internal <#= DALModel.Name #>Node(RELATIONSHIP relationship, DirectionEnum direction, AliasResult nodeAlias, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity)
+        {
+            NodeAlias = nodeAlias;
+        }
 
 <#
-	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && p.SystemReturnType.Namespace == "System").OrderBy(p => p.Name).ToList();
+    var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && p.SystemReturnType.Namespace == "System").OrderBy(p => p.Name).ToList();
 #>
-        public <#= DALModel.Name #>Node Where(<#= string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
+        public <#= DALModel.Name #>Node Where(<#= properties.ToJsonNotation() #>)
         {
             if (InlineConditions is not null || InlineAssignments is not null)
                 throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
@@ -118,19 +118,19 @@ namespace <#= Settings.FullQueryNamespace #>
             });
             List<QueryCondition> conditions = new List<QueryCondition>();
 <#
-	foreach (var p in properties)
-	{
+    foreach (var p in properties)
+    {
 #>
             if (<#= p.Name #>.HasValue) conditions.Add(new QueryCondition(alias.Value.<#= p.Name #>, Operator.Equals, ((IValue)<#= p.Name #>).GetValue()));
 <#
-	}
+    }
 #>
 
             InlineConditions = conditions.ToArray();
 
             return this;
         }
-        public <#= DALModel.Name #>Node Assign(<#= string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
+        public <#= DALModel.Name #>Node Assign(<#= properties.ToJsonNotation() #>)
         {
             if (InlineConditions is not null || InlineAssignments is not null)
                 throw new NotSupportedException("You cannot, at the same time, have inline-assignments and inline-conditions defined on a node.");
@@ -142,12 +142,12 @@ namespace <#= Settings.FullQueryNamespace #>
             });
             List<Assignment> assignments = new List<Assignment>();
 <#
-	foreach (var p in properties)
-	{
+    foreach (var p in properties)
+    {
 #>
             if (<#= p.Name #>.HasValue) assignments.Add(new Assignment(alias.Value.<#= p.Name #>, <#= p.Name #>));
 <#
-	}
+    }
 #>
 
             InlineAssignments = assignments.ToArray();
@@ -155,7 +155,7 @@ namespace <#= Settings.FullQueryNamespace #>
             return this;
         }
 
-		public <#= DALModel.Name #>Node Alias(out <#= DALModel.Name #>Alias alias)
+        public <#= DALModel.Name #>Node Alias(out <#= DALModel.Name #>Alias alias)
         {
             if (NodeAlias is <#= DALModel.Name #>Alias a)
             {
@@ -168,7 +168,7 @@ namespace <#= Settings.FullQueryNamespace #>
             }
             return this;
         }
-		public <#= DALModel.Name #>Node Alias(out <#= DALModel.Name #>Alias alias, string name)
+        public <#= DALModel.Name #>Node Alias(out <#= DALModel.Name #>Alias alias, string name)
         {
             if (NodeAlias is <#= DALModel.Name #>Alias a)
             {
@@ -183,309 +183,278 @@ namespace <#= Settings.FullQueryNamespace #>
             return this;
         }
 
-		public <#= DALModel.Name #>Node UseExistingAlias(AliasResult alias)
-		{
-			NodeAlias = alias;
+        public <#= DALModel.Name #>Node UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
             IsReference = true;
-			return this;
-		}
+            return this;
+        }
 
 <#
-	foreach(Entity subclass in DALModel.GetSubclasses())
-	{
+    foreach(Entity subclass in DALModel.GetSubclasses())
+    {
 #>
-		public <#= subclass.Name #>Node CastTo<#= subclass.Name #>()
-		{
-			if (this.Neo4jLabel is null)
-				throw new InvalidOperationException("Casting is not supported for virtual entities.");
+        public <#= subclass.Name #>Node CastTo<#= subclass.Name #>()
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException("Casting is not supported for virtual entities.");
 
-			if (FromRelationship is null)
-				throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
+            if (FromRelationship is null)
+                throw new InvalidOperationException("Please use the right type immediately, casting is only support after you have match through a relationship.");
 
-			return new <#= subclass.Name #>Node(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
-		}
+            return new <#= subclass.Name #>Node(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);
+        }
 
 <#
-	}
-	var inRelations =  Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.InEntity)).OrderBy(item => item.Name);
-	var outRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity)).OrderBy(item => item.Name);
-	var anyRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity) && item.InEntity == item.OutEntity).OrderBy(item => item.Name);
+    }
+    var inRelations =  Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.InEntity)).OrderBy(item => item.Name);
+    var outRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity)).OrderBy(item => item.Name);
+    var anyRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity) && item.InEntity == item.OutEntity).OrderBy(item => item.Name);
 
-	if (inRelations.Any())
-	{
+    if (inRelations.Any())
+    {
 #>
-		public <#= DALModel.Name #>In  In  { get { return new <#= DALModel.Name #>In(this); } }
-		public class <#= DALModel.Name #>In
-		{
-			private <#= DALModel.Name #>Node Parent;
-			internal <#= DALModel.Name #>In(<#= DALModel.Name #>Node parent)
-			{
-				Parent = parent;
-			}
+        public <#= DALModel.Name #>In  In  { get { return new <#= DALModel.Name #>In(this); } }
+        public class <#= DALModel.Name #>In
+        {
+            private <#= DALModel.Name #>Node Parent;
+            internal <#= DALModel.Name #>In(<#= DALModel.Name #>Node parent)
+            {
+                Parent = parent;
+            }
 <#
-		foreach (Relationship rel in inRelations)
-		{
+        foreach (Relationship rel in inRelations)
+        {
 #>
-			public IFromIn_<#= rel.Name #>_REL <#= rel.Name #> { get { return new <#= rel.Name #>_REL(Parent, DirectionEnum.In); } }
+            public IFromIn_<#= rel.Name #>_REL <#= rel.Name #> { get { return new <#= rel.Name #>_REL(Parent, DirectionEnum.In); } }
 <#
-		}
-#>
-
-		}
-<#
-	}
-
-	if (outRelations.Any())
-	{
+        }
 #>
 
-		public <#= DALModel.Name #>Out Out { get { return new <#= DALModel.Name #>Out(this); } }
-		public class <#= DALModel.Name #>Out
-		{
-			private <#= DALModel.Name #>Node Parent;
-			internal <#= DALModel.Name #>Out(<#= DALModel.Name #>Node parent)
-			{
-				Parent = parent;
-			}
+        }
 <#
-		foreach (Relationship rel in outRelations)
-		{
-#>
-			public IFromOut_<#= rel.Name #>_REL <#= rel.Name #> { get { return new <#= rel.Name #>_REL(Parent, DirectionEnum.Out); } }
-<#
-		}
-#>
-		}
-<#
-	}
+    }
 
-	if (anyRelations.Any())
-	{
+    if (outRelations.Any())
+    {
 #>
 
-		public <#= DALModel.Name #>Any Any { get { return new <#= DALModel.Name #>Any(this); } }
-		public class <#= DALModel.Name #>Any
-		{
-			private <#= DALModel.Name #>Node Parent;
-			internal <#= DALModel.Name #>Any(<#= DALModel.Name #>Node parent)
-			{
-				Parent = parent;
-			}
+        public <#= DALModel.Name #>Out Out { get { return new <#= DALModel.Name #>Out(this); } }
+        public class <#= DALModel.Name #>Out
+        {
+            private <#= DALModel.Name #>Node Parent;
+            internal <#= DALModel.Name #>Out(<#= DALModel.Name #>Node parent)
+            {
+                Parent = parent;
+            }
 <#
-		foreach (Relationship rel in anyRelations)
-		{
+        foreach (Relationship rel in outRelations)
+        {
 #>
-			public IFromAny_<#= rel.Name #>_REL <#= rel.Name #> { get { return new <#= rel.Name #>_REL(Parent, DirectionEnum.None); } }
+            public IFromOut_<#= rel.Name #>_REL <#= rel.Name #> { get { return new <#= rel.Name #>_REL(Parent, DirectionEnum.Out); } }
 <#
-		}
+        }
 #>
-		}
+        }
 <#
-	}
+    }
+
+    if (anyRelations.Any())
+    {
 #>
-	}
 
-	public class <#= DALModel.Name #>Alias : AliasResult<<#= DALModel.Name #>Alias, <#= DALModel.Name #>ListAlias>
-	{
-		internal <#= DALModel.Name #>Alias(<#= DALModel.Name #>Node parent)
-		{
-			Node = parent;
-		}
-		internal <#= DALModel.Name #>Alias(<#= DALModel.Name #>Node parent, string name)
-		{
-			Node = parent;
-			AliasName = name;
-		}
-		internal void SetAlias(string name) => AliasName = name;
+        public <#= DALModel.Name #>Any Any { get { return new <#= DALModel.Name #>Any(this); } }
+        public class <#= DALModel.Name #>Any
+        {
+            private <#= DALModel.Name #>Node Parent;
+            internal <#= DALModel.Name #>Any(<#= DALModel.Name #>Node parent)
+            {
+                Parent = parent;
+            }
+<#
+        foreach (Relationship rel in anyRelations)
+        {
+#>
+            public IFromAny_<#= rel.Name #>_REL <#= rel.Name #> { get { return new <#= rel.Name #>_REL(Parent, DirectionEnum.None); } }
+<#
+        }
+#>
+        }
+<#
+    }
+#>
+    }
 
-		private  <#= DALModel.Name #>Alias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private  <#= DALModel.Name #>Alias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private  <#= DALModel.Name #>Alias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type)
-		{
-			Node = alias.Node;
-		}
+    public class <#= DALModel.Name #>Alias : AliasResult<<#= DALModel.Name #>Alias, <#= DALModel.Name #>ListAlias>
+    {
+        internal <#= DALModel.Name #>Alias(<#= DALModel.Name #>Node parent)
+        {
+            Node = parent;
+        }
+        internal <#= DALModel.Name #>Alias(<#= DALModel.Name #>Node parent, string name)
+        {
+            Node = parent;
+            AliasName = name;
+        }
+        internal void SetAlias(string name) => AliasName = name;
 
-		public Assignment[] Assign(<#= string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default")) #>)
+        private  <#= DALModel.Name #>Alias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private  <#= DALModel.Name #>Alias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private  <#= DALModel.Name #>Alias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type)
+        {
+            Node = alias.Node;
+        }
+
+        public Assignment[] Assign(<#= properties.ToJsonNotation() #>)
         {
             List<Assignment> assignments = new List<Assignment>();
 <#
-	foreach (var p in properties)
-	{
+    foreach (var p in properties)
+    {
 #>
-			if (<#= p.Name #>.HasValue) assignments.Add(new Assignment(this.<#= p.Name #>, <#= p.Name #>));
+            if (<#= p.Name #>.HasValue) assignments.Add(new Assignment(this.<#= p.Name #>, <#= p.Name #>));
 <#
-	}
+    }
 #>
             
             return assignments.ToArray();
         }
 
 
-		public override IReadOnlyDictionary<string, FieldResult> AliasFields
-		{
-			get
-			{
-				if (m_AliasFields is null)
-				{
-					m_AliasFields = <#= inheritedUnidentifiedProp is null ? "" : "new UnidentifiedPropertiesAliasDictionary(" #>new Dictionary<string, FieldResult>()
-					{
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields is null)
+                {
+                    m_AliasFields = <#= inheritedUnidentifiedProp is null ? "" : "new UnidentifiedPropertiesAliasDictionary(" #>new Dictionary<string, FieldResult>()
+                    {
 <#
-	foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
-	{
-		if (property.PropertyType != PropertyType.Attribute)
-			continue;
+    foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
+    {
+        if (property.PropertyType != PropertyType.Attribute)
+            continue;
 #>
-						{ "<#= property.Name #>", new <#= GetResultType(property.SystemReturnType) #>(this, "<#= property.Name #>", <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"], <#= Datastore.GetType().FullName #>.Model.Entities["<#= property.Parent.Name #>"].Properties["<#= property.Name #>"]) },
+                        { "<#= property.Name #>", new <#= GetResultType(property.SystemReturnType) #>(this, "<#= property.Name #>", <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"], <#= Datastore.GetType().FullName #>.Model.Entities["<#= property.Parent.Name #>"].Properties["<#= property.Name #>"]) },
 <#
-	}
+    }
 #>
-					}<#= inheritedUnidentifiedProp is null ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)") #>;
-				}
-				return m_AliasFields;
-			}
-		}
-		private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
-
-<#
-	if (inRelations.Any())
-	{
-#>
-		public <#= DALModel.Name #>Node.<#= DALModel.Name #>In In { get { return new <#= DALModel.Name #>Node.<#= DALModel.Name #>In(new <#= DALModel.Name #>Node(this, true)); } }
-<#
-	}
-	if (outRelations.Any())
-	{
-#>
-		public <#= DALModel.Name #>Node.<#= DALModel.Name #>Out Out { get { return new <#= DALModel.Name #>Node.<#= DALModel.Name #>Out(new <#= DALModel.Name #>Node(this, true)); } }
-<#
-	}
-	if (anyRelations.Any())
-	{
-#>
-		public <#= DALModel.Name #>Node.<#= DALModel.Name #>Any Any { get { return new <#= DALModel.Name #>Node.<#= DALModel.Name #>Any(new <#= DALModel.Name #>Node(this, true)); } }
-<#
-	}
-#>
+                    }<#= inheritedUnidentifiedProp is null ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)") #>;
+                }
+                return m_AliasFields;
+            }
+        }
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
 <#
-	foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
-	{
-		if (property.PropertyType != PropertyType.Attribute)
-			continue;
-
+    if (inRelations.Any())
+    {
 #>
-		public <#= GetResultType(property.SystemReturnType) #> <#= property.Name #>
-		{
-			get
-			{
-				if (m_<#= property.Name #> is null)
-					m_<#= property.Name #> = (<#= GetResultType(property.SystemReturnType) #>)AliasFields["<#= property.Name #>"];
-
-				return m_<#= property.Name #>;
-			}
-		}
-		private <#= GetResultType(property.SystemReturnType) #> m_<#= property.Name #> = null;
+        public <#= DALModel.Name #>Node.<#= DALModel.Name #>In In { get { return new <#= DALModel.Name #>Node.<#= DALModel.Name #>In(new <#= DALModel.Name #>Node(this, true)); } }
 <#
-	}
-
-	if (inheritedUnidentifiedProp is not null)
-	{
+    }
+    if (outRelations.Any())
+    {
 #>
-		public UnidentifiedProperties <#= inheritedUnidentifiedProp.UnidentifiedProperties #>
-		{
-			get
-			{
-				if (m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> is null)
-					m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName #>.Model.Entities["<#= DALModel.Name #>"]);
-
-				return m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #>;
-			}
-		}
-		private UnidentifiedProperties m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = null;
-
-		public class UnidentifiedProperties
-		{
-			internal UnidentifiedProperties(<#= DALModel.Name #>Alias alias, Entity entity)
-			{
-				Alias = alias;
-				Entity = entity;
-			}
-			private <#= DALModel.Name #>Alias Alias;
-			private Entity Entity;
-
-			public MiscResult Get(string fieldName) { return new MiscResult(Alias, fieldName, Entity, null); }
-			public MiscResult this[string fieldName] { get { return Get(fieldName); } }
-
-			public MiscResult Get(FieldResult result, bool withCoalesce = false, Type type = null)
-			{
-				if (withCoalesce)
-					return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, result }, type ?? typeof(object));
-				else
-					return new MiscResult(t => t.FnGetField, new object[] { Alias, result }, type ?? typeof(object));
-			}
-
-			public MiscResult Get(Parameter parameter, bool withCoalesce = false, Type type = null)
-			{
-				if (withCoalesce)
-					return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, parameter }, type ?? typeof(object));
-				else
-					return new MiscResult(t => t.FnGetField, new object[] { Alias, parameter }, type ?? typeof(object));
-			}
-		}
+        public <#= DALModel.Name #>Node.<#= DALModel.Name #>Out Out { get { return new <#= DALModel.Name #>Node.<#= DALModel.Name #>Out(new <#= DALModel.Name #>Node(this, true)); } }
 <#
-	}
+    }
+    if (anyRelations.Any())
+    {
 #>
-		public AsResult As(string aliasName, out <#= DALModel.Name #>Alias alias)
-		{
-			alias = new <#= DALModel.Name #>Alias((<#= DALModel.Name #>Node)Node)
-			{
-				AliasName = aliasName
-			};
-			return this.As(aliasName);
-		}
-	}
+        public <#= DALModel.Name #>Node.<#= DALModel.Name #>Any Any { get { return new <#= DALModel.Name #>Node.<#= DALModel.Name #>Any(new <#= DALModel.Name #>Node(this, true)); } }
+<#
+    }
+#>
 
-	public class <#= DALModel.Name #>ListAlias : ListResult<<#= DALModel.Name #>ListAlias, <#= DALModel.Name #>Alias>, IAliasListResult
-	{
-		private <#= DALModel.Name #>ListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private <#= DALModel.Name #>ListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private <#= DALModel.Name #>ListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
-	}
-	public class <#= DALModel.Name #>JaggedListAlias : ListResult<<#= DALModel.Name #>JaggedListAlias, <#= DALModel.Name #>ListAlias>, IAliasJaggedListResult
-	{
-		private <#= DALModel.Name #>JaggedListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private <#= DALModel.Name #>JaggedListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private <#= DALModel.Name #>JaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
-	}
+<#
+    foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
+    {
+        if (property.PropertyType != PropertyType.Attribute)
+            continue;
+
+#>
+        public <#= GetResultType(property.SystemReturnType) #> <#= property.Name #>
+        {
+            get
+            {
+                if (m_<#= property.Name #> is null)
+                    m_<#= property.Name #> = (<#= GetResultType(property.SystemReturnType) #>)AliasFields["<#= property.Name #>"];
+
+                return m_<#= property.Name #>;
+            }
+        }
+        private <#= GetResultType(property.SystemReturnType) #> m_<#= property.Name #> = null;
+<#
+    }
+
+    if (inheritedUnidentifiedProp is not null)
+    {
+#>
+        public UnidentifiedProperties <#= inheritedUnidentifiedProp.UnidentifiedProperties #>
+        {
+            get
+            {
+                if (m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> is null)
+                    m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = new UnidentifiedProperties(this, <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"]);
+
+                return m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #>;
+            }
+        }
+        private UnidentifiedProperties m_<#= inheritedUnidentifiedProp.UnidentifiedProperties #> = null;
+
+        public class UnidentifiedProperties
+        {
+            internal UnidentifiedProperties(<#= DALModel.Name #>Alias alias, Entity entity)
+            {
+                Alias = alias;
+                Entity = entity;
+            }
+            private <#= DALModel.Name #>Alias Alias;
+            private Entity Entity;
+
+            public MiscResult Get(string fieldName) { return new MiscResult(Alias, fieldName, Entity, null); }
+            public MiscResult this[string fieldName] { get { return Get(fieldName); } }
+
+            public MiscResult Get(FieldResult result, bool withCoalesce = false, Type type = null)
+            {
+                if (withCoalesce)
+                    return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, result }, type ?? typeof(object));
+                else
+                    return new MiscResult(t => t.FnGetField, new object[] { Alias, result }, type ?? typeof(object));
+            }
+
+            public MiscResult Get(Parameter parameter, bool withCoalesce = false, Type type = null)
+            {
+                if (withCoalesce)
+                    return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, parameter }, type ?? typeof(object));
+                else
+                    return new MiscResult(t => t.FnGetField, new object[] { Alias, parameter }, type ?? typeof(object));
+            }
+        }
+<#
+    }
+#>
+        public AsResult As(string aliasName, out <#= DALModel.Name #>Alias alias)
+        {
+            alias = new <#= DALModel.Name #>Alias((<#= DALModel.Name #>Node)Node)
+            {
+                AliasName = aliasName
+            };
+            return this.As(aliasName);
+        }
+    }
+
+    public class <#= DALModel.Name #>ListAlias : ListResult<<#= DALModel.Name #>ListAlias, <#= DALModel.Name #>Alias>, IAliasListResult
+    {
+        private <#= DALModel.Name #>ListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private <#= DALModel.Name #>ListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private <#= DALModel.Name #>ListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
+    }
+    public class <#= DALModel.Name #>JaggedListAlias : ListResult<<#= DALModel.Name #>JaggedListAlias, <#= DALModel.Name #>ListAlias>, IAliasJaggedListResult
+    {
+        private <#= DALModel.Name #>JaggedListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private <#= DALModel.Name #>JaggedListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private <#= DALModel.Name #>JaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
+    }
 }
-<#+
-
-	private string GetResultType(Type type)
-	{
-		switch (type.Name)
-		{
-			case "Boolean":
-				return "BooleanResult";
-			case "Int16":
-			case "Int32":
-			case "Int64":
-			case "Decimal":
-				return "NumericResult";
-			case "Single":
-			case "Double":
-				return "FloatResult";
-			case "Guid":
-			case "String":
-				return "StringResult";
-			case "DateTime":
-				return "DateTimeResult";
-			case "List`1":
-				if(type.GenericTypeArguments[0] == typeof(string))
-					return "StringListResult";
-				else
-					return "ListResult";
-			default:
-				return "MiscResult";
-		}
-	}
-#>

@@ -293,25 +293,50 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     public abstract class TemplateBase<TSelf> : TemplateBase
         where TSelf : TemplateBase<TSelf>
     {
+        public IEntity Caller { get; set; }
+
+        public bool IsGlobal => Caller is null;
+        public bool IsEntity => Caller is Entity;
+        public Entity Entity => (Entity)Caller;
+        public bool IsRelationship => Caller is Relationship;
+        public Relationship Relationship => (Relationship)Caller;
+
+
         internal Func<TSelf> CreateInstance { get; set; }
         internal Action<TSelf> Setup { get; set; }
-        public void Run(bool withTransaction = true)
+        public long Run(bool withTransaction = false)
         {
+            long retval = 0;
+
             if (!Parser.ShouldExecute)
-                return;
+                return 0;
 
             if (withTransaction)
             {
                 using (Transaction.Begin(withTransaction))
                 {
-                    Execute();
+                    RawResult result = Execute();
+                    if (result != null)
+                    {
+                        RawRecord record = result.FirstOrDefault();
+                        if (record is not null && record.Values.TryGetValue("Count", out object cnt))
+                            retval = cnt.As<long>();
+                    }
                     Transaction.Commit();
                 }
             }
             else
             {
-                Execute();
+                RawResult result = Execute();
+                if (result != null)
+                {
+                    RawRecord record = result.FirstOrDefault();
+                    if (record is not null && record.Values.TryGetValue("Count", out object cnt))
+                        retval = cnt.As<long>();
+                }
             }
+
+            return retval;
         }
         public void RunBatched()
         {
@@ -350,31 +375,26 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
 
     public abstract class ApplyFunctionalIdBase : TemplateBase<ApplyFunctionalIdBase>
     {
-        public Entity Entity { get; set; }
         public FunctionalId FunctionalId { get; set; }
         public bool Full { get; set; }
     }
     public abstract class ConvertBase : TemplateBase<ConvertBase>
     {
-        public Entity Entity { get; set; }
         public Property Property { get; set; }
         public string WhereScript { get; set; }
         public string AssignScript { get; set; }
     }
     public abstract class CopyPropertyBase : TemplateBase<CopyPropertyBase>
     {
-        public Entity Entity { get; set; }
         public string To { get; set; }
         public string From { get; set; }
     }
     public abstract class CreateIndexBase : TemplateBase<CreateIndexBase>
     {
-        public Entity Entity { get; set; }
         public Property Property { get; set; }
     }
     public abstract class CreateUniqueConstraintBase : TemplateBase<CreateUniqueConstraintBase>
     {
-        public Entity Entity { get; set; }
         public Property Property { get; set; }
     }
     public abstract class DropExistConstraintBase : TemplateBase<DropExistConstraintBase>
@@ -384,7 +404,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     }
     public abstract class MergePropertyBase : TemplateBase<MergePropertyBase>
     {
-        public Entity ConcreteParent { get; set; }
+        //public IEntity ConcreteParent { get; set; }
         public Property From { get; set; }
         public Property To { get; set; }
         public MergeAlgorithm MergeAlgorithm { get; set; }
@@ -401,7 +421,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     }
     public abstract class RemovePropertyBase : TemplateBase<RemovePropertyBase>
     {
-        public Entity ConcreteParent { get; set; }
+        //public IEntity ConcreteParent { get; set; }
         public string Name { get; set; }
     }
     public abstract class RemoveRelationshipBase : TemplateBase<RemoveRelationshipBase>
@@ -417,13 +437,13 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     }
     public abstract class RenamePropertyBase : TemplateBase<RenamePropertyBase>
     {
-        public Entity ConcreteParent { get; set; }
+        //public IEntity ConcreteParent { get; set; }
         public Property From { get; set; }
         public string To { get; set; }
     }
     public abstract class RenameRelationshipBase : TemplateBase<RenameRelationshipBase>
     {
-        public Relationship Relationship { get; set; }
+        //public Relationship Relationship { get; set; }
         public string OldName { get; set; }
         public string NewName { get; set; }
     }
@@ -432,7 +452,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     }
     public abstract class SetDefaultConstantValueBase : TemplateBase<SetDefaultConstantValueBase>
     {
-        public Entity Entity { get; set; }
         public Property Property { get; set; }
         public object Value { get; set; }
     }
@@ -443,7 +462,6 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
     }
     public abstract class SetLabelBase : TemplateBase<SetLabelBase>
     {
-        public Entity Entity { get; set; }
         public string Label { get; set; }
     }
     public abstract class SetRelationshipPropertyValueBase : TemplateBase<SetRelationshipPropertyValueBase>

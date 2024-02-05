@@ -15,7 +15,7 @@ namespace Blueprint41.Neo4j.Model
 {
     public abstract partial class QueryTranslator
     {
-        protected QueryTranslator(PersistenceProvider persistenceProvider)
+        protected QueryTranslator(Neo4jPersistenceProvider persistenceProvider)
         {
             PersistenceProvider = persistenceProvider;
         }
@@ -527,6 +527,7 @@ namespace Blueprint41.Neo4j.Model
 
         public virtual string FnParam1                    => "{0}";
         public virtual string FnAsIs                      => "{base}";
+        public virtual string FnElementId                 => "elementId({0})";
         public virtual string FnToBoolean                 => "toBoolean({base})";
         public virtual string FnToInteger                 => "toInteger({base})";
         public virtual string FnToFloat                   => "toFloat({base})";
@@ -731,7 +732,7 @@ namespace Blueprint41.Neo4j.Model
 
         #region PersistenceProvider
 
-        internal PersistenceProvider PersistenceProvider { get; private set; }
+        internal Neo4jPersistenceProvider PersistenceProvider { get; private set; }
         internal abstract NodePersistenceProvider GetNodePersistenceProvider();
         internal abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider();
         internal abstract SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel);

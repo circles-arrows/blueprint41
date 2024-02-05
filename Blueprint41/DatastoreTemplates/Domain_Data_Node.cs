@@ -46,18 +46,18 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n\tpublic partial class Node\r\n\t{\r\n");
+            this.Write("\r\n{\r\n    public partial class Node\r\n    {\r\n");
             
             #line 21 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
-	if (DALModel.IsVirtual)
-	{
+    Entity inheritedUnidentifiedProp = DALModel.InheritedUnidentifiedProperties();
+    if (DALModel.IsVirtual)
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\t[Obsolete(\"This entity is virtual, consider making entity ");
+            this.Write("        [Obsolete(\"This entity is virtual, consider making entity ");
             
             #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -68,12 +68,12 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 27 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic static ");
+            this.Write("        public static ");
             
             #line 30 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -94,15 +94,15 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Node(); } }\r\n\t}\r\n\r\n\tpublic partial class ");
+            this.Write("Node(); } }\r\n    }\r\n\r\n    public partial class ");
             
             #line 33 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Node : Blueprint41.Query.Node\r\n\t{\r\n        public static implicit operator QueryC" +
-                    "ondition(");
+            this.Write("Node : Blueprint41.Query.Node\r\n    {\r\n        public static implicit operator Que" +
+                    "ryCondition(");
             
             #line 35 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -118,28 +118,28 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("Node a)\r\n        {\r\n            return new QueryCondition(a, true);\r\n        } \r\n" +
-                    "\r\n\t\tprotected override string GetNeo4jLabel()\r\n\t\t{\r\n");
+                    "\r\n        protected override string GetNeo4jLabel()\r\n        {\r\n");
             
             #line 46 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	if (DALModel.IsVirtual)
-	{
+    if (DALModel.IsVirtual)
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\t\treturn null;\r\n");
+            this.Write("            return null;\r\n");
             
             #line 51 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
-	else
-	{
+    }
+    else
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\t\treturn \"");
+            this.Write("            return \"");
             
             #line 56 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Label.Name));
@@ -150,33 +150,33 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 57 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
             #line hidden
-            this.Write("\t\t}\r\n\r\n\t\tprotected override Entity GetEntity()\r\n        {\r\n");
+            this.Write("        }\r\n\r\n        protected override Entity GetEntity()\r\n        {\r\n");
             
             #line 64 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	if (DALModel.IsVirtual)
-	{
+    if (DALModel.IsVirtual)
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\t\treturn null;\r\n");
+            this.Write("            return null;\r\n");
             
             #line 69 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
-	else
-	{
+    }
+    else
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\t\treturn m.");
+            this.Write("            return m.");
             
             #line 74 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Label.Name));
@@ -187,7 +187,7 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 75 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
@@ -196,14 +196,14 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 79 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	if (DALModel.FunctionalId is not null)
-	{
+    if (DALModel.FunctionalId is not null)
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic FunctionalId FunctionalId\r\n        {\r\n            get\r\n            {\r\n  " +
-                    "              return m.");
+            this.Write("        public FunctionalId FunctionalId\r\n        {\r\n            get\r\n           " +
+                    " {\r\n                return m.");
             
             #line 87 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -214,19 +214,19 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 90 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
             #line hidden
-            this.Write("\r\n\t\tinternal ");
+            this.Write("\r\n        internal ");
             
             #line 94 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Node() { }\r\n\t\tinternal ");
+            this.Write("Node() { }\r\n        internal ");
             
             #line 95 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -240,8 +240,8 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Alias alias, bool isReference = false)\r\n\t\t{\r\n\t\t\tNodeAlias = alias;\r\n\t\t\tIsReferenc" +
-                    "e = isReference;\r\n\t\t}\r\n\t\tinternal ");
+            this.Write("Alias alias, bool isReference = false)\r\n        {\r\n            NodeAlias = alias;" +
+                    "\r\n            IsReference = isReference;\r\n        }\r\n        internal ");
             
             #line 100 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -250,7 +250,7 @@ namespace Blueprint41.DatastoreTemplates
             #line hidden
             this.Write("Node(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null" +
                     ", Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }\r" +
-                    "\n\t\tinternal ");
+                    "\n        internal ");
             
             #line 101 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -259,11 +259,12 @@ namespace Blueprint41.DatastoreTemplates
             #line hidden
             this.Write("Node(RELATIONSHIP relationship, DirectionEnum direction, AliasResult nodeAlias, s" +
                     "tring neo4jLabel = null, Entity entity = null) : base(relationship, direction, n" +
-                    "eo4jLabel, entity)\r\n\t\t{\r\n\t\t\tNodeAlias = nodeAlias;\r\n\t\t}\r\n\r\n");
+                    "eo4jLabel, entity)\r\n        {\r\n            NodeAlias = nodeAlias;\r\n        }\r\n\r\n" +
+                    "");
             
             #line 106 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && p.SystemReturnType.Namespace == "System").OrderBy(p => p.Name).ToList();
+    var properties = DALModel.GetPropertiesOfBaseTypesAndSelf().Where(p => p.SystemReturnType is not null && p.PropertyType == PropertyType.Attribute && p.SystemReturnType.Namespace == "System").OrderBy(p => p.Name).ToList();
 
             
             #line default
@@ -278,7 +279,7 @@ namespace Blueprint41.DatastoreTemplates
             this.Write("Node Where(");
             
             #line 109 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default"))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(properties.ToJsonNotation()));
             
             #line default
             #line hidden
@@ -307,8 +308,8 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 120 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	foreach (var p in properties)
-	{
+    foreach (var p in properties)
+    {
 
             
             #line default
@@ -338,7 +339,7 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 125 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
@@ -354,7 +355,7 @@ namespace Blueprint41.DatastoreTemplates
             this.Write("Node Assign(");
             
             #line 133 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default"))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(properties.ToJsonNotation()));
             
             #line default
             #line hidden
@@ -383,8 +384,8 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 144 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	foreach (var p in properties)
-	{
+    foreach (var p in properties)
+    {
 
             
             #line default
@@ -414,13 +415,13 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 149 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
             #line hidden
             this.Write("\r\n            InlineAssignments = assignments.ToArray();\r\n\r\n            return th" +
-                    "is;\r\n        }\r\n\r\n\t\tpublic ");
+                    "is;\r\n        }\r\n\r\n        public ");
             
             #line 158 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -450,7 +451,7 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("Alias(this);\r\n                NodeAlias = alias;\r\n            }\r\n            retu" +
-                    "rn this;\r\n        }\r\n\t\tpublic ");
+                    "rn this;\r\n        }\r\n        public ");
             
             #line 171 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -481,25 +482,25 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("Alias(this, name);\r\n                NodeAlias = alias;\r\n            }\r\n          " +
-                    "  return this;\r\n        }\r\n\r\n\t\tpublic ");
+                    "  return this;\r\n        }\r\n\r\n        public ");
             
             #line 186 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Node UseExistingAlias(AliasResult alias)\r\n\t\t{\r\n\t\t\tNodeAlias = alias;\r\n           " +
-                    " IsReference = true;\r\n\t\t\treturn this;\r\n\t\t}\r\n\r\n");
+            this.Write("Node UseExistingAlias(AliasResult alias)\r\n        {\r\n            NodeAlias = alia" +
+                    "s;\r\n            IsReference = true;\r\n            return this;\r\n        }\r\n\r\n");
             
             #line 193 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	foreach(Entity subclass in DALModel.GetSubclasses())
-	{
+    foreach(Entity subclass in DALModel.GetSubclasses())
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic ");
+            this.Write("        public ");
             
             #line 197 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(subclass.Name));
@@ -514,37 +515,37 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write(@"()
-		{
-			if (this.Neo4jLabel is null)
-				throw new InvalidOperationException(""Casting is not supported for virtual entities."");
+        {
+            if (this.Neo4jLabel is null)
+                throw new InvalidOperationException(""Casting is not supported for virtual entities."");
 
-			if (FromRelationship is null)
-				throw new InvalidOperationException(""Please use the right type immediately, casting is only support after you have match through a relationship."");
+            if (FromRelationship is null)
+                throw new InvalidOperationException(""Please use the right type immediately, casting is only support after you have match through a relationship."");
 
-			return new ");
+            return new ");
             
             #line 205 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(subclass.Name));
             
             #line default
             #line hidden
-            this.Write("Node(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);\r\n\t\t}\r" +
-                    "\n\r\n");
+            this.Write("Node(FromRelationship, Direction, NodeAlias, this.Neo4jLabel, this.Entity);\r\n    " +
+                    "    }\r\n\r\n");
             
             #line 208 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
-	var inRelations =  Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.InEntity)).OrderBy(item => item.Name);
-	var outRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity)).OrderBy(item => item.Name);
-	var anyRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity) && item.InEntity == item.OutEntity).OrderBy(item => item.Name);
+    }
+    var inRelations =  Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.InEntity)).OrderBy(item => item.Name);
+    var outRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity)).OrderBy(item => item.Name);
+    var anyRelations = Datastore.Relations.Where(item => DALModel.IsSelfOrSubclassOf(item.OutEntity) && item.InEntity == item.OutEntity).OrderBy(item => item.Name);
 
-	if (inRelations.Any())
-	{
+    if (inRelations.Any())
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic ");
+            this.Write("        public ");
             
             #line 217 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -558,21 +559,21 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("In(this); } }\r\n\t\tpublic class ");
+            this.Write("In(this); } }\r\n        public class ");
             
             #line 218 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("In\r\n\t\t{\r\n\t\t\tprivate ");
+            this.Write("In\r\n        {\r\n            private ");
             
             #line 220 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Node Parent;\r\n\t\t\tinternal ");
+            this.Write("Node Parent;\r\n            internal ");
             
             #line 221 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -586,17 +587,17 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Node parent)\r\n\t\t\t{\r\n\t\t\t\tParent = parent;\r\n\t\t\t}\r\n");
+            this.Write("Node parent)\r\n            {\r\n                Parent = parent;\r\n            }\r\n");
             
             #line 225 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-		foreach (Relationship rel in inRelations)
-		{
+        foreach (Relationship rel in inRelations)
+        {
 
             
             #line default
             #line hidden
-            this.Write("\t\t\tpublic IFromIn_");
+            this.Write("            public IFromIn_");
             
             #line 229 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(rel.Name));
@@ -621,24 +622,24 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 230 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-		}
+        }
 
             
             #line default
             #line hidden
-            this.Write("\r\n\t\t}\r\n");
+            this.Write("\r\n        }\r\n");
             
             #line 235 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
-	if (outRelations.Any())
-	{
+    if (outRelations.Any())
+    {
 
             
             #line default
             #line hidden
-            this.Write("\r\n\t\tpublic ");
+            this.Write("\r\n        public ");
             
             #line 242 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -652,21 +653,21 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Out(this); } }\r\n\t\tpublic class ");
+            this.Write("Out(this); } }\r\n        public class ");
             
             #line 243 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Out\r\n\t\t{\r\n\t\t\tprivate ");
+            this.Write("Out\r\n        {\r\n            private ");
             
             #line 245 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Node Parent;\r\n\t\t\tinternal ");
+            this.Write("Node Parent;\r\n            internal ");
             
             #line 246 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -680,17 +681,17 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Node parent)\r\n\t\t\t{\r\n\t\t\t\tParent = parent;\r\n\t\t\t}\r\n");
+            this.Write("Node parent)\r\n            {\r\n                Parent = parent;\r\n            }\r\n");
             
             #line 250 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-		foreach (Relationship rel in outRelations)
-		{
+        foreach (Relationship rel in outRelations)
+        {
 
             
             #line default
             #line hidden
-            this.Write("\t\t\tpublic IFromOut_");
+            this.Write("            public IFromOut_");
             
             #line 254 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(rel.Name));
@@ -715,24 +716,24 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 255 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-		}
+        }
 
             
             #line default
             #line hidden
-            this.Write("\t\t}\r\n");
+            this.Write("        }\r\n");
             
             #line 259 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
-	if (anyRelations.Any())
-	{
+    if (anyRelations.Any())
+    {
 
             
             #line default
             #line hidden
-            this.Write("\r\n\t\tpublic ");
+            this.Write("\r\n        public ");
             
             #line 266 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -746,21 +747,21 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Any(this); } }\r\n\t\tpublic class ");
+            this.Write("Any(this); } }\r\n        public class ");
             
             #line 267 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Any\r\n\t\t{\r\n\t\t\tprivate ");
+            this.Write("Any\r\n        {\r\n            private ");
             
             #line 269 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Node Parent;\r\n\t\t\tinternal ");
+            this.Write("Node Parent;\r\n            internal ");
             
             #line 270 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -774,17 +775,17 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Node parent)\r\n\t\t\t{\r\n\t\t\t\tParent = parent;\r\n\t\t\t}\r\n");
+            this.Write("Node parent)\r\n            {\r\n                Parent = parent;\r\n            }\r\n");
             
             #line 274 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-		foreach (Relationship rel in anyRelations)
-		{
+        foreach (Relationship rel in anyRelations)
+        {
 
             
             #line default
             #line hidden
-            this.Write("\t\t\tpublic IFromAny_");
+            this.Write("            public IFromAny_");
             
             #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(rel.Name));
@@ -809,21 +810,21 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 279 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-		}
+        }
 
             
             #line default
             #line hidden
-            this.Write("\t\t}\r\n");
+            this.Write("        }\r\n");
             
             #line 283 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
             #line hidden
-            this.Write("\t}\r\n\r\n\tpublic class ");
+            this.Write("    }\r\n\r\n    public class ");
             
             #line 288 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -844,7 +845,7 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("ListAlias>\r\n\t{\r\n\t\tinternal ");
+            this.Write("ListAlias>\r\n    {\r\n        internal ");
             
             #line 290 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -858,7 +859,8 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Node parent)\r\n\t\t{\r\n\t\t\tNode = parent;\r\n\t\t}\r\n\t\tinternal ");
+            this.Write("Node parent)\r\n        {\r\n            Node = parent;\r\n        }\r\n        internal " +
+                    "");
             
             #line 294 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -872,8 +874,9 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Node parent, string name)\r\n\t\t{\r\n\t\t\tNode = parent;\r\n\t\t\tAliasName = name;\r\n\t\t}\r\n\t\ti" +
-                    "nternal void SetAlias(string name) => AliasName = name;\r\n\r\n\t\tprivate  ");
+            this.Write("Node parent, string name)\r\n        {\r\n            Node = parent;\r\n            Ali" +
+                    "asName = name;\r\n        }\r\n        internal void SetAlias(string name) => AliasN" +
+                    "ame = name;\r\n\r\n        private  ");
             
             #line 301 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -881,7 +884,7 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("Alias(Func<QueryTranslator, string> function, object[] arguments, Type type) : ba" +
-                    "se(function, arguments, type) { }\r\n\t\tprivate  ");
+                    "se(function, arguments, type) { }\r\n        private  ");
             
             #line 302 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -889,8 +892,8 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("Alias(FieldResult parent, Func<QueryTranslator, string> function, object[] argume" +
-                    "nts = null, Type type = null) : base(parent, function, arguments, type) { }\r\n\t\tp" +
-                    "rivate  ");
+                    "nts = null, Type type = null) : base(parent, function, arguments, type) { }\r\n   " +
+                    "     private  ");
             
             #line 303 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -898,11 +901,12 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("Alias(AliasResult alias, Func<QueryTranslator, string> function, object[] argumen" +
-                    "ts = null, Type type = null) : base(alias, function, arguments, type)\r\n\t\t{\r\n\t\t\tN" +
-                    "ode = alias.Node;\r\n\t\t}\r\n\r\n\t\tpublic Assignment[] Assign(");
+                    "ts = null, Type type = null) : base(alias, function, arguments, type)\r\n        {" +
+                    "\r\n            Node = alias.Node;\r\n        }\r\n\r\n        public Assignment[] Assig" +
+                    "n(");
             
             #line 308 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(", ", properties.Select(p => $"JsNotation<{p.SystemReturnType.ToCSharp()}{((p.SystemReturnType.IsValueType && p.Nullable ) ? "?" : "")}> {p.Name} = default"))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(properties.ToJsonNotation()));
             
             #line default
             #line hidden
@@ -911,13 +915,13 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 311 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	foreach (var p in properties)
-	{
+    foreach (var p in properties)
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\t\tif (");
+            this.Write("            if (");
             
             #line 315 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(p.Name));
@@ -942,33 +946,42 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 316 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
             #line hidden
-            this.Write("            \r\n            return assignments.ToArray();\r\n        }\r\n\r\n\r\n\t\tpublic " +
-                    "override IReadOnlyDictionary<string, FieldResult> AliasFields\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{" +
-                    "\r\n\t\t\t\tif (m_AliasFields is null)\r\n\t\t\t\t{\r\n\t\t\t\t\tm_AliasFields = ");
+            this.Write(@"            
+            return assignments.ToArray();
+        }
+
+
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields is null)
+                {
+                    m_AliasFields = ");
             
             #line 330 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp is null ? "" : "new UnidentifiedPropertiesAliasDictionary("));
             
             #line default
             #line hidden
-            this.Write("new Dictionary<string, FieldResult>()\r\n\t\t\t\t\t{\r\n");
+            this.Write("new Dictionary<string, FieldResult>()\r\n                    {\r\n");
             
             #line 332 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
-	{
-		if (property.PropertyType != PropertyType.Attribute)
-			continue;
+    foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
+    {
+        if (property.PropertyType != PropertyType.Attribute)
+            continue;
 
             
             #line default
             #line hidden
-            this.Write("\t\t\t\t\t\t{ \"");
+            this.Write("                        { \"");
             
             #line 338 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
@@ -992,7 +1005,7 @@ namespace Blueprint41.DatastoreTemplates
             this.Write("\", ");
             
             #line 338 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
@@ -1028,30 +1041,31 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 339 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
             #line hidden
-            this.Write("\t\t\t\t\t}");
+            this.Write("                    }");
             
             #line 342 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp is null ? "" : string.Concat(", ", Settings.FullCRUDNamespace, ".", DALModel.Name ,".Entity, this)")));
             
             #line default
             #line hidden
-            this.Write(";\r\n\t\t\t\t}\r\n\t\t\t\treturn m_AliasFields;\r\n\t\t\t}\r\n\t\t}\r\n\t\tprivate IReadOnlyDictionary<str" +
-                    "ing, FieldResult> m_AliasFields = null;\r\n\r\n");
+            this.Write(";\r\n                }\r\n                return m_AliasFields;\r\n            }\r\n     " +
+                    "   }\r\n        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = n" +
+                    "ull;\r\n\r\n");
             
             #line 349 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	if (inRelations.Any())
-	{
+    if (inRelations.Any())
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic ");
+            this.Write("        public ");
             
             #line 353 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1090,14 +1104,14 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 354 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
-	if (outRelations.Any())
-	{
+    }
+    if (outRelations.Any())
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic ");
+            this.Write("        public ");
             
             #line 359 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1136,14 +1150,14 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 360 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
-	if (anyRelations.Any())
-	{
+    }
+    if (anyRelations.Any())
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic ");
+            this.Write("        public ");
             
             #line 365 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1182,7 +1196,7 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 366 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
@@ -1191,16 +1205,16 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 370 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
-	{
-		if (property.PropertyType != PropertyType.Attribute)
-			continue;
+    foreach (var property in DALModel.GetPropertiesOfBaseTypesAndSelf())
+    {
+        if (property.PropertyType != PropertyType.Attribute)
+            continue;
 
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic ");
+            this.Write("        public ");
             
             #line 377 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetResultType(property.SystemReturnType)));
@@ -1214,14 +1228,14 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif (m_");
+            this.Write("\r\n        {\r\n            get\r\n            {\r\n                if (m_");
             
             #line 381 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
             
             #line default
             #line hidden
-            this.Write(" is null)\r\n\t\t\t\t\tm_");
+            this.Write(" is null)\r\n                    m_");
             
             #line 382 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
@@ -1242,14 +1256,14 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\"];\r\n\r\n\t\t\t\treturn m_");
+            this.Write("\"];\r\n\r\n                return m_");
             
             #line 384 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
             
             #line default
             #line hidden
-            this.Write(";\r\n\t\t\t}\r\n\t\t}\r\n\t\tprivate ");
+            this.Write(";\r\n            }\r\n        }\r\n        private ");
             
             #line 387 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetResultType(property.SystemReturnType)));
@@ -1267,29 +1281,29 @@ namespace Blueprint41.DatastoreTemplates
             
             #line 388 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
-	if (inheritedUnidentifiedProp is not null)
-	{
+    if (inheritedUnidentifiedProp is not null)
+    {
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic UnidentifiedProperties ");
+            this.Write("        public UnidentifiedProperties ");
             
             #line 394 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.UnidentifiedProperties));
             
             #line default
             #line hidden
-            this.Write("\r\n\t\t{\r\n\t\t\tget\r\n\t\t\t{\r\n\t\t\t\tif (m_");
+            this.Write("\r\n        {\r\n            get\r\n            {\r\n                if (m_");
             
             #line 398 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.UnidentifiedProperties));
             
             #line default
             #line hidden
-            this.Write(" is null)\r\n\t\t\t\t\tm_");
+            this.Write(" is null)\r\n                    m_");
             
             #line 399 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.UnidentifiedProperties));
@@ -1299,7 +1313,7 @@ namespace Blueprint41.DatastoreTemplates
             this.Write(" = new UnidentifiedProperties(this, ");
             
             #line 399 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
@@ -1310,30 +1324,30 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("\"]);\r\n\r\n\t\t\t\treturn m_");
+            this.Write("\"]);\r\n\r\n                return m_");
             
             #line 401 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.UnidentifiedProperties));
             
             #line default
             #line hidden
-            this.Write(";\r\n\t\t\t}\r\n\t\t}\r\n\t\tprivate UnidentifiedProperties m_");
+            this.Write(";\r\n            }\r\n        }\r\n        private UnidentifiedProperties m_");
             
             #line 404 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(inheritedUnidentifiedProp.UnidentifiedProperties));
             
             #line default
             #line hidden
-            this.Write(" = null;\r\n\r\n\t\tpublic class UnidentifiedProperties\r\n\t\t{\r\n\t\t\tinternal UnidentifiedP" +
-                    "roperties(");
+            this.Write(" = null;\r\n\r\n        public class UnidentifiedProperties\r\n        {\r\n            i" +
+                    "nternal UnidentifiedProperties(");
             
             #line 408 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Alias alias, Entity entity)\r\n\t\t\t{\r\n\t\t\t\tAlias = alias;\r\n\t\t\t\tEntity = entity;\r\n\t\t\t}" +
-                    "\r\n\t\t\tprivate ");
+            this.Write("Alias alias, Entity entity)\r\n            {\r\n                Alias = alias;\r\n     " +
+                    "           Entity = entity;\r\n            }\r\n            private ");
             
             #line 413 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1341,44 +1355,44 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write(@"Alias Alias;
-			private Entity Entity;
+            private Entity Entity;
 
-			public MiscResult Get(string fieldName) { return new MiscResult(Alias, fieldName, Entity, null); }
-			public MiscResult this[string fieldName] { get { return Get(fieldName); } }
+            public MiscResult Get(string fieldName) { return new MiscResult(Alias, fieldName, Entity, null); }
+            public MiscResult this[string fieldName] { get { return Get(fieldName); } }
 
-			public MiscResult Get(FieldResult result, bool withCoalesce = false, Type type = null)
-			{
-				if (withCoalesce)
-					return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, result }, type ?? typeof(object));
-				else
-					return new MiscResult(t => t.FnGetField, new object[] { Alias, result }, type ?? typeof(object));
-			}
+            public MiscResult Get(FieldResult result, bool withCoalesce = false, Type type = null)
+            {
+                if (withCoalesce)
+                    return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, result }, type ?? typeof(object));
+                else
+                    return new MiscResult(t => t.FnGetField, new object[] { Alias, result }, type ?? typeof(object));
+            }
 
-			public MiscResult Get(Parameter parameter, bool withCoalesce = false, Type type = null)
-			{
-				if (withCoalesce)
-					return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, parameter }, type ?? typeof(object));
-				else
-					return new MiscResult(t => t.FnGetField, new object[] { Alias, parameter }, type ?? typeof(object));
-			}
-		}
+            public MiscResult Get(Parameter parameter, bool withCoalesce = false, Type type = null)
+            {
+                if (withCoalesce)
+                    return new MiscResult(t => t.FnGetFieldWithCoalesce, new object[] { Alias, parameter }, type ?? typeof(object));
+                else
+                    return new MiscResult(t => t.FnGetField, new object[] { Alias, parameter }, type ?? typeof(object));
+            }
+        }
 ");
             
             #line 435 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
 
-	}
+    }
 
             
             #line default
             #line hidden
-            this.Write("\t\tpublic AsResult As(string aliasName, out ");
+            this.Write("        public AsResult As(string aliasName, out ");
             
             #line 438 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
-            this.Write("Alias alias)\r\n\t\t{\r\n\t\t\talias = new ");
+            this.Write("Alias alias)\r\n        {\r\n            alias = new ");
             
             #line 440 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1392,8 +1406,8 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Node)Node)\r\n\t\t\t{\r\n\t\t\t\tAliasName = aliasName\r\n\t\t\t};\r\n\t\t\treturn this.As(aliasName);" +
-                    "\r\n\t\t}\r\n\t}\r\n\r\n\tpublic class ");
+            this.Write("Node)Node)\r\n            {\r\n                AliasName = aliasName\r\n            };\r" +
+                    "\n            return this.As(aliasName);\r\n        }\r\n    }\r\n\r\n    public class ");
             
             #line 448 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1414,7 +1428,7 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("Alias>, IAliasListResult\r\n\t{\r\n\t\tprivate ");
+            this.Write("Alias>, IAliasListResult\r\n    {\r\n        private ");
             
             #line 450 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1422,7 +1436,7 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("ListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) " +
-                    ": base(function, arguments, type) { }\r\n\t\tprivate ");
+                    ": base(function, arguments, type) { }\r\n        private ");
             
             #line 451 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1431,7 +1445,7 @@ namespace Blueprint41.DatastoreTemplates
             #line hidden
             this.Write("ListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] ar" +
                     "guments = null, Type type = null) : base(parent, function, arguments, type) { }\r" +
-                    "\n\t\tprivate ");
+                    "\n        private ");
             
             #line 452 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1439,8 +1453,8 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("ListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arg" +
-                    "uments = null, Type type = null) : base(alias, function, arguments, type) { }\r\n\t" +
-                    "}\r\n\tpublic class ");
+                    "uments = null, Type type = null) : base(alias, function, arguments, type) { }\r\n " +
+                    "   }\r\n    public class ");
             
             #line 454 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1461,7 +1475,7 @@ namespace Blueprint41.DatastoreTemplates
             
             #line default
             #line hidden
-            this.Write("ListAlias>, IAliasJaggedListResult\r\n\t{\r\n\t\tprivate ");
+            this.Write("ListAlias>, IAliasJaggedListResult\r\n    {\r\n        private ");
             
             #line 456 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1469,7 +1483,7 @@ namespace Blueprint41.DatastoreTemplates
             #line default
             #line hidden
             this.Write("JaggedListAlias(Func<QueryTranslator, string> function, object[] arguments, Type " +
-                    "type) : base(function, arguments, type) { }\r\n\t\tprivate ");
+                    "type) : base(function, arguments, type) { }\r\n        private ");
             
             #line 457 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1478,7 +1492,7 @@ namespace Blueprint41.DatastoreTemplates
             #line hidden
             this.Write("JaggedListAlias(FieldResult parent, Func<QueryTranslator, string> function, objec" +
                     "t[] arguments = null, Type type = null) : base(parent, function, arguments, type" +
-                    ") { }\r\n\t\tprivate ");
+                    ") { }\r\n        private ");
             
             #line 458 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1487,45 +1501,9 @@ namespace Blueprint41.DatastoreTemplates
             #line hidden
             this.Write("JaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object" +
                     "[] arguments = null, Type type = null) : base(alias, function, arguments, type) " +
-                    "{ }\r\n\t}\r\n}\r\n");
+                    "{ }\r\n    }\r\n}");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 461 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Node.tt"
-
-
-	private string GetResultType(Type type)
-	{
-		switch (type.Name)
-		{
-			case "Boolean":
-				return "BooleanResult";
-			case "Int16":
-			case "Int32":
-			case "Int64":
-			case "Decimal":
-				return "NumericResult";
-			case "Single":
-			case "Double":
-				return "FloatResult";
-			case "Guid":
-			case "String":
-				return "StringResult";
-			case "DateTime":
-				return "DateTimeResult";
-			case "List`1":
-				if(type.GenericTypeArguments[0] == typeof(string))
-					return "StringListResult";
-				else
-					return "ListResult";
-			default:
-				return "MiscResult";
-		}
-	}
-
-        
-        #line default
-        #line hidden
     }
     
     #line default

@@ -35,6 +35,6 @@ namespace Blueprint41.Core
 
         public abstract string NextFunctionID(FunctionalId functionalId);
 
-        public abstract bool RelationshipExists(Property foreignProperty, OGM instance);
+        public abstract bool RelationshipExists(EntityProperty foreignProperty, OGM instance);
     }
 }

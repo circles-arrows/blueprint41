@@ -1,5 +1,9 @@
-﻿using System;
+﻿//#define DEBUG_QUERY
+
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Blueprint41.Core;
@@ -10,8 +14,16 @@ namespace Blueprint41.Neo4j.Persistence.Void
 {
     internal partial class Neo4jRelationshipPersistenceProvider : RelationshipPersistenceProvider
     {
-        public Neo4jRelationshipPersistenceProvider(PersistenceProvider factory) : base(factory) { }
+        public Neo4jRelationshipPersistenceProvider(PersistenceProvider factory) : base(factory)
+        {
+            HasApocMapRemoveKeys = new Lazy<bool>(() => HasFunction("apoc.map.removeKeys"));
 
+            bool HasFunction(string name)
+            {
+                Neo4jPersistenceProvider? provider = PersistenceProviderFactory as Neo4jPersistenceProvider;
+                return provider?.HasFunction(name) ?? false;
+            }
+        }
         private void Checks(Relationship relationship, OGM? inItem, OGM? outItem)
         {
             if (inItem is null && outItem is null)
@@ -281,44 +293,55 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         private static AtomicDictionary<string, Type> typeCache = new AtomicDictionary<string, Type>();
 
-        public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent)
+        public override void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent, Dictionary<string, object>? properties)
         {
             Transaction trans = Transaction.RunningTransaction;
 
             Checks(relationship, inItem, outItem);
 
             if (timedependent)
-                Add(trans, relationship, inItem, outItem, moment ?? Conversion.MinDateTime);
+                Add(trans, relationship, inItem, outItem, properties, moment ?? Conversion.MinDateTime);
             else
-                Add(trans, relationship, inItem, outItem);
+                Add(trans, relationship, inItem, outItem, properties);
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem)
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties)
         {
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
                 inItem.GetEntity().Key.Name,
                 outItem.GetEntity().Label.Name,
                 outItem.GetEntity().Key.Name);
-            string create = string.Format("MERGE (in)-[outr:{0}]->(out) ON CREATE SET outr.CreationDate = ${1} SET outr += $node", relationship.Neo4JRelationshipType, relationship.CreationDate);
+
+            string create = $"""
+                MERGE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out)
+                ON CREATE SET outr = $map
+                ON MATCH SET outr = $map, outr.CreationDate = $created
+                """;
+
+            long createdDate = Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate);
+
+            Dictionary<string, object> map = properties ?? new Dictionary<string, object>();
+            map.AddOrSet(relationship.CreationDate, createdDate);
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
-
-            Dictionary<string, object> node = new Dictionary<string, object>();
-            parameters.Add(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
-
-            parameters.Add("node", node);
+            parameters.Add("map", map);
+            parameters.Add("created", createdDate);
 
             string query = match + "\r\n" + create;
             relationship.RaiseOnRelationCreate(trans);
 
             RawResult result = trans.Run(query, parameters);
         }
-        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, DateTime moment) 
+        protected virtual void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties, DateTime moment) 
         {
+            long momentConv = Conversion<DateTime, long>.Convert(moment);
+            if (momentConv >= Conversion.MaxDateTimeInMS)
+                return; // Adding a relationship in the infinite future is equal to not adding it at all.
+
             // Expected behavior time dependent relationship:
             // ----------------------------------------------
             //
@@ -332,49 +355,96 @@ namespace Blueprint41.Neo4j.Persistence.Void
             Entity inEntity = inItem.GetEntity();
             Entity outEntity = outItem.GetEntity();
 
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }})-[rel:{relationship.Neo4JRelationshipType}]->(out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
-            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) >= $moment");
-            sb.AppendLine("DELETE rel");
-            string delete = sb.ToString();
+            string delete = $$"""
+                MATCH (in:{{inEntity.Label.Name}} { {{inEntity.Key.Name}}: $inKey })-[rel:{{relationship.Neo4JRelationshipType}}]->(out:{{outEntity.Label.Name}} { {{outEntity.Key.Name}}: $outKey })
+                WHERE COALESCE(rel.StartDate, $min) >= $moment
+                DELETE rel
+                """;
 
+            string update = $$"""
+                MATCH (in:{{inEntity.Label.Name}} { {{inEntity.Key.Name}}: $inKey })-[rel:{{relationship.Neo4JRelationshipType}}]->(out:{{outEntity.Label.Name}} { {{outEntity.Key.Name}}: $outKey })
+                WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
+                WITH rel, properties(rel) AS map1, $map AS map2
+                SET rel.EndDate = CASE WHEN {{MapRemoveKeys("map1", "$excl", relationship.ExcludedProperties())}} = {{MapRemoveKeys("map2", "$excl", relationship.ExcludedProperties())}} THEN $max ELSE $moment END
+                """;
+
+            string create = $$"""
+                MATCH (in:{{inEntity.Label.Name}} { {{inEntity.Key.Name}}: $inKey }), (out:{{outEntity.Label.Name}} { {{outEntity.Key.Name}}: $outKey })
+                OPTIONAL MATCH (in)-[rel:{{relationship.Neo4JRelationshipType}}]->(out)
+                WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) > $moment
+                WITH in, out, rel
+                WHERE rel is null
+                CREATE (in)-[outr:{{relationship.Neo4JRelationshipType}}]->(out) SET outr = $map
+                """;
+
+#if DEBUG_QUERY
             sb.Clear();
             sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }})-[rel:{relationship.Neo4JRelationshipType}]->(out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
-            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment");
-            sb.AppendLine("SET rel.EndDate = $max");
-            string update = sb.ToString();
+            sb.AppendLine("RETURN rel.StartDate AS StartDate, rel.EndDate AS EndDate, rel.CreationDate AS CreationDate, properties(rel) AS Properties");
+            string peek = sb.ToString();
+#endif
 
-            sb.Clear();
-            sb.AppendLine($"MATCH (in:{inEntity.Label.Name} {{ {inEntity.Key.Name}: $inKey }}), (out:{outEntity.Label.Name} {{ {outEntity.Key.Name}: $outKey }})");
-            sb.AppendLine($"OPTIONAL MATCH (in)-[rel:{relationship.Neo4JRelationshipType}]->(out)");
-            sb.AppendLine("WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment");
-            sb.AppendLine("WITH in, out, rel");
-            sb.AppendLine("WHERE rel is null");
-            sb.AppendLine($"CREATE (in)-[outr:{relationship.Neo4JRelationshipType}]->(out) SET outr.CreationDate = $create SET outr += $node");
-            string create = sb.ToString();
-
-            Dictionary<string, object> node = new Dictionary<string, object>();
-            node.Add(relationship.StartDate, Conversion<DateTime, long>.Convert(moment));
-            node.Add(relationship.EndDate, Conversion.MaxDateTimeInMS);
+            Dictionary<string, object> map = properties ?? new Dictionary<string, object>();
+            map.AddOrSet(relationship.StartDate, momentConv);
+            map.AddOrSet(relationship.EndDate, Conversion.MaxDateTimeInMS);
+            map.AddOrSet(relationship.CreationDate, Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("inKey", inItem.GetKey());
             parameters.Add("outKey", outItem.GetKey());
-            parameters.Add("create", Conversion<DateTime, long>.Convert(Transaction.RunningTransaction.TransactionDate));
             parameters.Add("min", Conversion.MinDateTimeInMS);
             parameters.Add("max", Conversion.MaxDateTimeInMS);
-            parameters.Add("moment", Conversion<DateTime, long>.Convert(moment));
-            parameters.Add("node", node);
+            parameters.Add("moment", momentConv);
+            parameters.Add("map", map);
+            parameters.Add("excl", relationship.ExcludedProperties());
 
             relationship.RaiseOnRelationCreate(trans);
 
+#if DEBUG_QUERY
+            Peek("Before Delete");
+#endif
             RawResult deleteResult = trans.Run(delete, parameters);
+#if DEBUG_QUERY
+            Peek("After Delete & Before Update");
+#endif
             RawResult updateResult = trans.Run(update, parameters);
+#if DEBUG_QUERY
+            Peek("After Update & Before Create");
+#endif
             RawResult createResult = trans.Run(create, parameters);
+#if DEBUG_QUERY
+            Peek("After Create");
+#endif
 
-            if (updateResult.Statistics().PropertiesSet > 0 && createResult.Statistics().RelationshipsCreated > 0)
-                throw new InvalidOperationException($"Unable to create relation '{relationship.Neo4JRelationshipType}' between {inEntity.Label.Name}('{inItem.GetKey()}') and {outEntity.Label.Name}('{outItem.GetKey()}')");
+            //if (updateResult.Statistics().PropertiesSet > 0 && createResult.Statistics().RelationshipsCreated > 0)
+            //    throw new InvalidOperationException($"Unable to create relation '{relationship.Neo4JRelationshipType}' between {inEntity.Label.Name}('{inItem.GetKey()}') and {outEntity.Label.Name}('{outItem.GetKey()}')");
+
+#if DEBUG_QUERY
+            void Peek(string message)
+            {
+                Debug.WriteLine($"Relationships for {relationship.Neo4JRelationshipType} {message}");
+                RawResult result = trans.Run(peek, parameters);
+                foreach (var record in result)
+                {
+                    DateTime from = Conversion<long?, DateTime>.Convert(record.Values["StartDate"].As<long?>() ?? Conversion.MinDateTimeInMS);
+                    DateTime till = Conversion<long?, DateTime>.Convert(record.Values["EndDate"].As<long?>() ?? Conversion.MaxDateTimeInMS);
+                    DateTime created = Conversion<long?, DateTime>.Convert(record.Values["CreationDate"].As<long?>() ?? Conversion.MaxDateTimeInMS);
+                    Dictionary<string, object?> properties = record.Values["Properties"].As<Dictionary<string, object?>?>();
+
+                    Debug.WriteLine($"From: {from.ToString("u"),-19}, Till: {till.ToString("u"),-19}, Created: {created.ToString("u"),-19}, Properties: {properties.Count}");
+                }
+            }
+#endif
         }
+
+        protected virtual string MapRemoveKeys(string map, string exclList, IReadOnlyList<string> entries)
+        {
+            if (HasApocMapRemoveKeys.Value)
+                return $"apoc.map.removeKeys({map}, {exclList})";
+
+            return $"{map} {{ {string.Join(", ", entries.Select(entry => $"{entry}: 0"))}, .* }}"; // WATCH OUT: This one is going to be tricky on Memgraph!!!!
+        }
+        protected readonly Lazy<bool> HasApocMapRemoveKeys;
 
         public override void Remove(Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment, bool timedependent)
         {
@@ -412,6 +482,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         protected virtual void Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem, DateTime moment)
         {
+            long momentConv = Conversion<DateTime, long>.Convert(moment);
+            if (momentConv >= Conversion.MaxDateTimeInMS)
+                return; // Removing a relationship in the infinite future is equal to not adding it at all.
+
             // Expected behavior time dependent relationship:
             // ----------------------------------------------
             //
@@ -445,7 +519,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
             parameters.Add("min", Conversion.MinDateTimeInMS);
             parameters.Add("max", Conversion.MaxDateTimeInMS);
-            parameters.Add("moment", Conversion<DateTime, long>.Convert(moment));
+            parameters.Add("moment", momentConv);
 
             relationship.RaiseOnRelationCreate(trans);
 
@@ -453,8 +527,11 @@ namespace Blueprint41.Neo4j.Persistence.Void
             RawResult updateResult = trans.Run(update, parameters);
         }
 
-        public override void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, bool fullyUnmanaged = false)
+        public override void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object> properties, bool fullyUnmanaged = false)
         {
+            if (properties is not null && properties.Count > 0) 
+                throw new NotImplementedException("Support for setting properties via the unmanaged relationship interface is not implemented yet.");
+
             Transaction trans = Transaction.RunningTransaction;
 
             Checks(relationship, inItem, outItem);

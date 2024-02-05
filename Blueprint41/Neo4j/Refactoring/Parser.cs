@@ -23,10 +23,13 @@ namespace Blueprint41.Neo4j.Refactoring
                 return Transaction.RunningTransaction.Run(cypher, parameters);
         }
 
-        internal static RawResult Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true)
+        internal static RawResult Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = false, Action<RawResult> logic = null)
         {
             if (!ShouldExecute)
                 return null;
+
+            if (!withTransaction && logic is not null)
+                throw new NotSupportedException("You can only supply logic if the query runs withTransaction");
 
             RawResult result;
 
@@ -35,6 +38,7 @@ namespace Blueprint41.Neo4j.Refactoring
                 using (Transaction.Begin(withTransaction))
                 {
                     result = Parser.PrivateExecute(cypher, parameters);
+                    logic?.Invoke(result);
                     Transaction.Commit();
                 }
             }
