@@ -160,7 +160,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         public override Bookmark FromToken(string consistencyToken) => Neo4jBookmark.FromTokenInternal(consistencyToken);
         public override string ToToken(Bookmark consistency) => Neo4jBookmark.ToTokenInternal(consistency);
 
-        internal CustomTaskScheduler TaskScheduler
+        public CustomTaskScheduler TaskScheduler
         {
             get
             {

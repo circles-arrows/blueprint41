@@ -6,7 +6,7 @@ using neo4j = Neo4j.Driver;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
-    internal class Neo4jBookmark : Bookmark
+    public class Neo4jBookmark : Bookmark
     {
         internal Neo4jBookmark(string[] values)
         {
@@ -15,7 +15,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 
         public string[] Values { get; private set; }
 
-        internal neo4j.Bookmark ToBookmark() => neo4j.Bookmark.From(Values);
+        public neo4j.Bookmark ToBookmark() => neo4j.Bookmark.From(Values);
 
         internal static string ToTokenInternal(Bookmark consistency)
         {

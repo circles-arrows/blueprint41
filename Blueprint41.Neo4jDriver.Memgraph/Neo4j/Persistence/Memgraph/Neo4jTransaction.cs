@@ -12,7 +12,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
     public class Neo4jTransaction : Void.Neo4jTransaction
     {
-        internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
+        public Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
         {
             Provider = provider;
         }
@@ -85,7 +85,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         public neo4j.IAsyncTransaction? Transaction { get; set; }
         public neo4j.IAsyncQueryRunner? StatementRunner { get; set; }
 
-        private List<Neo4jBookmark>? Consistency;
+        protected internal List<Neo4jBookmark>? Consistency;
 
         protected override void Initialize()
         {
