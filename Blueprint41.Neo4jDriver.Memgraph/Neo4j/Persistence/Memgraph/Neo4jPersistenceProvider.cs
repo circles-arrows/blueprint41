@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Neo4j.Driver;
 
 using Blueprint41.Core;
-using Blueprint41.Log;
 using Blueprint41.Neo4j.Model;
-using Blueprint41.Neo4j.Schema;
-using System.Runtime.CompilerServices;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
@@ -73,7 +69,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
         }
-        public RawResult RunImplicit(string cypher)
+        public override RawResult RunImplicit(string cypher)
         {
             IAsyncSession GetSession()
             {

@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema.Memgraph
 {
@@ -9,7 +10,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
     {
         public override bool IsKey { get; }
 
-        internal ConstraintInfo_Memgraph(RawRecord record) : base(record) { }
+        internal ConstraintInfo_Memgraph(RawRecord record, Neo4jPersistenceProvider persistenceProvider) : base(record, persistenceProvider) { }
 
         protected override void Initialize(RawRecord record)
         {

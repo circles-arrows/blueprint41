@@ -40,6 +40,7 @@ namespace Blueprint41.Core
         private readonly Lazy<RelationshipPersistenceProvider> _relationshipPersistenceProvider;
 
         public abstract Transaction NewTransaction(bool withTransaction);
+        public abstract RawResult RunImplicit(string cypher);
         public virtual string ToToken(Bookmark consistency) => string.Empty;
         public virtual Bookmark FromToken(string consistencyToken) => Bookmark.NullBookmark;
 

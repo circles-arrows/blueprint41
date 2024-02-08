@@ -3,23 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence.Driver.Memgraph;
-
-using neo4jDriver = Neo4j.Driver;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema.Memgraph
 {
     public class SchemaInfo_Memgraph : v4.SchemaInfo_v4
     {
-        internal SchemaInfo_Memgraph(DatastoreModel model) : base(model) { }
+        internal SchemaInfo_Memgraph(DatastoreModel model, Neo4jPersistenceProvider persistenceProvider) : base(model, persistenceProvider) { }
 
         protected override void Initialize()
         {
-            Indexes = ImplicitLoadData("SHOW INDEX INFO", record => NewIndexInfo(record)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
-            Constraints = ImplicitLoadData("SHOW CONSTRAINT INFO", record => NewConstraintInfo(record)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
+            Indexes = ImplicitLoadData("SHOW INDEX INFO", record => NewIndexInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
+            Constraints = ImplicitLoadData("SHOW CONSTRAINT INFO", record => NewConstraintInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
             Labels = ImplicitLoadData("SHOW NODE_LABELS INFO", record => record.Values["node labels"].As<string>());
             RelationshipTypes = ImplicitLoadData("SHOW EDGE_TYPES INFO", record => record.Values["edge types"].As<string>());
 
@@ -27,8 +24,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             {
                 bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
                 FunctionalIds = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
-                //TODO: disabled while waiting for schema.node_type_properties fix
-                //PropertyKeys = LoadSimpleData("CALL schema.node_type_properties() YIELD propertyName as propertyKey", "propertyKey");
+                PropertyKeys = LoadSimpleData("CALL schema.node_type_properties() YIELD propertyName as propertyKey", "propertyKey");
             }
         }
         protected IReadOnlyList<T> ImplicitLoadData<T>(string procedure, Func<RawRecord, T> processor)
@@ -41,7 +37,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
                 {
                     retry = false;
 
-                    RawResult result = (Model.PersistenceProvider as Neo4jPersistenceProvider)!.RunImplicit(procedure);
+                    RawResult result = PersistenceProvider.RunImplicit(procedure);
                     data = result.Select(processor).ToArray();
                 }
                 catch (Exception clientException) when (clientException.Message.Contains("is still populating"))
@@ -85,11 +81,11 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             }
         }
 
-        protected override ConstraintInfo NewConstraintInfo(RawRecord rawRecord) => new ConstraintInfo_Memgraph(rawRecord);
-        protected override IndexInfo NewIndexInfo(RawRecord rawRecord) => new IndexInfo_Memgraph(rawRecord);
+        protected override ConstraintInfo NewConstraintInfo(RawRecord rawRecord, Neo4jPersistenceProvider neo4JPersistenceProvider) => new ConstraintInfo_Memgraph(rawRecord, neo4JPersistenceProvider);
+        protected override IndexInfo NewIndexInfo(RawRecord rawRecord, Neo4jPersistenceProvider neo4JPersistenceProvider) => new IndexInfo_Memgraph(rawRecord, neo4JPersistenceProvider);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
-        internal override List<(ApplyConstraintAction, string?)> ComputeCommands(Entity entity, IndexType indexType, bool nullable, bool isKey, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
+        internal override List<(ApplyConstraintAction, string?)> ComputeCommands(IEntity entity, IndexType indexType, bool nullable, bool isKey, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
         {
             ConstraintInfo? uniqueConstraint = entity.IsVirtual ? null : constraints.FirstOrDefault(item => item.IsUnique);
             ConstraintInfo? mandatoryConstraint = entity.IsVirtual ? null : constraints.FirstOrDefault(item => item.IsMandatory);

@@ -1,14 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Model;
+using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Schema;
+using Blueprint41.Query;
 
 namespace Blueprint41.Neo4j.Persistence.Memgraph
 {
     internal class Neo4jQueryTranslator : v5.Neo4jQueryTranslator
     {
-        internal Neo4jQueryTranslator(PersistenceProvider persistenceProvider) : base(persistenceProvider)
+        internal Neo4jQueryTranslator(Neo4jPersistenceProvider persistenceProvider) : base(persistenceProvider)
         {
         }
 
@@ -16,7 +21,7 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
 
         internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v5();
 
-        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.Memgraph.SchemaInfo_Memgraph(datastoreModel);
+        internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.Memgraph.SchemaInfo_Memgraph(datastoreModel, PersistenceProvider);
 
         #endregion
 

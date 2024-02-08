@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 using Blueprint41.Core;
 using Blueprint41.Log;
@@ -191,6 +189,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
         public override Transaction NewTransaction(bool readWriteMode)
         {
             return new Neo4jTransaction(readWriteMode, TransactionLogger);
+        }
+        public override RawResult RunImplicit(string cypher)
+        {
+            throw new NotImplementedException();
         }
 
         public override List<TypeMapping> SupportedTypeMappings

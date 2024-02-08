@@ -5,12 +5,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Blueprint41.Core;
+using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema.Memgraph
 {
     public class IndexInfo_Memgraph : IndexInfo
     {
-        internal IndexInfo_Memgraph(RawRecord record) : base(record) { }
+        internal IndexInfo_Memgraph(RawRecord record, Neo4jPersistenceProvider neo4JPersistenceProvider) : base(record, neo4JPersistenceProvider) { }
 
         protected override void Initialize(RawRecord record)
         {

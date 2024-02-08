@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.CompilerServices;
 
 using neo4j = Neo4j.Driver;
 
 using Blueprint41.Core;
 using Blueprint41.Log;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.IO;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
