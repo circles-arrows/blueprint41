@@ -185,5 +185,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             }
             System.Diagnostics.Debug.WriteLine(cypherQuery);
         }
+        protected override void ApplyFunctionalId(FunctionalId functionalId)
+        {
+            //TODO: DO NOTHING Functional Id support not yet on memgraph
+        }
     }
 }

@@ -350,8 +350,8 @@ namespace Blueprint41
             //This will cause that the code to refresh function id every 12 hours to not be triggered.
             //if (!Parser.ShouldExecute) 
             //    return;
-
-            GetSchema().UpdateFunctionalIds();
+            if (PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value)
+                GetSchema().UpdateFunctionalIds();
         }
 
         void IRefactorGlobal.ApplyConstraints()
