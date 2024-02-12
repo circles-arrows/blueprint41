@@ -32,18 +32,14 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
 
         private bool ShouldAddConstraint(ApplyConstraintAction action, IEntity entity)
         {
-            FeatureSupport features = (entity is Entity) ? PersistenceProvider.NodePropertyFeatures : PersistenceProvider.RelationshipPropertyFeatures;
+            var features = entity is Entity ? PersistenceProvider.NodePropertyFeatures : PersistenceProvider.RelationshipPropertyFeatures;
 
             return action switch
             {
-                ApplyConstraintAction.CreateIndex => features.Index,
-                ApplyConstraintAction.CreateUniqueConstraint => features.Unique,
-                ApplyConstraintAction.CreateExistsConstraint => features.Exists,
-                ApplyConstraintAction.CreateKeyConstraint => features.Key,
-                ApplyConstraintAction.DeleteIndex => features.Index,
-                ApplyConstraintAction.DeleteUniqueConstraint => features.Unique,
-                ApplyConstraintAction.DeleteKeyConstraint => features.Key,
-                ApplyConstraintAction.DeleteExistsConstraint => features.Exists,
+                ApplyConstraintAction.CreateIndex or ApplyConstraintAction.DeleteIndex => features.Index,
+                ApplyConstraintAction.CreateUniqueConstraint or ApplyConstraintAction.DeleteUniqueConstraint => features.Unique,
+                ApplyConstraintAction.CreateExistsConstraint or ApplyConstraintAction.DeleteExistsConstraint => features.Exists,
+                ApplyConstraintAction.CreateKeyConstraint or ApplyConstraintAction.DeleteKeyConstraint => features.Key,
                 _ => false,
             };
         }
@@ -56,10 +52,14 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
 
             return action switch
             {
+                ApplyConstraintAction.CreateIndex => string.Empty,
+                ApplyConstraintAction.CreateKeyConstraint => string.Empty,
                 ApplyConstraintAction.CreateUniqueConstraint => CreateUniqueConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.CreateExistsConstraint => CreateExistsConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.DeleteUniqueConstraint => DropUniqueConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.DeleteExistsConstraint => DropExistsConstraintCommand(targetEntityType, alias, propertyName),
+                ApplyConstraintAction.DeleteIndex => string.Empty,
+                ApplyConstraintAction.DeleteKeyConstraint => string.Empty,
                 _ => string.Empty,
             };
         }
