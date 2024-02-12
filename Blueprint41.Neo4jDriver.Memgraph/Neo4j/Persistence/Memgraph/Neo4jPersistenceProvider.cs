@@ -63,11 +63,35 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         {
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
+
+            NodePropertyFeatures.Index = false;
+            NodePropertyFeatures.Exists = true;
+            NodePropertyFeatures.Unique = true;
+            NodePropertyFeatures.Key = false;
+            NodePropertyFeatures.Type = false;
+
+            RelationshipPropertyFeatures.Index = false;
+            RelationshipPropertyFeatures.Exists = false;
+            RelationshipPropertyFeatures.Unique = false;
+            RelationshipPropertyFeatures.Key = false;
+            RelationshipPropertyFeatures.Type = false;
         }
         public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base(uri, username, password, database, advancedConfig)
         {
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
+
+            NodePropertyFeatures.Index = false;
+            NodePropertyFeatures.Exists = true;
+            NodePropertyFeatures.Unique = true;
+            NodePropertyFeatures.Key = false;
+            NodePropertyFeatures.Type = false;
+
+            RelationshipPropertyFeatures.Index = false;
+            RelationshipPropertyFeatures.Exists = false;
+            RelationshipPropertyFeatures.Unique = false;
+            RelationshipPropertyFeatures.Key = false;
+            RelationshipPropertyFeatures.Type = false;
         }
         public override RawResult RunImplicit(string cypher)
         {

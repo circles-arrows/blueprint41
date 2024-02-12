@@ -14,12 +14,11 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
         {
             IEntity entity = Parent.Entity;
             List<string> commands = new();
-
-            foreach ((ApplyConstraintAction action, string? constraintOrIndexName) in Commands)
+            foreach ((ApplyConstraintAction action, _) in Commands)
             {
                 if (ShouldAddConstraint(action, entity))
                 {
-                    string command = GenerateConstraintCommand(action, entity, constraintOrIndexName);
+                    string command = GenerateConstraintCommand(action, entity);
                     if (!string.IsNullOrEmpty(command))
                     {
                         commands.Add(command);
@@ -49,41 +48,39 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             };
         }
 
-        private string GenerateConstraintCommand(ApplyConstraintAction action, IEntity entity, string? constraintOrIndexName)
+        private string GenerateConstraintCommand(ApplyConstraintAction action, IEntity entity)
         {
-            string propertyType = (entity is Entity) ? "node" : "rel";
-            string entityType = (entity is Entity) ? entity.Neo4jName : $"()-[rel:{entity.Neo4jName}]-()";
-            string forEntityType = (entity is Entity) ? $"(node:{entity.Neo4jName})" : $"()-[rel:{entity.Neo4jName}]-()";
-
-            string constraintType = (entity is Entity ? "NODE" : "RELATIONSHIP");
+            string targetEntityType = (entity is Entity) ? $"(node:{entity.Neo4jName})" : $"()-[rel:{entity.Neo4jName}]-()";
+            string alias = (entity is Entity) ? "node" : "rel";
             string propertyName = Property;
-            string commandTemplate = string.Empty;
 
-            switch (action)
+            return action switch
             {
-                case ApplyConstraintAction.CreateIndex:
-                    commandTemplate = $"CREATE INDEX {entityType}_{propertyName}_RangeIndex FOR {forEntityType} ON ({propertyType}.{propertyName})";
-                    break;
-                case ApplyConstraintAction.CreateUniqueConstraint:
-                    commandTemplate = $"CREATE CONSTRAINT {entityType}_{propertyName}_UniqueConstraint FOR {forEntityType} REQUIRE {propertyType}.{propertyName} IS UNIQUE";
-                    break;
-                case ApplyConstraintAction.CreateExistsConstraint:
-                    commandTemplate = $"CREATE CONSTRAINT {entityType}_{propertyName}_ExistsConstraint FOR {forEntityType} REQUIRE {propertyType}.{propertyName} IS NOT NULL";
-                    break;
-                case ApplyConstraintAction.CreateKeyConstraint:
-                    commandTemplate = $"CREATE CONSTRAINT {entityType}_{propertyName}_KeyConstraint FOR {forEntityType} REQUIRE {propertyType}.{propertyName} IS {constraintType} KEY";
-                    break;
-                case ApplyConstraintAction.DeleteIndex:
-                case ApplyConstraintAction.DeleteUniqueConstraint:
-                case ApplyConstraintAction.DeleteKeyConstraint:
-                case ApplyConstraintAction.DeleteExistsConstraint:
-                    commandTemplate = $"DROP CONSTRAINT {constraintOrIndexName}";
-                    break;
-                default:
-                    break;
-            }
+                ApplyConstraintAction.CreateUniqueConstraint => CreateUniqueConstraintCommand(targetEntityType, alias, propertyName),
+                ApplyConstraintAction.CreateExistsConstraint => CreateExistsConstraintCommand(targetEntityType, alias, propertyName),
+                ApplyConstraintAction.DeleteUniqueConstraint => DropUniqueConstraintCommand(targetEntityType, alias, propertyName),
+                ApplyConstraintAction.DeleteExistsConstraint => DropExistsConstraintCommand(targetEntityType, alias, propertyName),
+                _ => string.Empty,
+            };
+        }
 
-            return commandTemplate;
+
+        private string CreateUniqueConstraintCommand(string targetEntityType, string alias, string propertyName)
+        {
+            return $"CREATE CONSTRAINT ON {targetEntityType} ASSERT {alias}.{propertyName} IS UNIQUE";
+        }
+
+        private string CreateExistsConstraintCommand(string targetEntityType, string alias, string propertyName)
+        {
+            return $"CREATE CONSTRAINT ON {targetEntityType} ASSERT EXISTS ({alias}.{propertyName})";
+        }
+        private string DropUniqueConstraintCommand(string targetEntityType, string alias, string propertyName)
+        {
+            return $"DROP CONSTRAINT ON {targetEntityType} ASSERT {alias}.{propertyName} IS UNIQUE";
+        }
+        private string DropExistsConstraintCommand(string targetEntityType, string alias, string propertyName)
+        {
+            return $"DROP CONSTRAINT ON {targetEntityType} ASSERT EXISTS ({alias}.{propertyName})";
         }
 
     }
