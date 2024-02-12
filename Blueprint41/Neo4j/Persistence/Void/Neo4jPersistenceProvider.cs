@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using Blueprint41.Core;
 using Blueprint41.Log;
@@ -33,20 +34,20 @@ namespace Blueprint41.Neo4j.Persistence.Void
             _nodePropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
             {
                 Index = true,
-                Exists = IsEnterpriseEdition,
+                Exists = IsEnterpriseEdition || IsMemgraph,
                 Unique = true,
-                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
-                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+                Key = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
             _relationshipPropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
             {
-                Index = VersionGreaterOrEqual(4, 3),
-                Exists = IsEnterpriseEdition,
-                Unique = VersionGreaterOrEqual(5, 7),
-                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
-                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+                Index = !IsMemgraph && VersionGreaterOrEqual(4, 3),
+                Exists = !IsMemgraph && IsEnterpriseEdition,
+                Unique = !IsMemgraph && VersionGreaterOrEqual(5, 7),
+                Key = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
-    }
+        }
         public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base()
         {
             Uri = uri;
@@ -59,18 +60,18 @@ namespace Blueprint41.Neo4j.Persistence.Void
             _nodePropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
             {
                 Index = true,
-                Exists = IsEnterpriseEdition,
+                Exists = IsEnterpriseEdition || IsMemgraph,
                 Unique = true,
-                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
-                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+                Key = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
             _relationshipPropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
             {
-                Index = VersionGreaterOrEqual(4, 3),
-                Exists = IsEnterpriseEdition,
-                Unique = VersionGreaterOrEqual(5, 7),
-                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
-                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+                Index = !IsMemgraph && VersionGreaterOrEqual(4, 3),
+                Exists = !IsMemgraph && IsEnterpriseEdition,
+                Unique = !IsMemgraph && VersionGreaterOrEqual(5, 7),
+                Key = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
         }
 
@@ -81,10 +82,10 @@ namespace Blueprint41.Neo4j.Persistence.Void
         public bool IsAura { get; set; } = false;
         public bool IsEnterpriseEdition { get; set; } = false;
 
-        public FeatureSupport NodePropertyFeatures => _nodePropertyFeatures.Value;
+        public override FeatureSupport NodePropertyFeatures => _nodePropertyFeatures.Value;
         private readonly Lazy<FeatureSupport> _nodePropertyFeatures;
 
-        public FeatureSupport RelationshipPropertyFeatures => _relationshipPropertyFeatures.Value;
+        public override FeatureSupport RelationshipPropertyFeatures => _relationshipPropertyFeatures.Value;
         private readonly Lazy<FeatureSupport> _relationshipPropertyFeatures;
 
         public bool VersionGreaterOrEqual(int major, int minor = 0, int revision = 0)
@@ -190,9 +191,47 @@ namespace Blueprint41.Neo4j.Persistence.Void
         {
             return new Neo4jTransaction(readWriteMode, TransactionLogger);
         }
-        public override RawResult RunImplicit(string cypher)
+        public override RawResult Run(string cypher, bool useTransactionIfAvailable = false, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
-            throw new NotImplementedException();
+            Transaction? trans = Transaction.RunningTransaction;
+
+            if (useTransactionIfAvailable && trans is not null)
+            {
+                return trans.Run(cypher, memberName, sourceFilePath, sourceLineNumber);
+            }
+            else
+            {
+
+#if DEBUG
+                // TODO
+                //Logger?.Start();
+                //if (Logger is not null)
+                //    Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
+#endif
+
+                return new Neo4jRawResult();
+            }
+        }
+        public override RawResult Run(string cypher, Dictionary<string, object?>? parameters, bool useTransactionIfAvailable = false, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            Transaction? trans = Transaction.RunningTransaction;
+
+            if (useTransactionIfAvailable && trans is not null)
+            {
+                return trans.Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+            }
+            else
+            {
+
+#if DEBUG
+                // TODO
+                //Logger?.Start();
+                //if (Logger is not null)
+                //    Logger.Stop(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+#endif
+
+                return new Neo4jRawResult();
+            }
         }
 
         public override List<TypeMapping> SupportedTypeMappings

@@ -37,7 +37,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
                 {
                     retry = false;
 
-                    RawResult result = PersistenceProvider.RunImplicit(procedure);
+                    RawResult result = PersistenceProvider.Run(procedure);
                     data = result.Select(processor).ToArray();
                 }
                 catch (Exception clientException) when (clientException.Message.Contains("is still populating"))

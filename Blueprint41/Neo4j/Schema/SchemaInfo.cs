@@ -173,7 +173,7 @@ namespace Blueprint41.Neo4j.Schema
                     foreach (var cql in action.ToCypher())
                     {
                         Parser.Log(cql);
-                        Transaction.RunningTransaction.Run(cql);
+                        PersistenceProvider.Run(cql, !PersistenceProvider.IsMemgraph);
                     }
                 }
             }

@@ -206,13 +206,23 @@ namespace Blueprint41
 
                 if (upgradeDatastore && scriptCommitted)
                 {
-                    using (Transaction.Begin(true))
+                    if (PersistenceProvider.IsMemgraph)
                     {
                         Parser.ForceScript(delegate ()
                         {
                             Refactor.ApplyConstraints();
                         });
-                        Transaction.Commit();
+                    }
+                    else
+                    {
+                        using (Transaction.Begin(true))
+                        {
+                            Parser.ForceScript(delegate ()
+                            {
+                                Refactor.ApplyConstraints();
+                            });
+                            Transaction.Commit();
+                        }
                     }
                 }
             }

@@ -52,8 +52,8 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
 
             return action switch
             {
-                ApplyConstraintAction.CreateIndex => string.Empty,
-                ApplyConstraintAction.CreateKeyConstraint => string.Empty,
+                ApplyConstraintAction.CreateIndex => string.Empty, //TODO,
+                ApplyConstraintAction.CreateKeyConstraint => string.Empty, //TODO,
                 ApplyConstraintAction.CreateUniqueConstraint => CreateUniqueConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.CreateExistsConstraint => CreateExistsConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.DeleteUniqueConstraint => DropUniqueConstraintCommand(targetEntityType, alias, propertyName),

@@ -6,6 +6,7 @@ using Neo4j.Driver;
 
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Model;
+using System.Runtime.CompilerServices;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
@@ -63,47 +64,55 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         {
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
-
-            NodePropertyFeatures.Index = false;
-            NodePropertyFeatures.Exists = true;
-            NodePropertyFeatures.Unique = true;
-            NodePropertyFeatures.Key = false;
-            NodePropertyFeatures.Type = false;
-
-            RelationshipPropertyFeatures.Index = false;
-            RelationshipPropertyFeatures.Exists = false;
-            RelationshipPropertyFeatures.Unique = false;
-            RelationshipPropertyFeatures.Key = false;
-            RelationshipPropertyFeatures.Type = false;
+            IsMemgraph = true;
         }
         public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base(uri, username, password, database, advancedConfig)
         {
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
-
-            NodePropertyFeatures.Index = false;
-            NodePropertyFeatures.Exists = true;
-            NodePropertyFeatures.Unique = true;
-            NodePropertyFeatures.Key = false;
-            NodePropertyFeatures.Type = false;
-
-            RelationshipPropertyFeatures.Index = false;
-            RelationshipPropertyFeatures.Exists = false;
-            RelationshipPropertyFeatures.Unique = false;
-            RelationshipPropertyFeatures.Key = false;
-            RelationshipPropertyFeatures.Type = false;
+            IsMemgraph = true;
         }
-        public override RawResult RunImplicit(string cypher)
+        public override RawResult Run(string cypher, bool useTransactionIfAvailable = false, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
-            IAsyncSession GetSession()
+            Transaction? trans = Transaction.Current;
+
+            if (useTransactionIfAvailable && trans is not null)
             {
-                return Driver.AsyncSession((SessionConfigBuilder builder) => builder.WithFetchSize(Config.Infinite).WithDefaultAccessMode(AccessMode.Write));
+                return trans.Run(cypher, memberName, sourceFilePath, sourceLineNumber);
             }
+            else
+            {
+                IResultCursor results = TaskScheduler.RunBlocking(() => GetSession()!.RunAsync(cypher), cypher);
 
-            IResultCursor results = TaskScheduler.RunBlocking(() => GetSession()!.RunAsync(cypher), cypher);
+                //DebugQueryString(cypher, parameters);
+                return new Neo4jRawResult(TaskScheduler, results);
 
-            //DebugQueryString(cypher, parameters);
-            return new Neo4jRawResult(TaskScheduler, results);
+                IAsyncSession GetSession()
+                {
+                    return Driver.AsyncSession((SessionConfigBuilder builder) => builder.WithFetchSize(Config.Infinite).WithDefaultAccessMode(AccessMode.Write));
+                }
+            }
+        }
+        public override RawResult Run(string cypher, Dictionary<string, object?>? parameters, bool useTransactionIfAvailable = false, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            Transaction? trans = Transaction.Current;
+
+            if (useTransactionIfAvailable && trans is not null)
+            {
+                return trans.Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+            }
+            else
+            {
+                IResultCursor results = TaskScheduler.RunBlocking(() => GetSession()!.RunAsync(cypher, parameters), cypher);
+
+                //DebugQueryString(cypher, parameters);
+                return new Neo4jRawResult(TaskScheduler, results);
+
+                IAsyncSession GetSession()
+                {
+                    return Driver.AsyncSession((SessionConfigBuilder builder) => builder.WithFetchSize(Config.Infinite).WithDefaultAccessMode(AccessMode.Write));
+                }
+            }
         }
 
         internal override QueryTranslator Translator
