@@ -9,7 +9,7 @@ using Blueprint41.Neo4j.Persistence.Void;
 
 namespace Blueprint41.Neo4j.Schema.Memgraph
 {
-    public class SchemaInfo_Memgraph : v4.SchemaInfo_v4
+    public class SchemaInfo_Memgraph : v5.SchemaInfo_v5
     {
         internal SchemaInfo_Memgraph(DatastoreModel model, Neo4jPersistenceProvider persistenceProvider) : base(model, persistenceProvider) { }
 
