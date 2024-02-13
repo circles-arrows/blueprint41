@@ -164,20 +164,23 @@ namespace Blueprint41.Neo4j.Schema
                 Transaction.Commit();
             }
         }
-        internal void UpdateConstraints()
+        internal virtual void UpdateConstraints()
         {
-            foreach (var diff in GetConstraintDifferences())
+            using (Transaction.Begin())
             {
-                foreach (var action in diff.Actions)
+                foreach (var diff in GetConstraintDifferences())
                 {
-                    foreach (var cql in action.ToCypher())
+                    foreach (var action in diff.Actions)
                     {
-                        Parser.Log(cql);
-                        PersistenceProvider.Run(cql, !PersistenceProvider.IsMemgraph);
+                        foreach (var cql in action.ToCypher())
+                        {
+                            Parser.Log(cql);
+                            Transaction.RunningTransaction.Run(cql);
+                        }
                     }
                 }
+                Transaction.Commit();
             }
-            //Transaction.Commit();
         }
 
         protected virtual FunctionalIdInfo NewFunctionalIdInfo(RawRecord rawRecord)                                               => new FunctionalIdInfo(rawRecord);

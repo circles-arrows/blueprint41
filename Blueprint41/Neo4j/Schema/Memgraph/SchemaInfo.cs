@@ -6,6 +6,7 @@ using System.Threading;
 
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Persistence.Void;
+using Blueprint41.Neo4j.Refactoring;
 
 namespace Blueprint41.Neo4j.Schema.Memgraph
 {
@@ -85,6 +86,22 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
         protected override IndexInfo NewIndexInfo(RawRecord rawRecord, Neo4jPersistenceProvider neo4JPersistenceProvider) => new IndexInfo_Memgraph(rawRecord, neo4JPersistenceProvider);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
+
+        internal override void UpdateConstraints()
+        {
+            foreach (var diff in GetConstraintDifferences())
+            {
+                foreach (var action in diff.Actions)
+                {
+                    foreach (var cql in action.ToCypher())
+                    {
+                        Parser.Log(cql);
+                        PersistenceProvider.Run(cql, !PersistenceProvider.IsMemgraph);
+                    }
+                }
+            }
+            //Transaction.Commit();
+        }
         internal override List<(ApplyConstraintAction, string?)> ComputeCommands(
             IEntity entity,
             IndexType indexType,

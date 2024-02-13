@@ -201,7 +201,6 @@ namespace Blueprint41.Neo4j.Persistence.Void
             }
             else
             {
-
 #if DEBUG
                 // TODO
                 //Logger?.Start();

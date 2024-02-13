@@ -9,6 +9,7 @@ using Blueprint41.Core;
 using Blueprint41.Log;
 using Blueprint41.Neo4j.Model;
 using Blueprint41.Neo4j.Schema;
+using System.Runtime.CompilerServices;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
@@ -74,6 +75,48 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         {
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
+        }
+        public override RawResult Run(string cypher, bool useTransactionIfAvailable = true, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            Transaction? trans = Transaction.Current;
+
+            if (useTransactionIfAvailable && trans is not null)
+            {
+                return trans.Run(cypher, memberName, sourceFilePath, sourceLineNumber);
+            }
+            else
+            {
+                IResultCursor results = TaskScheduler.RunBlocking(() => GetSession()!.RunAsync(cypher), cypher);
+
+                //DebugQueryString(cypher, parameters);
+                return new Neo4jRawResult(TaskScheduler, results);
+
+                IAsyncSession GetSession()
+                {
+                    return Driver.AsyncSession((SessionConfigBuilder builder) => builder.WithFetchSize(Config.Infinite).WithDefaultAccessMode(AccessMode.Write));
+                }
+            }
+        }
+        public override RawResult Run(string cypher, Dictionary<string, object?>? parameters, bool useTransactionIfAvailable = true, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            Transaction? trans = Transaction.Current;
+
+            if (useTransactionIfAvailable && trans is not null)
+            {
+                return trans.Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+            }
+            else
+            {
+                IResultCursor results = TaskScheduler.RunBlocking(() => GetSession()!.RunAsync(cypher, parameters), cypher);
+
+                //DebugQueryString(cypher, parameters);
+                return new Neo4jRawResult(TaskScheduler, results);
+
+                IAsyncSession GetSession()
+                {
+                    return Driver.AsyncSession((SessionConfigBuilder builder) => builder.WithFetchSize(Config.Infinite).WithDefaultAccessMode(AccessMode.Write));
+                }
+            }
         }
 
         public override Transaction NewTransaction(bool readWriteMode) => new Neo4jTransaction(this, readWriteMode, TransactionLogger);
