@@ -59,7 +59,10 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             }
         }
 
-        private Neo4jPersistenceProvider() : this(null, null, null) { }
+        private Neo4jPersistenceProvider() : this(null, null, null) 
+        {
+            IsMemgraph = true;
+        }
         public Neo4jPersistenceProvider(string? uri, string? username, string? password, AdvancedConfig? advancedConfig = null) : base(uri, username, password, advancedConfig)
         {
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawNode), from => from is INode item ? new Neo4jRawNode(item) : null);

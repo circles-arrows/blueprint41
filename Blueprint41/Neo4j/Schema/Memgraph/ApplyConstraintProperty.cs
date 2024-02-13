@@ -52,19 +52,28 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
 
             return action switch
             {
-                ApplyConstraintAction.CreateIndex => string.Empty, //TODO,
-                ApplyConstraintAction.CreateKeyConstraint => string.Empty, //TODO,
+                ApplyConstraintAction.CreateIndex => CreateIndexCommand(entity.Neo4jName, propertyName),
+                ApplyConstraintAction.CreateKeyConstraint => CreateKeyConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.CreateUniqueConstraint => CreateUniqueConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.CreateExistsConstraint => CreateExistsConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.DeleteUniqueConstraint => DropUniqueConstraintCommand(targetEntityType, alias, propertyName),
                 ApplyConstraintAction.DeleteExistsConstraint => DropExistsConstraintCommand(targetEntityType, alias, propertyName),
-                ApplyConstraintAction.DeleteIndex => string.Empty,
-                ApplyConstraintAction.DeleteKeyConstraint => string.Empty,
+                ApplyConstraintAction.DeleteIndex => DropIndexCommand(entity.Neo4jName, propertyName),
+                ApplyConstraintAction.DeleteKeyConstraint => DropKeyConstraintCommand(targetEntityType, alias, propertyName),
                 _ => string.Empty,
             };
         }
 
 
+        private string CreateIndexCommand(string neo4jName, string propertyName)
+        {
+            return $"CREATE INDEX ON :{neo4jName}({propertyName})";
+        }
+        private string CreateKeyConstraintCommand(string targetEntityType, string alias, string propertyName)
+        {
+            return  $"{CreateExistsConstraintCommand(targetEntityType, alias, propertyName)}; " +
+                    $"{CreateUniqueConstraintCommand(targetEntityType, alias, propertyName)}";
+        }
         private string CreateUniqueConstraintCommand(string targetEntityType, string alias, string propertyName)
         {
             return $"CREATE CONSTRAINT ON {targetEntityType} ASSERT {alias}.{propertyName} IS UNIQUE";
@@ -82,6 +91,14 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
         {
             return $"DROP CONSTRAINT ON {targetEntityType} ASSERT EXISTS ({alias}.{propertyName})";
         }
-
+        private string DropIndexCommand(string neo4jName, string propertyName)
+        {
+            return $"DROP INDEX ON :{neo4jName}({propertyName})";
+        }
+        private string DropKeyConstraintCommand(string targetEntityType, string alias, string propertyName)
+        {
+            return $"{DropExistsConstraintCommand(targetEntityType, alias, propertyName)}; " +
+                    $"{DropUniqueConstraintCommand(targetEntityType, alias, propertyName)}";
+        }
     }
 }

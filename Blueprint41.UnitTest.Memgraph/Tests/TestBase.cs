@@ -32,12 +32,9 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
 
                 Transaction.Commit();
             }
-            //using (Transaction.Begin())
-            //{
-            //    string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
-            //    Transaction.RunningTransaction.Run(clearSchema);
-            //    Transaction.Commit();
-            //}
+
+            string clearSchema = "CALL schema.assert({},{}) YIELD label, key RETURN *";
+            PersistenceProvider.CurrentPersistenceProvider.Run(clearSchema);
         }
     }
 }

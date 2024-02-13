@@ -768,8 +768,8 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                 };
                 model.Execute(true);
 
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX AccountType_Indexed_RangeIndex FOR (node:AccountType) ON (node.Indexed)"));
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT AccountType_Unique_UniqueConstraint FOR (node:AccountType) REQUIRE node.Unique IS UNIQUE"));
+                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX ON :AccountType(Indexed)"));
+                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT ON (node:AccountType) ASSERT node.Unique IS UNIQUE"));
             }
         }
         #endregion
