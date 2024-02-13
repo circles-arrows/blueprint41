@@ -787,6 +787,12 @@ if (!DALModel.IsAbstract)
                 if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value?.ToString());
 <#
         }
+        else if (argument.SystemReturnType.IsArray)
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #>.All(item => item.In(<#= argument.Name #>.Value)));
+<#
+        }
         else
         {
 #>
@@ -890,6 +896,12 @@ if (!DALModel.IsAbstract)
         {
 #>
                 if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value?.ToString());
+<#
+        }
+        else if (argument.SystemReturnType.IsArray)
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #>.All(item => item.In(<#= argument.Name #>.Value)));
 <#
         }
         else
@@ -999,6 +1011,12 @@ if (!DALModel.IsAbstract)
         {
 #>
                 if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #> == <#= argument.Name #>.Value?.ToString());
+<#
+        }
+        else if (argument.SystemReturnType.IsArray)
+        {
+#>
+                if (<#= argument.Name #>.HasValue) conditions.Add(alias.<#= argument.Name #>.All(item => item.In(<#= argument.Name #>.Value)));
 <#
         }
         else

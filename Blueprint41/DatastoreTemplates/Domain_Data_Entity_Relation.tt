@@ -126,6 +126,12 @@ namespace <#= Settings.FullCRUDNamespace #>
                 if (<#= attr.Name #>.HasValue) conditions.Add(alias.<#= attr.Name #> == <#= attr.Name #>.Value?.ToString());
 <#
         }
+        else if (attr.SystemReturnType.IsArray)
+        {
+#>
+                if (<#= attr.Name #>.HasValue) conditions.Add(alias.<#= attr.Name #>.All(item => item.In(<#= attr.Name #>.Value)));
+<#
+        }
         else
         {
 #>
