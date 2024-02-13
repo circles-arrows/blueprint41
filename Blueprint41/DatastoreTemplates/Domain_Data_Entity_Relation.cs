@@ -669,7 +669,7 @@ using q = ");
             
             #line default
             #line hidden
-            this.Write("\r\n        public static Relationship Relationship => Threadsafe.LazyInit(ref _rel" +
+            this.Write("\r\n        public static Relationship Relationship => ThreadSafe.LazyInit(ref _rel" +
                     "ationship, () => ");
             
             #line 197 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
