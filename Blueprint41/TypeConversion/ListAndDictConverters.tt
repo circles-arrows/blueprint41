@@ -55,7 +55,9 @@ using Blueprint41.TypeConversion;
 		string name = string.Concat(Char.ToUpper(item[0][0]), item[0].Substring(1)).Replace("?", "Nullable");
 
 #>
+[assembly: Conversion(typeof(ListOfObjectToArrayOf<#= name #>))]
 [assembly: Conversion(typeof(ListOfObjectToListOf<#= name #>))]
+[assembly: Conversion(typeof(ArrayOf<#= name #>ToListOfObject))]
 [assembly: Conversion(typeof(ListOf<#= name #>ToListOfObject))]
 <#
 	}
@@ -102,6 +104,16 @@ namespace Blueprint41.TypeConversion
 			(nullable[0] && !item[0].EndsWith("?")) ? string.Concat(item[0], "?") : item[0],
 		};
 #>
+	internal class ListOfObjectToArrayOf<#= name #> : Conversion<List<<#= obj[0] #>>?, <#= obj[4] #>[]?>
+	{
+		protected override <#= obj[4] #>[]? Converter(List<<#= obj[0] #>>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<<#= obj[1] #>, <#= item[0] #>>.Convert((<#= obj[1] #>)item)<#= obj[3] #>).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOf<#= name #> : Conversion<List<<#= obj[0] #>>?, List<<#= obj[4] #>>?>
 	{
 		protected override List<<#= obj[4] #>>? Converter(List<<#= obj[0] #>>? value)
@@ -110,6 +122,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<<#= obj[1] #>, <#= item[0] #>>.Convert((<#= obj[1] #>)item)<#= obj[3] #>).ToList();
+		}
+	}	
+	internal class ArrayOf<#= name #>ToListOfObject : Conversion<<#= obj[4] #>[]?, List<<#= obj[0] #>>?>
+	{
+		protected override List<<#= obj[0] #>>? Converter(<#= obj[4] #>[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (<#= obj[0] #>)Conversion<<#= item[0] #>, <#= item[1] #>>.Convert(item)<#= obj[2] #>).ToList();
 		}
 	}	
 	internal class ListOf<#= name #>ToListOfObject : Conversion<List<<#= obj[4] #>>?, List<<#= obj[0] #>>?>

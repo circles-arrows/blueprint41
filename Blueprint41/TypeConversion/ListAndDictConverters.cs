@@ -7,53 +7,101 @@ using Blueprint41.TypeConversion;
 
 #region Assembly Conversion Registration
 
+[assembly: Conversion(typeof(ListOfObjectToArrayOfBool))]
 [assembly: Conversion(typeof(ListOfObjectToListOfBool))]
+[assembly: Conversion(typeof(ArrayOfBoolToListOfObject))]
 [assembly: Conversion(typeof(ListOfBoolToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfBoolNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfBoolNullable))]
+[assembly: Conversion(typeof(ArrayOfBoolNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfBoolNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfSbyte))]
 [assembly: Conversion(typeof(ListOfObjectToListOfSbyte))]
+[assembly: Conversion(typeof(ArrayOfSbyteToListOfObject))]
 [assembly: Conversion(typeof(ListOfSbyteToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfSbyteNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfSbyteNullable))]
+[assembly: Conversion(typeof(ArrayOfSbyteNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfSbyteNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfShort))]
 [assembly: Conversion(typeof(ListOfObjectToListOfShort))]
+[assembly: Conversion(typeof(ArrayOfShortToListOfObject))]
 [assembly: Conversion(typeof(ListOfShortToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfShortNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfShortNullable))]
+[assembly: Conversion(typeof(ArrayOfShortNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfShortNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfInt))]
 [assembly: Conversion(typeof(ListOfObjectToListOfInt))]
+[assembly: Conversion(typeof(ArrayOfIntToListOfObject))]
 [assembly: Conversion(typeof(ListOfIntToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfIntNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfIntNullable))]
+[assembly: Conversion(typeof(ArrayOfIntNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfIntNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfLong))]
 [assembly: Conversion(typeof(ListOfObjectToListOfLong))]
+[assembly: Conversion(typeof(ArrayOfLongToListOfObject))]
 [assembly: Conversion(typeof(ListOfLongToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfLongNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfLongNullable))]
+[assembly: Conversion(typeof(ArrayOfLongNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfLongNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfFloat))]
 [assembly: Conversion(typeof(ListOfObjectToListOfFloat))]
+[assembly: Conversion(typeof(ArrayOfFloatToListOfObject))]
 [assembly: Conversion(typeof(ListOfFloatToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfFloatNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfFloatNullable))]
+[assembly: Conversion(typeof(ArrayOfFloatNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfFloatNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfDouble))]
 [assembly: Conversion(typeof(ListOfObjectToListOfDouble))]
+[assembly: Conversion(typeof(ArrayOfDoubleToListOfObject))]
 [assembly: Conversion(typeof(ListOfDoubleToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfDoubleNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfDoubleNullable))]
+[assembly: Conversion(typeof(ArrayOfDoubleNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfDoubleNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfChar))]
 [assembly: Conversion(typeof(ListOfObjectToListOfChar))]
+[assembly: Conversion(typeof(ArrayOfCharToListOfObject))]
 [assembly: Conversion(typeof(ListOfCharToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfCharNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfCharNullable))]
+[assembly: Conversion(typeof(ArrayOfCharNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfCharNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfString))]
 [assembly: Conversion(typeof(ListOfObjectToListOfString))]
+[assembly: Conversion(typeof(ArrayOfStringToListOfObject))]
 [assembly: Conversion(typeof(ListOfStringToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfDateTime))]
 [assembly: Conversion(typeof(ListOfObjectToListOfDateTime))]
+[assembly: Conversion(typeof(ArrayOfDateTimeToListOfObject))]
 [assembly: Conversion(typeof(ListOfDateTimeToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfDateTimeNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfDateTimeNullable))]
+[assembly: Conversion(typeof(ArrayOfDateTimeNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfDateTimeNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfGuid))]
 [assembly: Conversion(typeof(ListOfObjectToListOfGuid))]
+[assembly: Conversion(typeof(ArrayOfGuidToListOfObject))]
 [assembly: Conversion(typeof(ListOfGuidToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfGuidNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfGuidNullable))]
+[assembly: Conversion(typeof(ArrayOfGuidNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfGuidNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfDecimal))]
 [assembly: Conversion(typeof(ListOfObjectToListOfDecimal))]
+[assembly: Conversion(typeof(ArrayOfDecimalToListOfObject))]
 [assembly: Conversion(typeof(ListOfDecimalToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfDecimalNullable))]
 [assembly: Conversion(typeof(ListOfObjectToListOfDecimalNullable))]
+[assembly: Conversion(typeof(ArrayOfDecimalNullableToListOfObject))]
 [assembly: Conversion(typeof(ListOfDecimalNullableToListOfObject))]
+[assembly: Conversion(typeof(ListOfObjectToArrayOfCompressedString))]
 [assembly: Conversion(typeof(ListOfObjectToListOfCompressedString))]
+[assembly: Conversion(typeof(ArrayOfCompressedStringToListOfObject))]
 [assembly: Conversion(typeof(ListOfCompressedStringToListOfObject))]
 [assembly: Conversion(typeof(DictOfObjectObjectToDictOfBoolBool))]
 [assembly: Conversion(typeof(DictOfBoolBoolToDictOfObjectObject))]
@@ -686,6 +734,16 @@ namespace Blueprint41.TypeConversion
 {
 	#region List<T>
 
+	internal class ListOfObjectToArrayOfBool : Conversion<List<object>?, bool[]?>
+	{
+		protected override bool[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<bool, bool>.Convert((bool)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfBool : Conversion<List<object>?, List<bool>?>
 	{
 		protected override List<bool>? Converter(List<object>? value)
@@ -694,6 +752,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<bool, bool>.Convert((bool)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfBoolToListOfObject : Conversion<bool[]?, List<object>?>
+	{
+		protected override List<object>? Converter(bool[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<bool, bool>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfBoolToListOfObject : Conversion<List<bool>?, List<object>?>
@@ -706,6 +774,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<bool, bool>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfBoolNullable : Conversion<List<object?>?, bool?[]?>
+	{
+		protected override bool?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<bool?, bool?>.Convert((bool?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfBoolNullable : Conversion<List<object?>?, List<bool?>?>
 	{
 		protected override List<bool?>? Converter(List<object?>? value)
@@ -714,6 +792,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<bool?, bool?>.Convert((bool?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfBoolNullableToListOfObject : Conversion<bool?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(bool?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<bool?, bool?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfBoolNullableToListOfObject : Conversion<List<bool?>?, List<object?>?>
@@ -726,6 +814,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<bool?, bool?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfSbyte : Conversion<List<object>?, sbyte[]?>
+	{
+		protected override sbyte[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long, sbyte>.Convert((long)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfSbyte : Conversion<List<object>?, List<sbyte>?>
 	{
 		protected override List<sbyte>? Converter(List<object>? value)
@@ -734,6 +832,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long, sbyte>.Convert((long)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfSbyteToListOfObject : Conversion<sbyte[]?, List<object>?>
+	{
+		protected override List<object>? Converter(sbyte[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<sbyte, long>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfSbyteToListOfObject : Conversion<List<sbyte>?, List<object>?>
@@ -746,6 +854,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<sbyte, long>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfSbyteNullable : Conversion<List<object?>?, sbyte?[]?>
+	{
+		protected override sbyte?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long?, sbyte?>.Convert((long?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfSbyteNullable : Conversion<List<object?>?, List<sbyte?>?>
 	{
 		protected override List<sbyte?>? Converter(List<object?>? value)
@@ -754,6 +872,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long?, sbyte?>.Convert((long?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfSbyteNullableToListOfObject : Conversion<sbyte?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(sbyte?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<sbyte?, long?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfSbyteNullableToListOfObject : Conversion<List<sbyte?>?, List<object?>?>
@@ -766,6 +894,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<sbyte?, long?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfShort : Conversion<List<object>?, short[]?>
+	{
+		protected override short[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long, short>.Convert((long)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfShort : Conversion<List<object>?, List<short>?>
 	{
 		protected override List<short>? Converter(List<object>? value)
@@ -774,6 +912,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long, short>.Convert((long)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfShortToListOfObject : Conversion<short[]?, List<object>?>
+	{
+		protected override List<object>? Converter(short[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<short, long>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfShortToListOfObject : Conversion<List<short>?, List<object>?>
@@ -786,6 +934,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<short, long>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfShortNullable : Conversion<List<object?>?, short?[]?>
+	{
+		protected override short?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long?, short?>.Convert((long?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfShortNullable : Conversion<List<object?>?, List<short?>?>
 	{
 		protected override List<short?>? Converter(List<object?>? value)
@@ -794,6 +952,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long?, short?>.Convert((long?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfShortNullableToListOfObject : Conversion<short?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(short?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<short?, long?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfShortNullableToListOfObject : Conversion<List<short?>?, List<object?>?>
@@ -806,6 +974,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<short?, long?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfInt : Conversion<List<object>?, int[]?>
+	{
+		protected override int[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long, int>.Convert((long)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfInt : Conversion<List<object>?, List<int>?>
 	{
 		protected override List<int>? Converter(List<object>? value)
@@ -814,6 +992,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long, int>.Convert((long)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfIntToListOfObject : Conversion<int[]?, List<object>?>
+	{
+		protected override List<object>? Converter(int[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<int, long>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfIntToListOfObject : Conversion<List<int>?, List<object>?>
@@ -826,6 +1014,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<int, long>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfIntNullable : Conversion<List<object?>?, int?[]?>
+	{
+		protected override int?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long?, int?>.Convert((long?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfIntNullable : Conversion<List<object?>?, List<int?>?>
 	{
 		protected override List<int?>? Converter(List<object?>? value)
@@ -834,6 +1032,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long?, int?>.Convert((long?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfIntNullableToListOfObject : Conversion<int?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(int?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<int?, long?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfIntNullableToListOfObject : Conversion<List<int?>?, List<object?>?>
@@ -846,6 +1054,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<int?, long?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfLong : Conversion<List<object>?, long[]?>
+	{
+		protected override long[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long, long>.Convert((long)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfLong : Conversion<List<object>?, List<long>?>
 	{
 		protected override List<long>? Converter(List<object>? value)
@@ -854,6 +1072,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long, long>.Convert((long)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfLongToListOfObject : Conversion<long[]?, List<object>?>
+	{
+		protected override List<object>? Converter(long[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<long, long>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfLongToListOfObject : Conversion<List<long>?, List<object>?>
@@ -866,6 +1094,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<long, long>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfLongNullable : Conversion<List<object?>?, long?[]?>
+	{
+		protected override long?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long?, long?>.Convert((long?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfLongNullable : Conversion<List<object?>?, List<long?>?>
 	{
 		protected override List<long?>? Converter(List<object?>? value)
@@ -874,6 +1112,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long?, long?>.Convert((long?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfLongNullableToListOfObject : Conversion<long?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(long?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<long?, long?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfLongNullableToListOfObject : Conversion<List<long?>?, List<object?>?>
@@ -886,6 +1134,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<long?, long?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfFloat : Conversion<List<object>?, float[]?>
+	{
+		protected override float[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<double, float>.Convert((double)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfFloat : Conversion<List<object>?, List<float>?>
 	{
 		protected override List<float>? Converter(List<object>? value)
@@ -894,6 +1152,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<double, float>.Convert((double)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfFloatToListOfObject : Conversion<float[]?, List<object>?>
+	{
+		protected override List<object>? Converter(float[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<float, double>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfFloatToListOfObject : Conversion<List<float>?, List<object>?>
@@ -906,6 +1174,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<float, double>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfFloatNullable : Conversion<List<object?>?, float?[]?>
+	{
+		protected override float?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<double?, float?>.Convert((double?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfFloatNullable : Conversion<List<object?>?, List<float?>?>
 	{
 		protected override List<float?>? Converter(List<object?>? value)
@@ -914,6 +1192,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<double?, float?>.Convert((double?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfFloatNullableToListOfObject : Conversion<float?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(float?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<float?, double?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfFloatNullableToListOfObject : Conversion<List<float?>?, List<object?>?>
@@ -926,6 +1214,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<float?, double?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfDouble : Conversion<List<object>?, double[]?>
+	{
+		protected override double[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<double, double>.Convert((double)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfDouble : Conversion<List<object>?, List<double>?>
 	{
 		protected override List<double>? Converter(List<object>? value)
@@ -934,6 +1232,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<double, double>.Convert((double)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfDoubleToListOfObject : Conversion<double[]?, List<object>?>
+	{
+		protected override List<object>? Converter(double[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<double, double>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfDoubleToListOfObject : Conversion<List<double>?, List<object>?>
@@ -946,6 +1254,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<double, double>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfDoubleNullable : Conversion<List<object?>?, double?[]?>
+	{
+		protected override double?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<double?, double?>.Convert((double?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfDoubleNullable : Conversion<List<object?>?, List<double?>?>
 	{
 		protected override List<double?>? Converter(List<object?>? value)
@@ -954,6 +1272,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<double?, double?>.Convert((double?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfDoubleNullableToListOfObject : Conversion<double?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(double?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<double?, double?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfDoubleNullableToListOfObject : Conversion<List<double?>?, List<object?>?>
@@ -966,6 +1294,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<double?, double?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfChar : Conversion<List<object>?, char[]?>
+	{
+		protected override char[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<string, char>.Convert((string)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfChar : Conversion<List<object>?, List<char>?>
 	{
 		protected override List<char>? Converter(List<object>? value)
@@ -974,6 +1312,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<string, char>.Convert((string)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfCharToListOfObject : Conversion<char[]?, List<object>?>
+	{
+		protected override List<object>? Converter(char[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<char, string>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfCharToListOfObject : Conversion<List<char>?, List<object>?>
@@ -986,6 +1334,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<char, string>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfCharNullable : Conversion<List<object?>?, char?[]?>
+	{
+		protected override char?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<string?, char?>.Convert((string?)item)).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfCharNullable : Conversion<List<object?>?, List<char?>?>
 	{
 		protected override List<char?>? Converter(List<object?>? value)
@@ -994,6 +1352,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<string?, char?>.Convert((string?)item)).ToList();
+		}
+	}	
+	internal class ArrayOfCharNullableToListOfObject : Conversion<char?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(char?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<char?, string>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfCharNullableToListOfObject : Conversion<List<char?>?, List<object?>?>
@@ -1006,6 +1374,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<char?, string>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfString : Conversion<List<object?>?, string?[]?>
+	{
+		protected override string?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<string?, string>.Convert((string?)item)).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfString : Conversion<List<object?>?, List<string?>?>
 	{
 		protected override List<string?>? Converter(List<object?>? value)
@@ -1014,6 +1392,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<string?, string>.Convert((string?)item)).ToList();
+		}
+	}	
+	internal class ArrayOfStringToListOfObject : Conversion<string?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(string?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<string, string>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfStringToListOfObject : Conversion<List<string?>?, List<object?>?>
@@ -1026,6 +1414,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<string, string>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfDateTime : Conversion<List<object>?, DateTime[]?>
+	{
+		protected override DateTime[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long, DateTime>.Convert((long)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfDateTime : Conversion<List<object>?, List<DateTime>?>
 	{
 		protected override List<DateTime>? Converter(List<object>? value)
@@ -1034,6 +1432,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long, DateTime>.Convert((long)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfDateTimeToListOfObject : Conversion<DateTime[]?, List<object>?>
+	{
+		protected override List<object>? Converter(DateTime[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<DateTime, long>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfDateTimeToListOfObject : Conversion<List<DateTime>?, List<object>?>
@@ -1046,6 +1454,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<DateTime, long>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfDateTimeNullable : Conversion<List<object?>?, DateTime?[]?>
+	{
+		protected override DateTime?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long?, DateTime?>.Convert((long?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfDateTimeNullable : Conversion<List<object?>?, List<DateTime?>?>
 	{
 		protected override List<DateTime?>? Converter(List<object?>? value)
@@ -1054,6 +1472,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long?, DateTime?>.Convert((long?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfDateTimeNullableToListOfObject : Conversion<DateTime?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(DateTime?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<DateTime?, long?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfDateTimeNullableToListOfObject : Conversion<List<DateTime?>?, List<object?>?>
@@ -1066,6 +1494,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<DateTime?, long?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfGuid : Conversion<List<object>?, Guid[]?>
+	{
+		protected override Guid[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<string, Guid>.Convert((string)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfGuid : Conversion<List<object>?, List<Guid>?>
 	{
 		protected override List<Guid>? Converter(List<object>? value)
@@ -1074,6 +1512,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<string, Guid>.Convert((string)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfGuidToListOfObject : Conversion<Guid[]?, List<object>?>
+	{
+		protected override List<object>? Converter(Guid[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<Guid, string>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfGuidToListOfObject : Conversion<List<Guid>?, List<object>?>
@@ -1086,6 +1534,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<Guid, string>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfGuidNullable : Conversion<List<object?>?, Guid?[]?>
+	{
+		protected override Guid?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<string?, Guid?>.Convert((string?)item)).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfGuidNullable : Conversion<List<object?>?, List<Guid?>?>
 	{
 		protected override List<Guid?>? Converter(List<object?>? value)
@@ -1094,6 +1552,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<string?, Guid?>.Convert((string?)item)).ToList();
+		}
+	}	
+	internal class ArrayOfGuidNullableToListOfObject : Conversion<Guid?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(Guid?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<Guid?, string>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfGuidNullableToListOfObject : Conversion<List<Guid?>?, List<object?>?>
@@ -1106,6 +1574,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<Guid?, string>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfDecimal : Conversion<List<object>?, decimal[]?>
+	{
+		protected override decimal[]? Converter(List<object>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long, decimal>.Convert((long)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfDecimal : Conversion<List<object>?, List<decimal>?>
 	{
 		protected override List<decimal>? Converter(List<object>? value)
@@ -1114,6 +1592,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long, decimal>.Convert((long)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfDecimalToListOfObject : Conversion<decimal[]?, List<object>?>
+	{
+		protected override List<object>? Converter(decimal[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object)Conversion<decimal, long>.Convert(item)!).ToList();
 		}
 	}	
 	internal class ListOfDecimalToListOfObject : Conversion<List<decimal>?, List<object>?>
@@ -1126,6 +1614,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object)Conversion<decimal, long>.Convert(item)!).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfDecimalNullable : Conversion<List<object?>?, decimal?[]?>
+	{
+		protected override decimal?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<long?, decimal?>.Convert((long?)item)!).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfDecimalNullable : Conversion<List<object?>?, List<decimal?>?>
 	{
 		protected override List<decimal?>? Converter(List<object?>? value)
@@ -1134,6 +1632,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<long?, decimal?>.Convert((long?)item)!).ToList();
+		}
+	}	
+	internal class ArrayOfDecimalNullableToListOfObject : Conversion<decimal?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(decimal?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<decimal?, long?>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfDecimalNullableToListOfObject : Conversion<List<decimal?>?, List<object?>?>
@@ -1146,6 +1654,16 @@ namespace Blueprint41.TypeConversion
 			return value.Select(item => (object?)Conversion<decimal?, long?>.Convert(item)).ToList();
 		}
 	}	
+	internal class ListOfObjectToArrayOfCompressedString : Conversion<List<object?>?, CompressedString?[]?>
+	{
+		protected override CompressedString?[]? Converter(List<object?>? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => Conversion<byte[]?, CompressedString>.Convert((byte[]?)item)).ToArray();
+		}
+	}	
 	internal class ListOfObjectToListOfCompressedString : Conversion<List<object?>?, List<CompressedString?>?>
 	{
 		protected override List<CompressedString?>? Converter(List<object?>? value)
@@ -1154,6 +1672,16 @@ namespace Blueprint41.TypeConversion
 				return null;
 
 			return value.Select(item => Conversion<byte[]?, CompressedString>.Convert((byte[]?)item)).ToList();
+		}
+	}	
+	internal class ArrayOfCompressedStringToListOfObject : Conversion<CompressedString?[]?, List<object?>?>
+	{
+		protected override List<object?>? Converter(CompressedString?[]? value)
+		{
+			if (value is null)
+				return null;
+
+			return value.Select(item => (object?)Conversion<CompressedString, byte[]>.Convert(item)).ToList();
 		}
 	}	
 	internal class ListOfCompressedStringToListOfObject : Conversion<List<CompressedString?>?, List<object?>?>

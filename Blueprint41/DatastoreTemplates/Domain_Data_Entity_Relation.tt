@@ -30,8 +30,8 @@ namespace <#= Settings.FullCRUDNamespace #>
         {
             _elementId = elementId;
             
-            <#= DALRelation.InEntity.Name #> = @in;
-            <#= DALRelation.OutEntity.Name #> = @out;
+            <#= DALRelation.InEntityName #> = @in;
+            <#= DALRelation.OutEntityName #> = @out;
             
 <#
     foreach (var attr in DALRelation.Properties)
@@ -45,14 +45,14 @@ namespace <#= Settings.FullCRUDNamespace #>
         internal string _elementId { get; private set; }
 
         /// <summary>
-        /// Person (In Node)
+        /// <#= DALRelation.InEntityName #> (In Node)
         /// </summary>
-        public <#= DALRelation.InEntity.Name #> <#= DALRelation.InEntity.Name #> { get; private set; }
+        public <#= DALRelation.InEntity.Name #> <#= DALRelation.InEntityName #> { get; private set; }
 
         /// <summary>
-        /// Restaurant (Out Node)
+        /// <#= DALRelation.OutEntityName #> (Out Node)
         /// </summary>
-        public <#= DALRelation.OutEntity.Name #> <#= DALRelation.OutEntity.Name #> { get; private set; }
+        public <#= DALRelation.OutEntity.Name #> <#= DALRelation.OutEntityName #> { get; private set; }
 
 <#
     foreach (var attr in DALRelation.Properties)
@@ -67,7 +67,7 @@ namespace <#= Settings.FullCRUDNamespace #>
         {
             var query = Transaction.CompiledQuery
                 .Match(node.<#= DALRelation.InEntity.Name #>.Alias(out var inAlias).In.<#= DALRelation.Name #>.Alias(out var relAlias).Out.<#= DALRelation.OutEntity.Name #>.Alias(out var outAlias))
-                .Where(inAlias.<#= DALRelation.InEntity.Key.Name #> == <#= DALRelation.InEntity.Name #>.<#= DALRelation.InEntity.Key.Name #>, outAlias.<#= DALRelation.OutEntity.Key.Name #> == <#= DALRelation.OutEntity.Name #>.<#= DALRelation.OutEntity.Key.Name #>, relAlias.ElementId == _elementId)
+                .Where(inAlias.<#= DALRelation.InEntity.Key.Name #> == <#= DALRelation.InEntityName #>.<#= DALRelation.InEntity.Key.Name #>, outAlias.<#= DALRelation.OutEntity.Key.Name #> == <#= DALRelation.OutEntityName #>.<#= DALRelation.OutEntity.Key.Name #>, relAlias.ElementId == _elementId)
                 .Set(GetAssignments(relAlias))
                 .Compile();
 
@@ -126,12 +126,6 @@ namespace <#= Settings.FullCRUDNamespace #>
                 if (<#= attr.Name #>.HasValue) conditions.Add(alias.<#= attr.Name #> == <#= attr.Name #>.Value?.ToString());
 <#
         }
-        else if (attr.SystemReturnType.IsArray)
-        {
-#>
-                if (<#= attr.Name #>.HasValue) conditions.Add(alias.<#= attr.Name #>.All(item => item.In(<#= attr.Name #>.Value)));
-<#
-        }
         else
         {
 #>
@@ -140,8 +134,8 @@ namespace <#= Settings.FullCRUDNamespace #>
         }
     }
 #>
-                if (InNode.HasValue) conditions.Add(alias.<#= DALRelation.InEntity.Name #>(InNode.Value));
-                if (OutNode.HasValue) conditions.Add(alias.<#= DALRelation.OutEntity.Name #>(OutNode.Value));
+                if (InNode.HasValue) conditions.Add(alias.<#= DALRelation.InEntityName #>(InNode.Value));
+                if (OutNode.HasValue) conditions.Add(alias.<#= DALRelation.OutEntityName #>(OutNode.Value));
 
                 return conditions.ToArray();
             });
@@ -235,63 +229,63 @@ namespace <#= Settings.FullCRUDNamespace #>
 #>
 
             /// <summary>
-            /// <#= DALRelation.InEntity.Name #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// <#= DALRelation.InEntityName #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
             /// </summary>
             /// <returns>
             /// Condition where in-node is the given <#= DALRelation.InEntity.Name.ToTitleCase().ToLowerCase() #>
             /// </returns>
-            public QueryCondition <#= DALRelation.InEntity.Name #>(<#= DALRelation.InEntity.Name #> <#= DALRelation.InEntity.Name.ToCamelCase() #>)
+            public QueryCondition <#= DALRelation.InEntityName #>(<#= DALRelation.InEntity.Name #> <#= DALRelation.InEntity.Name.ToCamelCase() #>)
             {
                 return _inAlias.<#= DALRelation.InEntity.Key.Name #> == <#= DALRelation.InEntity.Name.ToCamelCase() #>.<#= DALRelation.InEntity.Key.Name #>;
             }
             /// <summary>
-            /// <#= DALRelation.InEntity.Name #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// <#= DALRelation.InEntityName #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
             /// </summary>
             /// <returns>
             /// Condition where in-node is in the given set of <#= DALRelation.InEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
             /// </returns>
-            public QueryCondition <#= DALRelation.InEntity.Name.ToPlural() #>(IEnumerable<<#= DALRelation.InEntity.Name #>> <#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>)
+            public QueryCondition <#= DALRelation.InEntityName.ToPlural() #>(IEnumerable<<#= DALRelation.InEntity.Name #>> <#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>)
             {
                 return _inAlias.<#= DALRelation.InEntity.Key.Name #>.In(<#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.InEntity.Key.Name #>));
             }
             /// <summary>
-            /// <#= DALRelation.InEntity.Name #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// <#= DALRelation.InEntityName #> in-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
             /// </summary>
             /// <returns>
             /// Condition where in-node is in the given set of <#= DALRelation.InEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
             /// </returns>
-            public QueryCondition <#= DALRelation.InEntity.Name.ToPlural() #>(params <#= DALRelation.InEntity.Name #>[] <#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>)
+            public QueryCondition <#= DALRelation.InEntityName.ToPlural() #>(params <#= DALRelation.InEntity.Name #>[] <#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>)
             {
                 return _inAlias.<#= DALRelation.InEntity.Key.Name #>.In(<#= DALRelation.InEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.InEntity.Key.Name #>));
             }
 
             /// <summary>
-            /// <#= DALRelation.OutEntity.Name #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// <#= DALRelation.OutEntityName #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
             /// </summary>
             /// <returns>
             /// Condition where out-node is the given <#= DALRelation.OutEntity.Name.ToTitleCase().ToLowerCase() #>
             /// </returns>
-            public QueryCondition <#= DALRelation.OutEntity.Name #>(<#= DALRelation.OutEntity.Name #> <#= DALRelation.OutEntity.Name.ToCamelCase() #>)
+            public QueryCondition <#= DALRelation.OutEntityName #>(<#= DALRelation.OutEntity.Name #> <#= DALRelation.OutEntity.Name.ToCamelCase() #>)
             {
                 return _outAlias.<#= DALRelation.OutEntity.Key.Name #> == <#= DALRelation.OutEntity.Name.ToCamelCase() #>.<#= DALRelation.OutEntity.Key.Name #>;
             }
             /// <summary>
-            /// <#= DALRelation.OutEntity.Name #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// <#= DALRelation.OutEntityName #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
             /// </summary>
             /// <returns>
             /// Condition where out-node is in the given set of <#= DALRelation.OutEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
             /// </returns>
-            public QueryCondition <#= DALRelation.OutEntity.Name.ToPlural() #>(IEnumerable<<#= DALRelation.OutEntity.Name #>> <#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>)
+            public QueryCondition <#= DALRelation.OutEntityName.ToPlural() #>(IEnumerable<<#= DALRelation.OutEntity.Name #>> <#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>)
             {
                 return _outAlias.<#= DALRelation.OutEntity.Key.Name #>.In(<#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.OutEntity.Key.Name #>));
             }
             /// <summary>
-            /// <#= DALRelation.OutEntity.Name #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
+            /// <#= DALRelation.OutEntityName #> out-node: (<#= DALRelation.InEntity.Name #>)-[<#= DALRelation.Name #>]->(<#= DALRelation.OutEntity.Name #>)
             /// </summary>
             /// <returns>
             /// Condition where out-node is in the given set of <#= DALRelation.OutEntity.Name.ToPlural().ToTitleCase().ToLowerCase() #>
             /// </returns>
-            public QueryCondition <#= DALRelation.OutEntity.Name.ToPlural() #>(params <#= DALRelation.OutEntity.Name #>[] <#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>)
+            public QueryCondition <#= DALRelation.OutEntityName.ToPlural() #>(params <#= DALRelation.OutEntity.Name #>[] <#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>)
             {
                 return _outAlias.<#= DALRelation.OutEntity.Key.Name #>.In(<#= DALRelation.OutEntity.Name.ToPlural().ToCamelCase() #>.Select(item => item.<#= DALRelation.OutEntity.Key.Name #>));
             }

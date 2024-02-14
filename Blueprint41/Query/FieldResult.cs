@@ -16,7 +16,7 @@ namespace Blueprint41.Query
         public static QueryCondition operator ==(FieldResult a, Parameter b)
         {
             return new QueryCondition(a, Operator.Equals, b);
-        }      
+        }
         public static QueryCondition operator ==(FieldResult left, DateTime right)
         {
             return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
