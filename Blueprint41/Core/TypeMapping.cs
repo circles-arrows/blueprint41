@@ -13,21 +13,20 @@ namespace Blueprint41.Core
         {
             ReturnType = returnType;
             PersistedType = persistedType;
+
+            ShortReturnType = ReturnType.ToCSharp();
+            ShortPersistedType = PersistedType.ToCSharp();
+
             ComparisonGroup = comparisonGroup;
         }
 
-        public Type ReturnType {get; private set;}
+        public Type ReturnType { get; private set; }
         public Type PersistedType { get; private set; }
-        internal string ComparisonGroup { get; private set; }
 
-        public string ShortPersistedType
-        {
-            get
-            {
-                if (PersistedType is null) return "";
-                return PersistedType.ToCSharp();
-            }
-        }
+        public string ShortReturnType { get; private set; }
+        public string ShortPersistedType { get; private set; }
+
+        internal string ComparisonGroup { get; private set; }
 
         #region Conversion
 

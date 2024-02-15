@@ -16,7 +16,7 @@ namespace Blueprint41.UnitTest.Memgraph.DataStore
         [Version(0, 0, 0)]
         public void Script_0_0_0()
         {
-            FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+            FunctionalIds.Default = FunctionalIds.UUID;
 
             Entities.New("BaseEntity")
                 .AddProperty("Uid", typeof(string), false, IndexType.Unique)

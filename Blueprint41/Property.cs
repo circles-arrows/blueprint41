@@ -562,7 +562,7 @@ namespace Blueprint41
                     {
                         cypherRead = $"""
                             MATCH (node:{entity.Label.Name})
-                            WHERE [x IN node.`{Name}` | x] <> node.`{Name}`
+                            WHERE {Parent.Parent.PersistenceProvider.Translator.TestCompressedString("node", Name)}
                             RETURN DISTINCT node.`{Name}` as Text
                             LIMIT {batchSize}
                             """;
@@ -577,7 +577,7 @@ namespace Blueprint41
                     {
                         cypherRead = $"""
                             MATCH (:{relationship.InEntity.Label.Name})-[rel:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name})
-                            WHERE [x IN rel.`{Name}` | x] <> rel.`{Name}`
+                            WHERE {Parent.Parent.PersistenceProvider.Translator.TestCompressedString("rel", Name)}
                             RETURN DISTINCT rel.`{Name}` as Text
                             LIMIT {batchSize}
                             """;

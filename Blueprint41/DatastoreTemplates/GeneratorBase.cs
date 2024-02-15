@@ -14,7 +14,7 @@ namespace Blueprint41.DatastoreTemplates
         public Entity? DALModel { get; set; }
         public Relationship? DALRelation { get; set; }
         public DatastoreModel? Datastore { get; set; }
-        public List<TypeMapping> SupportedTypeMappings => Datastore?.PersistenceProvider?.SupportedTypeMappings ?? Neo4jPersistenceProvider.supportedTypeMappings;
+        public IReadOnlyList<TypeMapping> SupportedTypeMappings => Datastore?.PersistenceProvider?.SupportedTypeMappings ?? Neo4jPersistenceProvider.VoidPersistenceProvider.SupportedTypeMappings;
 
         public GeneratorSettings? Settings { get; set; }
 

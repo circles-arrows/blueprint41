@@ -31,7 +31,6 @@ namespace Blueprint41.Neo4j.Schema
                 Constraints       = LoadData("CALL db.constraints()", record => NewConstraintInfo(record, PersistenceProvider));
                 Indexes           = LoadData("CALL db.indexes()", record => NewIndexInfo(record, PersistenceProvider));
                 Labels            = LoadSimpleData("CALL db.labels()", "label");
-                PropertyKeys      = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
                 RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
             }
         }
@@ -69,7 +68,6 @@ namespace Blueprint41.Neo4j.Schema
         public IReadOnlyList<IndexInfo>        Indexes       { get; protected set; } = null!;
 
         public IReadOnlyList<string> Labels            { get; protected set; } = null!;
-        public IReadOnlyList<string> PropertyKeys      { get; protected set; } = null!;
         public IReadOnlyList<string> RelationshipTypes { get; protected set; } = null!;
         protected DatastoreModel Model;
 

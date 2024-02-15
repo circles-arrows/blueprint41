@@ -130,14 +130,8 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not byte[]), "Unexpected test-data");
             }
 
-            Execute(CompressAddrLine1);
-
-            using (Transaction.Begin())
-            {
-                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not string), "Conversion failed");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is byte[]), "Conversion failed");
-            }
+            Exception ex = Assert.Throws<InvalidOperationException>(() => Execute(CompressAddrLine1));
+            Assert.That(() => ex.Message.Contains("CompressedString is not supported on Memgraph, since ByteArray is not supported on Memgraph."));
         }
 
         [Test] // Asserts done

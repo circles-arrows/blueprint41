@@ -17,6 +17,10 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
         {
         }
 
+        // Element ID is not a string on Memgraph, this might cause performance issues with updating relationship properties...
+        public override string FnElementId => "toString(Id({0}))";
+        public override string TestCompressedString(string alias, string field) => throw new NotSupportedException("CompressedString is not supported on Memgraph, since ByteArray is not supported on Memgraph. See: https://memgraph.com/docs/client-libraries/java");
+
         #region
 
         internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v5();
@@ -30,6 +34,7 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
         #endregion
 
         #region Full Text Indexes
+
         internal override bool HasFullTextSearchIndexes()
         {
             //TODO: memgraph does not support Full-Text search indexes
@@ -42,5 +47,8 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
         }
 
         #endregion
+
+        internal override IEnumerable<TypeMapping> FilterSupportedTypeMappings(IEnumerable<TypeMapping> mappings) => mappings
+            .Where(item => !item.ShortReturnType.Contains(nameof(CompressedString)));
     }
 }

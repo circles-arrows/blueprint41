@@ -15,21 +15,32 @@ namespace Blueprint41.Core
     {
         protected PersistenceProvider()
         {
+            supportedTypeMappings = new Lazy<List<TypeMapping>>(delegate()
+                    {
+                        return Translator.FilterSupportedTypeMappings(GetSupportedTypeMappings()).ToList();
+                    },
+                    true
+                );
+
             convertToStoredType = new Lazy<Dictionary<Type, Conversion?>>(
-            delegate ()
-            {
-                return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.ReturnType, item.PersistedType));
-            }, true);
+                    delegate ()
+                    {
+                        return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.ReturnType, item.PersistedType));
+                    },
+                    true
+                );
 
             convertFromStoredType = new Lazy<Dictionary<Type, Conversion?>>(
-            delegate ()
-            {
-                return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.PersistedType, item.ReturnType));
-            }, true);
+                    delegate ()
+                    {
+                        return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.PersistedType, item.ReturnType));
+                    },
+                    true
+                );
 
-            _nodePersistenceProvider = new Lazy<NodePersistenceProvider>(() => Translator.GetNodePersistenceProvider());
-            _relationshipPersistenceProvider = new Lazy<RelationshipPersistenceProvider>(() => Translator.GetRelationshipPersistenceProvider());
-            _templates = new Lazy<RefactorTemplates>(() => Translator.GetTemplates());
+            _nodePersistenceProvider = new Lazy<NodePersistenceProvider>(Translator.GetNodePersistenceProvider);
+            _relationshipPersistenceProvider = new Lazy<RelationshipPersistenceProvider>(Translator.GetRelationshipPersistenceProvider);
+            _templates = new Lazy<RefactorTemplates>(Translator.GetTemplates);
         }
 
         internal NodePersistenceProvider NodePersistenceProvider => _nodePersistenceProvider.Value;
@@ -51,17 +62,19 @@ namespace Blueprint41.Core
 
         public virtual Bookmark FromToken(string consistencyToken) => Bookmark.NullBookmark;
 
-        public abstract List<TypeMapping> SupportedTypeMappings { get; }
+        public IReadOnlyList<TypeMapping> SupportedTypeMappings => supportedTypeMappings.Value;
+        private readonly Lazy<List<TypeMapping>> supportedTypeMappings;
+        protected internal abstract List<TypeMapping> GetSupportedTypeMappings();
 
-        private Lazy<Dictionary<Type, Conversion?>> convertToStoredType;
         internal Dictionary<Type, Conversion?> ConvertToStoredTypeCache
         { get { return convertToStoredType.Value; } }
+        private readonly Lazy<Dictionary<Type, Conversion?>> convertToStoredType;
 
-        private Lazy<Dictionary<Type, Conversion?>> convertFromStoredType;
         internal Dictionary<Type, Conversion?> ConvertFromStoredTypeCache
         { get { return convertFromStoredType.Value; } }
+        private readonly Lazy<Dictionary<Type, Conversion?>> convertFromStoredType;
 
-        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4jPersistenceProvider(null, null, null);
+        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = Neo4jPersistenceProvider.VoidPersistenceProvider;
         public static bool IsConfigured => ((CurrentPersistenceProvider as Neo4jPersistenceProvider)?.Uri is not null);
 
         public static bool IsNeo4j

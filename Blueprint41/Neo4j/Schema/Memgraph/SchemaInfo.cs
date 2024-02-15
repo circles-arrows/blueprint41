@@ -20,13 +20,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             Constraints = ImplicitLoadData("SHOW CONSTRAINT INFO", record => NewConstraintInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
             Labels = ImplicitLoadData("SHOW NODE_LABELS INFO", record => record.Values["node labels"].As<string>());
             RelationshipTypes = ImplicitLoadData("SHOW EDGE_TYPES INFO", record => record.Values["edge types"].As<string>());
-
-            using (Transaction.Begin())
-            {
-                bool hasPlugin = Model.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
-                FunctionalIds = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
-                PropertyKeys = LoadSimpleData("CALL schema.node_type_properties() YIELD propertyName as propertyKey", "propertyKey");
-            }
+            FunctionalIds = new List<FunctionalIdInfo>(0);
         }
         protected IReadOnlyList<T> ImplicitLoadData<T>(string procedure, Func<RawRecord, T> processor)
         {

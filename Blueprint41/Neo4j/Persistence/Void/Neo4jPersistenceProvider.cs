@@ -233,13 +233,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             }
         }
 
-        public override List<TypeMapping> SupportedTypeMappings
-        {
-            get
-            {
-                return supportedTypeMappings;
-            }
-        }
+        public static readonly PersistenceProvider VoidPersistenceProvider = new Neo4jPersistenceProvider();
     }
 
     public record FeatureSupport
