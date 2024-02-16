@@ -44,7 +44,7 @@ namespace Blueprint41.Neo4j.Refactoring
             }
             else
             {
-                result = Parser.PrivateExecute(cypher, parameters);
+                result = PersistenceProvider.CurrentPersistenceProvider.Run(cypher, parameters, !PersistenceProvider.CurrentPersistenceProvider.IsMemgraph);
             }
 
             return result;

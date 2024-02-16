@@ -96,6 +96,26 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             }
             //Transaction.Commit();
         }
+        internal override void RemoveIndexesAndContraints(Property property)
+        {
+            if (!property.Nullable || property.IndexType != IndexType.None)
+            {
+                property.Nullable = true;
+                property.IndexType = IndexType.None;
+
+                foreach (var entity in property.Parent.GetSubclassesOrSelf())
+                {
+                    ApplyConstraintEntity applyConstraint = NewApplyConstraintEntity(entity);
+                    foreach (var action in applyConstraint.Actions.Where(c => c.Property == property.Name))
+                    {
+                        foreach (string query in action.ToCypher())
+                        {
+                            Parser.Execute(query, null);
+                        }
+                    }
+                }
+            }
+        }
         internal override List<(ApplyConstraintAction, string?)> ComputeCommands(
             IEntity entity,
             IndexType indexType,

@@ -30,6 +30,9 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
         #endregion
 
         #region Compile Functions
+        public override string FnCollectSubquery => throw new NotSupportedException("Memgraph does not support Collect subqueries as of writing.");
+        public override string FnCountSubquery => throw new NotSupportedException("Memgraph does not support Count subqueries as of writing.");
+        public override string FnExistsSubquery => throw new NotSupportedException("Memgraph does not support Exists subqueries as of writing.");
 
         #endregion
 

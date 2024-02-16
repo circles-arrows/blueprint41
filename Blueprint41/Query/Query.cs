@@ -121,6 +121,9 @@ namespace Blueprint41.Query
         }
         public IMatchQuery UsingScan(params AliasResult[] aliases)
         {
+            if (PersistenceProvider.Translator is Blueprint41.Neo4j.Persistence.Memgraph.Neo4jQueryTranslator)
+                throw new NotImplementedException("UsingScan not yet supported for memgraph blueprint41."); //TODO
+
             SetType(PartType.UsingScan);
             Aliases = aliases;
 
@@ -128,6 +131,9 @@ namespace Blueprint41.Query
         }
         public IMatchQuery UsingIndex(params FieldResult[] fields)
         {
+            if (PersistenceProvider.Translator is Blueprint41.Neo4j.Persistence.Memgraph.Neo4jQueryTranslator)
+                throw new NotImplementedException("UsingIndex not yet supported for memgraph blueprint41."); //TODO
+
             SetType(PartType.UsingIndex);
             Fields = fields;
 

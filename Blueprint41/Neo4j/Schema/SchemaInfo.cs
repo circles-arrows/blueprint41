@@ -180,6 +180,30 @@ namespace Blueprint41.Neo4j.Schema
                 Transaction.Commit();
             }
         }
+        internal virtual void RemoveIndexesAndContraints(Property property)
+        {
+            if (!property.Nullable || property.IndexType != IndexType.None)
+            {
+                using (Transaction.Begin(true))
+                {
+                    property.Nullable = true;
+                    property.IndexType = IndexType.None;
+
+                    foreach (var entity in property.Parent.GetSubclassesOrSelf())
+                    {
+                        ApplyConstraintEntity applyConstraint = NewApplyConstraintEntity(entity);
+                        foreach (var action in applyConstraint.Actions.Where(c => c.Property == property.Name))
+                        {
+                            foreach (string query in action.ToCypher())
+                            {
+                                Parser.Execute(query, null);
+                            }
+                        }
+                    }
+                    Transaction.Commit();
+                }
+            }
+        }
 
         protected virtual FunctionalIdInfo NewFunctionalIdInfo(RawRecord rawRecord)                                               => new FunctionalIdInfo(rawRecord);
         protected virtual ConstraintInfo   NewConstraintInfo(RawRecord rawRecord, Neo4jPersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
