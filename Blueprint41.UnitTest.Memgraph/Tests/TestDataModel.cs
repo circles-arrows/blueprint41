@@ -927,7 +927,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
             [Version(0, 0, 0)]
             public void Initialize()
             {
-                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+                FunctionalIds.Default = FunctionalIds.UUID;
 
                 Entities.New("Account")
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)

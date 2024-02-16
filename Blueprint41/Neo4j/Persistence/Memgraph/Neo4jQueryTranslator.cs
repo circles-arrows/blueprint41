@@ -23,7 +23,7 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
 
         #region
 
-        internal override RefactorTemplates GetTemplates() => new RefactorTemplates_v5();
+        internal override RefactorTemplates GetTemplates() => new RefactorTemplates_Memgraph();
 
         internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.Memgraph.SchemaInfo_Memgraph(datastoreModel, PersistenceProvider);
 
