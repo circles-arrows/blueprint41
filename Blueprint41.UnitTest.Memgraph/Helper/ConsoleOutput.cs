@@ -20,7 +20,7 @@ namespace Blueprint41.UnitTest.Memgraph.Helper
             Console.SetOut(stringWriter);
         }
 
-        public string GetOuput(bool lastTransactionOnly = false)
+        public string GetOutput(bool lastTransactionOnly = false)
         {
             string output = stringWriter.ToString();
             if (!lastTransactionOnly)
@@ -62,7 +62,7 @@ namespace Blueprint41.UnitTest.Memgraph.Helper
                             MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
                             WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
                             WITH rel, properties(rel) AS map1, $map AS map2
-                            SET rel.EndDate = CASE WHEN apoc.map.removeKeys(map1, $excl) = apoc.map.removeKeys(map2, $excl) THEN $max ELSE $moment END
+                            SET rel.EndDate = CASE WHEN map1 { StartDate: 0, EndDate: 0, CreationDate: 0, .* } = map2 { StartDate: 0, EndDate: 0, CreationDate: 0, .* } THEN $max ELSE $moment END
                             """,
                             $$"""
                             MATCH (in:{{inNode}} { Uid: $inKey }), (out:{{outNode}} { Uid: $outKey })
@@ -130,7 +130,7 @@ namespace Blueprint41.UnitTest.Memgraph.Helper
             if (lines is null || lines.Length == 0)
                 throw new ArgumentNullException(nameof(lines));
 
-            string output = GetOuput(true);
+            string output = GetOutput(true);
 
             bool one = false;
             foreach (string line in lines)
@@ -141,45 +141,30 @@ namespace Blueprint41.UnitTest.Memgraph.Helper
 
             Assert.IsTrue(one ^ not);
         }
-        private void AllLines(bool not, params string[] lines)
+        private void AllLines(bool negate, params string[] lines)
         {
-            if (lines is null || lines.Length == 0)
+            if (lines == null || lines.Length == 0)
                 throw new ArgumentNullException(nameof(lines));
 
-            string[] output = Regex.Split(GetOuput(true), "\r\n|\r|\n").Select(item => item.Trim()).Where(item => !string.IsNullOrEmpty(item)).ToArray();
-            string[][] searches = lines.Select(line => Regex.Split(line, "\r\n|\r|\n").Select(item => item.Trim()).Where(item => !string.IsNullOrEmpty(item)).ToArray()).ToArray();
+            // Split and trim the output lines once, to improve performance.
+            string[] outputLines = SplitAndTrimLines(GetOutput(true));
 
-            bool found = true;
-            foreach (string[] search in searches)
-            {
-                bool all = false;
+            // Flatten, split, and trim the input lines.
+            string[] inputLines = lines.SelectMany(line => SplitAndTrimLines(line)).ToArray();
 
-                int lastSearchLine = (output.Length - search.Length);
-                if (lastSearchLine >= 0)
-                {
-                    for (int searchLine = 0; searchLine <= lastSearchLine; searchLine++)
-                    {
-                        all = true;
+            // Check if all input lines exist in the output lines.
+            bool allLinesExist = inputLines.All(inputLine => outputLines.Contains(inputLine));
 
-                        for (int line = 0; line < search.Length; line++)
-                        {
-                            if (!output[searchLine + line].Contains(search[line]))
-                            {
-                                all = false;
-                                break;
-                            }
-                        }
+            // Assert based on the "negate" parameter.
+            Assert.True(allLinesExist != negate);
+        }
 
-                        if (all)
-                            break;
-                    }
-                }
-
-                if (!all)
-                    found = false;
-            }
-
-            Assert.True(found ^ not);
+        private string[] SplitAndTrimLines(string text)
+        {
+            return Regex.Split(text, "\r\n|\r|\n")
+                        .Select(line => line.Trim())
+                        .Where(line => !string.IsNullOrEmpty(line))
+                        .ToArray();
         }
 
         private static Regex lineEndings = new Regex(@"\r\n?|\n", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.Compiled);

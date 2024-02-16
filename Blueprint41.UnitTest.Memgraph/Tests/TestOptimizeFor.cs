@@ -112,7 +112,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                     Assert.Greater(p.ActedInMovies.Count, 0);
                     Assert.Greater(p.ActedInMovies[0].Actors.Count, 0);
 
-                    outputConsole = output.GetOuput();
+                    outputConsole = output.GetOutput();
 
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person) WHERE node.Uid = $key RETURN node"));
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:DIRECTED_BY]->(out:Movie) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
@@ -127,7 +127,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                     Assert.Greater(p.ActedInMovies.Count, 0);
                     Assert.Greater(p.ActedInMovies[0].Actors.Count, 0);
 
-                    outputConsole = output.GetOuput();
+                    outputConsole = output.GetOutput();
 
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person) WHERE node.Uid = $key RETURN node"));
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:DIRECTED_BY]->(out:Movie) WHERE node.Uid = $key RETURN out, rel"));

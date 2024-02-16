@@ -640,7 +640,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                 };
                 model.Execute(true);
                 Assert.Throws<ArgumentOutOfRangeException>(() => Assert.IsNotNull(model.Entities["Person"]));
-                Assert.That(output.GetOuput(), Contains.Substring("Deprecate entity from Person"));
+                Assert.That(output.GetOutput(), Contains.Substring("Deprecate entity from Person"));
             }
         }
 
@@ -768,8 +768,8 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                 };
                 model.Execute(true);
 
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX ON :AccountType(Indexed)"));
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT ON (node:AccountType) ASSERT node.Unique IS UNIQUE"));
+                Assert.That(output.GetOutput(), Contains.Substring("CREATE INDEX ON :AccountType(Indexed)"));
+                Assert.That(output.GetOutput(), Contains.Substring("CREATE CONSTRAINT ON (node:AccountType) ASSERT node.Unique IS UNIQUE"));
             }
         }
         #endregion
@@ -968,7 +968,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                     LogToConsole = true
                 };
                 model.Execute(true);
-                Assert.IsTrue(Regex.IsMatch(output.GetOuput(), "Copy properties from Name to CopyName for entity Account"));
+                Assert.IsTrue(Regex.IsMatch(output.GetOutput(), "Copy properties from Name to CopyName for entity Account"));
             }
         }
 
@@ -1018,7 +1018,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                 model.Execute(true);
 
                 string query = "SetDefaultConstantValue -> Account.Name = 'First Account'";
-                Assert.That(output.GetOuput(), Contains.Substring(query));
+                Assert.That(output.GetOutput(), Contains.Substring(query));
             }
         }
 

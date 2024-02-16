@@ -832,7 +832,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
             string key = a.GetKey()?.ToString();
             Assert.IsNotNull(key);
             Assert.IsNotEmpty(key);
-            Assert.DoesNotThrow(() => int.Parse(key));
+            Assert.DoesNotThrow(() => Guid.Parse(key));
 
             return key;
         }
