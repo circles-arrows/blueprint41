@@ -38,9 +38,9 @@ namespace Blueprint41.Core
                     true
                 );
 
-            _nodePersistenceProvider = new Lazy<NodePersistenceProvider>(Translator.GetNodePersistenceProvider);
-            _relationshipPersistenceProvider = new Lazy<RelationshipPersistenceProvider>(Translator.GetRelationshipPersistenceProvider);
-            _templates = new Lazy<RefactorTemplates>(Translator.GetTemplates);
+            _nodePersistenceProvider = new Lazy<NodePersistenceProvider>(() => Translator.GetNodePersistenceProvider());
+            _relationshipPersistenceProvider = new Lazy<RelationshipPersistenceProvider>(() => Translator.GetRelationshipPersistenceProvider());
+            _templates = new Lazy<RefactorTemplates>(() => Translator.GetTemplates());
         }
 
         internal NodePersistenceProvider NodePersistenceProvider => _nodePersistenceProvider.Value;
