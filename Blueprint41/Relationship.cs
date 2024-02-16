@@ -65,6 +65,28 @@ namespace Blueprint41
         public string           EndDate               { get { return "EndDate";  } }
         public bool             IsTimeDependent       { get; private set; }
 
+        internal string InEntityName
+        {
+            get
+            {
+                if (InEntity.Name == OutEntity.Name)
+                    return "In" + InEntity.Name;
+
+                return InEntity.Name;
+            }
+        }
+        internal string OutEntityName
+        {
+            get
+            {
+                if (InEntity.Name == OutEntity.Name)
+                    return "Out" + OutEntity.Name;
+
+                return OutEntity.Name;
+            }
+        }
+
+
         public Guid Guid { get; private set; }
 
         public EntityPropertyCollection<RelationshipProperty, Relationship> Properties { get; private set; }

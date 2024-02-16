@@ -72,6 +72,7 @@ namespace Blueprint41
 
         public DatastoreModel Parent { get; private set; }
         public string Name { get; private set; }
+
         public string ClassName
         {
             get

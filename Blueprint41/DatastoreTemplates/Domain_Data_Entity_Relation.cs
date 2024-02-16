@@ -114,14 +114,14 @@ using q = ");
                     "= elementId;\r\n            \r\n            ");
             
             #line 33 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write(" = @in;\r\n            ");
             
             #line 34 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
@@ -173,8 +173,14 @@ using q = ");
             #line default
             #line hidden
             this.Write("        }\r\n\r\n        internal string _elementId { get; private set; }\r\n\r\n        " +
-                    "/// <summary>\r\n        /// Person (In Node)\r\n        /// </summary>\r\n        pub" +
-                    "lic ");
+                    "/// <summary>\r\n        /// ");
+            
+            #line 48 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
+            
+            #line default
+            #line hidden
+            this.Write(" (In Node)\r\n        /// </summary>\r\n        public ");
             
             #line 50 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
@@ -184,12 +190,18 @@ using q = ");
             this.Write(" ");
             
             #line 50 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
-            this.Write(" { get; private set; }\r\n\r\n        /// <summary>\r\n        /// Restaurant (Out Node" +
-                    ")\r\n        /// </summary>\r\n        public ");
+            this.Write(" { get; private set; }\r\n\r\n        /// <summary>\r\n        /// ");
+            
+            #line 53 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
+            
+            #line default
+            #line hidden
+            this.Write(" (Out Node)\r\n        /// </summary>\r\n        public ");
             
             #line 55 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
@@ -199,7 +211,7 @@ using q = ");
             this.Write(" ");
             
             #line 55 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
@@ -275,7 +287,7 @@ using q = ");
             this.Write(" == ");
             
             #line 70 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
@@ -296,7 +308,7 @@ using q = ");
             this.Write(" == ");
             
             #line 70 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
@@ -541,14 +553,14 @@ using q = ");
             this.Write("                if (InNode.HasValue) conditions.Add(alias.");
             
             #line 137 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write("(InNode.Value));\r\n                if (OutNode.HasValue) conditions.Add(alias.");
             
             #line 138 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
@@ -669,7 +681,7 @@ using q = ");
             
             #line default
             #line hidden
-            this.Write("\r\n        public static Relationship Relationship => Threadsafe.LazyInit(ref _rel" +
+            this.Write("\r\n        public static Relationship Relationship => ThreadSafe.LazyInit(ref _rel" +
                     "ationship, () => ");
             
             #line 197 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
@@ -809,7 +821,7 @@ using q = ");
             this.Write("\r\n            /// <summary>\r\n            /// ");
             
             #line 232 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
@@ -845,7 +857,7 @@ using q = ");
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
             #line 237 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
@@ -887,7 +899,7 @@ using q = ");
             this.Write(";\r\n            }\r\n            /// <summary>\r\n            /// ");
             
             #line 242 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
@@ -923,7 +935,7 @@ using q = ");
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
             #line 247 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToPlural()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName.ToPlural()));
             
             #line default
             #line hidden
@@ -965,7 +977,7 @@ using q = ");
             this.Write("));\r\n            }\r\n            /// <summary>\r\n            /// ");
             
             #line 252 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
@@ -1001,7 +1013,7 @@ using q = ");
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
             #line 257 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToPlural()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName.ToPlural()));
             
             #line default
             #line hidden
@@ -1043,7 +1055,7 @@ using q = ");
             this.Write("));\r\n            }\r\n\r\n            /// <summary>\r\n            /// ");
             
             #line 263 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
@@ -1079,7 +1091,7 @@ using q = ");
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
             #line 268 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
@@ -1121,7 +1133,7 @@ using q = ");
             this.Write(";\r\n            }\r\n            /// <summary>\r\n            /// ");
             
             #line 273 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
@@ -1157,7 +1169,7 @@ using q = ");
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
             #line 278 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToPlural()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName.ToPlural()));
             
             #line default
             #line hidden
@@ -1199,7 +1211,7 @@ using q = ");
             this.Write("));\r\n            }\r\n            /// <summary>\r\n            /// ");
             
             #line 283 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
@@ -1235,7 +1247,7 @@ using q = ");
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
             #line 288 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToPlural()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName.ToPlural()));
             
             #line default
             #line hidden
