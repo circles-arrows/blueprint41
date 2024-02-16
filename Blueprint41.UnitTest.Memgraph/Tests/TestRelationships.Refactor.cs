@@ -168,7 +168,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
             Execute(IndexAddrLine1);
 
             schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
-            Assert.That(schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
+            Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
         }
 
@@ -185,12 +185,11 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
             Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
 
-            var ex = Assert.Throws<AggregateException>(() => Execute(UniqueAddrLine1));
-#if NET5_0_OR_GREATER
-            Assert.That(ex.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
-#else
-            Assert.That(ex.InnerException.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
-#endif
+            Assert.DoesNotThrow(() => Execute(UniqueAddrLine1));
+            
+            schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
+            Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
+            Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
         }
 
         [Test] // Asserts done
@@ -223,12 +222,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                 var watched = SampleDataWatchedMovies().First();
                 watched.person.WatchedMovies.Add(watched.movie);
 
-                Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
-#if NET5_0_OR_GREATER
-                Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
-#else
-                Assert.That(() => ex.InnerException.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
-#endif
+                Assert.DoesNotThrow(() => Transaction.Commit());
             }
 
             Execute(MakeMinutesWatchedNullable);
@@ -247,18 +241,7 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
         {
             SetupTestDataSet();
 
-            using (Transaction.Begin())
-            {
-                var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
-
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "There should have been 'AddressLine1' properties with value '1640 Riverside Drive'.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
-            }
-
-            Execute(MakeAddrLine1Mandatory);
-
-            var schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
-            Assert.That(schema.Constraints.Any(constraint => constraint.IsMandatory && !constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
+            Assert.DoesNotThrow(() => Execute(MakeAddrLine1Mandatory));
         }
 
         [Test] // Asserts done

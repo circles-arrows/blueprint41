@@ -17,19 +17,18 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
         {
         }
 
-        // Element ID is not a string on Memgraph, this might cause performance issues with updating relationship properties...
-        public override string FnElementId => "toString(Id({0}))";
-        public override string TestCompressedString(string alias, string field) => throw new NotSupportedException("CompressedString is not supported on Memgraph, since ByteArray is not supported on Memgraph. See: https://memgraph.com/docs/client-libraries/java");
-
-        #region
+        #region Factory Methods
 
         internal override RefactorTemplates GetTemplates() => new RefactorTemplates_Memgraph();
-
         internal override SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => new Schema.Memgraph.SchemaInfo_Memgraph(datastoreModel, PersistenceProvider);
 
         #endregion
 
         #region Compile Functions
+
+        // Element ID is not a string on Memgraph, this might cause performance issues with updating relationship properties...
+        public override string FnElementId => "toString(Id({0}))";
+        public override string TestCompressedString(string alias, string field) => throw new NotSupportedException("CompressedString is not supported on Memgraph, since ByteArray is not supported on Memgraph. See: https://memgraph.com/docs/client-libraries/java");
         public override string FnCollectSubquery => throw new NotSupportedException("Memgraph does not support Collect subqueries as of writing.");
         public override string FnCountSubquery => throw new NotSupportedException("Memgraph does not support Count subqueries as of writing.");
         public override string FnExistsSubquery => throw new NotSupportedException("Memgraph does not support Exists subqueries as of writing.");

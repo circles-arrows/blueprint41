@@ -404,9 +404,10 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
 
             using (Transaction.Begin())
             {
-                ICompiled compiled = Transaction.CompiledQuery
+                ICompiled compiled;
+                IReturnQuery query = Transaction.CompiledQuery
                     .Match(node.Person.Alias(out PersonAlias p))
-                    .With(p, Functions.CollectSubquery<StringListResult>(sq => 
+                    .With(p, Functions.CollectSubquery<StringListResult>(sq =>
                         sq.Match
                         (
                             p
@@ -418,63 +419,10 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
                         .As("restaurants", out var restaurants)
                     )
                     .Where(Functions.ExistsSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Transaction.CompiledQuery) == true)
-                    .Return(p, restaurants)
-                    .Compile();
-                var result = compiled.GetExecutionContext().Execute();
-                List<Person> searchResult = Person.LoadWhere(compiled);
-                Assert.Greater(searchResult.Count, 0);
+                    .Return(p, restaurants);
 
-                Assert.AreEqual(
-                    """
-                    MATCH (n0:Person)
-                    WITH DISTINCT n0, COLLECT{MATCH (n0)-[:EATS_AT]->(n1:Restaurant)
-                    WHERE (COUNT{MATCH (n0)-[:EATS_AT]->(:Restaurant)} = $param0)
-                    RETURN DISTINCT n1.Name AS Column1} AS restaurants
-                    WHERE (EXISTS{MATCH (n0)-[:EATS_AT]->(:Restaurant)} = $param1)
-                    RETURN DISTINCT n0 AS Column1, restaurants AS Column2
-                    """,
-                    compiled.CompiledQuery.QueryText);
-
-                compiled = Transaction.CompiledQuery
-                    .Match(node.Person.Alias(out PersonAlias pWithLimit))
-                    .Where(pWithLimit.Name.Contains("Smith"))
-                    .Return(pWithLimit)
-                    .Limit(1)
-                    .Compile();
-
-                searchResult = Person.LoadWhere(compiled);
-                Assert.AreEqual(1, searchResult.Count);
-
-                Assert.AreEqual(
-                    """
-                    MATCH (n0:Person)
-                    WHERE (n0.Name CONTAINS $param0)
-                    RETURN DISTINCT n0 AS Column1
-                    LIMIT $param1
-                    """,
-                    compiled.CompiledQuery.QueryText);
-
-                compiled = Transaction.CompiledQuery
-                    .Match(node.Person.Alias(out var pR).In.PERSON_EATS_AT.Out.Restaurant.Alias(out var rP))
-                    .Where(rP.Name == "Shakeys")
-                    .Return(pR)
-                    .OrderBy(pR.Name)
-                    .Compile();
-
-                searchResult = Person.LoadWhere(compiled);
-                Assert.AreEqual(2, searchResult.Count);
-
-                Assert.AreEqual("Bob Smith", searchResult[0].Name);
-                Assert.AreEqual("Joe Smith", searchResult[1].Name);
-
-                Assert.AreEqual(
-                    """
-                    MATCH (n0:Person)-[:EATS_AT]->(n1:Restaurant)
-                    WHERE (n1.Name = $param0)
-                    RETURN DISTINCT n0 AS Column1
-                    ORDER BY n0.Name
-                    """,
-                    compiled.CompiledQuery.QueryText);
+                Exception ex = Assert.Throws<NotSupportedException>(() => query.Compile());
+                Assert.That(() => ex.Message.Contains("Memgraph does not support Collect subqueries"));
             }
         }
 

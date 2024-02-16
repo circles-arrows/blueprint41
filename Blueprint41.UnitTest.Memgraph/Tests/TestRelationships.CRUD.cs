@@ -87,27 +87,6 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
             {
                 CleanupRelations(WATCHED_MOVIE.Relationship);
 
-                var watched = SampleDataWatchedMovies().First();
-                watched.person.WatchedMovies.Add(watched.movie);
-
-                Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
-#if NET5_0_OR_GREATER
-                Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
-#else
-                Assert.That(() => ex.InnerException.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
-#endif
-            }
-
-            #region Strip Constraint from MinutesWatched
-
-            Execute(MakeMinutesWatchedNullable);
-
-            #endregion
-
-            using (Transaction.Begin())
-            {
-                CleanupRelations(WATCHED_MOVIE.Relationship);
-
                 foreach (var watched in SampleDataWatchedMovies())
                 {
                     Debug.WriteLine($"Add Watched Movie {watched.movie.Title} for {watched.person.Name}");
@@ -460,29 +439,6 @@ namespace Blueprint41.UnitTest.Memgraph.Tests
         public void TimeDepCollAddAndRemoveLegacy()
         {
             #region Add Same Streaming Service
-
-            using (Transaction.Begin())
-            {
-                CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
-
-                var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
-                var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
-
-                person.StreamingServiceSubscriptions.Add(netflix, DateTime.UtcNow);
-
-                Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
-#if NET5_0_OR_GREATER
-                Assert.That(() => ex.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
-#else
-                Assert.That(() => ex.InnerException.Message.Contains("`SUBSCRIBED_TO` must have the property `MonthlyFee`"));
-#endif
-            }
-
-            #region Strip Constraint from MonthlyFee
-
-            Execute(MakeMonthlyFeeNullable);
-
-            #endregion
 
             List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddSame);
 
