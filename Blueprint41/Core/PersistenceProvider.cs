@@ -13,8 +13,10 @@ namespace Blueprint41.Core
 {
     public abstract class PersistenceProvider
     {
+#pragma warning disable IDE0200 
         protected PersistenceProvider()
         {
+            //WARNING: do not refactor warning IDE0200, the wrong translator will be returned
             supportedTypeMappings = new Lazy<List<TypeMapping>>(delegate()
                     {
                         return Translator.FilterSupportedTypeMappings(GetSupportedTypeMappings()).ToList();
@@ -40,8 +42,9 @@ namespace Blueprint41.Core
 
             _nodePersistenceProvider = new Lazy<NodePersistenceProvider>(() => Translator.GetNodePersistenceProvider());
             _relationshipPersistenceProvider = new Lazy<RelationshipPersistenceProvider>(() => Translator.GetRelationshipPersistenceProvider());
-            _templates = new Lazy<RefactorTemplates>(() => Translator.GetTemplates());
+            _templates = new Lazy<RefactorTemplates>(() => Translator.GetTemplates()); //do not refactor warning IDE0200, the wrong translator will be returned
         }
+#pragma warning restore  IDE0200
 
         internal NodePersistenceProvider NodePersistenceProvider => _nodePersistenceProvider.Value;
         private readonly Lazy<NodePersistenceProvider> _nodePersistenceProvider;
