@@ -118,80 +118,6 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             }
         }
 
-        internal override QueryTranslator Translator
-        {
-            get
-            {
-                if (translator is null)
-                {
-                    lock (_lockObject3)
-                    {
-                        if (translator is null)
-                        {
-                            if (this.GetType() == typeof(Void.Neo4jPersistenceProvider))
-                                return GetVoidTranslator();
-
-                            if (Uri is null && Username is null && Password is null)
-                                return GetVoidTranslator();
-
-                            using (Transaction.Begin())
-                            {
-                                RawResult? components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition");
-                                var record = components.First();
-
-                                Version = record["version"].ValueAs<string>();
-                                IsEnterpriseEdition = (string.Equals(record["edition"].ValueAs<string>(), "enterprise", StringComparison.InvariantCultureIgnoreCase));
-
-                                string[] parts = Version.Split(new[] { '.' });
-                                Major = int.Parse(parts[0]);
-
-                                if (parts[1].IndexOf("-aura", StringComparison.OrdinalIgnoreCase) >= 0)
-                                {
-                                    parts[1] = parts[1].Replace("-aura", "");
-                                    IsAura = true;
-                                }
-
-                                Minor = int.Parse(parts[1]);
-
-                                if (parts.Length > 2)
-                                    Revision = int.Parse(parts[2]);
-
-                                functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(Major)).Select(item => item.Values["name"].ValueAs<string>()));
-                                procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(Major)).Select(item => item.Values["name"].ValueAs<string>()));
-                            }
-
-                            translator = new Persistence.Memgraph.Neo4jQueryTranslator(this);
-                        }
-                    }
-                }
-                return translator;
-
-                static string GetFunctions(int version) => version switch
-                {
-                    _ => "call mg.functions() yield name return name",
-                };
-                static string GetProcedures(int version) => version switch
-                {
-                    _ => "call mg.procedures() yield name return name",
-                };
-            }
-        }
-
-        private QueryTranslator? translator = null;
-        private QueryTranslator GetVoidTranslator()
-        {
-            if (voidTranslator is null)
-            {
-                lock (_lockObject2)
-                {
-                    voidTranslator ??= new Void.Neo4jQueryTranslator(this);
-                }
-            }
-
-            return voidTranslator;
-        }
-        private static QueryTranslator? voidTranslator = null;
-
         public override Transaction NewTransaction(bool readWriteMode) => new Neo4jTransaction(this, readWriteMode, TransactionLogger);
         public override Bookmark FromToken(string consistencyToken) => Neo4jBookmark.FromTokenInternal(consistencyToken);
         public override string ToToken(Bookmark consistency) => Neo4jBookmark.ToTokenInternal(consistency);
@@ -219,8 +145,6 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         private CustomTaskScheduler? taskScheduler = null;
         private static readonly object sync = new();
         private readonly object _lockObject = new();
-        private readonly object _lockObject2 = new();
-        private readonly object _lockObject3 = new();
 
         public Neo4jPersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue) => ConfigureTaskScheduler(mainQueue, CustomTaskQueueOptions.Disabled);
         public Neo4jPersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue, CustomTaskQueueOptions subQueue)
