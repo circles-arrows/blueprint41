@@ -8,7 +8,6 @@
   </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Blueprint41\Blueprint41.csproj" />
-		<ProjectReference Include="..\..\Blueprint41.Build\Blueprint41.Build.csproj" />
 		<ProjectReference Include="..\MovieGraph.Model\MovieGraph.Model.csproj" />
 	</ItemGroup>
 	<ItemGroup>

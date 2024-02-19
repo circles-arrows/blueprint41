@@ -25,15 +25,15 @@ namespace ConsoleApp
             // Execute only once
             CreateMovieGraph();
 
-            //FindActorTomHanks();
-            //FindMovieCloudAtlas();
-            //Find10People();
-            //FindMoviesIn1990s();
+            FindActorTomHanks();
+            FindMovieCloudAtlas();
+            Find10People();
+            FindMoviesIn1990s();
 
-            //ListAllTomHanksMovies();
-            //DirectedCloutAtlas();
-            //TomHanksCoActors();
-            //SomeoneToIntroduceToTomHanks();
+            ListAllTomHanksMovies();
+            DirectedCloutAtlas();
+            TomHanksCoActors();
+            SomeoneToIntroduceToTomHanks();
 
             Console.WriteLine("Done. Press any key to exit.");
             Console.ReadLine();
