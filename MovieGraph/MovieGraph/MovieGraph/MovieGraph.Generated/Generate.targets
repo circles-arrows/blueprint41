@@ -1,33 +1,34 @@
-<Project>
+<Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- See https://aka.ms/dotnet/msbuild/customize for more details on customizing your build -->
+	<PropertyGroup>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
 	<UsingTask
-	  TaskName="Generate"
+	  TaskName="GenerateTask"
 	  TaskFactory="RoslynCodeTaskFactory"
 	  AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
-		<ParameterGroup />
+		<ParameterGroup>
+			<Blueprint41BuilderPath ParameterType="System.String"></Blueprint41BuilderPath>
+			<ModelPath ParameterType="System.String"></ModelPath>
+			<GeneratePath ParameterType="System.String"></GeneratePath>
+		</ParameterGroup>
 		<Task>
-			<Reference Include="$(ProjectDir)..\MovieGraph.Model\bin\Debug\netstandard2.0\MovieGraph.Model.dll"/>
-			<Reference Include="$(ProjectDir)..\MovieGraph.Model\bin\Debug\netstandard2.0\Blueprint41.dll"/>
-			<Using Namespace="System"/>
-			<Using Namespace="MovieGraph.Model"/>
-			<Using Namespace="Blueprint41.DatastoreTemplates"/>
+			<Using Namespace="System" />
+			<Using Namespace="System.Diagnostics" />
+			<Using Namespace="System.IO" />
 			<Code Type="Fragment" Language="cs">
-<![CDATA[
-// Display "Hello, world!"
-Log.LogMessage(MessageImportance.High, "Generate!!!");
-try
-{
-    Generator.Execute<Datastore>(
-        new GeneratorSettings(
-            Directory.GetCurrentDirectory(),
-            "Domain.Data"
-        )
-    );
-}
-catch (Exception e)
-{
-	Log.LogMessage(MessageImportance.High, e.Message);
-}
+				<![CDATA[
+				
+    Stopwatch stopWatch = Stopwatch.StartNew();
+    Log.LogMessage(MessageImportance.High, "Generate!!!");
+    try
+    {
+    }
+    catch (Exception e)
+    {
+        Log.LogMessage(MessageImportance.High, e.Message);
+    }
+    Log.LogMessage(MessageImportance.High, "Generate DONE!!!");
 ]]>
 			</Code>
 		</Task>

@@ -1,5 +1,6 @@
 ﻿using Blueprint41;
 using Blueprint41.Core;
+using Blueprint41.DatastoreTemplates;
 using Blueprint41.Neo4j.Persistence.Driver.v5;
 using Blueprint41.Query;
 
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace ConsoleApp
 {
@@ -23,19 +25,20 @@ namespace ConsoleApp
             // Execute only once
             CreateMovieGraph();
 
-            //FindActorTomHanks();
-            //FindMovieCloudAtlas();
-            //Find10People();
-            //FindMoviesIn1990s();
+            FindActorTomHanks();
+            FindMovieCloudAtlas();
+            Find10People();
+            FindMoviesIn1990s();
 
-            //ListAllTomHanksMovies();
-            //DirectedCloutAtlas();
-            //TomHanksCoActors();
-            //SomeoneToIntroduceToTomHanks();
+            ListAllTomHanksMovies();
+            DirectedCloutAtlas();
+            TomHanksCoActors();
+            SomeoneToIntroduceToTomHanks();
 
             Console.WriteLine("Done. Press any key to exit.");
             Console.ReadLine();
         }
+
 
         private static void SomeoneToIntroduceToTomHanks()
         {

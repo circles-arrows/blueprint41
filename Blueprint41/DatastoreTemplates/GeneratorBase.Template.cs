@@ -10,7 +10,6 @@ namespace Blueprint41.DatastoreTemplates
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     public abstract partial class GeneratorBase
     {
-
         #region Fields
         private global::System.Text.StringBuilder? generationEnvironmentField;
         private global::System.CodeDom.Compiler.CompilerErrorCollection? errorsField;
@@ -27,11 +26,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             get
             {
-                if ((this.generationEnvironmentField is null))
-                {
-                    this.generationEnvironmentField = new global::System.Text.StringBuilder();
-                }
-                return this.generationEnvironmentField;
+                return this.generationEnvironmentField ??= new global::System.Text.StringBuilder();
             }
             set
             {
@@ -45,11 +40,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             get
             {
-                if ((this.errorsField is null))
-                {
-                    this.errorsField = new global::System.CodeDom.Compiler.CompilerErrorCollection();
-                }
-                return this.errorsField;
+                return this.errorsField ??= new global::System.CodeDom.Compiler.CompilerErrorCollection();
             }
         }
         /// <summary>
@@ -59,11 +50,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             get
             {
-                if ((this.indentLengthsField is null))
-                {
-                    this.indentLengthsField = new global::System.Collections.Generic.List<int>();
-                }
-                return this.indentLengthsField;
+                return this.indentLengthsField ??= new global::System.Collections.Generic.List<int>();
             }
         }
         /// <summary>
@@ -103,8 +90,8 @@ namespace Blueprint41.DatastoreTemplates
             }
             // If we're starting off, or if the previous text ended with a newline,
             // we have to append the current indent first.
-            if (((this.GenerationEnvironment.Length == 0)
-                        || this.endsWithNewline))
+            if ((this.GenerationEnvironment.Length == 0)
+                        || this.endsWithNewline)
             {
                 this.GenerationEnvironment.Append(this.currentIndentField);
                 this.endsWithNewline = false;
@@ -116,18 +103,18 @@ namespace Blueprint41.DatastoreTemplates
             }
             // This is an optimization. If the current indent is "", then we don't have to do any
             // of the more complex stuff further down.
-            if ((this.currentIndentField.Length == 0))
+            if (this.currentIndentField.Length == 0)
             {
                 this.GenerationEnvironment.Append(textToAppend);
                 return;
             }
             // Everywhere there is a newline in the text, add an indent after it
-            textToAppend = textToAppend.Replace(global::System.Environment.NewLine, (global::System.Environment.NewLine + this.currentIndentField));
+            textToAppend = textToAppend.Replace(global::System.Environment.NewLine, global::System.Environment.NewLine + this.currentIndentField);
             // If the text ends with a newline, then we should strip off the indent added at the very end
             // because the appropriate indent will be added when the next time Write() is called
             if (this.endsWithNewline)
             {
-                this.GenerationEnvironment.Append(textToAppend, 0, (textToAppend.Length - this.currentIndentField.Length));
+                this.GenerationEnvironment.Append(textToAppend, 0, textToAppend.Length - this.currentIndentField.Length);
             }
             else
             {
@@ -162,8 +149,10 @@ namespace Blueprint41.DatastoreTemplates
         /// </summary>
         public void Error(string message)
         {
-            System.CodeDom.Compiler.CompilerError error = new global::System.CodeDom.Compiler.CompilerError();
-            error.ErrorText = message;
+            System.CodeDom.Compiler.CompilerError error = new()
+            {
+                ErrorText = message
+            };
             this.Errors.Add(error);
         }
         /// <summary>
@@ -171,9 +160,11 @@ namespace Blueprint41.DatastoreTemplates
         /// </summary>
         public void Warning(string message)
         {
-            System.CodeDom.Compiler.CompilerError error = new global::System.CodeDom.Compiler.CompilerError();
-            error.ErrorText = message;
-            error.IsWarning = true;
+            System.CodeDom.Compiler.CompilerError error = new()
+            {
+                ErrorText = message,
+                IsWarning = true
+            };
             this.Errors.Add(error);
         }
         /// <summary>
@@ -181,11 +172,11 @@ namespace Blueprint41.DatastoreTemplates
         /// </summary>
         public void PushIndent(string indent)
         {
-            if ((indent is null))
+            if (indent is null)
             {
-                throw new global::System.ArgumentNullException("indent");
+                throw new ArgumentNullException(nameof(indent));
             }
-            this.currentIndentField = (this.currentIndentField + indent);
+            this.currentIndentField += indent;
             this.indentLengths.Add(indent.Length);
         }
         /// <summary>
@@ -194,14 +185,14 @@ namespace Blueprint41.DatastoreTemplates
         public string PopIndent()
         {
             string returnValue = "";
-            if ((this.indentLengths.Count > 0))
+            if (this.indentLengths.Count > 0)
             {
-                int indentLength = this.indentLengths[(this.indentLengths.Count - 1)];
-                this.indentLengths.RemoveAt((this.indentLengths.Count - 1));
-                if ((indentLength > 0))
+                int indentLength = this.indentLengths[this.indentLengths.Count - 1];
+                this.indentLengths.RemoveAt(this.indentLengths.Count - 1);
+                if (indentLength > 0)
                 {
-                    returnValue = this.currentIndentField.Substring((this.currentIndentField.Length - indentLength));
-                    this.currentIndentField = this.currentIndentField.Remove((this.currentIndentField.Length - indentLength));
+                    returnValue = this.currentIndentField.Substring(this.currentIndentField.Length - indentLength);
+                    this.currentIndentField = this.currentIndentField.Remove(this.currentIndentField.Length - indentLength);
                 }
             }
             return returnValue;
@@ -233,36 +224,36 @@ namespace Blueprint41.DatastoreTemplates
                 }
                 set
                 {
-                    if ((value is not null))
+                    if (value is not null)
                     {
                         this.formatProviderField = value;
                     }
                 }
             }
             /// <summary>
-            /// This is called from the compile/run appdomain to convert objects within an expression block to a string
+            /// This is called from the compile/run appDomain to convert objects within an expression block to a string
             /// </summary>
             public string? ToStringWithCulture(object objectToConvert)
             {
-                if ((objectToConvert is null))
+                if (objectToConvert is null)
                 {
-                    throw new global::System.ArgumentNullException("objectToConvert");
+                    throw new global::System.ArgumentNullException(nameof(objectToConvert));
                 }
                 System.Type t = objectToConvert.GetType();
                 System.Reflection.MethodInfo? method = t.GetMethod("ToString", new System.Type[] {
                             typeof(System.IFormatProvider)});
-                if ((method is null))
+                if (method is null)
                 {
                     return objectToConvert.ToString();
                 }
                 else
                 {
-                    return ((string?)(method.Invoke(objectToConvert, new object[] {
-                                this.formatProviderField })));
+                    return (string?)(method.Invoke(objectToConvert, new object[] {
+                                this.formatProviderField }));
                 }
             }
         }
-        private ToStringInstanceHelper toStringHelperField = new ToStringInstanceHelper();
+        private ToStringInstanceHelper toStringHelperField = new();
         /// <summary>
         /// Helper to produce culture-oriented representation of an object as a string
         /// </summary>
