@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="PreCompile">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	  <TargetFramework>net8.0</TargetFramework>
 	  <LangVersion>10.0</LangVersion>
@@ -25,8 +25,7 @@
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
-	<Target Name="PreCompile" BeforeTargets="CoreCompile"
-        Condition="'$(DesignTimeBuild)' != 'true' and '$(BuildingInsideVisualStudio)' == 'true'">
-	  <Exec Command="dotnet &quot;$(ProjectDir)Blueprint41.Build.dll&quot; --namespace=Domain.Data --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\$(Configuration)\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="dotnet &quot;$(ProjectDir)Blueprint41.Build.dll&quot; --namespace=Domain.Data --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\$(Configuration)\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
 	</Target>
 </Project>
