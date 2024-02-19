@@ -40,6 +40,8 @@ namespace Blueprint41.Neo4j.Schema
         }
         protected IReadOnlyList<T> LoadData<T>(string procedure, Func<RawRecord, T> processor)
         {
+            IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
+
             bool retry;
             IReadOnlyList<T>? data = null;
             do
@@ -47,7 +49,7 @@ namespace Blueprint41.Neo4j.Schema
                 try
                 {
                     retry = false;
-                    RawResult result = Transaction.RunningTransaction.Run(procedure);
+                    RawResult result = runner.Run(procedure);
                     data = result.Select(processor).ToArray();
                 }
                 catch (Exception clientException)
@@ -112,7 +114,7 @@ namespace Blueprint41.Neo4j.Schema
             }
         }
 
-        internal IReadOnlyList<ApplyFunctionalId> GetFunctionalIdDifferences()
+        internal virtual IReadOnlyList<ApplyFunctionalId> GetFunctionalIdDifferences()
         {
             List<ApplyFunctionalId> actions = new List<Schema.ApplyFunctionalId>();
             foreach (var inMemory in Model.FunctionalIds)
@@ -147,7 +149,7 @@ namespace Blueprint41.Neo4j.Schema
 
             return actions;
         }
-        internal void UpdateFunctionalIds()
+        internal virtual void UpdateFunctionalIds()
         {
             using (Transaction.Begin())
             {
@@ -180,27 +182,29 @@ namespace Blueprint41.Neo4j.Schema
                 Transaction.Commit();
             }
         }
+
+        //WHOOAAA: On Memgraph this blocks with an ongoing transaction.
+
+        // 1) Required constraint 'Scene.Name' is removed (this runs in a Session and is closed immediately after, thus locks are freed)
+        // 2) Properties for 'Scene.Name' are deleted (this runs in the script Transaction, and lock is taken on NodeType: Scene)
+        // 3) Required constraint 'Scene.Number' is removed (this runs in a Session, but a lock on NodeType: Scene cannot be taken!!!!)
         internal virtual void RemoveIndexesAndContraints(Property property)
         {
             if (!property.Nullable || property.IndexType != IndexType.None)
             {
-                using (Transaction.Begin(true))
-                {
-                    property.Nullable = true;
-                    property.IndexType = IndexType.None;
+                property.Nullable = true;
+                property.IndexType = IndexType.None;
 
-                    foreach (var entity in property.Parent.GetSubclassesOrSelf())
+                foreach (var entity in property.Parent.GetSubclassesOrSelf())
+                {
+                    ApplyConstraintEntity applyConstraint = NewApplyConstraintEntity(entity);
+                    foreach (var action in applyConstraint.Actions.Where(c => c.Property == property.Name))
                     {
-                        ApplyConstraintEntity applyConstraint = NewApplyConstraintEntity(entity);
-                        foreach (var action in applyConstraint.Actions.Where(c => c.Property == property.Name))
+                        foreach (string query in action.ToCypher())
                         {
-                            foreach (string query in action.ToCypher())
-                            {
-                                Parser.Execute(query, null);
-                            }
+                            Parser.Execute(query, null, !PersistenceProvider.IsMemgraph);
                         }
                     }
-                    Transaction.Commit();
                 }
             }
         }
