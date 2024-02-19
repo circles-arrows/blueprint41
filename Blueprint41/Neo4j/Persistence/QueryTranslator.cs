@@ -494,6 +494,9 @@ namespace Blueprint41.Neo4j.Model
             }
         }
 
+        internal virtual void OrderQueryParts(LinkedList<q.Query> parts)
+        {
+        }
         internal protected virtual void SearchTranslation(q.Query query, CompileState state)
         {
             string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
