@@ -8,120 +8,123 @@ namespace Blueprint41.Build
 {
     public static class Generator
     {
-        private const string MODEL_PATH_ARG = "modelPath";
-        private const string GENERATE_PATH_ARG = "generatePath";
-        private const string NAMESPACE_ARG = "namespace";
+        private const string ModelPathArg = "modelPath";
+        private const string GeneratePathArg = "generatePath";
+        private const string NamespaceArg = "namespace";
 
         public static void Main(string[] args)
         {
-            Dictionary<string, string> parameters = ParseParameters(args);
+            var parameters = ParseParameters(args);
 
-            string modelPath = null;
-            string generatePath = null;
-            string namespaceName = parameters.GetValueOrDefault(NAMESPACE_ARG, "Datastore");
+            var modelPath = GetFullPath(parameters, ModelPathArg);
+            var generatePath = GetFullPath(parameters, GeneratePathArg);
+            var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
-            if (parameters.TryGetValue(MODEL_PATH_ARG, out string modelPathValue))
-                modelPath = Path.GetFullPath(modelPathValue);
-
-            if (parameters.TryGetValue(GENERATE_PATH_ARG, out string generatePathValue))
-                generatePath = Path.GetFullPath(generatePathValue);
-
-            if (modelPath == null || generatePath == null)
-            {
-                Console.WriteLine($"Please provide both {MODEL_PATH_ARG} and {GENERATE_PATH_ARG} arguments for the file path.");
-                throw new InvalidOperationException($"Please provide both {MODEL_PATH_ARG} and {GENERATE_PATH_ARG} arguments for the file path.");
-            }
-
+            ValidatePaths(modelPath, generatePath);
 
             Console.WriteLine("Generate Task Starting...");
             Console.WriteLine($"ModelPath: '{modelPath}'");
             Console.WriteLine($"GeneratePath: '{generatePath}'");
             Console.WriteLine($"Namespace: '{namespaceName}'");
-            try
-            {
-                Generate(modelPath, generatePath, namespaceName);
-                Console.WriteLine("Generate Task Complete");
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"Generate Task Failed.");
-                Console.Error.WriteLine(ex.Message);
-                throw;
-            }
+
+            GenerateCode(modelPath, generatePath, namespaceName);
 
             Console.WriteLine("Generate Task Exiting.");
             Environment.Exit(0);
         }
-        public static void Generate(string modelDllPath, string generatePath, string namespaceName)
+
+        private static void GenerateCode(string modelDllPath, string generatePath, string namespaceName)
         {
-            Console.WriteLine("Loading assembly");
-            AssemblyLoader.Load(modelDllPath, assembly =>
+            try
             {
-                Type[] types = GetTypes(assembly);
-                if (types.Length == 0)
-                    throw new InvalidOperationException($"No types found in assembly '{assembly.FullName}'.");
-
-                foreach ((Type datastoreType, Assembly bp41assembly) in types.Select(type => (type, bp41: GetBlueprint41Assembly(type)!)).Where(item => item.bp41 is not null))
+                Console.WriteLine("Loading assembly");
+                AssemblyLoader.Load(modelDllPath, assembly =>
                 {
-                    Type[] bp41types = GetTypes(bp41assembly);
-                    Type generatorType = bp41types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.Generator");
-                    MethodInfo executeMethod = generatorType.GetMethod("Execute", BindingFlags.Public | BindingFlags.Static)!;
+                    var types = GetTypes(assembly);
+                    if (types.Length == 0)
+                        throw new InvalidOperationException($"No types found in assembly '{assembly.FullName}'.");
 
-                    MethodInfo executeMethodGeneric = executeMethod.MakeGenericMethod(datastoreType);
-
-                    Type generatorSettingsType = bp41types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.GeneratorSettings");
-                    object generatorSettingsInstance = Activator.CreateInstance(generatorSettingsType, generatePath, namespaceName)!;
-
-                    executeMethodGeneric.Invoke(null, new object[] { generatorSettingsInstance });
-                    Console.WriteLine("Generate Executed");
-                }
-            });
+                    foreach (var type in types)
+                    {
+                        var bp41Assembly = GetBlueprint41Assembly(type);
+                        if (bp41Assembly != null)
+                        {
+                            ExecuteGeneration(bp41Assembly, type, generatePath, namespaceName);
+                        }
+                    }
+                });
+                Console.WriteLine("Generate Task Complete");
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Generate Task Failed.");
+                Console.Error.WriteLine(ex.Message);
+                throw;
+            }
         }
 
+        private static void ExecuteGeneration(Assembly bp41Assembly, Type datastoreType, string generatePath, string namespaceName)
+        {
+            var bp41Types = GetTypes(bp41Assembly);
+            var generatorType = bp41Types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.Generator");
+            var executeMethod = generatorType.GetMethod("Execute", BindingFlags.Public | BindingFlags.Static);
+
+            if (executeMethod != null)
+            {
+                var executeMethodGeneric = executeMethod.MakeGenericMethod(datastoreType);
+                var generatorSettingsType = bp41Types.First(type => type.FullName == "Blueprint41.DatastoreTemplates.GeneratorSettings");
+                var generatorSettingsInstance = Activator.CreateInstance(generatorSettingsType, generatePath, namespaceName);
+
+                executeMethodGeneric.Invoke(null, new[] { generatorSettingsInstance });
+                Console.WriteLine("Generation Executed");
+            }
+        }
         private static Assembly GetBlueprint41Assembly(Type type)
         {
-            while (type is not null)
+            // Traverse the inheritance hierarchy to find the type that matches the target.
+            while (type != null)
             {
+                // Check if the current type is the one we're looking for.
                 if (type.FullName == "Blueprint41.DatastoreModel")
+                {
                     return type.Assembly;
+                }
 
+                // Move up the inheritance chain.
                 type = type.BaseType;
             }
+
+            // Return null if the specified base type is not found in the inheritance hierarchy.
             return null;
         }
 
-        static Type[] GetTypes(Assembly assembly)
+        private static Type[] GetTypes(Assembly assembly)
         {
-            Type[] types;
             try
             {
-                types = assembly.GetTypes();
+                return assembly.GetTypes();
             }
             catch (ReflectionTypeLoadException ex)
             {
                 Console.Error.WriteLine(ex.StackTrace);
-                types = ex.Types.Where(type => type is not null).ToArray()!;
+                return ex.Types.Where(type => type != null).ToArray();
             }
-            return types;
         }
-        static Dictionary<string, string> ParseParameters(string[] args)
+
+        private static Dictionary<string, string> ParseParameters(string[] args) => args
+            .Select(arg => arg.Split('='))
+            .Where(parts => parts.Length == 2)
+            .ToDictionary(parts => parts[0].TrimStart('-'), parts => parts[1].Trim('"'), StringComparer.OrdinalIgnoreCase);
+
+        private static string GetFullPath(Dictionary<string, string> parameters, string key) =>
+            parameters.TryGetValue(key, out var value) ? Path.GetFullPath(value) : null;
+
+        private static void ValidatePaths(string modelPath, string generatePath)
         {
-            var parameters = new Dictionary<string, string>();
-
-            foreach (string arg in args)
+            if (string.IsNullOrWhiteSpace(modelPath) || string.IsNullOrWhiteSpace(generatePath))
             {
-                string[] parts = arg.Split('=');
-
-                if (parts.Length == 2)
-                {
-                    string key = parts[0].TrimStart('-').TrimStart('-');
-                    string value = parts[1].Trim('"');
-
-                    parameters[key] = value;
-                }
+                throw new InvalidOperationException($"Both {ModelPathArg} and {GeneratePathArg} arguments are required.");
             }
-
-            return parameters;
         }
     }
 }
