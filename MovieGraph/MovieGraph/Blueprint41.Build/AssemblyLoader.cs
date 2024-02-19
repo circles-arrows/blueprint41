@@ -7,64 +7,66 @@ namespace Blueprint41.Build
 {
     public class AssemblyLoader : AssemblyLoadContext
     {
-        private AssemblyLoader(string filename) : base(true)
+        private readonly string initialFolder;
+
+        private AssemblyLoader(string filename) : base(isCollectible: true)
         {
-            InitialFolder = Path.GetDirectoryName(filename) ?? throw new DirectoryNotFoundException($"Directory '{filename}' not found.");
-            Resolving += AssemblyResolver;
+            initialFolder = Path.GetDirectoryName(filename) ?? throw new DirectoryNotFoundException($"The directory for '{filename}' was not found.");
+            Resolving += OnResolving;
         }
 
         public static void Load(string filename, Action<Assembly> action)
         {
-            AssemblyLoader loader = new(filename);
+            var loader = new AssemblyLoader(filename);
             try
             {
-                Assembly assembly = loader.LoadAssembly(filename);
-                if (assembly is null)
-                    throw new FileNotFoundException($"Failed to load datastore assembly from path '{filename}'.");
-
+                var assembly = loader.LoadFromAssemblyPath(filename);
                 action?.Invoke(assembly);
             }
             finally
             {
-                loader.Resolving -= loader.AssemblyResolver;
+                loader.Resolving -= loader.OnResolving;
                 loader.Unload();
             }
         }
 
-        private Assembly LoadAssembly(string filename)
+        private Assembly OnResolving(AssemblyLoadContext context, AssemblyName assemblyName)
         {
-            if (!File.Exists(filename))
-                return null;
-
-            return LoadFromAssemblyPath(filename);
+            var assemblyPath = ResolveAssemblyPath(assemblyName);
+            return assemblyPath != null ? LoadFromAssemblyPath(assemblyPath) : null;
         }
-        private Assembly AssemblyResolver(AssemblyLoadContext context, AssemblyName assemblyName)
-        {
-            string name = assemblyName.Name;
 
-            string assemblyPath = Path.Combine(InitialFolder, name + ".dll");
-            if (name.Equals("netstandard", StringComparison.InvariantCultureIgnoreCase))
+        private string ResolveAssemblyPath(AssemblyName assemblyName)
+        {
+            if (assemblyName.Name.Equals("netstandard", StringComparison.InvariantCultureIgnoreCase))
             {
-                assemblyPath = InitialFolder;
-                while (!string.IsNullOrEmpty(assemblyPath))
-                {
-                    if (File.Exists(Path.Combine(assemblyPath, @"DLLs\netstandard\framework\netstandard.dll")))
-                    {
-                        assemblyPath = Path.Combine(assemblyPath, @"DLLs\netstandard\framework\netstandard.dll");
-                        break;
-                    }
-                    assemblyPath = Path.GetDirectoryName(assemblyPath);
-                }
+                return FindNetStandardAssemblyPath();
             }
 
-            Assembly assembly = LoadAssembly(assemblyPath);
-            if (assembly != null && (name.Equals("netstandard", StringComparison.InvariantCultureIgnoreCase) || assembly.FullName == assemblyName.FullName))
-                return assembly;
-
-            return null;
+            var path = Path.Combine(initialFolder, $"{assemblyName.Name}.dll");
+            return File.Exists(path) ? path : null;
         }
 
+        private string FindNetStandardAssemblyPath()
+        {
+            var path = Path.Combine(initialFolder, @"DLLs\netstandard\framework\netstandard.dll");
+            return File.Exists(path) ? path : FindInParentDirectories(initialFolder);
+        }
 
-        private readonly string InitialFolder;
+        private static string FindInParentDirectories(string startDirectory)
+        {
+            var directory = startDirectory;
+            string path;
+            while (!string.IsNullOrEmpty(directory))
+            {
+                path = Path.Combine(directory, @"DLLs\netstandard\framework\netstandard.dll");
+                if (File.Exists(path))
+                {
+                    return path;
+                }
+                directory = Path.GetDirectoryName(directory);
+            }
+            return null;
+        }
     }
 }
