@@ -1,14 +1,11 @@
-﻿using Blueprint41.Neo4j.Persistence;
-using Blueprint41.Neo4j.Persistence.Driver.v5;
-
-using Neo4j.Driver;
-
-using Newtonsoft.Json;
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
+using Newtonsoft.Json;
+
+using Neo4j.Driver;
 
 namespace Blueprint41.UnitTest.Mocks
 {

@@ -1,12 +1,15 @@
-﻿using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence;
-using Blueprint41.Neo4j.Persistence.Driver.v5;
-using Blueprint41.Neo4j.Schema;
-using Blueprint41.Query;
-using Blueprint41.UnitTest.Mocks;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Linq;
+
+using NUnit.Framework;
+
+using Blueprint41.Core;
+
+#if NEO4J
+using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
+#elif MEMGRAPH
+using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
+#endif
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -31,7 +34,7 @@ namespace Blueprint41.UnitTest.Tests
         public void EnsureRunningTransactionIsNeo4jTransaction()
         {
             using (Transaction.Begin())
-                Assert.IsInstanceOf<Neo4jTransaction>(Transaction.RunningTransaction);
+                Assert.IsInstanceOf<driver.Neo4jTransaction>(Transaction.RunningTransaction);
         }
 
         [Test]

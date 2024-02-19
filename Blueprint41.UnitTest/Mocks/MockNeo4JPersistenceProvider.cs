@@ -1,20 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Linq;
 
 using neo4j = Neo4j.Driver;
 
 using Blueprint41.Core;
 using Blueprint41.Log;
 
+#if NEO4J
 using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
-using System.Linq;
+#elif MEMGRAPH
+using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
+#endif
 
 namespace Blueprint41.UnitTest.Mocks
 {
     public class MockNeo4jPersistenceProvider : driver.Neo4jPersistenceProvider
     {
+#if NEO4J
         public MockNeo4jPersistenceProvider(string uri, string username, string pass) : base(uri, username, pass, "unittest") { }
+#elif MEMGRAPH
+        public MockNeo4jPersistenceProvider(string uri, string username, string pass) : base(uri, username, pass) { }
+#endif
 
         public override Transaction NewTransaction(bool readWriteMode) => new MockNeo4jTransaction(this, readWriteMode, TransactionLogger);
     }

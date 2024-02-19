@@ -52,12 +52,17 @@ namespace Blueprint41.UnitTest.Tests
 
                 Transaction.Commit();
             }
+#if NEO4J
             using (Transaction.Begin())
             {
                 string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
                 Transaction.RunningTransaction.Run(clearSchema);
                 Transaction.Commit();
             }
+#elif MEMGRAPH
+            string clearSchema = "CALL schema.assert({},{}) YIELD label, key RETURN *";
+            PersistenceProvider.CurrentPersistenceProvider.Run(clearSchema);
+#endif
         }
 
         [Test]
@@ -404,9 +409,10 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-                ICompiled compiled = Transaction.CompiledQuery
+                ICompiled compiled;
+                IReturnQuery query = Transaction.CompiledQuery
                     .Match(node.Person.Alias(out PersonAlias p))
-                    .With(p, Functions.CollectSubquery<StringListResult>(sq => 
+                    .With(p, Functions.CollectSubquery<StringListResult>(sq =>
                         sq.Match
                         (
                             p
@@ -418,8 +424,10 @@ namespace Blueprint41.UnitTest.Tests
                         .As("restaurants", out var restaurants)
                     )
                     .Where(Functions.ExistsSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Transaction.CompiledQuery) == true)
-                    .Return(p, restaurants)
-                    .Compile();
+                    .Return(p, restaurants);
+#if NEO4J
+                compiled = query.Compile();
+
                 var result = compiled.GetExecutionContext().Execute();
                 List<Person> searchResult = Person.LoadWhere(compiled);
                 Assert.Greater(searchResult.Count, 0);
@@ -475,6 +483,10 @@ namespace Blueprint41.UnitTest.Tests
                     ORDER BY n0.Name
                     """,
                     compiled.CompiledQuery.QueryText);
+#elif MEMGRAPH
+                Exception ex = Assert.Throws<NotSupportedException>(() => query.Compile());
+                Assert.That(() => ex.Message.Contains("Memgraph does not support Collect subqueries"));
+#endif               
             }
         }
 
@@ -832,8 +844,11 @@ namespace Blueprint41.UnitTest.Tests
             string key = a.GetKey()?.ToString();
             Assert.IsNotNull(key);
             Assert.IsNotEmpty(key);
+#if NEO4J
             Assert.DoesNotThrow(() => int.Parse(key));
-
+#elif MEMGRAPH
+            Assert.DoesNotThrow(() => Guid.Parse(key));
+#endif
             return key;
         }
     }

@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+
 using Blueprint41.Core;
-using Blueprint41.Neo4j.Persistence.Driver.v5;
 using Blueprint41.UnitTest.DataStore;
-using Blueprint41.UnitTest.Helper;
-using Blueprint41.UnitTest.Mocks;
 
 using Datastore.Manipulation;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using ClientException = Neo4j.Driver.ClientException;
 using DatabaseException = Neo4j.Driver.DatabaseException;
+
+#if NEO4J
+using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
+#elif MEMGRAPH
+using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
+#endif
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -130,6 +133,7 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not byte[]), "Unexpected test-data");
             }
 
+#if NEO4J
             Execute(CompressAddrLine1);
 
             using (Transaction.Begin())
@@ -138,6 +142,10 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not string), "Conversion failed");
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is byte[]), "Conversion failed");
             }
+#elif MEMGRAPH
+            Exception ex = Assert.Throws<InvalidOperationException>(() => Execute(CompressAddrLine1));
+            Assert.That(() => ex.Message.Contains("CompressedString is not supported on Memgraph, since ByteArray is not supported on Memgraph."));
+#endif
         }
 
         [Test] // Asserts done
@@ -174,14 +182,19 @@ namespace Blueprint41.UnitTest.Tests
             Execute(IndexAddrLine1);
 
             schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
+#if NEO4J
             Assert.That(schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
+#elif MEMGRAPH
+            Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
+            Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
+#endif
         }
 
         [Test] // Asserts done
         public void SetIndexTypeToUnique()
         {
-            var persistenceProvider = PersistenceProvider.CurrentPersistenceProvider as Neo4jPersistenceProvider;
+            var persistenceProvider = PersistenceProvider.CurrentPersistenceProvider as driver.Neo4jPersistenceProvider;
             if (persistenceProvider is null || !persistenceProvider.VersionGreaterOrEqual(5, 7))
                 throw new NotSupportedException("Run this test on Neo4j 5.7 or greater.");
 
@@ -191,11 +204,19 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
 
+#if NEO4J
             var ex = Assert.Throws<AggregateException>(() => Execute(UniqueAddrLine1));
 #if NET5_0_OR_GREATER
             Assert.That(ex.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
 #else
             Assert.That(ex.InnerException.Message.Contains("Unable to create Constraint( name='LIVES_IN_AddressLine1_UniqueConstraint', type='RELATIONSHIP UNIQUENESS', schema=()-[:LIVES_IN {AddressLine1}]-() )"));
+#endif
+#elif MEMGRAPH
+            Assert.DoesNotThrow(() => Execute(UniqueAddrLine1));
+            
+            schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
+            Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
+            Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
 #endif
         }
 
@@ -229,11 +250,15 @@ namespace Blueprint41.UnitTest.Tests
                 var watched = SampleDataWatchedMovies().First();
                 watched.person.WatchedMovies.Add(watched.movie);
 
+#if NEO4J
                 Exception ex = Assert.Throws<AggregateException>(() => Transaction.Commit());
 #if NET5_0_OR_GREATER
                 Assert.That(() => ex.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
 #else
                 Assert.That(() => ex.InnerException.Message.Contains("`WATCHED` must have the property `MinutesWatched`"));
+#endif
+#elif MEMGRAPH
+                Assert.DoesNotThrow(() => Transaction.Commit());
 #endif
             }
 
@@ -253,6 +278,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
+#if NEO4J
             using (Transaction.Begin())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
@@ -265,6 +291,9 @@ namespace Blueprint41.UnitTest.Tests
 
             var schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
             Assert.That(schema.Constraints.Any(constraint => constraint.IsMandatory && !constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
+#elif MEMGRAPH
+            Assert.DoesNotThrow(() => Execute(MakeAddrLine1Mandatory));
+#endif
         }
 
         [Test] // Asserts done
