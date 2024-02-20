@@ -176,7 +176,7 @@ namespace Blueprint41
                 bool scriptCommitted = false;
                 if (upgradeDatastore && PersistenceProvider.IsNeo4j && !isVoidProvider)
                 {
-                    using (Transaction.Begin(true))
+                    using (Transaction.Begin())
                     {
                         if (!Parser.HasScript(script))
                         {
@@ -206,21 +206,27 @@ namespace Blueprint41
 
                 if (upgradeDatastore && scriptCommitted)
                 {
-                    Parser.ForceScript(delegate ()
+                    using (Session.Begin())
                     {
-                        Refactor.ApplyConstraints();
-                    });
+                        Parser.ForceScript(delegate ()
+                        {
+                            Refactor.ApplyConstraints();
+                        });
+                    }
                 }
             }
 
             if (upgradeDatastore)
             {
-                Parser.ForceScript(delegate ()
+                using (Session.Begin())
                 {
-                    Refactor.ApplyConstraints();
-                });
+                    Parser.ForceScript(delegate ()
+                    {
+                        Refactor.ApplyConstraints();
+                    });
+                }
 
-                using (Transaction.Begin(true))
+                using (Transaction.Begin())
                 {
                     if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds())
                     {
@@ -237,8 +243,11 @@ namespace Blueprint41
 
             if (!isVoidProvider)
             {
-                bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
-                Refactor.ApplyFullTextSearchIndexes(shouldRun);
+                using (Session.Begin())
+                {
+                    bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
+                    Refactor.ApplyFullTextSearchIndexes(shouldRun);
+                }
             }
 
             executed = true;

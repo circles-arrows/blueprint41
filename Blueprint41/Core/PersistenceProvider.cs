@@ -52,14 +52,12 @@ namespace Blueprint41.Core
         internal RelationshipPersistenceProvider RelationshipPersistenceProvider => _relationshipPersistenceProvider.Value;
         private readonly Lazy<RelationshipPersistenceProvider> _relationshipPersistenceProvider;
 
-        public abstract Transaction NewTransaction(bool withTransaction);
+        public abstract Session NewSession(bool readWriteMode);
+        public abstract Transaction NewTransaction(bool readWriteMode);
 
         public bool IsMemgraph { get; set; } = false;
         public abstract FeatureSupport NodePropertyFeatures { get; }
         public abstract FeatureSupport RelationshipPropertyFeatures { get; }
-
-        public abstract RawResult Run(string cypher, bool useTransactionIfAvailable = false, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
-        public abstract RawResult Run(string cypher, Dictionary<string, object?>? parameters, bool useTransactionIfAvailable = false, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
 
         public virtual string ToToken(Bookmark consistency) => string.Empty;
 

@@ -12,7 +12,7 @@ using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41
 {
-    public abstract class Transaction : DisposableScope<Transaction>
+    public abstract class Transaction : DisposableScope<Transaction>, IStatementRunner
     {
         protected Transaction()
         {

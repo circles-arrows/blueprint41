@@ -481,6 +481,21 @@ namespace Blueprint41.UnitTest.Tests
             [Version(0, 0, 2)]
             public void Script_0_0_2()
             {
+#if MEMGRAPH
+
+                //WHOOAAA: On Memgraph this blocks with an ongoing transaction.
+
+                // 1) Required constraint 'Scene.Name' is removed (this runs in a Session and is closed immediately after, thus locks are freed)
+                // 2) Properties for 'Scene.Name' are deleted (this runs in the script Transaction, and lock is taken on NodeType: Scene)
+                // 3) Required constraint 'Scene.Number' is removed (this runs in a Session, but a lock on NodeType: Scene cannot be taken!!!!)
+
+                throw new NotImplementedException("On Memgraph this hangs between 2 locks.");
+
+                // 1 - The main script execution transaction lock
+                // 2 - The session created when SchemaInfo.RemoveIndexesAndContraints runs on Memgraph
+
+#endif
+
                 Entities["Scene"].Properties["Name"].Refactor.Deprecate();
                 Entities["Scene"].Properties["Number"].Refactor.Deprecate();
                 Entities["Genre"].Properties["Name"].Refactor.Deprecate();
@@ -497,7 +512,7 @@ namespace Blueprint41.UnitTest.Tests
             DataModelPropertySetIndexTypeAndDeprecate model = new DataModelPropertySetIndexTypeAndDeprecate();
             model.Execute(true);
         }
-        #endregion
+#endregion
 
         #region IRefactorReroute
 

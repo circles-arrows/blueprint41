@@ -242,50 +242,13 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         private static QueryTranslator? voidTranslator = null;
 
+        public override Session NewSession(bool readWriteMode)
+        {
+            return new Neo4jSession(readWriteMode, TransactionLogger);
+        }
         public override Transaction NewTransaction(bool readWriteMode)
         {
             return new Neo4jTransaction(readWriteMode, TransactionLogger);
-        }
-        public override RawResult Run(string cypher, bool useTransactionIfAvailable = false, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Transaction? trans = Transaction.Current;
-
-            if (useTransactionIfAvailable && trans is not null)
-            {
-                return trans.Run(cypher, memberName, sourceFilePath, sourceLineNumber);
-            }
-            else
-            {
-#if DEBUG
-                // TODO
-                //Logger?.Start();
-                //if (Logger is not null)
-                //    Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
-#endif
-
-                return new Neo4jRawResult();
-            }
-        }
-        public override RawResult Run(string cypher, Dictionary<string, object?>? parameters, bool useTransactionIfAvailable = false, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            Transaction? trans = Transaction.RunningTransaction;
-
-            if (useTransactionIfAvailable && trans is not null)
-            {
-                return trans.Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
-            }
-            else
-            {
-
-#if DEBUG
-                // TODO
-                //Logger?.Start();
-                //if (Logger is not null)
-                //    Logger.Stop(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
-#endif
-
-                return new Neo4jRawResult();
-            }
         }
 
         public static readonly PersistenceProvider VoidPersistenceProvider = new Neo4jPersistenceProvider();

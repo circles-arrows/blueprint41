@@ -16,106 +16,78 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
 
         protected override void Initialize()
         {
-            Indexes = ImplicitLoadData("SHOW INDEX INFO", record => NewIndexInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
-            Constraints = ImplicitLoadData("SHOW CONSTRAINT INFO", record => NewConstraintInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
-            Labels = ImplicitLoadData("SHOW NODE_LABELS INFO", record => record.Values["node labels"].As<string>());
-            RelationshipTypes = ImplicitLoadData("SHOW EDGE_TYPES INFO", record => record.Values["edge types"].As<string>());
+            using (Session.Begin())
+            {
+                Indexes = LoadData("SHOW INDEX INFO", record => NewIndexInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
+                Constraints = LoadData("SHOW CONSTRAINT INFO", record => NewConstraintInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
+                Labels = LoadData("SHOW NODE_LABELS INFO", record => record.Values["node labels"].As<string>());
+                RelationshipTypes = LoadData("SHOW EDGE_TYPES INFO", record => record.Values["edge types"].As<string>());
+            }
             FunctionalIds = new List<FunctionalIdInfo>(0);
         }
-        protected IReadOnlyList<T> ImplicitLoadData<T>(string procedure, Func<RawRecord, T> processor)
-        {
-            bool retry;
-            IReadOnlyList<T>? data = null;
-            do
-            {
-                try
-                {
-                    retry = false;
-
-                    RawResult result = PersistenceProvider.Run(procedure);
-                    data = result.Select(processor).ToArray();
-                }
-                catch (Exception clientException) when (clientException.Message.Contains("is still populating"))
-                {
-                    retry = true;
-                    Thread.Sleep(500);
-                }
-            } while (retry);
-
-            return data ?? throw new NotSupportedException("Could not load the data.");
-        }
-        protected override long FindMaxId(FunctionalId functionalId)
-        {
-            bool first = true;
-            const string templateNumeric = "MATCH (node:{0}) WHERE toInteger(node.Uid) IS NOT NULL WITH toInteger(node.Uid) AS decoded RETURN CASE WHEN Max(decoded) IS NULL THEN 0 ELSE Max(decoded) END as MaxId";
-            const string templateHash = "MATCH (node:{0}) where node.Uid STARTS WITH '{1}' AND SIZE(node.Uid) = {2} CALL blueprint41.hashing.decode(replace(node.Uid, '{1}', '')) YIELD value as decoded RETURN CASE WHEN Max(decoded) IS NULL THEN 0 ELSE Max(decoded) END as MaxId";
-            const string actualFidValue = "CALL blueprint41.functionalid.current('{0}') YIELD Sequence as sequence RETURN sequence";
-            StringBuilder queryBuilder = new();
-            foreach (var entity in Model.Entities.Where(entity => entity.FunctionalId?.Label == functionalId.Label))
-            {
-                if (first)
-                    first = false;
-                else
-                    queryBuilder.AppendLine("UNION");
-
-                if (functionalId.Format == IdFormat.Hash)
-                    queryBuilder.AppendFormat(templateHash, entity.Label.Name, functionalId.Prefix, functionalId.Prefix.Length + 6);
-                else
-                    queryBuilder.AppendFormat(templateNumeric, entity.Label.Name);
-                queryBuilder.AppendLine();
-            }
-
-            if (queryBuilder.Length != 0)
-            {
-                var ids = LoadData(queryBuilder.ToString(), record => record.Values["MaxId"].As<int>());
-                return ids.Count == 0 ? 0 : ids.Max() + 1;
-            }
-            else
-            {
-                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record.Values["sequence"].As<int?>()).FirstOrDefault() ?? 0;
-            }
-        }
+        protected override long FindMaxId(FunctionalId functionalId) => throw new NotSupportedException("FunctionalIds are not supported on Memgraph.");
 
         protected override ConstraintInfo NewConstraintInfo(RawRecord rawRecord, Neo4jPersistenceProvider neo4JPersistenceProvider) => new ConstraintInfo_Memgraph(rawRecord, neo4JPersistenceProvider);
         protected override IndexInfo NewIndexInfo(RawRecord rawRecord, Neo4jPersistenceProvider neo4JPersistenceProvider) => new IndexInfo_Memgraph(rawRecord, neo4JPersistenceProvider);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
 
-        internal override void UpdateConstraints()
+        internal override IReadOnlyList<ApplyFunctionalId> GetFunctionalIdDifferences()
         {
-            foreach (var diff in GetConstraintDifferences())
+            return new List<Schema.ApplyFunctionalId>();
+        }
+        internal override void UpdateFunctionalIds()
+        {
+            using (Session.Begin())
             {
-                foreach (var action in diff.Actions)
+                foreach (var diff in GetFunctionalIdDifferences())
                 {
-                    foreach (var cql in action.ToCypher())
+                    Parser.Log(diff.ToString());
+                    foreach (var query in diff.ToCypher())
                     {
-                        Parser.Log(cql);
-                        PersistenceProvider.Run(cql, !PersistenceProvider.IsMemgraph);
+                        Session.RunningSession.Run(query);
                     }
                 }
             }
-            //Transaction.Commit();
         }
-        internal override void RemoveIndexesAndContraints(Property property)
+        internal override void UpdateConstraints()
         {
-            if (!property.Nullable || property.IndexType != IndexType.None)
+            using (Session.Begin())
             {
-                property.Nullable = true;
-                property.IndexType = IndexType.None;
-
-                foreach (var entity in property.Parent.GetSubclassesOrSelf())
+                foreach (var diff in GetConstraintDifferences())
                 {
-                    ApplyConstraintEntity applyConstraint = NewApplyConstraintEntity(entity);
-                    foreach (var action in applyConstraint.Actions.Where(c => c.Property == property.Name))
+                    foreach (var action in diff.Actions)
                     {
-                        foreach (string query in action.ToCypher())
+                        foreach (var cql in action.ToCypher())
                         {
-                            Parser.Execute(query, null);
+                            Parser.Log(cql);
+                            Session.RunningSession.Run(cql);
                         }
                     }
                 }
             }
         }
+
+        //internal override void RemoveIndexesAndContraints(Property property)
+        //{
+        //    if (!property.Nullable || property.IndexType != IndexType.None)
+        //    {
+        //        property.Nullable = true;
+        //        property.IndexType = IndexType.None;
+
+        //        foreach (var entity in property.Parent.GetSubclassesOrSelf())
+        //        {
+        //            ApplyConstraintEntity applyConstraint = NewApplyConstraintEntity(entity);
+        //            foreach (var action in applyConstraint.Actions.Where(c => c.Property == property.Name))
+        //            {
+        //                foreach (string query in action.ToCypher())
+        //                {
+        //                    Parser.Execute(query, null, !PersistenceProvider.IsMemgraph);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
         internal override List<(ApplyConstraintAction, string?)> ComputeCommands(
             IEntity entity,
             IndexType indexType,
