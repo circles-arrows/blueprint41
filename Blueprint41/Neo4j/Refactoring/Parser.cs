@@ -25,10 +25,10 @@ namespace Blueprint41.Neo4j.Refactoring
                 return runner.Run(cypher, parameters);
         }
 
-        internal static RawResult Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true, Action<RawResult> logic = null)
+        internal static void Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true, Action<RawResult> logic = null)
         {
             if (!ShouldExecute)
-                return null;
+                return;
 
             RawResult result;
 
@@ -49,8 +49,6 @@ namespace Blueprint41.Neo4j.Refactoring
                     logic?.Invoke(result);
                 }
             }
-
-            return result;
         }
         internal static void ExecuteBatched(string cypher, Dictionary<string, object> parameters)
         {

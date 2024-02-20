@@ -183,11 +183,6 @@ namespace Blueprint41.Neo4j.Schema
             }
         }
 
-        //WHOOAAA: On Memgraph this blocks with an ongoing transaction.
-
-        // 1) Required constraint 'Scene.Name' is removed (this runs in a Session and is closed immediately after, thus locks are freed)
-        // 2) Properties for 'Scene.Name' are deleted (this runs in the script Transaction, and lock is taken on NodeType: Scene)
-        // 3) Required constraint 'Scene.Number' is removed (this runs in a Session, but a lock on NodeType: Scene cannot be taken!!!!)
         internal virtual void RemoveIndexesAndContraints(Property property)
         {
             if (!property.Nullable || property.IndexType != IndexType.None)

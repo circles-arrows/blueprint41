@@ -176,6 +176,18 @@ namespace Blueprint41
                 bool scriptCommitted = false;
                 if (upgradeDatastore && PersistenceProvider.IsNeo4j && !isVoidProvider)
                 {
+                    if (PersistenceProvider.CurrentPersistenceProvider.IsMemgraph)
+                    {
+                        // In Memgraph constraints cannot be manipulated during transactions.
+                        // If any refactor action conflicts with a constraint (e.g. Rename property with NOT NULL constraint).
+                        // Memgraph will hang on a lock taken during removal of the constraint and the lock taken during renaming the property.
+                        using (Session.Begin())
+                        {
+                            string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
+                            Session.RunningSession.Run(clearSchema);
+                        }
+                    }
+
                     using (Transaction.Begin())
                     {
                         if (!Parser.HasScript(script))
