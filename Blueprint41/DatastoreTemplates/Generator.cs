@@ -162,7 +162,7 @@ namespace Blueprint41.DatastoreTemplates
             foreach (var fileEntry in filesContent)
             {
                 string filePath = Path.Combine(path, fileEntry.Key + FileExtension);
-                File.WriteAllText(filePath, fileEntry.Value, new UTF8Encoding(true));
+                File.WriteAllText(filePath, fileEntry.Value, new UTF8Encoding(false));
             }
         }
 
