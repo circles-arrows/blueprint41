@@ -313,7 +313,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
 
             if (withTransaction)
             {
-                using (Transaction.Begin(withTransaction))
+                using (Transaction.Begin())
                 {
                     RawResult result = Execute();
                     if (result != null)
@@ -327,12 +327,15 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             }
             else
             {
-                RawResult result = Execute();
-                if (result != null)
+                using (Blueprint41.Session.Begin())
                 {
-                    RawRecord record = result.FirstOrDefault();
-                    if (record is not null && record.Values.TryGetValue("Count", out object cnt))
-                        retval = cnt.As<long>();
+                    RawResult result = Execute();
+                    if (result != null)
+                    {
+                        RawRecord record = result.FirstOrDefault();
+                        if (record is not null && record.Values.TryGetValue("Count", out object cnt))
+                            retval = cnt.As<long>();
+                    }
                 }
             }
 
@@ -346,7 +349,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             RawResultStatistics counters;
             do
             {
-                using (Transaction.Begin(true))
+                using (Transaction.Begin())
                 {
                     TSelf template = CreateInstance();
                     Setup?.Invoke(template);

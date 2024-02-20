@@ -750,7 +750,7 @@ namespace Blueprint41.Neo4j.Model
 
         internal virtual bool HasFullTextSearchIndexes()
         {
-            using (Transaction.Begin(true))
+            using (Transaction.Begin())
             {
                 var result = Transaction.RunningTransaction.Run(FtiList);
                 return result.Count() > 0;
@@ -760,7 +760,7 @@ namespace Blueprint41.Neo4j.Model
         {
             try
             {
-                using (Transaction.Begin(true))
+                using (Transaction.Begin())
                 {
                     Transaction.RunningTransaction.Run(FtiRemove);
                     Transaction.Commit();
@@ -768,7 +768,7 @@ namespace Blueprint41.Neo4j.Model
             }
             catch { }
 
-            using (Transaction.Begin(true))
+            using (Transaction.Begin())
             {
                 string indexes = string.Join(
                         FtiSeparator,

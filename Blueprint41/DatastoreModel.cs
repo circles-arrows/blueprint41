@@ -413,7 +413,7 @@ namespace Blueprint41
 
                 if (script is not null && Parser.ShouldExecute)
                 {
-                    using (Transaction.Begin(true))
+                    using (Transaction.Begin())
                     {
                         script.Invoke();
                         Transaction.Commit();
