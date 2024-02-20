@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 using Blueprint41.Core;
 using Blueprint41.Log;
@@ -35,20 +34,20 @@ namespace Blueprint41.Neo4j.Persistence.Void
             _nodePropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
             {
                 Index = true,
-                Exists = IsEnterpriseEdition,
+                Exists = IsEnterpriseEdition || IsMemgraph,
                 Unique = true,
-                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
-                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+                Key = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
             _relationshipPropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
             {
-                Index = VersionGreaterOrEqual(4, 3),
-                Exists = IsEnterpriseEdition,
-                Unique = VersionGreaterOrEqual(5, 7),
-                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
-                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+                Index = !IsMemgraph && VersionGreaterOrEqual(4, 3),
+                Exists = !IsMemgraph && IsEnterpriseEdition,
+                Unique = !IsMemgraph && VersionGreaterOrEqual(5, 7),
+                Key = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
-    }
+        }
         public Neo4jPersistenceProvider(string? uri, string? username, string? password, string database, AdvancedConfig? advancedConfig = null) : base()
         {
             Uri = uri;
@@ -61,32 +60,33 @@ namespace Blueprint41.Neo4j.Persistence.Void
             _nodePropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
             {
                 Index = true,
-                Exists = IsEnterpriseEdition,
+                Exists = IsEnterpriseEdition || IsMemgraph,
                 Unique = true,
-                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
-                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+                Key = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
             _relationshipPropertyFeatures = new Lazy<FeatureSupport>(() => new FeatureSupport()
             {
-                Index = VersionGreaterOrEqual(4, 3),
-                Exists = IsEnterpriseEdition,
-                Unique = VersionGreaterOrEqual(5, 7),
-                Key = IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
-                Type = IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
+                Index = !IsMemgraph && VersionGreaterOrEqual(4, 3),
+                Exists = !IsMemgraph && IsEnterpriseEdition,
+                Unique = !IsMemgraph && VersionGreaterOrEqual(5, 7),
+                Key = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 7),
+                Type = !IsMemgraph && IsEnterpriseEdition && VersionGreaterOrEqual(5, 9),
             });
         }
 
-        public string Version { get; private set; } = "0.0.0";
-        public int Major { get; private set; } = 0;
-        public int Minor { get; private set; } = 0;
-        public int? Revision { get; private set; } = null;
+        public string DBMSName { get; internal set; } = string.Empty;
+        public string Version { get; internal set; } = "0.0.0";
+        public int Major { get; internal set; } = 0;
+        public int Minor { get; internal set; } = 0;
+        public int? Revision { get; internal set; } = null;
         public bool IsAura { get; set; } = false;
-        public bool IsEnterpriseEdition { get; private set; } = false;
+        public bool IsEnterpriseEdition { get; set; } = false;
 
-        public FeatureSupport NodePropertyFeatures => _nodePropertyFeatures.Value;
+        public override FeatureSupport NodePropertyFeatures => _nodePropertyFeatures.Value;
         private readonly Lazy<FeatureSupport> _nodePropertyFeatures;
 
-        public FeatureSupport RelationshipPropertyFeatures => _relationshipPropertyFeatures.Value;
+        public override FeatureSupport RelationshipPropertyFeatures => _relationshipPropertyFeatures.Value;
         private readonly Lazy<FeatureSupport> _relationshipPropertyFeatures;
 
         public bool VersionGreaterOrEqual(int major, int minor = 0, int revision = 0)
@@ -102,13 +102,14 @@ namespace Blueprint41.Neo4j.Persistence.Void
         {
             return functions.Contains(function);
         }
-        private HashSet<string> functions = new HashSet<string>();
+        protected HashSet<string> functions = new HashSet<string>();
 
         public bool HasProcedure(string procedure)
         {
             return procedures.Contains(procedure);
         }
-        private HashSet<string> procedures = new HashSet<string>();
+        protected HashSet<string> procedures = new HashSet<string>();
+        private QueryTranslator? translator = null;
 
         internal override QueryTranslator Translator
         {
@@ -120,64 +121,117 @@ namespace Blueprint41.Neo4j.Persistence.Void
                     {
                         if (translator is null)
                         {
-                            if (this.GetType() == typeof(Void.Neo4jPersistenceProvider))
-                                return GetVoidTranslator();
-
-                            if (Uri is null && Username is null && Password is null)
-                                return GetVoidTranslator();
-
-                            using (Transaction.Begin())
+                            if (ShouldUseVoidTranslator())
                             {
-                                RawResult? components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition");
-                                var record = components.First();
-
-                                Version = record["version"].As<string>();
-                                IsEnterpriseEdition = (record["edition"].As<string>().ToLowerInvariant() == "enterprise");
-
-                                string[] parts = Version.Split(new[] { '.' });
-                                Major = int.Parse(parts[0]);
-
-                                if (parts[1].ToLower().Contains("-aura"))
-                                {
-                                    parts[1] = parts[1].Replace("-aura", "");
-                                    IsAura = true;
-                                }
-                                
-                                Minor = int.Parse(parts[1]);                                
-
-                                if (parts.Length > 2)
-                                    Revision = int.Parse(parts[2]);
-
-                                functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(Major)).Select(item => item.Values["name"].As<string>()));
-                                procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(Major)).Select(item => item.Values["name"].As<string>()));
+                                return GetVoidTranslator();
                             }
 
-                            translator = Major switch
-                            {
-                                3 => new v3.Neo4jQueryTranslator(this),
-                                4 => new v4.Neo4jQueryTranslator(this),
-                                5 => new v5.Neo4jQueryTranslator(this),
-                                _ => throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.")
-                            };
+                            FetchDatabaseInfo();
+                            translator = DetermineTranslator();
                         }
                     }
                 }
-                return translator;
 
-                static string GetFunctions(int version) => version switch
+                return translator;
+            }
+        }
+
+        private bool ShouldUseVoidTranslator()
+        {
+            return this.GetType() == typeof(Void.Neo4jPersistenceProvider)
+                || (Uri is null && Username is null && Password is null);
+        }
+
+        private void FetchDatabaseInfo()
+        {
+            using (Transaction.Begin())
+            {
+                var components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
+
+                DBMSName = components["name"].As<string>();
+                Version = components["version"].As<string>();
+                IsEnterpriseEdition = components["edition"].As<string>().ToLowerInvariant() == "enterprise";
+
+                ParseVersion(Version);
+                LoadDbmsFunctions();
+                LoadDbmsProcedures();
+            }
+        }
+
+        private void ParseVersion(string version)
+        {
+            string[] parts = version.Split(new[] { '.' });
+            Major = int.Parse(parts[0]);
+            Minor = int.Parse(parts[1].Replace("-aura", ""));
+            IsAura = parts[1].Contains("-aura");
+
+            if (parts.Length > 2) Revision = int.Parse(parts[2]);
+        }
+
+        private void LoadDbmsFunctions()
+        {
+            functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(DBMSName, Major))
+                .Select(item => item.Values["name"].As<string>()));
+        }
+
+        private void LoadDbmsProcedures()
+        {
+            procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(DBMSName, Major))
+                .Select(item => item.Values["name"].As<string>()));
+        }
+
+        private QueryTranslator DetermineTranslator()
+        {
+            if (DBMSName.IndexOf("memgraph", StringComparison.InvariantCultureIgnoreCase) >= 0)
+                return new Memgraph.Neo4jQueryTranslator(this);
+
+            return Major switch
+            {
+                3 => new v3.Neo4jQueryTranslator(this),
+                4 => new v4.Neo4jQueryTranslator(this),
+                5 => new v5.Neo4jQueryTranslator(this),
+                _ => throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.")
+            };
+        }
+        static string GetFunctions(string name, int version)
+        {
+            if (name.IndexOf("neo4j", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            {
+                return version switch
                 {
                     < 5 => "call dbms.functions() yield name return name",
                     >= 5 => "show functions yield name return name",
                 };
-                static string GetProcedures(int version) => version switch
+            }
+            else if (name.IndexOf("memgraph", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            {
+                return "call mg.functions() yield name return name";
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+        static string GetProcedures(string name, int version)
+        {
+            if (name.IndexOf("neo4j", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            {
+                return version switch
                 {
                     < 5 => "call dbms.procedures() yield name as name",
                     >= 5 => "show procedures yield name return name",
                 };
             }
+            else if (name.IndexOf("memgraph", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            {
+                return "call mg.procedures() yield name return name";
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
-        private QueryTranslator? translator = null;
         private QueryTranslator GetVoidTranslator()
         {
             if (voidTranslator is null)
@@ -188,18 +242,16 @@ namespace Blueprint41.Neo4j.Persistence.Void
         }
         private static QueryTranslator? voidTranslator = null;
 
+        public override Session NewSession(bool readWriteMode)
+        {
+            return new Neo4jSession(readWriteMode, TransactionLogger);
+        }
         public override Transaction NewTransaction(bool readWriteMode)
         {
             return new Neo4jTransaction(readWriteMode, TransactionLogger);
         }
 
-        public override List<TypeMapping> SupportedTypeMappings
-        {
-            get
-            {
-                return supportedTypeMappings;
-            }
-        }
+        public static readonly PersistenceProvider VoidPersistenceProvider = new Neo4jPersistenceProvider();
     }
 
     public record FeatureSupport

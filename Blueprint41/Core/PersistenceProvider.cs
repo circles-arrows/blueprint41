@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+
 using Blueprint41.Neo4j.Model;
 using Blueprint41.Neo4j.Persistence.Void;
 using Blueprint41.Neo4j.Schema;
@@ -12,26 +13,38 @@ namespace Blueprint41.Core
 {
     public abstract class PersistenceProvider
     {
+#pragma warning disable IDE0200 
         protected PersistenceProvider()
         {
-            convertToStoredType = new Lazy<Dictionary<Type, Conversion?>>(
-            delegate ()
-            {
-                return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.ReturnType, item.PersistedType));
+            //WARNING: do not refactor warning IDE0200, the wrong translator will be returned
+            supportedTypeMappings = new Lazy<List<TypeMapping>>(delegate()
+                    {
+                        return Translator.FilterSupportedTypeMappings(GetSupportedTypeMappings()).ToList();
+                    },
+                    true
+                );
 
-            }, true);
+            convertToStoredType = new Lazy<Dictionary<Type, Conversion?>>(
+                    delegate ()
+                    {
+                        return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.ReturnType, item.PersistedType));
+                    },
+                    true
+                );
 
             convertFromStoredType = new Lazy<Dictionary<Type, Conversion?>>(
-            delegate ()
-            {
-                return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.PersistedType, item.ReturnType));
-
-            }, true);
+                    delegate ()
+                    {
+                        return SupportedTypeMappings.ToDictionary(item => item.ReturnType, item => Conversion.GetConverter(item.PersistedType, item.ReturnType));
+                    },
+                    true
+                );
 
             _nodePersistenceProvider = new Lazy<NodePersistenceProvider>(() => Translator.GetNodePersistenceProvider());
             _relationshipPersistenceProvider = new Lazy<RelationshipPersistenceProvider>(() => Translator.GetRelationshipPersistenceProvider());
-            _templates = new Lazy<RefactorTemplates>(() => Translator.GetTemplates());
+            _templates = new Lazy<RefactorTemplates>(() => Translator.GetTemplates()); //do not refactor warning IDE0200, the wrong translator will be returned
         }
+#pragma warning restore  IDE0200
 
         internal NodePersistenceProvider NodePersistenceProvider => _nodePersistenceProvider.Value;
         private readonly Lazy<NodePersistenceProvider> _nodePersistenceProvider;
@@ -39,20 +52,31 @@ namespace Blueprint41.Core
         internal RelationshipPersistenceProvider RelationshipPersistenceProvider => _relationshipPersistenceProvider.Value;
         private readonly Lazy<RelationshipPersistenceProvider> _relationshipPersistenceProvider;
 
-        public abstract Transaction NewTransaction(bool withTransaction);
+        public abstract Session NewSession(bool readWriteMode);
+        public abstract Transaction NewTransaction(bool readWriteMode);
+
+        public bool IsMemgraph { get; set; } = false;
+        public abstract FeatureSupport NodePropertyFeatures { get; }
+        public abstract FeatureSupport RelationshipPropertyFeatures { get; }
+
         public virtual string ToToken(Bookmark consistency) => string.Empty;
+
         public virtual Bookmark FromToken(string consistencyToken) => Bookmark.NullBookmark;
 
-        public abstract List<TypeMapping> SupportedTypeMappings { get; }
+        public IReadOnlyList<TypeMapping> SupportedTypeMappings => supportedTypeMappings.Value;
+        private readonly Lazy<List<TypeMapping>> supportedTypeMappings;
+        protected internal abstract List<TypeMapping> GetSupportedTypeMappings();
 
-        private Lazy<Dictionary<Type, Conversion?>> convertToStoredType;
-        internal Dictionary<Type, Conversion?> ConvertToStoredTypeCache { get { return convertToStoredType.Value; } }
+        internal Dictionary<Type, Conversion?> ConvertToStoredTypeCache
+        { get { return convertToStoredType.Value; } }
+        private readonly Lazy<Dictionary<Type, Conversion?>> convertToStoredType;
 
-        private Lazy<Dictionary<Type, Conversion?>> convertFromStoredType;
-        internal Dictionary<Type, Conversion?> ConvertFromStoredTypeCache { get { return convertFromStoredType.Value; } }
+        internal Dictionary<Type, Conversion?> ConvertFromStoredTypeCache
+        { get { return convertFromStoredType.Value; } }
+        private readonly Lazy<Dictionary<Type, Conversion?>> convertFromStoredType;
 
-        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = new Neo4jPersistenceProvider(null, null, null);
-        public static bool IsConfigured => ((CurrentPersistenceProvider as Neo4jPersistenceProvider)?.Uri is not null); 
+        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = Neo4jPersistenceProvider.VoidPersistenceProvider;
+        public static bool IsConfigured => ((CurrentPersistenceProvider as Neo4jPersistenceProvider)?.Uri is not null);
 
         public static bool IsNeo4j
         {
@@ -71,6 +95,7 @@ namespace Blueprint41.Core
         {
             return ConvertToStoredTypeCacheVia<TValue>.Convert(this, value);
         }
+
         public object? ConvertToStoredType(Type returnType, object? value)
         {
             if (returnType is null)
@@ -85,10 +110,12 @@ namespace Blueprint41.Core
 
             return converter.Convert(value);
         }
+
         public TReturnType ConvertFromStoredType<TReturnType>(object? value)
         {
             return (TReturnType)ConvertFromStoredTypeCacheVia<TReturnType>.Convert(this, value)!;
         }
+
         public object? ConvertFromStoredType(Type returnType, object? value)
         {
             if (returnType is null)
@@ -103,6 +130,7 @@ namespace Blueprint41.Core
 
             return converter.Convert(value);
         }
+
         public Conversion? GetConverterToStoredType(Type returnType)
         {
             if (returnType is null)
@@ -113,6 +141,7 @@ namespace Blueprint41.Core
 
             return converter;
         }
+
         public Conversion? GetConverterFromStoredType(Type returnType)
         {
             if (returnType is null)
@@ -129,6 +158,7 @@ namespace Blueprint41.Core
             ConvertFromStoredTypeCacheVia<TReturnType>.Initialize(this);
             return ConvertFromStoredTypeCacheVia<TReturnType>.Converter?.FromType ?? typeof(TReturnType);
         }
+
         public Type? GetStoredType(Type returnType)
         {
             Conversion? converter;
@@ -168,6 +198,7 @@ namespace Blueprint41.Core
                 }
             }
         }
+
         private class ConvertFromStoredTypeCacheVia<TReturnType>
         {
             public static Conversion? Converter = null;
@@ -199,25 +230,25 @@ namespace Blueprint41.Core
             }
         }
 
-        #endregion
+        #endregion Conversion
 
         #region Factory: Refactoring Templates
 
         internal RefactorTemplates Templates => _templates.Value;
         private readonly Lazy<RefactorTemplates> _templates;
 
-        #endregion
+        #endregion Factory: Refactoring Templates
 
         #region Factory: Query Translator
 
         internal abstract QueryTranslator Translator { get; }
-        
-        #endregion
+
+        #endregion Factory: Query Translator
 
         #region Factory: Schema Info
 
         internal SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => Translator.GetSchemaInfo(datastoreModel);
 
-        #endregion
+        #endregion Factory: Schema Info
     }
 }

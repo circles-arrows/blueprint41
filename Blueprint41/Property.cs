@@ -109,7 +109,7 @@ namespace Blueprint41
         }
         public Entity? EntityReturnType { get; private set; }
         public bool Nullable { get; protected internal set; }
-        public IndexType IndexType { get; private set; }
+        public IndexType IndexType { get; internal set; }
         public bool IsKey { get; internal set; }
         public bool IsNodeType { get; internal set; }
         public bool IsRowVersion { get; internal set; }
@@ -357,28 +357,10 @@ namespace Blueprint41
         private void RemoveIndexesAndContraints()
         {
             Parent.Parent.EnsureSchemaMigration();
+            if (!Parser.ShouldExecute)
+                return;
 
-            if (Parser.ShouldExecute && (Nullable == false || IndexType != IndexType.None))
-            {
-                using (Transaction.Begin(true))
-                {
-                    Nullable = true;
-                    IndexType = IndexType.None;
-
-                    foreach (var entity in Parent.GetSubclassesOrSelf())
-                    {
-                        ApplyConstraintEntity applyConstraint = Parent.Parent.GetSchema().NewApplyConstraintEntity(entity);
-                        foreach (var action in applyConstraint.Actions.Where(c => c.Property == Name))
-                        {
-                            foreach (string query in action.ToCypher())
-                            {
-                                Parser.Execute(query, null);
-                            }
-                        }
-                    }
-                    Transaction.Commit();
-                }
-            }
+            Parent.Parent.GetSchema().RemoveIndexesAndContraints(this);
         }
 
         //void IRefactorProperty.Move(string pattern, string newPropertyName)
@@ -562,7 +544,7 @@ namespace Blueprint41
                     {
                         cypherRead = $"""
                             MATCH (node:{entity.Label.Name})
-                            WHERE [x IN node.`{Name}` | x] <> node.`{Name}`
+                            WHERE {Parent.Parent.PersistenceProvider.Translator.TestCompressedString("node", Name)}
                             RETURN DISTINCT node.`{Name}` as Text
                             LIMIT {batchSize}
                             """;
@@ -577,7 +559,7 @@ namespace Blueprint41
                     {
                         cypherRead = $"""
                             MATCH (:{relationship.InEntity.Label.Name})-[rel:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name})
-                            WHERE [x IN rel.`{Name}` | x] <> rel.`{Name}`
+                            WHERE {Parent.Parent.PersistenceProvider.Translator.TestCompressedString("rel", Name)}
                             RETURN DISTINCT rel.`{Name}` as Text
                             LIMIT {batchSize}
                             """;
@@ -781,18 +763,25 @@ namespace Blueprint41
                 if (Parent is Entity entity)
                 {
                     string cypher = $"MATCH (n:{entity.Label.Name}) WHERE n.{Name} IS NULL RETURN count(n) as count";
-                    RawRecord record = Parser.Execute(cypher, null, false).First();
-                    bool hasNullProperty = record["count"].As<long>() > 0;
-                    if (hasNullProperty)
-                        throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", entity.Name, Name));
+                    Parser.Execute(cypher, null, true, delegate(RawResult result)
+                    {
+                        RawRecord record = result.First();
+                        bool hasNullProperty = record["count"].As<long>() > 0;
+                        if (hasNullProperty)
+                            throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", entity.Name, Name));
+
+                    });
                 }
                 else if (Parent is Relationship relationship)
                 {
                     string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
-                    RawRecord record = Parser.Execute(cypher, null, false).First();
-                    bool hasNullProperty = record["count"].As<long>() > 0;
-                    if (hasNullProperty)
-                        throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", relationship.Name, Name));
+                    Parser.Execute(cypher, null, true, delegate (RawResult result)
+                    {
+                        RawRecord record = result.First();
+                        bool hasNullProperty = record["count"].As<long>() > 0;
+                        if (hasNullProperty)
+                            throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", relationship.Name, Name));
+                    });
                 }
                 else
                 {

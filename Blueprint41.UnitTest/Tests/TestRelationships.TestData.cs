@@ -51,12 +51,20 @@ namespace Blueprint41.UnitTest.Tests
 
                 Transaction.Commit();
             }
+#if NEO4J
             using (Transaction.Begin())
             {
                 string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
                 Transaction.RunningTransaction.Run(clearSchema);
                 Transaction.Commit();
             }
+#elif MEMGRAPH
+            using (Session.Begin())
+            {
+                string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
+                Session.RunningSession.Run(clearSchema);
+            }
+#endif
         }
 
         public Uids DatabaseUids;

@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>9.0</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Blueprint41.Neo4jDriver.Memgraph\Blueprint41.MemgraphDriver.csproj" />
+		<ProjectReference Include="..\..\Blueprint41\Blueprint41.csproj" />
+		<ProjectReference Include="..\MemgraphTestApp.Model\MemgraphTestApp.Model.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Generate.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Generate.txt</LastGenOutput>
+		</None>
+		<None Update="Generate.txt">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Generate.tt</DependentUpon>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+
+</Project>

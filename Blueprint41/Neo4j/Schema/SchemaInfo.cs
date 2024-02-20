@@ -31,7 +31,6 @@ namespace Blueprint41.Neo4j.Schema
                 Constraints       = LoadData("CALL db.constraints()", record => NewConstraintInfo(record, PersistenceProvider));
                 Indexes           = LoadData("CALL db.indexes()", record => NewIndexInfo(record, PersistenceProvider));
                 Labels            = LoadSimpleData("CALL db.labels()", "label");
-                PropertyKeys      = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
                 RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
             }
         }
@@ -41,6 +40,8 @@ namespace Blueprint41.Neo4j.Schema
         }
         protected IReadOnlyList<T> LoadData<T>(string procedure, Func<RawRecord, T> processor)
         {
+            IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
+
             bool retry;
             IReadOnlyList<T>? data = null;
             do
@@ -48,7 +49,7 @@ namespace Blueprint41.Neo4j.Schema
                 try
                 {
                     retry = false;
-                    RawResult result = Transaction.RunningTransaction.Run(procedure);
+                    RawResult result = runner.Run(procedure);
                     data = result.Select(processor).ToArray();
                 }
                 catch (Exception clientException)
@@ -69,7 +70,6 @@ namespace Blueprint41.Neo4j.Schema
         public IReadOnlyList<IndexInfo>        Indexes       { get; protected set; } = null!;
 
         public IReadOnlyList<string> Labels            { get; protected set; } = null!;
-        public IReadOnlyList<string> PropertyKeys      { get; protected set; } = null!;
         public IReadOnlyList<string> RelationshipTypes { get; protected set; } = null!;
         protected DatastoreModel Model;
 
@@ -114,7 +114,7 @@ namespace Blueprint41.Neo4j.Schema
             }
         }
 
-        internal IReadOnlyList<ApplyFunctionalId> GetFunctionalIdDifferences()
+        internal virtual IReadOnlyList<ApplyFunctionalId> GetFunctionalIdDifferences()
         {
             List<ApplyFunctionalId> actions = new List<Schema.ApplyFunctionalId>();
             foreach (var inMemory in Model.FunctionalIds)
@@ -149,7 +149,7 @@ namespace Blueprint41.Neo4j.Schema
 
             return actions;
         }
-        internal void UpdateFunctionalIds()
+        internal virtual void UpdateFunctionalIds()
         {
             using (Transaction.Begin())
             {
@@ -164,20 +164,44 @@ namespace Blueprint41.Neo4j.Schema
                 Transaction.Commit();
             }
         }
-        internal void UpdateConstraints()
+        internal virtual void UpdateConstraints()
         {
-            foreach (var diff in GetConstraintDifferences())
+            using (Transaction.Begin())
             {
-                foreach (var action in diff.Actions)
+                foreach (var diff in GetConstraintDifferences())
                 {
-                    foreach (var cql in action.ToCypher())
+                    foreach (var action in diff.Actions)
                     {
-                        Parser.Log(cql);
-                        Transaction.RunningTransaction.Run(cql);
+                        foreach (var cql in action.ToCypher())
+                        {
+                            Parser.Log(cql);
+                            Transaction.RunningTransaction.Run(cql);
+                        }
+                    }
+                }
+                Transaction.Commit();
+            }
+        }
+
+        internal virtual void RemoveIndexesAndContraints(Property property)
+        {
+            if (!property.Nullable || property.IndexType != IndexType.None)
+            {
+                property.Nullable = true;
+                property.IndexType = IndexType.None;
+
+                foreach (var entity in property.Parent.GetSubclassesOrSelf())
+                {
+                    ApplyConstraintEntity applyConstraint = NewApplyConstraintEntity(entity);
+                    foreach (var action in applyConstraint.Actions.Where(c => c.Property == property.Name))
+                    {
+                        foreach (string query in action.ToCypher())
+                        {
+                            Parser.Execute(query, null, !PersistenceProvider.IsMemgraph);
+                        }
                     }
                 }
             }
-            //Transaction.Commit();
         }
 
         protected virtual FunctionalIdInfo NewFunctionalIdInfo(RawRecord rawRecord)                                               => new FunctionalIdInfo(rawRecord);

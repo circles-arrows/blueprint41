@@ -494,6 +494,9 @@ namespace Blueprint41.Neo4j.Model
             }
         }
 
+        internal virtual void OrderQueryParts(LinkedList<q.Query> parts)
+        {
+        }
         internal protected virtual void SearchTranslation(q.Query query, CompileState state)
         {
             string search = $"replace(trim(replace(replace(replace({state.Preview(query.SearchWords!.Compile, state)}, 'AND', '\"AND\"'), 'OR', '\"OR\"'), '  ', ' ')), ' ', ' {query.SearchOperator!.ToString().ToUpperInvariant()} ')";
@@ -656,6 +659,7 @@ namespace Blueprint41.Neo4j.Model
             sb.Append(")");
             return sb.ToString();
         }
+        public virtual string TestCompressedString(string alias, string field) => $"[x IN {alias}.`{field}` | x] <> {alias}.`{field}`";
 
         public virtual string FnApocCreateUuid            => "apoc.create.uuid()";
         public virtual string CallApocCreateUuid          => "WITH apoc.create.uuid() as key";
@@ -737,6 +741,8 @@ namespace Blueprint41.Neo4j.Model
         internal abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider();
         internal abstract SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel);
         internal abstract RefactorTemplates GetTemplates();
+
+        internal virtual IEnumerable<TypeMapping> FilterSupportedTypeMappings(IEnumerable<TypeMapping> mappings) => mappings;
 
         #endregion
 

@@ -41,6 +41,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Blueprint41.Neo4jDriver.v3")]
 [assembly: InternalsVisibleTo("Blueprint41.Neo4jDriver.v4")]
 [assembly: InternalsVisibleTo("Blueprint41.Neo4jDriver.v5")]
+[assembly: InternalsVisibleTo("Blueprint41.MemgraphDriver")]
 [assembly: InternalsVisibleTo("Blueprint41.Snapshot")]
 
 #region Type Conversions

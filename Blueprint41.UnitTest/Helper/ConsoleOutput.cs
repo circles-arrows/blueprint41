@@ -20,7 +20,7 @@ namespace Blueprint41.UnitTest.Helper
             Console.SetOut(stringWriter);
         }
 
-        public string GetOuput(bool lastTransactionOnly = false)
+        public string GetOutput(bool lastTransactionOnly = false)
         {
             string output = stringWriter.ToString();
             if (!lastTransactionOnly)
@@ -53,6 +53,7 @@ namespace Blueprint41.UnitTest.Helper
         }
         public void AssertTimeDependentRelationshipCreated(string inNode, string relationship, string outNode, bool not = false)
         {
+#if NEO4J
             AllLines(not,   $$"""
                             MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
                             WHERE COALESCE(rel.StartDate, $min) >= $moment
@@ -72,6 +73,27 @@ namespace Blueprint41.UnitTest.Helper
                             WHERE rel is null
                             CREATE (in)-[outr:{{relationship}}]->(out) SET outr = $map
                             """);
+#elif MEMGRAPH
+            AllLines(not,   $$"""
+                            MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
+                            WHERE COALESCE(rel.StartDate, $min) >= $moment
+                            DELETE rel
+                            """,
+                            $$"""
+                            MATCH (in:{{inNode}} { Uid: $inKey })-[rel:{{relationship}}]->(out:{{outNode}} { Uid: $outKey })
+                            WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) >= $moment
+                            WITH rel, properties(rel) AS map1, $map AS map2
+                            SET rel.EndDate = CASE WHEN map1 { StartDate: 0, EndDate: 0, CreationDate: 0, .* } = map2 { StartDate: 0, EndDate: 0, CreationDate: 0, .* } THEN $max ELSE $moment END
+                            """,
+                            $$"""
+                            MATCH (in:{{inNode}} { Uid: $inKey }), (out:{{outNode}} { Uid: $outKey })
+                            OPTIONAL MATCH (in)-[rel:{{relationship}}]->(out)
+                            WHERE COALESCE(rel.StartDate, $min) <= $moment AND COALESCE(rel.EndDate, $max) > $moment
+                            WITH in, out, rel
+                            WHERE rel is null
+                            CREATE (in)-[outr:{{relationship}}]->(out) SET outr = $map
+                            """);
+#endif
         }
         public void AssertNodeUpdated(string node, bool not = false)
         {
@@ -130,7 +152,7 @@ namespace Blueprint41.UnitTest.Helper
             if (lines is null || lines.Length == 0)
                 throw new ArgumentNullException(nameof(lines));
 
-            string output = GetOuput(true);
+            string output = GetOutput(true);
 
             bool one = false;
             foreach (string line in lines)
@@ -146,7 +168,7 @@ namespace Blueprint41.UnitTest.Helper
             if (lines is null || lines.Length == 0)
                 throw new ArgumentNullException(nameof(lines));
 
-            string[] output = Regex.Split(GetOuput(true), "\r\n|\r|\n").Select(item => item.Trim()).Where(item => !string.IsNullOrEmpty(item)).ToArray();
+            string[] output = Regex.Split(GetOutput(true), "\r\n|\r|\n").Select(item => item.Trim()).Where(item => !string.IsNullOrEmpty(item)).ToArray();
             string[][] searches = lines.Select(line => Regex.Split(line, "\r\n|\r|\n").Select(item => item.Trim()).Where(item => !string.IsNullOrEmpty(item)).ToArray()).ToArray();
 
             bool found = true;

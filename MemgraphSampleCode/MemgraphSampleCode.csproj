@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>OGMSampleCode</RootNamespace>
+    <AssemblyName>OGMSampleCode</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyTitle>OGMSampleCode</AssemblyTitle>
+    <Product>OGMSampleCode</Product>
+    <Copyright>Copyright ©  2018</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Neo4jDriver.Memgraph\Blueprint41.MemgraphDriver.csproj" />
+    <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
+    <ProjectReference Include="..\MemgraphTestApp\MemgraphTestApp.Generated\MemgraphTestApp.Generated.csproj" />
+    <ProjectReference Include="..\MemgraphTestApp\MemgraphTestApp.Model\MemgraphTestApp.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+</Project>

@@ -83,6 +83,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             #region Add Watched Movie
 
+#if NEO4J
             using (Transaction.Begin())
             {
                 CleanupRelations(WATCHED_MOVIE.Relationship);
@@ -103,6 +104,7 @@ namespace Blueprint41.UnitTest.Tests
             Execute(MakeMinutesWatchedNullable);
 
             #endregion
+#endif
 
             using (Transaction.Begin())
             {
@@ -461,6 +463,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             #region Add Same Streaming Service
 
+#if NEO4J
             using (Transaction.Begin())
             {
                 CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
@@ -483,6 +486,7 @@ namespace Blueprint41.UnitTest.Tests
             Execute(MakeMonthlyFeeNullable);
 
             #endregion
+#endif
 
             List<TestScenario> scenariosAdd = TestScenario.Get(TestAction.AddSame);
 

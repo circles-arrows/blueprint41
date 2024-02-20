@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<LangVersion>9.0</LangVersion>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Blueprint41.Neo4jDriver.Memgraph\Blueprint41.MemgraphDriver.csproj" />
+    <ProjectReference Include="..\..\Blueprint41\Blueprint41.csproj" />
+  </ItemGroup>
+
+</Project>

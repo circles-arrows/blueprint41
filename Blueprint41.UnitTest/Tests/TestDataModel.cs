@@ -640,7 +640,7 @@ namespace Blueprint41.UnitTest.Tests
                 };
                 model.Execute(true);
                 Assert.Throws<ArgumentOutOfRangeException>(() => Assert.IsNotNull(model.Entities["Person"]));
-                Assert.That(output.GetOuput(), Contains.Substring("Deprecate entity from Person"));
+                Assert.That(output.GetOutput(), Contains.Substring("Deprecate entity from Person"));
             }
         }
 
@@ -768,8 +768,13 @@ namespace Blueprint41.UnitTest.Tests
                 };
                 model.Execute(true);
 
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE INDEX AccountType_Indexed_RangeIndex FOR (node:AccountType) ON (node.Indexed)"));
-                Assert.That(output.GetOuput(), Contains.Substring("CREATE CONSTRAINT AccountType_Unique_UniqueConstraint FOR (node:AccountType) REQUIRE node.Unique IS UNIQUE"));
+#if NEO4J
+                Assert.That(output.GetOutput(), Contains.Substring("CREATE INDEX AccountType_Indexed_RangeIndex FOR (node:AccountType) ON (node.Indexed)"));
+                Assert.That(output.GetOutput(), Contains.Substring("CREATE CONSTRAINT AccountType_Unique_UniqueConstraint FOR (node:AccountType) REQUIRE node.Unique IS UNIQUE"));
+#elif MEMGRAPH
+                Assert.That(output.GetOutput(), Contains.Substring("CREATE INDEX ON :AccountType(Indexed)"));
+                Assert.That(output.GetOutput(), Contains.Substring("CREATE CONSTRAINT ON (node:AccountType) ASSERT node.Unique IS UNIQUE"));
+#endif
             }
         }
         #endregion
@@ -968,7 +973,7 @@ namespace Blueprint41.UnitTest.Tests
                     LogToConsole = true
                 };
                 model.Execute(true);
-                Assert.IsTrue(Regex.IsMatch(output.GetOuput(), "Copy properties from Name to CopyName for entity Account"));
+                Assert.IsTrue(Regex.IsMatch(output.GetOutput(), "Copy properties from Name to CopyName for entity Account"));
             }
         }
 
@@ -1018,7 +1023,7 @@ namespace Blueprint41.UnitTest.Tests
                 model.Execute(true);
 
                 string query = "SetDefaultConstantValue -> Account.Name = 'First Account'";
-                Assert.That(output.GetOuput(), Contains.Substring(query));
+                Assert.That(output.GetOutput(), Contains.Substring(query));
             }
         }
 
@@ -1096,6 +1101,7 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
+#if NEO4J
         [Test]
         public void IRefactorEntitySetFunctionalId()
         {
@@ -1104,8 +1110,8 @@ namespace Blueprint41.UnitTest.Tests
                 DatastoreModel model = new DatastoreEntitySetFunctionalId() { LogToConsole = true };
                 model.Execute(true);
 
-                Assert.That(output.GetOuput(), Contains.Substring("Differences for Account (\"A_\" : 1) -> CreateFunctionalId"));
-                Assert.That(output.GetOuput(), Contains.Substring("Differences for ChangeAccount (\"CA_\" : 1) -> CreateFunctionalId"));
+                Assert.That(output.GetOutput(), Contains.Substring("Differences for Account (\"A_\" : 1) -> CreateFunctionalId"));
+                Assert.That(output.GetOutput(), Contains.Substring("Differences for ChangeAccount (\"CA_\" : 1) -> CreateFunctionalId"));
             }
 
             TearDown();
@@ -1118,6 +1124,8 @@ namespace Blueprint41.UnitTest.Tests
 
             Assert.That(exception.Message, Contains.Substring("The entity 'Account' already inherited a functional id 'A_ (Account)', you cannot assign another one."));
         }
-        #endregion
+#endif
+
+#endregion
     }
 }

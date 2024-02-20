@@ -9,6 +9,7 @@ using Blueprint41.Core;
 using Blueprint41.Log;
 using Blueprint41.Neo4j.Model;
 using Blueprint41.Neo4j.Schema;
+using System.Runtime.CompilerServices;
 
 namespace Blueprint41.Neo4j.Persistence.Driver.v4
 {
@@ -76,6 +77,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
         }
 
+        public override Session NewSession(bool readWriteMode) => new Neo4jSession(this, readWriteMode, TransactionLogger);
         public override Transaction NewTransaction(bool readWriteMode) => new Neo4jTransaction(this, readWriteMode, TransactionLogger);
         public override Bookmark FromToken(string consistencyToken)    => Neo4jBookmark.FromTokenInternal(consistencyToken);
         public override string ToToken(Bookmark consistency)           => Neo4jBookmark.ToTokenInternal(consistency);

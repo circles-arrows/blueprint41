@@ -16,7 +16,11 @@ namespace Blueprint41.UnitTest.DataStore
         [Version(0, 0, 0)]
         public void Script_0_0_0()
         {
+#if NEO4J
             FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+#elif MEMGRAPH
+            FunctionalIds.Default = FunctionalIds.UUID;
+#endif
 
             Entities.New("BaseEntity")
                 .AddProperty("Uid", typeof(string), false, IndexType.Unique)
