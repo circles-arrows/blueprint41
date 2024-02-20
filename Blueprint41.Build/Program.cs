@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace Blueprint41.Build
 {
@@ -21,6 +22,16 @@ namespace Blueprint41.Build
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
+
+            var hashFilePath = Path.Combine(generatePath, "currentModelHash");
+            string existingHash = File.Exists(hashFilePath) ? File.ReadAllText(hashFilePath) : null;
+            string currentHash = ComputeSha256Hash(modelPath);
+
+            if (currentHash == existingHash)
+                return;
+            else
+                File.WriteAllText(hashFilePath, currentHash);
+
 
             Console.WriteLine("Generate Task Starting...");
             Console.WriteLine($"ModelPath: '{modelPath}'");
@@ -124,6 +135,21 @@ namespace Blueprint41.Build
             if (string.IsNullOrWhiteSpace(modelPath) || string.IsNullOrWhiteSpace(generatePath))
             {
                 throw new InvalidOperationException($"Both {ModelPathArg} and {GeneratePathArg} arguments are required.");
+            }
+        }
+
+        static string ComputeSha256Hash(string filePath)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                using (FileStream fileStream = File.OpenRead(filePath))
+                {
+                    // Compute the SHA256 hash of the file
+                    byte[] hashValue = sha256.ComputeHash(fileStream);
+
+                    // Convert hash bytes to hex string
+                    return BitConverter.ToString(hashValue).Replace("-", "").ToLowerInvariant();
+                }
             }
         }
     }
