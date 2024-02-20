@@ -30,22 +30,20 @@ namespace Blueprint41.Neo4j.Refactoring
             if (!ShouldExecute)
                 return;
 
-            RawResult result;
-
             if (withTransaction)
             {
-                using (Transaction.Begin(withTransaction))
+                using (Transaction.Begin())
                 {
-                    result = PrivateExecute(cypher, parameters);
+                    RawResult result = PrivateExecute(cypher, parameters);
                     logic?.Invoke(result);
                     Transaction.Commit();
                 }
             }
             else
             {
-                using (Session.Begin(withTransaction))
+                using (Session.Begin())
                 {
-                    result = PrivateExecute(cypher, parameters);
+                    RawResult result = PrivateExecute(cypher, parameters);
                     logic?.Invoke(result);
                 }
             }
@@ -58,7 +56,7 @@ namespace Blueprint41.Neo4j.Refactoring
             RawResultStatistics counters;
             do
             {
-                using (Transaction.Begin(true))
+                using (Transaction.Begin())
                 {
                     RawResult result = Parser.PrivateExecute(cypher, parameters);
                     Transaction.Commit();

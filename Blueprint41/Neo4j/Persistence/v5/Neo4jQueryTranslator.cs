@@ -51,7 +51,7 @@ namespace Blueprint41.Neo4j.Persistence.v5
             {
                 try
                 {
-                    using (Transaction.Begin(true))
+                    using (Transaction.Begin())
                     {
                         Transaction.RunningTransaction.Run(FtiRemove);
                         Transaction.Commit();
@@ -60,7 +60,7 @@ namespace Blueprint41.Neo4j.Persistence.v5
                 catch { }
             }
 
-            using (Transaction.Begin(true))
+            using (Transaction.Begin())
             {
                 string e = string.Join(
                         FtiEntitySeparator,
