@@ -24,7 +24,6 @@ namespace Blueprint41.Neo4j.Schema.v5
                 Constraints       = LoadData("show constraints", record => NewConstraintInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
                 Indexes           = LoadData("show indexes", record => NewIndexInfo(record, PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
                 Labels            = LoadSimpleData("CALL db.labels()", "label");
-                PropertyKeys      = LoadSimpleData("CALL db.propertyKeys()", "propertyKey");
                 RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
             }
         }

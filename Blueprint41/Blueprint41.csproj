@@ -56,6 +56,7 @@
     <PackageReference Include="Crc32.NET" Version="1.*" />
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.*" />
     <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.CodeDom" Version="4.*" />
     <PackageReference Include="System.Text.Json" Version="6.*" />
   </ItemGroup>
@@ -167,6 +168,10 @@
       <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
+    <None Update="Neo4j\Refactoring\Templates\Memgraph\RefactorTemplates.tt">
+      <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
     <None Update="Neo4j\Refactoring\Templates\v5\CopyProperty.tt">
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -277,6 +282,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>CopyProperty.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\Memgraph\RefactorTemplates.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RefactorTemplates.tt</DependentUpon>
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\SetDefaultLookupValue.cs">
       <DesignTime>True</DesignTime>

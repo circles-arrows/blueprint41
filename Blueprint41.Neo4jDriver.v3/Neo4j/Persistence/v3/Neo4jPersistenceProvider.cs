@@ -36,9 +36,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
             Core.ExtensionMethods.RegisterAsConversion(typeof(Neo4jPersistenceProvider), typeof(RawRelationship), from => from is IRelationship item ? new Neo4jRawRelationship(item) : null);
         }
 
-        public override Transaction NewTransaction(bool readWriteMode)
-        {
-            return new Neo4jTransaction(this, readWriteMode, TransactionLogger);
-        }
+        public override Session NewSession(bool readWriteMode) => new Neo4jSession(this, readWriteMode, TransactionLogger);
+        public override Transaction NewTransaction(bool readWriteMode) => new Neo4jTransaction(this, readWriteMode, TransactionLogger);
     }
 }

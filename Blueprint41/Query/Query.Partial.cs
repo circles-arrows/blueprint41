@@ -34,7 +34,12 @@ namespace Blueprint41.Query
 
 			return New;
 		}
-	}
+
+        internal void SetFields(FieldResult[] combinedFields)
+        {
+			Fields = combinedFields;
+        }
+    }
 	public partial interface IOptionalMatchQuery
 	{
 		IMatchQuery Unwind<TList, TResult, TType>(ListResult<TList, TResult, TType> list, string aliasName, out TResult alias)

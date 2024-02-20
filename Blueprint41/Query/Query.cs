@@ -121,6 +121,9 @@ namespace Blueprint41.Query
         }
         public IMatchQuery UsingScan(params AliasResult[] aliases)
         {
+            if (PersistenceProvider.Translator is Blueprint41.Neo4j.Persistence.Memgraph.Neo4jQueryTranslator)
+                throw new NotImplementedException("Memgraph does not yet support 'USING SCAN'."); //TODO
+
             SetType(PartType.UsingScan);
             Aliases = aliases;
 
@@ -459,7 +462,10 @@ namespace Blueprint41.Query
         }
         internal Query[] CompileParts(CompileState state)
         {
-            Query[] parts = GetParts();
+            LinkedList<Query> unordered = GetParts();
+            state.Translator.OrderQueryParts(unordered);
+
+            Query[] parts = unordered.ToArray();
             ForEach(parts, state.Text, "\r\n", item => item?.Compile(state));
 
             return parts;
@@ -523,7 +529,7 @@ namespace Blueprint41.Query
                 action.Invoke(items[index]);
             }
         }
-        private Query[] GetParts()
+        private LinkedList<Query> GetParts()
         {
             LinkedList<Query> parts = new();
             Query? query = Parent;
@@ -533,7 +539,7 @@ namespace Blueprint41.Query
                 query = query.Parent;
             }
 
-            return parts.ToArray();
+            return parts;
         }
         private void SetType(PartType type)
         {

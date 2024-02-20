@@ -71,7 +71,7 @@ namespace Blueprint41.UnitTest.Tests
                 model.Execute(true);
 
                 Assert.DoesNotThrow(() => { var a = model.Entities["Person"].Properties["FullName"]; });
-                Assert.That(output.GetOuput(), Contains.Substring("executing RenameProperty -> Rename property from Name to FullName"));
+                Assert.That(output.GetOutput(), Contains.Substring("executing RenameProperty -> Rename property from Name to FullName"));
             }
 
         }
@@ -497,7 +497,7 @@ namespace Blueprint41.UnitTest.Tests
             DataModelPropertySetIndexTypeAndDeprecate model = new DataModelPropertySetIndexTypeAndDeprecate();
             model.Execute(true);
         }
-        #endregion
+#endregion
 
         #region IRefactorReroute
 
@@ -722,7 +722,7 @@ namespace Blueprint41.UnitTest.Tests
                 DataModelPropertyMandatory model = new DataModelPropertyMandatory() { LogToConsole = true };
                 model.Execute(true);
 
-                string consoleOutput = output.GetOuput();
+                string consoleOutput = output.GetOutput();
                 Assert.That(consoleOutput, Contains.Substring("executing SetDefaultConstantValue -> Person.Name = 'Mr/Mrs.'"));
                 Assert.That(consoleOutput, Contains.Substring("executing SetDefaultLookupValue -> Set Default Lookup Value for Movie.MovieGenre"));
                 Assert.That(consoleOutput, Contains.Substring("executing SetDefaultLookupValue -> Set Default Lookup Value for Person.MovieGenre"));

@@ -1,0 +1,939 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="Blueprint41.UnitTest.Memgraph (net48)" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="Blueprint41.UnitTest.Memgraph.Tests" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestDataModel" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureEntitiesHaveRowVersionPropertyOrInherited" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntitiesHaveRowVersionPropertyOrInherited" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureEntityKeyIsUnique" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityKeyIsUnique" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureMatchNodeReturnsCorrectNode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureMatchNodeReturnsCorrectNode" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsurePropertiesAreUnique" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsurePropertiesAreUnique" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureRowVersionIsOnlyOnePerEntity" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureRowVersionIsOnlyOnePerEntity" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureRowVersionPropertyIsDateTime" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureRowVersionPropertyIsDateTime" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataAreCreated" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataAreCreated" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataAreUnique" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataAreUnique" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataHaveCorrectProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataHaveCorrectProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataHaveKeys" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataHaveKeys" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataIsDeleted" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataIsDeleted" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorChangeInheritance" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorChangeInheritance" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorCopyValue" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorCopyValue" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntityApplyConstraints" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntityApplyConstraints" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntityDeprecate" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntityDeprecate" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntityRename" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntityRename" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntityResetFunctionalId" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntityResetFunctionalId" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntitySetDefaultValue" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntitySetDefaultValue" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntitySetFunctionalId" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntitySetFunctionalId" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestGeneratedClasses" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplCRUD" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplCRUD" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplCRUDWithRelationship" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplCRUDWithRelationship" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplPlannerHitsUsing" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplPlannerHitsUsing" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplQuery" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplQuery" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplQueryOptionalMatch" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplQueryOptionalMatch" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestGenerator" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGenerator.EnsureFilesAreGenerated" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureFilesAreGenerated" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGenerator.EnsureFilesAreNotGeneratedWhenDeprecated" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureFilesAreNotGeneratedWhenDeprecated" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGenerator.EnsureGeneratorSettingsIsRequired" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureGeneratorSettingsIsRequired" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGenerator.GenerateMockModel" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="GenerateMockModel" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestNeo4jTransaction" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureCanCreateAnEntity" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureCanCreateAnEntity" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityIsCreatedEvenFlushedWithoutTransaction" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityIsCreatedEvenFlushedWithoutTransaction" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityIsCreatedRegardlessAnExceptionIsThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityIsCreatedRegardlessAnExceptionIsThrown" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityIsFlushedAfterTransaction" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityIsFlushedAfterTransaction" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityIsRolledbackWhenExceptionIsThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityIsRolledbackWhenExceptionIsThrown" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityShouldNotBeAddedAfterRollback" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityShouldNotBeAddedAfterRollback" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityShouldNotBeRollbackedAfterCommitedAndViceVersa" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityShouldNotBeRollbackedAfterCommitedAndViceVersa" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureNotAbleToTransactAfterCommit" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureNotAbleToTransactAfterCommit" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureRunningTransactionIsNeo4jTransaction" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureRunningTransactionIsNeo4jTransaction" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureThereShouldBeATransactionWhenRunningNeo4jCypher" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureThereShouldBeATransactionWhenRunningNeo4jCypher" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestOptimizeFor" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestOptimizeFor.TestOptimize" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TestOptimize" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestRefactorProperty" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyConvert" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyConvert" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyConvertToCollectionOrLookup" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyConvertToCollectionOrLookup" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyMakeMandatoryWithValues" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyMakeMandatoryWithValues" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyMerge" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyMerge" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyMove" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyMove" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyRename" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyRename" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyReroute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyReroute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertySetIndexTypeAndDeprecate" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertySetIndexTypeAndDeprecate" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestRelationships" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.CollAddAndRemoveLegacy" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="CollAddAndRemoveLegacy" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.CollAddAndRemoveWithProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="CollAddAndRemoveWithProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.Convert" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Convert" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.Deprecate" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Deprecate" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.LookupSetLegacy" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="LookupSetLegacy" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.LookupSetWithProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="LookupSetWithProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MakeMandatoryWithDefaultNoThrow" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MakeMandatoryWithDefaultNoThrow" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MakeMandatoryWithoutDefaultAndThrow" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MakeMandatoryWithoutDefaultAndThrow" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MakeMandatoryWithoutDefaultNoThrow" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MakeMandatoryWithoutDefaultNoThrow" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MakeNullable" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MakeNullable" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MergeAddrLine1And2AndFail" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MergeAddrLine1And2AndFail" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MergePropertyPreferSource" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MergePropertyPreferSource" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MergePropertyPreferTarget" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MergePropertyPreferTarget" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.RelationDirectLoad" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="RelationDirectLoad" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.RenameProperty" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="RenameProperty" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.SetDefaultValue" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetDefaultValue" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.SetIndexTypeToIndex" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetIndexTypeToIndex" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.SetIndexTypeToUnique" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetIndexTypeToUnique" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.TimeDepCollAddAndRemoveLegacy" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TimeDepCollAddAndRemoveLegacy" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.TimeDepCollAddAndRemoveWithProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TimeDepCollAddAndRemoveWithProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.TimeDepLookupSetLegacy" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TimeDepLookupSetLegacy" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.TimeDepLookupSetWithProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TimeDepLookupSetWithProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.ToCompressedString" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ToCompressedString" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+        <Rule Match="All">
+          <Property Name="Project" Value="Blueprint41.UnitTest.Memgraph (net8.0)" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="Blueprint41.UnitTest.Memgraph.Tests" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestDataModel" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureEntitiesHaveRowVersionPropertyOrInherited" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntitiesHaveRowVersionPropertyOrInherited" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureEntityKeyIsUnique" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityKeyIsUnique" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureMatchNodeReturnsCorrectNode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureMatchNodeReturnsCorrectNode" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsurePropertiesAreUnique" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsurePropertiesAreUnique" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureRowVersionIsOnlyOnePerEntity" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureRowVersionIsOnlyOnePerEntity" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureRowVersionPropertyIsDateTime" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureRowVersionPropertyIsDateTime" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataAreCreated" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataAreCreated" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataAreUnique" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataAreUnique" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataHaveCorrectProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataHaveCorrectProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataHaveKeys" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataHaveKeys" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.EnsureStaticDataIsDeleted" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureStaticDataIsDeleted" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorChangeInheritance" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorChangeInheritance" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorCopyValue" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorCopyValue" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntityApplyConstraints" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntityApplyConstraints" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntityDeprecate" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntityDeprecate" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntityRename" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntityRename" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntityResetFunctionalId" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntityResetFunctionalId" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntitySetDefaultValue" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntitySetDefaultValue" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestDataModel.IRefactorEntitySetFunctionalId" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorEntitySetFunctionalId" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestGeneratedClasses" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplCRUD" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplCRUD" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplCRUDWithRelationship" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplCRUDWithRelationship" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplPlannerHitsUsing" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplPlannerHitsUsing" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplQuery" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplQuery" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGeneratedClasses.OGMImplQueryOptionalMatch" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="OGMImplQueryOptionalMatch" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestGenerator" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGenerator.EnsureFilesAreGenerated" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureFilesAreGenerated" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGenerator.EnsureFilesAreNotGeneratedWhenDeprecated" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureFilesAreNotGeneratedWhenDeprecated" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGenerator.EnsureGeneratorSettingsIsRequired" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureGeneratorSettingsIsRequired" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestGenerator.GenerateMockModel" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="GenerateMockModel" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestNeo4jTransaction" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureCanCreateAnEntity" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureCanCreateAnEntity" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityIsCreatedEvenFlushedWithoutTransaction" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityIsCreatedEvenFlushedWithoutTransaction" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityIsCreatedRegardlessAnExceptionIsThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityIsCreatedRegardlessAnExceptionIsThrown" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityIsFlushedAfterTransaction" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityIsFlushedAfterTransaction" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityIsRolledbackWhenExceptionIsThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityIsRolledbackWhenExceptionIsThrown" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityShouldNotBeAddedAfterRollback" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityShouldNotBeAddedAfterRollback" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureEntityShouldNotBeRollbackedAfterCommitedAndViceVersa" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureEntityShouldNotBeRollbackedAfterCommitedAndViceVersa" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureNotAbleToTransactAfterCommit" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureNotAbleToTransactAfterCommit" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureRunningTransactionIsNeo4jTransaction" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureRunningTransactionIsNeo4jTransaction" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestNeo4jTransaction.EnsureThereShouldBeATransactionWhenRunningNeo4jCypher" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="EnsureThereShouldBeATransactionWhenRunningNeo4jCypher" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestOptimizeFor" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestOptimizeFor.TestOptimize" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TestOptimize" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestRefactorProperty" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyConvert" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyConvert" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyConvertToCollectionOrLookup" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyConvertToCollectionOrLookup" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyMakeMandatoryWithValues" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyMakeMandatoryWithValues" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyMerge" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyMerge" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyMove" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyMove" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyRename" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyRename" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertyReroute" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertyReroute" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRefactorProperty.IRefactorPropertySetIndexTypeAndDeprecate" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="IRefactorPropertySetIndexTypeAndDeprecate" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="TestRelationships" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.CollAddAndRemoveLegacy" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="CollAddAndRemoveLegacy" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.CollAddAndRemoveWithProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="CollAddAndRemoveWithProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.Convert" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Convert" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.Deprecate" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="Deprecate" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.LookupSetLegacy" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="LookupSetLegacy" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.LookupSetWithProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="LookupSetWithProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MakeMandatoryWithDefaultNoThrow" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MakeMandatoryWithDefaultNoThrow" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MakeMandatoryWithoutDefaultAndThrow" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MakeMandatoryWithoutDefaultAndThrow" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MakeMandatoryWithoutDefaultNoThrow" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MakeMandatoryWithoutDefaultNoThrow" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MakeNullable" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MakeNullable" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MergeAddrLine1And2AndFail" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MergeAddrLine1And2AndFail" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MergePropertyPreferSource" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MergePropertyPreferSource" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.MergePropertyPreferTarget" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="MergePropertyPreferTarget" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.RelationDirectLoad" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="RelationDirectLoad" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.RenameProperty" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="RenameProperty" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.SetDefaultValue" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetDefaultValue" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.SetIndexTypeToIndex" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetIndexTypeToIndex" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.SetIndexTypeToUnique" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="SetIndexTypeToUnique" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.TimeDepCollAddAndRemoveLegacy" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TimeDepCollAddAndRemoveLegacy" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.TimeDepCollAddAndRemoveWithProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TimeDepCollAddAndRemoveWithProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.TimeDepLookupSetLegacy" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TimeDepLookupSetLegacy" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.TimeDepLookupSetWithProperties" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="TimeDepLookupSetWithProperties" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="Blueprint41.UnitTest.Memgraph.Tests.TestRelationships.ToCompressedString" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ToCompressedString" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>

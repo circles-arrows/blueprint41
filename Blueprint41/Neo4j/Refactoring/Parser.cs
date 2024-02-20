@@ -17,19 +17,18 @@ namespace Blueprint41.Neo4j.Refactoring
 
         private static RawResult PrivateExecute(string cypher, Dictionary<string, object> parameters)
         {
+            IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
+
             if (parameters is null || parameters.Count == 0)
-                return Transaction.RunningTransaction.Run(cypher);
+                return runner.Run(cypher);
             else
-                return Transaction.RunningTransaction.Run(cypher, parameters);
+                return runner.Run(cypher, parameters);
         }
 
-        internal static RawResult Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = false, Action<RawResult> logic = null)
+        internal static void Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true, Action<RawResult> logic = null)
         {
             if (!ShouldExecute)
-                return null;
-
-            if (!withTransaction && logic is not null)
-                throw new NotSupportedException("You can only supply logic if the query runs withTransaction");
+                return;
 
             RawResult result;
 
@@ -37,17 +36,19 @@ namespace Blueprint41.Neo4j.Refactoring
             {
                 using (Transaction.Begin(withTransaction))
                 {
-                    result = Parser.PrivateExecute(cypher, parameters);
+                    result = PrivateExecute(cypher, parameters);
                     logic?.Invoke(result);
                     Transaction.Commit();
                 }
             }
             else
             {
-                result = Parser.PrivateExecute(cypher, parameters);
+                using (Session.Begin(withTransaction))
+                {
+                    result = PrivateExecute(cypher, parameters);
+                    logic?.Invoke(result);
+                }
             }
-
-            return result;
         }
         internal static void ExecuteBatched(string cypher, Dictionary<string, object> parameters)
         {

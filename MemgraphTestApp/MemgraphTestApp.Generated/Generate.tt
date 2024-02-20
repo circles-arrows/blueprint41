@@ -1,0 +1,31 @@
+﻿<#@ template language="C#" hostSpecific="true" debug="true" #>
+<#@ assembly name="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" #>
+<#@ assembly name="$(ProjectDir)..\MemgraphTestApp.Model\bin\Debug\netstandard2.0\System.CodeDom.dll" #>
+<#@ assembly name="$(ProjectDir)..\MemgraphTestApp.Model\bin\Debug\netstandard2.0\Blueprint41.dll"  #>
+<#@ assembly name="$(ProjectDir)..\MemgraphTestApp.Model\bin\Debug\netstandard2.0\MemgraphTestApp.dll"  #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Blueprint41.DatastoreTemplates" #>
+<#@ import namespace="MemgraphTestApp" #>
+<#@ output extension=".txt" #>
+<#   
+	try
+    {
+		Generator.Execute<HumanResources>(
+			new GeneratorSettings(
+				Path.GetDirectoryName(Host.TemplateFile),
+				"Domain.Data"
+			)
+		);
+#>
+Success!
+<#
+    }
+	catch (Exception e)
+    {
+#>
+Error Message: <#= e.Message #>
+Stack Trace:
+<#= e.StackTrace #>
+<#
+    }
+#>

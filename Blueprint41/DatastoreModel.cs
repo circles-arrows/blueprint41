@@ -176,7 +176,19 @@ namespace Blueprint41
                 bool scriptCommitted = false;
                 if (upgradeDatastore && PersistenceProvider.IsNeo4j && !isVoidProvider)
                 {
-                    using (Transaction.Begin(true))
+                    if (PersistenceProvider.CurrentPersistenceProvider.IsMemgraph)
+                    {
+                        // In Memgraph constraints cannot be manipulated during transactions.
+                        // If any refactor action conflicts with a constraint (e.g. Rename property with NOT NULL constraint).
+                        // Memgraph will hang on a lock taken during removal of the constraint and the lock taken during renaming the property.
+                        using (Session.Begin())
+                        {
+                            string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
+                            Session.RunningSession.Run(clearSchema);
+                        }
+                    }
+
+                    using (Transaction.Begin())
                     {
                         if (!Parser.HasScript(script))
                         {
@@ -206,29 +218,27 @@ namespace Blueprint41
 
                 if (upgradeDatastore && scriptCommitted)
                 {
-                    using (Transaction.Begin(true))
+                    using (Session.Begin())
                     {
                         Parser.ForceScript(delegate ()
                         {
                             Refactor.ApplyConstraints();
                         });
-                        Transaction.Commit();
                     }
                 }
             }
 
             if (upgradeDatastore)
             {
-                using (Transaction.Begin(true))
+                using (Session.Begin())
                 {
                     Parser.ForceScript(delegate ()
                     {
                         Refactor.ApplyConstraints();
                     });
-                    Transaction.Commit();
                 }
 
-                using (Transaction.Begin(true))
+                using (Transaction.Begin())
                 {
                     if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds())
                     {
@@ -245,8 +255,11 @@ namespace Blueprint41
 
             if (!isVoidProvider)
             {
-                bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
-                Refactor.ApplyFullTextSearchIndexes(shouldRun);
+                using (Session.Begin())
+                {
+                    bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
+                    Refactor.ApplyFullTextSearchIndexes(shouldRun);
+                }
             }
 
             executed = true;
@@ -350,8 +363,8 @@ namespace Blueprint41
             //This will cause that the code to refresh function id every 12 hours to not be triggered.
             //if (!Parser.ShouldExecute) 
             //    return;
-
-            GetSchema().UpdateFunctionalIds();
+            if (PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value)
+                GetSchema().UpdateFunctionalIds();
         }
 
         void IRefactorGlobal.ApplyConstraints()

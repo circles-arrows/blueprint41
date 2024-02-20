@@ -32,6 +32,7 @@ namespace Blueprint41.Neo4j.Persistence.v5
         public override string FnIsNaN => "isNaN({base})";
         public override string FnApocCreateUuid => "randomUUID()";
         public override string CallApocCreateUuid => "WITH randomUUID() as key";
+        public override string TestCompressedString(string alias, string field) => $"toStringOrNull({alias}.`{field}`) = {alias}.`{field}`";
 
         #endregion
 

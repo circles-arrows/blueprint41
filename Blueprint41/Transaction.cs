@@ -12,7 +12,7 @@ using persistence = Blueprint41.Neo4j.Persistence;
 
 namespace Blueprint41
 {
-    public abstract class Transaction : DisposableScope<Transaction>
+    public abstract class Transaction : DisposableScope<Transaction>, IStatementRunner
     {
         protected Transaction()
         {
@@ -23,6 +23,7 @@ namespace Blueprint41
             PersistenceProviderFactory = factory;
         }
 
+        
         #region Transaction Logic
 
         public static Transaction Begin()
@@ -83,7 +84,6 @@ namespace Blueprint41
 
         public abstract RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
         public abstract RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
-
         protected abstract void ApplyFunctionalId(FunctionalId functionalId);
         // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushInternal()

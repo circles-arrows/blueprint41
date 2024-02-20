@@ -1,14 +1,12 @@
-﻿using Blueprint41.Core;
-using Blueprint41.DatastoreTemplates;
-using Blueprint41.Neo4j.Persistence;
-using Blueprint41.Neo4j.Persistence.Driver.v5;
+﻿using System;
+using NUnit.Framework;
+
+using Blueprint41.Core;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
+
 using Datastore.Manipulation;
-using NUnit.Framework;
-using System;
-using System.Text.RegularExpressions;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -37,12 +35,20 @@ namespace Blueprint41.UnitTest.Tests
 
                 Transaction.Commit();
             }
+#if NEO4J
             using (Transaction.Begin())
             {
                 string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
                 Transaction.RunningTransaction.Run(clearSchema);
                 Transaction.Commit();
             }
+#elif MEMGRAPH
+            using (Session.Begin())
+            {
+                string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
+                Session.RunningSession.Run(clearSchema);
+            }
+#endif
         }
 
 
@@ -112,7 +118,7 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.Greater(p.ActedInMovies.Count, 0);
                     Assert.Greater(p.ActedInMovies[0].Actors.Count, 0);
 
-                    outputConsole = output.GetOuput();
+                    outputConsole = output.GetOutput();
 
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person) WHERE node.Uid = $key RETURN node"));
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:DIRECTED_BY]->(out:Movie) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
@@ -127,7 +133,7 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.Greater(p.ActedInMovies.Count, 0);
                     Assert.Greater(p.ActedInMovies[0].Actors.Count, 0);
 
-                    outputConsole = output.GetOuput();
+                    outputConsole = output.GetOutput();
 
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person) WHERE node.Uid = $key RETURN node"));
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Person)-[rel:DIRECTED_BY]->(out:Movie) WHERE node.Uid = $key RETURN out, rel"));
