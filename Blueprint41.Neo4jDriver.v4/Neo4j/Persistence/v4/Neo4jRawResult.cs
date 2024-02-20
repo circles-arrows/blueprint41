@@ -36,8 +36,24 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v4
         {
             get
             {
-                m_Enumerator = new RawRecordEnumerator<IRecord>(Scheduler.RunBlocking(() => Result.ToListAsync(), "Convert Result to Result List").GetEnumerator(), item => new Neo4jRawRecord(item));
+                m_Enumerator = new RawRecordEnumerator<IRecord>(Scheduler.RunBlocking(() => ToList(Result), "Convert Result to Result List").GetEnumerator(), item => new Neo4jRawRecord(item));
                 return m_Enumerator!;
+
+                async Task<List<IRecord>> ToList(IResultCursor? cursor)
+                {
+                    List<IRecord> records = new List<IRecord>(64);
+
+                    if (cursor is not null)
+                    {
+                        while (await cursor.FetchAsync())
+                        {
+                            var record = cursor.Current;
+                            records.Add(record);
+                        }
+                    }
+
+                    return records;
+                }
             }
         }
         private RawRecordEnumerator<IRecord>? m_Enumerator;
