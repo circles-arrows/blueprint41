@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace Blueprint41.Build
 {
@@ -15,12 +16,23 @@ namespace Blueprint41.Build
         public static void Main(string[] args)
         {
             var parameters = ParseParameters(args);
-
             var modelPath = GetFullPath(parameters, ModelPathArg);
             var generatePath = GetFullPath(parameters, GeneratePathArg);
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
+
+            var hashFilePath = Path.Combine(generatePath, "currentModelHash");
+            string existingHash = File.Exists(hashFilePath) ? File.ReadAllText(hashFilePath) : null;
+            string currentHash = ComputeHash(modelPath);
+
+            if (currentHash != existingHash)
+            {
+                File.WriteAllText(hashFilePath, currentHash);
+            }
+            else
+                return;
+
 
             Console.WriteLine("Generate Task Starting...");
             Console.WriteLine($"ModelPath: '{modelPath}'");
@@ -124,6 +136,21 @@ namespace Blueprint41.Build
             if (string.IsNullOrWhiteSpace(modelPath) || string.IsNullOrWhiteSpace(generatePath))
             {
                 throw new InvalidOperationException($"Both {ModelPathArg} and {GeneratePathArg} arguments are required.");
+            }
+        }
+
+        static string ComputeHash(string filePath)
+        {
+            using (HashAlgorithm algorithm = SHA1.Create())
+            {
+                using (FileStream fileStream = File.OpenRead(filePath))
+                {
+                    // Compute the hash of the file
+                    byte[] hashValue = algorithm.ComputeHash(fileStream);
+
+                    // Convert hash bytes to hex string
+                    return BitConverter.ToString(hashValue).Replace("-", "").ToLowerInvariant();
+                }
             }
         }
     }

@@ -10,6 +10,7 @@ namespace Blueprint41.DatastoreTemplates
 {
     public static class Generator
     {
+        private const string FileExtension = ".cs";
         public static GeneratorResult Execute<T>(GeneratorSettings settings)
             where T : DatastoreModel<T>, new()
         {
@@ -128,19 +129,40 @@ namespace Blueprint41.DatastoreTemplates
 
             return generatorResult;
         }
-
         private static void CreateFilesFromDictionary(Dictionary<string, string> dictionary, string path)
         {
-            if (Directory.Exists(path))
-                Directory.Delete(path, true);
+            EnsureDirectoryExists(path);
+            DeleteUnmatchedFiles(path, dictionary.Keys);
+            CreateOrUpdateFiles(path, dictionary);
+        }
 
-            Directory.CreateDirectory(path);
-            foreach (KeyValuePair<string, string> item in dictionary)
+        private static void EnsureDirectoryExists(string path)
+        {
+            if (!Directory.Exists(path))
             {
-                string entityPath = Path.Combine(path, item.Key + ".cs");
-                using FileStream fs = File.Create(entityPath);
-                byte[] info = new UTF8Encoding(true).GetBytes(item.Value);
-                fs.Write(info, 0, info.Length);
+                Directory.CreateDirectory(path);
+            }
+        }
+
+        private static void DeleteUnmatchedFiles(string path, ICollection<string> validFileNames)
+        {
+            var existingFiles = Directory.GetFiles(path, "*" + FileExtension)
+                .Select(Path.GetFileNameWithoutExtension)
+                .ToList();
+
+            var filesToDelete = existingFiles.Except(validFileNames);
+            foreach (var fileToDelete in filesToDelete)
+            {
+                File.Delete(Path.Combine(path, fileToDelete + FileExtension));
+            }
+        }
+
+        private static void CreateOrUpdateFiles(string path, Dictionary<string, string> filesContent)
+        {
+            foreach (var fileEntry in filesContent)
+            {
+                string filePath = Path.Combine(path, fileEntry.Key + FileExtension);
+                File.WriteAllText(filePath, fileEntry.Value, new UTF8Encoding(false));
             }
         }
 
