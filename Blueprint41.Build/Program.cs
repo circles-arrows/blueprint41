@@ -38,7 +38,7 @@ namespace Blueprint41.Build
         {
             var hashFilePath = Path.Combine(generatePath, "currentModelHash");
             string existingHash = File.Exists(hashFilePath) ? File.ReadAllText(hashFilePath) : null;
-            string currentHash = ComputeSha256Hash(modelPath);
+            string currentHash = ComputeHash(modelPath);
 
             if (currentHash != existingHash)
             {
@@ -140,14 +140,14 @@ namespace Blueprint41.Build
             }
         }
 
-        static string ComputeSha256Hash(string filePath)
+        static string ComputeHash(string filePath)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            using (HashAlgorithm algorithm = SHA1.Create())
             {
                 using (FileStream fileStream = File.OpenRead(filePath))
                 {
-                    // Compute the SHA256 hash of the file
-                    byte[] hashValue = sha256.ComputeHash(fileStream);
+                    // Compute the hash of the file
+                    byte[] hashValue = algorithm.ComputeHash(fileStream);
 
                     // Convert hash bytes to hex string
                     return BitConverter.ToString(hashValue).Replace("-", "").ToLowerInvariant();
