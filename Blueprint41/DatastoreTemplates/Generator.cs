@@ -3,59 +3,64 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace Blueprint41.DatastoreTemplates
 {
     public static class Generator
     {
-        public static GeneratorResult Execute<T>(GeneratorSettings? settings = null)
+        public static GeneratorResult Execute<T>(GeneratorSettings settings)
             where T : DatastoreModel<T>, new()
         {
             if (settings is null)
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
 
             DatastoreModel model = DatastoreModel<T>.Model;
 
-            GeneratorResult generatorResult = new GeneratorResult();
+            GeneratorResult generatorResult = new();
 
             #region Entities and Nodes
 
             foreach (var entity in model.Entities.Where(item => item.IsAbstract))
             {
-                Domain_Data_Entity_Abstract t4 = new Domain_Data_Entity_Abstract();
-                t4.Settings = settings;
-                t4.DALModel = entity;
-                t4.Datastore = model;
+                Domain_Data_Entity_Abstract t4 = new()
+                {
+                    Settings = settings,
+                    DALModel = entity,
+                    Datastore = model
+                };
                 string content = t4.TransformText();
                 generatorResult.EntityResult.Add(entity.Name, content);
 
-                Domain_Data_Node node = new Domain_Data_Node();
-                node.Settings = settings;
-                node.DALModel = entity;
-                node.Datastore = model;
+                Domain_Data_Node node = new()
+                {
+                    Settings = settings,
+                    DALModel = entity,
+                    Datastore = model
+                };
                 string nodeContent = node.TransformText();
-                generatorResult.NodeResult.Add(string.Format("{0}Node", entity.Name), nodeContent);
-
+                generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
             }
             foreach (var entity in model.Entities.Where(item => !item.IsAbstract))
             {
-                Domain_Data_Entity t4 = new Domain_Data_Entity();
-                t4.Settings = settings;
-                t4.DALModel = entity;
-                t4.Datastore = model;
+                Domain_Data_Entity t4 = new()
+                {
+                    Settings = settings,
+                    DALModel = entity,
+                    Datastore = model
+                };
                 string content = t4.TransformText();
                 generatorResult.EntityResult.Add(entity.Name, content);
 
-                Domain_Data_Node node = new Domain_Data_Node();
-                node.Settings = settings;
-                node.DALModel = entity;
-                node.Datastore = model;
+                Domain_Data_Node node = new()
+                {
+                    Settings = settings,
+                    DALModel = entity,
+                    Datastore = model
+                };
                 string nodeContent = node.TransformText();
-                generatorResult.NodeResult.Add(string.Format("{0}Node", entity.Name), nodeContent);
+                generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
             }
 
             #endregion
@@ -83,10 +88,12 @@ namespace Blueprint41.DatastoreTemplates
 
             #region Register
 
-            Domain_Data_Register register = new Domain_Data_Register();
-            register.Settings = settings;
-            register.DALModel = null;
-            register.Datastore = model;
+            Domain_Data_Register register = new()
+            {
+                Settings = settings,
+                DALModel = null,
+                Datastore = model
+            };
             string registerContent = register.TransformText();
             generatorResult.EntityResult.Add("_Register", registerContent);
 
@@ -94,10 +101,12 @@ namespace Blueprint41.DatastoreTemplates
 
             #region GraphEvents
 
-            Domain_Data_GraphEvents ge = new Domain_Data_GraphEvents();
-            ge.Settings = settings;
-            ge.DALModel = null;
-            ge.Datastore = model;
+            Domain_Data_GraphEvents ge = new()
+            {
+                Settings = settings,
+                DALModel = null,
+                Datastore = model
+            };
             string geContent = ge.TransformText();
             generatorResult.EntityResult.Add("_GraphEvents", geContent);
 
@@ -122,56 +131,16 @@ namespace Blueprint41.DatastoreTemplates
 
         private static void CreateFilesFromDictionary(Dictionary<string, string> dictionary, string path)
         {
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
+
             Directory.CreateDirectory(path);
             foreach (KeyValuePair<string, string> item in dictionary)
             {
                 string entityPath = Path.Combine(path, item.Key + ".cs");
-                using (FileStream fs = File.Create(entityPath))
-                {
-                    Byte[] info = new UTF8Encoding(true).GetBytes(item.Value);
-                    fs.Write(info, 0, info.Length);
-                }
-            }
-        }
-
-        private static void RecursiveDelete(string? currentDirectory)
-        {
-            if (Directory.GetFiles(currentDirectory).Length == 0)
-            {
-                string? parentDirectory = Path.GetDirectoryName(currentDirectory);
-                Directory.Delete(currentDirectory);
-                RecursiveDelete(parentDirectory);
-            }
-        }
-
-        private static void GetDirectories(string folder, string[] paths, int index, List<string> directories, List<string> files)
-        {
-            if (paths.Length - 1 == index)
-            {
-                string[] filesToAdd = Directory.GetFiles(folder, paths[index]);
-                if (filesToAdd.Length > 0)
-                {
-                    directories.Add(folder);
-                    files.AddRange(filesToAdd);
-                }
-                return;
-            }
-
-            if (paths[index].Contains("?") || paths[index].Contains("*"))
-            {
-                string[] searchDirectories = Directory.GetDirectories(folder, paths[index]);
-                foreach (var subDirectory in searchDirectories)
-                {
-                    DirectoryInfo directory = new DirectoryInfo(subDirectory);
-                    if (directory.Name.StartsWith("_") == false)
-                        GetDirectories(subDirectory, paths, index + 1, directories, files);
-                }
-            }
-            else
-            {
-                DirectoryInfo directory = new DirectoryInfo(Path.Combine(folder, paths[index]));
-                if (directory.Exists && directory.Name.StartsWith("_") == false)
-                    GetDirectories(directory.FullName, paths, index + 1, directories, files);
+                using FileStream fs = File.Create(entityPath);
+                byte[] info = new UTF8Encoding(true).GetBytes(item.Value);
+                fs.Write(info, 0, info.Length);
             }
         }
 
@@ -200,7 +169,7 @@ namespace Blueprint41.DatastoreTemplates
         }
         public static string ToProperCase(this string value)
         {
-            StringBuilder retVal = new StringBuilder(32);
+            StringBuilder retVal = new(32);
 
             if (!string.IsNullOrEmpty(value))
             {
@@ -304,7 +273,7 @@ namespace Blueprint41.DatastoreTemplates
         }
         private static bool MatchAndReplace(ref string Text, string Match, string Replace, int Amount)
         {
-            if (Text.EndsWith(Match, System.StringComparison.CurrentCultureIgnoreCase) == true)
+            if (Text.EndsWith(Match, System.StringComparison.CurrentCultureIgnoreCase))
             {
                 if (Text.Length > 0 && Text.Substring(Text.Length - 1) == Text.Substring(Text.Length - 1).ToUpper())
                     Replace = Replace.ToUpper();
@@ -323,33 +292,24 @@ namespace Blueprint41.DatastoreTemplates
         }
         public static string ToNeo4jType(this string type)
         {
-            switch (type)
+            return type switch
             {
-                case "DateTime":
-                    return "long";
-                case "DateTime?":
-                    return "long?";
-                case "decimal":
-                    return "long";
-                case "decimal?":
-                    return "long?";
-                case "Guid":
-                    return "string";
-                case "Guid?":
-                    return "string";
-                default:
-                    return type;
-            }
+                "DateTime" => "long",
+                "DateTime?" => "long?",
+                "decimal" => "long",
+                "decimal?" => "long?",
+                "Guid" => "string",
+                "Guid?" => "string",
+                _ => type,
+            };
         }
         public static string ToXsdType(this string type)
         {
-            switch (type.Replace("?", ""))
+            return type.Replace("?", "") switch
             {
-                case "bool":
-                    return "xs:boolean";
-                default:
-                    return string.Concat("xs:", type.Replace("?", "").ToCamelCase());
-            }
+                "bool" => "xs:boolean",
+                _ => string.Concat("xs:", type.Replace("?", "").ToCamelCase()),
+            };
         }
 
         public static string ToXmlEscape(this string self)

@@ -39,6 +39,32 @@ namespace Blueprint41.Query
 #>
 	public partial class <#= listType #> : ListResult<<#= listType #>, <#= resultType #>, <#= underlyingType ?? "object" #>>, <#= iface #>
 	{
+		public static QueryCondition operator ==(<#= listType #> left, <#= listType #> right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(<#= listType #> left, <#= underlyingType ?? "object" #>[] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(<#= listType #> left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(<#= listType #> left, <#= listType #> right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(<#= listType #> left, <#= underlyingType ?? "object" #>[] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(<#= listType #> left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public <#= listType #>(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public <#= listType #>(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public <#= listType #>(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }

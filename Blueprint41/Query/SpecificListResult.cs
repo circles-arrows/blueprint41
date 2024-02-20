@@ -10,6 +10,32 @@ namespace Blueprint41.Query
 {
 	public partial class MiscListResult : ListResult<MiscListResult, MiscResult, object>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(MiscListResult left, MiscListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(MiscListResult left, object[] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(MiscListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(MiscListResult left, MiscListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(MiscListResult left, object[] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(MiscListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public MiscListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public MiscListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public MiscListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -38,6 +64,32 @@ namespace Blueprint41.Query
 	}
 	public partial class StringListResult : ListResult<StringListResult, StringResult, string>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(StringListResult left, StringListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(StringListResult left, string[] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(StringListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(StringListResult left, StringListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(StringListResult left, string[] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(StringListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public StringListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public StringListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public StringListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -66,6 +118,32 @@ namespace Blueprint41.Query
 	}
 	public partial class BooleanListResult : ListResult<BooleanListResult, BooleanResult, bool>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(BooleanListResult left, BooleanListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(BooleanListResult left, bool[] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(BooleanListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(BooleanListResult left, BooleanListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(BooleanListResult left, bool[] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(BooleanListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public BooleanListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public BooleanListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public BooleanListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -94,6 +172,32 @@ namespace Blueprint41.Query
 	}
 	public partial class DateTimeListResult : ListResult<DateTimeListResult, DateTimeResult, DateTime>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(DateTimeListResult left, DateTimeListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(DateTimeListResult left, DateTime[] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(DateTimeListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(DateTimeListResult left, DateTimeListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(DateTimeListResult left, DateTime[] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(DateTimeListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public DateTimeListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public DateTimeListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public DateTimeListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -122,6 +226,32 @@ namespace Blueprint41.Query
 	}
 	public partial class FloatListResult : ListResult<FloatListResult, FloatResult, double>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(FloatListResult left, FloatListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(FloatListResult left, double[] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(FloatListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(FloatListResult left, FloatListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(FloatListResult left, double[] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(FloatListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public FloatListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public FloatListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public FloatListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -150,6 +280,32 @@ namespace Blueprint41.Query
 	}
 	public partial class NumericListResult : ListResult<NumericListResult, NumericResult, long>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(NumericListResult left, NumericListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(NumericListResult left, long[] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(NumericListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(NumericListResult left, NumericListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(NumericListResult left, long[] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(NumericListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public NumericListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public NumericListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public NumericListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -178,6 +334,32 @@ namespace Blueprint41.Query
 	}
 	public partial class MiscJaggedListResult : ListResult<MiscJaggedListResult, MiscListResult, object[]>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(MiscJaggedListResult left, MiscJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(MiscJaggedListResult left, object[][] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(MiscJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(MiscJaggedListResult left, MiscJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(MiscJaggedListResult left, object[][] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(MiscJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public MiscJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public MiscJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public MiscJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -202,6 +384,32 @@ namespace Blueprint41.Query
 	}
 	public partial class StringJaggedListResult : ListResult<StringJaggedListResult, StringListResult, string[]>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(StringJaggedListResult left, StringJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(StringJaggedListResult left, string[][] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(StringJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(StringJaggedListResult left, StringJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(StringJaggedListResult left, string[][] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(StringJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public StringJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public StringJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public StringJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -226,6 +434,32 @@ namespace Blueprint41.Query
 	}
 	public partial class BooleanJaggedListResult : ListResult<BooleanJaggedListResult, BooleanListResult, bool[]>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(BooleanJaggedListResult left, BooleanJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(BooleanJaggedListResult left, bool[][] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(BooleanJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(BooleanJaggedListResult left, BooleanJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(BooleanJaggedListResult left, bool[][] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(BooleanJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public BooleanJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public BooleanJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public BooleanJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -250,6 +484,32 @@ namespace Blueprint41.Query
 	}
 	public partial class DateTimeJaggedListResult : ListResult<DateTimeJaggedListResult, DateTimeListResult, DateTime[]>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(DateTimeJaggedListResult left, DateTimeJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(DateTimeJaggedListResult left, DateTime[][] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(DateTimeJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(DateTimeJaggedListResult left, DateTimeJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(DateTimeJaggedListResult left, DateTime[][] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(DateTimeJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public DateTimeJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public DateTimeJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public DateTimeJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -274,6 +534,32 @@ namespace Blueprint41.Query
 	}
 	public partial class FloatJaggedListResult : ListResult<FloatJaggedListResult, FloatListResult, double[]>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(FloatJaggedListResult left, FloatJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(FloatJaggedListResult left, double[][] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(FloatJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(FloatJaggedListResult left, FloatJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(FloatJaggedListResult left, double[][] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(FloatJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public FloatJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public FloatJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public FloatJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }
@@ -298,6 +584,32 @@ namespace Blueprint41.Query
 	}
 	public partial class NumericJaggedListResult : ListResult<NumericJaggedListResult, NumericListResult, long[]>, IPrimitiveListResult
 	{
+		public static QueryCondition operator ==(NumericJaggedListResult left, NumericJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+		public static QueryCondition operator ==(NumericJaggedListResult left, long[][] right)
+        {
+            return new QueryCondition(left, Operator.Equals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator ==(NumericJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.Equals, right);
+        }
+        public static QueryCondition operator !=(NumericJaggedListResult left, NumericJaggedListResult right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+        public static QueryCondition operator !=(NumericJaggedListResult left, long[][] right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, Parameter.Constant(right));
+        }
+        public static QueryCondition operator !=(NumericJaggedListResult left, Parameter right)
+        {
+            return new QueryCondition(left, Operator.NotEquals, right);
+        }
+
+
 		public NumericJaggedListResult(Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(function, arguments, type) { }
 		public NumericJaggedListResult(FieldResult? parent, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(parent, function, arguments, type) { }
 		public NumericJaggedListResult(AliasResult alias, Func<QueryTranslator, string?>? function, object[]? arguments = null, Type? type = null) : base(alias, function, arguments, type) { }

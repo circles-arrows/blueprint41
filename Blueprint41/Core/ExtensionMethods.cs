@@ -311,7 +311,9 @@ namespace System
             {
                 csharpProvider.GenerateCodeFromStatement(variableDeclaration, writer, new CodeGeneratorOptions());
             }
-            sb.Replace(" dummy;\r\n", null);
+
+            string dummyString = $" dummy;{Environment.NewLine}";
+            sb.Replace(dummyString, null);
             if (nullable && type.IsValueType)
                 return sb.ToString() + "?";
             return sb.ToString();

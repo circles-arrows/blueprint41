@@ -10,13 +10,13 @@ using m = Domain.Data.Manipulation;
 
 namespace Domain.Data.Query
 {
-	public partial class Node
-	{
-		public static MovieNode Movie { get { return new MovieNode(); } }
-	}
+    public partial class Node
+    {
+        public static MovieNode Movie { get { return new MovieNode(); } }
+    }
 
-	public partial class MovieNode : Blueprint41.Query.Node
-	{
+    public partial class MovieNode : Blueprint41.Query.Node
+    {
         public static implicit operator QueryCondition(MovieNode a)
         {
             return new QueryCondition(a);
@@ -26,16 +26,16 @@ namespace Domain.Data.Query
             return new QueryCondition(a, true);
         } 
 
-		protected override string GetNeo4jLabel()
-		{
-			return "Movie";
-		}
-
-		protected override Entity GetEntity()
+        protected override string GetNeo4jLabel()
         {
-			return m.Movie.Entity;
+            return "Movie";
         }
-		public FunctionalId FunctionalId
+
+        protected override Entity GetEntity()
+        {
+            return m.Movie.Entity;
+        }
+        public FunctionalId FunctionalId
         {
             get
             {
@@ -43,17 +43,17 @@ namespace Domain.Data.Query
             }
         }
 
-		internal MovieNode() { }
-		internal MovieNode(MovieAlias alias, bool isReference = false)
-		{
-			NodeAlias = alias;
-			IsReference = isReference;
-		}
-		internal MovieNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
-		internal MovieNode(RELATIONSHIP relationship, DirectionEnum direction, AliasResult nodeAlias, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity)
-		{
-			NodeAlias = nodeAlias;
-		}
+        internal MovieNode() { }
+        internal MovieNode(MovieAlias alias, bool isReference = false)
+        {
+            NodeAlias = alias;
+            IsReference = isReference;
+        }
+        internal MovieNode(RELATIONSHIP relationship, DirectionEnum direction, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity) { }
+        internal MovieNode(RELATIONSHIP relationship, DirectionEnum direction, AliasResult nodeAlias, string neo4jLabel = null, Entity entity = null) : base(relationship, direction, neo4jLabel, entity)
+        {
+            NodeAlias = nodeAlias;
+        }
 
         public MovieNode Where(JsNotation<int?> released = default, JsNotation<string> tagline = default, JsNotation<string> title = default, JsNotation<string> Uid = default)
         {
@@ -96,7 +96,7 @@ namespace Domain.Data.Query
             return this;
         }
 
-		public MovieNode Alias(out MovieAlias alias)
+        public MovieNode Alias(out MovieAlias alias)
         {
             if (NodeAlias is MovieAlias a)
             {
@@ -109,7 +109,7 @@ namespace Domain.Data.Query
             }
             return this;
         }
-		public MovieNode Alias(out MovieAlias alias, string name)
+        public MovieNode Alias(out MovieAlias alias, string name)
         {
             if (NodeAlias is MovieAlias a)
             {
@@ -124,160 +124,160 @@ namespace Domain.Data.Query
             return this;
         }
 
-		public MovieNode UseExistingAlias(AliasResult alias)
-		{
-			NodeAlias = alias;
+        public MovieNode UseExistingAlias(AliasResult alias)
+        {
+            NodeAlias = alias;
             IsReference = true;
-			return this;
-		}
+            return this;
+        }
 
-		public MovieIn  In  { get { return new MovieIn(this); } }
-		public class MovieIn
-		{
-			private MovieNode Parent;
-			internal MovieIn(MovieNode parent)
-			{
-				Parent = parent;
-			}
-			public IFromIn_CONTAINS_GENRE_REL CONTAINS_GENRE { get { return new CONTAINS_GENRE_REL(Parent, DirectionEnum.In); } }
+        public MovieIn  In  { get { return new MovieIn(this); } }
+        public class MovieIn
+        {
+            private MovieNode Parent;
+            internal MovieIn(MovieNode parent)
+            {
+                Parent = parent;
+            }
+            public IFromIn_CONTAINS_GENRE_REL CONTAINS_GENRE { get { return new CONTAINS_GENRE_REL(Parent, DirectionEnum.In); } }
 
-		}
+        }
 
-		public MovieOut Out { get { return new MovieOut(this); } }
-		public class MovieOut
-		{
-			private MovieNode Parent;
-			internal MovieOut(MovieNode parent)
-			{
-				Parent = parent;
-			}
-			public IFromOut_ACTED_IN_REL ACTED_IN { get { return new ACTED_IN_REL(Parent, DirectionEnum.Out); } }
-			public IFromOut_DIRECTED_REL DIRECTED { get { return new DIRECTED_REL(Parent, DirectionEnum.Out); } }
-			public IFromOut_MOVIEREVIEW_HAS_MOVIE_REL MOVIEREVIEW_HAS_MOVIE { get { return new MOVIEREVIEW_HAS_MOVIE_REL(Parent, DirectionEnum.Out); } }
-			public IFromOut_MOVIEROLE_HAS_MOVIE_REL MOVIEROLE_HAS_MOVIE { get { return new MOVIEROLE_HAS_MOVIE_REL(Parent, DirectionEnum.Out); } }
-			public IFromOut_PRODUCED_REL PRODUCED { get { return new PRODUCED_REL(Parent, DirectionEnum.Out); } }
-			public IFromOut_WROTE_REL WROTE { get { return new WROTE_REL(Parent, DirectionEnum.Out); } }
-		}
-	}
+        public MovieOut Out { get { return new MovieOut(this); } }
+        public class MovieOut
+        {
+            private MovieNode Parent;
+            internal MovieOut(MovieNode parent)
+            {
+                Parent = parent;
+            }
+            public IFromOut_ACTED_IN_REL ACTED_IN { get { return new ACTED_IN_REL(Parent, DirectionEnum.Out); } }
+            public IFromOut_DIRECTED_REL DIRECTED { get { return new DIRECTED_REL(Parent, DirectionEnum.Out); } }
+            public IFromOut_MOVIEREVIEW_HAS_MOVIE_REL MOVIEREVIEW_HAS_MOVIE { get { return new MOVIEREVIEW_HAS_MOVIE_REL(Parent, DirectionEnum.Out); } }
+            public IFromOut_MOVIEROLE_HAS_MOVIE_REL MOVIEROLE_HAS_MOVIE { get { return new MOVIEROLE_HAS_MOVIE_REL(Parent, DirectionEnum.Out); } }
+            public IFromOut_PRODUCED_REL PRODUCED { get { return new PRODUCED_REL(Parent, DirectionEnum.Out); } }
+            public IFromOut_WROTE_REL WROTE { get { return new WROTE_REL(Parent, DirectionEnum.Out); } }
+        }
+    }
 
-	public class MovieAlias : AliasResult<MovieAlias, MovieListAlias>
-	{
-		internal MovieAlias(MovieNode parent)
-		{
-			Node = parent;
-		}
-		internal MovieAlias(MovieNode parent, string name)
-		{
-			Node = parent;
-			AliasName = name;
-		}
-		internal void SetAlias(string name) => AliasName = name;
+    public class MovieAlias : AliasResult<MovieAlias, MovieListAlias>
+    {
+        internal MovieAlias(MovieNode parent)
+        {
+            Node = parent;
+        }
+        internal MovieAlias(MovieNode parent, string name)
+        {
+            Node = parent;
+            AliasName = name;
+        }
+        internal void SetAlias(string name) => AliasName = name;
 
-		private  MovieAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private  MovieAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private  MovieAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type)
-		{
-			Node = alias.Node;
-		}
+        private  MovieAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private  MovieAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private  MovieAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type)
+        {
+            Node = alias.Node;
+        }
 
-		public Assignment[] Assign(JsNotation<int?> released = default, JsNotation<string> tagline = default, JsNotation<string> title = default, JsNotation<string> Uid = default)
+        public Assignment[] Assign(JsNotation<int?> released = default, JsNotation<string> tagline = default, JsNotation<string> title = default, JsNotation<string> Uid = default)
         {
             List<Assignment> assignments = new List<Assignment>();
-			if (released.HasValue) assignments.Add(new Assignment(this.released, released));
-			if (tagline.HasValue) assignments.Add(new Assignment(this.tagline, tagline));
-			if (title.HasValue) assignments.Add(new Assignment(this.title, title));
-			if (Uid.HasValue) assignments.Add(new Assignment(this.Uid, Uid));
+            if (released.HasValue) assignments.Add(new Assignment(this.released, released));
+            if (tagline.HasValue) assignments.Add(new Assignment(this.tagline, tagline));
+            if (title.HasValue) assignments.Add(new Assignment(this.title, title));
+            if (Uid.HasValue) assignments.Add(new Assignment(this.Uid, Uid));
             
             return assignments.ToArray();
         }
 
 
-		public override IReadOnlyDictionary<string, FieldResult> AliasFields
-		{
-			get
-			{
-				if (m_AliasFields is null)
-				{
-					m_AliasFields = new Dictionary<string, FieldResult>()
-					{
-						{ "title", new StringResult(this, "title", MovieGraph.Model.Datastore.Model.Entities["Movie"], MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["title"]) },
-						{ "tagline", new StringResult(this, "tagline", MovieGraph.Model.Datastore.Model.Entities["Movie"], MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["tagline"]) },
-						{ "released", new NumericResult(this, "released", MovieGraph.Model.Datastore.Model.Entities["Movie"], MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["released"]) },
-						{ "Uid", new StringResult(this, "Uid", MovieGraph.Model.Datastore.Model.Entities["Movie"], MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Uid"]) },
-					};
-				}
-				return m_AliasFields;
-			}
-		}
-		private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
+        public override IReadOnlyDictionary<string, FieldResult> AliasFields
+        {
+            get
+            {
+                if (m_AliasFields is null)
+                {
+                    m_AliasFields = new Dictionary<string, FieldResult>()
+                    {
+                        { "title", new StringResult(this, "title", MovieGraph.Model.Datastore.Model.Entities["Movie"], MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["title"]) },
+                        { "tagline", new StringResult(this, "tagline", MovieGraph.Model.Datastore.Model.Entities["Movie"], MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["tagline"]) },
+                        { "released", new NumericResult(this, "released", MovieGraph.Model.Datastore.Model.Entities["Movie"], MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["released"]) },
+                        { "Uid", new StringResult(this, "Uid", MovieGraph.Model.Datastore.Model.Entities["Movie"], MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Uid"]) },
+                    };
+                }
+                return m_AliasFields;
+            }
+        }
+        private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
-		public MovieNode.MovieIn In { get { return new MovieNode.MovieIn(new MovieNode(this, true)); } }
-		public MovieNode.MovieOut Out { get { return new MovieNode.MovieOut(new MovieNode(this, true)); } }
+        public MovieNode.MovieIn In { get { return new MovieNode.MovieIn(new MovieNode(this, true)); } }
+        public MovieNode.MovieOut Out { get { return new MovieNode.MovieOut(new MovieNode(this, true)); } }
 
-		public StringResult title
-		{
-			get
-			{
-				if (m_title is null)
-					m_title = (StringResult)AliasFields["title"];
+        public StringResult title
+        {
+            get
+            {
+                if (m_title is null)
+                    m_title = (StringResult)AliasFields["title"];
 
-				return m_title;
-			}
-		}
-		private StringResult m_title = null;
-		public StringResult tagline
-		{
-			get
-			{
-				if (m_tagline is null)
-					m_tagline = (StringResult)AliasFields["tagline"];
+                return m_title;
+            }
+        }
+        private StringResult m_title = null;
+        public StringResult tagline
+        {
+            get
+            {
+                if (m_tagline is null)
+                    m_tagline = (StringResult)AliasFields["tagline"];
 
-				return m_tagline;
-			}
-		}
-		private StringResult m_tagline = null;
-		public NumericResult released
-		{
-			get
-			{
-				if (m_released is null)
-					m_released = (NumericResult)AliasFields["released"];
+                return m_tagline;
+            }
+        }
+        private StringResult m_tagline = null;
+        public NumericResult released
+        {
+            get
+            {
+                if (m_released is null)
+                    m_released = (NumericResult)AliasFields["released"];
 
-				return m_released;
-			}
-		}
-		private NumericResult m_released = null;
-		public StringResult Uid
-		{
-			get
-			{
-				if (m_Uid is null)
-					m_Uid = (StringResult)AliasFields["Uid"];
+                return m_released;
+            }
+        }
+        private NumericResult m_released = null;
+        public StringResult Uid
+        {
+            get
+            {
+                if (m_Uid is null)
+                    m_Uid = (StringResult)AliasFields["Uid"];
 
-				return m_Uid;
-			}
-		}
-		private StringResult m_Uid = null;
-		public AsResult As(string aliasName, out MovieAlias alias)
-		{
-			alias = new MovieAlias((MovieNode)Node)
-			{
-				AliasName = aliasName
-			};
-			return this.As(aliasName);
-		}
-	}
+                return m_Uid;
+            }
+        }
+        private StringResult m_Uid = null;
+        public AsResult As(string aliasName, out MovieAlias alias)
+        {
+            alias = new MovieAlias((MovieNode)Node)
+            {
+                AliasName = aliasName
+            };
+            return this.As(aliasName);
+        }
+    }
 
-	public class MovieListAlias : ListResult<MovieListAlias, MovieAlias>, IAliasListResult
-	{
-		private MovieListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private MovieListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private MovieListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
-	}
-	public class MovieJaggedListAlias : ListResult<MovieJaggedListAlias, MovieListAlias>, IAliasJaggedListResult
-	{
-		private MovieJaggedListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
-		private MovieJaggedListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
-		private MovieJaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
-	}
+    public class MovieListAlias : ListResult<MovieListAlias, MovieAlias>, IAliasListResult
+    {
+        private MovieListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private MovieListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private MovieListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
+    }
+    public class MovieJaggedListAlias : ListResult<MovieJaggedListAlias, MovieListAlias>, IAliasJaggedListResult
+    {
+        private MovieJaggedListAlias(Func<QueryTranslator, string> function, object[] arguments, Type type) : base(function, arguments, type) { }
+        private MovieJaggedListAlias(FieldResult parent, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(parent, function, arguments, type) { }
+        private MovieJaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object[] arguments = null, Type type = null) : base(alias, function, arguments, type) { }
+    }
 }

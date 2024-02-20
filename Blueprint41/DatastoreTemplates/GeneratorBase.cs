@@ -165,6 +165,8 @@ namespace Blueprint41.DatastoreTemplates
                         return "StringListResult";
                     else
                         return "ListResult";
+                case "String[]":                   
+                    return "StringListResult";
                 default:
                     if (type.IsEnum)
                         return "StringResult";

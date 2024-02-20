@@ -40,6 +40,33 @@ namespace Blueprint41.Neo4j.Persistence.Void
                 new TypeMapping(typeof(decimal), typeof(long), "d"),
                 new TypeMapping(typeof(decimal?), typeof(long?), "d"),
                 new TypeMapping(typeof(CompressedString), typeof(byte[]), "cs"),
+
+			    // arrays...
+			    new TypeMapping(typeof(bool[]), typeof(List<object>), "l_b"),
+                new TypeMapping(typeof(bool?[]), typeof(List<object>), "l_b"),
+                new TypeMapping(typeof(sbyte[]), typeof(List<object>), "l_i"),
+                new TypeMapping(typeof(sbyte?[]), typeof(List<object>), "l_i"),
+                new TypeMapping(typeof(short[]), typeof(List<object>), "l_i"),
+                new TypeMapping(typeof(short?[]), typeof(List<object>), "l_i"),
+                new TypeMapping(typeof(int[]), typeof(List<object>), "l_i"),
+                new TypeMapping(typeof(int?[]), typeof(List<object>), "l_i"),
+                new TypeMapping(typeof(long[]), typeof(List<object>), "l_i"),
+                new TypeMapping(typeof(long?[]), typeof(List<object>), "l_i"),
+                new TypeMapping(typeof(float[]), typeof(List<object>), "l_f"),
+                new TypeMapping(typeof(float?[]), typeof(List<object>), "l_f"),
+                new TypeMapping(typeof(double[]), typeof(List<object>), "l_f"),
+                new TypeMapping(typeof(double?[]), typeof(List<object>), "l_f"),
+                new TypeMapping(typeof(char[]), typeof(List<object>), "l_s"),
+                new TypeMapping(typeof(char?[]), typeof(List<object>), "l_s"),
+                new TypeMapping(typeof(string[]), typeof(List<object>), "l_s"),
+                new TypeMapping(typeof(DateTime[]), typeof(List<object>), "l_dt"),
+                new TypeMapping(typeof(DateTime?[]), typeof(List<object>), "l_dt"),
+                new TypeMapping(typeof(Guid[]), typeof(List<object>), "l_s"),
+                new TypeMapping(typeof(Guid?[]), typeof(List<object>), "l_s"),
+                new TypeMapping(typeof(decimal[]), typeof(List<object>), "l_d"),
+                new TypeMapping(typeof(decimal?[]), typeof(List<object>), "l_d"),
+                new TypeMapping(typeof(CompressedString[]), typeof(List<object>), "l_cs"),
+          
           
                 // lists...
                 new TypeMapping(typeof(List<bool>), typeof(List<object>), "l_b"),

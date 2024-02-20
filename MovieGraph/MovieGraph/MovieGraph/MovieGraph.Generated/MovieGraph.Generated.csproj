@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+	  <TargetFramework>net8.0</TargetFramework>
+	  <LangVersion>10.0</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+  </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Blueprint41\Blueprint41.csproj" />
 		<ProjectReference Include="..\MovieGraph.Model\MovieGraph.Model.csproj" />
@@ -20,8 +24,7 @@
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
-	<!--<Import Project="Generate.targets" />
-	<Target Name="Generate" AfterTargets="Build">
-		<Generate />
-	</Target>-->
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="dotnet &quot;$(ProjectDir)Blueprint41.Build.dll&quot; --namespace=Domain.Data --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\$(Configuration)\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
+	</Target>
 </Project>

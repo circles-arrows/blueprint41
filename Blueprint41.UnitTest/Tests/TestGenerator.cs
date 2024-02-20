@@ -70,7 +70,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureGeneratorSettingsIsRequired()
         {
-            Assert.Throws<ArgumentNullException>(() => Generator.Execute<MockGeneratorModel>());
+            Assert.Throws<ArgumentNullException>(() => Generator.Execute<MockGeneratorModel>(null));
         }
 
         [Test]

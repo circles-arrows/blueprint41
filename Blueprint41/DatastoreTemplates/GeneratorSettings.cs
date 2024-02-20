@@ -18,8 +18,8 @@ namespace Blueprint41.DatastoreTemplates
             RelationshipsFolder = "Relationships";
         }
 
-        public string ProjectFolder { get; private set; }
-        public string ProjectNamespace { get; private set; }
+        public string ProjectFolder { get; }
+        public string ProjectNamespace { get; }
 
         public string CRUDNamespace { get; set; }
         public string QueryNamespace { get; set; }
@@ -31,7 +31,7 @@ namespace Blueprint41.DatastoreTemplates
         {
             get
             {
-                if (string.IsNullOrEmpty(ProjectNamespace)) 
+                if (string.IsNullOrEmpty(ProjectNamespace))
                     return CRUDNamespace ?? "";
 
                 if (string.IsNullOrEmpty(CRUDNamespace))
