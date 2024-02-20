@@ -16,22 +16,12 @@ namespace Blueprint41.Build
         public static void Main(string[] args)
         {
             var parameters = ParseParameters(args);
-
             var modelPath = GetFullPath(parameters, ModelPathArg);
             var generatePath = GetFullPath(parameters, GeneratePathArg);
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
-
-            var hashFilePath = Path.Combine(generatePath, "currentModelHash");
-            string existingHash = File.Exists(hashFilePath) ? File.ReadAllText(hashFilePath) : null;
-            string currentHash = ComputeSha256Hash(modelPath);
-
-            if (currentHash == existingHash)
-                return;
-            else
-                File.WriteAllText(hashFilePath, currentHash);
-
+            ValidateAndWriteHash(modelPath, generatePath);
 
             Console.WriteLine("Generate Task Starting...");
             Console.WriteLine($"ModelPath: '{modelPath}'");
@@ -42,6 +32,18 @@ namespace Blueprint41.Build
 
             Console.WriteLine("Generate Task Exiting.");
             Environment.Exit(0);
+        }
+
+        private static void ValidateAndWriteHash(string modelPath, string generatePath)
+        {
+            var hashFilePath = Path.Combine(generatePath, "currentModelHash");
+            string existingHash = File.Exists(hashFilePath) ? File.ReadAllText(hashFilePath) : null;
+            string currentHash = ComputeSha256Hash(modelPath);
+
+            if (currentHash != existingHash)
+            {
+                File.WriteAllText(hashFilePath, currentHash);
+            }
         }
 
         private static void GenerateCode(string modelDllPath, string generatePath, string namespaceName)
