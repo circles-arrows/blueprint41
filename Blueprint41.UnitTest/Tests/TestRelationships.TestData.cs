@@ -59,7 +59,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 #elif MEMGRAPH
-            string clearSchema = "CALL schema.assert({},{}) YIELD label, key RETURN *";
+            string clearSchema = "CALL schema.assert({},{},{},true) YIELD *";
             PersistenceProvider.CurrentPersistenceProvider.Run(clearSchema);
 #endif
         }

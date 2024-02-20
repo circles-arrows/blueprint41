@@ -50,6 +50,42 @@ namespace Blueprint41.Neo4j.Persistence.Memgraph
 
         #endregion
 
+        internal override void OrderQueryParts(LinkedList<Query.Query> parts)
+        {
+            var usingIndexParts = parts.Where(p => p.Type == PartType.UsingIndex).ToList();
+            var otherParts = parts.Where(p => p.Type != PartType.UsingIndex).ToList();
+
+            parts.Clear();
+
+            if (usingIndexParts.Any())
+            {
+                var combinedFields = usingIndexParts.SelectMany(part => part.Fields).Distinct().ToArray();
+                usingIndexParts[0].SetFields(combinedFields);
+                parts.AddLast(usingIndexParts[0]);
+            }
+
+            foreach (var part in otherParts)
+            {
+                parts.AddLast(part);
+            }
+        }
+        internal override void Compile(Query.Query query, CompileState state)
+        {
+            if (query.Type == PartType.UsingIndex)
+            {
+                state.Text.Append("USING INDEX ");
+                query.ForEach(query.Fields, state.Text, ",", item =>
+                {
+                    if (item.Alias is null || item.Alias.Node is null)
+                        return;
+
+                    state.Text.Append(string.Format(":{0}({1})", item.Alias.Node.Neo4jLabel, item.FieldName));
+                });
+            }
+            else
+                base.Compile(query, state);
+        }
+
         internal override IEnumerable<TypeMapping> FilterSupportedTypeMappings(IEnumerable<TypeMapping> mappings) => mappings
             .Where(item => !item.ShortReturnType.Contains(nameof(CompressedString)));
     }

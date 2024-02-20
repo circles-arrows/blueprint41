@@ -60,7 +60,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 #elif MEMGRAPH
-            string clearSchema = "CALL schema.assert({},{}) YIELD label, key RETURN *";
+            string clearSchema = "CALL schema.assert({},{},{},true) YIELD label, key RETURN *";
             PersistenceProvider.CurrentPersistenceProvider.Run(clearSchema);
 #endif
         }
@@ -695,6 +695,7 @@ namespace Blueprint41.UnitTest.Tests
                     var a = result[0] as IDictionary<string, object>;
                     Assert.AreEqual(a["Column1"], "Wall Street");
 
+#if NEO4J
                     output.AssertQuery(
                         """
                         MATCH (n0:Movie)
@@ -702,6 +703,15 @@ namespace Blueprint41.UnitTest.Tests
                         WHERE (n0.Title = $param0)
                         RETURN DISTINCT n0.Title AS Column1
                         """);
+#elif MEMGRAPH
+                    output.AssertQuery(
+                        """
+                        USING INDEX :Movie(Title)
+                        MATCH (n0:Movie)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        """);
+#endif
 
                     // With relationship
                     compiled = Transaction.CompiledQuery
@@ -717,6 +727,7 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.AreEqual(a["Column1"], "Wall Street");
                     Assert.AreEqual(a["Column2"], "Oliver Stone");
 
+#if NEO4J
                     output.AssertQuery(
                         """
                         MATCH (n0:Movie)
@@ -728,7 +739,21 @@ namespace Blueprint41.UnitTest.Tests
                         WHERE (n0.Title = $param0)
                         RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
                         """);
+#elif MEMGRAPH
+                    output.AssertQuery(
+                        """
+                        USING INDEX :Movie(Title)
+                        MATCH (n0:Movie)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1
+                        USING INDEX :Movie(Title)
+                        MATCH (n0:Movie)<-[:DIRECTED_BY]-(n1:Person)
+                        WHERE (n0.Title = $param0)
+                        RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
+                        """);
+#endif
 
+#if NEO4J
                     // Use label scan
                     compiled = Transaction.CompiledQuery
                             .Match(node.Movie.Alias(out MovieAlias mas))
@@ -834,6 +859,8 @@ namespace Blueprint41.UnitTest.Tests
                         WHERE (n0.Title = $param0)
                         RETURN DISTINCT n0.Title AS Column1, n1.Name AS Column2
                         """);
+#elif MEMGRAPH
+#endif
                 }
             }
         }
