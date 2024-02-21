@@ -9,7 +9,22 @@
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+
+	<PropertyGroup Label="Package">
+		<PackageVersion>1.1.0</PackageVersion>
+		<PackageId>Blueprin41.Build</PackageId>
 		<Title>Blueprin41.Build</Title>
+		<Authors>Circles Arrows Limited</Authors>
+		<Description>Driver needed to connect to Neo4j using Blueprint41</Description>
+		<Copyright>Copyright 2017, 2022 (c) Circles Arrows Limited</Copyright>
+		<PackageLicenseUrl>https://github.com/circles-arrows/blueprint41/blob/master/LICENSE.txt</PackageLicenseUrl>
+		<PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
+		<PackageTags>Neo4j Graph Object Mapper</PackageTags>
+		<IncludeSymbols>false</IncludeSymbols>
+		<RepositoryUrl>https://github.com/circles-arrows/blueprint41</RepositoryUrl>
+		<RepositoryType>GitHub</RepositoryType>
 	</PropertyGroup>
 
 	<ItemGroup>
