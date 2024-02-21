@@ -8,6 +8,8 @@
 		<StartupObject>Blueprint41.Build.Generator</StartupObject>
 		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 		<EnableDynamicLoading>true</EnableDynamicLoading>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Blueprin41.Build</Title>
 	</PropertyGroup>
 
 	<ItemGroup>
