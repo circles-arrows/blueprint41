@@ -17,7 +17,7 @@
 		<PackageId>Blueprin41.Build</PackageId>
 		<Title>Blueprin41.Build</Title>
 		<Authors>Circles Arrows Limited</Authors>
-		<Description>Driver needed to connect to Neo4j using Blueprint41</Description>
+		<Description>Code generator needed to generate Type-safe classes for Blueprint41</Description>
 		<Copyright>Copyright 2017, 2022 (c) Circles Arrows Limited</Copyright>
 		<PackageLicenseUrl>https://github.com/circles-arrows/blueprint41/blob/master/LICENSE.txt</PackageLicenseUrl>
 		<PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
