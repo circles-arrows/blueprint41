@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace Blueprint41.Build
 {
@@ -12,12 +13,27 @@ namespace Blueprint41.Build
         private const string ModelPathArg = "modelPath";
         private const string GeneratePathArg = "generatePath";
         private const string NamespaceArg = "namespace";
+        private const string ProjectPathArg = "projectPath";
 
         public static void Main(string[] args)
         {
             var parameters = ParseParameters(args);
+            var projectPath = GetFullPath(parameters, ProjectPathArg);
+            if (!string.IsNullOrEmpty(projectPath))
+            {
+                var configFilePath = Path.Combine(projectPath, "Blueprint41.Build.json");
+
+                if (File.Exists(configFilePath))
+                {
+                    foreach (var param in ReadConfigFile(configFilePath))
+                    {
+                        parameters[param.Key] = param.Value;
+                    }
+                }
+            }
+
             var modelPath = GetFullPath(parameters, ModelPathArg);
-            var generatePath = GetFullPath(parameters, GeneratePathArg);
+            var generatePath = GetFullPath(parameters, GeneratePathArg) ?? projectPath;
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
@@ -203,6 +219,16 @@ namespace Blueprint41.Build
                 algorithm.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
                 return BitConverter.ToString(algorithm.Hash).Replace("-", "").ToLowerInvariant();
             }
+        }
+        private static Dictionary<string, string> ReadConfigFile(string configFilePath)
+        {
+            var jsonText = File.ReadAllText(configFilePath);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var parameters = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonText, options);
+            return parameters ?? new Dictionary<string, string>();
         }
     }
 }

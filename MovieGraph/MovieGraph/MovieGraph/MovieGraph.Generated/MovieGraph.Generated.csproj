@@ -4,7 +4,7 @@
 		<LangVersion>10.0</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Blueprint41.Build" Version="1.1.1" GeneratePathProperty="True"/>
+		<PackageReference Include="Blueprint41.Build" Version="1.1.1" />
 		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
 	</ItemGroup>
 	<ItemGroup>
@@ -25,7 +25,4 @@
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="dotnet &quot;$(PkgBlueprint41_Build)\lib\net8.0\Blueprint41.Build.dll&quot; --namespace=Domain.Data --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\$(Configuration)\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
-	</Target>
 </Project>
