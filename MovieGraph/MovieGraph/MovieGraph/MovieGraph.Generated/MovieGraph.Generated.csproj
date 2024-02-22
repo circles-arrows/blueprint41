@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-	  <TargetFramework>net8.0</TargetFramework>
-	  <LangVersion>10.0</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>10.0</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Blueprint41.Build" Version="1.1.1" GeneratePathProperty="True"/>
+		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\Blueprint41\Blueprint41.csproj" />
 		<ProjectReference Include="..\MovieGraph.Model\MovieGraph.Model.csproj" />
@@ -25,13 +26,6 @@
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="dotnet &quot;$(ProjectDir)Blueprint41.Build.dll&quot; --namespace=Domain.Data --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\$(Configuration)\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
+		<Exec Command="dotnet &quot;$(PkgBlueprint41_Build)\lib\net8.0\Blueprint41.Build.dll&quot; --namespace=Domain.Data --modelPath=&quot;$(ProjectDir)..\MovieGraph.Model\bin\$(Configuration)\netstandard2.0\MovieGraph.Model.dll&quot; --generatePath=$(ProjectDir)" />
 	</Target>
-
-	<!--<ItemGroup>
-		<PackageReference Include="Blueprint41.Build" Version="1.0.0" GeneratePathProperty="True" />
-	</ItemGroup>
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="dotnet &quot;$(PkgBlueprint41_Build)\lib\net8.0\Blueprint41.Build.dll&quot;" />
-	</Target>-->
 </Project>

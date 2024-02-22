@@ -22,27 +22,54 @@ namespace Blueprint41.Build
 
             ValidatePaths(modelPath, generatePath);
 
+            if (IsGenerationRequired(generatePath, modelPath))
+            {
+                LogGenerationStart(modelPath, generatePath, namespaceName);
+                GenerateCode(modelPath, generatePath, namespaceName);
+                Console.WriteLine("Generate Task Exiting.");
+            }
+        }
+
+        private static bool IsGenerationRequired(string generatePath, string modelPath)
+        {
             var hashFilePath = Path.Combine(generatePath, "currentModelHash");
-            string existingHash = File.Exists(hashFilePath) ? File.ReadAllText(hashFilePath) : null;
-            string currentHash = ComputeHash(modelPath);
+            var existingHash = ReadFileContent(hashFilePath);
+            var currentHash = CalculateCurrentHash(generatePath, modelPath);
 
             if (currentHash != existingHash)
             {
-                File.WriteAllText(hashFilePath, currentHash);
+                WriteFileContent(hashFilePath, currentHash);
+                return true;
             }
-            else
-                return;
+            return false;
+        }
 
+        private static string CalculateCurrentHash(string generatePath, string modelPath)
+        {
+            var currentModelHash = ComputeHash(modelPath);
+            var entitiesFolderHash = CalculateFolderHash(Path.Combine(generatePath, "Entities"));
+            var nodesFolderHash = CalculateFolderHash(Path.Combine(generatePath, "Nodes"));
+            var relationshipsFolderHash = CalculateFolderHash(Path.Combine(generatePath, "Relationships"));
 
+            return $"{currentModelHash}-{entitiesFolderHash}{nodesFolderHash}{relationshipsFolderHash}";
+        }
+
+        private static void LogGenerationStart(string modelPath, string generatePath, string namespaceName)
+        {
             Console.WriteLine("Generate Task Starting...");
             Console.WriteLine($"ModelPath: '{modelPath}'");
             Console.WriteLine($"GeneratePath: '{generatePath}'");
             Console.WriteLine($"Namespace: '{namespaceName}'");
+        }
 
-            GenerateCode(modelPath, generatePath, namespaceName);
+        private static string ReadFileContent(string filePath)
+        {
+            return File.Exists(filePath) ? File.ReadAllText(filePath) : null;
+        }
 
-            Console.WriteLine("Generate Task Exiting.");
-            Environment.Exit(0);
+        private static void WriteFileContent(string filePath, string content)
+        {
+            File.WriteAllText(filePath, content);
         }
 
         private static void GenerateCode(string modelDllPath, string generatePath, string namespaceName)
@@ -145,12 +172,36 @@ namespace Blueprint41.Build
             {
                 using (FileStream fileStream = File.OpenRead(filePath))
                 {
-                    // Compute the hash of the file
                     byte[] hashValue = algorithm.ComputeHash(fileStream);
 
-                    // Convert hash bytes to hex string
                     return BitConverter.ToString(hashValue).Replace("-", "").ToLowerInvariant();
                 }
+            }
+        }
+        static string CalculateFolderHash(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+                return DateTime.UtcNow.ToString("O");
+
+            using (var algorithm = SHA1.Create())
+            {
+                var files = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories);
+
+                foreach (var file in files)
+                {
+                    using (var stream = File.OpenRead(file))
+                    {
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            algorithm.TransformBlock(buffer, 0, bytesRead, buffer, 0);
+                        }
+                    }
+                }
+
+                algorithm.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+                return BitConverter.ToString(algorithm.Hash).Replace("-", "").ToLowerInvariant();
             }
         }
     }
