@@ -1,3 +1,13 @@
+ 
+<div>
+ <div><img align="left" src="https://github.com/circles-arrows/blueprint41/assets/121929116/88c219d4-403b-4e98-81a6-f1f3055a0a33" alt="Girl in a jacket" width="180" height="180"></div> 
+   <div align="right">
+     <div align="left"><b> ✔️ Neo4j</b></div>  
+     <div align="left"><b> ✔️ Memgraph</b></div>  
+     <div align="left"><b> ✔️ Supports Relationship Properties</b></div>
+   </div>  
+</div>  
+
 # Blueprint41
 
 [![NuGet](https://img.shields.io/nuget/v/Blueprint41.svg)](https://www.nuget.org/packages/Blueprint41)
@@ -6,8 +16,7 @@
 ![license](https://img.shields.io/github/license/circles-arrows/Blueprint41)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=circles-arrows_blueprint41&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=circles-arrows_blueprint41)
 
-
-
+&nbsp;
 ### .NET ORM for Neo4j Graph Database
 
 Simplify database operations through generated data access objects. 
