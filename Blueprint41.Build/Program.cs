@@ -184,6 +184,7 @@ namespace Blueprint41.Build
 
         static string ComputeHash(string filePath)
         {
+#pragma warning disable S4790
             using (HashAlgorithm algorithm = SHA1.Create())
             {
                 using (FileStream fileStream = File.OpenRead(filePath))
@@ -193,12 +194,14 @@ namespace Blueprint41.Build
                     return BitConverter.ToString(hashValue).Replace("-", "").ToLowerInvariant();
                 }
             }
+#pragma warning restore S4790
         }
         static string CalculateFolderHash(string folderPath)
         {
             if (!Directory.Exists(folderPath))
                 return DateTime.UtcNow.ToString("O");
 
+#pragma warning disable S4790
             using (var algorithm = SHA1.Create())
             {
                 var files = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories);
@@ -219,6 +222,8 @@ namespace Blueprint41.Build
                 algorithm.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
                 return BitConverter.ToString(algorithm.Hash).Replace("-", "").ToLowerInvariant();
             }
+
+#pragma warning restore S4790
         }
         private static Dictionary<string, string> ReadConfigFile(string configFilePath)
         {
