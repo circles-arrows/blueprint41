@@ -2,9 +2,9 @@
 <div>
  <div><img align="left" src="https://github.com/circles-arrows/blueprint41/assets/121929116/88c219d4-403b-4e98-81a6-f1f3055a0a33" alt="Girl in a jacket" width="180" height="180"></div> 
    <div align="right">
-     <div align="left"><b> ✔️ Neo4j</b></div>  
-     <div align="left"><b> ✔️ Memgraph</b></div>  
-     <div align="left"><b> ✔️ Supports Relationship Properties</b></div>
+     <div align="left"><b> ✔️ Supports for Neo4j and Memgraph</b></div>  
+     <div align="left"><b> ✔️ Works Visual Studio, Visual Studio Code and Rider</b></div>   
+     <div align="left"><b> ✔️ Develop on Windows, macOS or Linux</b></div>     
    </div>  
 </div>  
 
@@ -25,7 +25,7 @@ Simplify database operations through generated data access objects.
 
 ![Intellisense](https://raw.githubusercontent.com/circles-arrows/blueprint41/master/Documentation/Blueprint41_Intellisense.gif)
 
-### Required Neo4j Plugins
+### Neo4j Plugins (Optional)
 * Download Blueprint41 plugin for [Neo4j v5](https://github.com/circles-arrows/functionalid/blob/master/blueprint41-5.0.0.jar?raw=true), [Neo4j v4](https://github.com/circles-arrows/functionalid/blob/master/blueprint41-4.0.3.jar?raw=true) or [Neo4j v3](https://github.com/circles-arrows/functionalid/blob/master/blueprint41-1.0.3.jar?raw=true).
 * Download APOC plugin [here](https://neo4j-contrib.github.io/neo4j-apoc-procedures/#_download_latest_release).
 
