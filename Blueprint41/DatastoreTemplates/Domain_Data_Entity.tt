@@ -631,11 +631,11 @@ if (!DALModel.IsAbstract)
         {
             return ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(from, till);
         }
-        public void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment)
-        {
-            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), value, moment))
-                ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(value, moment);
-        }
+        //public void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment)
+        //{
+        //    if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), value, moment))
+        //        ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(value, moment);
+        //}
 <#
                 }
                 else
@@ -745,7 +745,20 @@ if (!DALModel.IsAbstract)
         private readonly Lazy<ICompiled> _query<#= attr.Name.ToSingular() #>Relations = new Lazy<ICompiled>(delegate()
         {
             return Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
@@ -753,7 +766,20 @@ if (!DALModel.IsAbstract)
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -764,7 +790,20 @@ if (!DALModel.IsAbstract)
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -799,7 +838,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
@@ -819,9 +858,9 @@ if (!DALModel.IsAbstract)
                     }
                 }
 #>
-            ((ILookupHelper<<#= attr.ForeignEntity.Name #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
+            ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
         }
-        public void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>)
+        public void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>)
         {
             <#= attr.Name #>.Remove(<#= attr.ForeignEntity.Name.ToCamelCase() #>);
         }
@@ -847,7 +886,20 @@ if (!DALModel.IsAbstract)
         private readonly Lazy<ICompiled> _query<#= attr.Name.ToSingular() #>Relations = new Lazy<ICompiled>(delegate()
         {
             return Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
@@ -855,7 +907,20 @@ if (!DALModel.IsAbstract)
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -866,7 +931,20 @@ if (!DALModel.IsAbstract)
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -905,7 +983,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -928,9 +1006,9 @@ if (!DALModel.IsAbstract)
                     }
                 }
 #>
-            ((ILookupHelper<<#= attr.ForeignEntity.Name #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
+            ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).AddItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
         }
-        public void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment)
+        public void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment)
         {
             <#= attr.Name #>.Remove(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment);
         }
@@ -959,7 +1037,20 @@ if (!DALModel.IsAbstract)
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relation = new Lazy<ICompiled>(delegate()
         {
             return Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
@@ -967,7 +1058,20 @@ if (!DALModel.IsAbstract)
         public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
             var query = Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -978,7 +1082,20 @@ if (!DALModel.IsAbstract)
         public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
             var query = Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -1013,7 +1130,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 <#
@@ -1034,8 +1151,8 @@ if (!DALModel.IsAbstract)
                 }
 #>
 
-            ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
-
+            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).GetItems(null, null), <#= attr.ForeignEntity.Name.ToCamelCase() #>, null))
+                ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
         }
 
         #endregion
@@ -1062,7 +1179,20 @@ if (!DALModel.IsAbstract)
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relation = new Lazy<ICompiled>(delegate()
         {
             return Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == key)
                 .And(relAlias.Moment(moment))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -1075,7 +1205,20 @@ if (!DALModel.IsAbstract)
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relations = new Lazy<ICompiled>(delegate()
         {
             return Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
@@ -1086,7 +1229,20 @@ if (!DALModel.IsAbstract)
                 moment = DateTime.UtcNow;
 
             var query = Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
                 .And(relAlias.Moment(moment))
@@ -1101,7 +1257,20 @@ if (!DALModel.IsAbstract)
                 moment = DateTime.UtcNow;
 
             var query = Transaction.CompiledQuery
+<#
+            if (!attr.Relationship.InEntity.IsVirtual)
+            {
+#>
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
+<#
+            }
+            else if (!attr.Relationship.OutEntity.IsVirtual)
+            {
+#>
+                .Match(node.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias).Out.<#= attr.Relationship.Name #>.Alias(out var relAlias).In.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias))
+<#
+            }
+#>
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
                 .And(relAlias.Moment(moment))
@@ -1193,7 +1362,7 @@ if (!DALModel.IsAbstract)
                 return conditions.ToArray();
             });
         }
-        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.Name #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
+        public void Set<#= attr.Name #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>)
         {
             if (moment is null)
                 moment = DateTime.UtcNow;
@@ -1217,7 +1386,8 @@ if (!DALModel.IsAbstract)
                 }
 #>
 
-            ((ILookupHelper<<#= attr.OuterReturnType #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
+            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), <#= attr.ForeignEntity.Name.ToCamelCase() #>, moment))
+                ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
         }
 
         #endregion
@@ -1268,10 +1438,10 @@ if (!DALModel.IsAbstract)
             #region Members for interface I<#= inherited.Name #>
 
 <#
-        foreach (Property attr in inherited.Properties)
+        foreach (EntityProperty attr in inherited.Properties)
         {
 #>
-            public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
+            public EntityProperty <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
 <#
         }
 #>
@@ -1304,10 +1474,10 @@ if (!DALModel.IsAbstract)
             internal <#= DALModel.ClassName #>FullTextMembers() { }
 
 <#
-        foreach (Property attr in DALModel.FullTextIndexProperties)
+        foreach (EntityProperty attr in DALModel.FullTextIndexProperties)
         {
 #>
-            public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= attr.Parent.Name #>"].Properties["<#= attr.Name #>"];
+            public EntityProperty <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= attr.Parent.Name #>"].Properties["<#= attr.Name #>"];
 <#
         }
 #>

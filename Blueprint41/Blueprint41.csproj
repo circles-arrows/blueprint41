@@ -223,11 +223,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Relation.cs">
-      <DependentUpon>Domain_Data_Entity_Relation.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="DatastoreTemplates\Domain_Data_Entity.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -237,6 +232,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Domain_Data_Entity_Abstract.tt</DependentUpon>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Relation.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Domain_Data_Entity_Relation.tt</DependentUpon>
     </Compile>
     <Compile Update="DatastoreTemplates\Domain_Data_GraphEvents.cs">
       <DesignTime>True</DesignTime>
