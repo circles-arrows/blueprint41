@@ -754,17 +754,17 @@ namespace Domain.Data.Manipulation
 
             #region Members for interface IPerson
 
-            public Property name { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["name"];
-            public Property born { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["born"];
-            public Property Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["Uid"];
-            public Property ActedMovies { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["ActedMovies"];
-            public Property DirectedMovies { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["DirectedMovies"];
-            public Property ProducedMovies { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["ProducedMovies"];
-            public Property WritedMovies { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["WritedMovies"];
-            public Property MovieReviews { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["MovieReviews"];
-            public Property MovieRoles { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["MovieRoles"];
-            public Property FollowedPersons { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["FollowedPersons"];
-            public Property Followers { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["Followers"];
+            public EntityProperty name { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["name"];
+            public EntityProperty born { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["born"];
+            public EntityProperty Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["Uid"];
+            public EntityProperty ActedMovies { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["ActedMovies"];
+            public EntityProperty DirectedMovies { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["DirectedMovies"];
+            public EntityProperty ProducedMovies { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["ProducedMovies"];
+            public EntityProperty WritedMovies { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["WritedMovies"];
+            public EntityProperty MovieReviews { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["MovieReviews"];
+            public EntityProperty MovieRoles { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["MovieRoles"];
+            public EntityProperty FollowedPersons { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["FollowedPersons"];
+            public EntityProperty Followers { get; } = MovieGraph.Model.Datastore.Model.Entities["Person"].Properties["Followers"];
             #endregion
 
         }

@@ -74,6 +74,7 @@ namespace Domain.Data.Manipulation
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.FOLLOWS.Alias(out var relAlias).Out.Person.Alias(out var outAlias))
+
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();

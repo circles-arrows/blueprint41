@@ -13,7 +13,7 @@
 
 
 	<PropertyGroup Label="Package">
-		<PackageVersion>1.1.1</PackageVersion>
+		<PackageVersion>1.1.2</PackageVersion>
 		<PackageId>Blueprint41.Build</PackageId>
 		<Title>Blueprint41.Build</Title>
 		<Authors>Circles Arrows Limited</Authors>
