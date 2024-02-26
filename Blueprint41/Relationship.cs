@@ -28,6 +28,9 @@ namespace Blueprint41
             if (outEntity is not null && outInterface is not null)
                 throw new ArgumentException("You cannot have both the outEntity and the outInterface set at the same time.");
 
+            if ((inEntity?.IsVirtual ?? false) && (outEntity?.IsVirtual ?? false))
+                throw new InvalidOperationException($"In and Out sides of the relation '{name}' cannot be virtual at the same time.");
+
             _self = new IEntity[] { this };
             _properties = new PropertyCollection(this);
             Properties = new EntityPropertyCollection<RelationshipProperty, Relationship>(this, _properties);

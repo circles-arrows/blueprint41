@@ -301,6 +301,10 @@ namespace Blueprint41
         }
         public Entity Virtual(bool isVirtual = true)
         {
+            EntityProperty? rel = Properties.FirstOrDefault(item => item.ForeignEntity is not null && item.ForeignEntity.IsVirtual);
+            if (rel is not null)
+                throw new InvalidOperationException($"In and Out sides of the relation '{rel.Name}' cannot be virtual at the same time.");
+
             IsVirtual = isVirtual;
 
             return this;

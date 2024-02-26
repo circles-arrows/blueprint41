@@ -13,6 +13,7 @@ namespace Blueprint41
         string Neo4jName { get; }
         bool IsAbstract { get; }
         bool IsVirtual { get; }
+        IEntity? Inherits { get; }
 
         PropertyCollection Properties { get; }
         IReadOnlyList<Property> FullTextIndexProperties { get; }
@@ -42,7 +43,9 @@ namespace Blueprint41
     {
         string IEntity.Neo4jName => Label.Name;
         PropertyCollection IEntity.Properties => _properties;
-        
+        IEntity? IEntity.Inherits => Inherits;
+
+
         IEntity IEntity.SetFullTextProperty(string propertyName) => SetFullTextProperty(propertyName);
         IEntity IEntity.RemoveFullTextProperty(string propertyName) => RemoveFullTextProperty(propertyName);
         IReadOnlyList<Property> IEntity.FullTextIndexProperties => FullTextIndexProperties;
@@ -66,6 +69,7 @@ namespace Blueprint41
     {
         string IEntity.Neo4jName => Neo4JRelationshipType;
         PropertyCollection IEntity.Properties => _properties;
+        IEntity? IEntity.Inherits => null;
 
         IEntity IEntity.SetFullTextProperty(string propertyName) => SetFullTextProperty(propertyName);
         IEntity IEntity.RemoveFullTextProperty(string propertyName) => RemoveFullTextProperty(propertyName);

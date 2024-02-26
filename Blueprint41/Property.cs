@@ -1294,7 +1294,7 @@ namespace Blueprint41
             Type type = instance.GetType();
             Action<OGM, DateTime?>? clearLookup;
 
-            if (PropertyType == PropertyType.Lookup)
+            if (PropertyType == PropertyType.Lookup && instance is not DynamicEntity)
             {
                 if (!clearLookupCache.TryGetValue(type, out clearLookup))
                 {

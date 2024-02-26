@@ -270,7 +270,7 @@ namespace System.Linq
         {
             if (dictionary.TryGetValue(key, out TValue value))
                 return value;
-            
+
             return defaultValue;
         }
         public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default!)

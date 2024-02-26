@@ -96,7 +96,10 @@ if (DALModel.IsAbstract)
         string <#= DALModel.NodeTypeName #> { get; }
 <#
     }
+#>
 
+        #region Properties
+<#
     foreach (Property attr in DALModel.Properties)
     {
         if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
@@ -115,12 +118,122 @@ if (DALModel.IsAbstract)
             {
 #>
         <#= attr.OuterReturnType #> Get<#= attr.Name #>(DateTime moment);
-        void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment);
+        //void Set<#= attr.Name #>(<#= attr.OuterReturnType #> value, DateTime? moment);
+<#
+            }
+        }
+    }
+#>
+
+        #endregion
+
+        #region Relationship Properties
+<#
+    foreach (var attr in DALModel.GetPropertiesOfBaseTypesAndSelf().Where(property => property.PropertyType != PropertyType.Attribute))
+    {
+        if (attr.PropertyType == PropertyType.Collection)
+        {
+            if (!attr.Relationship.IsTimeDependent)
+            {
+/*******************************************************************************************
+***                                                                                      ***
+*** NORMAL COLLECTION                                                                    ***
+***                                                                                      ***
+*******************************************************************************************/
+#>
+
+        #region <#= attr.Name #> (Collection)
+
+        List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations();
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(<#= attr.Relationship.Properties.ToJsonNotation() #>);
+        void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
+        void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>);
+
+        #endregion
+<#
+            }
+            else
+            {
+/*******************************************************************************************
+***                                                                                      ***
+*** TIME DEPENDENT COLLECTION                                                            ***
+***                                                                                      ***
+*******************************************************************************************/
+#>
+
+        #region <#= attr.Name #> (Time Dependent Collection)
+
+        List<<#= attr.Relationship.Name #>> <#= attr.Name.ToSingular() #>Relations();
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
+        void Add<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
+        void Remove<#= attr.Name.ToSingular() #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment);
+
+        #endregion
+<#
+            }
+        }
+        else if (attr.PropertyType == PropertyType.Lookup)
+        {
+            if (!attr.Relationship.IsTimeDependent)
+            {
+/*******************************************************************************************
+***                                                                                      ***
+*** NORMAL LOOKUP                                                                        ***
+***                                                                                      ***
+*******************************************************************************************/
+#>
+
+        #region <#= attr.Name #> (Lookup)
+
+        <#= attr.Relationship.Name #> <#= attr.Name #>Relation();
+        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(<#= attr.Relationship.Properties.ToJsonNotation() #>);
+        void Set<#= attr.Name #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #><#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
+
+        #endregion
+<#
+            }
+            else
+            {
+/*******************************************************************************************
+***                                                                                      ***
+*** TIME DEPENDENT LOOKUP                                                                ***
+***                                                                                      ***
+*******************************************************************************************/
+#>
+
+        #region <#= attr.Name #> (Time Dependent Lookup)
+
+        <#= attr.Relationship.Name #> <#= attr.Name #>Relation(DateTime? moment = null);
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Relations();
+        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment, Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        <#= attr.Relationship.Name #> Get<#= attr.Name #>If(DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression);
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression);
+        List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(JsNotation<DateTime?> Moment = default<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true, true) #>);
+        void Set<#= attr.Name #>(<#= attr.ForeignEntity.ClassName #> <#= attr.ForeignEntity.Name.ToCamelCase() #>, DateTime? moment<#= attr.Relationship.Properties.ToJsonNotation(attr.Relationship, true) #>);
+
+        #endregion
 <#
             }
         }
     }
 
+/*******************************************************************************************
+***                                                                                      ***
+*** END RELATIONSHIP PROPERTIES                                                          ***
+***                                                                                      ***
+*******************************************************************************************/
+#>
+        #endregion
+
+<#
     if (!string.IsNullOrEmpty(DALModel.UnidentifiedProperties))
     {
 #>
@@ -248,7 +361,7 @@ if (DALModel.IsAbstract)
         foreach (Property attr in inherited.Properties)
         {
 #>
-            public Property <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
+            public EntityProperty <#= attr.Name #> { get; } = <#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= inherited.Name #>"].Properties["<#= attr.Name #>"];
 <#
         }
 #>
