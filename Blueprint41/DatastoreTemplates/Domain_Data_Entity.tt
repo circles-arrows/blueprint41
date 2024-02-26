@@ -1151,8 +1151,7 @@ if (!DALModel.IsAbstract)
                 }
 #>
 
-            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).GetItems(null, null), <#= attr.ForeignEntity.Name.ToCamelCase() #>, null))
-                ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
+            ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, null, properties);
         }
 
         #endregion
@@ -1385,9 +1384,8 @@ if (!DALModel.IsAbstract)
                     }
                 }
 #>
-
-            if (LazySet(Members.<#= attr.Name #>, ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).GetItems(moment, null), <#= attr.ForeignEntity.Name.ToCamelCase() #>, moment))
-                ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
+        
+            ((ILookupHelper<<#= attr.ForeignEntity.ClassName #>>)InnerData.<#= attr.Name #>).SetItem(<#= attr.ForeignEntity.Name.ToCamelCase() #>, moment, properties);
         }
 
         #endregion

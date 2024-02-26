@@ -289,8 +289,7 @@ namespace Datastore.Manipulation
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 
-            if (LazySet(Members.Director, ((ILookupHelper<Person>)InnerData.Director).GetItems(null, null), person, null))
-                ((ILookupHelper<Person>)InnerData.Director).SetItem(person, null, properties);
+            ((ILookupHelper<Person>)InnerData.Director).SetItem(person, null, properties);
         }
 
         #endregion
@@ -415,8 +414,7 @@ namespace Datastore.Manipulation
             if (Substances.HasValue) properties.Add("Substances", Substances.Value?.ToString());
             if (SexAndNudity.HasValue) properties.Add("SexAndNudity", SexAndNudity.Value?.ToString());
 
-            if (LazySet(Members.Certification, ((ILookupHelper<Rating>)InnerData.Certification).GetItems(null, null), rating, null))
-                ((ILookupHelper<Rating>)InnerData.Certification).SetItem(rating, null, properties);
+            ((ILookupHelper<Rating>)InnerData.Certification).SetItem(rating, null, properties);
         }
 
         #endregion
