@@ -221,11 +221,11 @@ namespace Datastore.Manipulation
         {
             return ((ILookupHelper<City>)InnerData.City).GetItems(from, till);
         }
-        public void SetCity(City value, DateTime? moment)
-        {
-            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), value, moment))
-                ((ILookupHelper<City>)InnerData.City).SetItem(value, moment);
-        }
+        //public void SetCity(City value, DateTime? moment)
+        //{
+        //    if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), value, moment))
+        //        ((ILookupHelper<City>)InnerData.City).SetItem(value, moment);
+        //}
 
         #endregion
         #region Members for interface IBaseEntity
@@ -671,7 +671,8 @@ namespace Datastore.Manipulation
             if (AddressLine2.HasValue) properties.Add("AddressLine2", AddressLine2.Value);
             if (AddressLine3.HasValue) properties.Add("AddressLine3", AddressLine3.Value);
 
-            ((ILookupHelper<City>)InnerData.City).SetItem(city, moment, properties);
+            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(moment, null), city, moment))
+                ((ILookupHelper<City>)InnerData.City).SetItem(city, moment, properties);
         }
 
         #endregion
@@ -705,19 +706,19 @@ namespace Datastore.Manipulation
 
             #region Members for interface IPerson
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Name"];
-            public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Restaurants"];
-            public Property DirectedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["DirectedMovies"];
-            public Property ActedInMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["ActedInMovies"];
-            public Property StreamingServiceSubscriptions { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["StreamingServiceSubscriptions"];
-            public Property WatchedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["WatchedMovies"];
-            public Property City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["City"];
+            public EntityProperty Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Name"];
+            public EntityProperty Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["Restaurants"];
+            public EntityProperty DirectedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["DirectedMovies"];
+            public EntityProperty ActedInMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["ActedInMovies"];
+            public EntityProperty StreamingServiceSubscriptions { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["StreamingServiceSubscriptions"];
+            public EntityProperty WatchedMovies { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["WatchedMovies"];
+            public EntityProperty City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Person"].Properties["City"];
             #endregion
 
             #region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+            public EntityProperty Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+            public EntityProperty LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
             #endregion
 
         }

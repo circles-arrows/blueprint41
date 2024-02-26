@@ -302,14 +302,14 @@ namespace Datastore.Manipulation
 
             #region Members for interface IStreamingService
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["StreamingService"].Properties["Name"];
-            public Property Subscribers { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["StreamingService"].Properties["Subscribers"];
+            public EntityProperty Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["StreamingService"].Properties["Name"];
+            public EntityProperty Subscribers { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["StreamingService"].Properties["Subscribers"];
             #endregion
 
             #region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+            public EntityProperty Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+            public EntityProperty LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
             #endregion
 
         }

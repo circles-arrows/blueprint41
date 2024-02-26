@@ -257,15 +257,15 @@ namespace Datastore.Manipulation
 
             #region Members for interface IRating
 
-            public Property Code { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Code"];
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Name"];
-            public Property Description { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Description"];
+            public EntityProperty Code { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Code"];
+            public EntityProperty Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Name"];
+            public EntityProperty Description { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Rating"].Properties["Description"];
             #endregion
 
             #region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+            public EntityProperty Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+            public EntityProperty LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
             #endregion
 
         }

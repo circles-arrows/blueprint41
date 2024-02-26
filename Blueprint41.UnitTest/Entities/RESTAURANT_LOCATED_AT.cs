@@ -31,12 +31,12 @@ namespace Datastore.Manipulation
         internal string _elementId { get; private set; }
 
         /// <summary>
-        /// Person (In Node)
+        /// Restaurant (In Node)
         /// </summary>
         public Restaurant Restaurant { get; private set; }
 
         /// <summary>
-        /// Restaurant (Out Node)
+        /// City (Out Node)
         /// </summary>
         public City City { get; private set; }
 
@@ -74,6 +74,7 @@ namespace Datastore.Manipulation
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
+
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();

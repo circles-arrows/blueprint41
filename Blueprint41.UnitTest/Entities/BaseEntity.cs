@@ -21,8 +21,16 @@ namespace Datastore.Manipulation
     public partial interface IBaseEntity : OGM
     {
         string NodeType { get; }
+
+        #region Properties
         string Uid { get; set; }
         System.DateTime LastModifiedOn { get; }
+
+        #endregion
+
+        #region Relationship Properties
+        #endregion
+
 
         IBaseEntityOriginalData OriginalVersion { get; }
     }
@@ -70,8 +78,8 @@ namespace Datastore.Manipulation
 
             #region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+            public EntityProperty Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+            public EntityProperty LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
             #endregion
 
         }
