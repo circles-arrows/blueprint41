@@ -253,8 +253,7 @@ namespace Domain.Data.Manipulation
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 
-            if (LazySet(Members.Movie, ((ILookupHelper<Movie>)InnerData.Movie).GetItems(null, null), movie, null))
-                ((ILookupHelper<Movie>)InnerData.Movie).SetItem(movie, null, properties);
+            ((ILookupHelper<Movie>)InnerData.Movie).SetItem(movie, null, properties);
         }
 
         #endregion

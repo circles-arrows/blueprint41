@@ -8,22 +8,24 @@ using System.Text.Json;
 
 namespace Blueprint41.Build
 {
+    //--projectFolder=$(ProjectDir) --outputFolder=$(OutDir) --modelName=$(TargetName)$(TargetExt)
     public static class Generator
     {
-        private const string ModelPathArg = "modelPath";
         private const string GeneratePathArg = "generatePath";
         private const string NamespaceArg = "namespace";
-        private const string ModelFolderArg = "modelFolder";
+        private const string ProjectFolderArg = "projectFolder";
+        private const string OutputFolderArg = "outputFolder";
+        private const string ModelNameArg = "modelName";
 
         public static void Main(string[] args)
         {
             var parameters = ParseParameters(args);
-            var modelFolder = GetFullPath(parameters, ModelFolderArg);
-            var projectPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(modelFolder)));
+            var projectFolder = GetFullPath(parameters, ProjectFolderArg);
+            var outputFolder = parameters.GetValueOrDefault(OutputFolderArg);
 
-            if (!string.IsNullOrEmpty(modelFolder))
+            if (!string.IsNullOrEmpty(projectFolder))
             {
-                var configFilePath = Path.Combine(projectPath, "Blueprint41.Build.json");
+                var configFilePath = Path.Combine(projectFolder, "Blueprint41.Build.json");
 
                 if (File.Exists(configFilePath))
                 {
@@ -34,14 +36,14 @@ namespace Blueprint41.Build
                 }
             }
 
-            var modelName = parameters.GetValueOrDefault(ModelPathArg);
-            var modelPath = Path.Combine(modelFolder, modelName);
-            var generatePath = Path.Combine(projectPath, parameters.GetValueOrDefault(GeneratePathArg));
+            var modelName = parameters.GetValueOrDefault(ModelNameArg);
+            var modelPath = Path.Combine(projectFolder, outputFolder, modelName);
+            var generatePath = Path.Combine(projectFolder, parameters.GetValueOrDefault(GeneratePathArg));
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
 
-            if (IsGenerationRequired(generatePath, modelPath, projectPath))
+            if (IsGenerationRequired(generatePath, modelPath, projectFolder))
             {
                 LogGenerationStart(modelPath, generatePath, namespaceName);
                 GenerateCode(modelPath, generatePath, namespaceName);
@@ -181,7 +183,7 @@ namespace Blueprint41.Build
         {
             if (string.IsNullOrWhiteSpace(modelPath) || string.IsNullOrWhiteSpace(generatePath))
             {
-                throw new InvalidOperationException($"Both {ModelPathArg} and {GeneratePathArg} arguments are required.");
+                throw new InvalidOperationException($"Both {ModelNameArg} and {GeneratePathArg} arguments are required.");
             }
         }
 

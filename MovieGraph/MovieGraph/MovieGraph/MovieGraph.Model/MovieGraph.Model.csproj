@@ -4,6 +4,12 @@
 	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="currentModelHash" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Blueprint41.Build" Version="1.1.4" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\..\Blueprint41\Blueprint41.csproj" />
   </ItemGroup>
 </Project>
