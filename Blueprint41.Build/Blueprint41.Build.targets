@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Target Name="RunGeneratorDll" BeforeTargets="PreBuildEvent">
+	<Target Name="RunGeneratorDll" BeforeTargets="PostBuildEvent">
 		<Message Text="Blueprint41.Build Generator running" Importance="high" />
-		<Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)..\lib\net8.0\Blueprint41.Build.dll&quot; --projectPath=$(ProjectDir) --modelFolder=$(OutDir)"  />
+		<Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)..\lib\net8.0\Blueprint41.Build.dll&quot; --projectPath=$(ProjectDir) --modelFolder=$(OutDir) --modelPath=$(TargetName)$(TargetExt)"  />
 	</Target>
 </Project>

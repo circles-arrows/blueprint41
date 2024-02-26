@@ -1,0 +1,4 @@
+﻿{
+	"generatePath": "..\\MovieGraph.Generated",
+	"namespace": "Domain.Data"
+}

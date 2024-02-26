@@ -13,15 +13,15 @@ namespace Blueprint41.Build
         private const string ModelPathArg = "modelPath";
         private const string GeneratePathArg = "generatePath";
         private const string NamespaceArg = "namespace";
-        private const string ProjectPathArg = "projectPath";
         private const string ModelFolderArg = "modelFolder";
 
         public static void Main(string[] args)
         {
             var parameters = ParseParameters(args);
-            var projectPath = GetFullPath(parameters, ProjectPathArg);
             var modelFolder = GetFullPath(parameters, ModelFolderArg);
-            if (!string.IsNullOrEmpty(projectPath))
+            var projectPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(modelFolder)));
+
+            if (!string.IsNullOrEmpty(modelFolder))
             {
                 var configFilePath = Path.Combine(projectPath, "Blueprint41.Build.json");
 
@@ -36,12 +36,12 @@ namespace Blueprint41.Build
 
             var modelName = parameters.GetValueOrDefault(ModelPathArg);
             var modelPath = Path.Combine(modelFolder, modelName);
-            var generatePath = GetFullPath(parameters, GeneratePathArg) ?? projectPath;
+            var generatePath = Path.Combine(projectPath, parameters.GetValueOrDefault(GeneratePathArg));
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
 
-            if (IsGenerationRequired(generatePath, modelPath))
+            if (IsGenerationRequired(generatePath, modelPath, projectPath))
             {
                 LogGenerationStart(modelPath, generatePath, namespaceName);
                 GenerateCode(modelPath, generatePath, namespaceName);
@@ -49,9 +49,9 @@ namespace Blueprint41.Build
             }
         }
 
-        private static bool IsGenerationRequired(string generatePath, string modelPath)
+        private static bool IsGenerationRequired(string generatePath, string modelPath, string projectPath)
         {
-            var hashFilePath = Path.Combine(generatePath, "currentModelHash");
+            var hashFilePath = Path.Combine(projectPath, "currentModelHash");
             var existingHash = ReadFileContent(hashFilePath);
             var currentHash = CalculateCurrentHash(generatePath, modelPath);
 

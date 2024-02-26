@@ -26,4 +26,9 @@
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
+	<Target Name="AfterResolveProjectReferences" AfterTargets="ResolveProjectReferences">
+		<!-- Loop through all resolved project reference paths -->
+		<Message Importance="high" Text="Resolved project reference path: %(ResolvedProjectReferencePaths.FullPath)" />
+	</Target>
+
 </Project>
