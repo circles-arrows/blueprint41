@@ -1,4 +1,4 @@
 ﻿{
-	"modelPath": "../MovieGraph.Model/bin/Debug/netstandard2.0/MovieGraph.Model.dll",
+	"modelPath": "MovieGraph.Model.dll",
 	"namespace": "Domain.Data"
 }

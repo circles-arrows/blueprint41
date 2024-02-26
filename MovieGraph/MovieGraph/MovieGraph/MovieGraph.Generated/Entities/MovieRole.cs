@@ -246,8 +246,8 @@ namespace Domain.Data.Manipulation
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 
-            ((ILookupHelper<Movie>)InnerData.Movie).SetItem(movie, null, properties);
-
+            if (LazySet(Members.Movie, ((ILookupHelper<Movie>)InnerData.Movie).GetItems(null, null), movie, null))
+                ((ILookupHelper<Movie>)InnerData.Movie).SetItem(movie, null, properties);
         }
 
         #endregion
@@ -281,9 +281,9 @@ namespace Domain.Data.Manipulation
 
             #region Members for interface IMovieRole
 
-            public Property Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["MovieRole"].Properties["Uid"];
-            public Property Role { get; } = MovieGraph.Model.Datastore.Model.Entities["MovieRole"].Properties["Role"];
-            public Property Movie { get; } = MovieGraph.Model.Datastore.Model.Entities["MovieRole"].Properties["Movie"];
+            public EntityProperty Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["MovieRole"].Properties["Uid"];
+            public EntityProperty Role { get; } = MovieGraph.Model.Datastore.Model.Entities["MovieRole"].Properties["Role"];
+            public EntityProperty Movie { get; } = MovieGraph.Model.Datastore.Model.Entities["MovieRole"].Properties["Movie"];
             #endregion
 
         }

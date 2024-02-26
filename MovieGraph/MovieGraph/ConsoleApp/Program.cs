@@ -20,6 +20,7 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
+
             PersistenceProvider.CurrentPersistenceProvider = new Neo4jPersistenceProvider($"bolt://localhost:7687", $"neo4j", $"neoneoneo");
 
             // Execute only once

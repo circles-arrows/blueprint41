@@ -14,11 +14,13 @@ namespace Blueprint41.Build
         private const string GeneratePathArg = "generatePath";
         private const string NamespaceArg = "namespace";
         private const string ProjectPathArg = "projectPath";
+        private const string ModelFolderArg = "modelFolder";
 
         public static void Main(string[] args)
         {
             var parameters = ParseParameters(args);
             var projectPath = GetFullPath(parameters, ProjectPathArg);
+            var modelFolder = GetFullPath(parameters, ModelFolderArg);
             if (!string.IsNullOrEmpty(projectPath))
             {
                 var configFilePath = Path.Combine(projectPath, "Blueprint41.Build.json");
@@ -32,7 +34,8 @@ namespace Blueprint41.Build
                 }
             }
 
-            var modelPath = GetFullPath(parameters, ModelPathArg);
+            var modelName = parameters.GetValueOrDefault(ModelPathArg);
+            var modelPath = Path.Combine(modelFolder, modelName);
             var generatePath = GetFullPath(parameters, GeneratePathArg) ?? projectPath;
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 

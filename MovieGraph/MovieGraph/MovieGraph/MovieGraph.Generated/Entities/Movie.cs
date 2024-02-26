@@ -565,15 +565,15 @@ namespace Domain.Data.Manipulation
 
             #region Members for interface IMovie
 
-            public Property title { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["title"];
-            public Property tagline { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["tagline"];
-            public Property released { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["released"];
-            public Property Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Uid"];
-            public Property Genres { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Genres"];
-            public Property Actors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Actors"];
-            public Property Directors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Directors"];
-            public Property Producers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Producers"];
-            public Property Writers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Writers"];
+            public EntityProperty title { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["title"];
+            public EntityProperty tagline { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["tagline"];
+            public EntityProperty released { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["released"];
+            public EntityProperty Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Uid"];
+            public EntityProperty Genres { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Genres"];
+            public EntityProperty Actors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Actors"];
+            public EntityProperty Directors { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Directors"];
+            public EntityProperty Producers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Producers"];
+            public EntityProperty Writers { get; } = MovieGraph.Model.Datastore.Model.Entities["Movie"].Properties["Writers"];
             #endregion
 
         }

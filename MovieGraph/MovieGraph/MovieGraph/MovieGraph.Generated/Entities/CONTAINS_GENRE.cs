@@ -74,6 +74,7 @@ namespace Domain.Data.Manipulation
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Movie.Alias(out var inAlias).In.CONTAINS_GENRE.Alias(out var relAlias).Out.Genre.Alias(out var outAlias))
+
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();

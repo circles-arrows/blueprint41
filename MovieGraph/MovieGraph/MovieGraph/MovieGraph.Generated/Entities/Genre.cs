@@ -281,9 +281,9 @@ namespace Domain.Data.Manipulation
 
             #region Members for interface IGenre
 
-            public Property Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Genre"].Properties["Uid"];
-            public Property Name { get; } = MovieGraph.Model.Datastore.Model.Entities["Genre"].Properties["Name"];
-            public Property Movies { get; } = MovieGraph.Model.Datastore.Model.Entities["Genre"].Properties["Movies"];
+            public EntityProperty Uid { get; } = MovieGraph.Model.Datastore.Model.Entities["Genre"].Properties["Uid"];
+            public EntityProperty Name { get; } = MovieGraph.Model.Datastore.Model.Entities["Genre"].Properties["Name"];
+            public EntityProperty Movies { get; } = MovieGraph.Model.Datastore.Model.Entities["Genre"].Properties["Movies"];
             #endregion
 
         }
