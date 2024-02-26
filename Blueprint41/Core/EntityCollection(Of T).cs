@@ -299,6 +299,7 @@ namespace Blueprint41.Core
             if (ParentProperty?.PropertyType != PropertyType.Lookup)
                 throw new NotSupportedException("You cannot use SetItem on a property thats not a lookup.");
 
+            LazyLoad();
             LazySet();
 
             if (item is not null && EagerLoadLogic is not null)
