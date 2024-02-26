@@ -39,7 +39,7 @@ namespace Datastore.Manipulation
         public Person Person { get; private set; }
 
         /// <summary>
-        /// Restaurant (Out Node)
+        /// StreamingService (Out Node)
         /// </summary>
         public StreamingService StreamingService { get; private set; }
 
@@ -81,6 +81,7 @@ namespace Datastore.Manipulation
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
+
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();

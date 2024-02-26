@@ -289,8 +289,8 @@ namespace Datastore.Manipulation
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 
-            ((ILookupHelper<Person>)InnerData.Director).SetItem(person, null, properties);
-
+            if (LazySet(Members.Director, ((ILookupHelper<Person>)InnerData.Director).GetItems(null, null), person, null))
+                ((ILookupHelper<Person>)InnerData.Director).SetItem(person, null, properties);
         }
 
         #endregion
@@ -415,8 +415,8 @@ namespace Datastore.Manipulation
             if (Substances.HasValue) properties.Add("Substances", Substances.Value?.ToString());
             if (SexAndNudity.HasValue) properties.Add("SexAndNudity", SexAndNudity.Value?.ToString());
 
-            ((ILookupHelper<Rating>)InnerData.Certification).SetItem(rating, null, properties);
-
+            if (LazySet(Members.Certification, ((ILookupHelper<Rating>)InnerData.Certification).GetItems(null, null), rating, null))
+                ((ILookupHelper<Rating>)InnerData.Certification).SetItem(rating, null, properties);
         }
 
         #endregion
@@ -450,16 +450,16 @@ namespace Datastore.Manipulation
 
             #region Members for interface IMovie
 
-            public Property Title { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Title"];
-            public Property Director { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Director"];
-            public Property Actors { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Actors"];
-            public Property Certification { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Certification"];
+            public EntityProperty Title { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Title"];
+            public EntityProperty Director { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Director"];
+            public EntityProperty Actors { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Actors"];
+            public EntityProperty Certification { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Movie"].Properties["Certification"];
             #endregion
 
             #region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+            public EntityProperty Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+            public EntityProperty LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
             #endregion
 
         }

@@ -310,16 +310,16 @@ namespace Datastore.Manipulation
 
             #region Members for interface ICity
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"];
-            public Property State { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["State"];
-            public Property Country { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Country"];
-            public Property Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restaurants"];
+            public EntityProperty Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Name"];
+            public EntityProperty State { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["State"];
+            public EntityProperty Country { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Country"];
+            public EntityProperty Restaurants { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["City"].Properties["Restaurants"];
             #endregion
 
             #region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+            public EntityProperty Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+            public EntityProperty LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
             #endregion
 
         }

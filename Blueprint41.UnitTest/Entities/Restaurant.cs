@@ -263,8 +263,8 @@ namespace Datastore.Manipulation
         {
             Dictionary<string, object> properties = new Dictionary<string, object>();
 
-            ((ILookupHelper<City>)InnerData.City).SetItem(city, null, properties);
-
+            if (LazySet(Members.City, ((ILookupHelper<City>)InnerData.City).GetItems(null, null), city, null))
+                ((ILookupHelper<City>)InnerData.City).SetItem(city, null, properties);
         }
 
         #endregion
@@ -357,15 +357,15 @@ namespace Datastore.Manipulation
 
             #region Members for interface IRestaurant
 
-            public Property Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"].Properties["Name"];
-            public Property City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"].Properties["City"];
-            public Property Persons { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"].Properties["Persons"];
+            public EntityProperty Name { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"].Properties["Name"];
+            public EntityProperty City { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"].Properties["City"];
+            public EntityProperty Persons { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["Restaurant"].Properties["Persons"];
             #endregion
 
             #region Members for interface IBaseEntity
 
-            public Property Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
-            public Property LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
+            public EntityProperty Uid { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["Uid"];
+            public EntityProperty LastModifiedOn { get; } = Blueprint41.UnitTest.DataStore.MockModel.Model.Entities["BaseEntity"].Properties["LastModifiedOn"];
             #endregion
 
         }

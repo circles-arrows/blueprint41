@@ -36,12 +36,12 @@ namespace Datastore.Manipulation
         internal string _elementId { get; private set; }
 
         /// <summary>
-        /// Person (In Node)
+        /// Movie (In Node)
         /// </summary>
         public Movie Movie { get; private set; }
 
         /// <summary>
-        /// Restaurant (Out Node)
+        /// Rating (Out Node)
         /// </summary>
         public Rating Rating { get; private set; }
 
@@ -89,6 +89,7 @@ namespace Datastore.Manipulation
         {
             var query = Transaction.CompiledQuery
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
+
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
                 .Compile();
