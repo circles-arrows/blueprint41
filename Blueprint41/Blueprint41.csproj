@@ -21,12 +21,12 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <PackageVersion>1.1.2</PackageVersion>
+    <PackageVersion>1.1.3</PackageVersion>
     <PackageId>Blueprint41</PackageId>
     <Title>Blueprint41</Title>
     <Authors>Circles Arrows Limited</Authors>
     <Description>An Object Graph Mapper for CSharp and Neo4j. It supports defining your object model as a schema written in C#, adding refactor scripts to define changes to your model over time, also written in C#. When you run your program and the graph is of an older version, the upgrade script will automatically be executed against the graph. It also supports generation of type-safe C# objects, so you know at compile time if your code is compatible with the latest model and upgrades.</Description>
-    <Copyright>Copyright 2017, 2022 (c) Circles Arrows Limited</Copyright>
+    <Copyright>Copyright 2017, 2024 (c) Circles Arrows Limited</Copyright>
     <PackageLicenseUrl>https://github.com/circles-arrows/blueprint41/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
     <PackageTags>Neo4j Graph Object Mapper</PackageTags>
