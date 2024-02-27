@@ -8,7 +8,6 @@ using System.Text.Json;
 
 namespace Blueprint41.Build
 {
-    //--projectFolder=$(ProjectDir) --outputFolder=$(OutDir) --modelName=$(TargetName)$(TargetExt)
     public static class Generator
     {
         private const string GeneratePathArg = "generatePath";
@@ -23,22 +22,12 @@ namespace Blueprint41.Build
             var projectFolder = GetFullPath(parameters, ProjectFolderArg);
             var outputFolder = parameters.GetValueOrDefault(OutputFolderArg);
 
-            if (!string.IsNullOrEmpty(projectFolder))
-            {
-                var configFilePath = Path.Combine(projectFolder, "Blueprint41.Build.json");
-
-                if (File.Exists(configFilePath))
-                {
-                    foreach (var param in ReadConfigFile(configFilePath))
-                    {
-                        parameters[param.Key] = param.Value;
-                    }
-                }
-            }
+            var configFilePath = Path.Combine(projectFolder, "Blueprint41.Build.json");
+            parameters = MergeParametersWithConfigFile(parameters, configFilePath);
 
             var modelName = parameters.GetValueOrDefault(ModelNameArg);
             var modelPath = Path.Combine(projectFolder, outputFolder, modelName);
-            var generatePath = Path.Combine(projectFolder, parameters.GetValueOrDefault(GeneratePathArg));
+            var generatePath = Path.GetFullPath(Path.Combine(projectFolder, parameters.GetValueOrDefault(GeneratePathArg)));
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
@@ -63,6 +52,17 @@ namespace Blueprint41.Build
                 return true;
             }
             return false;
+        }
+
+        private static Dictionary<string, string> MergeParametersWithConfigFile(Dictionary<string, string> parameters, string configFilePath)
+        {
+            if (File.Exists(configFilePath))
+            {
+                var configParameters = ReadConfigFile(configFilePath);
+                foreach (var param in configParameters)
+                    parameters[param.Key] = param.Value;
+            }
+            return parameters;
         }
 
         private static string CalculateCurrentHash(string generatePath, string modelPath)
@@ -182,9 +182,13 @@ namespace Blueprint41.Build
         private static void ValidatePaths(string modelPath, string generatePath)
         {
             if (string.IsNullOrWhiteSpace(modelPath) || string.IsNullOrWhiteSpace(generatePath))
-            {
                 throw new InvalidOperationException($"Both {ModelNameArg} and {GeneratePathArg} arguments are required.");
-            }
+
+            if (!File.Exists(modelPath))
+                throw new FileNotFoundException($"Model dll '{modelPath}' does not exist.");
+
+            if (!Directory.Exists(generatePath))
+                throw new FileNotFoundException($"Target folder '{generatePath}' does not exist.");
         }
 
         static string ComputeHash(string filePath)
