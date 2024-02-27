@@ -1,22 +1,24 @@
+
  
 <div>
- <div><img align="left" src="https://github.com/circles-arrows/blueprint41/assets/121929116/88c219d4-403b-4e98-81a6-f1f3055a0a33" alt="Girl in a jacket" width="180" height="180"></div> 
+   <div><img align="left" src="https://github.com/circles-arrows/blueprint41/assets/121929116/88c219d4-403b-4e98-81a6-f1f3055a0a33" alt="Blueprint41" width="180" height="180"></div> 
    <div align="right">
+     <div align="left">&nbsp;</div>
      <div align="left"><b> ✔️ Supports for Neo4j and Memgraph</b></div>  
      <div align="left"><b> ✔️ Works Visual Studio, Visual Studio Code and Rider</b></div>   
      <div align="left"><b> ✔️ Develop on Windows, macOS or Linux</b></div>     
+     <div align="left">&nbsp;</div>
+     <div align="left"><h1>Blueprint41</h1></div>
+     <div align="right">
+      <a href="https://www.nuget.org/packages/Blueprint4"><img alt="NuGet" src="https://img.shields.io/nuget/v/Blueprint41.svg"></a>
+      <a href="https://www.nuget.org/packages/Blueprint4"><img alt="downloads" src="https://img.shields.io/nuget/dt/Blueprint41"></a>
+      <img alt="repo size" src="https://img.shields.io/github/repo-size/circles-arrows/blueprint41">
+      <img alt="license" src="https://img.shields.io/github/license/circles-arrows/Blueprint41">
+      <a href="https://sonarcloud.io/summary/new_code?id=circles-arrows_blueprint41"><img alt="Quality Gate Status" src="https://sonarcloud.io/api/project_badges/measure?project=circles-arrows_blueprint41&metric=alert_status"></a>
+     </div>
    </div>  
-</div>  
+</div> 
 
-# Blueprint41
-
-[![NuGet](https://img.shields.io/nuget/v/Blueprint41.svg)](https://www.nuget.org/packages/Blueprint41)
-[![downloads](https://img.shields.io/nuget/dt/Blueprint41)](https://www.nuget.org/packages/Blueprint41)
-![repo size](https://img.shields.io/github/repo-size/circles-arrows/blueprint41)
-![license](https://img.shields.io/github/license/circles-arrows/Blueprint41)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=circles-arrows_blueprint41&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=circles-arrows_blueprint41)
-
-&nbsp;
 ### .NET ORM for Neo4j Graph Database
 
 Simplify database operations through generated data access objects. 
