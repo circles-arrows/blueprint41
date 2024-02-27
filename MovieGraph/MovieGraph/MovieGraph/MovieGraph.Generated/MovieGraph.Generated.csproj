@@ -5,7 +5,6 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Blueprint41.Build" Version="1.1.2" />
 		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
 	</ItemGroup>
 	<ItemGroup>
@@ -13,17 +12,11 @@
 		<ProjectReference Include="..\MovieGraph.Model\MovieGraph.Model.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Update="Generate.tt">
-			<Generator>TextTemplatingFileGenerator</Generator>
-			<LastGenOutput>Generate.txt</LastGenOutput>
-		</None>
-		<None Update="Generate.txt">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Generate.tt</DependentUpon>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
+	<Target Name="AfterResolveProjectReferences" AfterTargets="ResolveProjectReferences">
+		<!-- Loop through all resolved project reference paths -->
+		<Message Importance="high" Text="Resolved project reference path: %(ResolvedProjectReferencePaths.FullPath)" />
+	</Target>
+
 </Project>

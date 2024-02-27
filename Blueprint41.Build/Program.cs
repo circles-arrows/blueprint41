@@ -10,38 +10,29 @@ namespace Blueprint41.Build
 {
     public static class Generator
     {
-        private const string ModelPathArg = "modelPath";
         private const string GeneratePathArg = "generatePath";
         private const string NamespaceArg = "namespace";
-        private const string ProjectPathArg = "projectPath";
-        private const string ModelFolderArg = "modelFolder";
+        private const string ProjectFolderArg = "projectFolder";
+        private const string OutputFolderArg = "outputFolder";
+        private const string ModelNameArg = "modelName";
 
         public static void Main(string[] args)
         {
             var parameters = ParseParameters(args);
-            var projectPath = GetFullPath(parameters, ProjectPathArg);
-            var modelFolder = GetFullPath(parameters, ModelFolderArg);
-            if (!string.IsNullOrEmpty(projectPath))
-            {
-                var configFilePath = Path.Combine(projectPath, "Blueprint41.Build.json");
+            var projectFolder = GetFullPath(parameters, ProjectFolderArg);
+            var outputFolder = parameters.GetValueOrDefault(OutputFolderArg);
 
-                if (File.Exists(configFilePath))
-                {
-                    foreach (var param in ReadConfigFile(configFilePath))
-                    {
-                        parameters[param.Key] = param.Value;
-                    }
-                }
-            }
+            var configFilePath = Path.Combine(projectFolder, "Blueprint41.Build.json");
+            parameters = MergeParametersWithConfigFile(parameters, configFilePath);
 
-            var modelName = parameters.GetValueOrDefault(ModelPathArg);
-            var modelPath = Path.Combine(modelFolder, modelName);
-            var generatePath = GetFullPath(parameters, GeneratePathArg) ?? projectPath;
+            var modelName = parameters.GetValueOrDefault(ModelNameArg);
+            var modelPath = Path.Combine(projectFolder, outputFolder, modelName);
+            var generatePath = Path.GetFullPath(Path.Combine(projectFolder, parameters.GetValueOrDefault(GeneratePathArg)));
             var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
 
-            if (IsGenerationRequired(generatePath, modelPath))
+            if (IsGenerationRequired(generatePath, modelPath, projectFolder))
             {
                 LogGenerationStart(modelPath, generatePath, namespaceName);
                 GenerateCode(modelPath, generatePath, namespaceName);
@@ -49,9 +40,9 @@ namespace Blueprint41.Build
             }
         }
 
-        private static bool IsGenerationRequired(string generatePath, string modelPath)
+        private static bool IsGenerationRequired(string generatePath, string modelPath, string projectPath)
         {
-            var hashFilePath = Path.Combine(generatePath, "currentModelHash");
+            var hashFilePath = Path.Combine(projectPath, "currentModelHash");
             var existingHash = ReadFileContent(hashFilePath);
             var currentHash = CalculateCurrentHash(generatePath, modelPath);
 
@@ -61,6 +52,17 @@ namespace Blueprint41.Build
                 return true;
             }
             return false;
+        }
+
+        private static Dictionary<string, string> MergeParametersWithConfigFile(Dictionary<string, string> parameters, string configFilePath)
+        {
+            if (File.Exists(configFilePath))
+            {
+                var configParameters = ReadConfigFile(configFilePath);
+                foreach (var param in configParameters)
+                    parameters[param.Key] = param.Value;
+            }
+            return parameters;
         }
 
         private static string CalculateCurrentHash(string generatePath, string modelPath)
@@ -180,9 +182,13 @@ namespace Blueprint41.Build
         private static void ValidatePaths(string modelPath, string generatePath)
         {
             if (string.IsNullOrWhiteSpace(modelPath) || string.IsNullOrWhiteSpace(generatePath))
-            {
-                throw new InvalidOperationException($"Both {ModelPathArg} and {GeneratePathArg} arguments are required.");
-            }
+                throw new InvalidOperationException($"Both {ModelNameArg} and {GeneratePathArg} arguments are required.");
+
+            if (!File.Exists(modelPath))
+                throw new FileNotFoundException($"Model dll '{modelPath}' does not exist.");
+
+            if (!Directory.Exists(generatePath))
+                throw new FileNotFoundException($"Target folder '{generatePath}' does not exist. Make sure to have a Blueprint41.Build.json with 'generatePath' set in the model project folder.");
         }
 
         static string ComputeHash(string filePath)
