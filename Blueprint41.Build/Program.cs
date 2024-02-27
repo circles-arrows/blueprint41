@@ -188,7 +188,7 @@ namespace Blueprint41.Build
                 throw new FileNotFoundException($"Model dll '{modelPath}' does not exist.");
 
             if (!Directory.Exists(generatePath))
-                throw new FileNotFoundException($"Target folder '{generatePath}' does not exist.");
+                throw new FileNotFoundException($"Target folder '{generatePath}' does not exist. Make sure to have a Blueprint41.Build.json with 'generatePath' set in the model project folder.");
         }
 
         static string ComputeHash(string filePath)
