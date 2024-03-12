@@ -19,7 +19,7 @@
    </div>  
 </div> 
 
-### .NET ORM for Neo4j Graph Database
+### .NET ORM for Neo4j and Memgraph Graph Database
 
 Simplify database operations through generated data access objects. 
 
