@@ -166,7 +166,7 @@ namespace Blueprint41.Neo4j.Schema
         }
         internal virtual void UpdateConstraints()
         {
-            using (Transaction.Begin())
+            using (Session.Begin())
             {
                 foreach (var diff in GetConstraintDifferences())
                 {
@@ -174,12 +174,15 @@ namespace Blueprint41.Neo4j.Schema
                     {
                         foreach (var cql in action.ToCypher())
                         {
-                            Parser.Log(cql);
-                            Transaction.RunningTransaction.Run(cql);
+                            using (Transaction.Begin())
+                            {
+                                Parser.Log(cql);
+                                Transaction.RunningTransaction.Run(cql);
+                                Transaction.Commit();
+                            }
                         }
                     }
                 }
-                Transaction.Commit();
             }
         }
 

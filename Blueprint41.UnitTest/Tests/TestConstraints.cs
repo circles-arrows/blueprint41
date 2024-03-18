@@ -1,12 +1,6 @@
-﻿using Blueprint41.Neo4j.Persistence;
-using Blueprint41.UnitTest.Helper;
-using Neo4j.Driver;
+﻿using Blueprint41.UnitTest.Helper;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -35,6 +29,17 @@ namespace Blueprint41.UnitTest.Tests
             }
         }
 
+        [Test]
+        public void SetNodeKeyFromUniqueConstraint()
+        {
+            using (ConsoleOutput output = new())
+            {
+                MovieDataStoreModel_01 model = new () { LogToConsole = true };               
+
+                Assert.DoesNotThrow(() => model.Execute(true));
+            }
+        }
+
         private class MovieDataStoreModel_02 : DatastoreModel<MovieDataStoreModel_02>
         {
             protected override void SubscribeEventHandlers() { }
@@ -60,24 +65,16 @@ namespace Blueprint41.UnitTest.Tests
         }
 
         [Test]
-        public void SetNodeKeyFromUniqueConstraint()
-        {
-            using (ConsoleOutput output = new())
-            {
-                MovieDataStoreModel_01 model = new () { LogToConsole = true };               
-
-                Assert.Throws<AggregateException>(() => model.Execute(true) );
-            }
-        }
-
-        [Test]
         public void SetNewNodeKeyIfNodeKeyIsAlreadySet()
         {
             using (ConsoleOutput output = new())
             {
                 MovieDataStoreModel_02 model = new() { LogToConsole = true };
 
-                Assert.Throws<InvalidOperationException>(() => model.Execute(true));
+                Exception ex = Assert.Throws<InvalidOperationException>(() => model.Execute(true));
+
+                Assert.That(ex.InnerException is NotSupportedException);
+                Assert.AreEqual("Multiple key not allowed.", ex.InnerException.Message);
             }
         }
     }
