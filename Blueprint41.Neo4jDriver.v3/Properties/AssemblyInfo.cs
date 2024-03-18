@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Blueprint41 Neo4j Driver v3")]
-[assembly: AssemblyDescription("An Object Graph Mapper for CSharp and Neo4j. It has support for defining the object model as a schema. It support refactor scripts written in CSharp, which you can add to your project. When you run your program and the graph is of an older version, the upgrade script will automatically be executed against the graph. It also support generation of type-safe data objects, so you know at compile time if your code is compatible with the latest upgrades.")]
+[assembly: AssemblyDescription("An Object Graph Mapper for CSharp to connect to Neo4j or Memgraph. It has support for defining the object model as a schema. It support refactor scripts written in CSharp, which you can add to your project. When you run your program and the graph is of an older version, the upgrade script will automatically be executed against the graph. It also support generation of type-safe data objects, so you know at compile time if your code is compatible with the latest upgrades.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CIRCLES ARROWS LIMITED")]
 [assembly: AssemblyProduct("Blueprint41 Neo4j Driver v3")]
@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.3.0")]
-[assembly: AssemblyFileVersion("1.1.3.0")]
+[assembly: AssemblyVersion("1.1.4.0")]
+[assembly: AssemblyFileVersion("1.1.4.0")]
 
 [assembly: InternalsVisibleTo("Blueprint41.UnitTest")]
