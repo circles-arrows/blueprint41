@@ -1,46 +1,32 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-	<DefineConstants>NEO4J;$(COMPUTERNAME.Replace('-','_'))</DefineConstants>
+	<TargetFrameworks>net48;net8.0</TargetFrameworks>
+	  <LangVersion>12</LangVersion>
+	  <ApplicationIcon />
+	  <OutputType>Library</OutputType>
+	  <StartupObject />
+	  <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Mocks\**" />
-    <Compile Remove="Tests\**" />
-    <EmbeddedResource Remove="Mocks\**" />
-    <EmbeddedResource Remove="Tests\**" />
-    <None Remove="Mocks\**" />
-    <None Remove="Tests\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.0" />
+		<PackageReference Include="Neo4j.Driver" Version="5.17.0" />
+		<PackageReference Include="Neo4j.Driver.Simple" Version="5.8.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="NUnit" Version="3.12.0" />
+		<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="DatabaseConnectionSettings.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Blueprint41.Neo4jDriver.Memgraph\Blueprint41.MemgraphDriver.csproj" />
+		<ProjectReference Include="..\Blueprint41.Neo4jDriver.v5\Blueprint41.Neo4jDriver.v5.csproj" />
+		<ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="Neo4j.Driver" Version="5.18.1" />
-    <PackageReference Include="Neo4j.Driver.Simple" Version="5.18.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NUnit" Version="3.14.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Blueprint41.Neo4jDriver.Memgraph\Blueprint41.MemgraphDriver.csproj" />
-    <ProjectReference Include="..\Blueprint41.Neo4jDriver.v5\Blueprint41.Neo4jDriver.v5.csproj" />
-    <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Using Include="NUnit.Framework" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<Using Include="NUnit.Framework" />
+		<Using Include="NUnit.Framework.Internal" />
+	</ItemGroup>
 </Project>
