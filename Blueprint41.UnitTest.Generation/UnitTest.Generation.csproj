@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.UnitTest.Multiple\Blueprint41.UnitTest.Multiple.csproj" />
     <ProjectReference Include="..\Blueprint41.UnitTest\Blueprint41.UnitTest.Neo4j.csproj" />
     <ProjectReference Include="..\Blueprint41\Blueprint41.csproj" />
   </ItemGroup>
