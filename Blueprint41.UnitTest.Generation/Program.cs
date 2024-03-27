@@ -1,6 +1,6 @@
 ﻿using Blueprint41.DatastoreTemplates;
 using Blueprint41.UnitTest.DataStore;
-using Multiple = Blueprint41.UnitTest.Multiple.DataStore;
+using Multiple = Blueprint41.UnitTest.Multiple;
 
 namespace UnitTest.Generation
 {
@@ -36,22 +36,36 @@ namespace UnitTest.Generation
 
             folder = Path.Combine(folder!, "Blueprint41.UnitTest.Multiple");
 
-            string[] graphs = ["Neo4j", "Memgraph"];
 
-            foreach (string graph in graphs)
-            {
-                string graphDir = Path.Combine(folder, graph);
-                
-                Directory.CreateDirectory(graphDir);
+            #region Neo4j Code Generation
 
-                Generator.Execute<Multiple.MockModel>(
-                                new GeneratorSettings(
-                                    graphDir,
-                                    $"{graph}.Datastore"
-                                )
-                            );
-            }
-            
+            string graphDir = Path.Combine(folder, "Neo4j", "Generated");
+
+            Directory.CreateDirectory(graphDir);
+
+            Generator.Execute<Multiple.Neo4j.DataStore.Neo4jModel>(
+                            new GeneratorSettings(
+                                graphDir,
+                                $"Neo4j.Datastore"
+                            )
+                        );
+
+            #endregion
+
+            #region Memgraph Code Generation
+
+            graphDir = Path.Combine(folder, "Memgraph", "Generated");
+
+            Directory.CreateDirectory(graphDir);
+
+            Generator.Execute<Multiple.Memgraph.DataStore.MemgraphModel>(
+                          new GeneratorSettings(
+                              graphDir,
+                              $"Memgraph.Datastore"
+                          )
+                      );
+
+            #endregion
         }
     }
 }

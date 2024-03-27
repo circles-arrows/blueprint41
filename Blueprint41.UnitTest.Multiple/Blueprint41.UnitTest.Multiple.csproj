@@ -7,7 +7,21 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+	<DefineConstants>NEO4J;$(COMPUTERNAME.Replace('-','_'))</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Mocks\**" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Mocks\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Mocks\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="DatabaseConnectionSettings.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
