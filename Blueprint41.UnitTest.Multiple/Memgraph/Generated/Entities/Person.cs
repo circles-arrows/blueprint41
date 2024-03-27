@@ -16,6 +16,7 @@ namespace Memgraph.Datastore.Manipulation
         string name { get; }
         int? born { get; }
         string Uid { get; }
+        IEnumerable<Movie> ActedMovies { get; }
     }
 
     public partial class Person : OGM<Person, Person.PersonData, System.String>, IPersonOriginalData
@@ -130,6 +131,7 @@ namespace Memgraph.Datastore.Manipulation
                 name = data.name;
                 born = data.born;
                 Uid = data.Uid;
+                ActedMovies = data.ActedMovies;
             }
 
 
@@ -139,6 +141,7 @@ namespace Memgraph.Datastore.Manipulation
             {
                 NodeType = "Person";
 
+                ActedMovies = new EntityCollection<Movie>(Wrapper, Members.ActedMovies, item => { if (Members.ActedMovies.Events.HasRegisteredChangeHandlers) { int loadHack = item.Actors.Count; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -174,6 +177,7 @@ namespace Memgraph.Datastore.Manipulation
             public string name { get; set; }
             public int? born { get; set; }
             public string Uid { get; set; }
+            public EntityCollection<Movie> ActedMovies { get; private set; }
 
             #endregion
         }
@@ -187,6 +191,11 @@ namespace Memgraph.Datastore.Manipulation
         public string name { get { LazyGet(); return InnerData.name; } set { if (LazySet(Members.name, InnerData.name, value)) InnerData.name = value; } }
         public int? born { get { LazyGet(); return InnerData.born; } set { if (LazySet(Members.born, InnerData.born, value)) InnerData.born = value; } }
         public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
+        public EntityCollection<Movie> ActedMovies { get { return InnerData.ActedMovies; } }
+        private void ClearActedMovies(DateTime? moment)
+        {
+            ((ILookupHelper<Movie>)InnerData.ActedMovies).ClearLookup(moment);
+        }
 
         #endregion
 
@@ -199,6 +208,67 @@ namespace Memgraph.Datastore.Manipulation
         #endregion
 
         #region Relationship Properties
+
+        #region ActedMovies (Collection)
+
+        public List<ACTED_IN> ActedMovieRelations()
+        {
+            return ACTED_IN.Load(_queryActedMovieRelations.Value, ("key", Uid));
+        }
+        private readonly Lazy<ICompiled> _queryActedMovieRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
+        public List<ACTED_IN> ActedMoviesWhere(Func<ACTED_IN.Alias, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return ACTED_IN.Load(query);
+        }
+        public List<ACTED_IN> ActedMoviesWhere(Func<ACTED_IN.Alias, QueryCondition[]> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(inAlias.Uid == Uid)
+                .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return ACTED_IN.Load(query);
+        }
+        public List<ACTED_IN> ActedMoviesWhere(JsNotation<System.DateTime?> CreationDate = default, JsNotation<string[]> roles = default)
+        {
+            return ActedMoviesWhere(delegate(ACTED_IN.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (roles.HasValue) conditions.Add(alias.roles == roles.Value);
+
+                return conditions.ToArray();
+            });
+        }
+        public void AddActedMovie(Movie movie, JsNotation<string[]> roles = default)
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            if (roles.HasValue) properties.Add("roles", roles.Value);
+            ((ILookupHelper<Movie>)InnerData.ActedMovies).AddItem(movie, null, properties);
+        }
+        public void RemoveActedMovie(Movie movie)
+        {
+            ActedMovies.Remove(movie);
+        }
+
+        #endregion
 
         private static readonly Parameter key = Parameter.New<string>("key");
         private static readonly Parameter moment = Parameter.New<DateTime>("moment");
@@ -232,6 +302,7 @@ namespace Memgraph.Datastore.Manipulation
             public EntityProperty name { get; } = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Entities["Person"].Properties["name"];
             public EntityProperty born { get; } = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Entities["Person"].Properties["born"];
             public EntityProperty Uid { get; } = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Entities["Person"].Properties["Uid"];
+            public EntityProperty ActedMovies { get; } = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Entities["Person"].Properties["ActedMovies"];
             #endregion
 
         }
@@ -597,6 +668,49 @@ namespace Memgraph.Datastore.Manipulation
 
                 #endregion
 
+                #region OnActedMovies
+
+                private static bool onActedMoviesIsRegistered = false;
+
+                private static EventHandler<Person, PropertyEventArgs> onActedMovies;
+                public static event EventHandler<Person, PropertyEventArgs> OnActedMovies
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onActedMoviesIsRegistered)
+                            {
+                                Members.ActedMovies.Events.OnChange -= onActedMoviesProxy;
+                                Members.ActedMovies.Events.OnChange += onActedMoviesProxy;
+                                onActedMoviesIsRegistered = true;
+                            }
+                            onActedMovies += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onActedMovies -= value;
+                            if (onActedMovies is null && onActedMoviesIsRegistered)
+                            {
+                                Members.ActedMovies.Events.OnChange -= onActedMoviesProxy;
+                                onActedMoviesIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onActedMoviesProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<Person, PropertyEventArgs> handler = onActedMovies;
+                    if (handler is not null)
+                        handler.Invoke((Person)sender, args);
+                }
+
+                #endregion
+
             }
 
             #endregion
@@ -613,6 +727,7 @@ namespace Memgraph.Datastore.Manipulation
         string IPersonOriginalData.name { get { return OriginalData.name; } }
         int? IPersonOriginalData.born { get { return OriginalData.born; } }
         string IPersonOriginalData.Uid { get { return OriginalData.Uid; } }
+        IEnumerable<Movie> IPersonOriginalData.ActedMovies { get { return OriginalData.ActedMovies.OriginalData; } }
 
         #endregion
         #endregion

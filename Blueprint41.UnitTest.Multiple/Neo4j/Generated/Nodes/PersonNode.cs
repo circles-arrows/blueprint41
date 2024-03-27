@@ -129,6 +129,17 @@ namespace Neo4j.Datastore.Query
             return this;
         }
 
+        public PersonIn  In  { get { return new PersonIn(this); } }
+        public class PersonIn
+        {
+            private PersonNode Parent;
+            internal PersonIn(PersonNode parent)
+            {
+                Parent = parent;
+            }
+            public IFromIn_ACTED_IN_REL ACTED_IN { get { return new ACTED_IN_REL(Parent, DirectionEnum.In); } }
+
+        }
     }
 
     public class PersonAlias : AliasResult<PersonAlias, PersonListAlias>
@@ -180,6 +191,7 @@ namespace Neo4j.Datastore.Query
         }
         private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
+        public PersonNode.PersonIn In { get { return new PersonNode.PersonIn(new PersonNode(this, true)); } }
 
         public StringResult name
         {

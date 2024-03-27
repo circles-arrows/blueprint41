@@ -761,6 +761,175 @@ namespace Memgraph.Datastore.Manipulation
         }
         public static class Relationships
         {
+            public static class ACTED_IN
+            {
+                public static readonly Relationship Relationship = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Relations["ACTED_IN"];
+
+                #region OnRelationCreate
+
+                private static bool onRelationCreateIsRegistered = false;
+
+                private static event EventHandler<Relationship, RelationshipEventArgs> onRelationCreate;
+                public static event EventHandler<Relationship, RelationshipEventArgs> OnRelationCreate
+                {
+                    add
+                    {
+                        lock (Relationship)
+                        {
+                            if (!onRelationCreateIsRegistered)
+                            {
+                                Relationship.Events.OnRelationCreate += onRelationCreateProxy;
+                                onRelationCreateIsRegistered = true;
+                            }
+                            onRelationCreate += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (Relationship)
+                        {
+                            onRelationCreate -= value;
+                            if (onRelationCreate is null && onRelationCreateIsRegistered)
+                            {
+                                Relationship.Events.OnRelationCreate -= onRelationCreateProxy;
+                                onRelationCreateIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+
+                private static void onRelationCreateProxy(object sender, RelationshipEventArgs args)
+                {
+                    EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreate;
+                    if (handler is not null)
+                        handler.Invoke((Relationship)sender, args);
+                }
+
+                #endregion
+                #region OnRelationCreated
+
+                private static bool onRelationCreatedIsRegistered = false;
+
+                private static event EventHandler<Relationship, RelationshipEventArgs> onRelationCreated;
+                public static event EventHandler<Relationship, RelationshipEventArgs> OnRelationCreated
+                {
+                    add
+                    {
+                        lock (Relationship)
+                        {
+                            if (!onRelationCreatedIsRegistered)
+                            {
+                                Relationship.Events.OnRelationCreated += onRelationCreatedProxy;
+                                onRelationCreatedIsRegistered = true;
+                            }
+                            onRelationCreated += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (Relationship)
+                        {
+                            onRelationCreated -= value;
+                            if (onRelationCreated is null && onRelationCreatedIsRegistered)
+                            {
+                                Relationship.Events.OnRelationCreated -= onRelationCreatedProxy;
+                                onRelationCreatedIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+
+                private static void onRelationCreatedProxy(object sender, RelationshipEventArgs args)
+                {
+                    EventHandler<Relationship, RelationshipEventArgs> handler = onRelationCreated;
+                    if (handler is not null)
+                        handler.Invoke((Relationship)sender, args);
+                }
+
+                #endregion
+                #region OnRelationDelete
+
+                private static bool onRelationDeleteIsRegistered = false;
+
+                private static event EventHandler<Relationship, RelationshipEventArgs> onRelationDelete;
+                public static event EventHandler<Relationship, RelationshipEventArgs> OnRelationDelete
+                {
+                    add
+                    {
+                        lock (Relationship)
+                        {
+                            if (!onRelationDeleteIsRegistered)
+                            {
+                                Relationship.Events.OnRelationDelete += onRelationDeleteProxy;
+                                onRelationDeleteIsRegistered = true;
+                            }
+                            onRelationDelete += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (Relationship)
+                        {
+                            onRelationDelete -= value;
+                            if (onRelationDelete is null && onRelationDeleteIsRegistered)
+                            {
+                                Relationship.Events.OnRelationDelete -= onRelationDeleteProxy;
+                                onRelationDeleteIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+
+                private static void onRelationDeleteProxy(object sender, RelationshipEventArgs args)
+                {
+                    EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDelete;
+                    if (handler is not null)
+                        handler.Invoke((Relationship)sender, args);
+                }
+
+                #endregion
+                #region OnRelationDeleted
+
+                private static bool onRelationDeletedIsRegistered = false;
+
+                private static event EventHandler<Relationship, RelationshipEventArgs> onRelationDeleted;
+                public static event EventHandler<Relationship, RelationshipEventArgs> OnRelationDeleted
+                {
+                    add
+                    {
+                        lock (Relationship)
+                        {
+                            if (!onRelationDeletedIsRegistered)
+                            {
+                                Relationship.Events.OnRelationDeleted += onRelationDeletedProxy;
+                                onRelationDeletedIsRegistered = true;
+                            }
+                            onRelationDeleted += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (Relationship)
+                        {
+                            onRelationDeleted -= value;
+                            if (onRelationDeleted is null && onRelationDeletedIsRegistered)
+                            {
+                                Relationship.Events.OnRelationDeleted -= onRelationDeletedProxy;
+                                onRelationDeletedIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+
+                private static void onRelationDeletedProxy(object sender, RelationshipEventArgs args)
+                {
+                    EventHandler<Relationship, RelationshipEventArgs> handler = onRelationDeleted;
+                    if (handler is not null)
+                        handler.Invoke((Relationship)sender, args);
+                }
+
+                #endregion
+            }
         }
     }
 }

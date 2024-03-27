@@ -131,6 +131,17 @@ namespace Memgraph.Datastore.Query
             return this;
         }
 
+
+        public MovieOut Out { get { return new MovieOut(this); } }
+        public class MovieOut
+        {
+            private MovieNode Parent;
+            internal MovieOut(MovieNode parent)
+            {
+                Parent = parent;
+            }
+            public IFromOut_ACTED_IN_REL ACTED_IN { get { return new ACTED_IN_REL(Parent, DirectionEnum.Out); } }
+        }
     }
 
     public class MovieAlias : AliasResult<MovieAlias, MovieListAlias>
@@ -184,6 +195,7 @@ namespace Memgraph.Datastore.Query
         }
         private IReadOnlyDictionary<string, FieldResult> m_AliasFields = null;
 
+        public MovieNode.MovieOut Out { get { return new MovieNode.MovieOut(new MovieNode(this, true)); } }
 
         public StringResult title
         {

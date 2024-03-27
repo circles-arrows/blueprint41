@@ -17,6 +17,7 @@ namespace Memgraph.Datastore.Manipulation
         string tagline { get; }
         int? released { get; }
         string Uid { get; }
+        IEnumerable<Person> Actors { get; }
     }
 
     public partial class Movie : OGM<Movie, Movie.MovieData, System.String>, IMovieOriginalData
@@ -132,6 +133,7 @@ namespace Memgraph.Datastore.Manipulation
                 tagline = data.tagline;
                 released = data.released;
                 Uid = data.Uid;
+                Actors = data.Actors;
             }
 
 
@@ -141,6 +143,7 @@ namespace Memgraph.Datastore.Manipulation
             {
                 NodeType = "Movie";
 
+                Actors = new EntityCollection<Person>(Wrapper, Members.Actors, item => { if (Members.Actors.Events.HasRegisteredChangeHandlers) { int loadHack = item.ActedMovies.Count; } });
             }
             public string NodeType { get; private set; }
             sealed public override System.String GetKey() { return Entity.Parent.PersistenceProvider.ConvertFromStoredType<System.String>(Uid); }
@@ -180,6 +183,7 @@ namespace Memgraph.Datastore.Manipulation
             public string tagline { get; set; }
             public int? released { get; set; }
             public string Uid { get; set; }
+            public EntityCollection<Person> Actors { get; private set; }
 
             #endregion
         }
@@ -194,6 +198,11 @@ namespace Memgraph.Datastore.Manipulation
         public string tagline { get { LazyGet(); return InnerData.tagline; } set { if (LazySet(Members.tagline, InnerData.tagline, value)) InnerData.tagline = value; } }
         public int? released { get { LazyGet(); return InnerData.released; } set { if (LazySet(Members.released, InnerData.released, value)) InnerData.released = value; } }
         public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
+        public EntityCollection<Person> Actors { get { return InnerData.Actors; } }
+        private void ClearActors(DateTime? moment)
+        {
+            ((ILookupHelper<Person>)InnerData.Actors).ClearLookup(moment);
+        }
 
         #endregion
 
@@ -206,6 +215,67 @@ namespace Memgraph.Datastore.Manipulation
         #endregion
 
         #region Relationship Properties
+
+        #region Actors (Collection)
+
+        public List<ACTED_IN> ActorRelations()
+        {
+            return ACTED_IN.Load(_queryActorRelations.Value, ("key", Uid));
+        }
+        private readonly Lazy<ICompiled> _queryActorRelations = new Lazy<ICompiled>(delegate()
+        {
+            return Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == key)
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+        });
+        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN.Alias, QueryCondition> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return ACTED_IN.Load(query);
+        }
+        public List<ACTED_IN> ActorsWhere(Func<ACTED_IN.Alias, QueryCondition[]> expression)
+        {
+            var query = Transaction.CompiledQuery
+                .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
+                .Where(outAlias.Uid == Uid)
+                .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
+                .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
+                .Compile();
+
+            return ACTED_IN.Load(query);
+        }
+        public List<ACTED_IN> ActorsWhere(JsNotation<System.DateTime?> CreationDate = default, JsNotation<string[]> roles = default)
+        {
+            return ActorsWhere(delegate(ACTED_IN.Alias alias)
+            {
+                List<QueryCondition> conditions = new List<QueryCondition>();
+
+                if (CreationDate.HasValue) conditions.Add(alias.CreationDate == CreationDate.Value);
+                if (roles.HasValue) conditions.Add(alias.roles == roles.Value);
+
+                return conditions.ToArray();
+            });
+        }
+        public void AddActor(Person person, JsNotation<string[]> roles = default)
+        {
+            Dictionary<string, object> properties = new Dictionary<string, object>();
+            if (roles.HasValue) properties.Add("roles", roles.Value);
+            ((ILookupHelper<Person>)InnerData.Actors).AddItem(person, null, properties);
+        }
+        public void RemoveActor(Person person)
+        {
+            Actors.Remove(person);
+        }
+
+        #endregion
 
         private static readonly Parameter key = Parameter.New<string>("key");
         private static readonly Parameter moment = Parameter.New<DateTime>("moment");
@@ -240,6 +310,7 @@ namespace Memgraph.Datastore.Manipulation
             public EntityProperty tagline { get; } = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Entities["Movie"].Properties["tagline"];
             public EntityProperty released { get; } = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Entities["Movie"].Properties["released"];
             public EntityProperty Uid { get; } = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Entities["Movie"].Properties["Uid"];
+            public EntityProperty Actors { get; } = Blueprint41.UnitTest.Multiple.Memgraph.DataStore.MemgraphModel.Model.Entities["Movie"].Properties["Actors"];
             #endregion
 
         }
@@ -648,6 +719,49 @@ namespace Memgraph.Datastore.Manipulation
 
                 #endregion
 
+                #region OnActors
+
+                private static bool onActorsIsRegistered = false;
+
+                private static EventHandler<Movie, PropertyEventArgs> onActors;
+                public static event EventHandler<Movie, PropertyEventArgs> OnActors
+                {
+                    add
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            if (!onActorsIsRegistered)
+                            {
+                                Members.Actors.Events.OnChange -= onActorsProxy;
+                                Members.Actors.Events.OnChange += onActorsProxy;
+                                onActorsIsRegistered = true;
+                            }
+                            onActors += value;
+                        }
+                    }
+                    remove
+                    {
+                        lock (typeof(OnPropertyChange))
+                        {
+                            onActors -= value;
+                            if (onActors is null && onActorsIsRegistered)
+                            {
+                                Members.Actors.Events.OnChange -= onActorsProxy;
+                                onActorsIsRegistered = false;
+                            }
+                        }
+                    }
+                }
+            
+                private static void onActorsProxy(object sender, PropertyEventArgs args)
+                {
+                    EventHandler<Movie, PropertyEventArgs> handler = onActors;
+                    if (handler is not null)
+                        handler.Invoke((Movie)sender, args);
+                }
+
+                #endregion
+
             }
 
             #endregion
@@ -665,6 +779,7 @@ namespace Memgraph.Datastore.Manipulation
         string IMovieOriginalData.tagline { get { return OriginalData.tagline; } }
         int? IMovieOriginalData.released { get { return OriginalData.released; } }
         string IMovieOriginalData.Uid { get { return OriginalData.Uid; } }
+        IEnumerable<Person> IMovieOriginalData.Actors { get { return OriginalData.Actors.OriginalData; } }
 
         #endregion
         #endregion

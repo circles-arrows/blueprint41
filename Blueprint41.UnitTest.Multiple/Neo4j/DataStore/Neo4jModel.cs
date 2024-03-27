@@ -10,7 +10,6 @@
         [Version(0, 0, 0)]
         public void Script_0_0_0()
         {
-
             FunctionalIds.Default = FunctionalIds.UUID;
 
             Entities.New("Movie")
@@ -25,6 +24,12 @@
                     .AddProperty("born", typeof(int))
                     .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                     .SetKey("Uid", true);
+
+
+            Relations.New(Entities["Person"], Entities["Movie"], "ACTED_IN", "ACTED_IN")
+                     .SetInProperty("ActedMovies", PropertyType.Collection)
+                     .SetOutProperty("Actors", PropertyType.Collection)
+                     .AddProperty("roles", typeof(string[]), IndexType.Unique);
         }
     }
 }
