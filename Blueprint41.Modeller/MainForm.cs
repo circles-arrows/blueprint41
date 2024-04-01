@@ -10,7 +10,6 @@ using Blueprint41.Modeller.Generation;
 using System.Xml;
 using Blueprint41.Modeller.Editors;
 using Microsoft.Msagl.GraphViewerGdi;
-using Blueprint41.Licensing.Connector;
 using Blueprint41.Modeller.Utils;
 
 namespace Blueprint41.Modeller
@@ -18,9 +17,9 @@ namespace Blueprint41.Modeller
     public partial class MainForm : Form
     {
         #region Private Properties
-        bool showLabels = false;
-        bool showInherited = false;
-        bool removingEdge = false;
+        bool showLabels;
+        bool showInherited;
+        bool removingEdge;
         int idcounter = 0;
         int splitterDistance;
 
@@ -29,9 +28,9 @@ namespace Blueprint41.Modeller
         const string NEO4J_EDITOR = "Neo4j Model";
         const string B41_EDITOR = "Blueprint41 Model";
 
-        Submodel mainSubmodel => Model.Submodels.Submodel[0];
-        NodeTypeEntry newNodeTypeEntity { get; set; }
-        Submodel.NodeLocalType selectedNode { get; set; }
+        protected Submodel MainSubmodel => Model.Submodels.Submodel[0];
+        protected NodeTypeEntry NewNodeTypeEntity { get; set; }
+        protected Submodel.NodeLocalType SelectedNode { get; set; }
         #endregion
 
         #region Properties
@@ -39,13 +38,13 @@ namespace Blueprint41.Modeller
         private string m_StoragePath = null;
         public string StoragePath
         {
-            set { this.m_StoragePath = value; }
+            set { m_StoragePath = value; }
             get
             {
-                if (this.m_StoragePath == null)
-                    this.m_StoragePath = Util.DefaultFilePath;
+                if (m_StoragePath == null)
+                    m_StoragePath = Util.DefaultFilePath;
 
-                return this.m_StoragePath;
+                return m_StoragePath;
             }
         }
         public string EntityNodeName => Model.ModellerType == ModellerType.Blueprint41 ? "Entity" : "Node";
@@ -161,7 +160,7 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_EdgeAdded(object sender, EdgeEventArgs e)
         {
-            if (tsbEdgeInsertion.Checked == false || removingEdge == true)
+            if (!tsbEdgeInsertion.Checked || removingEdge)
                 return;
 
             using (EdgeEditor editor = new EdgeEditor())
@@ -169,7 +168,7 @@ namespace Blueprint41.Modeller
                 editor.Model = Model;
                 editor.SourceName = e.Edge.Source;
                 editor.TargetName = e.Edge.Target;
-                
+
                 if (editor.ShowDialog() == DialogResult.OK)
                 {
                     Model.InsertRelationship(editor.SourceName, editor.TargetName, editor.Relationship, e.Edge);
@@ -177,7 +176,9 @@ namespace Blueprint41.Modeller
                     graphEditor.ClearSelection();
                 }
                 else
+                {
                     Model.GraphEditor.Viewer.Undo();
+                }
             }
 
             Model.Invalidate();
@@ -220,15 +221,15 @@ namespace Blueprint41.Modeller
             CloseEdgeEditor();
             RefreshNodeCombobox();
             DefaultOrExpandPropertiesWidth(false);
-            selectedNode = null;
+            SelectedNode = null;
         }
 
         void GraphEditor_NodeSelected(object sender, NodeEventArgs e)
-        {          
+        {
             if (!(e.Node.UserData is Submodel.NodeLocalType))
                 throw new NotSupportedException();
 
-            selectedNode = e.Node.UserData as Submodel.NodeLocalType;
+            SelectedNode = e.Node.UserData as Submodel.NodeLocalType;
 
             if (tsbEdgeInsertion.Checked)
                 return;
@@ -252,11 +253,10 @@ namespace Blueprint41.Modeller
 
         void GraphEditor_InsertNode(object sender, NodeEventArgs e)
         {
-            Submodel.NodeLocalType model = e.Node?.UserData as Submodel.NodeLocalType;
-            if (model == null)
+            if (!(e.Node?.UserData is Submodel.NodeLocalType model))
             {
-                Entity entity = new Schemas.Entity(Model);
-                entity.Label = GetNewId(newNodeTypeEntity);
+                Entity entity = new Entity(Model);
+                entity.Label = GetNewId(NewNodeTypeEntity);
                 entity.Name = entity.Label;
                 Model.Entities.Entity.Add(entity);
 
@@ -266,18 +266,17 @@ namespace Blueprint41.Modeller
                 model.Ycoordinate = e.Center.Y;
                 model.EntityGuid = entity.Guid;
 
-                if (Model.DisplayedSubmodel != mainSubmodel)
-                    mainSubmodel.Node.Add(model.Clone());
+                if (Model.DisplayedSubmodel != MainSubmodel)
+                    MainSubmodel.Node.Add(model.Clone());
 
                 Model.DisplayedSubmodel.Node.Add(model);
                 RefreshNodeCombobox();
-                //ResetLayout();
-                Model.RebindControl();     
+                Model.RebindControl();
             }
 
             // Auto select newly created entity
-            selectedNode = model;
-            selectedNode.Select();
+            SelectedNode = model;
+            SelectedNode.Select();
             entityEditor.Show(model.Entity, Model);
 
             EnableDisableButtons();
@@ -325,10 +324,8 @@ namespace Blueprint41.Modeller
             Model.ShowInheritedRelationships = showInherited;
 
             string editorName = Model.ModellerType == ModellerType.Blueprint41 ? B41_EDITOR : NEO4J_EDITOR;
-            this.Text = $"{FORMNAME} - ({editorName})";
+            Text = $"{FORMNAME} - ({editorName})";
             graphEditor.ModellerType = Model.ModellerType;
-
-            //CheckGuidDiscrepancies();
         }
 
         void InitializeSubmodel()
@@ -342,11 +339,11 @@ namespace Blueprint41.Modeller
                     Model.Submodels.Submodel.Add(main);
                 }
 
-                Model.DisplayedSubmodel = Model.Submodels.Submodel.Where(m => m.Name == RegistryHandler.LastOpenedSubmodel).FirstOrDefault();
-                Model.MainSubmodel = mainSubmodel;
+                Model.DisplayedSubmodel = Model.Submodels.Submodel.FirstOrDefault(m => m.Name == RegistryHandler.LastOpenedSubmodel);
+                Model.MainSubmodel = MainSubmodel;
 
                 if (Model.DisplayedSubmodel == null)
-                    Model.DisplayedSubmodel = mainSubmodel;
+                    Model.DisplayedSubmodel = MainSubmodel;
             }
 
             FillSubmodelComboBox(Model.DisplayedSubmodel);
@@ -366,8 +363,8 @@ namespace Blueprint41.Modeller
 
             if (graphEditor.NodeTypes.SingleOrDefault(x => x.Name == contextMenuString) == null)
             {
-                newNodeTypeEntity = new NodeTypeEntry(contextMenuString, Microsoft.Msagl.Drawing.Shape.Circle, Microsoft.Msagl.Drawing.Color.Transparent, Microsoft.Msagl.Drawing.Color.Black, 10, null, label);
-                graphEditor.AddNodeType(newNodeTypeEntity);
+                NewNodeTypeEntity = new NodeTypeEntry(contextMenuString, Microsoft.Msagl.Drawing.Shape.Circle, Microsoft.Msagl.Drawing.Color.Transparent, Microsoft.Msagl.Drawing.Color.Black, 10, null, label);
+                graphEditor.AddNodeType(NewNodeTypeEntity);
             }
         }
 
@@ -402,13 +399,13 @@ namespace Blueprint41.Modeller
         private void EnableDisableButtons()
         {
             bool hasEntities = Model?.GraphEditor?.Viewer?.Entities.Count() > 0;
-                        
+
             tsbEdgeInsertion.Enabled = hasEntities;
             showLabelsToolStripMenuItem.Enabled = hasEntities;
             btnShowLabels.Enabled = hasEntities;
             btnShowInheritedRelationships.Enabled = hasEntities;
             showInheritedRelationshipsToolStripMenuItem.Enabled = hasEntities;
-            
+
             if (!hasEntities)
             {
                 graphEditor.Viewer.InsertingEdge = false;
@@ -540,7 +537,7 @@ namespace Blueprint41.Modeller
             }
             else
             {
-                selectedNode = null;
+                SelectedNode = null;
                 Model.DisplayedSubmodel = cmbSubmodels.SelectedItem as Submodel;
             }
 
@@ -560,14 +557,14 @@ namespace Blueprint41.Modeller
             if (cmbNodes.SelectedIndex == 0)
             {
                 entityEditor.CloseEditor();
-                Model.GraphReset();                
+                Model.GraphReset();
                 return;
             }
-            
-            selectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
 
-            entityEditor.Show(selectedNode.Entity, Model);
-            selectedNode.Highlight();
+            SelectedNode = cmbNodes.SelectedItem as Submodel.NodeLocalType;
+
+            entityEditor.Show(SelectedNode.Entity, Model);
+            SelectedNode.Highlight();
         }
 
         private void RemoveHighlightNodes()
@@ -581,7 +578,7 @@ namespace Blueprint41.Modeller
 
         private void EntityEditor_EntityTypeChanged(object sender, EventArgs e)
         {
-            selectedNode.RemoveHighlight();
+            SelectedNode.RemoveHighlight();
         }
 
         #endregion
@@ -859,7 +856,7 @@ namespace Blueprint41.Modeller
         private void BtnShowInheritedRelationships_Click(object sender, EventArgs e)
         {
             showInherited = btnShowInheritedRelationships.Checked;
-            showInheritedRelationshipsToolStripMenuItem.Checked = btnShowInheritedRelationships.Checked;            
+            showInheritedRelationshipsToolStripMenuItem.Checked = btnShowInheritedRelationships.Checked;
             Model.ShowInheritedRelationships = btnShowInheritedRelationships.Checked;
         }
 
@@ -908,7 +905,6 @@ namespace Blueprint41.Modeller
             if (module == null)
             {
                 MessageBox.Show("The comparer is not available.", "Info", System.Windows.Forms.MessageBoxButtons.OK);
-                return;
             }
             else
             {
@@ -960,11 +956,11 @@ namespace Blueprint41.Modeller
             if (graphEditor.SelectedEntities.Count > 1)
             {
                 CloseNodeEditor();
-                selectedNode = null;
+                SelectedNode = null;
             }
             else
             {
-                Entity entity = selectedNode?.Entity;
+                Entity entity = SelectedNode?.Entity;
                 if (entity != null)
                     entityEditor.Show(entity, Model);
             }
@@ -975,15 +971,6 @@ namespace Blueprint41.Modeller
         #region Help Menu
         private void registerProductToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ConnectorLoader loader = ConnectorLoader.GetConnectorClient();
-
-            if (loader == null)
-            {
-                MessageBox.Show("Unable to communicate to the server at this time. Please check your internet connection and restart the application. If error persists, contact support@circles-arrows.com", "Register", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            loader.RegisterLicense();
             SetModuleMenuItemVisibility();
         }
 
