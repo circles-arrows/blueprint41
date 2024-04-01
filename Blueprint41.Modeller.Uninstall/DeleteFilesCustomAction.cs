@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Blueprint41.Modeller.Uninstall
 {
     [RunInstaller(true)]
-    public partial class DeleteFilesCustomAction : System.Configuration.Install.Installer
+    public partial class DeleteFilesCustomAction : Installer
     {
         public DeleteFilesCustomAction()
         {
@@ -24,18 +24,16 @@ namespace Blueprint41.Modeller.Uninstall
             {
                 // delete any addictional files (or comepletely remove the folder)
                 string pathtodelete = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                // MessageBox.Show("Deleting: " + pathtodelete);
                 if (pathtodelete != null && Directory.Exists(pathtodelete))
                 {
                     // delete all the file inside this folder except SID.SetupSupport
                     foreach (var file in Directory.GetFiles(pathtodelete))
                     {
-                        // MessageBox.Show(file);
                         if (!file.Contains(System.Reflection.Assembly.GetAssembly(typeof(DeleteFilesCustomAction)).GetName().Name))
                             SafeDeleteFile(file);
                     }
 
-                    // delete all directories 
+                    // delete all directories
                     // optional "Modules" if update
                     foreach (var directory in Directory.GetDirectories(pathtodelete))
                     {
@@ -49,10 +47,11 @@ namespace Blueprint41.Modeller.Uninstall
                         SafeDeleteDirectory(directory);
                     }
                 }
-
-                // 
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         private static void SafeDeleteFile(string file)
@@ -63,6 +62,7 @@ namespace Blueprint41.Modeller.Uninstall
             }
             catch
             {
+                // ignored
             }
         }
 
@@ -72,8 +72,9 @@ namespace Blueprint41.Modeller.Uninstall
             {
                 Directory.Delete(directory, true);
             }
-            catch (Exception)
+            catch
             {
+                // ignored
             }
         }
     }
