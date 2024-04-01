@@ -57,6 +57,8 @@ namespace Blueprint41.Modeller
 
             InitializeComponent();
             FormClosing += MainForm_FormClosing;
+
+            DisableHelpMenuItems();
         }
 
         #region Main Form Events
@@ -989,6 +991,16 @@ namespace Blueprint41.Modeller
                 form.ShowDialog();
             }
         }
+
+        private void DisableHelpMenuItems()
+        {
+            registerProductToolStripMenuItem.Visible = false;
+            registerProductToolStripMenuItem.Enabled = false;
+            checkForUpdatesToolStripMenuItem.Visible = false;
+            checkForUpdatesToolStripMenuItem.Enabled = false;
+            toolStripSeparator5.Visible = false;
+        }
+
         #endregion
 
     }

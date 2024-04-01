@@ -5578,7 +5578,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Blueprint41 Modeller"
         "ProductCode" = "8:{28135988-C1AF-4734-9A82-993AF0ACEE46}"
-        "PackageCode" = "8:{F3F468E3-9F0C-49B7-A4E9-6D5B1359CEE2}"
+        "PackageCode" = "8:{D7B75277-9B90-4E55-9FA1-0AAC235BEB3C}"
         "UpgradeCode" = "8:{B2C223A8-2CEF-497A-85C0-AB460E559880}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -6127,7 +6127,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A426A1062DD741E1BB391075A850B88B"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\obj\\Release\\Blueprint41.Modeller.exe"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller\\obj\\x86\\Release\\Blueprint41.Modeller.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"
@@ -6187,7 +6187,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_EE5C9E604B644743BC85076E4C340AD0"
             {
-            "SourcePath" = "8:..\\..\\Blueprint41.Modeller.Uninstall\\obj\\Release\\Blueprint41.Modeller.Uninstall.dll"
+            "SourcePath" = "8:..\\..\\Blueprint41.Modeller.Uninstall\\obj\\x86\\Release\\Blueprint41.Modeller.Uninstall.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1D7FD3CB89B3499AA36652090D0D304A"

@@ -84,7 +84,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(239, 13);
             this.label4.TabIndex = 4;
-            this.label4.Text = "Copyright 2017 (c) CIRCLES ARROWS LIMITED";
+            this.label4.Text = "Copyright 2024 (c) CIRCLES ARROWS LIMITED";
             // 
             // llSite
             // 
