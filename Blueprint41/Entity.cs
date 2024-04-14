@@ -703,6 +703,9 @@ namespace Blueprint41
 
             foreach (Entity baseClass in this.GetConcreteClasses())
             {
+                if (baseClass.Key is null)
+                    continue;
+
                 Parent.Templates.ApplyFunctionalId(template =>
                 {
                     template.Caller = this;
