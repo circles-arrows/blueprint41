@@ -75,19 +75,8 @@ namespace Blueprint41.Core
         { get { return convertFromStoredType.Value; } }
         private readonly Lazy<Dictionary<Type, Conversion?>> convertFromStoredType;
 
-        public static PersistenceProvider CurrentPersistenceProvider { get; set; } = Neo4jPersistenceProvider.VoidPersistenceProvider;
-        public static bool IsConfigured => ((CurrentPersistenceProvider as Neo4jPersistenceProvider)?.Uri is not null);
-
-        public static bool IsNeo4j
-        {
-            get
-            {
-                if (CurrentPersistenceProvider is null)
-                    return false;
-
-                return CurrentPersistenceProvider.GetType().IsSubclassOfOrSelf(typeof(Neo4jPersistenceProvider));
-            }
-        }
+        public virtual bool IsConfigured => false;
+        public virtual bool IsNeo4j => false;
 
         #region Conversion
 
@@ -250,5 +239,14 @@ namespace Blueprint41.Core
         internal SchemaInfo GetSchemaInfo(DatastoreModel datastoreModel) => Translator.GetSchemaInfo(datastoreModel);
 
         #endregion Factory: Schema Info
+
+        [Obsolete("Do not use this property on a multi-database project")]
+        public static PersistenceProvider CurrentPersistenceProvider
+        {
+            get => currentPersistenceProvider ?? VoidPersistenceProvider;
+            set => currentPersistenceProvider = value;
+        }
+        private static PersistenceProvider? currentPersistenceProvider = null;
+        public static readonly PersistenceProvider VoidPersistenceProvider = new Neo4jPersistenceProvider();
     }
 }

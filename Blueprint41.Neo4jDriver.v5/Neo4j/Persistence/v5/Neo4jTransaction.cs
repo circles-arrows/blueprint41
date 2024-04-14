@@ -15,7 +15,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
 
     public class Neo4jTransaction : Void.Neo4jTransaction
     {
-        internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
+        internal Neo4jTransaction(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(provider, readWriteMode, logger)
         {
             Provider = provider;
         }
@@ -25,7 +25,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
             if (string.IsNullOrEmpty(consistencyToken))
                 return this;
 
-            return WithConsistency(PersistenceProvider.CurrentPersistenceProvider.FromToken(consistencyToken));
+            return WithConsistency(Provider.FromToken(consistencyToken));
         }
         public override Transaction WithConsistency(Bookmark consistency)
         {
@@ -94,7 +94,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
         {
             neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
 
-            if ((Provider ?? PersistenceProvider.CurrentPersistenceProvider) is not Neo4jPersistenceProvider provider)
+            if (Provider is not Neo4jPersistenceProvider provider)
                 throw new InvalidOperationException("CurrentPersistenceProvider is null");
 
             Session = provider.Driver.AsyncSession(c =>

@@ -2,6 +2,9 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Blueprint41.Core" #>
+#pragma warning disable S101 // Types should be named in PascalCase
+#pragma warning disable CS8981 // Types should not be in lower case
+
 using System;
 using Blueprint41.Core;
 

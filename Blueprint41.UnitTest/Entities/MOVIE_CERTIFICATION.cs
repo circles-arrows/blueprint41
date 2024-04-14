@@ -25,12 +25,12 @@ namespace Datastore.Manipulation
             Movie = @in;
             Rating = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            FrighteningIntense = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("FrighteningIntense"));
-            ViolenceGore = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("ViolenceGore"));
-            Profanity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Profanity"));
-            Substances = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Substances"));
-            SexAndNudity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("SexAndNudity"));
+            CreationDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            FrighteningIntense = (Blueprint41.UnitTest.DataStore.RatingComponent?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("FrighteningIntense"));
+            ViolenceGore = (Blueprint41.UnitTest.DataStore.RatingComponent?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("ViolenceGore"));
+            Profanity = (Blueprint41.UnitTest.DataStore.RatingComponent?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Profanity"));
+            Substances = (Blueprint41.UnitTest.DataStore.RatingComponent?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Substances"));
+            SexAndNudity = (Blueprint41.UnitTest.DataStore.RatingComponent?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("SexAndNudity"));
         }
 
         internal string _elementId { get; private set; }

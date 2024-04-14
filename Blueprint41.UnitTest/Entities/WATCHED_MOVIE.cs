@@ -25,8 +25,8 @@ namespace Datastore.Manipulation
             Person = @in;
             Movie = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            MinutesWatched = (int)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(int), properties.GetValue("MinutesWatched"));
+            CreationDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            MinutesWatched = (int)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(int), properties.GetValue("MinutesWatched"));
         }
 
         internal string _elementId { get; private set; }

@@ -21,7 +21,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
         public string? Database { get; private set; }
         public AdvancedConfig? AdvancedConfig { get; private set; }
 
-        private Neo4jPersistenceProvider() : this(null, null, null, null) { }
+        internal Neo4jPersistenceProvider() : this(null, null, null, null) { }
         public Neo4jPersistenceProvider(string? uri, string? username, string? password, AdvancedConfig? advancedConfig = null) : base()
         {
             Uri = uri;
@@ -82,6 +82,9 @@ namespace Blueprint41.Neo4j.Persistence.Void
         public int? Revision { get; internal set; } = null;
         public bool IsAura { get; set; } = false;
         public bool IsEnterpriseEdition { get; set; } = false;
+
+        public override bool IsConfigured => (Uri is not null);
+        public override bool IsNeo4j => true;
 
         public override FeatureSupport NodePropertyFeatures => _nodePropertyFeatures.Value;
         private readonly Lazy<FeatureSupport> _nodePropertyFeatures;
@@ -244,14 +247,12 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
         public override Session NewSession(bool readWriteMode)
         {
-            return new Neo4jSession(readWriteMode, TransactionLogger);
+            return new Neo4jSession(this, readWriteMode, TransactionLogger);
         }
         public override Transaction NewTransaction(bool readWriteMode)
         {
-            return new Neo4jTransaction(readWriteMode, TransactionLogger);
+            return new Neo4jTransaction(this, readWriteMode, TransactionLogger);
         }
-
-        public static readonly PersistenceProvider VoidPersistenceProvider = new Neo4jPersistenceProvider();
     }
 
     public record FeatureSupport

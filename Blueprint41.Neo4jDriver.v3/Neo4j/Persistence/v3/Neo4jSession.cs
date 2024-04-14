@@ -14,7 +14,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v3
 
     public class Neo4jSession : Void.Neo4jSession
     {
-        internal Neo4jSession(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
+        internal Neo4jSession(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(provider, readWriteMode, logger)
         {
             Provider = provider;
         }

@@ -201,12 +201,8 @@ namespace Blueprint41.Core
             }
         }
 
-        internal RelationshipPersistenceProvider RelationshipPersistenceProvider =>
-            DbTransaction?.
-            RelationshipPersistenceProvider ??
-                PersistenceProvider.
-                CurrentPersistenceProvider.
-                RelationshipPersistenceProvider;
+        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => DbTransaction?.RelationshipPersistenceProvider ?? Parent.GetEntity().Parent.PersistenceProvider.RelationshipPersistenceProvider;
+
         private protected void ExecuteAction(RelationshipAction action)
         {
             if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))

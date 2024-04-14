@@ -1,4 +1,7 @@
-﻿namespace Blueprint41.UnitTest.Multiple.Neo4j.DataStore
+﻿using System;
+using Blueprint41.Core;
+
+namespace Blueprint41.UnitTest.Multiple.Neo4j.DataStore
 {
     public class Neo4jModel : DatastoreModel<Neo4jModel>
     {

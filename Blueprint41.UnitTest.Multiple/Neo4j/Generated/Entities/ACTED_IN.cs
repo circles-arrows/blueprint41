@@ -25,8 +25,8 @@ namespace Neo4j.Datastore.Manipulation
             Person = @in;
             Movie = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            roles = (string[])PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(string[]), properties.GetValue("roles"));
+            CreationDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            roles = (string[])Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(string[]), properties.GetValue("roles"));
         }
 
         internal string _elementId { get; private set; }

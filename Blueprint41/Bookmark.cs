@@ -7,8 +7,18 @@ namespace Blueprint41
 {
     public class Bookmark
     {
-        public string ToToken() => PersistenceProvider.CurrentPersistenceProvider.ToToken(this);
-        public static Bookmark FromToken(string consistencyToken) => PersistenceProvider.CurrentPersistenceProvider.FromToken(consistencyToken);
+        public string ToToken<TDatastoreModel>()
+             where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider.ToToken(this);
+        }
+        public string ToToken(PersistenceProvider provider) => provider.ToToken(this);
+        public static Bookmark FromToken<TDatastoreModel>(string consistencyToken)
+             where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider.FromToken(consistencyToken);
+        }
+        public static Bookmark FromToken(PersistenceProvider provider, string consistencyToken) => provider.FromToken(consistencyToken);
         
         internal static readonly Bookmark NullBookmark = new Bookmark();
     }

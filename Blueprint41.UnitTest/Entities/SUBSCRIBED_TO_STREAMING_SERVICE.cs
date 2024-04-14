@@ -25,10 +25,10 @@ namespace Datastore.Manipulation
             Person = @in;
             StreamingService = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            MonthlyFee = (decimal)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(decimal), properties.GetValue("MonthlyFee"));
-            StartDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("StartDate"));
-            EndDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("EndDate"));
+            CreationDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            MonthlyFee = (decimal)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(decimal), properties.GetValue("MonthlyFee"));
+            StartDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("StartDate"));
+            EndDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("EndDate"));
         }
 
         internal string _elementId { get; private set; }

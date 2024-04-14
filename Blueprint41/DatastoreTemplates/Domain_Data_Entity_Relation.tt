@@ -7,6 +7,7 @@
 <#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #>
 #pragma warning disable S101 // Types should be named in PascalCase
+#pragma warning disable CS8981 // Types should not be in lower case
 
 using System;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace <#= Settings.FullCRUDNamespace #>
     foreach (var attr in DALRelation.Properties)
     {
 #>
-            <#= attr.Name #> = (<#= attr.OuterReturnType #>)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnType #>), properties.GetValue("<#= attr.Name #>"));
+            <#= attr.Name #> = (<#= attr.OuterReturnType #>)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnType #>), properties.GetValue("<#= attr.Name #>"));
 <#
     }
 #>        }

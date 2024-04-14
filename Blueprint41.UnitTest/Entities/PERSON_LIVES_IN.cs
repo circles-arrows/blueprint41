@@ -25,12 +25,12 @@ namespace Datastore.Manipulation
             Person = @in;
             City = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            StartDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("StartDate"));
-            EndDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("EndDate"));
-            AddressLine1 = (string)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine1"));
-            AddressLine2 = (string)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine2"));
-            AddressLine3 = (string)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine3"));
+            CreationDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            StartDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("StartDate"));
+            EndDate = (System.DateTime?)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("EndDate"));
+            AddressLine1 = (string)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine1"));
+            AddressLine2 = (string)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine2"));
+            AddressLine3 = (string)Relationship.Parent.PersistenceProvider.ConvertFromStoredType(typeof(string), properties.GetValue("AddressLine3"));
         }
 
         internal string _elementId { get; private set; }

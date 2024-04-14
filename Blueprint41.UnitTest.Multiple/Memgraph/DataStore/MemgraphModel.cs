@@ -1,4 +1,7 @@
-﻿namespace Blueprint41.UnitTest.Multiple.Memgraph.DataStore
+﻿using Blueprint41.Core;
+using System;
+
+namespace Blueprint41.UnitTest.Multiple.Memgraph.DataStore
 {
     public class MemgraphModel : DatastoreModel<MemgraphModel>
     {

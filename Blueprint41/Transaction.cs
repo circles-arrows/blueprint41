@@ -14,36 +14,70 @@ namespace Blueprint41
 {
     public abstract class Transaction : DisposableScope<Transaction>, IStatementRunner
     {
-        protected Transaction()
+        protected Transaction(PersistenceProvider provider)
         {
             InTransaction = true;
             DisableForeignKeyChecks = false;
 
-            PersistenceProvider factory = PersistenceProvider.CurrentPersistenceProvider;
+            PersistenceProvider factory = provider;
             PersistenceProviderFactory = factory;
         }
 
-        
         #region Transaction Logic
 
+        [Obsolete("Do not use this Transaction.Begin() method on a multi-database project, use Transaction.Begin<TDatastoreModel>() instead")]
         public static Transaction Begin()
         {
             return Begin(true, OptimizeFor.PartialSubGraphAccess);
         }
+        [Obsolete("Do not use this Transaction.Begin(...) method on a multi-database project, use Transaction.Begin<TDatastoreModel>(...) instead")]
         public static Transaction Begin(bool readWriteMode)
         {
             return Begin(readWriteMode, OptimizeFor.PartialSubGraphAccess);
         }
+        [Obsolete("Do not use this Transaction.Begin(...) method on a multi-database project, use Transaction.Begin<TDatastoreModel>(...) instead")]
         public static Transaction Begin(OptimizeFor mode)
         {
             return Begin(true, mode);
         }
+        [Obsolete("Do not use this Transaction.Begin(...) method on a multi-database project, use Transaction.Begin<TDatastoreModel>(...) instead")]
         public static Transaction Begin(bool readWriteMode, OptimizeFor mode)
         {
             if (PersistenceProvider.CurrentPersistenceProvider is null)
                 throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
 
             Transaction trans = PersistenceProvider.CurrentPersistenceProvider.NewTransaction(readWriteMode);
+            trans.RaiseOnBegin();
+            trans.Attach();
+            trans.TransactionDate = DateTime.UtcNow;
+            trans.Mode = mode;
+            trans.FireEvents = EventOptions.AllEvents;
+
+            return trans;
+        }
+
+        public static Transaction Begin<TDatastoreModel>()
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return Begin<TDatastoreModel>(true, OptimizeFor.PartialSubGraphAccess);
+        }
+        public static Transaction Begin<TDatastoreModel>(bool readWriteMode)
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return Begin<TDatastoreModel>(readWriteMode, OptimizeFor.PartialSubGraphAccess);
+        }
+        public static Transaction Begin<TDatastoreModel>(OptimizeFor mode)
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return Begin<TDatastoreModel>(true, mode);
+        }
+        public static Transaction Begin<TDatastoreModel>(bool readWriteMode, OptimizeFor mode)
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            if (DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider is null)
+                throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
+
+            Transaction trans = DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider.NewTransaction(readWriteMode);
             trans.RaiseOnBegin();
             trans.Attach();
             trans.TransactionDate = DateTime.UtcNow;
@@ -520,15 +554,14 @@ namespace Blueprint41
         {
             get
             {
-                return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
+                return new Query.Query(RunningTransaction.PersistenceProviderFactory);
             }
         }
-
         public static Query.ICallSubquery CompiledSubQuery
         {
             get
             {
-                return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
+                return new Query.Query(RunningTransaction.PersistenceProviderFactory);
             }
         }
 

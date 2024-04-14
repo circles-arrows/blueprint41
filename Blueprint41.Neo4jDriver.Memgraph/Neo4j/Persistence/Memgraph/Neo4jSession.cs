@@ -12,7 +12,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 {
     public class Neo4jSession : Void.Neo4jSession
     {
-        public Neo4jSession(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(readWriteMode, logger)
+        public Neo4jSession(Neo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(provider, readWriteMode, logger)
         {
             Provider = provider;
         }
@@ -22,7 +22,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
             if (string.IsNullOrEmpty(consistencyToken))
                 return this;
 
-            return WithConsistency(PersistenceProvider.CurrentPersistenceProvider.FromToken(consistencyToken));
+            return WithConsistency(Provider.FromToken(consistencyToken));
         }
         public override Session WithConsistency(Bookmark consistency)
         {
@@ -90,7 +90,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         {
             neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
 
-            if ((Provider ?? PersistenceProvider.CurrentPersistenceProvider) is not Neo4jPersistenceProvider provider)
+            if (Provider is not Neo4jPersistenceProvider provider)
                 throw new NullReferenceException("CurrentPersistenceProvider is null");
 
             Session = provider.Driver.AsyncSession(c =>

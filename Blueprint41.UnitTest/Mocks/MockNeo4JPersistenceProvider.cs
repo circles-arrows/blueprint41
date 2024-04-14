@@ -35,7 +35,7 @@ namespace Blueprint41.UnitTest.Mocks
         {
             neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
 
-            if ((Provider ?? PersistenceProvider.CurrentPersistenceProvider) is not MockNeo4jPersistenceProvider provider)
+            if (Provider is not MockNeo4jPersistenceProvider provider)
                 throw new InvalidOperationException("CurrentPersistenceProvider is null");
 
             Session = new MockSession(provider.Driver.AsyncSession(c =>

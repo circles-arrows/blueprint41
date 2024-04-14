@@ -14,35 +14,66 @@ namespace Blueprint41
 {
     public abstract class Session : DisposableScope<Session>, IStatementRunner
     {
-        protected Session()
+        protected Session(PersistenceProvider provider)
         {
-            PersistenceProvider factory = PersistenceProvider.CurrentPersistenceProvider;
+            PersistenceProvider factory = provider;
             PersistenceProviderFactory = factory;
         }
 
         #region Session Logic
 
+        [Obsolete("Do not use this Session.Begin() method on a multi-database project, use Session.Begin<TDatastoreModel>() instead")]
         public static Session Begin()
         {
             return Begin(true, OptimizeFor.PartialSubGraphAccess);
         }
+        [Obsolete("Do not use this Session.Begin(...) method on a multi-database project, use Session.Begin<TDatastoreModel>(...) instead")]
         public static Session Begin(bool readWriteMode)
         {
             return Begin(readWriteMode, OptimizeFor.PartialSubGraphAccess);
         }
+        [Obsolete("Do not use this Session.Begin(...) method on a multi-database project, use Session.Begin<TDatastoreModel>(...) instead")]
         public static Session Begin(OptimizeFor mode)
         {
             return Begin(true, mode);
         }
+        [Obsolete("Do not use this Session.Begin(...) method on a multi-database project, use Session.Begin<TDatastoreModel>(...) instead")]
         public static Session Begin(bool readWriteMode, OptimizeFor mode)
         {
             if (PersistenceProvider.CurrentPersistenceProvider is null)
                 throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
 
-            Session trans = PersistenceProvider.CurrentPersistenceProvider.NewSession(readWriteMode);
-            trans.Attach();
+            Session session = PersistenceProvider.CurrentPersistenceProvider.NewSession(readWriteMode);
+            session.Attach();
 
-            return trans;
+            return session;
+        }
+
+        public static Session Begin<TDatastoreModel>()
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return Begin<TDatastoreModel>(true, OptimizeFor.PartialSubGraphAccess);
+        }
+        public static Session Begin<TDatastoreModel>(bool readWriteMode)
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return Begin<TDatastoreModel>(readWriteMode, OptimizeFor.PartialSubGraphAccess);
+        }
+        public static Session Begin<TDatastoreModel>(OptimizeFor mode)
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return Begin<TDatastoreModel>(true, mode);
+        }
+        public static Session Begin<TDatastoreModel>(bool readWriteMode, OptimizeFor mode)
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            if (DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider is null)
+                throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
+
+            Session session = DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider.NewSession(readWriteMode);
+            session.Attach();
+
+            return session;
         }
 
         public virtual Session WithConsistency(Bookmark consistency)

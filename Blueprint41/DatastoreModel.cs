@@ -18,10 +18,8 @@ namespace Blueprint41
 {
     public abstract partial class DatastoreModel : IRefactorGlobal, IDatastoreUnitTesting
     {
-        protected DatastoreModel(PersistenceProvider persistence)
+        protected DatastoreModel()
         {
-            PersistenceProvider = persistence;
-
             Entities = new EntityCollection(this);
             Relations = new RelationshipCollection(this);
             Interfaces = new InterfaceCollection(this);
@@ -35,8 +33,7 @@ namespace Blueprint41
             DataMigration = new DataMigrationScope(this);
         }
 
-        public PersistenceProvider PersistenceProvider { get; private set; }
-
+        public abstract PersistenceProvider PersistenceProvider { get; }
         public EntityCollection       Entities      { get; private set; }
         public RelationshipCollection Relations     { get; private set; }
         public InterfaceCollection    Interfaces    { get; private set; }
@@ -176,7 +173,7 @@ namespace Blueprint41
                 bool scriptCommitted = false;
                 if (upgradeDatastore && PersistenceProvider.IsNeo4j && !isVoidProvider)
                 {
-                    if (PersistenceProvider.CurrentPersistenceProvider.IsMemgraph)
+                    if (PersistenceProvider.IsMemgraph)
                     {
                         // In Memgraph constraints cannot be manipulated during transactions.
                         // If any refactor action conflicts with a constraint (e.g. Rename property with NOT NULL constraint).
@@ -514,8 +511,17 @@ namespace Blueprint41
     public abstract class DatastoreModel<TSelf> : DatastoreModel
         where TSelf : DatastoreModel<TSelf>, new()
     {
-        protected DatastoreModel() : this(PersistenceProvider.CurrentPersistenceProvider) { }
-        protected DatastoreModel(PersistenceProvider persistence) : base(persistence) { }
+#pragma warning disable S2743 // Static fields should not be used in generic types
+        public static PersistenceProvider CurrentPersistenceProvider
+        {
+            //get => currentPersistenceProvider ?? PersistenceProvider.CurrentPersistenceProvider;
+            get => currentPersistenceProvider ?? PersistenceProvider.VoidPersistenceProvider;
+            set => currentPersistenceProvider = value;
+        }
+        private static PersistenceProvider? currentPersistenceProvider = null;
+#pragma warning restore S2743 // Static fields should not be used in generic types
+
+        public override PersistenceProvider PersistenceProvider => CurrentPersistenceProvider;
 
         private static TSelf? model = null;
         public static TSelf GetMainInstance()
@@ -551,6 +557,9 @@ namespace Blueprint41
 
         public bool LogToConsole { get => Parser.LogToConsole; set => Parser.LogToConsole = value; }
         public bool LogToDebugger { get => Parser.LogToDebugger; set => Parser.LogToDebugger= value; }
+
+        public static Transaction BeginTransaction(bool readWriteMode = true) => CurrentPersistenceProvider.NewTransaction(readWriteMode);
+        public static Session BeginSession(bool readWriteMode = true) => CurrentPersistenceProvider.NewSession(readWriteMode);
     }
 
     public interface IDatastoreUnitTesting

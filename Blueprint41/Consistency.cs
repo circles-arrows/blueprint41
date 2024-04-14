@@ -10,13 +10,26 @@ namespace Blueprint41
 {
     public class Consistency : DisposableScope<Consistency>
     {
-        protected Consistency(Bookmark bookmark) : base()
+        protected Consistency(PersistenceProvider provider, Bookmark bookmark) : base()
         {
-            Value = bookmark ?? Bookmark.FromToken(string.Empty);
+            Value = bookmark ?? Bookmark.FromToken(provider, string.Empty);
         }
 
-        public static Consistency Start(string bookmark) => new Consistency(Bookmark.FromToken(bookmark)).Attach();
-        public static Consistency Start(Bookmark bookmark) => new Consistency(bookmark).Attach();
+        [Obsolete("Do not use this Start method on a multi-database project")]
+        public static Consistency Start(string bookmark) => new Consistency(PersistenceProvider.CurrentPersistenceProvider, Bookmark.FromToken(PersistenceProvider.CurrentPersistenceProvider, bookmark)).Attach();
+        public static Consistency Start<TDatastoreModel>(string bookmark)
+            where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return new Consistency(DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider, Bookmark.FromToken(DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider, bookmark)).Attach();
+        }
+
+        [Obsolete("Do not use this Start method on a multi-database project")]
+        public static Consistency Start(Bookmark bookmark) => new Consistency(PersistenceProvider.CurrentPersistenceProvider, bookmark).Attach();
+        public static Consistency Start<TDatastoreModel>(Bookmark bookmark)
+             where TDatastoreModel : DatastoreModel<TDatastoreModel>, new()
+        {
+            return new Consistency(DatastoreModel<TDatastoreModel>.CurrentPersistenceProvider, bookmark).Attach();
+        }
 
         private Bookmark Value;
 

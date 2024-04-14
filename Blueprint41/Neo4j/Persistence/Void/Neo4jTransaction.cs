@@ -13,7 +13,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
 
     public class Neo4jTransaction : Transaction
     {
-        internal Neo4jTransaction(bool readWriteMode, TransactionLogger? logger)
+        internal Neo4jTransaction(PersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(provider)
         {
             Logger = logger;
             ReadWriteMode = readWriteMode;

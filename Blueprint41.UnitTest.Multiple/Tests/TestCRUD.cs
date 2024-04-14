@@ -21,9 +21,7 @@ namespace Blueprint41.UnitTest.Multiple.Tests
         [SetUp]
         public void Neo4jDriverSetUp()
         {
-            var neo4jProvider = new Neo4jDriver.Neo4jPersistenceProvider("bolt://localhost:7687", "neo4j", "passionite?01", "unittest");
-           
-            PersistenceProvider.CurrentPersistenceProvider = neo4jProvider;
+            Neo4jModel.CurrentPersistenceProvider = new Neo4jDriver.Neo4jPersistenceProvider("bolt://localhost:7687", "neo4j", "passionite?01", "unittest");
 
             var neo4jModel = new Neo4jModel();
             neo4jModel.Execute(true);
@@ -34,9 +32,7 @@ namespace Blueprint41.UnitTest.Multiple.Tests
         [SetUp]
         public void MemgraphDriverSetUp()
         {
-            var memgraphProvider = new MemgraphDriver.Neo4jPersistenceProvider("bolt://localhost:7689", string.Empty, string.Empty);
-
-            PersistenceProvider.CurrentPersistenceProvider = memgraphProvider;
+            MemgraphModel.CurrentPersistenceProvider = new MemgraphDriver.Neo4jPersistenceProvider("bolt://localhost:7689", string.Empty, string.Empty);
 
             var memgraphModel = new MemgraphModel();
             memgraphModel.Execute(true);
