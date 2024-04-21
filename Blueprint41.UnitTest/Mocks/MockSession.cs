@@ -20,6 +20,7 @@ namespace Blueprint41.UnitTest.Mocks
         public IAsyncSession NeoSession { get; private set; }
         public IAsyncTransaction MockTransaction { get; set; }
 
+        [Obsolete]
         public global::Neo4j.Driver.Bookmark LastBookmark => NeoSession.LastBookmark;
 
         public Bookmarks LastBookmarks => NeoSession.LastBookmarks;
@@ -80,11 +81,13 @@ namespace Blueprint41.UnitTest.Mocks
             return NeoSession.ExecuteWriteAsync(work, action);
         }
 
+        [Obsolete]
         public Task<T> ReadTransactionAsync<T>(Func<IAsyncTransaction, Task<T>> work, Action<TransactionConfigBuilder> action = null)
         {
             return NeoSession.ReadTransactionAsync(work, action);
         }
 
+        [Obsolete]
         public Task ReadTransactionAsync(Func<IAsyncTransaction, Task> work, Action<TransactionConfigBuilder> action = null)
         {
             return NeoSession.ReadTransactionAsync(work, action);
@@ -152,11 +155,13 @@ namespace Blueprint41.UnitTest.Mocks
             return ((IAsyncQueryRunner)NeoSession).RunAsync(query);
         }
 
+        [Obsolete]
         public Task<T> WriteTransactionAsync<T>(Func<IAsyncTransaction, Task<T>> work, Action<TransactionConfigBuilder> action = null)
         {
             return NeoSession.WriteTransactionAsync(work, action);
         }
 
+        [Obsolete]
         public Task WriteTransactionAsync(Func<IAsyncTransaction, Task> work, Action<TransactionConfigBuilder> action = null)
         {
             return NeoSession.WriteTransactionAsync(work, action);

@@ -26,7 +26,7 @@ namespace Blueprint41.UnitTest.DataStore
                 .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                 .Abstract(true)
                 .Virtual(true)
-                .SetKey("Uid", true)
+                .SetKey("Uid")
                 .AddProperty("LastModifiedOn", typeof(DateTime))
                 .SetRowVersionField("LastModifiedOn");
 

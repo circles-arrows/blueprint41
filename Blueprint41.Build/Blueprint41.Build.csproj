@@ -1,38 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
-		<LangVersion>10.0</LangVersion>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-		<StartupObject>Blueprint41.Build.Generator</StartupObject>
-		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-		<EnableDynamicLoading>true</EnableDynamicLoading>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	</PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <StartupObject>Blueprint41.Build.Generator</StartupObject>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
 
 
-	<PropertyGroup Label="Package">
-		<PackageVersion>1.1.4</PackageVersion>
-		<PackageId>Blueprint41.Build</PackageId>
-		<Title>Blueprint41.Build</Title>
-		<Authors>Circles Arrows Limited</Authors>
-		<Description>Code generator needed to generate Type-safe classes for Blueprint41</Description>
-		<Copyright>Copyright 2017, 2024 (c) Circles Arrows Limited</Copyright>
-		<PackageLicenseUrl>https://github.com/circles-arrows/blueprint41/blob/master/LICENSE.txt</PackageLicenseUrl>
-		<PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
-		<PackageTags>Neo4j Graph Object Mapper</PackageTags>
-		<IncludeSymbols>false</IncludeSymbols>
-		<RepositoryUrl>https://github.com/circles-arrows/blueprint41</RepositoryUrl>
-		<RepositoryType>GitHub</RepositoryType>
-	</PropertyGroup>
+  <PropertyGroup Label="Package">
+    <PackageVersion>1.1.4</PackageVersion>
+    <PackageId>Blueprint41.Build</PackageId>
+    <Title>Blueprint41.Build</Title>
+    <Authors>Circles Arrows Limited</Authors>
+    <Description>Code generator needed to generate Type-safe classes for Blueprint41</Description>
+    <Copyright>Copyright 2017, 2024 (c) Circles Arrows Limited</Copyright>
+    <PackageLicense>MIT</PackageLicense>
+    <PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
+    <PackageTags>Neo4j Graph Object Mapper</PackageTags>
+    <IncludeSymbols>false</IncludeSymbols>
+    <RepositoryUrl>https://github.com/circles-arrows/blueprint41</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Folder Include="DLLs\" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="Blueprint41.Build.targets" Pack="true" PackagePath="build\" />
-	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="DLLs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Blueprint41.Build.targets" Pack="true" PackagePath="build\" />
+  </ItemGroup>
 
 
 </Project>

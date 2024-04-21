@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable CS8981 // Names should not be lower type only
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -173,6 +175,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test] // Asserts done
         public void SetIndexTypeToIndex()
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             SetupTestDataSet();
 
             var schema = ((IDatastoreUnitTesting)MockModel.Model).GetSchemaInfo();
@@ -189,11 +192,13 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
 #endif
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [Test] // Asserts done
         public void SetIndexTypeToUnique()
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             var persistenceProvider = PersistenceProvider.CurrentPersistenceProvider as driver.Neo4jPersistenceProvider;
             if (persistenceProvider is null || !persistenceProvider.VersionGreaterOrEqual(5, 7))
                 throw new NotSupportedException("Run this test on Neo4j 5.7 or greater.");
@@ -218,6 +223,7 @@ namespace Blueprint41.UnitTest.Tests
             Assert.That(!schema.Indexes.Any(index => index.IsIndexed && !index.IsUnique && index.Entity.Count == 1 && index.Entity[0] == "LIVES_IN" && index.Field.Count == 1 && index.Field[0] == "AddressLine1"));
             Assert.That(!schema.Constraints.Any(constraint => !constraint.IsMandatory && constraint.IsUnique && !constraint.IsKey && constraint.Entity.Count == 1 && constraint.Entity[0] == "LIVES_IN" && constraint.Field.Count == 1 && constraint.Field[0] == "AddressLine1"));
 #endif
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [Test] // Asserts done
