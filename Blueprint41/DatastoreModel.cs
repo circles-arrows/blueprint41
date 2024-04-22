@@ -35,17 +35,49 @@ namespace Blueprint41
             DataMigration = new DataMigrationScope(this);
         }
 
+        /// <summary>
+        /// The persistence provider registered with this data-store
+        /// </summary>
         public PersistenceProvider PersistenceProvider { get; private set; }
 
+        /// <summary>
+        /// All entities in the data-store
+        /// </summary>
         public EntityCollection       Entities      { get; private set; }
+
+        /// <summary>
+        /// All relationships in the data-store
+        /// </summary>
         public RelationshipCollection Relations     { get; private set; }
+
+        /// <summary>
+        /// All interfaces in the data-store
+        /// </summary>
         public InterfaceCollection    Interfaces    { get; private set; }
+
+        /// <summary>
+        /// All enumerations in the data-store
+        /// </summary>
         public EnumerationCollection  Enumerations  { get; private set; }
+
+        /// <summary>
+        /// All functional ids in the data-store
+        /// </summary>
         public FunctionalIdCollection FunctionalIds { get; private set; }
+
+        /// <summary>
+        /// All sub-models in the data-store
+        /// </summary>
         public SubModelCollection     SubModels     { get; private set; }
 
+        /// <summary>
+        /// All registered models
+        /// </summary>
         public static List<DatastoreModel> RegisteredModels { get; } = new List<DatastoreModel>();
 
+        /// <summary>
+        /// True when all scripts have been executed
+        /// </summary>
         public bool HasExecuted
         {
             get
@@ -53,6 +85,10 @@ namespace Blueprint41
                 return executed;
             }
         }
+
+        /// <summary>
+        /// True when the data-store has been upgraded
+        /// </summary>
         public bool IsUpgraded
         {
             get
@@ -60,6 +96,10 @@ namespace Blueprint41
                 return executed && didUpgradeDataStore;
             }
         }
+
+        /// <summary>
+        /// True when the data-store is in data-migration mode
+        /// </summary>
         public bool IsDataMigration
         {
             get

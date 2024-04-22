@@ -375,7 +375,7 @@ namespace Blueprint41
         }
 
         /// <summary>
-        /// Marks if the entity is virtual. Virtual entities will not save their name as a label in the data store
+        /// Marks if the entity is virtual. Virtual entities will not save their name as a label in the data-store
         /// </summary>
         /// <param name="isVirtual">Whether the entity is virtual</param>
         public Entity Virtual(bool isVirtual = true)
@@ -443,7 +443,7 @@ namespace Blueprint41
         }
 
         /// <summary>
-        /// The static data for the entity. Static data is part of the schema and is generated in the data store
+        /// The static data for the entity. Static data is part of the schema and is generated in the data-store
         /// </summary>
         public ICollection<DynamicEntity> StaticData { get { return staticData.Values; } }
         private Dictionary<object, DynamicEntity> staticData = new Dictionary<object, DynamicEntity>();
