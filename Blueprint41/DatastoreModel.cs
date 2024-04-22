@@ -158,10 +158,20 @@ namespace Blueprint41
             return scripts;
         }
 
+        /// <summary>
+        /// Execute the data-store
+        /// </summary>
+        /// <param name="upgradeDatastore">Whether or not the data-store should be upgraded</param>
         public void Execute(bool upgradeDatastore)
         {
             Execute(upgradeDatastore, null);
         }
+
+        /// <summary>
+        /// Execute the data-store and subsequently execute a unit-test script if provided
+        /// </summary>
+        /// <param name="upgradeDatastore">Whether or not the data-store should be upgraded</param>
+        /// <param name="unitTestScript">The unit-test script</param>
         void IDatastoreUnitTesting.Execute(bool upgradeDatastore, MethodInfo? unitTestScript) => Execute(upgradeDatastore, unitTestScript);
         internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript)
         {
@@ -334,6 +344,10 @@ namespace Blueprint41
                 throw new InvalidOperationException($"Error in script version {script.Major}.{script.Minor}.{script.Patch}, line {line} -> {e.Message}", e);
             }
         }
+
+        /// <summary>
+        /// Subscribes to the event handlers in the overridden method
+        /// </summary>
         protected abstract void SubscribeEventHandlers();
 
         [DebuggerDisplay("UpgradeScript: {Major}.{Minor}.{Patch} ({Name})")]
@@ -392,10 +406,21 @@ namespace Blueprint41
         {
             return PersistenceProvider.GetSchemaInfo(this);
         }
+
+        /// <summary>
+        /// Get the schema info for the data-store
+        /// </summary>
+        /// <returns>The schema info</returns>
         SchemaInfo IDatastoreUnitTesting.GetSchemaInfo() => GetSchema();
 
+        /// <summary>
+        /// The refactor actions
+        /// </summary>
         protected IRefactorGlobal Refactor { get { return this; } }
 
+        /// <summary>
+        /// (Re-)Create FunctionalId definitions in the database and set the initial seed to the max value found in the database.
+        /// </summary>
         void IRefactorGlobal.ApplyFunctionalIds()
         {
             EnsureSchemaMigration();
@@ -407,6 +432,9 @@ namespace Blueprint41
                 GetSchema().UpdateFunctionalIds();
         }
 
+        /// <summary>
+        /// Apply any missing constraint or index to the database
+        /// </summary>
         void IRefactorGlobal.ApplyConstraints()
         {
             EnsureSchemaMigration();
@@ -416,11 +444,19 @@ namespace Blueprint41
             GetSchema().UpdateConstraints();
         }
 
+        /// <summary>
+        /// Apply any missing full-text-index to the database
+        /// </summary>
+
         void IRefactorGlobal.ApplyFullTextSearchIndexes()
         {
             Refactor.ApplyFullTextSearchIndexes(false);
         }
 
+        /// <summary>
+        /// Apply any missing full-text-index to the database
+        /// (force apply when shouldRun = true)
+        /// </summary>
         void IRefactorGlobal.ApplyFullTextSearchIndexes(bool shouldRun)
         {
             EnsureSchemaMigration();
@@ -430,11 +466,17 @@ namespace Blueprint41
             PersistenceProvider.Translator.ApplyFullTextSearchIndexes(Entities);
         }
 
+        /// <summary>
+        /// Scans the data model if any full-text-indexes exist
+        /// </summary>
         bool IRefactorGlobal.HasFullTextSearchIndexes()
         {
             return PersistenceProvider.Translator.HasFullTextSearchIndexes();
         }
 
+        /// <summary>
+        /// Define a data-migration
+        /// </summary>
         protected DataMigrationScope DataMigration { get; private set; }
         public class DataMigrationScope
         {
@@ -444,6 +486,10 @@ namespace Blueprint41
             }
             public DatastoreModel Model { get; private set; }
 
+            /// <summary>
+            /// Run a data-migration script
+            /// </summary>
+            /// <param name="script">The script</param>
             public void Run(Action script)
             {
                 if (Model.datamigration)
@@ -466,7 +512,7 @@ namespace Blueprint41
             #region Global Migrations
 
             /// <summary>
-            /// Executes a hard-coded Cypher query against the graph.
+            /// Executes a hard-coded data-migration Cypher query against the graph
             /// <para>Be aware that the parameters will be automatically converted from Blueprint41 supported DOT NET types to Neo4j types. However, it returns a raw Neo4j response and no type conversions will be executed on the data it contains.</para>
             /// </summary>
             /// <param name="cypher">The query</param>
@@ -548,6 +594,9 @@ namespace Blueprint41
 
         internal RefactorTemplates Templates => PersistenceProvider.Templates;
 
+        /// <summary>
+        /// True if runtime-types have been registered on the entities
+        /// </summary>
         public bool TypesRegistered { get; internal set; } = false;
     }
 
@@ -558,6 +607,12 @@ namespace Blueprint41
         protected DatastoreModel(PersistenceProvider persistence) : base(persistence) { }
 
         private static TSelf? model = null;
+
+        /// <summary>
+        /// Get the main model instance
+        /// <para>This method will not wait for the model to execute</para>
+        /// </summary>
+        /// <returns></returns>
         public static TSelf GetMainInstance()
         {
             if (model is null)
@@ -577,6 +632,10 @@ namespace Blueprint41
             }
             return model;
         }
+
+        /// <summary>
+        /// The main model instance
+        /// </summary>
         public static TSelf Model
         {
             get
@@ -587,15 +646,31 @@ namespace Blueprint41
                 return GetMainInstance();
             }
         }
-        
 
+        /// <summary>
+        /// Whether or not queries should be logged to the console
+        /// </summary>
         public bool LogToConsole { get => Parser.LogToConsole; set => Parser.LogToConsole = value; }
+
+        /// <summary>
+        /// Whether or not queries should be logged to the debugger
+        /// </summary>
         public bool LogToDebugger { get => Parser.LogToDebugger; set => Parser.LogToDebugger= value; }
     }
 
     public interface IDatastoreUnitTesting
     {
+        /// <summary>
+        /// Execute the data-store and subsequently execute a unit-test script if provided
+        /// </summary>
+        /// <param name="upgradeDatastore">Whether or not the data-store should be upgraded</param>
+        /// <param name="unitTestScript">The unit-test script</param>
         void Execute(bool upgradeDatastore, MethodInfo? unitTestScript);
+
+        /// <summary>
+        /// Get the schema info for the data-store
+        /// </summary>
+        /// <returns>The schema info</returns>
         SchemaInfo GetSchemaInfo();
     }
 }
