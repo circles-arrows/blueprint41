@@ -754,135 +754,158 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (Session.Begin())
             {
-                if (expectedIndexType == IndexType.None)
+                using (Session.Begin())
                 {
-                    var results = Session.Current.Run("SHOW CONSTRAINTS");
+                    if (expectedIndexType == IndexType.None)
+                        IndexNone(actualEntity, actualProperty);
 
-                    Assert.That(
-                        !results.Where(item => item.Values["labelsOrTypes"].As<List<string>>().Contains(actualEntity) &&                                      
-                                                item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
-                    () => $"Constraint for label {actualEntity} and field {actualProperty} has found!");
+                    if (expectedIndexType == IndexType.Unique)
+                        IndexUnique(actualEntity, actualProperty);
 
-                    results = Session.Current.Run("SHOW INDEXES");
+                    if (expectedIndexType == IndexType.Indexed)
+                        ConstraintIndexed(actualEntity, actualProperty);
 
-                    Assert.That(
-                        !results.Where(item => item.Values["labelsOrTypes"].As<List<string>>() != null && item.Values["labelsOrTypes"].As<List<string>>().Contains(actualEntity) &&
-                                            item.Values["type"].As<string>() == "RANGE" &&
+                    // todo: IndexType.Key
+                    //if (expectedIndexType == IndexType.Key)
+                    //    IndexKey(actualEntity, actualProperty);
+                }
+            }
+
+            static void IndexNone(string actualEntity, string actualProperty)
+            {
+                var results = Session.Current.Run("SHOW CONSTRAINTS");
+
+                Assert.That(
+                    !results.Where(item => item.Values["labelsOrTypes"].As<List<string>>().Contains(actualEntity) &&
                                             item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
-                    () => $"Index for label {actualEntity} and field {actualProperty} has found!");
-                }
+                () => $"Constraint for label {actualEntity} and field {actualProperty} has found!");
 
-                if (expectedIndexType == IndexType.Unique)
-                {
-                    var results = Session.Current.Run("SHOW CONSTRAINTS");
+                results = Session.Current.Run("SHOW INDEXES");
 
-                    Assert.That(
-                        results.Where(item => item.Values["labelsOrTypes"].As<List<string>>().Contains(actualEntity) &&
-                                              item.Values["type"].As<string>() == "UNIQUENESS" &&
-                                              item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
+                Assert.That(
+                    !results.Where(item => item.Values["labelsOrTypes"].As<List<string>>() != null && item.Values["labelsOrTypes"].As<List<string>>().Contains(actualEntity) &&
+                                        item.Values["type"].As<string>() == "RANGE" &&
+                                        item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
+                () => $"Index for label {actualEntity} and field {actualProperty} has found!");
+            }
+
+            static void IndexUnique(string actualEntity, string actualProperty)
+            {
+                var results = Session.Current.Run("SHOW CONSTRAINTS");
+
+                Assert.That(
+                    results.Where(item => item.Values["labelsOrTypes"].As<List<string>>().Contains(actualEntity) &&
+                                          item.Values["type"].As<string>() == "UNIQUENESS" &&
+                                          item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
+                () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
+            }
+
+            static void ConstraintIndexed(string actualEntity, string actualProperty)
+            {
+                var results = Session.Current.Run("SHOW INDEXES");
+
+                Assert.That(
+                    results.Where(item => item.Values["labelsOrTypes"].As<List<string>?>()?.Contains(actualEntity) ?? false &&
+                                        item.Values["type"].As<string>() == "RANGE" &&
+                                        item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
+                () => $"Index for label {actualEntity} and field {actualProperty} not found!");
+            }
+
+            // todo: IndexType.Key
+            static void IndexKey(string actualEntity, string actualProperty)
+            {
+                var results = Session.Current.Run("SHOW CONSTRAINT INFO");
+
+                Assert.That(
+                    results.Where(item => item.Values["label"].As<string>() == actualEntity &&
+                                          item.Values["constraint type"].As<string>() == "unique" &&
+                                          item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
                     () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
-                }
 
-                // todo: IndexType.Key
-                /*
-                if (expectedIndexType == IndexType.Key)
-                {
-                    var results = Session.Current.Run("SHOW CONSTRAINT INFO");
-
-                    Assert.That(
-                        results.Where(item => item.Values["label"].As<string>() == actualEntity &&
-                                              item.Values["constraint type"].As<string>() == "unique" &&
-                                              item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
-                        () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
-
-                    Assert.That(
-                        results.Any(item => item.Values["label"].As<string>() == actualEntity &&
-                                            item.Values["constraint type"].As<string>() == "exists" &&
-                                            item.Values["properties"].As<string>() == actualProperty),
-                    () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
-                }
-                */
-
-                if (expectedIndexType == IndexType.Indexed)
-                {
-                    var results = Session.Current.Run("SHOW INDEXES");
-
-                    Assert.That(
-                        results.Where(item => item.Values["labelsOrTypes"].As<List<string>?>()?.Contains(actualEntity) ?? false &&
-                                            item.Values["type"].As<string>() == "RANGE" &&
-                                            item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
-                    () => $"Index for label {actualEntity} and field {actualProperty} not found!");
-                }
-
+                Assert.That(
+                    results.Any(item => item.Values["label"].As<string>() == actualEntity &&
+                                        item.Values["constraint type"].As<string>() == "exists" &&
+                                        item.Values["properties"].As<string>() == actualProperty),
+                () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
             }
         }
 
         private static void MemGraph(string actualEntity, string actualProperty, IndexType expectedIndexType)
         {
             using (Session.Begin())
-            { 
+            {
                 if (expectedIndexType == IndexType.None)
-                {
-                    var results = Session.Current.Run("SHOW CONSTRAINT INFO");
-
-                    Assert.That(
-                       !results.Where(item => item.Values["label"].As<string>() == actualEntity &&
-                                              item.Values["constraint type"].As<string>() == "unique" &&
-                                              item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
-                    () => $"Constraint for label {actualEntity} and field {actualProperty} has found!");
-
-                    results = Session.Current.Run("SHOW INDEX INFO");
-
-                    Assert.That(
-                       !results.Any(item => item.Values["label"].As<string>() == actualEntity &&
-                                            item.Values["index type"].As<string>() == "label+property" &&
-                                            item.Values["property"].As<string>() == actualProperty),
-                    () => $"Index for label {actualEntity} and field {actualProperty} has found!");
-                }
+                    IndexNone(actualEntity, actualProperty);
 
                 if (expectedIndexType == IndexType.Unique)
-                {
-                    var results = Session.Current.Run("SHOW CONSTRAINT INFO");
-
-                    Assert.That(
-                        results.Where(item => item.Values["label"].As<string>() == actualEntity &&
-                                              item.Values["constraint type"].As<string>() == "unique" &&
-                                              item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
-                    () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
-                }
-
-                // todo: IndexType.Key
-                /*
-                if (expectedIndexType == IndexType.Key)
-                {
-                    var results = Session.Current.Run("SHOW CONSTRAINT INFO");
-
-                    Assert.That(
-                        results.Where(item => item.Values["label"].As<string>() == actualEntity &&
-                                              item.Values["constraint type"].As<string>() == "unique" &&
-                                              item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
-                        () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
-
-                    Assert.That(
-                        results.Any(item => item.Values["label"].As<string>() == actualEntity &&
-                                            item.Values["constraint type"].As<string>() == "exists" &&
-                                            item.Values["properties"].As<string>() == actualProperty),
-                    () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
-                }
-                */
+                    IndexUnique(actualEntity, actualProperty);
 
                 if (expectedIndexType == IndexType.Indexed)
-                {
-                    var results = Session.Current.Run("SHOW INDEX INFO");
+                    ConstraintIndexed(actualEntity, actualProperty);
 
-                    Assert.That(
-                        results.Any(item => item.Values["label"].As<string>() == actualEntity &&
-                                            item.Values["index type"].As<string>() == "label+property" &&
-                                            item.Values["property"].As<string>() == actualProperty),
-                    () => $"Index for label {actualEntity} and field {actualProperty} not found!");
-                }
-
+                // todo: IndexType.Key
+                //if (expectedIndexType == IndexType.Key)
+                //    IndexKey(actualEntity, actualProperty);
             }
+
+            static void IndexNone(string actualEntity, string actualProperty)
+            {
+                var results = Session.Current.Run("SHOW CONSTRAINT INFO");
+
+                Assert.That(
+                   !results.Where(item => item.Values["label"].As<string>() == actualEntity &&
+                                          item.Values["constraint type"].As<string>() == "unique" &&
+                                          item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
+                () => $"Constraint for label {actualEntity} and field {actualProperty} has found!");
+
+                results = Session.Current.Run("SHOW INDEX INFO");
+
+                Assert.That(
+                   !results.Any(item => item.Values["label"].As<string>() == actualEntity &&
+                                        item.Values["index type"].As<string>() == "label+property" &&
+                                        item.Values["property"].As<string>() == actualProperty),
+                () => $"Index for label {actualEntity} and field {actualProperty} has found!");         
+            }
+
+            static void IndexUnique(string actualEntity, string actualProperty)
+            {
+                var results = Session.Current.Run("SHOW CONSTRAINT INFO");
+
+                Assert.That(
+                    results.Where(item => item.Values["label"].As<string>() == actualEntity &&
+                                          item.Values["constraint type"].As<string>() == "unique" &&
+                                          item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
+                () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
+            }
+
+            static void ConstraintIndexed(string actualEntity, string actualProperty)
+            {
+                var results = Session.Current.Run("SHOW INDEX INFO");
+
+                Assert.That(
+                    results.Any(item => item.Values["label"].As<string>() == actualEntity &&
+                                        item.Values["index type"].As<string>() == "label+property" &&
+                                        item.Values["property"].As<string>() == actualProperty),
+                () => $"Index for label {actualEntity} and field {actualProperty} not found!");
+            }
+
+            // todo: IndexType.Key
+            //static void IndexKey(string actualEntity, string actualProperty, IndexType expectedIndexType)
+            //{ 
+            //    var results = Session.Current.Run("SHOW CONSTRAINT INFO");
+
+            //    Assert.That(
+            //        results.Where(item => item.Values["label"].As<string>() == actualEntity &&
+            //                                item.Values["constraint type"].As<string>() == "unique" &&
+            //                                item.Values["properties"].As<List<string>>().Contains(actualProperty)).Any(),
+            //        () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
+
+            //    Assert.That(
+            //        results.Any(item => item.Values["label"].As<string>() == actualEntity &&
+            //                            item.Values["constraint type"].As<string>() == "exists" &&
+            //                            item.Values["properties"].As<string>() == actualProperty),
+            //    () => $"Constraint for label {actualEntity} and field {actualProperty} not found!");
+            //}
         }
     }
 }
