@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -101,8 +102,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
 
             indexType = AdjustIndexTypeBasedOnContext(entity, indexType, isKey);
             ManageIndexConstraints(commands, indexType, constraintsAndIndex.Unique, constraintsAndIndex.Index);
-            HandleKeyConstraints(commands, isKey, constraintsAndIndex.Key);
-            HandleMandatoryConstraints(commands, nullable, constraintsAndIndex.Mandatory);
+            HandleMandatoryConstraints(commands, (!isKey && nullable), constraintsAndIndex.Mandatory);
 
             return commands;
         }
@@ -112,7 +112,7 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             if (entity.IsAbstract && indexType == IndexType.Unique)
                 return IndexType.Indexed;
 
-            return isKey ? IndexType.None : indexType;
+            return isKey ? IndexType.Unique : indexType;
         }
 
         private void ManageIndexConstraints(
@@ -161,15 +161,8 @@ namespace Blueprint41.Neo4j.Schema.Memgraph
             {
                 DeleteIndexIfNoOwningConstraint(commands, indexInfo);
                 commands.Add((ApplyConstraintAction.CreateUniqueConstraint, null));
+                commands.Add((ApplyConstraintAction.CreateIndex, null));
             }
-        }
-
-        private void HandleKeyConstraints(List<(ApplyConstraintAction, string?)> commands, bool isKey, ConstraintInfo? keyConstraint)
-        {
-            if (!isKey && keyConstraint != null)
-                commands.Add((ApplyConstraintAction.DeleteKeyConstraint, keyConstraint.Name));
-            else if (isKey && keyConstraint == null)
-                commands.Add((ApplyConstraintAction.CreateKeyConstraint, null));
         }
 
         private void HandleMandatoryConstraints(List<(ApplyConstraintAction, string?)> commands, bool nullable, ConstraintInfo? mandatoryConstraint)
