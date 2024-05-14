@@ -9,13 +9,15 @@
     Log("	executing {0} -> Apply FunctionalId on entity {1}", this.GetType().Name, Caller.Name);
 #>
 MATCH (node:<#= Entity.Label.Name #>)
-<# if(! this.Full) 
-   {
+<#
+    if (!this.Full)
+    {
 #>
-WHERE NOT node.Uid STARTS WITH '<#= FunctionalId.Prefix #>'
-<# }
+WHERE NOT node.<#= Entity.Key.Name #> STARTS WITH '<#= FunctionalId.Prefix #>'
+<#
+    }
 #>
 WITH node limit 10000 
 CALL blueprint41.functionalid.next('<#= FunctionalId.Label #>') YIELD value as key
 WITH node,key
-SET node.Uid=key
+SET node.<#= Entity.Key.Name #> = key

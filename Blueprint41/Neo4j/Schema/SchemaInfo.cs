@@ -85,21 +85,24 @@ namespace Blueprint41.Neo4j.Schema
         protected virtual long FindMaxId(FunctionalId functionalId)
         {
             bool first = true;
-            string templateNumeric = "MATCH (node:{0}) WHERE toInt(node.Uid) IS NOT NULL WITH toInt(node.Uid) AS decoded RETURN case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId";
-            string templateHash = "MATCH (node:{0}) where node.Uid STARTS WITH '{1}' AND Length(node.Uid) >= {2} CALL blueprint41.hashing.decode(replace(node.Uid, '{1}', '')) YIELD value as decoded RETURN  case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId";
+            string templateNumeric = "MATCH (node:{0}) WHERE toInt(node.{1}) IS NOT NULL WITH toInt(node.{1}) AS decoded RETURN case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId";
+            string templateHash = "MATCH (node:{0}) where node.{1} STARTS WITH '{2}' AND Length(node.{1}) >= {3} CALL blueprint41.hashing.decode(replace(node.{1}, '{2}', '')) YIELD value as decoded RETURN case Max(decoded) WHEN NULL THEN 0 ELSE Max(decoded) END as MaxId";
             string actualFidValue = "CALL blueprint41.functionalid.current('{0}') YIELD Sequence as sequence RETURN sequence";
             StringBuilder queryBuilder = new StringBuilder();
             foreach (var entity in Model.Entities.Where(entity => entity.FunctionalId?.Label == functionalId.Label))
             {
+                if (entity.Key is null)
+                    continue;
+
                 if (first)
                     first = false;
                 else
                     queryBuilder.AppendLine("UNION");
 
                 if (functionalId.Format == IdFormat.Hash)
-                    queryBuilder.AppendFormat(templateHash, entity.Label.Name, functionalId.Prefix, functionalId.Prefix.Length + 6);
+                    queryBuilder.AppendFormat(templateHash, entity.Label.Name, entity.Key.Name, functionalId.Prefix, functionalId.Prefix.Length + 6);
                 else
-                    queryBuilder.AppendFormat(templateNumeric, entity.Label.Name);
+                    queryBuilder.AppendFormat(templateNumeric, entity.Label.Name, entity.Key.Name);
                 queryBuilder.AppendLine();
             }
 
@@ -174,12 +177,8 @@ namespace Blueprint41.Neo4j.Schema
                     {
                         foreach (var cql in action.ToCypher())
                         {
-                            using (Transaction.Begin())
-                            {
-                                Parser.Log(cql);
-                                Transaction.RunningTransaction.Run(cql);
-                                Transaction.Commit();
-                            }
+                            Parser.Log(cql);
+                            Session.RunningSession.Run(cql);
                         }
                     }
                 }

@@ -777,6 +777,70 @@ namespace Blueprint41.UnitTest.Tests
 #endif
             }
         }
+
+#if !MEMGRAPH
+        private class DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint : DatastoreModel<DatastoreEntityRefactorConstraints>
+        {
+            protected override void SubscribeEventHandlers()
+            {
+
+            }
+
+            [Version(0, 0, 0)]
+            public void Initialize()
+            {
+                FunctionalIds.Default = FunctionalIds.New("Shared", "0", IdFormat.Numeric, 0);
+
+                Entities.New("AccountType")
+                   .Summary("The type of an Account")
+                   .HasStaticData(true)
+                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
+                   .SetKey("Uid", true)
+                   .AddProperty("Name", typeof(string), false, IndexType.Unique)
+                   .SetFullTextProperty("Name");
+
+                Entities["AccountType"].Refactor.CreateNode(new { Uid = "6", Name = "Account" });
+            }
+
+            [Version(0, 0, 1)]
+            public void HackCompositeConstraint()
+            {
+                DataMigration.Run(delegate ()
+                {
+                    DataMigration.ExecuteCypher("CREATE CONSTRAINT AccountType_Uid_And_Name_UniqueConstraint FOR (node:AccountType) REQUIRE (node.Uid, node.Name) IS UNIQUE");
+                });
+            }
+
+            [Version(0, 0, 2)]
+            public void Update()
+            {
+                Entities["AccountType"].AddProperty("Unique", typeof(string), IndexType.Unique);
+                Entities["AccountType"].AddProperty("Indexed", typeof(string), IndexType.Indexed);
+            }
+        }
+
+        [Test]
+        public void IRefactorEntityDontTouchCompositeConstraint()
+        {
+            using (ConsoleOutput output = new ConsoleOutput())
+            {
+                DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint model = new DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint()
+                {
+                    LogToConsole = true
+                };
+                model.Execute(true);
+
+                Assert.That(output.GetOutput(), Contains.Substring("CREATE INDEX AccountType_Indexed_RangeIndex FOR (node:AccountType) ON (node.Indexed)"));
+                Assert.That(output.GetOutput(), Contains.Substring("CREATE CONSTRAINT AccountType_Unique_UniqueConstraint FOR (node:AccountType) REQUIRE node.Unique IS UNIQUE"));
+
+                using (Transaction.Begin())
+                {
+                    Assert.That(Transaction.Current.Run("show constraints").Select(item => item.Values["name"]?.ToString()).Any(item => item == "AccountType_Uid_And_Name_UniqueConstraint"));
+                }
+            }
+        }
+#endif
+
         #endregion
 
         #region IRefactorEntity ChangeInheritance()
