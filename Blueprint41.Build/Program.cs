@@ -26,7 +26,7 @@ namespace Blueprint41.Build
             parameters = MergeParametersWithConfigFile(parameters, configFilePath);
 
             string normalizedGenerateFolder = parameters.GetValueOrDefault(GeneratePathArg).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
-            string generatePath = Path.Combine(projectFolder, normalizedGenerateFolder);
+            string generatePath = Path.GetFullPath(Path.Combine(projectFolder, normalizedGenerateFolder));
 
             string modelName = parameters.GetValueOrDefault(ModelNameArg);
             string modelPath = Path.Combine(projectFolder, outputFolder, modelName);
