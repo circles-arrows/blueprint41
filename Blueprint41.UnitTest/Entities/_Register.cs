@@ -1,3 +1,6 @@
+#pragma warning disable S101 // Types should be named in PascalCase
+#pragma warning disable CS8981 // Names should not be lower type only
+
 using System;
 using Blueprint41.Core;
 
@@ -5,8 +8,7 @@ namespace Datastore.Manipulation
 {
     internal class Register
     {
-        private static bool isInitialized = false;
-
+        [Obsolete]
         public static void Types()
         {
             if (Blueprint41.UnitTest.DataStore.MockModel.Model.TypesRegistered)

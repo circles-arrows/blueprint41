@@ -138,6 +138,10 @@ namespace Blueprint41
 
         #endregion
 
+        /// <summary>
+        /// Add a property to be indexed for full text search
+        /// </summary>
+        /// <param name="propertyName">The property name</param>
         public Entity SetFullTextProperty(string propertyName)
         {
             EntityProperty? property = Search(propertyName);
@@ -147,6 +151,10 @@ namespace Blueprint41
             fullTextIndexProperties.Add(property);
             return this;
         }
+        /// <summary>
+        /// Remove a property from being indexed for full text search
+        /// </summary>
+        /// <param name="propertyName">The property name</param>
         public Entity RemoveFullTextProperty(string propertyName)
         {
             EntityProperty? property = Search(propertyName);
@@ -157,11 +165,22 @@ namespace Blueprint41
             return this;
         }
 
-
+        /// <summary>
+        /// Add a property to the entity
+        /// </summary>
+        /// <param name="name">The property name</param>
+        /// <param name="type">The property type</param>
         public Entity AddProperty(string name, Type type)
         {
             return AddProperty(name, type, true, IndexType.None);
         }
+        /// <summary>
+        /// Add an enumeration property to the entity
+        /// </summary>
+        /// <param name="name">The property name</param>
+        /// <param name="enumeration">The possible enumeration values the property can hold</param>
+        /// <param name="nullable">Whether the property can be null, defaults to true</param>
+        /// <param name="indexType">The index type, defaults to 'None'</param>
         public Entity AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
         {
             VerifyFromInheritedProperties(name);
@@ -174,6 +193,13 @@ namespace Blueprint41
 
             return this;
         }
+        /// <summary>
+        /// Add an enumeration property to the entity
+        /// </summary>
+        /// <param name="name">The property name</param>
+        /// <param name="enumeration">The possible enumeration values the property can hold</param>
+        /// <param name="nullable">Whether the property can be null, defaults to true</param>
+        /// <param name="indexType">The index type, defaults to 'None'</param>
         public Entity AddProperty(string name, Enumeration enumeration, bool nullable = true, IndexType indexType = IndexType.None)
         {
             VerifyFromInheritedProperties(name);
@@ -186,10 +212,19 @@ namespace Blueprint41
 
             return this;
         }
+        /// <summary>
+        /// Add a property to the entity
+        /// </summary>
+        /// <param name="name">The property name</param>
+        /// <param name="type">The property type</param>
+        /// <param name="indexType">The index type</param>
         public Entity AddProperty(string name, Type type, IndexType indexType)
         {
             return AddProperty(name, type, true, indexType);
         }
+        /// <summary>
+        /// Add a property to the entity
+        /// </summary>
         public Entity AddProperty(string name, Type type, bool nullable, IndexType indexType = IndexType.None)
         {
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -205,12 +240,20 @@ namespace Blueprint41
 
             return this;
         }
+
+        /// <summary>
+        /// Add a Dictionary&lt;sting, object&gt; to the entity to support dynamic properties that are not part of the schema
+        /// </summary>
+        /// <param name="name">The property name used to access the Dictionary</param>
         public Entity AddUnidentifiedProperties(string name)
         {
             UnidentifiedProperties = name;
 
             return this;
         }
+        /// <summary>
+        /// Remove the support for UnidentifiedProperties (aka dynamic properties that are not part of the schema)
+        /// </summary>
         public Entity RemoveUnidentifiedProperties()
         {
             UnidentifiedProperties = null;
@@ -232,17 +275,30 @@ namespace Blueprint41
             return this;
         }
 
+        /// <summary>
+        /// Properties that are indexed for full text search
+        /// </summary>
         public IReadOnlyList<EntityProperty> FullTextIndexProperties
         {
             get { return fullTextIndexProperties; }
         }
         private List<EntityProperty> fullTextIndexProperties = new List<EntityProperty>();
 
+        /// <summary>
+        /// The properties of the entity
+        /// </summary>
         public EntityPropertyCollection<EntityProperty, Entity> Properties { get; private set; }
         private readonly PropertyCollection _properties;
 
+        /// <summary>
+        /// The property name used to access the Dictionary of UnidentifiedProperties (aka dynamic properties that are not part of the schema)
+        /// </summary>
         public string? UnidentifiedProperties { get; private set; }
 
+        /// <summary>
+        /// The entity or parent entity that contains a definition for UnidentifiedProperties (aka dynamic properties that are not part of the schema)
+        /// </summary>
+        /// <returns>The entity or parent entity that contains a definition for UnidentifiedProperties</returns>
         public Entity? InheritedUnidentifiedProperties()
         {
             if (!string.IsNullOrEmpty(UnidentifiedProperties))
@@ -252,7 +308,9 @@ namespace Blueprint41
         }
 
 
-        private Lazy<EntityProperty> key;
+        /// <summary>
+        /// The definition for the property that represents the unique key
+        /// </summary>
         public EntityProperty Key
         {
             get
@@ -263,7 +321,11 @@ namespace Blueprint41
                 return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey);
             }
         }
-        private Lazy<EntityProperty> nodeType;
+        private Lazy<EntityProperty> key;
+
+        /// <summary>
+        /// The definition for the property that represents the concrete type
+        /// </summary>
         public EntityProperty NodeType
         {
             get
@@ -274,6 +336,10 @@ namespace Blueprint41
                 return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType);
             }
         }
+        private Lazy<EntityProperty> nodeType;
+        /// <summary>
+        /// The name of the property that represents the concrete type
+        /// </summary>
         public string NodeTypeName
         {
             get
@@ -281,7 +347,10 @@ namespace Blueprint41
                 return (NodeType is null) ? "NodeType" : NodeType.Name;
             }
         }
-        private Lazy<EntityProperty> rowVersion;
+
+        /// <summary>
+        /// The definition for the property that represents the row-version and will be used for optimistic locking
+        /// </summary>
         public EntityProperty RowVersion
         {
             get
@@ -292,13 +361,23 @@ namespace Blueprint41
                 return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion);
             }
         }
+        private Lazy<EntityProperty> rowVersion;
 
+        /// <summary>
+        /// Marks if the entity is abstract. Abstract entities must be inherited
+        /// </summary>
+        /// <param name="isAbstract">Whether the entity is abstract</param>
         public Entity Abstract(bool isAbstract = true)
         {
             IsAbstract = isAbstract;
 
             return this;
         }
+
+        /// <summary>
+        /// Marks if the entity is virtual. Virtual entities will not save their name as a label in the data-store
+        /// </summary>
+        /// <param name="isVirtual">Whether the entity is virtual</param>
         public Entity Virtual(bool isVirtual = true)
         {
             EntityProperty? rel = Properties.FirstOrDefault(item => item.ForeignEntity is not null && item.ForeignEntity.IsVirtual);
@@ -309,7 +388,12 @@ namespace Blueprint41
 
             return this;
         }
-        public Entity SetKey(string property, bool autoGenerate)
+
+        /// <summary>
+        /// Sets the key property for the entity
+        /// </summary>
+        /// <param name="property">The key property name</param>
+        public Entity SetKey(string property)
         {
             IReadOnlyList<Property> properties = GetPropertiesOfBaseTypesAndSelf();
             if (properties.Where(x => x.Name != property && x.IsKey).Count() > 0)
@@ -321,6 +405,11 @@ namespace Blueprint41
             Properties[property].IsKey = true;
             return this;
         }
+
+        /// <summary>
+        /// Sets the node type property for the entity
+        /// </summary>
+        /// <param name="property">The node type property name</param>
         public Entity SetNodeType(string property)
         {
             IReadOnlyList<Property> properties = GetPropertiesOfBaseTypesAndSelf();
@@ -330,6 +419,12 @@ namespace Blueprint41
             Properties[property].IsNodeType = true;
             return this;
         }
+
+        /// <summary>
+        /// Sets the row version property for the entity
+        /// </summary>
+        /// <param name="property">The row version property name</param>
+        /// <param name="hideSetter">Whether to hide the setter</param>
         public Entity SetRowVersionField(string property, bool hideSetter = true)
         {
             IReadOnlyList<Property> properties = GetPropertiesOfBaseTypesAndSelf();
@@ -347,10 +442,16 @@ namespace Blueprint41
             return this;
         }
 
-        private Dictionary<object, DynamicEntity> staticData = new Dictionary<object, DynamicEntity>();
+        /// <summary>
+        /// The static data for the entity. Static data is part of the schema and is generated in the data-store
+        /// </summary>
         public ICollection<DynamicEntity> StaticData { get { return staticData.Values; } }
+        private Dictionary<object, DynamicEntity> staticData = new Dictionary<object, DynamicEntity>();
 
-        private string? summary = null;
+        /// <summary>
+        /// The description of the entity
+        /// </summary>
+        /// <param name="summary">The summary</param>
         public Entity Summary(string summary)
         {
             this.summary = AddDot(summary);
@@ -359,8 +460,13 @@ namespace Blueprint41
 
             return this;
         }
+        private string? summary = null;
 
-        private string? example = null;
+        /// <summary>
+        /// An optional example for the need of the entity
+        /// </summary>
+        /// <param name="example"></param>
+        /// <returns></returns>
         public Entity Example(string example)
         {
             this.example = AddDot(example);
@@ -369,7 +475,12 @@ namespace Blueprint41
 
             return this;
         }
+        private string? example = null;
 
+        /// <summary>
+        /// Sets whether the entity will contain static data
+        /// </summary>
+        /// <param name="containsStaticData">Whether the entity will contain static data</param>
         public Entity HasStaticData(bool containsStaticData = true)
         {
             this.containsStaticData = containsStaticData;
@@ -444,7 +555,14 @@ namespace Blueprint41
                 VerifyFromInheritedProperties(prop.Name, true);
         }
 
+        /// <summary>
+        /// The dot-net type at runtime that was generated (either a class or an interface)
+        /// </summary>
         public Type? RuntimeReturnType { get; private set; }
+
+        /// <summary>
+        /// The dot-net type at runtime that was generated (the class, not the interface)
+        /// </summary>
         public Type? RuntimeClassType { get; private set; }
         void ISetRuntimeType.SetRuntimeTypes(Type returnType, Type classType)
         {
@@ -456,9 +574,15 @@ namespace Blueprint41
 
         #region Refactor Actions
 
+        /// <summary>
+        /// The refactor actions
+        /// </summary>
         public IRefactorEntity Refactor { get { return this; } }
 
-
+        /// <summary>
+        /// Rename the entity
+        /// </summary>
+        /// <param name="newName">The new entity name</param>
         void IRefactorEntity.Rename(string newName)
         {
             if (string.IsNullOrEmpty(newName))
@@ -482,6 +606,10 @@ namespace Blueprint41
             }).RunBatched();
         }
 
+        /// <summary>
+        /// Set default property values for the entity
+        /// </summary>
+        /// <param name="values">The default property values</param>
         void IRefactorEntity.SetDefaultValue(Action<dynamic> values)
         {
             Parent.EnsureSchemaMigration();
@@ -507,6 +635,12 @@ namespace Blueprint41
                 }).RunBatched();
             }
         }
+
+        /// <summary>
+        /// Copy data from one property to another
+        /// </summary>
+        /// <param name="sourceProperty">The source property</param>
+        /// <param name="targetProperty">The target property</param>
         void IRefactorEntity.CopyValue(string sourceProperty, string targetProperty)
         {
             Parent.EnsureSchemaMigration();
@@ -536,6 +670,9 @@ namespace Blueprint41
             }
         }
 
+        /// <summary>
+        /// (Re-)apply labels for the entity to the data-store
+        /// </summary>
         void IRefactorEntity.ApplyLabels()
         {
             Parent.EnsureSchemaMigration();
@@ -555,6 +692,11 @@ namespace Blueprint41
             }
         }
 
+        /// <summary>
+        /// Create a new node
+        /// </summary>
+        /// <param name="node">The node content</param>
+        /// <returns>The newly created node</returns>
         dynamic IRefactorEntity.CreateNode(object node)
         {
             //Parent.EnsureSchemaMigration();
@@ -575,6 +717,12 @@ namespace Blueprint41
 
             return entity;
         }
+
+        /// <summary>
+        /// Load an existing node
+        /// </summary>
+        /// <param name="key">The primary key value for the node to be loaded</param>
+        /// <returns>The node</returns>
         dynamic? IRefactorEntity.MatchNode(object key)
         {
             //Parent.EnsureSchemaMigration();
@@ -597,6 +745,11 @@ namespace Blueprint41
             else
                 return value;
         }
+
+        /// <summary>
+        /// Delete an existing node
+        /// </summary>
+        /// <param name="key">The primary key value for the node to be deleted</param>
         void IRefactorEntity.DeleteNode(object key)
         {
             //Parent.EnsureSchemaMigration();
@@ -617,6 +770,9 @@ namespace Blueprint41
                 DynamicEntity.Delete(this, key);
         }
 
+        /// <summary>
+        /// Deprecate the entity
+        /// </summary>
         void IRefactorEntity.Deprecate()
         {
             Parent.EnsureSchemaMigration();
@@ -648,7 +804,11 @@ namespace Blueprint41
             }
         }
 
-        void IRefactorEntity.ChangeInheritance(Entity newParentEntity)
+        /// <summary>
+        /// Change the entity inheritance chain
+        /// </summary>
+        /// <param name="newParentEntity">The new parent entity</param>
+        void IRefactorEntity.ChangeInheritance(Entity? newParentEntity)
         {
             Parent.EnsureSchemaMigration();
 
@@ -676,6 +836,9 @@ namespace Blueprint41
             CheckProperties();
         }
 
+        /// <summary>
+        /// Remove the FunctionalId pattern assigned to the property. Previously assigned primary key values (if any) will not be reset.
+        /// </summary>
         void IRefactorEntity.ResetFunctionalId()
         {
             Parent.EnsureSchemaMigration();
@@ -687,6 +850,12 @@ namespace Blueprint41
             foreach (Entity subclass in this.GetSubclasses())
                 subclass.functionalId = null;
         }
+
+        /// <summary>
+        /// Assign a new FunctionalId pattern to the property. Previously assigned primary key values (if any) will be set according to the chosen algorithm.
+        /// </summary>
+        /// <param name="functionalId">The functional id</param>
+        /// <param name="algorithm">The algorithm to apply to the data-store</param>
         void IRefactorEntity.SetFunctionalId(FunctionalId functionalId, ApplyAlgorithm algorithm)
         {
             Parent.EnsureSchemaMigration();
@@ -760,6 +929,9 @@ namespace Blueprint41
 
         #region Event Handlers
 
+        /// <summary>
+        /// The entity events
+        /// </summary>
         public Core.IEntityEvents Events { get { return this; } }
 
         internal Type EntityEventArgsType
@@ -779,6 +951,18 @@ namespace Blueprint41
         }
         private Type? entityEventArgsType = null;
 
+        /// <summary>
+        /// True when a OnNew event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNewHandlers { get { return onNew is not null; } }
+        /// <summary>
+        /// This event fires while instantiating the object
+        /// </summary>
+        event EventHandler<EntityEventArgs> IEntityEvents.OnNew
+        {
+            add { onNew += value; }
+            remove { onNew -= value; }
+        }
         internal void RaiseOnNew(OGMImpl sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnNew, sender, trans, true);
@@ -787,14 +971,20 @@ namespace Blueprint41
 
             onNew?.Invoke(sender, args);
         }
-        bool IEntityEvents.HasRegisteredOnNewHandlers { get { return onNew is not null; } }
         private EventHandler<EntityEventArgs>? onNew;
-        event EventHandler<EntityEventArgs> IEntityEvents.OnNew
-        {
-            add { onNew += value; }
-            remove { onNew -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnSave event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnSaveHandlers { get { return onSave is not null; } }
+        /// <summary>
+        /// This event fires while calling the save internal method
+        /// </summary>
+        event EventHandler<EntityEventArgs> IEntityEvents.OnSave
+        {
+            add { onSave += value; }
+            remove { onSave -= value; }
+        }
         internal void RaiseOnSave(OGMImpl sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnSave, sender, trans);
@@ -803,14 +993,20 @@ namespace Blueprint41
 
             onSave?.Invoke(sender, args);
         }
-        bool IEntityEvents.HasRegisteredOnSaveHandlers { get { return onSave is not null; } }
         private EventHandler<EntityEventArgs>? onSave;
-        event EventHandler<EntityEventArgs> IEntityEvents.OnSave
-        {
-            add { onSave += value; }
-            remove { onSave -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnAfterSave event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnAfterSaveHandlers { get { return onAfterSave is not null; } }
+        /// <summary>
+        /// This event fires while calling the after save internal method
+        /// </summary>
+        event EventHandler<EntityEventArgs> IEntityEvents.OnAfterSave
+        {
+            add { onAfterSave += value; }
+            remove { onAfterSave -= value; }
+        }
         internal void RaiseOnAfterSave(OGMImpl sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnAfterSave, sender, trans);
@@ -819,14 +1015,20 @@ namespace Blueprint41
 
             onAfterSave?.Invoke(sender, args);
         }
-        bool IEntityEvents.HasRegisteredOnAfterSaveHandlers { get { return onAfterSave is not null; } }
         private EventHandler<EntityEventArgs>? onAfterSave;
-        event EventHandler<EntityEventArgs> IEntityEvents.OnAfterSave
-        {
-            add { onAfterSave += value; }
-            remove { onAfterSave -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnDelete event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnDeleteHandlers { get { return onDelete is not null; } }
+        /// <summary>
+        /// This event fires while calling the Delete method
+        /// </summary>
+        event EventHandler<EntityEventArgs> IEntityEvents.OnDelete
+        {
+            add { onDelete += value; }
+            remove { onDelete -= value; }
+        }
         internal void RaiseOnDelete(OGMImpl sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnDelete, sender, trans);
@@ -835,14 +1037,20 @@ namespace Blueprint41
 
             onDelete?.Invoke(sender, args);
         }
-        bool IEntityEvents.HasRegisteredOnDeleteHandlers { get { return onDelete is not null; } }
         private EventHandler<EntityEventArgs>? onDelete;
-        event EventHandler<EntityEventArgs> IEntityEvents.OnDelete
-        {
-            add { onDelete += value; }
-            remove { onDelete -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnNodeLoading event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNodeLoadingHandlers { get { return onNodeLoading is not null; } }
+        /// <summary>
+        /// This event fires when a node is about to be loaded into memory
+        /// </summary>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeLoading
+        {
+            add { onNodeLoading += value; }
+            remove { onNodeLoading -= value; }
+        }
         internal NodeEventArgs RaiseOnNodeLoading(Transaction trans, OGM? sender, string cypher, Dictionary<string, object?>? parameters, ref Dictionary<string, object?>? customState)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeLoading, trans, sender, cypher, parameters, customState);
@@ -853,14 +1061,20 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeLoadingHandlers { get { return onNodeLoading is not null; } }
         private EventHandler<NodeEventArgs>? onNodeLoading;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeLoading
-        {
-            add { onNodeLoading += value; }
-            remove { onNodeLoading -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnNodeLoaded event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNodeLoadedHandlers { get { return onNodeLoaded is not null; } }
+        /// <summary>
+        /// This event fires after a node was loaded into memory
+        /// </summary>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeLoaded
+        {
+            add { onNodeLoaded += value; }
+            remove { onNodeLoaded -= value; }
+        }
         internal NodeEventArgs RaiseOnNodeLoaded(Transaction trans, NodeEventArgs previousArgs, long id, IReadOnlyList<string> labels, Dictionary<string, object?> properties)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeLoaded, previousArgs, id, labels, properties);
@@ -871,14 +1085,20 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeLoadedHandlers { get { return onNodeLoaded is not null; } }
         private EventHandler<NodeEventArgs>? onNodeLoaded;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeLoaded
-        {
-            add { onNodeLoaded += value; }
-            remove { onNodeLoaded -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnBatchFinished event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnBatchFinishedHandlers { get { return onBatchFinished is not null; } }
+        /// <summary>
+        /// This event fires after a batch command, like loading or deleting a collection, was finished
+        /// </summary>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnBatchFinished
+        {
+            add { onBatchFinished += value; }
+            remove { onBatchFinished -= value; }
+        }
         internal NodeEventArgs RaiseOnBatchFinished(Transaction trans, NodeEventArgs previousArgs)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnBatchFinished, previousArgs);
@@ -889,14 +1109,20 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnBatchFinishedHandlers { get { return onBatchFinished is not null; } }
         private EventHandler<NodeEventArgs>? onBatchFinished;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnBatchFinished
-        {
-            add { onBatchFinished += value; }
-            remove { onBatchFinished -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnNodeCreate event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNodeCreateHandlers { get { return onNodeCreate is not null; } }
+        /// <summary>
+        /// This event fires during the commit stage, when a new node is about to be created
+        /// </summary>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeCreate
+        {
+            add { onNodeCreate += value; }
+            remove { onNodeCreate -= value; }
+        }
         internal NodeEventArgs RaiseOnNodeCreate(Transaction trans, OGM sender, string cypher, Dictionary<string, object?> parameters, ref Dictionary<string, object?>? customState)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeCreate, trans, sender, cypher, parameters, customState);
@@ -907,14 +1133,20 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeCreateHandlers { get { return onNodeCreate is not null; } }
         private EventHandler<NodeEventArgs>? onNodeCreate;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeCreate
-        {
-            add { onNodeCreate += value; }
-            remove { onNodeCreate -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnNodeCreated event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNodeCreatedHandlers { get { return onNodeCreated is not null; } }
+        /// <summary>
+        /// This event fires during the commit stage, after the node was created. The transaction is read-only at this moment.
+        /// </summary>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeCreated
+        {
+            add { onNodeCreated += value; }
+            remove { onNodeCreated -= value; }
+        }
         internal NodeEventArgs RaiseOnNodeCreated(Transaction trans, NodeEventArgs previousArgs, long id, IReadOnlyList<string> labels, Dictionary<string, object?> properties)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeCreated, previousArgs, id, labels, properties);
@@ -925,14 +1157,20 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeCreatedHandlers { get { return onNodeCreated is not null; } }
         private EventHandler<NodeEventArgs>? onNodeCreated;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeCreated
-        {
-            add { onNodeCreated += value; }
-            remove { onNodeCreated -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnNodeUpdate event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNodeUpdateHandlers { get { return onNodeUpdate is not null; } }
+        /// <summary>
+        /// This event fires during the commit stage, when an existing node is about to be updated
+        /// </summary>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeUpdate
+        {
+            add { onNodeUpdate += value; }
+            remove { onNodeUpdate -= value; }
+        }
         internal NodeEventArgs RaiseOnNodeUpdate(Transaction trans, OGM sender, string cypher, Dictionary<string, object?> parameters, ref Dictionary<string, object?>? customState)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeUpdate, trans, sender, cypher, parameters, customState);
@@ -943,14 +1181,20 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeUpdateHandlers { get { return onNodeUpdate is not null; } }
         private EventHandler<NodeEventArgs>? onNodeUpdate;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeUpdate
-        {
-            add { onNodeUpdate += value; }
-            remove { onNodeUpdate -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnNodeUpdated event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNodeUpdatedHandlers { get { return onNodeUpdated is not null; } }
+        /// <summary>
+        /// This event fires during the commit stage, when an existing node was updated. The transaction is read-only at this moment.
+        /// </summary>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeUpdated
+        {
+            add { onNodeUpdated += value; }
+            remove { onNodeUpdated -= value; }
+        }
         internal NodeEventArgs RaiseOnNodeUpdated(Transaction trans, NodeEventArgs previousArgs)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeUpdated, previousArgs);
@@ -961,14 +1205,20 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeUpdatedHandlers { get { return onNodeUpdated is not null; } }
         private EventHandler<NodeEventArgs>? onNodeUpdated;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeUpdated
-        {
-            add { onNodeUpdated += value; }
-            remove { onNodeUpdated -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnNodeDelete event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNodeDeleteHandlers { get { return onNodeDelete is not null; } }
+        /// <summary>
+        /// This event fires during the commit stage, when an existing node is about to be deleted
+        /// </summary>>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeDelete
+        {
+            add { onNodeDelete += value; }
+            remove { onNodeDelete -= value; }
+        }
         internal NodeEventArgs RaiseOnNodeDelete(Transaction trans, OGM sender, string cypher, Dictionary<string, object?> parameters, ref Dictionary<string, object?>? customState)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeDelete, trans, sender, cypher, parameters, customState);
@@ -979,14 +1229,20 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeDeleteHandlers { get { return onNodeDelete is not null; } }
         private EventHandler<NodeEventArgs>? onNodeDelete;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeDelete
-        {
-            add { onNodeDelete += value; }
-            remove { onNodeDelete -= value; }
-        }
 
+        /// <summary>
+        /// True when a OnNodeDeleted event is registered
+        /// </summary>
+        bool IEntityEvents.HasRegisteredOnNodeDeletedHandlers { get { return onNodeDeleted is not null; } }
+        /// <summary>
+        /// This event fires during the commit stage, when an existing node was deleted. The transaction is read-only at this moment.
+        /// </summary>
+        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeDeleted
+        {
+            add { onNodeDeleted += value; }
+            remove { onNodeDeleted -= value; }
+        }
         internal NodeEventArgs RaiseOnNodeDeleted(Transaction trans, NodeEventArgs previousArgs)
         {
             NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeDeleted, previousArgs);
@@ -997,18 +1253,17 @@ namespace Blueprint41
 
             return args;
         }
-        bool IEntityEvents.HasRegisteredOnNodeDeletedHandlers { get { return onNodeDeleted is not null; } }
         private EventHandler<NodeEventArgs>? onNodeDeleted;
-        event EventHandler<NodeEventArgs> IEntityEvents.OnNodeDeleted
-        {
-            add { onNodeDeleted += value; }
-            remove { onNodeDeleted -= value; }
-        }
 
         #endregion
 
         #region Helper Methods
 
+        /// <summary>
+        /// Returns true if the item is a subclass of the base type
+        /// </summary>
+        /// <param name="baseType">The entity type to check</param>
+        /// <returns>True if the item is a subclass of the base type</returns>
         public bool IsSubsclassOf(IEntity baseType)
         {
             Entity? baseEntity = baseType as Entity;
@@ -1029,6 +1284,12 @@ namespace Blueprint41
 
             return found;
         }
+
+        /// <summary>
+        /// Returns true if the item is a self or subclass of the base type
+        /// </summary>
+        /// <param name="baseType">The entity type to check</param>
+        /// <returns>True if the item is a self or subclass of the base type</returns>
         public bool IsSelfOrSubclassOf(IEntity baseType)
         {
             Entity? baseEntity = baseType as Entity;
@@ -1071,7 +1332,10 @@ namespace Blueprint41
 
 
 
-        private List<Entity>? baseTypes = null;
+        /// <summary>
+        /// Returns all base types
+        /// </summary>
+        /// <returns>The list of base types</returns>
         public IReadOnlyList<Entity> GetBaseTypes()
         {
             return InitSubList(ref baseTypes, delegate (List<Entity> result)
@@ -1083,8 +1347,12 @@ namespace Blueprint41
                 });
             });
         }
+        private List<Entity>? baseTypes = null;
 
-        private List<Entity>? baseTypesAndSelf = null;
+        /// <summary>
+        /// Returns all base types and self
+        /// </summary>
+        /// <returns>The list of base types</returns>
         public IReadOnlyList<Entity> GetBaseTypesAndSelf()
         {
             return InitSubList(ref baseTypesAndSelf, delegate (List<Entity> result)
@@ -1096,8 +1364,12 @@ namespace Blueprint41
                 });
             });
         }
+        private List<Entity>? baseTypesAndSelf = null;
 
-        private List<Entity>? subclassesOrSelf = null;
+        /// <summary>
+        /// Returns all subclasses or self
+        /// </summary>
+        /// <returns>The list of subclasses</returns>
         public IReadOnlyList<Entity> GetSubclassesOrSelf()
         {
             return InitSubList(ref subclassesOrSelf, delegate (List<Entity> classes)
@@ -1110,8 +1382,12 @@ namespace Blueprint41
                 }
             });
         }
+        private List<Entity>? subclassesOrSelf = null;
 
-        private List<Entity>? subclasses = null;
+        /// <summary>
+        /// Returns all subclasses
+        /// </summary>
+        /// <returns>The </returns>
         public IReadOnlyList<Entity> GetSubclasses()
         {
             return InitSubList(ref subclasses, delegate (List<Entity> classes)
@@ -1124,8 +1400,12 @@ namespace Blueprint41
                 }
             });
         }
+        private List<Entity>? subclasses = null;
 
-        private List<Entity>? directSubclasses = null;
+        /// <summary>
+        /// Returns all direct subclasses
+        /// </summary>
+        /// <returns>The list of subclasses</returns>
         public IReadOnlyList<Entity> GetDirectSubclasses()
         {
             return InitSubList(ref directSubclasses, delegate (List<Entity> classes)
@@ -1142,8 +1422,12 @@ namespace Blueprint41
                 }
             });
         }
+        private List<Entity>? directSubclasses = null;
 
-        private List<Entity>? nearestNonVirtualSubclasses = null;
+        /// <summary>
+        /// Returns the nearest non-virtual subclass
+        /// </summary>
+        /// <returns>The list of subclasses</returns>
         public IReadOnlyList<Entity> GetNearestNonVirtualSubclass()
         {
             return InitSubList(ref nearestNonVirtualSubclasses, delegate (List<Entity> classes)
@@ -1160,8 +1444,13 @@ namespace Blueprint41
                 }
             });
         }
+        private List<Entity>? nearestNonVirtualSubclasses = null;
 
-        private List<EntityProperty>? propertiesOfBaseTypesAndSelf = null;
+
+        /// <summary>
+        /// Returns all properties in the inheritance hierarchy
+        /// </summary>
+        /// <returns>The list of properties</returns>
         public IReadOnlyList<EntityProperty> GetPropertiesOfBaseTypesAndSelf()
         {
             return InitSubList(ref propertiesOfBaseTypesAndSelf, delegate (List<EntityProperty> allProperties)
@@ -1172,8 +1461,13 @@ namespace Blueprint41
                 }
             });
         }
+        private List<EntityProperty>? propertiesOfBaseTypesAndSelf = null;
 
-        private List<Entity>? concreteClasses = null;
+
+        /// <summary>
+        /// Returns all concrete classes in the inheritance hierarchy
+        /// </summary>
+        /// <returns>The list of concrete classes</returns>
         public IReadOnlyList<Entity> GetConcreteClasses()
         {
             return InitSubList(ref concreteClasses, delegate (List<Entity> classes)
@@ -1189,6 +1483,7 @@ namespace Blueprint41
                 }
             });
         }
+        private List<Entity>? concreteClasses = null;
 
         private List<T> InitSubList<T>(ref List<T>? listReference, Action<List<T>> initialize)
         {
@@ -1214,6 +1509,8 @@ namespace Blueprint41
         }
 
         private IReadOnlyDictionary<string, EntityProperty>? namedPropertiesOfBaseTypesAndSelf = null;
+
+        // Search for a property on the entity or any of its base types
         public EntityProperty? Search(string name)
         {
             if (Parent.IsUpgraded)
@@ -1438,15 +1735,58 @@ namespace Blueprint41
 
         #region IEntityAdvancedFeatures
 
-
+        /// <summary>
+        /// Load an existing node
+        /// </summary>
+        /// <param name="key">The primary key value for the node to be loaded</param>
+        /// <param name="locked">If the node should be locked</param>
+        /// <returns>The node</returns>
         OGM? IEntityAdvancedFeatures.Load(object? key, bool locked) => Load(key, locked);
+
+        /// <summary>
+        /// Load an existing node from the transaction cache
+        /// </summary>
+        /// <param name="key">The primary key value for the node to be loaded</param>
+        /// <returns>The node</returns>
         OGM? IEntityAdvancedFeatures.Lookup(object? key) => Lookup(key);
+        
+        /// <summary>
+        /// Force-delete an existing node
+        /// </summary>
+        /// <param name="key">The primary key value for the node to be deleted</param>
         void IEntityAdvancedFeatures.ForceDelete(object key) => ForceDelete(key);
+
+        /// <summary>
+        /// Delete an existing node
+        /// </summary>
+        /// <param name="key">The primary key value for the node to be deleted</param>
         void IEntityAdvancedFeatures.Delete(object key) => Delete(key);
 
+        /// <summary>
+        /// Create a new node
+        /// </summary>
+        /// <param name="eventOptions">Which events should be fired during the creation</param>
+        /// <returns>The new node</returns>
         OGM IEntityAdvancedFeatures.Activator(EventOptions eventOptions) => Activator(eventOptions);
+
+        /// <summary>
+        /// Map a node loaded via a query into a new node instance
+        /// </summary>
+        /// <param name="node">The raw cypher node</param>
+        /// <param name="mappingMode">The node mapping mode</param>
+        /// <returns>The new node</returns>
         OGM? IEntityAdvancedFeatures.Map(RawNode node, NodeMapping mappingMode) => Map(node, mappingMode);
+
+        /// <summary>
+        /// Map a node loaded via a query into a new node instance
+        /// </summary>
+        /// <param name="node">The raw cypher node</param>
+        /// <param name="cypher">The cypher query</param>
+        /// <param name="parameters">The cypher query parameters</param>
+        /// <param name="mappingMode">The node mapping mode</param>
+        /// <returns>The new node</returns>
         OGM? IEntityAdvancedFeatures.Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode) => Map(node, cypher, parameters, mappingMode);
+
         #endregion
 
         #endregion

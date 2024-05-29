@@ -21,13 +21,13 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <PackageVersion>1.1.4</PackageVersion>
+    <PackageVersion>1.1.5</PackageVersion>
     <PackageId>Blueprint41.MemgraphDriver</PackageId>
     <Title>Blueprint41.MemgraphDriver</Title>
     <Authors>Circles Arrows Limited</Authors>
     <Description>Driver needed to connect to Memgraph using Blueprint41</Description>
     <Copyright>Copyright 2017, 2024 (c) Circles Arrows Limited</Copyright>
-    <PackageLicenseUrl>https://github.com/circles-arrows/blueprint41/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageLicense>MIT</PackageLicense>
     <PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
     <PackageTags>Memgraph Graph Object Mapper</PackageTags>
     <IncludeSymbols>false</IncludeSymbols>

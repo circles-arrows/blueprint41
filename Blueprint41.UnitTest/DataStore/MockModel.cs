@@ -26,7 +26,7 @@ namespace Blueprint41.UnitTest.DataStore
                 .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                 .Abstract(true)
                 .Virtual(true)
-                .SetKey("Uid", true)
+                .SetKey("Uid")
                 .AddProperty("LastModifiedOn", typeof(DateTime))
                 .SetRowVersionField("LastModifiedOn");
 
@@ -85,7 +85,7 @@ namespace Blueprint41.UnitTest.DataStore
                 .SetInProperty("StreamingServiceSubscriptions", PropertyType.Collection)
                 .SetOutProperty("Subscribers", PropertyType.Collection)
                 .AddProperty("MonthlyFee", typeof(decimal), false)
-                .AddTimeDependance();
+                .AddTimeDependence();
 
             // Collection, time independent: (Person)-[WATCHED { Minutes }]->(Movie)
             Relations.New(Entities["Person"], Entities["Movie"], "WATCHED_MOVIE", "WATCHED")
@@ -95,7 +95,7 @@ namespace Blueprint41.UnitTest.DataStore
             // Lookup, time dependent:       (Person)-[PERSON_LIVES_IN { AddressLine1..3, ZipCode }]->(City)
             Relations.New(Entities["Person"], Entities["City"], "PERSON_LIVES_IN", "LIVES_IN")
                 .SetInProperty("City", PropertyType.Lookup)
-                .AddTimeDependance()
+                .AddTimeDependence()
                 .AddProperty("AddressLine1", typeof(string))
                 .AddProperty("AddressLine2", typeof(string))
                 .AddProperty("AddressLine3", typeof(string));
