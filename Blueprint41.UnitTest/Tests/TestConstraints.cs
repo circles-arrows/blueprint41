@@ -25,7 +25,7 @@ namespace Blueprint41.UnitTest.Tests
             [Version(0, 0, 1)]
             public void Script_0_0_1()
             {
-                Entities["Movie"].SetKey("Uid");
+                Entities["Movie"].SetKey("Uid", false);
             }
         }
 
@@ -54,13 +54,13 @@ namespace Blueprint41.UnitTest.Tests
                         .AddProperty("tagline", typeof(string))
                         .AddProperty("released", typeof(int))
                         .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                        .SetKey("Uid");
+                        .SetKey("Uid", true);
             }
 
             [Version(0, 0, 1)]
             public void Script_0_0_1()
             {
-                Entities["Movie"].SetKey("title");
+                Entities["Movie"].SetKey("title", false);
             }
         }
 

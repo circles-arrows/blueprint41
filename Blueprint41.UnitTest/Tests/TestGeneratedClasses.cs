@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS8981 // Names should not be lower type only
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -414,9 +412,7 @@ namespace Blueprint41.UnitTest.Tests
 
             using (Transaction.Begin())
             {
-#pragma warning disable CS0168 // Variable is declared but never used
                 ICompiled compiled;
-#pragma warning restore CS0168 // Variable is declared but never used
                 IReturnQuery query = Transaction.CompiledQuery
                     .Match(node.Person.Alias(out PersonAlias p))
                     .With(p, Functions.CollectSubquery<StringListResult>(sq =>

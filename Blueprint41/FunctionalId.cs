@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace Blueprint41
 {
-    /// <summary>
-    /// A functional id
-    /// </summary>
     public class FunctionalId
     {
         internal FunctionalId(DatastoreModel parent, string label, string prefix, IdFormat format, int startFrom)
@@ -22,38 +19,13 @@ namespace Blueprint41
 
         #region Properties
 
-        /// <summary>
-        /// The label of the functional id
-        /// </summary>
         public string Label { get; private set; }
-
-        /// <summary>
-        /// The prefix of the functional id
-        /// </summary>
         public string Prefix { get; private set; }
-
-        /// <summary>
-        /// The format of the functional id
-        /// </summary>
         public IdFormat Format { get; private set; }
-
-        /// <summary>
-        /// The start value of the functional id
-        /// </summary>
         public int StartFrom { get; private set; }
-        
-        /// <summary>
-        /// A unique identifier for the functional id
-        /// </summary>
         public Guid Guid { get; private set; }
 
         #endregion
-
-        /// <summary>
-        /// Sets the prefix of the functional id
-        /// </summary>
-        /// <param name="DataMigration">The data-migration scope</param>
-        /// <param name="prefix">The prefix to set</param>
         public void SetPrefix(DatastoreModel.DataMigrationScope DataMigration, string prefix)
         {
             Prefix = prefix;
@@ -99,10 +71,6 @@ namespace Blueprint41
             }
         }
 
-        /// <summary>
-        /// Get the next functional id
-        /// </summary>
-        /// <returns>The next functional id</returns>
         public string NextFunctionID()
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.NextFunctionID(this);

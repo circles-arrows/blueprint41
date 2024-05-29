@@ -6,9 +6,6 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #>
-#pragma warning disable S101 // Types should be named in PascalCase
-#pragma warning disable CS8981 // Names should not be lower type only
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -97,8 +94,6 @@ if (!DALModel.IsAbstract)
     {
         #region Initialize
 
-
-        [Obsolete]
         static <#= DALModel.ClassName #>()
         {
             Register.Types();

@@ -97,6 +97,12 @@ namespace Blueprint41.UnitTest.Tests
 
             public static Uids SetupDb()
             {
+                MovieUids movies;
+                RatingUids ratings;
+                PersonUids persons;
+                CityUids cities;
+                StreamingServiceUids streamingServices;
+
                 using (Transaction.Begin())
                 {
                     #region Movies

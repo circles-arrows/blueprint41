@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS8981 // Names should not be lower type only
-
-using System;
+﻿using System;
 using System.Linq;
 
 using NUnit.Framework;

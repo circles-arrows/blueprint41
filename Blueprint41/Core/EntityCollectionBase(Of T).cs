@@ -73,7 +73,7 @@ namespace Blueprint41.Core
         protected virtual void LazySet()
         {
             if (Parent.PersistenceState == PersistenceState.Persisted && DbTransaction != Transaction.RunningTransaction)
-                throw new InvalidOperationException("This object was already flushed to the data-store.");
+                throw new InvalidOperationException("This object was already flushed to the data store.");
             else if (Parent.PersistenceState == PersistenceState.OutOfScope)
                 throw new InvalidOperationException("The transaction for this object has already ended.");
 

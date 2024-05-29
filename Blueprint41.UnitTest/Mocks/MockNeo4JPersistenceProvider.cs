@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS8981
-
-using System;
+﻿using System;
 using System.Linq;
 
 using neo4j = Neo4j.Driver;
@@ -29,7 +27,7 @@ namespace Blueprint41.UnitTest.Mocks
 
     public class MockNeo4jTransaction : driver.Neo4jTransaction
     {
-        internal MockNeo4jTransaction(MockNeo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger logger) : base(provider, readWriteMode, logger)
+        internal MockNeo4jTransaction(MockNeo4jPersistenceProvider provider, bool readWriteMode, TransactionLogger? logger) : base(provider, readWriteMode, logger)
         {
         }
 

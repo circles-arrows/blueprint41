@@ -31,7 +31,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid")
+                       .SetKey("Uid", true)
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
@@ -52,7 +52,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid")
+                       .SetKey("Uid", true)
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 

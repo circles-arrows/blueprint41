@@ -134,11 +134,7 @@ namespace Blueprint41
 
             Neo4JRelationshipType = newNeo4JRelationshipType ?? newName;
         }
-
-        /// <summary>
-        /// Add time dependence support
-        /// </summary>
-        public Relationship AddTimeDependence()
+        public Relationship AddTimeDependance()
         {
             if (IsTimeDependent)
                 throw new NotSupportedException(string.Format("The relationship type '{0}' already has time dependence support.", Name));
@@ -151,12 +147,6 @@ namespace Blueprint41
             return this;
         }
 
-        /// <summary>
-        /// Set the in-property
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="type">The type of the property</param>
-        /// <param name="nullable">Whether the property can be null</param>
         public Relationship SetInProperty(string name, PropertyType type, bool nullable = true)
         {
             Parent.EnsureSchemaMigration();
@@ -184,13 +174,6 @@ namespace Blueprint41
 
             return this;
         }
-
-        /// <summary>
-        /// Set the out-property
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="type">The type of the property</param>
-        /// <param name="nullable">Whether the property can be null</param>
         public Relationship SetOutProperty(string name, PropertyType type, bool nullable = true)
         {
             Parent.EnsureSchemaMigration();
@@ -219,25 +202,10 @@ namespace Blueprint41
             return this;
         }
 
-        /// <summary>
-        /// Add a new property
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="type">The type of the property</param>
-        /// <returns></returns>
         public Relationship AddProperty(string name, Type type)
         {
             return AddProperty(name, type, true, IndexType.None);
         }
-
-        /// <summary>
-        /// Add a new property
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="enumeration">The possible values the property can have</param>
-        /// <param name="nullable">Whether the property can be null</param>
-        /// <param name="indexType">The type of the index</param>
-        /// <returns></returns>
         public Relationship AddProperty(string name, string[] enumeration, bool nullable = true, IndexType indexType = IndexType.None)
         {
             VerifyPropertiesCanBeAdded();
@@ -247,15 +215,6 @@ namespace Blueprint41
 
             return this;
         }
-
-        /// <summary>
-        /// Add a new property
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="enumeration">The possible values the property can have</param>
-        /// <param name="nullable">Whether the property can be null</param>
-        /// <param name="indexType">The type of the index</param>
-        /// <returns></returns>
         public Relationship AddProperty(string name, Enumeration enumeration, bool nullable = true, IndexType indexType = IndexType.None)
         {
             VerifyPropertiesCanBeAdded();
@@ -265,27 +224,10 @@ namespace Blueprint41
 
             return this;
         }
-
-        /// <summary>
-        /// Add a new property
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="type">The type of the property</param>
-        /// <param name="indexType">The type of the index</param>
-        /// <returns></returns>
         public Relationship AddProperty(string name, Type type, IndexType indexType)
         {
             return AddProperty(name, type, true, indexType);
         }
-
-        /// <summary>
-        /// Add a new property
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <param name="type">The type of the property</param>
-        /// <param name="nullable">Whether the property can be null</param>
-        /// <param name="indexType">The type of the index</param>
-        /// <returns></returns>
         public Relationship AddProperty(string name, Type type, bool nullable, IndexType indexType = IndexType.None)
         {
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -320,20 +262,19 @@ namespace Blueprint41
                 OutProperty = null;
         }
 
+
+
+        public Relationship CascadedDelete(params Entity[] nodes)
+        {
+            return this;
+        }
+ 
         #endregion
 
         #region Refactor Actions
 
-        /// <summary>
-        /// The refactor actions
-        /// </summary>
         public IRefactorRelationship Refactor { get { return this; } }
-
-        /// <summary>
-        /// Renames the relationship
-        /// </summary>
-        /// <param name="newName">The new name</param>
-        /// <param name="newNeo4JRelationshipType">The new neo4j relationship type</param>
+ 
         void IRefactorRelationship.Rename(string newName, string newNeo4JRelationshipType)
         {
             if (string.IsNullOrEmpty(newName))
@@ -358,11 +299,6 @@ namespace Blueprint41
             }
         }
 
-        /// <summary>
-        /// Sets the in-entity
-        /// </summary>
-        /// <param name="target">The new in-entity</param>
-        /// <param name="allowLosingData">Whether to allow losing data</param>
         void IRefactorRelationship.SetInEntity(Entity target, bool allowLosingData)
         {
             Parent.EnsureSchemaMigration();
@@ -403,12 +339,6 @@ namespace Blueprint41
 
             InInterface = new Interface(target);
         }
-
-        /// <summary>
-        /// Sets the out-entity
-        /// </summary>
-        /// <param name="target">The new out-entity</param>
-        /// <param name="allowLosingData">Whether to allow losing data</param>
         void IRefactorRelationship.SetOutEntity(Entity target, bool allowLosingData)
         {
             Parent.EnsureSchemaMigration();
@@ -450,10 +380,7 @@ namespace Blueprint41
             OutInterface = new Interface(target);
         }
 
-        /// <summary>
-        /// Removes the time dependence
-        /// </summary>
-        void IRefactorRelationship.RemoveTimeDependence()
+        void IRefactorRelationship.RemoveTimeDependance()
         {
             Parent.EnsureSchemaMigration();
 
@@ -467,10 +394,6 @@ namespace Blueprint41
 
             throw new NotImplementedException("Apply logic to neo4j db...");
         }
-
-        /// <summary>
-        /// Deprecates the relationship
-        /// </summary>
         void IRefactorRelationship.Deprecate()
         {
             Parent.EnsureSchemaMigration();
@@ -495,23 +418,8 @@ namespace Blueprint41
 
         #region Event Handlers
 
-        /// <summary>
-        /// The relationship events
-        /// </summary>
         public Core.IRelationshipEvents Events { get { return this; } }
 
-        /// <summary>
-        /// This event fires during the commit stage, when a new relationship is about to be created
-        /// </summary>
-        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreate
-        {
-            add { onRelationCreate += value; }
-            remove { onRelationCreate -= value; }
-        }
-        /// <summary>
-        /// True when a OnRelationCreate event is registered
-        /// </summary>
-        bool IRelationshipEvents.HasRegisteredOnRelationCreateHandlers { get { return onRelationCreate is not null; } }
         internal RelationshipEventArgs RaiseOnRelationCreate(Transaction trans)
         {
             RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationCreate, trans);
@@ -522,20 +430,14 @@ namespace Blueprint41
 
             return args;
         }
+        bool IRelationshipEvents.HasRegisteredOnRelationCreateHandlers { get { return onRelationCreate is not null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationCreate;
-
-        /// <summary>
-        /// This event fires during the commit stage, after the relationship was created. The transaction is read-only at this moment.
-        /// </summary>
-        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreated
+        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreate
         {
-            add { onRelationCreated += value; }
-            remove { onRelationCreated -= value; }
+            add { onRelationCreate += value; }
+            remove { onRelationCreate -= value; }
         }
-        /// <summary>
-        /// True when a OnRelationCreated event is registered
-        /// </summary>
-        bool IRelationshipEvents.HasRegisteredOnRelationCreatedHandlers { get { return onRelationCreated is not null; } }
+
         internal RelationshipEventArgs RaiseOnRelationCreated(Transaction trans)
         {
             RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationCreated, trans);
@@ -546,20 +448,14 @@ namespace Blueprint41
 
             return args;
         }
+        bool IRelationshipEvents.HasRegisteredOnRelationCreatedHandlers { get { return onRelationCreated is not null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationCreated;
-
-        /// <summary>
-        /// This event fires during the commit stage, when an existing relationship is about to be deleted
-        /// </summary>>
-        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDelete
+        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationCreated
         {
-            add { onRelationDelete += value; }
-            remove { onRelationDelete -= value; }
+            add { onRelationCreated += value; }
+            remove { onRelationCreated -= value; }
         }
-        /// <summary>
-        /// True when a OnRelationDelete event is registered
-        /// </summary>
-        bool IRelationshipEvents.HasRegisteredOnRelationDeleteHandlers { get { return onRelationDelete is not null; } }
+
         internal RelationshipEventArgs RaiseOnRelationDelete(Transaction trans)
         {
             RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationDelete, trans);
@@ -570,20 +466,14 @@ namespace Blueprint41
 
             return args;
         }
+        bool IRelationshipEvents.HasRegisteredOnRelationDeleteHandlers { get { return onRelationDelete is not null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationDelete;
-
-        /// <summary>
-        /// This event fires during the commit stage, when an existing relationship was deleted. The transaction is read-only at this moment.
-        /// </summary>
-        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDeleted
+        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDelete
         {
-            add { onRelationDeleted += value; }
-            remove { onRelationDeleted -= value; }
+            add { onRelationDelete += value; }
+            remove { onRelationDelete -= value; }
         }
-        /// <summary>
-        /// True when a OnRelationDeleted event is registered
-        /// </summary>
-        bool IRelationshipEvents.HasRegisteredOnRelationDeletedHandlers { get { return onRelationDeleted is not null; } }
+
         internal RelationshipEventArgs RaiseOnRelationDeleted(Transaction trans)
         {
             RelationshipEventArgs args = new RelationshipEventArgs(EventTypeEnum.OnRelationDelete, trans);
@@ -594,17 +484,18 @@ namespace Blueprint41
       
             return args;
         }
+        bool IRelationshipEvents.HasRegisteredOnRelationDeletedHandlers { get { return onRelationDeleted is not null; } }
         private event EventHandler<RelationshipEventArgs>? onRelationDeleted;
+        event EventHandler<RelationshipEventArgs> IRelationshipEvents.OnRelationDeleted
+        {
+            add { onRelationDeleted += value; }
+            remove { onRelationDeleted -= value; }
+        }
 
         #endregion
 
         #region Helper Methods
 
-        /// <summary>
-        /// Search for a property
-        /// </summary>
-        /// <param name="name">The name of the property</param>
-        /// <returns>The property</returns>
         public RelationshipProperty? Search(string name)
         {
             if (Parent.IsUpgraded)

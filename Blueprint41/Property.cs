@@ -55,7 +55,7 @@ namespace Blueprint41
             EntityReturnType = null;
             Nullable = nullable;
             IndexType = indexType;
-            Reference = null; 
+            Reference = null;
             Guid = parent.Parent.GenerateGuid(string.Concat(parent.Guid, ".", name));
             Enumeration = (enumeration is null || enumeration.Length == 0) ? null : new Enumeration(this, enumeration);
         }
@@ -76,24 +76,9 @@ namespace Blueprint41
 
         #region Properties
 
-        /// <summary>
-        /// The parent entity or relationship
-        /// </summary>
         public IEntity Parent { get; protected internal set; }
-
-        /// <summary>
-        /// The type of the property
-        /// </summary>
         public PropertyType PropertyType { get; protected internal set; }
-
-        /// <summary>
-        /// The name of the property
-        /// </summary>
         public string Name { get; private set; }
-
-        /// <summary>
-        /// If this is an enumeration property, the values the property can hold
-        /// </summary>
         public IReadOnlyList<EnumerationValue>? EnumValues
         {
             get
@@ -104,20 +89,8 @@ namespace Blueprint41
                 return Enumeration.Values;
             }
         }
-
-        /// <summary>
-        /// The enumeration this property is constrained by
-        /// </summary>
         public Enumeration? Enumeration { get; private set; }
-
-        /// <summary>
-        /// The return type of the property (without nullability)
-        /// </summary>
         public Type? SystemReturnType { get; private set; }
-
-        /// <summary>
-        /// The return type of the property (with nullability)
-        /// </summary>
         public Type? SystemReturnTypeWithNullability
         {
             get
@@ -134,43 +107,14 @@ namespace Blueprint41
                 return typeof(Nullable<>).MakeGenericType(SystemReturnType);  //Caching this type?...
             }
         }
-
-        /// <summary>
-        /// If the property represents a relationship, entity return type of the property
-        /// </summary>
         public Entity? EntityReturnType { get; private set; }
-
-        /// <summary>
-        /// Whether the property is nullable
-        /// </summary>
         public bool Nullable { get; protected internal set; }
-
-        /// <summary>
-        /// The index type of the property
-        /// </summary>
         public IndexType IndexType { get; internal set; }
-
-        /// <summary>
-        /// Whether the property is the primary key
-        /// </summary>
         public bool IsKey { get; internal set; }
-
-        /// <summary>
-        /// Whether the property will return the concrete type of the node
-        /// </summary>
         public bool IsNodeType { get; internal set; }
-
-        /// <summary>
-        /// Whether the property is used as the row version for optimistic locking
-        /// </summary>
         public bool IsRowVersion { get; internal set; }
         internal bool HideSetter { get; set; }
-
         public Property? Reference { get; private set; }
-
-        /// <summary>
-        /// A unique identifier for the property
-        /// </summary>
         public Guid Guid { get; private set; }
 
         private string? innerReturnType = null;
@@ -361,23 +305,18 @@ namespace Blueprint41
         #region Refactor Actions
 
         /// <summary>
-        /// Removes the property from the data model, but leaves the current data in the database.
+        /// Removes the property from the data model, but leaves the current dat in the database.
         /// (Use Refactor.Deprecate() if you also want the data to be deleted)
         /// </summary>
-        void IRefactorProperty.Remove()
+        public void Remove()
         {
 
             if (!Parent.Properties.Any(item => item.Name == Name))
                 throw new NotSupportedException($"Property to remove with name '{Name}' does not exist.");
-            
             // No changes in DB needed for this action!!!
             Parent.Properties.Remove(Name);
         }
 
-        /// <summary>
-        /// Renames the property
-        /// </summary>
-        /// <param name="newName">The new name</param>
         void IRefactorProperty.Rename(string newName)
         {
             if (string.IsNullOrEmpty(newName))
@@ -424,11 +363,11 @@ namespace Blueprint41
             Parent.Parent.GetSchema().RemoveIndexesAndContraints(this);
         }
 
-        /// <summary>
-        /// Merges two properties according to the chosen algorithm
-        /// </summary>
-        /// <param name="target">The target property</param>
-        /// <param name="mergeAlgorithm">The merge algorithm</param>
+        //void IRefactorProperty.Move(string pattern, string newPropertyName)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
         void IRefactorProperty.Merge(Property target, MergeAlgorithm mergeAlgorithm)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -586,10 +525,6 @@ namespace Blueprint41
             }
         }
 
-        /// <summary>
-        /// Converts the string property to a compressed-string property
-        /// </summary>
-        /// <param name="batchSize">The batch size for applying the conversion to the data-store</param>
         void IRefactorProperty.ToCompressedString(int batchSize)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -676,13 +611,7 @@ namespace Blueprint41
 
             this.SystemReturnType = typeof(CompressedString);
         }
-
-        /// <summary>
-        /// Converts the property to a different type
-        /// </summary>
-        /// <param name="target">The target type</param>
-        /// <param name="skipConversionLogic">Whether to skip the conversion logic</param>
-        void IRefactorProperty.Convert(Type target, bool skipConversionLogic)
+        void IRefactorProperty.Convert(Type target, bool skipConvertionLogic)
         {
             Parent.Parent.EnsureSchemaMigration();
 
@@ -695,7 +624,7 @@ namespace Blueprint41
             if (from == to)
                 throw new NotSupportedException("The property is already of this type.");
 
-            if (!skipConversionLogic)
+            if (!skipConvertionLogic)
             {
                 Type? fromDb = Parent.Parent.PersistenceProvider.GetStoredType(from);
                 Type? toDb = Parent.Parent.PersistenceProvider.GetStoredType(to);
@@ -728,7 +657,6 @@ namespace Blueprint41
 
             this.SystemReturnType = to;
         }
-
         private const string NOT_SUPPORTED = nameof(NOT_SUPPORTED);
         private const string NO_SCRIPT     = nameof(NO_SCRIPT);
         private const string TO_BOOL       = "toBoolean({0})";
@@ -764,9 +692,6 @@ namespace Blueprint41
             (typeof(string), typeof(double), TO_STRING, TO_DOUBLE),
         };
 
-        /// <summary>
-        /// Removes the property from the data model and deletes the existing data in the database
-        /// </summary>
         void IRefactorProperty.Deprecate()
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -795,10 +720,6 @@ namespace Blueprint41
             Parent.DynamicEntityPropertyRemoved(this);
         }
 
-        /// <summary>
-        /// Sets the indexing for the property
-        /// </summary>
-        /// <param name="indexType">The index type</param>
         void IRefactorProperty.SetIndexType(IndexType indexType)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -813,9 +734,6 @@ namespace Blueprint41
             // commit to db is automatic after any script ran during upgrade...
         }
 
-        /// <summary>
-        /// Make the property nullable
-        /// </summary>
         void IRefactorProperty.MakeNullable()
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -828,10 +746,6 @@ namespace Blueprint41
 
             Nullable = true;
         }
-
-        /// <summary>
-        /// Make the property mandatory, throw an error if there are any instances where the value is currently NULL
-        /// </summary>
         void IRefactorProperty.MakeMandatory()
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -875,11 +789,6 @@ namespace Blueprint41
                 }
             }
         }
-
-        /// <summary>
-        /// Make the property mandatory and set the default value for instances where the value is currently NULL
-        /// </summary>
-        /// <param name="defaultValue">The default value</param>
         void IRefactorProperty.MakeMandatory(object defaultValue)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -922,11 +831,6 @@ namespace Blueprint41
                 MandatoryDefaultValue = defaultValue;
             }
         }
-
-        /// <summary>
-        /// Set the default value for instances where the value is currently NULL
-        /// </summary>
-        /// <param name="defaultValue">The default value</param>
         void IRefactorProperty.SetDefaultValue(object defaultValue)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -1175,7 +1079,7 @@ namespace Blueprint41
 
                     if (!found)
                         if (strict)
-                            throw new FormatException($"When applying the pattern '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' it cannot be guaranteed that you will not lose information. If you are sure about this pattern, set the 'strict' argument to 'false' to override this warning.");
+                            throw new FormatException($"When applying the pattern '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' it cannot be guarenteed that you will lose information. If you are sure about this pattern, set the 'strict' argument to 'false' to override this warning.");
                         else
                             throw new FormatException($"The relationship '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' does not exist");
                 }
@@ -1183,7 +1087,7 @@ namespace Blueprint41
                 {
                     if (!RelationDirection.Test(Relation, node.Entity, Next.Entity, strict))
                         if (strict)
-                            throw new FormatException($"When applying the pattern '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[{Relation.Name}]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' it cannot be guaranteed that you will lose information. If you are sure about this pattern, set the 'strict' argument to 'false' to override this warning.");
+                            throw new FormatException($"When applying the pattern '({node.EntityName}){(RelationDirection == DirectionPattern.Left ? "<" : "")}-[{Relation.Name}]-{(RelationDirection == DirectionPattern.Right ? ">" : "")}({Next.EntityName})' it cannot be guarenteed that you will lose information. If you are sure about this pattern, set the 'strict' argument to 'false' to override this warning.");
                         else
                             throw new FormatException($"The relationship '{Relation.Name}' does not attach to the specified node types");
                 }
@@ -1280,12 +1184,6 @@ namespace Blueprint41
 
         #region Reflection
 
-        /// <summary>
-        /// Gets the value of the property
-        /// </summary>
-        /// <param name="instance">The instance to get the value from</param>
-        /// <param name="moment">The moment, if the property holds time dependent data</param>
-        /// <returns>The property value</returns>
         public object GetValue(OGM instance, DateTime? moment = null)
         {
             if (Parent is Entity entity)
@@ -1336,13 +1234,6 @@ namespace Blueprint41
         private Func<OGM, object>? getValue = null;
         private Func<OGM, DateTime?, object>? getValueWithMoment = null;
 
-        /// <summary>
-        /// Sets the value of the property
-        /// </summary>
-        /// <param name="instance">The instance to set the value on</param>
-        /// <param name="value">The property value to set</param>
-        /// <param name="moment">The moment, if the property holds time dependent data</param>
-        /// <exception cref="NotSupportedException"></exception>
         public void SetValue(OGM instance, object? value, DateTime? moment = null)
         {
             if (Parent is Entity entity)
@@ -1427,29 +1318,8 @@ namespace Blueprint41
 
         #region Event Handlers
 
-        /// <summary>
-        /// The property events
-        /// </summary>
         public Core.IPropertyEvents Events { get { return this; } }
 
-        /// <summary>
-        /// This event fires when setting the property value
-        /// </summary>
-        event EventHandler<PropertyEventArgs> IPropertyEvents.OnChange
-        {
-            add { onChange += value; }
-            remove { onChange -= value; }
-        }
-        /// <summary>
-        /// True when a OnChange event is registered
-        /// </summary>
-        bool IPropertyEvents.HasRegisteredChangeHandlers
-        {
-            get
-            {
-                return onChange is not null || ForeignProperty?.onChange is not null;
-            }
-        }
         internal bool RaiseOnChange<T>(OGMImpl sender, [AllowNull] T previousValue, [AllowNull] T assignedValue, DateTime? moment, OperationEnum operation)
         {
             Transaction trans = Transaction.RunningTransaction;
@@ -1522,7 +1392,19 @@ namespace Blueprint41
                 return args.Canceled;
             }
         }
+        bool IPropertyEvents.HasRegisteredChangeHandlers
+        {
+            get
+            {
+                return onChange is not null || ForeignProperty?.onChange is not null;
+            }
+        }
         private EventHandler<PropertyEventArgs>? onChange;
+        event EventHandler<PropertyEventArgs> IPropertyEvents.OnChange
+        {
+            add { onChange += value; }
+            remove { onChange -= value; }
+        }
 
         internal Type GetPropertyEventArgsType(Type senderType)
         {
@@ -1548,19 +1430,10 @@ namespace Blueprint41
 
     public class EntityProperty : Property, IRefactorEntityProperty
     {
-        /// <summary>
-        /// The refactor actions
-        /// </summary>
         public IRefactorEntityProperty Refactor { get { return this; } }
 
         #region Refactoring Entity Properties
 
-        /// <summary>
-        /// Move a relationship property to another node and migrate the existing relations according to the supplied pattern
-        /// </summary>
-        /// <param name="pattern">A pattern in the format: (from:SourceNode)-[:RELATION]-(to:TargetNode)</param>
-        /// <param name="newPropertyName">The new property name</param>
-        /// <param name="strict">Whether potential loss of data/relationships is allowed</param>
         void IRefactorEntityProperty.Reroute(string pattern, string newPropertyName, bool strict)
         {
             if (Relationship is null || EntityReturnType is null)
@@ -1568,25 +1441,11 @@ namespace Blueprint41
 
             Reroute(pattern, newPropertyName, Relationship.Name, Relationship.Neo4JRelationshipType, strict);
         }
-
-        /// <summary>
-        /// Move a relationship property to another node and migrate the existing relations according to the supplied pattern
-        /// (You can rename the relationship at the same time)
-        /// </summary>
-        /// <param name="pattern">A pattern in the format: (from:SourceNode)-[:RELATION]-(to:TargetNode)</param>
-        /// <param name="newPropertyName">The new property name</param>
-        /// <param name="newRelationshipName">The new relationship name</param>
-        /// <param name="newNeo4jRelationshipType">The new neo4j relationship type</param>
-        /// <param name="strict">Whether potential loss of data/relationships is allowed</param>
         void IRefactorEntityProperty.Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
         {
             Reroute(pattern, newPropertyName, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName, strict);
         }
 
-        /// <summary>
-        /// Moves the property to a base or sub-class
-        /// </summary>
-        /// <param name="target">The target class</param>
         void IRefactorEntityProperty.Move(Entity target)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -1615,10 +1474,6 @@ namespace Blueprint41
             target.Properties.Add(Name, this);
             base.Parent = target;
         }
-
-        /// <summary>
-        /// Moves/duplicates the property to every sub-class of the current class
-        /// </summary>
         void IRefactorEntityProperty.MoveToSubClasses()
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -1634,9 +1489,6 @@ namespace Blueprint41
             }
         }
 
-        /// <summary>
-        /// Convert a Lookup to a Collection
-        /// </summary>
         void IRefactorEntityProperty.ConvertToCollection()
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -1645,19 +1497,11 @@ namespace Blueprint41
             Nullable = true;
         }
 
-        /// <summary>
-        /// Convert a Lookup to a Collection
-        /// </summary>
-        /// <param name="newName">The new property name</param>
         void IRefactorEntityProperty.ConvertToCollection(string newName)
         {
             Refactor.ConvertToCollection();
             Refactor.Rename(newName);
         }
-
-        /// <summary>
-        /// Convert a Collection to a Lookup
-        /// </summary>
         void IRefactorEntityProperty.ConvertToLookup(ConvertAlgorithm conversionAlgorithm)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -1667,22 +1511,12 @@ namespace Blueprint41
 
             throw new NotImplementedException("Apply the conversion algorithm");
         }
-
-        /// <summary>
-        /// Convert a Collection to a Lookup
-        /// </summary>
-        /// <param name="newName">The new property name</param>
-        /// <param name="conversionAlgorithm">The conversion algorithm</param>
         void IRefactorEntityProperty.ConvertToLookup(string newName, ConvertAlgorithm conversionAlgorithm)
         {
             Refactor.ConvertToLookup(conversionAlgorithm);
             Refactor.Rename(newName);
         }
 
-        /// <summary>
-        /// Make the property mandatory and set the default lookup value for instances where the value is currently NULL
-        /// </summary>
-        /// <param name="defaultValue">The default value</param>
         void IRefactorEntityProperty.MakeMandatory(DynamicEntity defaultValue)
         {
             Parent.Parent.EnsureSchemaMigration();
@@ -1715,7 +1549,7 @@ namespace Blueprint41
             : base(parent, storage, name, entityType, nullable, indexType)
         {
         }
-        internal EntityProperty(Entity parent, PropertyType storage, string name, EntityProperty reference)
+        internal EntityProperty(Entity parent, PropertyType storage, string name, EntityProperty reference) 
             : base(parent, storage, name, reference)
         {
         }
@@ -1728,16 +1562,10 @@ namespace Blueprint41
         {
         }
 
-        /// <summary>
-        /// The parent entity
-        /// </summary>
         new public Entity Parent => (Entity)base.Parent;
     }
     public class RelationshipProperty : Property
     {
-        /// <summary>
-        /// The refactor actions
-        /// </summary>
         public IRefactorProperty Refactor { get { return this; } }
 
         internal RelationshipProperty(Relationship parent, PropertyType storage, string name, Entity entityType, bool nullable, IndexType indexType)
@@ -1757,9 +1585,6 @@ namespace Blueprint41
         {
         }
 
-        /// <summary>
-        /// The parent relationship
-        /// </summary>
         new public Relationship Parent => (Relationship)base.Parent;
     }
 

@@ -18,19 +18,17 @@ namespace Blueprint41.Build
 
         public static void Main(string[] args)
         {
-            Dictionary<string, string> parameters = ParseParameters(args);
-            string projectFolder = GetFullPath(parameters, ProjectFolderArg);
-            string outputFolder = parameters.GetValueOrDefault(OutputFolderArg);
+            var parameters = ParseParameters(args);
+            var projectFolder = GetFullPath(parameters, ProjectFolderArg);
+            var outputFolder = parameters.GetValueOrDefault(OutputFolderArg);
 
-            string configFilePath = Path.Combine(projectFolder, "Blueprint41.Build.json");
+            var configFilePath = Path.Combine(projectFolder, "Blueprint41.Build.json");
             parameters = MergeParametersWithConfigFile(parameters, configFilePath);
 
-            string normalizedGenerateFolder = parameters.GetValueOrDefault(GeneratePathArg).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
-            string generatePath = Path.GetFullPath(Path.Combine(projectFolder, normalizedGenerateFolder));
-
-            string modelName = parameters.GetValueOrDefault(ModelNameArg);
-            string modelPath = Path.Combine(projectFolder, outputFolder, modelName);
-            string namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
+            var modelName = parameters.GetValueOrDefault(ModelNameArg);
+            var modelPath = Path.Combine(projectFolder, outputFolder, modelName);
+            var generatePath = Path.GetFullPath(Path.Combine(projectFolder, parameters.GetValueOrDefault(GeneratePathArg)));
+            var namespaceName = parameters.GetValueOrDefault(NamespaceArg, "Datastore");
 
             ValidatePaths(modelPath, generatePath);
 

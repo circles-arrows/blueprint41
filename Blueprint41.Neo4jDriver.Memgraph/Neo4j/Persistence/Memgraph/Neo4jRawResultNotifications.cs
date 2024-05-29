@@ -23,6 +23,6 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
         public override int Offset => Notification.Position.Offset;
         public override int Line => Notification.Position.Line;
         public override int Column => Notification.Position.Column;
-        public override string Severity => Notification.RawSeverityLevel;
+        public override string Severity => Notification.Severity;
     }
 }

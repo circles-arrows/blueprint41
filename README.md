@@ -10,8 +10,8 @@
      <div align="left">&nbsp;</div>
      <div align="left"><h1>Blueprint41</h1></div>
      <div align="right">
-      <a href="https://www.nuget.org/packages/Blueprint41"><img alt="NuGet" src="https://img.shields.io/nuget/v/Blueprint41.svg"></a>
-      <a href="https://www.nuget.org/packages/Blueprint41"><img alt="downloads" src="https://img.shields.io/nuget/dt/Blueprint41"></a>
+      <a href="https://www.nuget.org/packages/Blueprint4"><img alt="NuGet" src="https://img.shields.io/nuget/v/Blueprint41.svg"></a>
+      <a href="https://www.nuget.org/packages/Blueprint4"><img alt="downloads" src="https://img.shields.io/nuget/dt/Blueprint41"></a>
       <img alt="repo size" src="https://img.shields.io/github/repo-size/circles-arrows/blueprint41">
       <img alt="license" src="https://img.shields.io/github/license/circles-arrows/Blueprint41">
       <a href="https://sonarcloud.io/summary/new_code?id=circles-arrows_blueprint41"><img alt="Quality Gate Status" src="https://sonarcloud.io/api/project_badges/measure?project=circles-arrows_blueprint41&metric=alert_status"></a>

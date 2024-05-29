@@ -15,7 +15,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.Memgraph
 
         public string[] Values { get; private set; }
 
-        public neo4j.Bookmarks ToBookmark() => neo4j.Bookmarks.From(Values);
+        public neo4j.Bookmark ToBookmark() => neo4j.Bookmark.From(Values);
 
         internal static string ToTokenInternal(Bookmark consistency)
         {
