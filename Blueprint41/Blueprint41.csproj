@@ -30,7 +30,7 @@
     <Copyright>Copyright 2017, 2024 (c) Circles Arrows Limited</Copyright>
     <PackageLicenseUrl>https://github.com/circles-arrows/blueprint41/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://www.circlesarrows.com/blueprint41</PackageProjectUrl>
-    <PackageTags>Neo4j Graph Object Mapper</PackageTags>
+    <PackageTags>Neo4j Memgraph Graph Object Mapper</PackageTags>
     <IncludeSymbols>false</IncludeSymbols>
     <RepositoryUrl>https://github.com/circles-arrows/blueprint41</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
@@ -51,7 +51,7 @@
     <Compile Remove="Nuget\**" />
     <EmbeddedResource Remove="Nuget\**" />
     <None Remove="Nuget\**" />
-	<None Include="docs\README.md" Pack="true" PackagePath="\"/>
+	<None Include="docs\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
