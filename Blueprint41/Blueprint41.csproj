@@ -23,7 +23,7 @@
   <PropertyGroup Label="Package">
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-	<PackageVersion>1.1.4</PackageVersion>
+	<PackageVersion>1.1.5</PackageVersion>
     <PackageId>Blueprint41</PackageId>
     <Title>Blueprint41</Title>
     <Authors>Circles Arrows Limited</Authors>
