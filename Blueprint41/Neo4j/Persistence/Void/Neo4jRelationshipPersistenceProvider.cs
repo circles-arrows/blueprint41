@@ -527,7 +527,7 @@ namespace Blueprint41.Neo4j.Persistence.Void
             RawResult updateResult = trans.Run(update, parameters);
         }
 
-        public override void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object> properties, bool fullyUnmanaged = false)
+        public override void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
         {
             if (properties is not null && properties.Count > 0) 
                 throw new NotImplementedException("Support for setting properties via the unmanaged relationship interface is not implemented yet.");

@@ -1,3 +1,6 @@
+#pragma warning disable S101 // Types should be named in PascalCase
+#pragma warning disable CS8981 // Names should not be lower type only
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -21,6 +24,8 @@ namespace Datastore.Manipulation
     {
         #region Initialize
 
+
+        [Obsolete]
         static StreamingService()
         {
             Register.Types();

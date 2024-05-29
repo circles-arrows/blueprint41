@@ -2,6 +2,9 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Blueprint41.Core" #>
+#pragma warning disable S101 // Types should be named in PascalCase
+#pragma warning disable CS8981 // Names should not be lower type only
+
 using System;
 using Blueprint41.Core;
 
@@ -9,8 +12,7 @@ namespace <#= Settings.FullCRUDNamespace #>
 {
     internal class Register
     {
-        private static bool isInitialized = false;
-
+        [Obsolete]
         public static void Types()
         {
             if (<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.TypesRegistered)

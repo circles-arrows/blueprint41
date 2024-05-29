@@ -161,7 +161,7 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
             if (Session is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            return new Neo4jBookmark(Session.LastBookmark.Values);
+            return new Neo4jBookmark(Session.LastBookmarks.Values);
         }
 
         protected override void FlushInternal()

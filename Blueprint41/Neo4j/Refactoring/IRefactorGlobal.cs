@@ -21,10 +21,12 @@ namespace Blueprint41.Neo4j.Refactoring
         /// Apply any missing constraint or index to the database
         /// </summary>
         void ApplyConstraints();
+
         /// <summary>
         /// Apply any missing full-text-index to the database
         /// </summary>
         void ApplyFullTextSearchIndexes();
+
         /// <summary>
         /// Apply any missing full-text-index to the database
         /// (force apply when shouldRun = true)

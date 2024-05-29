@@ -31,7 +31,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true)
+                       .SetKey("Uid")
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
@@ -74,7 +74,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true)
+                       .SetKey("Uid")
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
@@ -119,7 +119,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true)
+                       .SetKey("Uid")
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .AddProperty("ModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn")
@@ -161,7 +161,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true)
+                       .SetKey("Uid")
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
             }
@@ -183,7 +183,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true)
+                       .SetKey("Uid")
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
@@ -209,8 +209,8 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid2", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true)
-                       .SetKey("Uid2", true)
+                       .SetKey("Uid")
+                       .SetKey("Uid2")
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
             }
@@ -275,7 +275,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Name", typeof(string))
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true)
+                       .SetKey("Uid")
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
@@ -299,7 +299,7 @@ namespace Blueprint41.UnitTest.Tests
                     .AddProperty("Name", typeof(string))
                     .Abstract(true)
                     .Virtual(true)
-                    .SetKey("Uid", true)
+                    .SetKey("Uid")
                     .AddProperty("LastModifiedOn", typeof(DateTime))
                     .SetRowVersionField("LastModifiedOn");
 
@@ -368,7 +368,7 @@ namespace Blueprint41.UnitTest.Tests
                    .Summary("The type of an Account")
                    .HasStaticData(true)
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false, IndexType.Unique)
                    .SetFullTextProperty("Name");
 
@@ -389,7 +389,7 @@ namespace Blueprint41.UnitTest.Tests
                     //.HasStaticData(true)
                     .AddProperty("OrderBy", typeof(string))
                     .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                    .SetKey("Uid", true)
+                    .SetKey("Uid")
                     .AddProperty("Name", typeof(string), false, IndexType.Unique);
 
                 Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
@@ -398,7 +398,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 Entities.New("ReferenceType")
                     .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                    .SetKey("Uid", true)
+                    .SetKey("Uid")
                     .AddProperty("Name", typeof(string), false)
                     .AddProperty("Fields", typeof(List<string>));
 
@@ -452,7 +452,7 @@ namespace Blueprint41.UnitTest.Tests
                     .HasStaticData(true)
                     .AddProperty("OrderBy", typeof(string))
                     .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                    .SetKey("Uid", true)
+                    .SetKey("Uid")
                     .AddProperty("Name", typeof(string), false, IndexType.Unique);
 
                 Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
@@ -522,7 +522,7 @@ namespace Blueprint41.UnitTest.Tests
                     .HasStaticData(true)
                     .AddProperty("OrderBy", typeof(string))
                     .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                    .SetKey("Uid", true)
+                    .SetKey("Uid")
                     .AddProperty("Label", typeof(string), false, IndexType.Unique);
 
                 Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
@@ -563,7 +563,7 @@ namespace Blueprint41.UnitTest.Tests
                     .HasStaticData(true)
                     .AddProperty("OrderBy", typeof(string))
                     .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                    .SetKey("Uid", true)
+                    .SetKey("Uid")
                     .AddProperty("Name", typeof(string), false, IndexType.Unique);
 
                 Entities["ContactStatus"].Refactor.CreateNode(new { Uid = "1", Name = "Active", OrderBy = "1" });
@@ -610,7 +610,7 @@ namespace Blueprint41.UnitTest.Tests
                        .AddProperty("Uid", typeof(string), false, IndexType.Unique)
                        .Abstract(true)
                        .Virtual(true)
-                       .SetKey("Uid", true)
+                       .SetKey("Uid")
                        .AddProperty("LastModifiedOn", typeof(DateTime))
                        .SetRowVersionField("LastModifiedOn");
 
@@ -688,7 +688,7 @@ namespace Blueprint41.UnitTest.Tests
                    .Summary("The type of an Account")
                    .HasStaticData(true)
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false, IndexType.Unique)
                    .SetFullTextProperty("Name");
 
@@ -742,7 +742,7 @@ namespace Blueprint41.UnitTest.Tests
                    .Summary("The type of an Account")
                    .HasStaticData(true)
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false, IndexType.Unique)
                    .SetFullTextProperty("Name");
 
@@ -861,7 +861,7 @@ namespace Blueprint41.UnitTest.Tests
                   .Abstract(true)
                   .Virtual(true)
                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                  .SetKey("Uid", true)
+                  .SetKey("Uid")
                   .AddProperty("LastModifiedOn", typeof(DateTime))
                   .SetRowVersionField("LastModifiedOn");
 
@@ -869,7 +869,7 @@ namespace Blueprint41.UnitTest.Tests
                   .Abstract(true)
                   .Virtual(true)
                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                  .SetKey("Uid", true)
+                  .SetKey("Uid")
                   .AddProperty("LastModifiedOn", typeof(DateTime))
                   .SetRowVersionField("LastModifiedOn"); ;
 
@@ -900,7 +900,7 @@ namespace Blueprint41.UnitTest.Tests
                   .Abstract(true)
                   .Virtual(true)
                   .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                  .SetKey("Uid", true)
+                  .SetKey("Uid")
                   .AddProperty("LastModifiedOn", typeof(DateTime))
                   .SetRowVersionField("LastModifiedOn");
 
@@ -956,7 +956,7 @@ namespace Blueprint41.UnitTest.Tests
                    .Summary("The type of an Account")
                    .HasStaticData(true)
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false, IndexType.Unique)
                    .SetFullTextProperty("Name");
 
@@ -1000,7 +1000,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 Entities.New("Account")
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false, IndexType.Unique)
                    .AddProperty("CopyName", typeof(string))
                    .SetFullTextProperty("Name");
@@ -1009,7 +1009,7 @@ namespace Blueprint41.UnitTest.Tests
                    .Summary("The type of an Account")
                    .HasStaticData(true)
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false, IndexType.Unique)
                    .AddProperty("CopyName", typeof(string))
                    .SetFullTextProperty("Name");
@@ -1059,7 +1059,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 Entities.New("Account")
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false)
                    .SetFullTextProperty("Name");
             }
@@ -1108,7 +1108,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 Entities.New("Account")
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false)
                    .SetFullTextProperty("Name");
 
@@ -1148,7 +1148,7 @@ namespace Blueprint41.UnitTest.Tests
 
                 Entities.New("BaseAccount", account)
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true);
+                   .SetKey("Uid");
 
                 Entities.New("Account", Entities["BaseAccount"])
                    .AddProperty("Name", typeof(string), false)
