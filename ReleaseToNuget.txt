@@ -1,8 +1,18 @@
+- Are you in the right branch -> master?
+- Are there any pull-requests outstanding?
+  https://github.com/circles-arrows/blueprint41/pulls
+- Are there any relevant branches that are not merged yet?
+  https://github.com/circles-arrows/blueprint41/branches
+
 For each of the following projects: Blueprint41, Blueprint41.Neo4jDriver.v3 & Blueprint41.Neo4jDriver.v4
 
-- Open "Properties\AssemblyInfo.cs" on project -> Set the version number: AssemblyVersion & AssemblyFileVersion
-- In solution explorer -> Right click project -> select "Edit project file" -> Set the version number: <PackageVersion>
-- Rebuild in release mode
-- In solution explorer -> Right click project -> select "Pack"
-- Find the nuget-package in the "bin/Release" folder
-- Go to "www.nuget.org" and upload the nuget-package
+    - Open "Properties\AssemblyInfo.cs" on project -> Set the version number: AssemblyVersion & AssemblyFileVersion
+    - In solution explorer -> Right click project -> select "Edit project file" -> Set the version number: <PackageVersion>
+    - Rebuild in release mode
+    - In solution explorer -> Right click project -> select "Pack"
+    - Find the nuget-package in the "bin/Release" folder
+    - Go to "www.nuget.org" and upload the nuget-package
+
+
+If you need to re-pack the project, go to:
+Tools -> NuGet Package Manager -> Package Manager Settings -> Clear All NuGet Storage

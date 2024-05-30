@@ -795,7 +795,7 @@ namespace Blueprint41.UnitTest.Tests
                    .Summary("The type of an Account")
                    .HasStaticData(true)
                    .AddProperty("Uid", typeof(string), false, IndexType.Unique)
-                   .SetKey("Uid", true)
+                   .SetKey("Uid")
                    .AddProperty("Name", typeof(string), false, IndexType.Unique)
                    .SetFullTextProperty("Name");
 
