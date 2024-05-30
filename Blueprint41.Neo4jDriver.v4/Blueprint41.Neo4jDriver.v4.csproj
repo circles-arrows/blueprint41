@@ -28,7 +28,8 @@
     <Description>Driver needed to connect to Neo4j using Blueprint41</Description>
     <Copyright>Copyright 2017, 2024 (c) Circles Arrows Limited</Copyright>
     <PackageLicense>MIT</PackageLicense>
-    <PackageProjectUrl>http://www.blueprint41.com/</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://www.circlesarrows.com/blueprint41</PackageProjectUrl>
     <PackageTags>Neo4j Graph Object Mapper</PackageTags>
     <IncludeSymbols>false</IncludeSymbols>
     <RepositoryUrl>https://github.com/circles-arrows/blueprint41</RepositoryUrl>
@@ -45,7 +46,11 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-    
+
+  <ItemGroup>
+    <None Include="Docs\LICENSE.txt" Pack="true" PackagePath=""/>
+  </ItemGroup>
+	
   <ItemGroup>
     <PackageReference Include="Neo4j.Driver" Version="4.4.0" />
   </ItemGroup>
