@@ -3,7 +3,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Diagnostics" #>
-<#@ import namespace="Blueprint41" #>
+<#@ import namespace="Blueprint41.Async" #>
 <#
     Log("	executing {0} -> {1}.{2} = '{3}'", this.GetType().Name, Caller.Name, Property.Name, (Value is null) ? "<NULL>" : Value.ToString());
 

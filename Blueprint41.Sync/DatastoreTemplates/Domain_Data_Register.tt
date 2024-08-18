@@ -1,12 +1,12 @@
 <#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Blueprint41.Core" #>
+<#@ import namespace="Blueprint41.Sync.Core" #>
 #pragma warning disable S101 // Types should be named in PascalCase
 #pragma warning disable CS8981 // Names should not be lower type only
 
 using System;
-using Blueprint41.Core;
+using Blueprint41.Sync.Core;
 
 namespace <#= Settings.FullCRUDNamespace #>
 {

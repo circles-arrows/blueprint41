@@ -52,14 +52,14 @@ using Blueprint41.Sync;
             #line hidden
             this.Write(")\r\nWHERE node.");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format(WhereScript, string.Concat("node.", Property.Name))));
             
             #line default

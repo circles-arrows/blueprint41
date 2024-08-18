@@ -57,7 +57,7 @@ using Blueprint41.Sync;
             #line hidden
             this.Write(")\r\nWITH node LIMIT 10000\r\nREMOVE node.");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveProperty.tt"
+#line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\RemoveProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default

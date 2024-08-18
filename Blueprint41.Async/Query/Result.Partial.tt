@@ -22,9 +22,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-using Blueprint41.Neo4j.Model;
+using Blueprint41.Async.Neo4j.Model;
 
-namespace Blueprint41.Query
+namespace Blueprint41.Async.Query
 {
 <#
 	foreach ((string listType, string resultType, string underlyingType) in listTypes)

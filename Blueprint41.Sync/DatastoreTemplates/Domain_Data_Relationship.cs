@@ -35,7 +35,7 @@ using Blueprint41.Sync.Core;
                     "g System.Collections.Generic;\r\n\r\nusing Blueprint41;\r\nusing Blueprint41.Query;\r\n\r" +
                     "\nnamespace ");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\DatastoreTemplates\Domain_Data_Relationship.tt"
+#line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\DatastoreTemplates\Domain_Data_Relationship.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullQueryNamespace));
             
             #line default

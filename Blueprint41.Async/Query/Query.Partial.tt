@@ -24,7 +24,7 @@
 
 	};
 #>
-using Blueprint41.Core;
+using Blueprint41.Async.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,9 +32,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using query = Blueprint41.Query;
+using query = Blueprint41.Async.Query;
 
-namespace Blueprint41.Query
+namespace Blueprint41.Async.Query
 {
 <#
 	foreach ((string listType, string resultType, string underlyingType) in listTypes)
