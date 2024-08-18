@@ -116,6 +116,10 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
     </None>
+    <None Update="Neo4j\Refactoring\Templates\CopyProperty.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>CopyProperty.cs</LastGenOutput>
+    </None>
     <None Update="Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>SetDefaultLookupValue.cs</LastGenOutput>
@@ -284,6 +288,11 @@
       <DependentUpon>Convert.tt</DependentUpon>
     </Compile>
     <Compile Update="Neo4j\Model\CopyProperty.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CopyProperty.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\CopyProperty.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>CopyProperty.tt</DependentUpon>

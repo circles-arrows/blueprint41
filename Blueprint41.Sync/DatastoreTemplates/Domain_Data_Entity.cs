@@ -7031,7 +7031,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("}");
+            this.Write("}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

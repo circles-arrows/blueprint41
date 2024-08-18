@@ -1628,7 +1628,7 @@ using q = ");
             #line default
             #line hidden
             this.Write("               \r\n                return assignments.ToArray();\r\n            }\r\n  " +
-                    "      }\r\n    }\r\n}");
+                    "      }\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
