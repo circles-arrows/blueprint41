@@ -496,7 +496,7 @@ foreach (var DALModel in Datastore.Relations.OrderBy(item => item.Name))
             
             #line default
             #line hidden
-            this.Write("        }\r\n    }\r\n}");
+            this.Write("        }\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

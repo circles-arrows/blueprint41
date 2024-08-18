@@ -1510,7 +1510,7 @@ using m = ");
             #line hidden
             this.Write("JaggedListAlias(AliasResult alias, Func<QueryTranslator, string> function, object" +
                     "[] arguments = null, Type type = null) : base(alias, function, arguments, type) " +
-                    "{ }\r\n    }\r\n}");
+                    "{ }\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

@@ -1,4 +1,4 @@
-using Blueprint41.Sync.Core;
+﻿using Blueprint41.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using query = Blueprint41.Sync.Query;
+using query = Blueprint41.Query;
 
-namespace Blueprint41.Sync.Query
+namespace Blueprint41.Query
 {
 	public partial class Query : IUnwindQuery<MiscResult>
 	{
