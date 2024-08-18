@@ -21,7 +21,7 @@
 		( listType: "NumericJaggedListResult",  resultType: "NumericListResult",  underlyingType: "long[]"     ),
 	};
 #>
-using Blueprint41.Neo4j.Model;
+using Blueprint41.Async.Neo4j.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +29,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Blueprint41.Query
+namespace Blueprint41.Async.Query
 {
 <#
 	foreach ((string listType, string resultType, string underlyingType) in listTypes)

@@ -44,10 +44,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Blueprint41.Core;
-using Blueprint41.TypeConversion;
+using Blueprint41.Sync.Core;
+using Blueprint41.Sync.TypeConversion;
 
-namespace Blueprint41.Neo4j.Persistence.Void
+namespace Blueprint41.Sync.Neo4j.Persistence.Void
 {
 	#region Provider Type Registration
 

@@ -44,8 +44,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Blueprint41.Core;
-using Blueprint41.TypeConversion;
+using Blueprint41.Async.Core;
+using Blueprint41.Async.TypeConversion;
 
 #region Assembly Conversion Registration
 
@@ -82,7 +82,7 @@ using Blueprint41.TypeConversion;
 
 #endregion
 
-namespace Blueprint41.TypeConversion
+namespace Blueprint41.Async.TypeConversion
 {
 	#region List<T>
 

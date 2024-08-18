@@ -22,7 +22,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace Blueprint41.Query
+namespace Blueprint41.Async.Query
 {
 	public abstract partial class ListResult<TList, TResult>
 	{

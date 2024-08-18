@@ -3,8 +3,8 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Diagnostics" #>
-<#@ import namespace="Blueprint41" #>
-<#@ import namespace="Blueprint41.Dynamic" #>
+<#@ import namespace="Blueprint41.Async" #>
+<#@ import namespace="Blueprint41.Async.Dynamic" #>
 <#
 
     Log("	executing {0} -> Set Default Lookup Value for {1}.{2}", this.GetType().Name, Caller.Name, Property.Name);

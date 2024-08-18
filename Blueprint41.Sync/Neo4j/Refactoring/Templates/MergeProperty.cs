@@ -57,14 +57,14 @@ using Blueprint41.Sync;
             #line hidden
             this.Write(") \r\nWITH node LIMIT 10000 \r\nSET node.");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+#line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\MergeProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To.Name));
             
             #line default
             #line hidden
             this.Write(" = node.");
             
-            #line 16 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\MergeProperty.tt"
+#line 16 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\MergeProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default

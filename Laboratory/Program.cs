@@ -41,7 +41,7 @@ namespace Laboratory
             {
                 string? org = null, line = null;
                 string filename = Path.GetFileName(sourceFile)!;
-                string extension = Path.GetExtension(sourceFile);
+                string extension = Path.GetExtension(sourceFile)?.ToLowerInvariant();
 
                 // exclude files without a name or files starting with a dot (like .gitignore)
                 if (string.IsNullOrEmpty(filename) || filename.StartsWith('.'))
@@ -51,7 +51,7 @@ namespace Laboratory
 
                 Console.WriteLine($"\t{filename}");
 
-                if (extension == ".cs")
+                if (extension == ".cs" || extension == ".tt")
                 {
                     string[] content = File.ReadAllLines(sourceFile);
 
@@ -73,10 +73,10 @@ namespace Laboratory
 
                     File.WriteAllLines(targetFile, content);
                 }
-                else if (extension == ".tt")
+                else if (extension == ".txt" || extension == ".md")
                 {
-                    string[] content = File.ReadAllLines(sourceFile);
-                    File.WriteAllLines(targetFile, content);
+                    string content = File.ReadAllText(sourceFile);
+                    File.WriteAllText(targetFile, content);
                 }
 
             }
@@ -109,8 +109,7 @@ namespace Laboratory
             Namespace = @namespace;
             RenameTo = renameTo;
 
-            _regex = new Regex(@$"^[ \t]*((?<start>namespace[ \t]+)(?:{@namespace.Replace(".", @"\.")})(?<end>[._0-9A-Za-z]*[ \t]*)|(?<start>using([ \t]+static)?([ \t]+[_0-9A-Za-z]+[_0-9A-Za-z]*[ \t]*=)?[ \t]*)(?:{@namespace.Replace(".", @"\.")})(?<end>[._0-9A-Za-z]*[ \t]*;[ \t]*))$", RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
-
+            _regex = new Regex(@"^[ \t]*((?<start>namespace[ \t]+)(?:BLUEPRINT41)(?<end>[._0-9A-Za-z]*)|(?<start>using([ \t]+static)?([ \t]+[_0-9A-Za-z]+[_0-9A-Za-z]*[ \t]*=)?[ \t]*)(?:BLUEPRINT41)(?<end>[._0-9A-Za-z]*[ \t]*;)|(?<start>#line 16 ""[:\\. \-_0-9A-Za-z]*)(?:BLUEPRINT41)(?<end>[:\\. \-_0-9A-Za-z]*"")|(?<start><#@[ \t]*import[ \t]+namespace[ \t]*=[ \t]*"")(?:BLUEPRINT41)(?<end>[._0-9A-Za-z]*""[ \t]*#>))[ \t]*$".Replace("BLUEPRINT41", @namespace.Replace(".", @"\.")), RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
             _replace = @$"${{start}}{renameTo}${{end}}";
         }
 

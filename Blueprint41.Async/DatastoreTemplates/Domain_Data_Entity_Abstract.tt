@@ -14,10 +14,10 @@ using System.Linq;
 using System.Collections.Generic;
 
 
-using Blueprint41;
-using Blueprint41.Core;
-using Blueprint41.Query;
-using Blueprint41.DatastoreTemplates;
+using Blueprint41.Async;
+using Blueprint41.Async.Core;
+using Blueprint41.Async.Query;
+using Blueprint41.Async.DatastoreTemplates;
 using q = <#= Settings.FullQueryNamespace #>;
 
 namespace <#= Settings.FullCRUDNamespace #>

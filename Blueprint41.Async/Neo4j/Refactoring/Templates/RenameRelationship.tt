@@ -3,7 +3,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Diagnostics" #>
-<#@ import namespace="Blueprint41" #>
+<#@ import namespace="Blueprint41.Async" #>
 <#
 
     Log("	executing {0} -> Rename relationship from {1} to {2}", this.GetType().Name, Relationship.Name, NewName);
