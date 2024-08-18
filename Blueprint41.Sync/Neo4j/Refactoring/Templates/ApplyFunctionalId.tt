@@ -1,0 +1,23 @@
+<#@ template language="C#"  visibility="internal" inherits="ApplyFunctionalIdBase" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Linq.Expressions" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#
+    Log("	executing {0} -> Apply FunctionalId on entity {1}", this.GetType().Name, Caller.Name);
+#>
+MATCH (node:<#= Entity.Label.Name #>)
+<#
+    if (!this.Full)
+    {
+#>
+WHERE NOT node.<#= Entity.Key.Name #> STARTS WITH '<#= FunctionalId.Prefix #>'
+<#
+    }
+#>
+WITH node limit 10000 
+CALL blueprint41.functionalid.next('<#= FunctionalId.Label #>') YIELD value as key
+WITH node,key
+SET node.<#= Entity.Key.Name #> = key

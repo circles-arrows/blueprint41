@@ -112,7 +112,7 @@
       <LastGenOutput>Convert.cs</LastGenOutput>
       <CustomToolNamespace></CustomToolNamespace>
     </None>
-    <None Update="Neo4j\Refactoring\Templates\CopyProperty.tt">
+    <None Update="Neo4j\Model\CopyProperty.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
     </None>
@@ -279,7 +279,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Convert.tt</DependentUpon>
     </Compile>
-    <Compile Update="Neo4j\Refactoring\Templates\CopyProperty.cs">
+    <Compile Update="Neo4j\Model\CopyProperty.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>CopyProperty.tt</DependentUpon>

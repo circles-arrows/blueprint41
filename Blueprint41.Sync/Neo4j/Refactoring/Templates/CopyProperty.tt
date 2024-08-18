@@ -1,0 +1,33 @@
+<#@ template language="C#"  visibility="internal" inherits="CopyPropertyBase" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#@ import namespace="System.Linq.Expressions" #>
+<#
+    Log("	executing {0} -> Copy properties from {1} to {2} for entity {3}", this.GetType().Name, From, To, Caller.Name);
+
+    if (IsEntity)
+    {
+#>
+MATCH (node:<#= Entity.Label.Name #>)
+WHERE NOT EXISTS(node.<#= To #>) OR node.<#= From #> <> node.<#= To #>
+WITH node limit 10000 
+SET node.<#= To #> = node.<#= From #>
+<#
+    }
+    else if (IsRelationship)
+    {
+#>
+MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
+WHERE NOT EXISTS(rel.<#= To #>) OR rel.<#= From #> <> rel.<#= To #>
+WITH rel limit 10000 
+SET rel.<#= To #> = rel.<#= From #>
+<#
+    }
+    else
+    {
+        throw new NotSupportedException();
+    }
+#>

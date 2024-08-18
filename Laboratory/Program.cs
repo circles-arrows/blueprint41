@@ -1,94 +1,131 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Laboratory
 {
-    public static class Program
+    public static partial class Program
     {
         public static void Main(string[] args)
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
+            //AsyncLocalStorageTest.Test();
 
-            bool parallel = true;
+            CopySourceCode(
+                    source: @"C:\_CirclesArrows\blueprint41\Blueprint41",
+                    target: @"C:\_CirclesArrows\blueprint41\Blueprint41.Async",
+                    renames: new NamespaceRename(@"Blueprint41", @"Blueprint41.Async")
+                );
 
-            List<Thread> threads = new List<Thread>();
+            CopySourceCode(
+                source: @"C:\_CirclesArrows\blueprint41\Blueprint41",
+                target: @"C:\_CirclesArrows\blueprint41\Blueprint41.Sync",
+                renames: new NamespaceRename(@"Blueprint41", @"Blueprint41.Sync")
+            );
 
-            for (int index = 0; index < 4; index++)
-            {
-                Thread thread = new Thread(TestTaskLocalStorage);
-                threads.Add(thread);
-                
-                thread.Start(parallel);
 
-                parallel = !parallel;
-            }
-
-            threads.ForEach(t => t.Join());
 
             Console.WriteLine();
             Console.WriteLine("Press any key...");
             Console.ReadKey(true);
         }
-        public static void TestTaskLocalStorage(object? arg)
+
+        public static void CopySourceCode(string source, string target, params NamespaceRename[] renames)
         {
-            string context = Guid.NewGuid().ToString();
-            bool parallel = (arg is bool) && (bool)arg;
+            ReadOnlySpan<char> trimElements = new ReadOnlySpan<char>([ ' ', '\t']);
 
-            _TaskLocalStorageContext.Value = context;
-            //_TaskLocalStoragePath.Value = new
+            foreach (string sourceFile in Directory.GetFiles(source, "*.*", SearchOption.TopDirectoryOnly))
+            {
+                string? org = null, line = null;
+                string filename = Path.GetFileName(sourceFile)!;
+                string extension = Path.GetExtension(sourceFile);
 
-            TestTaskLocalStorageRecursive(context, 0, 0, parallel).Wait();
+                // exclude files without a name or files starting with a dot (like .gitignore)
+                if (string.IsNullOrEmpty(filename) || filename.StartsWith('.'))
+                    continue;
 
-            Console.WriteLine($"Finished Test: {context}");
+                string targetFile = Path.Combine(target, filename);
+
+                Console.WriteLine($"\t{filename}");
+
+                if (extension == ".cs")
+                {
+                    string[] content = File.ReadAllLines(sourceFile);
+
+                    for (int i = 0; i < content.Length; i++)
+                    {
+                        line = content[i];
+
+                        bool isChanged = false;
+                        foreach (NamespaceRename rename in renames)
+                        {
+                            isChanged = rename.Apply(ref line);
+                            if (isChanged)
+                            {
+                                content[i] = line;
+                                break;
+                            }
+                        }
+                    }
+
+                    File.WriteAllLines(targetFile, content);
+                }
+                else if (extension == ".tt")
+                {
+                    string[] content = File.ReadAllLines(sourceFile);
+                    File.WriteAllLines(targetFile, content);
+                }
+
+            }
+
+            foreach (string sourcePath in Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly))
+            {
+                string folder = Path.GetFileName(sourcePath)!;
+
+                // exclude empty folders or folders starting with a dot (like .vs)
+                if (string.IsNullOrEmpty(folder) || folder.StartsWith('.'))
+                    continue;
+
+                // exclude bin and obj folders
+                if (folder.Equals("bin", StringComparison.OrdinalIgnoreCase) || folder.Equals("obj", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                string targetPath = Path.Combine(target, folder);
+
+                Console.WriteLine($"Folder: {sourcePath}");
+
+                CopySourceCode(sourcePath, targetPath, renames);
+            }
+        }
+    }
+
+    public record struct NamespaceRename
+    {
+        public NamespaceRename(string @namespace, string renameTo) 
+        { 
+            Namespace = @namespace;
+            RenameTo = renameTo;
+
+            _regex = new Regex(@$"^[ \t]*((?<start>namespace[ \t]+)(?:{@namespace.Replace(".", @"\.")})(?<end>[._0-9A-Za-z]*[ \t]*)|(?<start>using([ \t]+static)?([ \t]+[_0-9A-Za-z]+[_0-9A-Za-z]*[ \t]*=)?[ \t]*)(?:{@namespace.Replace(".", @"\.")})(?<end>[._0-9A-Za-z]*[ \t]*;[ \t]*))$", RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
+
+            _replace = @$"${{start}}{renameTo}${{end}}";
         }
 
-        public static async Task TestTaskLocalStorageRecursive(string context, int depth, int index, bool parallel)
+        public string Namespace { get; private set; }
+        public string RenameTo { get; private set; }
+
+        public bool Apply(ref string line)
         {
-            Console.WriteLine($"\tEntering: {context}, Depth: {depth}, Index: {index}, Parallel: {parallel}");
+            string before = line;
+            line = _regex.Replace(line, _replace);
 
-            if (context != _TaskLocalStorageContext.Value)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"\tExpected: {context}, Actual {_TaskLocalStorageContext.Value}, Depth: {depth}, Index: {index}, Parallel: {parallel}");
-                Console.ForegroundColor = ConsoleColor.Gray;
-            }
-
-            Task[]? result = null;
-
-            if (depth < 3)
-            {
-                if (parallel)
-                {
-                    result = Enumerable.Range(0, 3).Select(item => TestTaskLocalStorageRecursive(context, depth + 1, item, parallel)).ToArray();
-                }
-                else
-                {
-                    foreach (int item in Enumerable.Range(0, 3))
-                        await TestTaskLocalStorageRecursive(context, depth + 1, item, parallel);
-                }
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"\tWaiting: {context}, Depth: {depth}, Index: {index}, Parallel: {parallel}");
-                Console.ForegroundColor = ConsoleColor.Gray;
-
-                if (parallel)
-                    result = new[] { Task.Delay(1000) };
-                else
-                    await Task.Delay(1000);
-            }
-
-            Console.WriteLine($"\tLeaving: {context}, Depth: {depth}, Index: {index}, Parallel: {parallel}");
-
-            if (result is not null)
-                Task.WaitAll(result);
+            return !ReferenceEquals(before, line);
         }
 
-        private static readonly AsyncLocal<string> _TaskLocalStorageContext = new AsyncLocal<string>();
-        private static readonly AsyncLocal<List<(string context, int depth, )>> _TaskLocalStoragePath = new AsyncLocal<string>();
+        private readonly Regex _regex;
+        private readonly string _replace;
     }
 }
