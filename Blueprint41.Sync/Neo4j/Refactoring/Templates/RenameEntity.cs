@@ -20,7 +20,7 @@ using Blueprint41.Sync;
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+#line 1 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\RenameEntity.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class RenameEntity : RenameEntityBase
     {
@@ -31,7 +31,7 @@ using Blueprint41.Sync;
         public override string TransformText()
         {
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+#line 7 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\RenameEntity.tt"
 
 
     Log("	executing {0} -> Rename entity from {1} to {2}", this.GetType().Name, OldName, NewName);
@@ -41,21 +41,21 @@ using Blueprint41.Sync;
             #line hidden
             this.Write("MATCH (n:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+#line 11 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OldName));
             
             #line default
             #line hidden
             this.Write(") WITH n LIMIT 10000 SET n:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+#line 11 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(NewName));
             
             #line default
             #line hidden
             this.Write(" REMOVE n:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameEntity.tt"
+#line 11 "C:\_CirclesArrows\blueprint41\Blueprint41.Sync\Neo4j\Refactoring\Templates\RenameEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(OldName));
             
             #line default

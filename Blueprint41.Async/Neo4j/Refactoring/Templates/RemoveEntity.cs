@@ -20,7 +20,7 @@ using Blueprint41.Async;
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+#line 1 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RemoveEntity.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class RemoveEntity : RemoveEntityBase
     {
@@ -31,7 +31,7 @@ using Blueprint41.Async;
         public override string TransformText()
         {
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+#line 7 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RemoveEntity.tt"
 
 
     Log("	executing {0} -> Deprecate entity from {1}", this.GetType().Name, Name);
@@ -41,7 +41,7 @@ using Blueprint41.Async;
             #line hidden
             this.Write("MATCH (n:");
             
-            #line 11 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RemoveEntity.tt"
+#line 11 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RemoveEntity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default
