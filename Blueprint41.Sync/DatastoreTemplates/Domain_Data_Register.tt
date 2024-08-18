@@ -1,0 +1,37 @@
+<#@ template language="C#" inherits="GeneratorBase" visibility="public" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Blueprint41.Core" #>
+#pragma warning disable S101 // Types should be named in PascalCase
+#pragma warning disable CS8981 // Names should not be lower type only
+
+using System;
+using Blueprint41.Core;
+
+namespace <#= Settings.FullCRUDNamespace #>
+{
+    internal class Register
+    {
+        [Obsolete]
+        public static void Types()
+        {
+            if (<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.TypesRegistered)
+                return;
+
+            lock (typeof(Register))
+            {
+                if (<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.TypesRegistered)
+                    return;
+
+<#
+foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
+{
+#>
+                ((ISetRuntimeType)<#= Datastore.GetType().FullName.Replace("+", ".") #>.Model.Entities["<#= DALModel.Name #>"]).SetRuntimeTypes(typeof(<#= DALModel.ClassName #>), typeof(<#= DALModel.Name #>));
+<#
+}
+#>
+            }
+        }
+    }
+}

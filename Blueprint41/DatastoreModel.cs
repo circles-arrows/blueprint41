@@ -1,18 +1,21 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
+using System.Diagnostics;
+
+using Force.Crc32;
 
 using Blueprint41.Core;
 using Blueprint41.Neo4j.Schema;
 using Blueprint41.Neo4j.Persistence;
 using Blueprint41.Neo4j.Refactoring;
-using Force.Crc32;
 using model = Blueprint41.Neo4j.Model;
-using System.Threading;
+using voidProvider = Blueprint41.Neo4j.Persistence.Void.Neo4jPersistenceProvider;
+
 
 namespace Blueprint41
 {
@@ -211,7 +214,7 @@ namespace Blueprint41
 
         internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript, Predicate<UpgradeScript> predicate, bool standAloneScript)
         {
-            bool isVoidProvider = (PersistenceProvider.GetType() == typeof(Blueprint41.Neo4j.Persistence.Void.Neo4jPersistenceProvider));
+            bool isVoidProvider = (PersistenceProvider.GetType() == typeof(voidProvider));
 
 #pragma warning disable CS0618 // Type or member is obsolete
 

@@ -9,6 +9,7 @@
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
 

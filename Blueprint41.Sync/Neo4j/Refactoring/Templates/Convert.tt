@@ -1,0 +1,34 @@
+<#@ template language="C#"  visibility="internal" inherits="ConvertBase" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="Blueprint41" #>
+<#@ import namespace="System.Linq.Expressions" #>
+<#
+
+    Log("	executing {0} -> Convert value of {1}.{2} = '{3}'", this.GetType().Name, Caller.Name, Property.Name, string.Format(AssignScript, string.Concat(Caller.Name, ".", Property.Name)));
+
+    if (IsEntity)
+    {
+#>
+MATCH (node:<#= Entity.Label.Name #>)
+WHERE node.<#= Property.Name #> = <#= string.Format(WhereScript, string.Concat("node.", Property.Name)) #> 
+WITH node LIMIT 10000
+SET node.<#= Property.Name #> = <#= string.Format(AssignScript, string.Concat("node.", Property.Name)) #>
+<#
+    }
+    else if (IsRelationship)
+    {
+#>
+MATCH (:<#= Relationship.InEntity.Label.Name #>)-[rel:<#= Relationship.Neo4JRelationshipType #>]->(:<#= Relationship.OutEntity.Label.Name #>)
+WHERE rel.<#= Property.Name #> = <#= string.Format(WhereScript, string.Concat("rel.", Property.Name)) #> 
+WITH rel LIMIT 10000
+SET rel.<#= Property.Name #> = <#= string.Format(AssignScript, string.Concat("rel.", Property.Name)) #>
+<#
+    }
+    else
+    {
+        throw new NotSupportedException();
+    }
+#>

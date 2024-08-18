@@ -8,6 +8,7 @@ using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
 
 using query = Blueprint41.Query;
+using memgraph = Blueprint41.Neo4j.Persistence.Memgraph;
 
 namespace Blueprint41.Query
 {
@@ -121,7 +122,7 @@ namespace Blueprint41.Query
         }
         public IMatchQuery UsingScan(params AliasResult[] aliases)
         {
-            if (PersistenceProvider.Translator is Blueprint41.Neo4j.Persistence.Memgraph.Neo4jQueryTranslator)
+            if (PersistenceProvider.Translator is memgraph.Neo4jQueryTranslator)
                 throw new NotImplementedException("Memgraph does not yet support 'USING SCAN'."); //TODO
 
             SetType(PartType.UsingScan);

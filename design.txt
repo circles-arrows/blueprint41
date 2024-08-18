@@ -1,0 +1,12 @@
+Blueprint41.Driver (late bound via delegates?)
+Blueprint41.Schema
+Blueprint41.Query - No nuget will be made of this
+Blueprint41.OGM   - No nuget will be made of this
+
+Blueprint41.Async.Query - Pull code from Blueprint41.Query and rename the name-space
+Blueprint41.Async.OGM   - Pull code from Blueprint41.OGM and rename the name-space
+
+Blueprint41.Sync.Query - Pull code from Blueprint41.Query and rename the name-space
+Blueprint41.Sync.OGM   - Pull code from Blueprint41.OGM and rename the name-space
+
+Blueprint41.Build

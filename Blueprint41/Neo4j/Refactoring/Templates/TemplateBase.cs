@@ -1,12 +1,14 @@
 ﻿#nullable disable
 
-using Blueprint41.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using bp41 = Blueprint41;
+using Blueprint41.Core;
 
 namespace Blueprint41.Neo4j.Refactoring.Templates
 {
@@ -327,7 +329,7 @@ namespace Blueprint41.Neo4j.Refactoring.Templates
             }
             else
             {
-                using (Blueprint41.Session.Begin())
+                using (bp41.Session.Begin())
                 {
                     RawResult result = Execute();
                     if (result != null)
