@@ -21,7 +21,7 @@ using Blueprint41.Async;
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 1 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class Convert : ConvertBase
     {
@@ -32,7 +32,7 @@ using Blueprint41.Async;
         public override string TransformText()
         {
             
-            #line 8 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 8 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
 
 
     Log("	executing {0} -> Convert value of {1}.{2} = '{3}'", this.GetType().Name, Caller.Name, Property.Name, string.Format(AssignScript, string.Concat(Caller.Name, ".", Property.Name)));
@@ -45,7 +45,7 @@ using Blueprint41.Async;
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 15 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 15 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
@@ -66,21 +66,21 @@ using Blueprint41.Async;
             #line hidden
             this.Write(" \r\nWITH node LIMIT 10000\r\nSET node.");
             
-            #line 18 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 18 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 18 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 18 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format(AssignScript, string.Concat("node.", Property.Name))));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 19 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 19 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
 
     }
     else if (IsRelationship)
@@ -91,56 +91,56 @@ using Blueprint41.Async;
             #line hidden
             this.Write("MATCH (:");
             
-            #line 24 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 24 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.InEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")-[rel:");
             
-            #line 24 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 24 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.Neo4JRelationshipType));
             
             #line default
             #line hidden
             this.Write("]->(:");
             
-            #line 24 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 24 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.OutEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")\r\nWHERE rel.");
             
-            #line 25 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 25 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 25 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 25 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format(WhereScript, string.Concat("rel.", Property.Name))));
             
             #line default
             #line hidden
             this.Write(" \r\nWITH rel LIMIT 10000\r\nSET rel.");
             
-            #line 27 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 27 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Property.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 27 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 27 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format(AssignScript, string.Concat("rel.", Property.Name))));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\Convert.tt"
+#line 28 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\Convert.tt"
 
     }
     else

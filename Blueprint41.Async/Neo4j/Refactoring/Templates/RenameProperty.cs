@@ -20,7 +20,7 @@ using Blueprint41.Async;
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 1 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     internal partial class RenameProperty : RenamePropertyBase
     {
@@ -31,7 +31,7 @@ using Blueprint41.Async;
         public override string TransformText()
         {
             
-            #line 7 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 7 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
 
     Log("	executing {0} -> Rename property from {1} to {2}", this.GetType().Name, From.Name, To);
 
@@ -43,14 +43,14 @@ using Blueprint41.Async;
             #line hidden
             this.Write("MATCH (node:");
             
-            #line 13 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 13 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Entity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")\r\nWHERE EXISTS(node.");
             
-            #line 14 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 14 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
@@ -71,14 +71,14 @@ using Blueprint41.Async;
             #line hidden
             this.Write("\r\nSET node.");
             
-            #line 17 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 17 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
             #line hidden
             this.Write(" = NULL\r\n");
             
-            #line 18 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 18 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
 
     }
     else if (IsRelationship)
@@ -89,56 +89,56 @@ using Blueprint41.Async;
             #line hidden
             this.Write("MATCH (:");
             
-            #line 23 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 23 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.InEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")-[rel:");
             
-            #line 23 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 23 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.Neo4JRelationshipType));
             
             #line default
             #line hidden
             this.Write("]->(:");
             
-            #line 23 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 23 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Relationship.OutEntity.Label.Name));
             
             #line default
             #line hidden
             this.Write(")\r\nWHERE EXISTS(rel.");
             
-            #line 24 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 24 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
             #line hidden
             this.Write(") \r\nWITH rel LIMIT 10000 \r\nSET rel.");
             
-            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 26 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(To));
             
             #line default
             #line hidden
             this.Write(" = rel.");
             
-            #line 26 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 26 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
             #line hidden
             this.Write("\r\nSET rel.");
             
-            #line 27 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 27 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(From.Name));
             
             #line default
             #line hidden
             this.Write(" = NULL\r\n");
             
-            #line 28 "C:\_CirclesArrows\blueprint41\Blueprint41\Neo4j\Refactoring\Templates\RenameProperty.tt"
+#line 28 "C:\_CirclesArrows\blueprint41\Blueprint41.Async\Neo4j\Refactoring\Templates\RenameProperty.tt"
 
     }
     else
