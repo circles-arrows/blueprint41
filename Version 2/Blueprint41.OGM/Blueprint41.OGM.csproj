@@ -1,0 +1,427 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Build">
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <RootNamespace>Blueprint41.OGM</RootNamespace>
+    <AssemblyName>Blueprint41.OGM</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <LangVersion>11.0</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8606;CS8607;CS8609;CS8610;CS8611;CS8612;CS8613;CS8614;CS8615;CS8616;CS8617;CS8618;CS8619;CS8620;CS8621;CS8622;CS8624;CS8625;CS8626;CS8629;CS8631;CS8632;CS8633;CS8634;CS8638;CS8643;CS8644;CS8645;CS8653;CS8654</WarningsAsErrors>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <PackageVersion>1.1.6</PackageVersion>
+    <PackageId>Blueprint41</PackageId>
+    <Title>Blueprint41</Title>
+    <Authors>Circles Arrows</Authors>
+    <Description>An Object Graph Mapper for CSharp to connect to Neo4j or Memgraph. It has support for defining the object model as a schema. It support refactor scripts written in CSharp, which you can add to your project. When you run your program and the graph is of an older version, the upgrade script will automatically be executed against the graph. It also support generation of type-safe data objects, so you know at compile time if your code is compatible with the latest upgrades.</Description>
+    <Copyright>Copyright 2017, 2024 (c) Circles Arrows</Copyright>
+    <PackageLicense>MIT</PackageLicense>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://www.circlesarrows.com/blueprint41</PackageProjectUrl>
+    <PackageTags>Neo4j Memgraph Graph Object Mapper</PackageTags>
+    <IncludeSymbols>false</IncludeSymbols>
+    <RepositoryUrl>https://github.com/circles-arrows/blueprint41</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Docs\**" />
+    <Compile Remove="Nuget\**" />
+    <EmbeddedResource Remove="Docs\**" />
+    <EmbeddedResource Remove="Nuget\**" />
+    <None Remove="Docs\**" />
+    <None Remove="Nuget\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Crc32.NET" Version="1.*" />
+    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.*" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.CodeDom" Version="4.*" />
+    <PackageReference Include="System.Text.Json" Version="6.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DatastoreTemplates\Domain_Data_Entity_Relation.tt">
+      <LastGenOutput>Domain_Data_Entity_Relation.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Domain_Data_Entity.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Domain_Data_Entity.cs</LastGenOutput>
+    </None>
+    <None Update="DatastoreTemplates\Domain_Data_Entity_Abstract.tt">
+      <LastGenOutput>Domain_Data_Entity_Abstract.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Domain_Data_GraphEvents.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Domain_Data_GraphEvents.cs</LastGenOutput>
+    </None>
+    <None Update="DatastoreTemplates\Domain_Data_Node.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Domain_Data_Node.cs</LastGenOutput>
+    </None>
+    <None Update="DatastoreTemplates\Domain_Data_Register.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Domain_Data_Register.cs</LastGenOutput>
+    </None>
+    <None Update="DatastoreTemplates\Domain_Data_Relationship.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Domain_Data_Relationship.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Persistence\Void\ListAndDictConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ListAndDictConverters.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\RefactorTemplates.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\ApplyFunctionalId.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ApplyFunctionalId.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\Convert.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Convert.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Model\CopyProperty.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>CopyProperty.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\CopyProperty.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>CopyProperty.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\SetDefaultLookupValue.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SetDefaultLookupValue.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\MergeProperty.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>MergeProperty.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\RemoveEntity.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>RemoveEntity.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\RemoveProperty.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>RemoveProperty.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\RemoveRelationship.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>RemoveRelationship.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\RenameEntity.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>RenameEntity.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\RenameProperty.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>RenameProperty.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\RenameRelationship.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>RenameRelationship.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\SetDefaultConstantValue.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\SetLabel.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>SetLabel.cs</LastGenOutput>
+      <CustomToolNamespace></CustomToolNamespace>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v4\RefactorTemplates.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.tt">
+      <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\Memgraph\RefactorTemplates.tt">
+      <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\CopyProperty.tt">
+      <LastGenOutput>CopyProperty.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\MergeProperty.tt">
+      <LastGenOutput>MergeProperty.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\RefactorTemplates.tt">
+      <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\RemoveProperty.tt">
+      <LastGenOutput>RemoveProperty.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\RenameProperty.tt">
+      <LastGenOutput>RenameProperty.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.tt">
+      <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Query\Result.Partial.tt">
+      <LastGenOutput>Result.Partial.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Query\ListResult.Partial.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ListResult.Partial.cs</LastGenOutput>
+    </None>
+    <None Update="Query\Query.Partial.tt">
+      <LastGenOutput>Query.Partial.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Query\SpecificListResult.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SpecificListResult.cs</LastGenOutput>
+    </None>
+    <None Update="TypeConversion\ListAndDictConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ListAndDictConverters.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DatastoreTemplates\Domain_Data_Entity.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Domain_Data_Entity.tt</DependentUpon>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Abstract.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Domain_Data_Entity_Abstract.tt</DependentUpon>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Relation.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Domain_Data_Entity_Relation.tt</DependentUpon>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Domain_Data_GraphEvents.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Domain_Data_GraphEvents.tt</DependentUpon>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Domain_Data_Node.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Domain_Data_Node.tt</DependentUpon>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Domain_Data_Register.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Domain_Data_Register.tt</DependentUpon>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Domain_Data_Relationship.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Domain_Data_Relationship.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Persistence\Void\ListAndDictConverters.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ListAndDictConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\RefactorTemplates.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RefactorTemplates.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\ApplyFunctionalId.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ApplyFunctionalId.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\Convert.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Convert.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Model\CopyProperty.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CopyProperty.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\CopyProperty.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CopyProperty.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\Memgraph\RefactorTemplates.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RefactorTemplates.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\SetDefaultLookupValue.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SetDefaultLookupValue.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\MergeProperty.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MergeProperty.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\RemoveEntity.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RemoveEntity.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\RemoveProperty.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RemoveProperty.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\RemoveRelationship.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RemoveRelationship.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\RenameEntity.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RenameEntity.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\RenameProperty.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RenameProperty.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\RenameRelationship.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RenameRelationship.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\SetDefaultConstantValue.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\SetLabel.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SetLabel.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v4\RefactorTemplates.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RefactorTemplates.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v4\SetDefaultConstantValue.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\CopyProperty.cs">
+      <DependentUpon>CopyProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\MergeProperty.cs">
+      <DependentUpon>MergeProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\RefactorTemplates.cs">
+      <DependentUpon>RefactorTemplates.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\RemoveProperty.cs">
+      <DependentUpon>RemoveProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\RenameProperty.cs">
+      <DependentUpon>RenameProperty.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.cs">
+      <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Query\ListResult.Partial.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ListResult.Partial.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Query\Query.Partial.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Query.Partial.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Query\Result.Partial.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Result.Partial.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Query\SpecificListResult.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SpecificListResult.tt</DependentUpon>
+    </Compile>
+    <Compile Update="TypeConversion\ListAndDictConverters.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ListAndDictConverters.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,67 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using t = Blueprint41.Refactoring.Templates;
+
+namespace Blueprint41.Core
+{
+    public class RefactorTemplates
+    {
+        internal RefactorTemplates(DatastoreModel datastoreModel)
+        {
+            DatastoreModel = datastoreModel;
+        }
+
+        protected readonly DatastoreModel DatastoreModel;
+<#
+    foreach (string path in Directory.EnumerateFiles(Path.Combine(Path.GetDirectoryName(Host.TemplateFile), "Templates"), "*.tt"))
+    {
+        string baseClass = "TemplateBase";
+        string content = File.ReadAllText(path);
+        int start = content.IndexOf("inherits=\"");
+        if (start != -1)
+        {
+            start += 10;
+            int end = content.IndexOf("\"", start);
+            if (end != -1)
+                baseClass = content.Substring(start, end - start);
+        }
+
+        string filename = Path.GetFileName(path);
+        string name = Path.GetFileNameWithoutExtension(path);
+#>
+        #region <#= name #>
+
+        public virtual t.<#= baseClass #> <#= name #>()
+        {
+            t.<#= baseClass #> template = new t.<#= name #>();
+            template.DatastoreModel = DatastoreModel;
+            template.CreateInstance = <#= name #>;
+            return template;
+        }
+        public t.<#= baseClass #> <#= name #>(Action<t.<#= baseClass #>> setup)
+        {
+            t.<#= baseClass #> template = <#= name #>();
+            template.DatastoreModel = DatastoreModel;
+            template.Setup = setup;
+            if (setup is not null)
+                setup.Invoke(template);
+            return template;
+        }
+
+        #endregion
+
+<#
+    }
+#>
+    }
+}
