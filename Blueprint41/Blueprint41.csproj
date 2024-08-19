@@ -213,10 +213,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ListResult.Partial.cs</LastGenOutput>
     </None>
-    <None Update="Query\Query.Partial.tt">
-      <LastGenOutput>Query.Partial.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
     <None Update="Query\SpecificListResult.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SpecificListResult.cs</LastGenOutput>
@@ -396,11 +392,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ListResult.Partial.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Query\Query.Partial.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Query.Partial.tt</DependentUpon>
     </Compile>
     <Compile Update="Query\Result.Partial.cs">
       <DesignTime>True</DesignTime>

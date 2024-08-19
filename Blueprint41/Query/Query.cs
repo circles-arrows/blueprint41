@@ -447,6 +447,34 @@ namespace Blueprint41.Query
             return New;
         }
 
+        public IMatchQuery Unwind<TList, TResult, TType>(ListResult<TList, TResult, TType> list, string aliasName, out TResult alias)
+            where TList : ListResult<TList, TResult, TType>, IPrimitiveListResult
+            where TResult : FieldResult, IPrimitiveResult
+        {
+            SetType(PartType.Unwind);
+
+            Results = new[] { list.As(aliasName) };
+            list.NewResult(t => aliasName).As(aliasName, out alias);
+
+            return New;
+        }
+        public IMatchQuery Unwind<TList, TResult>(ListResult<TList, TResult> list, string aliasName, out TResult alias)
+            where TList : ListResult<TList, TResult>, IAliasListResult
+            where TResult : AliasResult, IAliasResult
+        {
+            SetType(PartType.Unwind);
+
+            Results = new[] { list.As(aliasName) };
+            list.NewResult(t => aliasName).As(aliasName, out alias);
+
+            return New;
+        }
+
+        internal void SetFields(FieldResult[] combinedFields)
+        {
+            Fields = combinedFields;
+        }
+
         private Query New { get { return new Query(this); } }
 
 
@@ -600,6 +628,13 @@ namespace Blueprint41.Query
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
         IWhereQuery Where(params QueryCondition[] conditions);
+
+        IMatchQuery Unwind<TList, TResult, TType>(ListResult<TList, TResult, TType> list, string aliasName, out TResult alias)
+            where TList : ListResult<TList, TResult, TType>, IPrimitiveListResult
+            where TResult : FieldResult, IPrimitiveResult;
+        IMatchQuery Unwind<TList, TResult>(ListResult<TList, TResult> list, string aliasName, out TResult alias)
+         where TList : ListResult<TList, TResult>, IAliasListResult
+            where TResult : AliasResult, IAliasResult;
     }
     public partial interface IMatchQuery : IOptionalMatchQuery
     {
@@ -612,6 +647,14 @@ namespace Blueprint41.Query
         IWithQuery With(bool distinct, params Result[] results);
         IWhereQuery Or(params QueryCondition[] conditions);
         IWhereQuery And(params QueryCondition[] conditions);
+
+        IMatchQuery Unwind<TList, TResult, TType>(ListResult<TList, TResult, TType> list, string aliasName, out TResult alias)
+            where TList : ListResult<TList, TResult, TType>, IPrimitiveListResult
+            where TResult : FieldResult, IPrimitiveResult;
+
+        IMatchQuery Unwind<TList, TResult>(ListResult<TList, TResult> list, string aliasName, out TResult alias)
+            where TList : ListResult<TList, TResult>, IAliasListResult
+            where TResult : AliasResult, IAliasResult;
     }
     //public partial interface IUnwindQuery<T>
     //{
@@ -674,6 +717,14 @@ namespace Blueprint41.Query
         IWithQuery With(params Result[] results);
         IWithQuery With(bool distinct, params Result[] results);
         IMatchQuery UnionMatch(bool duplicates = true, params Node[] patterns);
+
+        IMatchQuery Unwind<TList, TResult, TType>(ListResult<TList, TResult, TType> list, string aliasName, out TResult alias)
+            where TList : ListResult<TList, TResult, TType>, IPrimitiveListResult
+            where TResult : FieldResult, IPrimitiveResult;
+
+        IMatchQuery Unwind<TList, TResult>(ListResult<TList, TResult> list, string aliasName, out TResult alias)
+         where TList : ListResult<TList, TResult>, IAliasListResult
+            where TResult : AliasResult, IAliasResult;
     }
 
     public partial interface IOrderQuery
