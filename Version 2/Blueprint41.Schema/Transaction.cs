@@ -1,5 +1,4 @@
-﻿using Blueprint41.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,50 +6,51 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static Blueprint41.Core.RelationshipPersistenceProvider;
-using persistence = Blueprint41.Neo4j.Persistence;
+
+using Blueprint41.Core;
+using Blueprint41.Events;
+using Blueprint41.Providers;
 
 namespace Blueprint41
 {
     public abstract class Transaction : DisposableScope<Transaction>, IStatementRunner
     {
-        protected Transaction()
+        protected Transaction(PersistenceProvider provider)
         {
             InTransaction = true;
             DisableForeignKeyChecks = false;
 
-            PersistenceProvider factory = PersistenceProvider.CurrentPersistenceProvider;
-            PersistenceProviderFactory = factory;
+            PersistenceProviderFactory = provider;
         }
 
         #region Transaction Logic
 
-        public static Transaction Begin()
-        {
-            return Begin(true, OptimizeFor.PartialSubGraphAccess);
-        }
-        public static Transaction Begin(bool readWriteMode)
-        {
-            return Begin(readWriteMode, OptimizeFor.PartialSubGraphAccess);
-        }
-        public static Transaction Begin(OptimizeFor mode)
-        {
-            return Begin(true, mode);
-        }
-        public static Transaction Begin(bool readWriteMode, OptimizeFor mode)
-        {
-            if (PersistenceProvider.CurrentPersistenceProvider is null)
-                throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
+        //public static Transaction Begin()
+        //{
+        //    return Begin(true, OptimizeFor.PartialSubGraphAccess);
+        //}
+        //public static Transaction Begin(bool readWriteMode)
+        //{
+        //    return Begin(readWriteMode, OptimizeFor.PartialSubGraphAccess);
+        //}
+        //public static Transaction Begin(OptimizeFor mode)
+        //{
+        //    return Begin(true, mode);
+        //}
+        //public static Transaction Begin(bool readWriteMode, OptimizeFor mode)
+        //{
+        //    if (PersistenceProvider.CurrentPersistenceProvider is null)
+        //        throw new InvalidOperationException("PersistenceProviderFactory should be set before you start doing transactions.");
 
-            Transaction trans = PersistenceProvider.CurrentPersistenceProvider.NewTransaction(readWriteMode);
-            trans.RaiseOnBegin();
-            trans.Attach();
-            trans.TransactionDate = DateTime.UtcNow;
-            trans.Mode = mode;
-            trans.FireEvents = EventOptions.AllEvents;
+        //    Transaction trans = PersistenceProvider.CurrentPersistenceProvider.NewTransaction(readWriteMode);
+        //    trans.RaiseOnBegin();
+        //    trans.Attach();
+        //    trans.TransactionDate = DateTime.UtcNow;
+        //    trans.Mode = mode;
+        //    trans.FireEvents = EventOptions.AllEvents;
 
-            return trans;
-        }
+        //    return trans;
+        //}
 
         public virtual Transaction WithConsistency(Bookmark consistency)
         {
@@ -87,7 +87,7 @@ namespace Blueprint41
         // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushInternal()
         {
-            List<OGM> entities = registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OGMImpl).ToList();
+            List<OGMImpl> entities = registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OGMImpl).Cast<OGMImpl>().ToList();
             foreach (OGMImpl entity in entities)
             {
                 if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
@@ -95,10 +95,10 @@ namespace Blueprint41
 
                 if (HasChanges(entity))
                 {
-                    if(!beforeCommitEntityState.ContainsKey(entity))
+                    if (!beforeCommitEntityState.ContainsKey(entity))
                         beforeCommitEntityState.Add(entity, entity.PersistenceState);
 
-                    entity.GetEntity().RaiseOnSave((OGMImpl)entity, this);
+                    entity.GetEntity().RaiseOnSave(entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
                         item.Flush();
                 }
@@ -193,7 +193,7 @@ namespace Blueprint41
             {
                 if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                 {
-                    entity.GetEntity().RaiseOnAfterSave((OGMImpl)entity, this);
+                    entity.GetEntity().RaiseOnAfterSave(entity, this);
                     foreach (EntityEventArgs item in entity.EventHistory)
                         item.Flush();
                 }
@@ -209,7 +209,8 @@ namespace Blueprint41
         {
             Transaction trans = RunningTransaction;
             bool repeat = false;
-            do {
+            do
+            {
                 try
                 {
                     repeat = false;
@@ -256,6 +257,7 @@ namespace Blueprint41
             trans.Invalidate();
             trans.InTransaction = false;
         }
+
         public static Transaction RunningTransaction
         {
             get
@@ -283,7 +285,7 @@ namespace Blueprint41
 
         protected void ApplyFunctionalIds()
         {
-            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item=> item is not null))
+            foreach (FunctionalId functionalId in DatastoreModel.RegisteredModels.SelectMany(model => model.FunctionalIds).Where(item => item is not null))
             {
                 ApplyFunctionalId(functionalId);
             }
@@ -291,12 +293,6 @@ namespace Blueprint41
         protected abstract void CommitInternal();
         protected abstract void RollbackInternal();
         protected abstract void RetryInternal();
-
-        protected override void Cleanup()
-        {
-            if (InTransaction)
-                Rollback();
-        }
 
         #endregion
 
@@ -364,7 +360,7 @@ namespace Blueprint41
             if (item is null)
                 return;
 
-            item.DbTransaction = this;
+            item.Transaction = this;
 
             string relationshipName = item.Relationship.Name;
 
@@ -402,7 +398,7 @@ namespace Blueprint41
             registeredEntities.Clear();
 
             foreach (Core.EntityCollectionBase item in registeredCollections.Values.SelectMany(item => item.Values).SelectMany(item => item))
-                item.DbTransaction = null;
+                item.Transaction = null;
 
             registeredCollections.Clear();
         }
@@ -486,11 +482,11 @@ namespace Blueprint41
                         if (item.Parent.PersistenceState != PersistenceState.New && item.Parent.PersistenceState != PersistenceState.NewAndChanged)
                             parents.Add(item.Parent);
 
-                    Dictionary<OGM, CollectionItemList> allItems = RelationshipPersistenceProvider.Load(parents, collection);
+                    Dictionary<OGM, RelationshipPersistenceProvider.CollectionItemList> allItems = RelationshipPersistenceProvider.Load(parents, collection);
 
                     foreach (Core.EntityCollectionBase item in chunk)
                     {
-                        CollectionItemList? items = null;
+                        RelationshipPersistenceProvider.CollectionItemList? items = null;
                         if (allItems.TryGetValue(item.Parent, out items))
                             item.InitialLoad(items.Items);
                         else
@@ -513,25 +509,25 @@ namespace Blueprint41
 
         #endregion
 
-        #region Query
+        //#region Query
 
-        public static Query.IBlankQuery CompiledQuery
-        {
-            get
-            {
-                return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
-            }
-        }
+        //public static Query.IBlankQuery CompiledQuery
+        //{
+        //    get
+        //    {
+        //        return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
+        //    }
+        //}
 
-        public static Query.ICallSubquery CompiledSubQuery
-        {
-            get
-            {
-                return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
-            }
-        }
+        //public static Query.ICallSubquery CompiledSubQuery
+        //{
+        //    get
+        //    {
+        //        return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
+        //    }
+        //}
 
-        #endregion
+        //#endregion
 
         #region Events
 
@@ -592,12 +588,12 @@ namespace Blueprint41
 
         internal void RaiseOnCommit()
         {
-            if (!this.FireEntityEvents)
+            if (!FireEntityEvents)
                 return;
-            
+
             TransactionEventArgs args = TransactionEventArgs.CreateInstance(EventTypeEnum.OnCommit, this);
             onCommit?.Invoke(this, args);
-            
+
             // Wipe custom-state so the garbage collection can collect it. If anyone thinks this causes a bug for them, feel free to remove this line of code :o)
             customState = null;
         }
@@ -627,14 +623,5 @@ namespace Blueprint41
         }
 
         #endregion
-    }
-
-    [Flags]
-    public enum EventOptions
-    {
-        SupressEvents = 0,
-        EntityEvents = 1,
-        GraphEvents = 2,
-        AllEvents = 3,
     }
 }
