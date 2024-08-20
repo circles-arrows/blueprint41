@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Laboratory</RootNamespace>
+    <AssemblyName>Laboratory version 2</AssemblyName>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+    <ProjectReference Include="..\DatastoreBP41v2\DatastoreBP41v2.csproj" />
+  </ItemGroup>
+
+</Project>

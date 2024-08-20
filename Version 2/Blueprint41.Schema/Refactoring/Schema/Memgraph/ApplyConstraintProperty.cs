@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+
 using Blueprint41.Refactoring.Schema.v5;
 
 namespace Blueprint41.Refactoring.Schema.Memgraph

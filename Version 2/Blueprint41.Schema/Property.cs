@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -13,8 +10,6 @@ using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Events;
 using Blueprint41.Refactoring;
-using Blueprint41.Refactoring.Templates;
-using Templates = Blueprint41.Refactoring.Templates;
 
 namespace Blueprint41
 {
@@ -1579,7 +1574,7 @@ namespace Blueprint41
         /// <param name="newRelationshipName">The new relationship name</param>
         /// <param name="newNeo4jRelationshipType">The new neo4j relationship type</param>
         /// <param name="strict">Whether potential loss of data/relationships is allowed</param>
-        void IRefactorEntityProperty.Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType, bool strict)
+        void IRefactorEntityProperty.Reroute(string pattern, string newPropertyName, string newRelationshipName, string? newNeo4jRelationshipType, bool strict)
         {
             Reroute(pattern, newPropertyName, newRelationshipName, newNeo4jRelationshipType ?? newRelationshipName, strict);
         }

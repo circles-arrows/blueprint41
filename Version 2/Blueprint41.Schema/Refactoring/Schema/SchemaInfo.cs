@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
+
 using Blueprint41.Core;
 
 namespace Blueprint41.Refactoring.Schema

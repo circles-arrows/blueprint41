@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
-using Blueprint41.Core;
 using Blueprint41.Dynamic;
-using Blueprint41.Providers;
 
 namespace Blueprint41.Core
 {

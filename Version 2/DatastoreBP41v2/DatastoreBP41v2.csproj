@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <RootNamespace>Datastore</RootNamespace>
+    <AssemblyName>DatastoreBP41v2</AssemblyName>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+  </ItemGroup>
+
+</Project>

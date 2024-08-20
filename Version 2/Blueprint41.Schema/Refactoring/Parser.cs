@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -12,7 +10,7 @@ namespace Blueprint41.Refactoring
     {
         #region Parser Logic
 
-        private static RawResult PrivateExecute(string cypher, Dictionary<string, object> parameters)
+        private static RawResult PrivateExecute(string cypher, Dictionary<string, object?>? parameters)
         {
             IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
 
@@ -22,7 +20,7 @@ namespace Blueprint41.Refactoring
                 return runner.Run(cypher, parameters);
         }
 
-        internal static void Execute(string cypher, Dictionary<string, object> parameters, bool withTransaction = true, Action<RawResult> logic = null)
+        internal static void Execute(string cypher, Dictionary<string, object?>? parameters, bool withTransaction = true, Action<RawResult>? logic = null)
         {
             throw new NotImplementedException();
 
@@ -47,7 +45,7 @@ namespace Blueprint41.Refactoring
             //    }
             //}
         }
-        internal static void ExecuteBatched(string cypher, Dictionary<string, object> parameters)
+        internal static void ExecuteBatched(string cypher, Dictionary<string, object?>? parameters)
         {
             throw new NotImplementedException();
 

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using t = Blueprint41.Refactoring.Templates;
 
@@ -13,8 +11,8 @@ namespace Blueprint41.Core
         {
             DatastoreModel = datastoreModel;
         }
-
         protected readonly DatastoreModel DatastoreModel;
+
         #region ApplyFunctionalId
 
         public virtual t.ApplyFunctionalIdBase ApplyFunctionalId()
