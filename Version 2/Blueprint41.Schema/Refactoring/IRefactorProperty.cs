@@ -1,13 +1,8 @@
-﻿#nullable disable
+﻿using System;
+using System.Collections.Generic;
 
 using Blueprint41.Core;
 using Blueprint41.Dynamic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blueprint41.Refactoring
 {
@@ -121,7 +116,7 @@ namespace Blueprint41.Refactoring
         /// <param name="newNeo4jRelationshipType">The new neo4j relationship type</param>
         /// <param name="strict">Whether potential loss of data/relationships is allowed</param>
         [RestrictedTo(PropertyType.Lookup, PropertyType.Collection)]
-        void Reroute(string pattern, string newPropertyName, string newRelationshipName, string newNeo4jRelationshipType = null, bool strict = true);
+        void Reroute(string pattern, string newPropertyName, string newRelationshipName, string? newNeo4jRelationshipType = null, bool strict = true);
 
         /// <summary>
         /// Convert a Lookup to a Collection

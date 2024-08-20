@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Blueprint41.Core;
 
 namespace Blueprint41.Providers
@@ -57,11 +58,11 @@ InMemoryLogic  is still broken, it now deletes both ParentOrg & ChildOrgs if you
 Constructor needs to take both in and out as argument, one of the 2 should always be NULL
 
 p.ParentOrg (p = parent, p = out)
-	|
-	|
-	O Has_Parent
-	|
-	^
+    |
+    |
+    O Has_Parent
+    |
+    ^
 c.ChildOrgs  (c = parent, c = in)
 
 Check that caller of ClearRelationshipsActions feed in the right InItem and OutItem

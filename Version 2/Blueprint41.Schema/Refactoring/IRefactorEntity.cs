@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Dynamic;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using Blueprint41.Dynamic;
 
 namespace Blueprint41.Refactoring
 {

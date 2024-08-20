@@ -5,9 +5,7 @@ using System.Linq;
 using System.Text;
 
 using Blueprint41.Core;
-using Blueprint41.Query;
 using Blueprint41.Refactoring.Schema;
-using q = Blueprint41.Query;
 
 namespace Blueprint41.Providers
 {

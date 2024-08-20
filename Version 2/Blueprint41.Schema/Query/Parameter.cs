@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 
-using Blueprint41.Query;
 using Blueprint41.Core;
 
 namespace Blueprint41.Query

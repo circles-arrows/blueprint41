@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Blueprint41;
-
 namespace Blueprint41.Core
 {
     public interface OGM

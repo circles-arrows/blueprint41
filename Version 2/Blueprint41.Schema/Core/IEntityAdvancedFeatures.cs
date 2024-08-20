@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 using Blueprint41.Events;
 using Blueprint41.Query;

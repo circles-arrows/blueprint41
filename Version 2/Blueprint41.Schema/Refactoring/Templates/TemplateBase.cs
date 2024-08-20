@@ -2,12 +2,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using bp41 = Blueprint41;
 using Blueprint41.Core;
 
 namespace Blueprint41.Refactoring.Templates

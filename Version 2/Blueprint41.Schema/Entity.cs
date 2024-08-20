@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-using Blueprint41.Providers;
 using Blueprint41.Query;
 using System.Reflection;
 using Blueprint41.Events;
 
 using Blueprint41.Dynamic;
 using Blueprint41.Refactoring;
-using Blueprint41.Refactoring.Templates;
 
 using model = Blueprint41.Model;
 using Blueprint41.Core;

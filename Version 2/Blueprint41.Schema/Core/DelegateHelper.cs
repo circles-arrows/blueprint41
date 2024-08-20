@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace Blueprint41.Core
 {
     /// <summary>
-	///   A helper class to do common <see cref = "Delegate" /> operations.
-	///   TODO: Add extra contracts to reenforce correct usage.
-	/// </summary>
-	/// <author>Steven Jeuris</author>
-	public static class DelegateHelper
+    ///   A helper class to do common <see cref = "Delegate" /> operations.
+    ///   TODO: Add extra contracts to reenforce correct usage.
+    /// </summary>
+    /// <author>Steven Jeuris</author>
+    public static class DelegateHelper
     {
         /// <summary>
         ///   Options which specify what type of delegate should be created.
