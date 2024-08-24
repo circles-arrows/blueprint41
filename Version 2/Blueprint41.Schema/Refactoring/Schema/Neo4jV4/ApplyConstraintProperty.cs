@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace Blueprint41.Refactoring.Schema.v4
+namespace Blueprint41.Refactoring.Schema
 {
-    public class ApplyConstraintProperty_v4 : ApplyConstraintProperty
+    public class ApplyConstraintProperty_Neo4jV4 : ApplyConstraintProperty
     {
-        internal ApplyConstraintProperty_v4(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
-        internal ApplyConstraintProperty_v4(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
+        internal ApplyConstraintProperty_Neo4jV4(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
+        internal ApplyConstraintProperty_Neo4jV4(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
     
         internal override List<string> ToCypher()
         {

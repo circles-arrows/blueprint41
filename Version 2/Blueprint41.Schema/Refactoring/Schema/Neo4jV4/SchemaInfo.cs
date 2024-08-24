@@ -6,11 +6,11 @@ using Blueprint41.Core;
 using Blueprint41.Persistence.Provider;
 
 
-namespace Blueprint41.Refactoring.Schema.v4
+namespace Blueprint41.Refactoring.Schema
 {
-    public class SchemaInfo_v4 : SchemaInfo
+    public class SchemaInfo_Neo4jV4 : SchemaInfo
     {
-        internal SchemaInfo_v4(DatastoreModel model) : base(model)
+        internal SchemaInfo_Neo4jV4(DatastoreModel model) : base(model)
         {
         }
 
@@ -63,9 +63,9 @@ namespace Blueprint41.Refactoring.Schema.v4
         }
 
         protected override ConstraintInfo   NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
-        protected override IndexInfo        NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo_v4(rawRecord, persistenceProvider);
+        protected override IndexInfo        NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo_Neo4jV4(rawRecord, persistenceProvider);
 
-        internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v4(parent, property, commands);
-        internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty_v4(parent, property, commands);
+        internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Neo4jV4(parent, property, commands);
+        internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty_Neo4jV4(parent, property, commands);
     }
 }

@@ -5,6 +5,8 @@ using System.Linq;
 using Blueprint41.Core;
 using Blueprint41.Refactoring.Schema;
 using Blueprint41.Persistence.Translator;
+using System.Diagnostics.CodeAnalysis;
+using Blueprint41.Refactoring;
 
 namespace Blueprint41.Persistence.Provider
 {
@@ -215,8 +217,8 @@ namespace Blueprint41.Persistence.Provider
         public abstract Transaction NewTransaction(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess);
         public abstract Session NewSession(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess);
 
-        public abstract bool IsNeo4j { get; }
-        public abstract bool IsMemgraph { get; }
+        public bool IsNeo4j => (DatastoreModel.DatastoreTechnology == GDMS.Neo4j);
+        public bool IsMemgraph => (DatastoreModel.DatastoreTechnology == GDMS.Memgraph);
         internal bool IsVoidProvider => Uri is null;
 
         public virtual string ToToken(Bookmark consistency) => string.Empty;
@@ -381,11 +383,84 @@ namespace Blueprint41.Persistence.Provider
         #region Factory
 
         internal DatastoreModel DatastoreModel { get; private set; }
-        internal abstract NodePersistenceProvider NodePersistenceProvider { get; }
-        internal abstract RelationshipPersistenceProvider RelationshipPersistenceProvider { get; }
-        internal abstract RefactorTemplates Templates { get; }
-        internal abstract SchemaInfo SchemaInfo { get; }
-        internal abstract QueryTranslator Translator { get; }
+
+        internal virtual NodePersistenceProvider NodePersistenceProvider => GetOrInit(ref _nodePersistenceProvider, delegate ()
+        {
+            return new NodePersistenceProvider(DatastoreModel);
+        });
+        private protected NodePersistenceProvider? _nodePersistenceProvider = null;
+
+        internal virtual RelationshipPersistenceProvider RelationshipPersistenceProvider => GetOrInit(ref _relationshipPersistenceProvider, delegate ()
+        {
+            return new RelationshipPersistenceProvider(DatastoreModel);
+        });
+        private protected RelationshipPersistenceProvider? _relationshipPersistenceProvider = null;
+
+        internal virtual RefactorTemplates Templates => GetOrInit(ref _templates, delegate ()
+        {
+            if (IsNeo4j)
+            {
+                if (Major >= 5 || IsVoidProvider)
+                    return new RefactorTemplates_Neo4jV5(DatastoreModel);
+                else if (Major == 4)
+                    return new RefactorTemplates_Neo4jV4(DatastoreModel);
+            }
+            else if (IsMemgraph)
+            {
+                return new RefactorTemplates_MemgraphV1(DatastoreModel);
+            }
+            throw new NotSupportedException();
+        });
+        private protected RefactorTemplates? _templates = null;
+
+        internal virtual SchemaInfo SchemaInfo => GetOrInit(ref _schemaInfo, delegate ()
+        {
+            if (IsNeo4j)
+            {
+                if (Major >= 5 || IsVoidProvider)
+                    return new SchemaInfo_Neo4jV5(DatastoreModel);
+                else if (Major == 4)
+                    return new SchemaInfo_Neo4jV4(DatastoreModel);
+            }
+            else if (IsMemgraph)
+            {
+                return new SchemaInfo_MemgraphV1(DatastoreModel);
+            }
+            throw new NotSupportedException();
+        });
+        private protected SchemaInfo? _schemaInfo = null;
+
+        internal virtual QueryTranslator Translator => GetOrInit(ref _translator, delegate ()
+        {
+            if (IsNeo4j)
+            {
+                if (Major >= 5 || IsVoidProvider)
+                    return new Neo4jQueryTranslatorV5(DatastoreModel);
+                else if (Major == 4)
+                    return new Neo4jQueryTranslatorV4(DatastoreModel);
+            }
+            else if (IsMemgraph)
+            {
+                return new MemgraphQueryTranslatorV1(DatastoreModel);
+            }
+            throw new NotSupportedException();
+        });
+        private protected QueryTranslator? _translator = null;
+
+        private protected T GetOrInit<T>([NotNull] ref T? value, Func<T> initializer)
+            where T : class
+        {
+            if (value is not null)
+                return value;
+
+            lock (_syncObject)
+            {
+                if (value is null)
+                    value = initializer.Invoke();
+            }
+            return value;
+        }
+        private static readonly object _syncObject = new object();
 
         #endregion Factory
     }
