@@ -206,22 +206,6 @@
       <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Query\Result.Partial.tt">
-      <LastGenOutput>Result.Partial.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Query\ListResult.Partial.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ListResult.Partial.cs</LastGenOutput>
-    </None>
-    <None Update="Query\Query.Partial.tt">
-      <LastGenOutput>Query.Partial.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Query\SpecificListResult.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SpecificListResult.cs</LastGenOutput>
-    </None>
     <None Update="Refactoring\RefactorTemplates.tt">
       <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -484,26 +468,6 @@
       <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Query\ListResult.Partial.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ListResult.Partial.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Query\Query.Partial.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Query.Partial.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Query\Result.Partial.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Result.Partial.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Query\SpecificListResult.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SpecificListResult.tt</DependentUpon>
     </Compile>
     <Compile Update="Refactoring\RefactorTemplates.cs">
       <DependentUpon>RefactorTemplates.tt</DependentUpon>

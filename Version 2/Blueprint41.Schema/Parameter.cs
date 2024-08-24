@@ -5,7 +5,7 @@ using System.Reflection;
 
 using Blueprint41.Core;
 
-namespace Blueprint41.Query
+namespace Blueprint41
 {
     public class Parameter
     {
@@ -28,7 +28,7 @@ namespace Blueprint41.Query
             // Constants or Optional parameters (used in Query) or actual value (used during Execution)
             Name = name;
             Type = type;
-            IsConstant = (name == CONSTANT_NAME);
+            IsConstant = name == CONSTANT_NAME;
             Value = MaterializeValue(Type, value);
             HasValue = true;
         }

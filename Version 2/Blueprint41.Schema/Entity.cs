@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
-
-using Blueprint41.Query;
 using System.Reflection;
 using Blueprint41.Events;
 
@@ -14,6 +12,7 @@ using Blueprint41.Refactoring;
 
 using model = Blueprint41.Model;
 using Blueprint41.Core;
+using Blueprint41.Persistence;
 
 namespace Blueprint41
 {
