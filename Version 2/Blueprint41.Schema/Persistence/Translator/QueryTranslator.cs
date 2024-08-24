@@ -734,12 +734,6 @@ namespace Blueprint41.Persistence.Translator
         #region PersistenceProvider
 
         internal DatastoreModel DatastoreModel { get; private set; }
-        internal PersistenceProvider PersistenceProvider => DatastoreModel.PersistenceProvider;
-        internal abstract NodePersistenceProvider GetNodePersistenceProvider();
-        internal abstract RelationshipPersistenceProvider GetRelationshipPersistenceProvider();
-        internal abstract SchemaInfo GetSchemaInfo();
-        internal abstract RefactorTemplates GetTemplates();
-
         internal virtual IEnumerable<TypeMapping> FilterSupportedTypeMappings(IEnumerable<TypeMapping> mappings) => mappings;
 
         #endregion
@@ -1002,16 +996,14 @@ namespace Blueprint41.Persistence.Translator
         {
             return new Lazy<bool>(delegate ()
             {
-                PersistenceProvider? neo4j = PersistenceProvider;
-                return neo4j?.HasFunction(function) ?? false;
+                return DatastoreModel.PersistenceProvider.HasFunction(function);
             }, true);
         }
         private Lazy<bool> GetProcedure(string procedure)
         {
             return new Lazy<bool>(delegate ()
             {
-                PersistenceProvider? neo4j = PersistenceProvider;
-                return neo4j?.HasProcedure(procedure) ?? false;
+                return DatastoreModel.PersistenceProvider.HasProcedure(procedure);
             }, true);
         }
 

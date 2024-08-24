@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Blueprint41.Events;
-using Blueprint41.Query;
+using Blueprint41.Persistence;
 
 namespace Blueprint41.Core
 {
