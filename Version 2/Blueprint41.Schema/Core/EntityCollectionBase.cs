@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 
 using Blueprint41.Dynamic;
-using Blueprint41.Providers;
+using Blueprint41.Persistence;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41.Core
 {
@@ -163,7 +164,7 @@ namespace Blueprint41.Core
             }
 
             Transaction trans = Transaction.RunningTransaction;
-            if (trans.Mode == OptimizeFor.RecursiveSubGraphAccess)
+            if (trans.OptimizeFor == OptimizeFor.RecursiveSubGraphAccess)
             {
                 trans.LoadAll(this);
                 return;

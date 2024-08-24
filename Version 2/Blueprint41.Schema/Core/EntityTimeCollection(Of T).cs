@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Blueprint41.Events;
-using Blueprint41.Providers;
+using Blueprint41.Persistence;
 
 namespace Blueprint41.Core
 {

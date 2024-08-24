@@ -847,7 +847,7 @@ namespace Blueprint41
                     string cypher = $"MATCH (n:{entity.Label.Name}) WHERE n.{Name} IS NULL RETURN count(n) as count";
                     Parser.Execute(cypher, null, true, delegate(RawResult result)
                     {
-                        RawRecord record = result.First();
+                        IDictionary<string, object> record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;
                         if (hasNullProperty)
                             throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", entity.Name, Name));
@@ -859,7 +859,7 @@ namespace Blueprint41
                     string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
                     Parser.Execute(cypher, null, true, delegate (RawResult result)
                     {
-                        RawRecord record = result.First();
+                        IDictionary<string, object> record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;
                         if (hasNullProperty)
                             throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", relationship.Name, Name));

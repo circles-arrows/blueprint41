@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41.Refactoring.Schema.v4
 {
     public class IndexInfo_v4: IndexInfo
     {
-        internal IndexInfo_v4(RawRecord record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) 
+        internal IndexInfo_v4(IDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) 
         {
         }
 
-        protected override void Initialize(RawRecord record)
+        protected override void Initialize(IDictionary<string, object> record)
         {
             EntityType = "NODE";
-            Name = record.Values["name"].As<string>();
-            State = record.Values["state"].As<string>();
-            Type = record.Values["type"].As<string>();
+            Name = record["name"].As<string>();
+            State = record["state"].As<string>();
+            Type = record["type"].As<string>();
             IsIndexed = true;
-            isUnique = record.Values["uniqueness"].As<string>().ToLowerInvariant() == "unique";
-            Entity = record.Values["labelsOrTypes"].As<List<string>>().ToArray();
-            Field = record.Values["properties"].As<List<string>>().ToArray();
+            isUnique = record["uniqueness"].As<string>().ToLowerInvariant() == "unique";
+            Entity = record["labelsOrTypes"].As<List<string>>().ToArray();
+            Field = record["properties"].As<List<string>>().ToArray();
         }
     }
 }

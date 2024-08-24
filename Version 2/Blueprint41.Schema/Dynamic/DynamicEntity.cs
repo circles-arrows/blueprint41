@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-
 using Blueprint41.Core;
-using Blueprint41.Providers;
+using Blueprint41.Persistence;
+using Blueprint41.Persistence.Provider;
 using Blueprint41.Refactoring;
 
 namespace Blueprint41.Dynamic

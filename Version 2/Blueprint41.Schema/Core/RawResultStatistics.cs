@@ -3,21 +3,26 @@ using System.Collections.Generic;
 
 namespace Blueprint41.Core
 {
-    public abstract class RawResultStatistics
+    public class RawResultStatistics
     {
-        public abstract bool ContainsUpdates { get; }
-        public abstract int NodesCreated { get; }
-        public abstract int NodesDeleted { get; }
-        public abstract int RelationshipsCreated { get; }
-        public abstract int RelationshipsDeleted { get; }
-        public abstract int PropertiesSet { get; }
-        public abstract int LabelsAdded { get; }
-        public abstract int LabelsRemoved { get; }
-        public abstract int IndexesAdded { get; }
-        public abstract int IndexesRemoved { get; }
-        public abstract int ConstraintsAdded { get; }
-        public abstract int ConstraintsRemoved { get; }
-        public abstract int SystemUpdates { get; }
-        public abstract bool ContainsSystemUpdates { get; }
+        internal RawResultStatistics()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ContainsUpdates { get; }
+        public int NodesCreated { get; }
+        public int NodesDeleted { get; }
+        public int RelationshipsCreated { get; }
+        public int RelationshipsDeleted { get; }
+        public int PropertiesSet { get; }
+        public int LabelsAdded { get; }
+        public int LabelsRemoved { get; }
+        public int IndexesAdded { get; }
+        public int IndexesRemoved { get; }
+        public int ConstraintsAdded { get; }
+        public int ConstraintsRemoved { get; }
+        public int SystemUpdates { get; }
+        public bool ContainsSystemUpdates { get; }
     }
 }

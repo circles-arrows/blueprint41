@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using Blueprint41.Core;
 using Blueprint41.Query;
 
-namespace Blueprint41.Core
+namespace Blueprint41.Persistence.Provider
 {
     internal abstract class NodePersistenceProvider
     {
         protected NodePersistenceProvider(PersistenceProvider factory)
         {
-            this.PersistenceProviderFactory = factory;
+            PersistenceProviderFactory = factory;
         }
 
         public PersistenceProvider PersistenceProviderFactory { get; private set; }

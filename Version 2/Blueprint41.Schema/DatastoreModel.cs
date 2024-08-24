@@ -13,16 +13,15 @@ using Blueprint41.Core;
 using Blueprint41.Refactoring;
 using model = Blueprint41.Model;
 using Blueprint41.Refactoring.Schema;
+using Blueprint41.Persistence;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41
 {
     public abstract partial class DatastoreModel : IRefactorGlobal, IDatastoreUnitTesting
     {
-        protected DatastoreModel(PersistenceProvider persistence)
+        protected DatastoreModel()
         {
-            persistence.DatastoreModel = this;
-            PersistenceProvider = persistence;
-
             Entities = new EntityCollection(this);
             Relations = new RelationshipCollection(this);
             Interfaces = new InterfaceCollection(this);
@@ -39,7 +38,19 @@ namespace Blueprint41
         /// <summary>
         /// The persistence provider registered with this data-store
         /// </summary>
-        public PersistenceProvider PersistenceProvider { get; private set; }
+        public PersistenceProvider PersistenceProvider
+        {
+            get
+            {
+                if (_persistenceProvider is null)
+                    _persistenceProvider = PersistenceProvider.Get(this, null, null, null, null,null);
+
+                return _persistenceProvider;
+            }
+        }
+        internal protected PersistenceProvider? _persistenceProvider = null;
+
+        public abstract GDMS DatastoreTechnology { get; }
 
         /// <summary>
         /// All entities in the data-store
@@ -165,6 +176,9 @@ namespace Blueprint41
         /// <param name="upgradeDatastore">Whether or not the data-store should be upgraded</param>
         public void Execute(bool upgradeDatastore)
         {
+            if (PersistenceProvider is null)
+                throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
+
             Execute(upgradeDatastore, null);
         }
 
@@ -176,6 +190,9 @@ namespace Blueprint41
         void IDatastoreUnitTesting.Execute(bool upgradeDatastore, MethodInfo? unitTestScript) => Execute(upgradeDatastore, unitTestScript);
         internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript)
         {
+            if (PersistenceProvider is null)
+                throw new InvalidOperationException($"Instead of using 'new {GetType().Name}();' to get an instance of the data-store, please use the method '{GetType().Name}.Connect(persistenceProvider);' instead.");
+
             if (isExecuting)
                 throw new InvalidOperationException("It is not allowed to call the 'Execute' method from within an upgrade script.");
 
@@ -212,8 +229,6 @@ namespace Blueprint41
 
         internal void Execute(bool upgradeDatastore, MethodInfo? unitTestScript, Predicate<UpgradeScript> predicate, bool standAloneScript)
         {
-            bool isVoidProvider = (PersistenceProvider == PersistenceProvider.VoidProvider);
-
 #pragma warning disable CS0618 // Type or member is obsolete
 
             if (executed && standAloneScript)
@@ -225,21 +240,21 @@ namespace Blueprint41
             foreach (UpgradeScript script in scripts.Where(item => predicate.Invoke(item)))
             {
                 bool scriptCommitted = false;
-                if (upgradeDatastore && PersistenceProvider.IsNeo4j && !isVoidProvider)
+                if (upgradeDatastore && PersistenceProvider.IsNeo4j && !PersistenceProvider.IsVoidProvider)
                 {
                     if (PersistenceProvider.IsMemgraph)
                     {
                         // In Memgraph constraints cannot be manipulated during transactions.
                         // If any refactor action conflicts with a constraint (e.g. Rename property with NOT NULL constraint).
                         // Memgraph will hang on a lock taken during removal of the constraint and the lock taken during renaming the property.
-                        using (PersistenceProvider.NewSession(true))
+                        using (PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                         {
                             string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
                             Session.RunningSession.Run(clearSchema);
                         }
                     }
 
-                    using (PersistenceProvider.NewTransaction(true))
+                    using (PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                     {
                         if (!Parser.HasScript(script))
                         {
@@ -269,7 +284,7 @@ namespace Blueprint41
 
                 if (upgradeDatastore && scriptCommitted)
                 {
-                    using (PersistenceProvider.NewSession(true))
+                    using (PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                     {
                         Parser.ForceScript(delegate ()
                         {
@@ -281,7 +296,7 @@ namespace Blueprint41
 
             if (upgradeDatastore)
             {
-                using (PersistenceProvider.NewSession(true))
+                using (PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                 {
                     Parser.ForceScript(delegate ()
                     {
@@ -289,7 +304,7 @@ namespace Blueprint41
                     });
                 }
 
-                using (PersistenceProvider.NewTransaction(true))
+                using (PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                 {
                     if (!anyScriptRan && Parser.ShouldRefreshFunctionalIds())
                     {
@@ -304,9 +319,9 @@ namespace Blueprint41
 
 #pragma warning restore CS0618 // Type or member is obsolete
 
-            if (!isVoidProvider)
+            if (!PersistenceProvider.IsVoidProvider)
             {
-                using (PersistenceProvider.NewSession(true))
+                using (PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                 {
                     bool shouldRun = !Refactor.HasFullTextSearchIndexes() && Entities.Any(entity => entity.FullTextIndexProperties.Count > 0);
                     Refactor.ApplyFullTextSearchIndexes(shouldRun);
@@ -494,7 +509,7 @@ namespace Blueprint41
 
                 if (script is not null && Parser.ShouldExecute)
                 {
-                    using (Model.PersistenceProvider.NewTransaction(true))
+                    using (Model.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                     {
                         script.Invoke();
                         Transaction.Commit();
@@ -596,7 +611,13 @@ namespace Blueprint41
     public abstract class DatastoreModel<TSelf> : DatastoreModel
         where TSelf : DatastoreModel<TSelf>, new()
     {
-        protected DatastoreModel(PersistenceProvider persistence) : base(persistence) { }
+        public static TSelf Connect(string uri, string? username, string? password, string? database = null, AdvancedConfig? advancedConfig = null)
+        {
+            TSelf instance = new TSelf();
+            instance._persistenceProvider = PersistenceProvider.Get(instance, uri, username, password, database, advancedConfig);
+
+            return instance;
+        }
 
         private static TSelf? model = null;
 
@@ -648,21 +669,5 @@ namespace Blueprint41
         /// Whether or not queries should be logged to the debugger
         /// </summary>
         public bool LogToDebugger { get => Parser.LogToDebugger; set => Parser.LogToDebugger= value; }
-    }
-
-    public interface IDatastoreUnitTesting
-    {
-        /// <summary>
-        /// Execute the data-store and subsequently execute a unit-test script if provided
-        /// </summary>
-        /// <param name="upgradeDatastore">Whether or not the data-store should be upgraded</param>
-        /// <param name="unitTestScript">The unit-test script</param>
-        void Execute(bool upgradeDatastore, MethodInfo? unitTestScript);
-
-        /// <summary>
-        /// Get the schema info for the data-store
-        /// </summary>
-        /// <returns>The schema info</returns>
-        SchemaInfo GetSchemaInfo();
     }
 }
