@@ -5,11 +5,11 @@ using System.Text;
 using Blueprint41.Core;
 using Blueprint41.Persistence.Provider;
 
-namespace Blueprint41.Refactoring.Schema.v5
+namespace Blueprint41.Refactoring.Schema
 {
-    public class SchemaInfo_v5 : v4.SchemaInfo_v4
+    public class SchemaInfo_Neo4jV5 : SchemaInfo_Neo4jV4
     {
-        internal SchemaInfo_v5(DatastoreModel model) : base(model)
+        internal SchemaInfo_Neo4jV5(DatastoreModel model) : base(model)
         {
         }
 
@@ -63,10 +63,10 @@ namespace Blueprint41.Refactoring.Schema.v5
             }
         }
 
-        protected override ConstraintInfo NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider) => new ConstraintInfo_v5(rawRecord, persistenceProvider);
-        protected override IndexInfo NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider) => new IndexInfo_v5(rawRecord, persistenceProvider);
-        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v5(parent, property, commands);
-        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v5(parent, property, commands);
+        protected override ConstraintInfo NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider) => new ConstraintInfo_Neo4jV5(rawRecord, persistenceProvider);
+        protected override IndexInfo NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider) => new IndexInfo_Neo4jV5(rawRecord, persistenceProvider);
+        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Neo4jV5(parent, property, commands);
+        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Neo4jV5(parent, property, commands);
         internal override List<(ApplyConstraintAction, string?)> ComputeCommands(IEntity entity, IndexType indexType, bool nullable, bool isKey, IEnumerable<ConstraintInfo> constraints, IEnumerable<IndexInfo> indexes)
         {
             // TODO: Fix case where constraint is for a property on a relationship

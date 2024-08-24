@@ -4,13 +4,13 @@ using System.Linq;
 using Blueprint41.Core;
 using Blueprint41.Persistence.Provider;
 
-namespace Blueprint41.Refactoring.Schema.Memgraph
+namespace Blueprint41.Refactoring.Schema
 {
-    public class ConstraintInfo_Memgraph : ConstraintInfo
+    public class ConstraintInfo_MemgraphV1: ConstraintInfo
     {
         public override bool IsKey { get; }
 
-        internal ConstraintInfo_Memgraph(IDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) { }
+        internal ConstraintInfo_MemgraphV1(IDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) { }
 
         protected override void Initialize(IDictionary<string, object> record)
         {

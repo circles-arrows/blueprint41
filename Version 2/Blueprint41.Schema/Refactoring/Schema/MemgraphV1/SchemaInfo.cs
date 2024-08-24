@@ -4,11 +4,11 @@ using System.Linq;
 using Blueprint41.Core;
 using Blueprint41.Persistence.Provider;
 
-namespace Blueprint41.Refactoring.Schema.Memgraph
+namespace Blueprint41.Refactoring.Schema
 {
-    public class SchemaInfo_Memgraph : v5.SchemaInfo_v5
+    public class SchemaInfo_MemgraphV1 : SchemaInfo_Neo4jV5
     {
-        internal SchemaInfo_Memgraph(DatastoreModel model) : base(model) { }
+        internal SchemaInfo_MemgraphV1(DatastoreModel model) : base(model) { }
 
         protected override void Initialize()
         {
@@ -23,10 +23,10 @@ namespace Blueprint41.Refactoring.Schema.Memgraph
         }
         protected override long FindMaxId(FunctionalId functionalId) => throw new NotSupportedException("FunctionalIds are not supported on Memgraph.");
 
-        protected override ConstraintInfo NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider neo4JPersistenceProvider) => new ConstraintInfo_Memgraph(rawRecord, neo4JPersistenceProvider);
-        protected override IndexInfo NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider) => new IndexInfo_Memgraph(rawRecord, persistenceProvider);
-        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
-        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
+        protected override ConstraintInfo NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider neo4JPersistenceProvider) => new ConstraintInfo_MemgraphV1(rawRecord, neo4JPersistenceProvider);
+        protected override IndexInfo NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider) => new IndexInfo_MemgraphV1(rawRecord, persistenceProvider);
+        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_MemgraphV1(parent, property, commands);
+        internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_MemgraphV1(parent, property, commands);
 
         internal override IReadOnlyList<ApplyFunctionalId> GetFunctionalIdDifferences()
         {

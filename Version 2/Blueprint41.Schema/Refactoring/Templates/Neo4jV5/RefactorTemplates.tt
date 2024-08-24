@@ -6,7 +6,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <#
-    string version = "v4";
+    string version = "Neo4jV5";
 #>
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using t = Blueprint41.Refactoring.Templates;
 
 namespace Blueprint41.Refactoring
 {
-    public class RefactorTemplates_<#= version #> : RefactorTemplates
+    public class RefactorTemplates_<#= version #> : RefactorTemplates_Neo4jV4
     {
         internal RefactorTemplates_<#= version #>(DatastoreModel datastoreModel) : base(datastoreModel) { }
 <#

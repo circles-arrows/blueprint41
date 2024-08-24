@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Blueprint41.Refactoring.Schema.v5;
-
-namespace Blueprint41.Refactoring.Schema.Memgraph
+namespace Blueprint41.Refactoring.Schema
 {
-    public class ApplyConstraintProperty_Memgraph : ApplyConstraintProperty_v5
+    public class ApplyConstraintProperty_MemgraphV1 : ApplyConstraintProperty_Neo4jV5
     {
-        internal ApplyConstraintProperty_Memgraph(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
-        internal ApplyConstraintProperty_Memgraph(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
+        internal ApplyConstraintProperty_MemgraphV1(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
+        internal ApplyConstraintProperty_MemgraphV1(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction actionEnum, string? constraintOrIndexName)> commands) : base(parent, property, commands) { }
 
         internal override List<string> ToCypher()
         {

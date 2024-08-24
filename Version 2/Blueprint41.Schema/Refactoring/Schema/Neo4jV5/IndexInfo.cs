@@ -4,11 +4,11 @@ using System.Linq;
 using Blueprint41.Core;
 using Blueprint41.Persistence.Provider;
 
-namespace Blueprint41.Refactoring.Schema.v5
+namespace Blueprint41.Refactoring.Schema
 {
-    public class IndexInfo_v5: IndexInfo
+    public class IndexInfo_Neo4jV5 : IndexInfo
     {
-        internal IndexInfo_v5(IDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) 
+        internal IndexInfo_Neo4jV5(IDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) 
         {
         }
 

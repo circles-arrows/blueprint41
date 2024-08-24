@@ -222,7 +222,7 @@
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Refactoring\Templates\Memgraph\RefactorTemplates.tt">
+    <None Update="Refactoring\Templates\MemgraphV1\RefactorTemplates.tt">
       <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
@@ -266,35 +266,35 @@
       <LastGenOutput>SetLabel.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Refactoring\Templates\v4\RefactorTemplates.tt">
+    <None Update="Refactoring\Templates\Neo4jV4\RefactorTemplates.tt">
       <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
-    <None Update="Refactoring\Templates\v4\SetDefaultConstantValue.tt">
+    <None Update="Refactoring\Templates\Neo4jV4\SetDefaultConstantValue.tt">
       <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Refactoring\Templates\v5\CopyProperty.tt">
+    <None Update="Refactoring\Templates\Neo4jV5\CopyProperty.tt">
       <LastGenOutput>CopyProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Refactoring\Templates\v5\MergeProperty.tt">
+    <None Update="Refactoring\Templates\Neo4jV5\MergeProperty.tt">
       <LastGenOutput>MergeProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Refactoring\Templates\v5\RefactorTemplates.tt">
+    <None Update="Refactoring\Templates\Neo4jV5\RefactorTemplates.tt">
       <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
-    <None Update="Refactoring\Templates\v5\RemoveProperty.tt">
+    <None Update="Refactoring\Templates\Neo4jV5\RemoveProperty.tt">
       <LastGenOutput>RemoveProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Refactoring\Templates\v5\RenameProperty.tt">
+    <None Update="Refactoring\Templates\Neo4jV5\RenameProperty.tt">
       <LastGenOutput>RenameProperty.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Refactoring\Templates\v5\SetDefaultConstantValue.tt">
+    <None Update="Refactoring\Templates\Neo4jV5\SetDefaultConstantValue.tt">
       <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
@@ -489,7 +489,7 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\Memgraph\RefactorTemplates.cs">
+    <Compile Update="Refactoring\Templates\MemgraphV1\RefactorTemplates.cs">
       <DependentUpon>RefactorTemplates.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -544,42 +544,42 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\v4\RefactorTemplates.cs">
+    <Compile Update="Refactoring\Templates\Neo4jV4\RefactorTemplates.cs">
       <DependentUpon>RefactorTemplates.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\v4\SetDefaultConstantValue.cs">
+    <Compile Update="Refactoring\Templates\Neo4jV4\SetDefaultConstantValue.cs">
       <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\v5\CopyProperty.cs">
+    <Compile Update="Refactoring\Templates\Neo4jV5\CopyProperty.cs">
       <DependentUpon>CopyProperty.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\v5\MergeProperty.cs">
+    <Compile Update="Refactoring\Templates\Neo4jV5\MergeProperty.cs">
       <DependentUpon>MergeProperty.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\v5\RefactorTemplates.cs">
+    <Compile Update="Refactoring\Templates\Neo4jV5\RefactorTemplates.cs">
       <DependentUpon>RefactorTemplates.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\v5\RemoveProperty.cs">
+    <Compile Update="Refactoring\Templates\Neo4jV5\RemoveProperty.cs">
       <DependentUpon>RemoveProperty.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\v5\RenameProperty.cs">
+    <Compile Update="Refactoring\Templates\Neo4jV5\RenameProperty.cs">
       <DependentUpon>RenameProperty.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Refactoring\Templates\v5\SetDefaultConstantValue.cs">
+    <Compile Update="Refactoring\Templates\Neo4jV5\SetDefaultConstantValue.cs">
       <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

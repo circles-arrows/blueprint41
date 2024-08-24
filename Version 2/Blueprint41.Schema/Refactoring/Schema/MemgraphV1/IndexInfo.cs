@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using Blueprint41.Core;
 using Blueprint41.Persistence.Provider;
 
-namespace Blueprint41.Refactoring.Schema.Memgraph
+namespace Blueprint41.Refactoring.Schema
 {
-    public class IndexInfo_Memgraph : IndexInfo
+    public class IndexInfo_MemgraphV1 : IndexInfo
     {
-        internal IndexInfo_Memgraph(IDictionary<string, object> record, PersistenceProvider neo4JPersistenceProvider) : base(record, neo4JPersistenceProvider) { }
+        internal IndexInfo_MemgraphV1(IDictionary<string, object> record, PersistenceProvider neo4JPersistenceProvider) : base(record, neo4JPersistenceProvider) { }
 
         protected override void Initialize(IDictionary<string, object> record)
         {
