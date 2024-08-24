@@ -313,13 +313,13 @@ namespace Blueprint41.Refactoring.Templates
 
             if (withTransaction)
             {
-                using (DatastoreModel.PersistenceProvider.NewTransaction(true))
+                using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                 {
                     RawResult result = Execute();
                     if (result != null)
                     {
-                        RawRecord record = result.FirstOrDefault();
-                        if (record is not null && record.Values.TryGetValue("Count", out object cnt))
+                        IDictionary<string, object> record = result.FirstOrDefault();
+                        if (record is not null && record.TryGetValue("Count", out object cnt))
                             retval = cnt.As<long>();
                     }
                     Transaction.Commit();
@@ -327,13 +327,13 @@ namespace Blueprint41.Refactoring.Templates
             }
             else
             {
-                using (DatastoreModel.PersistenceProvider.NewSession(true))
+                using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                 {
                     RawResult result = Execute();
                     if (result != null)
                     {
-                        RawRecord record = result.FirstOrDefault();
-                        if (record is not null && record.Values.TryGetValue("Count", out object cnt))
+                        IDictionary<string, object> record = result.FirstOrDefault();
+                        if (record is not null && record.TryGetValue("Count", out object cnt))
                             retval = cnt.As<long>();
                     }
                 }
@@ -349,7 +349,7 @@ namespace Blueprint41.Refactoring.Templates
             RawResultStatistics counters;
             do
             {
-                using (DatastoreModel.PersistenceProvider.NewTransaction(true))
+                using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                 {
                     TSelf template = CreateInstance();
                     Setup?.Invoke(template);

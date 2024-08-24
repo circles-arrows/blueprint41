@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
 
 namespace Blueprint41.Refactoring.Schema.v4
@@ -16,7 +16,7 @@ namespace Blueprint41.Refactoring.Schema.v4
 
         protected override void Initialize()
         {
-            using (DatastoreModel.PersistenceProvider.NewTransaction(true))
+            using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
             {
                 bool hasPlugin = DatastoreModel.PersistenceProvider.Translator.HasBlueprint41FunctionalidFnNext.Value;
                 FunctionalIds     = hasPlugin ? LoadData("CALL blueprint41.functionalid.list()", record => NewFunctionalIdInfo(record)) : new List<FunctionalIdInfo>(0);
@@ -53,17 +53,17 @@ namespace Blueprint41.Refactoring.Schema.v4
 
             if (queryBuilder.Length != 0)
             {
-                var ids = LoadData(queryBuilder.ToString(), record => record.Values["MaxId"].As<long>());
+                var ids = LoadData(queryBuilder.ToString(), record => record["MaxId"].As<long>());
                 return ids.Count == 0 ? 0 : ids.Max() + 1;
             }
             else
             {
-                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record.Values["sequence"].As<int?>()).FirstOrDefault() ?? 0;
+                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record["sequence"].As<int?>()).FirstOrDefault() ?? 0;
             }
         }
 
-        protected override ConstraintInfo   NewConstraintInfo(RawRecord rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
-        protected override IndexInfo        NewIndexInfo(RawRecord rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo_v4(rawRecord, persistenceProvider);
+        protected override ConstraintInfo   NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
+        protected override IndexInfo        NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo_v4(rawRecord, persistenceProvider);
 
         internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_v4(parent, property, commands);
         internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty_v4(parent, property, commands);

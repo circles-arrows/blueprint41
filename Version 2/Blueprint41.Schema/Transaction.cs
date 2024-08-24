@@ -5,14 +5,17 @@ using System.Runtime.CompilerServices;
 
 using Blueprint41.Core;
 using Blueprint41.Events;
-using Blueprint41.Providers;
+using Blueprint41.Persistence;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41
 {
     public abstract class Transaction : DisposableScope<Transaction>, IStatementRunner
     {
-        protected Transaction(PersistenceProvider provider)
+        protected Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize)
         {
+            OptimizeFor = optimize;
+            ReadWriteMode = readwrite;
             InTransaction = true;
             DisableForeignKeyChecks = false;
 
@@ -272,7 +275,8 @@ namespace Blueprint41
 
         public bool InTransaction { get; private set; }
         public DateTime TransactionDate { get; private set; }
-        public OptimizeFor Mode { get; set; }
+        public OptimizeFor OptimizeFor { get; private set; }
+        public ReadWriteMode ReadWriteMode { get; private set; }
 
         public virtual Bookmark GetConsistency() => NullConsistency;
         private static readonly Bookmark NullConsistency = new Bookmark();

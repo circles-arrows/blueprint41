@@ -3,15 +3,23 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41
 {
     public abstract class Session : DisposableScope<Session>, IStatementRunner
     {
-        protected Session(PersistenceProvider provider)
+        protected Session(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize)
         {
+            OptimizeFor = optimize;
+            ReadWriteMode = readwrite;
+
             PersistenceProviderFactory = provider;
         }
+
+        public DateTime TransactionDate { get; private set; }
+        public OptimizeFor OptimizeFor { get; private set; }
+        public ReadWriteMode ReadWriteMode { get; private set; }
 
         #region Session Logic
 

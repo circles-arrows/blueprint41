@@ -7,16 +7,16 @@ namespace Blueprint41.Refactoring.Schema
 {
     public class FunctionalIdInfo
     {
-        internal FunctionalIdInfo(RawRecord record)
+        internal FunctionalIdInfo(IDictionary<string, object> record)
         {
             Initialize(record);
         }
-        protected virtual void Initialize(RawRecord record)
+        protected virtual void Initialize(IDictionary<string, object> record)
         {
-            Label = record.Values["Label"].As<string>();
-            Prefix = record.Values["Prefix"].As<string>();
-            SequenceNumber = record.Values["Sequence"].As<long>();
-            SequenceHash = record.Values["Uid"].As<string>();
+            Label = record["Label"].As<string>();
+            Prefix = record["Prefix"].As<string>();
+            SequenceNumber = record["Sequence"].As<long>();
+            SequenceHash = record["Uid"].As<string>();
         }
 
         public string Label { get; protected set; } = null!;

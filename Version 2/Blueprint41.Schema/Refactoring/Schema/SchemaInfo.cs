@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41.Refactoring.Schema
 {
@@ -18,7 +18,7 @@ namespace Blueprint41.Refactoring.Schema
 
         protected virtual void Initialize()
         {
-            using (DatastoreModel.PersistenceProvider.NewTransaction(true))
+            using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
             {
                 bool hasPlugin = DatastoreModel.PersistenceProvider.Translator.HasBlueprint41Plugin.Value;
 
@@ -31,9 +31,9 @@ namespace Blueprint41.Refactoring.Schema
         }
         protected IReadOnlyList<string> LoadSimpleData(string procedure, string resultname)
         {
-            return LoadData<string>(procedure, record => record.Values[resultname].As<string>());
+            return LoadData<string>(procedure, record => record[resultname].As<string>());
         }
-        protected IReadOnlyList<T> LoadData<T>(string procedure, Func<RawRecord, T> processor)
+        protected IReadOnlyList<T> LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)
         {
             IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
 
@@ -103,12 +103,12 @@ namespace Blueprint41.Refactoring.Schema
 
             if (queryBuilder.Length != 0)
             {
-                var ids = LoadData(queryBuilder.ToString(), record => record.Values["MaxId"].As<long>());
+                var ids = LoadData(queryBuilder.ToString(), record => record["MaxId"].As<long>());
                 return ids.Count == 0 ? 0 : ids.Max() + 1;
             }
             else
             {
-                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record.Values["sequence"].As<int?>()).FirstOrDefault()??0;
+                return LoadData(string.Format(actualFidValue, functionalId.Label), record => record["sequence"].As<int?>()).FirstOrDefault()??0;
             }
         }
 
@@ -149,7 +149,7 @@ namespace Blueprint41.Refactoring.Schema
         }
         internal virtual void UpdateFunctionalIds()
         {
-            using (DatastoreModel.PersistenceProvider.NewTransaction(true))
+            using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
             {
                 foreach (var diff in GetFunctionalIdDifferences())
                 {
@@ -164,7 +164,7 @@ namespace Blueprint41.Refactoring.Schema
         }
         internal virtual void UpdateConstraints()
         {
-            using (DatastoreModel.PersistenceProvider.NewSession(true))
+            using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
             {
                 foreach (var diff in GetConstraintDifferences())
                 {
@@ -201,9 +201,9 @@ namespace Blueprint41.Refactoring.Schema
             }
         }
 
-        protected virtual FunctionalIdInfo NewFunctionalIdInfo(RawRecord rawRecord)                                               => new FunctionalIdInfo(rawRecord);
-        protected virtual ConstraintInfo   NewConstraintInfo(RawRecord rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
-        protected virtual IndexInfo        NewIndexInfo(RawRecord rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo(rawRecord, persistenceProvider);
+        protected virtual FunctionalIdInfo NewFunctionalIdInfo(IDictionary<string, object> rawRecord)                                               => new FunctionalIdInfo(rawRecord);
+        protected virtual ConstraintInfo   NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
+        protected virtual IndexInfo        NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo(rawRecord, persistenceProvider);
 
         internal virtual ApplyConstraintEntity    NewApplyConstraintEntity(IEntity entity)                                                                              => new ApplyConstraintEntity(this, entity);
         internal virtual ApplyFunctionalId        NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);

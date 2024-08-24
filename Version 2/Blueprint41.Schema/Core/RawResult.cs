@@ -4,46 +4,61 @@ using System.Collections.Generic;
 
 namespace Blueprint41.Core
 {
-    public abstract class RawResult: IEnumerable<RawRecord>
+    public class RawResult: IEnumerable<IDictionary<string, object>>
     {
-        public abstract IReadOnlyList<string> Keys { get; }
-        public abstract RawRecord? Peek();
-        public abstract void Consume();
-        public abstract RawResultStatistics Statistics();
-        public abstract List<RawResultNotification> Notifications();
+        internal RawResult()
+        {
+            Keys = voidKeys;
+        }
+        internal RawResult(object iRecord)
+        {
+            throw new NotImplementedException();
+        }
 
-        public abstract IEnumerator<RawRecord> GetEnumerator();
+        public IReadOnlyList<string> Keys { get; private set; }
+        public IDictionary<string, object>? Peek()
+        {
+            return null;
+        }
+        public void Consume()
+        {
+        }
+        public RawResultStatistics Statistics()
+        {
+            return voidStatistics;
+        }
+        public List<RawResultNotification> Notifications()
+        {
+            return voidNotifications;
+        }
+        public IEnumerator<IDictionary<string, object>> GetEnumerator()
+        {
+            return voidResults.GetEnumerator();
+        }
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
-        protected class RawRecordEnumerator<TFrom> : IEnumerator<RawRecord>
-        {
-            public RawRecordEnumerator(IEnumerator<TFrom> enumerator, Func<TFrom, RawRecord> converter)
-            {
-                Enumerator = enumerator;
-                Converter = converter;
-            }
-            private IEnumerator<TFrom> Enumerator;
-            private Func<TFrom, RawRecord> Converter;
-
-            public RawRecord Current   => Converter.Invoke(Enumerator.Current);
-            object IEnumerator.Current => Converter.Invoke(Enumerator.Current);
-            public void Dispose()      => Enumerator.Dispose();
-            public bool MoveNext()     => Enumerator.MoveNext();
-            public void Reset()        => Enumerator.Reset();
-        }
+        private static readonly List<string> voidKeys = new List<string>(0);
+        private static readonly List<IDictionary<string, object>> voidResults = new List<IDictionary<string, object>>(0);
+        private static readonly RawResultStatistics voidStatistics = new RawResultStatistics();
+        private static readonly List<RawResultNotification> voidNotifications = new List<RawResultNotification>(0);
     }
 
-    public abstract class RawResultNotification
+    public class RawResultNotification
     {
-        public abstract string Code { get; }
-        public abstract string Title { get; }
-        public abstract string Description { get; }
-        public abstract int Offset { get; }
-        public abstract int Line { get; }
-        public abstract int Column { get; }
-        public abstract string Severity { get; }
+        internal RawResultNotification(object iResultNotification)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Code { get; private set; }
+        public string Title { get; private set; }
+        public string Description { get; private set; }
+        public int Offset { get; private set; }
+        public int Line { get; private set; }
+        public int Column { get; private set; }
+        public string Severity { get; private set; }
     }
 }

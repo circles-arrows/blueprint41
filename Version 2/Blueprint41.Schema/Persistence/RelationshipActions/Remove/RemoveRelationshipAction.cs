@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
-namespace Blueprint41.Providers
+namespace Blueprint41.Persistence
 {
     internal class RemoveRelationshipAction : RelationshipAction
     {

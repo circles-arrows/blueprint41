@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Blueprint41.Providers
+namespace Blueprint41.Persistence
 {
     public record FeatureSupport
     {

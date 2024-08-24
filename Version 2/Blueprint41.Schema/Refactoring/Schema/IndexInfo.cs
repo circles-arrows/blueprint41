@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41.Refactoring.Schema
 {
     public class IndexInfo
     {
-        internal IndexInfo(RawRecord record, PersistenceProvider persistenceProvider)
+        internal IndexInfo(IDictionary<string, object> record, PersistenceProvider persistenceProvider)
         {
             PersistenceProvider = persistenceProvider;
             Initialize(record);
@@ -17,12 +17,12 @@ namespace Blueprint41.Refactoring.Schema
         protected PersistenceProvider PersistenceProvider { get; private set; }
         protected bool SupportsRelationshipIndexes => PersistenceProvider.VersionGreaterOrEqual(5, 7);
 
-        protected virtual void Initialize(RawRecord record)
+        protected virtual void Initialize(IDictionary<string, object> record)
         {
             EntityType = "NODE";
-            Name = record.Values["description"].As<string>();
-            State = record.Values["state"].As<string>();
-            Type = record.Values["type"].As<string>();
+            Name = record["description"].As<string>();
+            State = record["state"].As<string>();
+            Type = record["type"].As<string>();
             IsIndexed = true;
 
             switch (Type.ToLowerInvariant().Trim())

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Blueprint41
+namespace Blueprint41.Core
 {
     public static class Hashing
     {
@@ -19,7 +19,7 @@ namespace Blueprint41
             {
                 int pos = index * 4;
                 output = output << 4;
-                uint mapindex = (input >> pos) & 0xf;
+                uint mapindex = input >> pos & 0xf;
                 output |= map[mapindex];
             }
             output ^= 0x3364abf7;
@@ -29,14 +29,14 @@ namespace Blueprint41
                 output ^= (output & 0x7f) << pos;
             }
 
-            ulong output2 = output | ((ulong)value & 0xFFFFFFFF00000000);
+            ulong output2 = output | (ulong)value & 0xFFFFFFFF00000000;
 
             // convert integer to base 36 string
             char[] returnValue = new char[] { '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0' };
             for (int index = 0; index < 13; index++)
             {
                 returnValue[12 - index] = base36Chars[(int)(output2 % 36)];
-                output2 = output2 / (ulong)36;
+                output2 = output2 / 36;
             }
 
             int skip = 0;
@@ -87,7 +87,7 @@ namespace Blueprint41
                     else
                         return -1;
                 }
-                
+
                 int power = value.Length - index - 1;
                 double base36PowerOf = Math.Pow(36, value.Length - index - 1);
                 input2 += (ulong)(valueindex * base36PowerOf);
@@ -113,11 +113,11 @@ namespace Blueprint41
             {
                 int pos = index * 4;
                 output = output << 4;
-                uint mapindex = (input >> pos) & 0xf;
+                uint mapindex = input >> pos & 0xf;
                 output |= rmap[mapindex];
             }
 
-            return (long)(output | ((ulong)input2 & 0xFFFFFFFF00000000));
+            return (long)(output | input2 & 0xFFFFFFFF00000000);
         }
 
         private static readonly uint[] map = new uint[] { 4, 2, 3, 5, 7, 1, 0, 6, 15, 8, 13, 11, 14, 9, 12, 10 };

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41.Refactoring.Schema.Memgraph
 {
@@ -12,19 +12,19 @@ namespace Blueprint41.Refactoring.Schema.Memgraph
 
         protected override void Initialize()
         {
-            using (DatastoreModel.PersistenceProvider.NewSession(true))
+            using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
             {
                 Indexes = LoadData("SHOW INDEX INFO", record => NewIndexInfo(record, DatastoreModel.PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
                 Constraints = LoadData("SHOW CONSTRAINT INFO", record => NewConstraintInfo(record, DatastoreModel.PersistenceProvider)).Where(item => item.Entity is not null && item.Field is not null).ToArray();
-                Labels = LoadData("SHOW NODE_LABELS INFO", record => record.Values["node labels"].As<string>());
-                RelationshipTypes = LoadData("SHOW EDGE_TYPES INFO", record => record.Values["edge types"].As<string>());
+                Labels = LoadData("SHOW NODE_LABELS INFO", record => record["node labels"].As<string>());
+                RelationshipTypes = LoadData("SHOW EDGE_TYPES INFO", record => record["edge types"].As<string>());
             }
             FunctionalIds = new List<FunctionalIdInfo>(0);
         }
         protected override long FindMaxId(FunctionalId functionalId) => throw new NotSupportedException("FunctionalIds are not supported on Memgraph.");
 
-        protected override ConstraintInfo NewConstraintInfo(RawRecord rawRecord, PersistenceProvider neo4JPersistenceProvider) => new ConstraintInfo_Memgraph(rawRecord, neo4JPersistenceProvider);
-        protected override IndexInfo NewIndexInfo(RawRecord rawRecord, PersistenceProvider persistenceProvider) => new IndexInfo_Memgraph(rawRecord, persistenceProvider);
+        protected override ConstraintInfo NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider neo4JPersistenceProvider) => new ConstraintInfo_Memgraph(rawRecord, neo4JPersistenceProvider);
+        protected override IndexInfo NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider) => new IndexInfo_Memgraph(rawRecord, persistenceProvider);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
         internal override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Memgraph(parent, property, commands);
 
@@ -34,7 +34,7 @@ namespace Blueprint41.Refactoring.Schema.Memgraph
         }
         internal override void UpdateFunctionalIds()
         {
-            using (DatastoreModel.PersistenceProvider.NewSession(true))
+            using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
             {
                 foreach (var diff in GetFunctionalIdDifferences())
                 {
@@ -48,7 +48,7 @@ namespace Blueprint41.Refactoring.Schema.Memgraph
         }
         internal override void UpdateConstraints()
         {
-            using (DatastoreModel.PersistenceProvider.NewSession(true))
+            using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
             {
                 foreach (var diff in GetConstraintDifferences())
                 {

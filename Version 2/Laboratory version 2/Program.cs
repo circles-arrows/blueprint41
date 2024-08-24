@@ -1,6 +1,5 @@
 ﻿using System;
-
-using Blueprint41.Core;
+using Blueprint41.Persistence;
 using DataStore;
 
 namespace Laboratory_version_2
@@ -9,10 +8,8 @@ namespace Laboratory_version_2
     {
         static void Main(string[] args)
         {
-            PersistenceProvider connection = PersistenceProvider.VoidProvider; // new PersistenceProvider("localhost", 5687, "neo4j", "neoneoneo", "unittest");
-
-            MockModel model = new MockModel(connection);
-            model.Execute(false);
+            MockModel model = MockModel.Connect(@"bolt://localhost:7876", "neo4j", "neoneoneo", "unittest");
+            model.Execute(true);
 
             // Generate documentation
         }

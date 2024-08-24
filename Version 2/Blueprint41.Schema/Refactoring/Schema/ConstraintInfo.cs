@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41.Refactoring.Schema
 {
     public class ConstraintInfo
     {
-        internal ConstraintInfo(RawRecord record, PersistenceProvider persistenceProvider)
+        internal ConstraintInfo(IDictionary<string, object> record, PersistenceProvider persistenceProvider)
         {
             PersistenceProvider = persistenceProvider;
             Initialize(record);
@@ -16,10 +16,10 @@ namespace Blueprint41.Refactoring.Schema
 
         protected PersistenceProvider PersistenceProvider { get; private set; }
 
-        protected virtual void Initialize(RawRecord record)
+        protected virtual void Initialize(IDictionary<string, object> record)
         {
             EntityType = "NODE";
-            Name = record.Values["description"].As<string>();
+            Name = record["description"].As<string>();
             IsUnique = false;
             IsMandatory = false;
 

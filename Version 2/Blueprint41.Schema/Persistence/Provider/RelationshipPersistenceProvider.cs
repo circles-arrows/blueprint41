@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Blueprint41.Core;
 
-namespace Blueprint41.Core
+namespace Blueprint41.Persistence.Provider
 {
     internal abstract partial class RelationshipPersistenceProvider
     {
         protected RelationshipPersistenceProvider(PersistenceProvider factory)
         {
-            this.PersistenceProviderFactory = factory;
+            PersistenceProviderFactory = factory;
         }
 
         public PersistenceProvider PersistenceProviderFactory { get; private set; }
 
         public abstract IEnumerable<CollectionItem> Load(OGM parent, EntityCollectionBase target);
-        public abstract Dictionary<OGM, CollectionItemList> Load(IEnumerable<OGM> parents, Core.EntityCollectionBase target);
+        public abstract Dictionary<OGM, CollectionItemList> Load(IEnumerable<OGM> parents, EntityCollectionBase target);
         public abstract void Add(Relationship relationship, OGM inItem, OGM outItem, DateTime? moment, bool timedependent, Dictionary<string, object>? properties);
         public abstract void Remove(Relationship relationship, OGM? inItem, OGM? outItem, DateTime? moment, bool timedependent);
         public abstract void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false);

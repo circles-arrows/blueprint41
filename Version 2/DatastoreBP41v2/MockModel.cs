@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define NEO4J
+
+using System;
 using System.Collections.Generic;
 
 using Blueprint41;
@@ -8,8 +10,7 @@ namespace DataStore
 {
     public class MockModel : DatastoreModel<MockModel>
     {
-        public MockModel() : base(PersistenceProvider.VoidProvider) { } // Get rid of this...
-        public MockModel(PersistenceProvider provider) : base(provider) { } // How to auto generate this?
+        public override GDMS DatastoreTechnology => GDMS.Neo4j;
 
         protected override void SubscribeEventHandlers()
         {

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 
 using Blueprint41.Core;
+using Blueprint41.Persistence.Provider;
 
-namespace Blueprint41.Providers
+namespace Blueprint41.Persistence
 {
-    internal class ClearRelationshipsAction : RelationshipAction
+    internal class TimeDependentClearRelationshipsAction : TimeDependentRelationshipAction
     {
-        internal ClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, OGM item)
-            : base(persistenceProvider, null, item, item) { }
+        internal TimeDependentClearRelationshipsAction(RelationshipPersistenceProvider persistenceProvider, Relationship relationship, OGM item, DateTime? moment)
+            : base(persistenceProvider, relationship, item, item, moment) { }
 
         protected override void InDatastoreLogic(Relationship relationship)
         {
@@ -16,12 +17,12 @@ namespace Blueprint41.Providers
             if (entity.IsSelfOrSubclassOf(relationship.InEntity))
             {
                 if (relationship.OutProperty is null || relationship.OutProperty.Nullable || relationship.OutProperty.PropertyType == PropertyType.Collection)
-                    PersistenceProvider.Remove(relationship, InItem, (OGM?)null, null, false);
+                    PersistenceProvider.Remove(relationship, InItem, (OGM?)null, Moment, true);
             }
             if (entity.IsSelfOrSubclassOf(relationship.OutEntity))
             {
                 if (relationship.InProperty is null || relationship.InProperty.Nullable || relationship.InProperty.PropertyType == PropertyType.Collection)
-                    PersistenceProvider.Remove(relationship, (OGM?)null, OutItem, null, false);
+                    PersistenceProvider.Remove(relationship, (OGM?)null, OutItem, Moment, true);
             }
         }
 
@@ -32,16 +33,28 @@ namespace Blueprint41.Providers
                 if (target.Direction == DirectionEnum.Out)
                 {
                     if (OutItem is not null && item.Parent.Equals(OutItem) || InItem is not null && item.Item.Equals(InItem))
-                        target.RemoveAt(index);
+                        Remove();
                 }
                 else if (target.Direction == DirectionEnum.In)
                 {
                     if (InItem is not null && item.Parent.Equals(InItem) || OutItem is not null && item.Item.Equals(OutItem))
-                        target.RemoveAt(index);
+                        Remove();
                 }
                 else
                 {
                     throw new NotSupportedException("Please contact developer.");
+                }
+
+                void Remove()
+                {
+                    if (item.IsAfter(Moment))
+                    {
+                        target.RemoveAt(index);
+                    }
+                    else if (item.Overlaps(Moment))
+                    {
+                        target.SetItem(index, target.NewCollectionItem(target.Parent, item.Item, item.StartDate, Moment));
+                    }
                 }
             });
         }
@@ -49,6 +62,10 @@ namespace Blueprint41.Providers
 }
 
 /*
+
+Relationship: FOR_SITE
+InItem: Vessel
+OutItem: null
 
 InMemoryLogic  is still broken, it now deletes both ParentOrg & ChildOrgs if you issue a Clear on either on.
                it should clear 1 and remove related items only for the other side. Not clear the complete other side.
@@ -63,7 +80,7 @@ p.ParentOrg (p = parent, p = out)
     O Has_Parent
     |
     ^
-c.ChildOrgs  (c = parent, c = in)
+c.ChildOrgs  (c = parent, c = in) 
 
 Check that caller of ClearRelationshipsActions feed in the right InItem and OutItem
 
