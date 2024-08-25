@@ -23,7 +23,6 @@ namespace Blueprint41.Async
             PersistenceProviderFactory = factory;
         }
 
-        
         #region Transaction Logic
 
         public static Transaction Begin()

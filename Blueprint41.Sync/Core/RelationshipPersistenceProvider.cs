@@ -29,7 +29,7 @@ namespace Blueprint41.Sync.Core
             private CollectionItemList(OGM parent)
             {
                 Parent = parent;
-                Items = new LinkedList<Core.CollectionItem>();
+                Items = new LinkedList<CollectionItem>();
             }
 
             public static Dictionary<OGM, CollectionItemList> Get(IEnumerable<CollectionItem> items)
