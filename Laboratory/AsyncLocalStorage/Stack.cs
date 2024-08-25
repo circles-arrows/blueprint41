@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Laboratory
+namespace Laboratory.AsyncLocalStorage
 {
     public class Stack
     {
@@ -23,7 +23,7 @@ namespace Laboratory
         }
 
         public int Length => _stack.Length;
-        public StackItem? Peek() => (Length > 0) ? _stack[0] : null;
+        public StackItem? Peek() => Length > 0 ? _stack[0] : null;
         public Stack Push(string context, int depth, int index) => new Stack(this, context, depth, index);
 
         private readonly StackItem[] _stack;

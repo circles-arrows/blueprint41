@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Laboratory
+namespace Laboratory.AsyncLocalStorage
 {
     public record class StackItem
     {

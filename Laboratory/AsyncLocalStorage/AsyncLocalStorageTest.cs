@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Laboratory
+namespace Laboratory.AsyncLocalStorage
 {
     public static class AsyncLocalStorageTest
     {
@@ -36,7 +36,7 @@ namespace Laboratory
         public static void TestTaskLocalStorage(object? arg)
         {
             string context = Guid.NewGuid().ToString();
-            bool parallel = (arg is bool) && (bool)arg;
+            bool parallel = arg is bool && (bool)arg;
             Stack stack = new Stack();
 
             Console.WriteLine($"Starting Test: {context}");
