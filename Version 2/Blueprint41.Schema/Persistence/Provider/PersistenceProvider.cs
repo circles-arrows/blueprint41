@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 using Blueprint41.Core;
-using Blueprint41.Refactoring.Schema;
-using Blueprint41.Persistence.Translator;
-using System.Diagnostics.CodeAnalysis;
 using Blueprint41.Refactoring;
+using Blueprint41.Refactoring.Schema;
 
-namespace Blueprint41.Persistence.Provider
+namespace Blueprint41.Persistence
 {
     public partial class PersistenceProvider
     {
@@ -16,20 +15,19 @@ namespace Blueprint41.Persistence.Provider
         internal const decimal DECIMAL_FACTOR = 100000000m;
 
         public TransactionLogger? TransactionLogger { get; private set; }
-        public string? Uri { get; private set; }
-        public string? Username { get; private set; }
-        public string? Password { get; private set; }
+
+        public Uri? Uri { get; private set; }
+        public AuthToken? AuthToken { get; private set; }
         public string? Database { get; private set; }
         public AdvancedConfig? AdvancedConfig { get; private set; }
 
 #pragma warning disable IDE0200
-        internal PersistenceProvider(DatastoreModel model, string? uri, string? username, string? password, string? database, AdvancedConfig? advancedConfig = null)
+        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
         {
             DatastoreModel = model;
 
             Uri = uri;
-            Username = username;
-            Password = password;
+            AuthToken = authToken;
             Database = database;
             AdvancedConfig = advancedConfig;
             TransactionLogger = advancedConfig?.GetLogger();
@@ -201,14 +199,8 @@ namespace Blueprint41.Persistence.Provider
             }
         }
 
-        public virtual Session NewSession(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
-        {
-            return new Session(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
-        }
-        public virtual Transaction NewTransaction(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
-        {
-            return new Transaction(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
-        }
+        public virtual Session NewSession(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess) => new Session(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
+        public virtual Transaction NewTransaction(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess) => new Transaction(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
 
         public bool IsNeo4j => (DatastoreModel.DatastoreTechnology == GDMS.Neo4j);
         public bool IsMemgraph => (DatastoreModel.DatastoreTechnology == GDMS.Memgraph);

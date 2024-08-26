@@ -8,7 +8,7 @@ using Blueprint41.Dynamic;
 using Blueprint41.Events;
 using Blueprint41.Refactoring;
 
-namespace Blueprint41.Persistence.Provider
+namespace Blueprint41.Persistence
 {
     internal partial class RelationshipPersistenceProvider
     {

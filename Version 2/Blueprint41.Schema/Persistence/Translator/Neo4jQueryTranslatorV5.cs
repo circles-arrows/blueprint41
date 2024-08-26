@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blueprint41.Persistence.Translator
+namespace Blueprint41.Persistence
 {
     internal class Neo4jQueryTranslatorV5 : QueryTranslator
     {
