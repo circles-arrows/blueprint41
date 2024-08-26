@@ -85,7 +85,34 @@ namespace Blueprint41.Core
                 parameterExpressions.OriginalParameters
                 ).Compile();
         }
+        /// <summary>
+        ///   Creates a delegate of a specified type which wraps another similar delegate, doing downcasts where necessary.
+        ///   The created delegate will only work in case the casts are valid.
+        /// </summary>
+        /// <typeparam name = "TDelegate">The type for the delegate to create.</typeparam>
+        /// <param name = "toWrap">The delegate which needs to be wrapped by another delegate.</param>
+        /// <returns>A new delegate which wraps the passed delegate, doing downcasts where necessary.</returns>
+        public static Delegate WrapDelegate(Type delegateType, Delegate toWrap)
+        {
+            MethodInfo toCreateInfo = MethodInfoFromDelegateType(delegateType);
+            MethodInfo toWrapInfo = toWrap.Method;
 
+            // Create delegate original and converted parameters.
+            var toCreateArguments = toCreateInfo.GetParameters().Select(d => d.ParameterType);
+            var toWrapArguments = toWrapInfo.GetParameters().Select(p => p.ParameterType);
+            var parameterExpressions = CreateParameterConversionExpressions(toCreateArguments, toWrapArguments);
+
+            // Create call to wrapped delegate.
+            Expression delegateCall = Expression.Invoke(
+                Expression.Constant(toWrap),
+                parameterExpressions.ConvertedParameters);
+
+            return Expression.Lambda(
+                delegateType,
+                ConvertOrWrapDelegate(delegateCall, toCreateInfo.ReturnType),
+                parameterExpressions.OriginalParameters
+                ).Compile();
+        }
 
         /// <summary>
         ///   Creates a delegate of a specified type that represents the specified static or instance method,

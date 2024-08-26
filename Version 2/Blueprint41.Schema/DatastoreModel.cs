@@ -14,7 +14,6 @@ using Blueprint41.Refactoring;
 using model = Blueprint41.Model;
 using Blueprint41.Refactoring.Schema;
 using Blueprint41.Persistence;
-using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41
 {
@@ -43,7 +42,7 @@ namespace Blueprint41
             get
             {
                 if (_persistenceProvider is null)
-                    _persistenceProvider = new PersistenceProvider(this, null, null, null, null,null);
+                    _persistenceProvider = new PersistenceProvider(this, null, null, null,null);
 
                 return _persistenceProvider;
             }
@@ -611,10 +610,10 @@ namespace Blueprint41
     public abstract class DatastoreModel<TSelf> : DatastoreModel
         where TSelf : DatastoreModel<TSelf>, new()
     {
-        public static TSelf Connect(string uri, string? username, string? password, string? database = null, AdvancedConfig? advancedConfig = null)
+        public static TSelf Connect(Uri uri, AuthToken authToken, string? database = null, AdvancedConfig? advancedConfig = null)
         {
             TSelf instance = new TSelf();
-            instance._persistenceProvider = new PersistenceProvider(instance, uri, username, password, database, advancedConfig);
+            instance._persistenceProvider = new PersistenceProvider(instance, uri, authToken, database, advancedConfig);
 
             return instance;
         }

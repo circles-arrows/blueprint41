@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Persistence;
-using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41
 {

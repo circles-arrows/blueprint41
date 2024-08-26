@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using Blueprint41.Core;
-using Blueprint41.Persistence.Provider;
+using Blueprint41.Persistence;
 
 namespace Blueprint41.Refactoring.Schema
 {

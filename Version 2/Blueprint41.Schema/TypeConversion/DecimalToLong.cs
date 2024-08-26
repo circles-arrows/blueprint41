@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Blueprint41.Core;
-using Blueprint41.Persistence.Provider;
+using Blueprint41.Persistence;
 
 namespace Blueprint41.TypeConversion
 {

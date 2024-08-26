@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -181,73 +180,6 @@ namespace Blueprint41.Core
         #endregion
 
         #region Custom Conversions
-
-        static private void Register()
-        {
-            if (!registrationsLoaded)
-            {
-                lock (typeof(Conversion))
-                {
-                    if (!registrationsLoaded)
-                    {
-                        foreach (Assembly assembly in GetAssemblies())
-                        {
-                            if (assembly is null)
-                                continue;
-
-                            foreach (ConversionAttribute attribute in assembly.GetCustomAttributes<ConversionAttribute>())
-                            {
-                                Conversion converter = (Conversion)Activator.CreateInstance(attribute.Converter)!;
-                                converter.RegisterConversion();
-                                registeredConverters.Add(converter);
-                            }
-                        }
-
-                        registrationsLoaded = true;
-                    }
-                }
-            }            
-        }
-        public static IEnumerable<Assembly> GetAssemblies()
-        {
-            var list = new HashSet<string>();
-            var stack = new Stack<Assembly>();
-
-            stack.Push(typeof(Conversion).Assembly);
-            Assembly? entry = Assembly.GetEntryAssembly();
-            if (!(entry is null))
-                stack.Push(entry);
-
-            do
-            {
-                var asm = stack.Pop();
-
-                yield return asm;
-
-                foreach (var reference in asm.GetReferencedAssemblies())
-                {
-                    if (reference.FullName.StartsWith("mscorlib") || reference.FullName.StartsWith("netstandard") || reference.FullName.StartsWith("System") || reference.FullName.StartsWith("Microsoft") || reference.FullName.StartsWith("Xml.Schema"))
-                        continue;
-
-                    if (!list.Contains(reference.FullName))
-                    {
-                        try
-                        {
-                            Assembly a = Assembly.Load(reference);
-                            stack.Push(a);
-                            list.Add(reference.FullName);
-                        }
-                        catch (FileNotFoundException)
-                        {
-                            // This is relatively normal... This usually happens when
-                            // a referenced assembly is not in the active code path
-                            // and therefore was not included in the deployment.
-                        }
-                    }
-                }
-            }
-            while (stack.Count > 0);
-        }
 
         [return: MaybeNull]
         protected abstract TTo Converter([AllowNull] TFrom value);

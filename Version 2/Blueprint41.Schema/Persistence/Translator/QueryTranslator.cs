@@ -6,7 +6,7 @@ using System.Text;
 
 using Blueprint41.Core;
 
-namespace Blueprint41.Persistence.Translator
+namespace Blueprint41.Persistence
 {
     public abstract partial class QueryTranslator
     {

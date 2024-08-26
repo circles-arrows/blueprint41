@@ -4,7 +4,7 @@ using System.Linq;
 
 using Blueprint41.Core;
 
-namespace Blueprint41.Persistence.Translator
+namespace Blueprint41.Persistence
 {
     internal class MemgraphQueryTranslatorV1 : QueryTranslator
     {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using Blueprint41.Dynamic;
 using Blueprint41.Persistence;
-using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41.Core
 {

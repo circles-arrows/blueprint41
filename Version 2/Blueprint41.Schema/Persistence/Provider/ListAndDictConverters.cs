@@ -5,7 +5,7 @@ using System.Linq;
 using Blueprint41.Core;
 using Blueprint41.TypeConversion;
 
-namespace Blueprint41.Persistence.Provider
+namespace Blueprint41.Persistence
 {
     #region Provider Type Registration
 
