@@ -206,6 +206,10 @@
       <LastGenOutput>SetDefaultConstantValue.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
+    <None Update="Persistence\Provider\ListAndDictConverters.tt">
+      <LastGenOutput>ListAndDictConverters.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
     <None Update="Refactoring\RefactorTemplates.tt">
       <LastGenOutput>RefactorTemplates.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -466,6 +470,11 @@
     </Compile>
     <Compile Update="Neo4j\Refactoring\Templates\v5\SetDefaultConstantValue.cs">
       <DependentUpon>SetDefaultConstantValue.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Persistence\Provider\ListAndDictConverters.cs">
+      <DependentUpon>ListAndDictConverters.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>

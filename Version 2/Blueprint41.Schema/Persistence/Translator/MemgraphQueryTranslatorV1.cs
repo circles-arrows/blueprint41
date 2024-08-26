@@ -73,8 +73,5 @@ namespace Blueprint41.Persistence.Translator
         //    else
         //        base.Compile(query, state);
         //}
-
-        internal override IEnumerable<TypeMapping> FilterSupportedTypeMappings(IEnumerable<TypeMapping> mappings) => mappings
-            .Where(item => !item.ShortReturnType.Contains(nameof(CompressedString)));
     }
 }

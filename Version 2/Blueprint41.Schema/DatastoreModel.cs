@@ -43,7 +43,7 @@ namespace Blueprint41
             get
             {
                 if (_persistenceProvider is null)
-                    _persistenceProvider = PersistenceProvider.Get(this, null, null, null, null,null);
+                    _persistenceProvider = new PersistenceProvider(this, null, null, null, null,null);
 
                 return _persistenceProvider;
             }
@@ -614,7 +614,7 @@ namespace Blueprint41
         public static TSelf Connect(string uri, string? username, string? password, string? database = null, AdvancedConfig? advancedConfig = null)
         {
             TSelf instance = new TSelf();
-            instance._persistenceProvider = PersistenceProvider.Get(instance, uri, username, password, database, advancedConfig);
+            instance._persistenceProvider = new PersistenceProvider(instance, uri, username, password, database, advancedConfig);
 
             return instance;
         }

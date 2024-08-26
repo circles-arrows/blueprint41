@@ -12,9 +12,9 @@ namespace Blueprint41.Persistence.Provider
     {
         internal NodePersistenceProvider(DatastoreModel datastoreModel)
         {
-            PersistenceProviderFactory = datastoreModel.PersistenceProvider;
+            PersistenceProvider = datastoreModel.PersistenceProvider;
         }
-        public PersistenceProvider PersistenceProviderFactory { get; private set; }
+        public PersistenceProvider PersistenceProvider { get; private set; }
 
         public List<T> GetAll<T>(Entity entity)
             where T : class, OGM
@@ -233,7 +233,7 @@ namespace Blueprint41.Persistence.Provider
         }
         private string NextFunctionalIdQuery(FunctionalId functionalId)
         {
-            QueryTranslator t = PersistenceProviderFactory.Translator;
+            QueryTranslator t = PersistenceProvider.Translator;
 
             if (functionalId.Guid == Guid.Empty)
                 return t.CallApocCreateUuid;
@@ -432,8 +432,7 @@ namespace Blueprint41.Persistence.Provider
 
             StringBuilder sb = new StringBuilder();
 
-            Neo4jPersistenceProvider persistenceProvider = PersistenceProviderFactory as Neo4jPersistenceProvider ?? throw new NotSupportedException("Expected Neo4jPersistenceProvider");
-            if (persistenceProvider.Major < 4)
+            if (PersistenceProvider.Major < 4)
             {
                 sb.Append("CALL apoc.index.search('fts', '");
                 sb.Append(string.Join(" OR ", queries));

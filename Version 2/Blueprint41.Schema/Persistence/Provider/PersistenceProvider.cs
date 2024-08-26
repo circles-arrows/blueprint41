@@ -10,7 +10,7 @@ using Blueprint41.Refactoring;
 
 namespace Blueprint41.Persistence.Provider
 {
-    public abstract class PersistenceProvider
+    public partial class PersistenceProvider
     {
         // Precision (roughly) 10.8
         internal const decimal DECIMAL_FACTOR = 100000000m;
@@ -23,7 +23,7 @@ namespace Blueprint41.Persistence.Provider
         public AdvancedConfig? AdvancedConfig { get; private set; }
 
 #pragma warning disable IDE0200
-        private protected PersistenceProvider(DatastoreModel model, string? uri, string? username, string? password, string? database, AdvancedConfig? advancedConfig = null)
+        internal PersistenceProvider(DatastoreModel model, string? uri, string? username, string? password, string? database, AdvancedConfig? advancedConfig = null)
         {
             DatastoreModel = model;
 
@@ -54,7 +54,7 @@ namespace Blueprint41.Persistence.Provider
             //WARNING: do not refactor warning IDE0200, the wrong translator will be returned
             supportedTypeMappings = new Lazy<List<TypeMapping>>(delegate ()
             {
-                return Translator.FilterSupportedTypeMappings(GetSupportedTypeMappings()).ToList();
+                return FilterSupportedTypeMappings(GetSupportedTypeMappings()).ToList();
             }, true);
 
             convertToStoredType = new Lazy<Dictionary<Type, Conversion?>>(
@@ -74,19 +74,6 @@ namespace Blueprint41.Persistence.Provider
                 );
         }
 #pragma warning restore IDE0200
-
-        internal static PersistenceProvider Get(DatastoreModel model, string? uri, string? username, string? password, string? database, AdvancedConfig? advancedConfig = null)
-        {
-            switch (model.DatastoreTechnology)
-            {
-                case GDMS.Memgraph:
-                    return new MemgraphPersistenceProvider(model, uri, username, password, database, advancedConfig);
-                case GDMS.Neo4j:
-                    return new Neo4jPersistenceProvider(model, uri, username, password, database, advancedConfig);
-                default:
-                    throw new NotImplementedException($"Support for {model.DatastoreTechnology} is available.");
-            }
-        }
 
         public string DBMSName { get; internal set; } = string.Empty;
         public string Version { get; internal set; } = "0.0.0";
@@ -214,8 +201,14 @@ namespace Blueprint41.Persistence.Provider
             }
         }
 
-        public abstract Transaction NewTransaction(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess);
-        public abstract Session NewSession(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess);
+        public virtual Session NewSession(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
+        {
+            return new Session(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
+        }
+        public virtual Transaction NewTransaction(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
+        {
+            return new Transaction(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
+        }
 
         public bool IsNeo4j => (DatastoreModel.DatastoreTechnology == GDMS.Neo4j);
         public bool IsMemgraph => (DatastoreModel.DatastoreTechnology == GDMS.Memgraph);
@@ -227,7 +220,19 @@ namespace Blueprint41.Persistence.Provider
 
         public IReadOnlyList<TypeMapping> SupportedTypeMappings => supportedTypeMappings.Value;
         private readonly Lazy<List<TypeMapping>> supportedTypeMappings;
-        protected internal abstract List<TypeMapping> GetSupportedTypeMappings();
+
+        private protected virtual IEnumerable<TypeMapping> FilterSupportedTypeMappings(IEnumerable<TypeMapping> mappings)
+        {
+            if (IsNeo4j)
+            {
+                return mappings;
+            }
+            else if (IsMemgraph)
+            {
+                return mappings.Where(item => !item.ShortReturnType.Contains(nameof(CompressedString)));
+            }
+            throw new NotSupportedException();
+        }
 
         internal Dictionary<Type, Conversion?> ConvertToStoredTypeCache
         { get { return convertToStoredType.Value; } }

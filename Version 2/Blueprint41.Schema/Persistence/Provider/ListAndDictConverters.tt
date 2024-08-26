@@ -1,0 +1,97 @@
+﻿<#@ template debug="true" hostSpecific="false" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    var referenceTypes = new List<string>()
+    {
+        "object",
+        "string",
+        "CompressedString",
+        "byte[]",
+    };
+
+    var conversions = new []
+    {
+            new [] { "bool",      "bool",   "b"  },
+            new [] { "bool?",     "bool?",  "b"  },
+            new [] { "sbyte",     "long",   "i"  },
+            new [] { "sbyte?",    "long?",  "i"  },
+            new [] { "short",     "long",   "i"  },
+            new [] { "short?",    "long?",  "i"  },
+            new [] { "int",       "long",   "i"  },
+            new [] { "int?",      "long?",  "i"  },
+            new [] { "long",      "long",   "i"  },
+            new [] { "long?",     "long?",  "i"  },
+            new [] { "float",     "double", "f"  },
+            new [] { "float?",    "double?","f"  },
+            new [] { "double",    "double", "f"  },
+            new [] { "double?",   "double?","f"  },
+            new [] { "char",      "string", "s"  },
+            new [] { "char?",     "string", "s"  },
+            new [] { "string",    "string", "s"  },
+            new [] { "DateTime",  "long",   "dt" },
+            new [] { "DateTime?", "long?",  "dt" },
+            new [] { "Guid",      "string", "s"  },
+            new [] { "Guid?",     "string", "s"  },
+            new [] { "decimal",   "long",   "d"  },
+            new [] { "decimal?",  "long?",  "d"  },
+            new [] { "CompressedString",  "byte[]",  "cs"  }
+    };
+
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Blueprint41.Core;
+using Blueprint41.TypeConversion;
+
+namespace Blueprint41.Persistence.Provider
+{
+    #region Provider Type Registration
+
+    public partial class PersistenceProvider
+    {
+        public static List<TypeMapping> GetSupportedTypeMappings() => new List<TypeMapping>()
+        {
+            // primitives...
+<#
+    foreach (var item in conversions)
+    {
+#>
+            new TypeMapping(typeof(<#= item[0] #>), typeof(<#= item[1] #>), "<#= item[2] #>"),
+<#
+    }
+#>          
+            // lists...
+<#
+    foreach (var item in conversions)
+    {
+#>
+            new TypeMapping(typeof(List<<#= item[0] #>>), typeof(List<object>), "l_<#= item[2] #>"),
+<#
+    }
+#>          
+
+            // dictionaries
+<#
+    foreach (var key in conversions)
+    {
+        if (key[0].EndsWith("?"))
+            continue;
+
+        foreach (var value in conversions)
+        {
+#>
+            new TypeMapping(typeof(Dictionary<<#= key[0] #>, <#= value[0] #>>), typeof(string), "d_<#= key[2] #>_<#= value[2] #>"),
+<#
+        }
+    }
+#>           
+        };
+    }
+
+    #endregion
+}
+

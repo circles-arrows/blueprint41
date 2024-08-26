@@ -85,7 +85,7 @@ namespace Blueprint41.Refactoring
         public static bool HasScript(DatastoreModel.UpgradeScript script)
         {
             // the HasScriptPrivate method doesn't set hasScript = true
-            hasScript = Transaction.RunningTransaction.PersistenceProviderFactory.Translator.HasScript(script);
+            hasScript = Transaction.RunningTransaction.PersistenceProvider.Translator.HasScript(script);
             return hasScript; 
         }
         internal static void ForceScript(Action action)
@@ -103,7 +103,7 @@ namespace Blueprint41.Refactoring
         }
         public static void CommitScript(DatastoreModel.UpgradeScript script)
         {
-            Transaction.RunningTransaction.PersistenceProviderFactory.Translator.CommitScript(script);
+            Transaction.RunningTransaction.PersistenceProvider.Translator.CommitScript(script);
             hasScript = true;
         }
 
@@ -112,7 +112,7 @@ namespace Blueprint41.Refactoring
 
         internal static bool ShouldRefreshFunctionalIds()
         {
-            bool shouldRefresh = Transaction.RunningTransaction.PersistenceProviderFactory.Translator.ShouldRefreshFunctionalIds();
+            bool shouldRefresh = Transaction.RunningTransaction.PersistenceProvider.Translator.ShouldRefreshFunctionalIds();
             hasScript = !shouldRefresh;
             return shouldRefresh;
         }
@@ -120,7 +120,7 @@ namespace Blueprint41.Refactoring
 
         public static void SetLastRun()
         {
-            Transaction.RunningTransaction.PersistenceProviderFactory.Translator.SetLastRun();
+            Transaction.RunningTransaction.PersistenceProvider.Translator.SetLastRun();
             hasScript = true;
         }
 

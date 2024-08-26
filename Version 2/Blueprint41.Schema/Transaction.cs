@@ -10,17 +10,25 @@ using Blueprint41.Persistence.Provider;
 
 namespace Blueprint41
 {
-    public abstract class Transaction : DisposableScope<Transaction>, IStatementRunner
+    public class Transaction : DisposableScope<Transaction>, IStatementRunner
     {
-        protected Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize)
+        internal Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
+            Logger = logger;
             OptimizeFor = optimize;
             ReadWriteMode = readwrite;
             InTransaction = true;
             DisableForeignKeyChecks = false;
 
-            PersistenceProviderFactory = provider;
+            PersistenceProvider = provider;
+
+            RaiseOnBegin();
+            Attach();
+            TransactionDate = DateTime.UtcNow;
+            FireEvents = EventOptions.AllEvents;
         }
+        private protected TransactionLogger? Logger { get; private set; }
+        public static void Log(string message) => RunningTransaction.Logger?.Log(message);
 
         #region Transaction Logic
 
@@ -80,9 +88,61 @@ namespace Blueprint41
             return this;
         }
 
-        public abstract RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
-        public abstract RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
-        protected abstract void ApplyFunctionalId(FunctionalId functionalId);
+        public virtual RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            if (PersistenceProvider.IsVoidProvider)
+            {
+#if DEBUG
+                Logger?.Start();
+                if (Logger is not null)
+                    Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
+#endif
+                return new RawResult(0);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+        public virtual RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            if (PersistenceProvider.IsVoidProvider)
+            {
+#if DEBUG
+                Logger?.Start();
+                if (Logger is not null)
+                    Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
+#endif
+                return new RawResult(0);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+        protected virtual void ApplyFunctionalId(FunctionalId functionalId)
+        {
+            if (functionalId is null)
+                return;
+
+            if (functionalId.wasApplied || functionalId.highestSeenId == -1)
+                return;
+
+            lock (functionalId)
+            {
+                string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
+                RawResult result = Run(getFidQuery);
+                long? currentFid = result.FirstOrDefault()?["Sequence"].As<long?>();
+                if (currentFid.HasValue)
+                    functionalId.SeenUid(currentFid.Value);
+
+                string setFidQuery = $"CALL blueprint41.functionalid.setSequenceNumber('{functionalId.Label}', {functionalId.highestSeenId}, {(functionalId.Format == IdFormat.Numeric).ToString().ToLowerInvariant()})";
+                Run(setFidQuery);
+                functionalId.wasApplied = true;
+                functionalId.highestSeenId = -1;
+            }
+        }
+
         // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushInternal()
         {
@@ -290,9 +350,16 @@ namespace Blueprint41
                 ApplyFunctionalId(functionalId);
             }
         }
-        protected abstract void CommitInternal();
-        protected abstract void RollbackInternal();
-        protected abstract void RetryInternal();
+        protected virtual void CommitInternal()
+        {
+            RaiseOnCommit();
+        }
+        protected virtual void RollbackInternal()
+        {
+        }
+        protected virtual void RetryInternal()
+        {
+        }
 
         #endregion
 
@@ -503,9 +570,9 @@ namespace Blueprint41
 
         #region PersistenceProviderFactory
 
-        public PersistenceProvider PersistenceProviderFactory { get; private set; }
-        internal NodePersistenceProvider NodePersistenceProvider => PersistenceProviderFactory.NodePersistenceProvider;
-        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => PersistenceProviderFactory.RelationshipPersistenceProvider;
+        public PersistenceProvider PersistenceProvider { get; private set; }
+        internal NodePersistenceProvider NodePersistenceProvider => PersistenceProvider.NodePersistenceProvider;
+        internal RelationshipPersistenceProvider RelationshipPersistenceProvider => PersistenceProvider.RelationshipPersistenceProvider;
 
         #endregion
 
