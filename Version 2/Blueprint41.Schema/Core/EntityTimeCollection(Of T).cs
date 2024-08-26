@@ -381,7 +381,7 @@ namespace Blueprint41.Core
             LazySet();
 
             //if (!moment.HasValue)
-            //	moment = RunningTransaction.TransactionDate;
+            //    moment = RunningTransaction.TransactionDate;
 
             if (item is not null && EagerLoadLogic is not null)
                 EagerLoadLogic.Invoke(item);

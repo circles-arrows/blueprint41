@@ -11,12 +11,11 @@ namespace Laboratory
         public static void Main(string[] args)
         {
             //AsyncLocalStorageTest.Test();
-            CSharpProject.Test();
+            //CSharpProject.Test();
 
             Console.WriteLine();
             Console.WriteLine("Press any key...");
             Console.ReadKey(true);
         }
-        
     }
 }

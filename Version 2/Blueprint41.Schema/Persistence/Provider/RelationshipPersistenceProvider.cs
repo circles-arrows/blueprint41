@@ -14,18 +14,17 @@ namespace Blueprint41.Persistence.Provider
     {
         internal RelationshipPersistenceProvider(DatastoreModel datastoreModel)
         {
-            PersistenceProviderFactory = datastoreModel.PersistenceProvider;
+            PersistenceProvider = datastoreModel.PersistenceProvider;
 
             HasApocMapRemoveKeys = new Lazy<bool>(() => HasFunction("apoc.map.removeKeys"));
 
             bool HasFunction(string name)
             {
-                Neo4jPersistenceProvider? provider = PersistenceProviderFactory as Neo4jPersistenceProvider;
-                return provider?.HasFunction(name) ?? false;
+                return PersistenceProvider?.HasFunction(name) ?? false;
             }
         }
 
-        public PersistenceProvider PersistenceProviderFactory { get; private set; }
+        public PersistenceProvider PersistenceProvider { get; private set; }
         
         private void Checks(Relationship relationship, OGM? inItem, OGM? outItem)
         {
