@@ -103,8 +103,7 @@ namespace Blueprint41
             }
         }
 
-        public virtual Bookmark GetConsistency() => NullConsistency;
-        private static readonly Bookmark NullConsistency = new Bookmark();
+        public virtual Bookmark GetConsistency() => Bookmark.NullBookmark;
 
         #endregion
 

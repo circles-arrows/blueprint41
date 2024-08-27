@@ -10,12 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Kerberos.NET" Version="4.6.64" />
     <PackageReference Include="Neo4j.Driver.Signed" Version="5.23.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
     <ProjectReference Include="..\DatastoreBP41v2\DatastoreBP41v2.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="movies.cypher">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

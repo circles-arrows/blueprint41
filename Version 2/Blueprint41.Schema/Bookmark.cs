@@ -6,9 +6,33 @@ namespace Blueprint41
 {
     public class Bookmark
     {
-        public string[] ToToken() => null!; // PersistenceProvider.CurrentPersistenceProvider.ToToken(this);
-        public static Bookmark FromToken(string[] consistencyToken) => null!; // PersistenceProvider.CurrentPersistenceProvider.FromToken(consistencyToken);
+        private Bookmark(string[] values)
+        {
+            Values = values;
+        }
 
-        internal static readonly Bookmark NullBookmark = new Bookmark();
+        public string[] Values { get; private set; }
+
+        internal static string ToTokenInternal(Bookmark consistency)
+        {
+            if (consistency is not Bookmark bookmark)
+                return string.Empty;
+
+            return string.Join("|", bookmark.Values);
+        }
+        internal static Bookmark FromTokenInternal(string consistencyToken)
+        {
+            if (string.IsNullOrEmpty(consistencyToken))
+                return NullBookmark;
+
+            string[] values = consistencyToken.Split(new[] { '|' });
+
+            return new Bookmark(values);
+        }
+
+        public string[] ToToken() => Values;
+        public static Bookmark FromToken(string[] consistencyToken) => new Bookmark(consistencyToken);
+
+        internal static readonly Bookmark NullBookmark = new Bookmark(new string[0]);
     }
 }

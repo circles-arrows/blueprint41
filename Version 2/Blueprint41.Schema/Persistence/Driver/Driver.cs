@@ -1,18 +1,22 @@
-﻿using System;
+﻿#pragma warning disable S3881
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+
 using Blueprint41.Core;
+
 using config_builder             = Blueprint41.Persistence.ConfigBuilder;
 using session_config_builder     = Blueprint41.Persistence.SessionConfigBuilder;
 using transaction_config_builder = Blueprint41.Persistence.TransactionConfigBuilder;
 
 namespace Blueprint41.Persistence
 {
-    public sealed class Driver
+    public sealed class Driver : IDisposable, IAsyncDisposable
     {
         internal Driver(object value)
         {
@@ -25,6 +29,9 @@ namespace Blueprint41.Persistence
             return GRAPH_DATABASE.Driver(uri, authToken, configBuilder);
         }
 
+        public DriverSession AsyncSession() => I_DRIVER.AsyncSession(this);
+        public DriverSession AsyncSession(Action<session_config_builder> configBuilder) => I_DRIVER.AsyncSession(this, configBuilder);
+
         public static void Configure<TDriverInterface>()
         {
             DriverTypeInfo.SearchAssembly = typeof(TDriverInterface).Assembly;
@@ -33,40 +40,55 @@ namespace Blueprint41.Persistence
                 throw new InvalidOperationException($"Please pass type of {I_DRIVER.Names} as generic argument TDriverInterface.");
         }
 
-        internal static readonly IDriverInfo                  I_DRIVER                      = new IDriverInfo("Neo4j.Driver.IDriver");
-        internal static readonly ConfigBuilderInfo            CONFIG_BUILDER                = new ConfigBuilderInfo("Neo4j.Driver.ConfigBuilder");
-        internal static readonly GraphDatabaseInfo            GRAPH_DATABASE                = new GraphDatabaseInfo("Neo4j.Driver.GraphDatabase");
-        internal static readonly IAuthTokenInfo               I_AUTH_TOKEN                  = new IAuthTokenInfo("Neo4j.Driver.IAuthToken");
-        internal static readonly AuthTokensInfo               AUTH_TOKENS                   = new AuthTokensInfo("Neo4j.Driver.AuthTokens");
-        internal static readonly IResultCursorInfo            I_RESULT_CURSOR               = new IResultCursorInfo("Neo4j.Driver.IResultCursor");
-        internal static readonly IAsyncSessionInfo            I_ASYNC_SESSION               = new IAsyncSessionInfo("Neo4j.Driver.IAsyncSession");
-        internal static readonly SessionConfigBuilderInfo     SESSION_CONFIG_BUILDER        = new SessionConfigBuilderInfo("Neo4j.Driver.SessionConfigBuilder");
-        internal static readonly IAsyncTransactionInfo        I_ASYNC_TRANSACTION           = new IAsyncTransactionInfo("Neo4j.Driver.IAsyncTransaction");
-        internal static readonly TransactionConfigBuilderInfo TRANSACTION_CONFIG_BUILDER    = new TransactionConfigBuilderInfo("Neo4j.Driver.TransactionConfigBuilder");
-        internal static readonly IAsyncQueryRunnerInfo        I_ASYNC_QUERY_RUNNER          = new IAsyncQueryRunnerInfo("Neo4j.Driver.IAsyncQueryRunner");
-        internal static readonly AccessModeInfo               ACCESS_MODE                   = new AccessModeInfo("Neo4j.Driver.AccessMode");
-        internal static readonly BookmarksInfo                BOOKMARKS                     = new BookmarksInfo("Neo4j.Driver.Bookmarks");
+        #region DriverTypeInfo definitions 
 
-        internal static readonly DriverTypeInfo               TASK                          = new DriverTypeInfo(typeof(Task));
-        internal static readonly DriverTypeInfo               TASK_OF_BOOL                  = new DriverTypeInfo(typeof(Task<bool>));
-        internal static readonly DriverTypeInfo               TASK_OF_I_ASYNC_SESSION       = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_ASYNC_SESSION.Type));
-        internal static readonly DriverTypeInfo               TASK_OF_I_ASYNC_TRANSACTION   = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_ASYNC_TRANSACTION.Type));
-        internal static readonly DriverTypeInfo               BOOKMARKS_ARRAY               = new DriverTypeInfo(() => BOOKMARKS.Type.MakeArrayType());
+        internal static readonly IDriverInfo                  I_DRIVER                             = new IDriverInfo("Neo4j.Driver.IDriver");
+        internal static readonly ConfigBuilderInfo            CONFIG_BUILDER                       = new ConfigBuilderInfo("Neo4j.Driver.ConfigBuilder");
+        internal static readonly GraphDatabaseInfo            GRAPH_DATABASE                       = new GraphDatabaseInfo("Neo4j.Driver.GraphDatabase");
+        internal static readonly IAuthTokenInfo               I_AUTH_TOKEN                         = new IAuthTokenInfo("Neo4j.Driver.IAuthToken");
+        internal static readonly AuthTokensInfo               AUTH_TOKENS                          = new AuthTokensInfo("Neo4j.Driver.AuthTokens");
+        internal static readonly IResultCursorInfo            I_RESULT_CURSOR                      = new IResultCursorInfo("Neo4j.Driver.IResultCursor");
+        internal static readonly IResultCursorInfo            I_RESULT_SUMMARY                     = new IResultCursorInfo("Neo4j.Driver.IResultSummary");
+        internal static readonly IRecord                      I_RECORD                             = new IRecord("Neo4j.Driver.IRecord");
+        internal static readonly IAsyncSessionInfo            I_ASYNC_SESSION                      = new IAsyncSessionInfo("Neo4j.Driver.IAsyncSession");
+        internal static readonly SessionConfigBuilderInfo     SESSION_CONFIG_BUILDER               = new SessionConfigBuilderInfo("Neo4j.Driver.SessionConfigBuilder");
+        internal static readonly IAsyncTransactionInfo        I_ASYNC_TRANSACTION                  = new IAsyncTransactionInfo("Neo4j.Driver.IAsyncTransaction");
+        internal static readonly TransactionConfigBuilderInfo TRANSACTION_CONFIG_BUILDER           = new TransactionConfigBuilderInfo("Neo4j.Driver.TransactionConfigBuilder");
+        internal static readonly IAsyncQueryRunnerInfo        I_ASYNC_QUERY_RUNNER                 = new IAsyncQueryRunnerInfo("Neo4j.Driver.IAsyncQueryRunner");
+        internal static readonly AccessModeInfo               ACCESS_MODE                          = new AccessModeInfo("Neo4j.Driver.AccessMode");
+        internal static readonly BookmarksInfo                BOOKMARKS                            = new BookmarksInfo("Neo4j.Driver.Bookmarks");
+
+        internal static readonly DriverTypeInfo               TASK                                 = new DriverTypeInfo(typeof(Task));
+        internal static readonly DriverTypeInfo               TASK_OF_BOOLEAN                      = new DriverTypeInfo(typeof(Task<bool>));
+        internal static readonly DriverTypeInfo               TASK_OF_STRING                       = new DriverTypeInfo(typeof(Task<string>));
+        internal static readonly DriverTypeInfo               TASK_OF_STRING_ARRAY                 = new DriverTypeInfo(typeof(Task<string[]>));
+        internal static readonly DriverTypeInfo               TASK_OF_I_ASYNC_TRANSACTION          = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_ASYNC_TRANSACTION.Type));
+        internal static readonly DriverTypeInfo               TASK_OF_I_RESULT_CURSOR              = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_RESULT_CURSOR.Type));
+        internal static readonly DriverTypeInfo               TASK_OF_I_RESULT_SUMMARY             = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_RESULT_SUMMARY.Type));
+        internal static readonly DriverTypeInfo               TASK_OF_I_RECORD                     = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_RECORD.Type));
+        internal static readonly DriverTypeInfo               BOOKMARKS_ARRAY                      = new DriverTypeInfo(() => BOOKMARKS.Type.MakeArrayType());
         
-        internal static readonly DriverTypeInfo               VOID                          = new DriverTypeInfo(typeof(void));
-        internal static readonly DriverTypeInfo               BOOLEAN                       = new DriverTypeInfo(typeof(bool));
-        internal static readonly DriverTypeInfo               INTEGER                       = new DriverTypeInfo(typeof(int));
-        internal static readonly DriverTypeInfo               BIGINTEGER                    = new DriverTypeInfo(typeof(long));
-        internal static readonly DriverTypeInfo               STRING                        = new DriverTypeInfo(typeof(string));
-        internal static readonly DriverTypeInfo               STRING_ARRAY                  = new DriverTypeInfo(typeof(string[]));
-        internal static readonly DriverTypeInfo               TIMESPAN                      = new DriverTypeInfo(typeof(TimeSpan));
-        internal static readonly DriverTypeInfo               NULLABLE_TIMESPAN             = new DriverTypeInfo(typeof(TimeSpan?));
-        internal static readonly DriverTypeInfo               URI                           = new DriverTypeInfo(typeof(Uri));
-        internal static readonly DriverTypeInfo               DICT_OF_STRING_AND_OBJECT     = new DriverTypeInfo(typeof(Dictionary<string, object>));
-        internal static readonly DriverTypeInfo               I_DICT_OF_STRING_AND_OBJECT   = new DriverTypeInfo(typeof(IDictionary<string, object>));
-        internal static readonly DriverTypeInfo               ACTION_OF_CONFIG_BUILDER      = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(CONFIG_BUILDER.Type));
-        internal static readonly DriverTypeInfo               ACTION_OF_SESSION_BUILDER     = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(SESSION_CONFIG_BUILDER.Type));
-        internal static readonly DriverTypeInfo               ACTION_OF_TRANSACTION_BUILDER = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(TRANSACTION_CONFIG_BUILDER.Type));
+        internal static readonly DriverTypeInfo               VOID                                 = new DriverTypeInfo(typeof(void));
+        internal static readonly DriverTypeInfo               OBJECT                               = new DriverTypeInfo(typeof(object));
+        internal static readonly DriverTypeInfo               BOOLEAN                              = new DriverTypeInfo(typeof(bool));
+        internal static readonly DriverTypeInfo               INTEGER                              = new DriverTypeInfo(typeof(int));
+        internal static readonly DriverTypeInfo               BIGINTEGER                           = new DriverTypeInfo(typeof(long));
+        internal static readonly DriverTypeInfo               STRING                               = new DriverTypeInfo(typeof(string));
+        internal static readonly DriverTypeInfo               STRING_ARRAY                         = new DriverTypeInfo(typeof(string[]));
+        internal static readonly DriverTypeInfo               TIMESPAN                             = new DriverTypeInfo(typeof(TimeSpan));
+        internal static readonly DriverTypeInfo               NULLABLE_TIMESPAN                    = new DriverTypeInfo(typeof(TimeSpan?));
+        internal static readonly DriverTypeInfo               URI                                  = new DriverTypeInfo(typeof(Uri));
+        internal static readonly DriverTypeInfo               I_READONLY_LIST_OF_STRING            = new DriverTypeInfo(typeof(IReadOnlyList<string>));
+        internal static readonly DriverTypeInfo               DICT_OF_STRING_AND_OBJECT            = new DriverTypeInfo(typeof(Dictionary<string, object>));
+        internal static readonly DriverTypeInfo               I_DICT_OF_STRING_AND_OBJECT          = new DriverTypeInfo(typeof(IDictionary<string, object>));
+        internal static readonly DriverTypeInfo               I_READONLY_DICT_OF_STRING_AND_OBJECT = new DriverTypeInfo(typeof(IReadOnlyDictionary<string, object>));
+        internal static readonly DriverTypeInfo               ACTION_OF_CONFIG_BUILDER             = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(CONFIG_BUILDER.Type));
+        internal static readonly DriverTypeInfo               ACTION_OF_SESSION_BUILDER            = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(SESSION_CONFIG_BUILDER.Type));
+        internal static readonly DriverTypeInfo               ACTION_OF_TRANSACTION_BUILDER        = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(TRANSACTION_CONFIG_BUILDER.Type));
+
+        #endregion
+
+        #region Type, Property, Method & Enum helpers
 
         internal class DriverTypeInfo
         {
@@ -121,7 +143,7 @@ namespace Blueprint41.Persistence
 
                 return (Task)value;
             }
-            protected static async Task<T> AsTask<T>(object value)
+            protected static async Task<T> AsTask<T>(object value, Func<object, T> wrapper = null)
             {
                 if (value is not Task)
                     throw new InvalidOperationException("Not a task.");
@@ -129,8 +151,26 @@ namespace Blueprint41.Persistence
                 Task task = (Task)value;
                 await task.ConfigureAwait(false);
 
-                // Harvest the result. Ugly but works
-                return (T)((dynamic)task).Result;
+                if (wrapper is null)
+                {
+                    // Harvest the result. Ugly but works
+                    return (T)((dynamic)task).Result;
+                }
+                else
+                {
+                    // Harvest and wrap the result. Ugly but works
+                    return wrapper.Invoke((object)((dynamic)task).Result);
+                }
+            }
+
+            public object ToArray(Array items)
+            {
+                Array array = Array.CreateInstance(Type, items.Length);
+
+                for (int index = 0; index < items.Length; index++)
+                    array.SetValue(items.GetValue(index), index);
+
+                return array;
             }
 #nullable enable
         }
@@ -140,7 +180,7 @@ namespace Blueprint41.Persistence
             {
                 _propertyInfo = new Lazy<PropertyInfo>(delegate()
                 {
-                    PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType.Type, (indexer is null) ? null : new Type[] { indexer.Type }, null);
+                    PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
                     if (propertyInfo is not null)
                         return propertyInfo;
 
@@ -153,7 +193,7 @@ namespace Blueprint41.Persistence
                 {
                     foreach (string name in names)
                     {
-                        PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType.Type, (indexer is null) ? null : new Type[] { indexer.Type }, null);
+                        PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
                         if (propertyInfo is not null)
                             return propertyInfo;
                     }
@@ -183,7 +223,7 @@ namespace Blueprint41.Persistence
             {
                 _propertyInfo = new Lazy<PropertyInfo>(delegate ()
                 {
-                    PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance, null, returnType.Type, (indexer is null) ? null : new Type[] { indexer.Type }, null);
+                    PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
                     if (propertyInfo is not null)
                         return propertyInfo;
 
@@ -196,7 +236,7 @@ namespace Blueprint41.Persistence
                 {
                     foreach (string name in names)
                     {
-                        PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance, null, returnType.Type, (indexer is null) ? null : new Type[] { indexer.Type }, null);
+                        PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
                         if (propertyInfo is not null)
                             return propertyInfo;
                     }
@@ -226,7 +266,7 @@ namespace Blueprint41.Persistence
             {
                 _methodInfo = new Lazy<MethodInfo>(delegate ()
                 {
-                    MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Static, null, arguments?.Select(info => info.Type).ToArray(), null);
+                    MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Static, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
                     if (methodInfo?.ReturnType == returnType.Type)
                         return methodInfo;
 
@@ -239,7 +279,7 @@ namespace Blueprint41.Persistence
                 {
                     foreach (string name in names)
                     {
-                        MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Static, null, arguments?.Select(info => info.Type).ToArray(), null);
+                        MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Static, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
                         if (methodInfo?.ReturnType == returnType.Type)
                             return methodInfo;
                     }
@@ -247,9 +287,29 @@ namespace Blueprint41.Persistence
                 }, true);
             }
 
-            public object Invoke(params object[] arguments)
+            public object Invoke()
             {
-                return _methodInfo.Value.Invoke(null, arguments);
+                return _methodInfo.Value.Invoke(null, new object?[0]);
+            }
+            public object Invoke(object? arg1)
+            {
+                return _methodInfo.Value.Invoke(null, new object?[] { arg1 });
+            }
+            public object Invoke(object? arg1, object? arg2)
+            {
+                return _methodInfo.Value.Invoke(null, new object?[] { arg1, arg2 });
+            }
+            public object Invoke(object? arg1, object? arg2, object? arg3)
+            {
+                return _methodInfo.Value.Invoke(null, new object?[] { arg1, arg2, arg3 });
+            }
+            public object Invoke(object? arg1, object? arg2, object? arg3, object? arg4)
+            {
+                return _methodInfo.Value.Invoke(null, new object?[] { arg1, arg2, arg3, arg4 });
+            }
+            public object Invoke(object? arg1, object? arg2, object? arg3, object? arg4, object? arg5)
+            {
+                return _methodInfo.Value.Invoke(null, new object?[] { arg1, arg2, arg3, arg4, arg5 });
             }
             private readonly Lazy<MethodInfo> _methodInfo;
         }
@@ -259,7 +319,7 @@ namespace Blueprint41.Persistence
             {
                 _methodInfo = new Lazy<MethodInfo>(delegate ()
                 {
-                    MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance, null, arguments?.Select(info => info.Type).ToArray(), null);
+                    MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
                     if (methodInfo?.ReturnType == returnType.Type)
                         return methodInfo;
 
@@ -272,7 +332,7 @@ namespace Blueprint41.Persistence
                 {
                     foreach (string name in names)
                     {
-                        MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance, null, arguments?.Select(info => info.Type).ToArray(), null);
+                        MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
                         if (methodInfo?.ReturnType == returnType.Type)
                             return methodInfo;
                     }
@@ -280,9 +340,29 @@ namespace Blueprint41.Persistence
                 }, true);
             }
 
-            public object Invoke(object instance, params object?[] arguments)
+            public object Invoke(object instance)
             {
-                return _methodInfo.Value.Invoke(instance, arguments);
+                return _methodInfo.Value.Invoke(instance, new object?[0]);
+            }
+            public object Invoke(object instance, object? arg1)
+            {
+                return _methodInfo.Value.Invoke(instance, new object?[] { arg1 });
+            }
+            public object Invoke(object instance, object? arg1, object? arg2)
+            {
+                return _methodInfo.Value.Invoke(instance, new object?[] { arg1, arg2 });
+            }
+            public object Invoke(object instance, object? arg1, object? arg2, object? arg3)
+            {
+                return _methodInfo.Value.Invoke(instance, new object?[] { arg1, arg2, arg3 });
+            }
+            public object Invoke(object instance, object? arg1, object? arg2, object? arg3, object? arg4)
+            {
+                return _methodInfo.Value.Invoke(instance, new object?[] { arg1, arg2, arg3, arg4 });
+            }
+            public object Invoke(object instance, object? arg1, object? arg2, object? arg3, object? arg4, object? arg5)
+            {
+                return _methodInfo.Value.Invoke(instance, new object?[] { arg1, arg2, arg3, arg4, arg5 });
             }
             private readonly Lazy<MethodInfo> _methodInfo;
         }
@@ -319,24 +399,31 @@ namespace Blueprint41.Persistence
             private readonly Lazy<FieldInfo> _fieldInfo;
         }
 
+        #endregion
+
+        #region Specific Neo4j Driver Types
+
         internal sealed class IDriverInfo : DriverTypeInfo
         {
             public IDriverInfo(params string[] names) : base (names) { }
 
-            public Task<object> AsyncSession(Driver driver) => AsTask<object>(_asyncSession1.Value.Invoke(driver.Value));
-            private readonly Lazy<InstanceMethod> _asyncSession1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_I_ASYNC_SESSION, "AsyncSession"), true);
+            //bool Encrypted { get; }
 
-            public Task<object> AsyncSession(Driver driver, Action<session_config_builder> configBuilder) => AsTask<object>(_asyncSession2.Value.Invoke(driver.Value, DelegateHelper.WrapDelegate(ACTION_OF_SESSION_BUILDER.Type, (object o) => configBuilder.Invoke(new session_config_builder(o)))));
-            private readonly Lazy<InstanceMethod> _asyncSession2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_I_ASYNC_SESSION, "AsyncSession", ACTION_OF_SESSION_BUILDER), true);
+            public DriverSession AsyncSession(Driver driver) => new DriverSession(_asyncSession1.Value.Invoke(driver.Value));
+            private readonly Lazy<InstanceMethod> _asyncSession1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession"), true);
 
-            public Task DisposeAsync(Driver driver) => AsTask(_disposeAsync.Value.Invoke(driver.Value));
-            private readonly Lazy<InstanceMethod> _disposeAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK, "DisposeAsync", ACTION_OF_SESSION_BUILDER), true);
+            public DriverSession AsyncSession(Driver driver, Action<session_config_builder> configBuilder) => new DriverSession(_asyncSession2.Value.Invoke(driver.Value, DelegateHelper.WrapDelegate(ACTION_OF_SESSION_BUILDER.Type, (object o) => configBuilder.Invoke(new session_config_builder(o)))));
+            private readonly Lazy<InstanceMethod> _asyncSession2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession", ACTION_OF_SESSION_BUILDER), true);
+
+            //Task<IServerInfo> GetServerInfoAsync();
 
             public Task<bool> TryVerifyConnectivityAsync(Driver driver) => AsTask<bool>(_tryVerifyConnectivityAsync.Value.Invoke(driver.Value));
-            private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_BOOL, "TryVerifyConnectivityAsync", ACTION_OF_SESSION_BUILDER), true);
+            private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_BOOLEAN, "TryVerifyConnectivityAsync", ACTION_OF_SESSION_BUILDER), true);
+
+            //Task VerifyConnectivityAsync();
 
             public Task<bool> SupportsMultiDbAsync(Driver driver) => AsTask<bool>(_supportsMultiDbAsync.Value.Invoke(driver.Value));
-            private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_BOOL, "SupportsMultiDbAsync", ACTION_OF_SESSION_BUILDER), true);
+            private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_BOOLEAN, "SupportsMultiDbAsync", ACTION_OF_SESSION_BUILDER), true);
         }
         internal sealed class ConfigBuilderInfo : DriverTypeInfo
         {
@@ -399,50 +486,77 @@ namespace Blueprint41.Persistence
         {
             public AuthTokensInfo(params string[] names) : base(names) { }
 
-            public object None { get => _none.Value.GetValue(); set => _none.Value.SetValue(value); }
+            public AuthToken None { get => new AuthToken(_none.Value.GetValue()); set => _none.Value.SetValue(value.Value); }
             private readonly Lazy<StaticProperty> _none = new Lazy<StaticProperty>(() => new StaticProperty(AUTH_TOKENS, I_AUTH_TOKEN, "None"), true);
 
-            public object Basic(string username, string password) => _basic1.Value.Invoke(username, password);
+            public AuthToken Basic(string username, string password) => new AuthToken(_basic1.Value.Invoke(username, password));
             private readonly Lazy<StaticMethod> _basic1 = new Lazy<StaticMethod>(()=> new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Basic", STRING, STRING), true);
 
-            public object Basic(string username, string password, string realm) => _basic2.Value.Invoke(username, password, realm);
+            public AuthToken Basic(string username, string password, string realm) => new AuthToken(_basic2.Value.Invoke(username, password, realm));
             private readonly Lazy<StaticMethod> _basic2 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Basic", STRING, STRING, STRING), true);
 
-            public object Kerberos(string base64EncodedTicket) => _kerberos.Value.Invoke(base64EncodedTicket);
+            public AuthToken Kerberos(string base64EncodedTicket) => new AuthToken(_kerberos.Value.Invoke(base64EncodedTicket));
             private readonly Lazy<StaticMethod> _kerberos = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Kerberos", STRING), true);
 
-            public object Custom(string principal, string credentials, string realm, string scheme) => _custom1.Value.Invoke(principal, credentials, realm, scheme);
+            public AuthToken Custom(string principal, string credentials, string realm, string scheme) => new AuthToken(_custom1.Value.Invoke(principal, credentials, realm, scheme));
             private readonly Lazy<StaticMethod> _custom1 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Custom", STRING, STRING, STRING, STRING), true);
 
-            public object Custom(string principal, string credentials, string realm, string scheme, Dictionary<string, object> parameters) => _custom2.Value.Invoke(principal, credentials, realm, scheme, parameters);
+            public AuthToken Custom(string principal, string credentials, string realm, string scheme, Dictionary<string, object> parameters) => new AuthToken(_custom2.Value.Invoke(principal, credentials, realm, scheme, parameters));
             private readonly Lazy<StaticMethod> _custom2 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Custom", STRING, STRING, STRING, STRING, DICT_OF_STRING_AND_OBJECT), true);
 
-            public object Bearer(string token) => _bearer.Value.Invoke(token);
+            public AuthToken Bearer(string token) => new AuthToken(_bearer.Value.Invoke(token));
             private readonly Lazy<StaticMethod> _bearer = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Bearer", STRING), true);
         }
         internal sealed class IResultCursorInfo : DriverTypeInfo
         {
             public IResultCursorInfo(params string[] names) : base(names) { }
 
-            //IRecord Current { get; }
-            //bool IsOpen { get; }
-            //Task<string[]> KeysAsync();
-            //Task<IResultSummary> ConsumeAsync();
-            //Task<IRecord> PeekAsync();
-            //Task<bool> FetchAsync();
+            public object Current(object instance) => _current.Value.GetValue(instance); //IRecord Current { get; }
+            private readonly Lazy<InstanceProperty> _current = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_CURSOR, I_RECORD, "Current"), true);
+
+            public bool IsOpen(object instance) => (bool)_isOpen.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _isOpen = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_CURSOR, BOOLEAN, "IsOpen"), true);
+
+            public Task<string[]> KeysAsync(object instance) => AsTask<string[]>(_keysAsync.Value.Invoke(instance));
+            private readonly Lazy<InstanceMethod> _keysAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_STRING_ARRAY, "KeysAsync"), true);
+
+            public Task<DriverResultSummary> ConsumeAsync(object instance) => AsTask(_consumeAsync.Value.Invoke(instance), instance => new DriverResultSummary(instance));
+            private readonly Lazy<InstanceMethod> _consumeAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_I_RESULT_SUMMARY, "ConsumeAsync"), true);
+
+            public Task<object> PeekAsync(object instance) => AsTask<object>(_peekAsync.Value.Invoke(instance));
+            private readonly Lazy<InstanceMethod> _peekAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_I_RECORD, "PeekAsync"), true);
+
+            public Task<bool> FetchAsync(object instance) => AsTask<bool>(_fetchAsync.Value.Invoke(instance));
+            private readonly Lazy<InstanceMethod> _fetchAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_BOOLEAN, "FetchAsync"), true);
+        }
+        internal sealed class IRecord : DriverTypeInfo
+        {
+            public IRecord(params string[] names) : base(names) { }
+
+            public object Item(object instance, int index) => _item1.Value.GetValue(instance, index);
+            private readonly Lazy<InstanceProperty> _item1 = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, OBJECT, "Item", INTEGER), true);
+
+            public object Item(object instance, string key) => _item2.Value.GetValue(instance, key);
+            private readonly Lazy<InstanceProperty> _item2 = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, OBJECT, "Item", STRING), true);
+
+            public IReadOnlyDictionary<string, object?> Values(object instance) => (IReadOnlyDictionary<string, object?>)_values.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _values = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, I_READONLY_DICT_OF_STRING_AND_OBJECT, "Values"), true);
+
+            public IReadOnlyList<string> Keys(object instance) => (IReadOnlyList<string>)_keys.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _keys = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, I_READONLY_LIST_OF_STRING, "Keys"), true);
         }
         internal sealed class IAsyncSessionInfo : DriverTypeInfo
         {
             public IAsyncSessionInfo(params string[] names) : base(names) { }
 
-            public Bookmark[] LastBookmarks(object session) => ((object[])_lastBookmarks.Value.GetValue(session)).Select(item => Bookmark.FromToken(BOOKMARKS.Values(item))).ToArray();
-            private readonly Lazy<InstanceProperty> _lastBookmarks = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ASYNC_SESSION, BOOKMARKS_ARRAY, "LastBookmarks"), true);
+            public Bookmark LastBookmarks(object instance) => Bookmark.FromToken(BOOKMARKS.Values(_lastBookmarks.Value.GetValue(instance)));
+            private readonly Lazy<InstanceProperty> _lastBookmarks = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ASYNC_SESSION, BOOKMARKS, "LastBookmarks"), true);
 
-            public Task<object> BeginTransactionAsync(object session) => AsTask<object>(_beginTransactionAsync1.Value.Invoke(session));
+            public Task<DriverTransaction> BeginTransactionAsync(object instance) => AsTask(_beginTransactionAsync1.Value.Invoke(instance), instance => new DriverTransaction(instance));
             private readonly Lazy<InstanceMethod> _beginTransactionAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, TASK_OF_I_ASYNC_TRANSACTION, "BeginTransactionAsync"), true);
 
-            public Task<object> BeginTransactionAsync(object session, Action<transaction_config_builder> configBuilder) => AsTask<object>(_beginTransactionAsync2.Value.Invoke(session, DelegateHelper.WrapDelegate(TRANSACTION_CONFIG_BUILDER.Type, (object o) => configBuilder.Invoke(new transaction_config_builder(o)))));
-            private readonly Lazy<InstanceMethod> _beginTransactionAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, TASK_OF_I_ASYNC_TRANSACTION, "BeginTransactionAsync", TRANSACTION_CONFIG_BUILDER), true);
+            public Task<DriverTransaction> BeginTransactionAsync(object instance, Action<transaction_config_builder> configBuilder) => AsTask(_beginTransactionAsync2.Value.Invoke(instance, DelegateHelper.WrapDelegate(ACTION_OF_TRANSACTION_BUILDER.Type, (object o) => configBuilder.Invoke(new transaction_config_builder(o)))), instance => new DriverTransaction(instance));
+            private readonly Lazy<InstanceMethod> _beginTransactionAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, TASK_OF_I_ASYNC_TRANSACTION, "BeginTransactionAsync", ACTION_OF_TRANSACTION_BUILDER), true);
         }
         internal sealed class SessionConfigBuilderInfo : DriverTypeInfo
         {
@@ -454,7 +568,7 @@ namespace Blueprint41.Persistence
             public void WithDefaultAccessMode(object instance, object defaultAccessMode) => _withDefaultAccessMode.Value.Invoke(instance, defaultAccessMode);
             private readonly Lazy<InstanceMethod> _withDefaultAccessMode = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithDefaultAccessMode", ACCESS_MODE), true);
 
-            public void WithBookmarks(object instance, params object[] bookmarks) => _withBookmarks.Value.Invoke(instance, bookmarks);
+            public void WithBookmarks(object instance, object[] bookmarks) => _withBookmarks.Value.Invoke(instance, BOOKMARKS.ToArray(bookmarks));
             private readonly Lazy<InstanceMethod> _withBookmarks = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithBookmarks", BOOKMARKS_ARRAY), true);
 
             public void WithFetchSize(object instance, long size) => _withFetchSize.Value.Invoke(instance, size);
@@ -467,8 +581,11 @@ namespace Blueprint41.Persistence
         {
             public IAsyncTransactionInfo(params string[] names) : base(names) { }
 
-            //Task CommitAsync();
-            //Task RollbackAsync();
+            public Task CommitAsync(object instance) => AsTask(_commitAsync.Value.Invoke(instance));
+            private readonly Lazy<InstanceMethod> _commitAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, TASK, "CommitAsync"), true);
+
+            public Task RollbackAsync(object instance) => AsTask(_rollbackAsync.Value.Invoke(instance));
+            private readonly Lazy<InstanceMethod> _rollbackAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, TASK, "RollbackAsync"), true);
         }
         internal sealed class TransactionConfigBuilderInfo : DriverTypeInfo
         {
@@ -484,8 +601,11 @@ namespace Blueprint41.Persistence
         {
             public IAsyncQueryRunnerInfo(params string[] names) : base(names) { }
 
-            //Task<IResultCursor> RunAsync(string query);
-            //Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters);
+            public Task<DriverResultSet> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new DriverResultSet(instance));
+            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, TASK_OF_I_RESULT_CURSOR, "RunAsync", STRING), true);
+
+            public Task<DriverResultSet> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new DriverResultSet(instance));
+            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, TASK_OF_I_RESULT_CURSOR, "RunAsync", STRING, I_DICT_OF_STRING_AND_OBJECT), true);
         }
         internal sealed class AccessModeInfo : DriverTypeInfo
         {
@@ -504,10 +624,15 @@ namespace Blueprint41.Persistence
             public BookmarksInfo(params string[] names) : base(names) { }
 
             public object From(string[] bookmarks) => _from.Value.Invoke(bookmarks);
-            private readonly Lazy<StaticMethod> _from = new Lazy<StaticMethod>(() => new StaticMethod(BOOKMARKS, BOOKMARKS, "From", STRING), true);
+            private readonly Lazy<StaticMethod> _from = new Lazy<StaticMethod>(() => new StaticMethod(BOOKMARKS, BOOKMARKS, "From", STRING_ARRAY), true);
             
             public string[] Values(object instance) => (string[])_values.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _values = new Lazy<InstanceProperty>(() => new InstanceProperty(BOOKMARKS, STRING_ARRAY, "Values"), true);
         }
+
+        #endregion
+
+        public void Dispose() => ((IDisposable)Value).Dispose();
+        public ValueTask DisposeAsync() => ((IAsyncDisposable)Value).DisposeAsync();
     }
 }
