@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using config_builder             = Blueprint41.Persistence.ConfigBuilder;
 using session_config_builder     = Blueprint41.Persistence.SessionConfigBuilder;
@@ -45,6 +46,11 @@ namespace Blueprint41.Persistence
         internal static readonly IAsyncQueryRunnerInfo        I_ASYNC_QUERY_RUNNER          = new IAsyncQueryRunnerInfo("Neo4j.Driver.IAsyncQueryRunner");
         internal static readonly AccessModeInfo               ACCESS_MODE                   = new AccessModeInfo("Neo4j.Driver.AccessMode");
         internal static readonly BookmarksInfo                BOOKMARKS                     = new BookmarksInfo("Neo4j.Driver.Bookmarks");
+
+        internal static readonly DriverTypeInfo               TASK                          = new DriverTypeInfo(typeof(Task));
+        internal static readonly DriverTypeInfo               TASK_OF_BOOL                  = new DriverTypeInfo(typeof(Task<bool>));
+        internal static readonly DriverTypeInfo               TASK_OF_I_ASYNC_SESSION       = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_ASYNC_SESSION.Type));
+        internal static readonly DriverTypeInfo               TASK_OF_I_ASYNC_TRANSACTION   = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_ASYNC_TRANSACTION.Type));
         internal static readonly DriverTypeInfo               BOOKMARKS_ARRAY               = new DriverTypeInfo(() => BOOKMARKS.Type.MakeArrayType());
         
         internal static readonly DriverTypeInfo               VOID                          = new DriverTypeInfo(typeof(void));
@@ -105,6 +111,28 @@ namespace Blueprint41.Persistence
 
                 throw new TypeLoadException($"Custom initialization logic failed to initialize the type.");
             }
+
+
+#nullable disable
+            protected static Task AsTask(object value)
+            {
+                if (value is not Task)
+                    throw new InvalidOperationException("Not a task.");
+
+                return (Task)value;
+            }
+            protected static async Task<T> AsTask<T>(object value)
+            {
+                if (value is not Task)
+                    throw new InvalidOperationException("Not a task.");
+
+                Task task = (Task)value;
+                await task.ConfigureAwait(false);
+
+                // Harvest the result. Ugly but works
+                return (T)((dynamic)task).Result;
+            }
+#nullable enable
         }
         internal sealed class StaticProperty
         {
@@ -295,8 +323,20 @@ namespace Blueprint41.Persistence
         {
             public IDriverInfo(params string[] names) : base (names) { }
 
-            public object AsyncSession(Driver driver, Action<session_config_builder> configBuilder) => _driver.Value.Invoke(driver.Value, DelegateHelper.WrapDelegate(ACTION_OF_SESSION_BUILDER.Type, (object o) => configBuilder.Invoke(new session_config_builder(o))));
-            private readonly Lazy<InstanceMethod> _driver = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession", ACTION_OF_SESSION_BUILDER), true);
+            public Task<object> AsyncSession(Driver driver) => AsTask<object>(_asyncSession1.Value.Invoke(driver.Value));
+            private readonly Lazy<InstanceMethod> _asyncSession1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_I_ASYNC_SESSION, "AsyncSession"), true);
+
+            public Task<object> AsyncSession(Driver driver, Action<session_config_builder> configBuilder) => AsTask<object>(_asyncSession2.Value.Invoke(driver.Value, DelegateHelper.WrapDelegate(ACTION_OF_SESSION_BUILDER.Type, (object o) => configBuilder.Invoke(new session_config_builder(o)))));
+            private readonly Lazy<InstanceMethod> _asyncSession2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_I_ASYNC_SESSION, "AsyncSession", ACTION_OF_SESSION_BUILDER), true);
+
+            public Task DisposeAsync(Driver driver) => AsTask(_disposeAsync.Value.Invoke(driver.Value));
+            private readonly Lazy<InstanceMethod> _disposeAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK, "DisposeAsync", ACTION_OF_SESSION_BUILDER), true);
+
+            public Task<bool> TryVerifyConnectivityAsync(Driver driver) => AsTask<bool>(_tryVerifyConnectivityAsync.Value.Invoke(driver.Value));
+            private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_BOOL, "TryVerifyConnectivityAsync", ACTION_OF_SESSION_BUILDER), true);
+
+            public Task<bool> SupportsMultiDbAsync(Driver driver) => AsTask<bool>(_supportsMultiDbAsync.Value.Invoke(driver.Value));
+            private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_BOOL, "SupportsMultiDbAsync", ACTION_OF_SESSION_BUILDER), true);
         }
         internal sealed class ConfigBuilderInfo : DriverTypeInfo
         {
@@ -383,13 +423,26 @@ namespace Blueprint41.Persistence
         internal sealed class IResultCursorInfo : DriverTypeInfo
         {
             public IResultCursorInfo(params string[] names) : base(names) { }
+
+            //IRecord Current { get; }
+            //bool IsOpen { get; }
+            //Task<string[]> KeysAsync();
+            //Task<IResultSummary> ConsumeAsync();
+            //Task<IRecord> PeekAsync();
+            //Task<bool> FetchAsync();
         }
         internal sealed class IAsyncSessionInfo : DriverTypeInfo
         {
             public IAsyncSessionInfo(params string[] names) : base(names) { }
 
-            public object BeginTransactionAsync(object session, Action<transaction_config_builder> configBuilder) => _driver.Value.Invoke(session, DelegateHelper.WrapDelegate(TRANSACTION_CONFIG_BUILDER.Type, (object o) => configBuilder.Invoke(new transaction_config_builder(o))));
-            private readonly Lazy<InstanceMethod> _driver = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, I_ASYNC_TRANSACTION, "BeginTransactionAsync", TRANSACTION_CONFIG_BUILDER), true);
+            public Bookmark[] LastBookmarks(object session) => ((object[])_lastBookmarks.Value.GetValue(session)).Select(item => Bookmark.FromToken(BOOKMARKS.Values(item))).ToArray();
+            private readonly Lazy<InstanceProperty> _lastBookmarks = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ASYNC_SESSION, BOOKMARKS_ARRAY, "LastBookmarks"), true);
+
+            public Task<object> BeginTransactionAsync(object session) => AsTask<object>(_beginTransactionAsync1.Value.Invoke(session));
+            private readonly Lazy<InstanceMethod> _beginTransactionAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, TASK_OF_I_ASYNC_TRANSACTION, "BeginTransactionAsync"), true);
+
+            public Task<object> BeginTransactionAsync(object session, Action<transaction_config_builder> configBuilder) => AsTask<object>(_beginTransactionAsync2.Value.Invoke(session, DelegateHelper.WrapDelegate(TRANSACTION_CONFIG_BUILDER.Type, (object o) => configBuilder.Invoke(new transaction_config_builder(o)))));
+            private readonly Lazy<InstanceMethod> _beginTransactionAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, TASK_OF_I_ASYNC_TRANSACTION, "BeginTransactionAsync", TRANSACTION_CONFIG_BUILDER), true);
         }
         internal sealed class SessionConfigBuilderInfo : DriverTypeInfo
         {
@@ -413,6 +466,9 @@ namespace Blueprint41.Persistence
         internal sealed class IAsyncTransactionInfo : DriverTypeInfo
         {
             public IAsyncTransactionInfo(params string[] names) : base(names) { }
+
+            //Task CommitAsync();
+            //Task RollbackAsync();
         }
         internal sealed class TransactionConfigBuilderInfo : DriverTypeInfo
         {
@@ -427,6 +483,9 @@ namespace Blueprint41.Persistence
         internal sealed class IAsyncQueryRunnerInfo : DriverTypeInfo
         {
             public IAsyncQueryRunnerInfo(params string[] names) : base(names) { }
+
+            //Task<IResultCursor> RunAsync(string query);
+            //Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters);
         }
         internal sealed class AccessModeInfo : DriverTypeInfo
         {
