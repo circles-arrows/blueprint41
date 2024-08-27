@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Persistence
 {
-    public class DriverResultSet
+    public class DriverRecordSet
     {
-        internal DriverResultSet(object value)
+        internal DriverRecordSet(object value)
         {
             Value = value;
         }
@@ -18,5 +18,18 @@ namespace Blueprint41.Persistence
         public Task<DriverResultSummary> ConsumeAsync() => Driver.I_RESULT_CURSOR.ConsumeAsync(Value);
         public Task<object> PeekAsync() => Driver.I_RESULT_CURSOR.PeekAsync(Value);
         public Task<bool> FetchAsync() => Driver.I_RESULT_CURSOR.FetchAsync(Value);
+
+        public async Task<List<object>> ToList()
+        {
+            List<object> records = new List<object>(64);
+
+            if (Value is not null)
+            {
+                while (await FetchAsync())
+                    records.Add(Current);
+            }
+
+            return records;
+        }
     }
 }
