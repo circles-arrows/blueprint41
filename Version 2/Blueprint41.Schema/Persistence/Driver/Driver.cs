@@ -56,7 +56,7 @@ namespace Blueprint41.Persistence
         internal static readonly TransactionConfigBuilderInfo TRANSACTION_CONFIG_BUILDER           = new TransactionConfigBuilderInfo("Neo4j.Driver.TransactionConfigBuilder");
         internal static readonly IAsyncQueryRunnerInfo        I_ASYNC_QUERY_RUNNER                 = new IAsyncQueryRunnerInfo("Neo4j.Driver.IAsyncQueryRunner");
         internal static readonly AccessModeInfo               ACCESS_MODE                          = new AccessModeInfo("Neo4j.Driver.AccessMode");
-        internal static readonly BookmarksInfo                BOOKMARKS                            = new BookmarksInfo("Neo4j.Driver.Bookmarks");
+        internal static readonly BookmarksInfo                BOOKMARKS                            = new BookmarksInfo("Neo4j.Driver.Bookmarks", "Neo4j.Driver.Bookmark");
 
         internal static readonly DriverTypeInfo               TASK                                 = new DriverTypeInfo(typeof(Task));
         internal static readonly DriverTypeInfo               TASK_OF_BOOLEAN                      = new DriverTypeInfo(typeof(Task<bool>));
@@ -67,7 +67,7 @@ namespace Blueprint41.Persistence
         internal static readonly DriverTypeInfo               TASK_OF_I_RESULT_SUMMARY             = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_RESULT_SUMMARY.Type));
         internal static readonly DriverTypeInfo               TASK_OF_I_RECORD                     = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_RECORD.Type));
         internal static readonly DriverTypeInfo               BOOKMARKS_ARRAY                      = new DriverTypeInfo(() => BOOKMARKS.Type.MakeArrayType());
-        
+
         internal static readonly DriverTypeInfo               VOID                                 = new DriverTypeInfo(typeof(void));
         internal static readonly DriverTypeInfo               OBJECT                               = new DriverTypeInfo(typeof(object));
         internal static readonly DriverTypeInfo               BOOLEAN                              = new DriverTypeInfo(typeof(bool));
@@ -119,6 +119,8 @@ namespace Blueprint41.Persistence
 
             public Type Type => _typeInit.Value ?? Throw();
             private readonly Lazy<Type?> _typeInit;
+
+            public bool Exists => (_typeInit.Value is not null);
 
             public string? Names { get; private set; }
 
@@ -178,18 +180,18 @@ namespace Blueprint41.Persistence
         {
             internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null)
             {
-                _propertyInfo = new Lazy<PropertyInfo>(delegate()
+                _propertyInfo = new Lazy<PropertyInfo?>(delegate()
                 {
                     PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
                     if (propertyInfo is not null)
                         return propertyInfo;
 
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
             internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null)
             {
-                _propertyInfo = new Lazy<PropertyInfo>(delegate ()
+                _propertyInfo = new Lazy<PropertyInfo?>(delegate ()
                 {
                     foreach (string name in names)
                     {
@@ -197,42 +199,46 @@ namespace Blueprint41.Persistence
                         if (propertyInfo is not null)
                             return propertyInfo;
                     }
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
+
+            public bool Exists => (_propertyInfo.Value is not null);
 
             public object GetValue(object? index = null)
             {
                 if (index is null)
-                    return _propertyInfo.Value.GetValue(null);
+                    return PropertyInfo.GetValue(null);
                 else
-                    return _propertyInfo.Value.GetValue(null, new object[] { index });
+                    return PropertyInfo.GetValue(null, new object[] { index });
             }
             public void SetValue(object? value, object? index = null)
             {
                 if (index is null)
-                    _propertyInfo.Value.SetValue(null, value);
+                    PropertyInfo.SetValue(null, value);
                 else
-                    _propertyInfo.Value.SetValue(null, value, new object[] { index });
+                    PropertyInfo.SetValue(null, value, new object[] { index });
             }
-            private readonly Lazy<PropertyInfo> _propertyInfo;
+
+            private PropertyInfo PropertyInfo => _propertyInfo.Value ?? throw new MissingMethodException();
+            private readonly Lazy<PropertyInfo?> _propertyInfo;
         }
         internal sealed class InstanceProperty
         {
             internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null)
             {
-                _propertyInfo = new Lazy<PropertyInfo>(delegate ()
+                _propertyInfo = new Lazy<PropertyInfo?>(delegate ()
                 {
                     PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
                     if (propertyInfo is not null)
                         return propertyInfo;
 
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
             internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null)
             {
-                _propertyInfo = new Lazy<PropertyInfo>(delegate ()
+                _propertyInfo = new Lazy<PropertyInfo?>(delegate ()
                 {
                     foreach (string name in names)
                     {
@@ -240,42 +246,46 @@ namespace Blueprint41.Persistence
                         if (propertyInfo is not null)
                             return propertyInfo;
                     }
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
+
+            public bool Exists => (_propertyInfo.Value is not null);
 
             public object GetValue(object instance, object? index = null)
             {
                 if (index is null)
-                    return _propertyInfo.Value.GetValue(instance);
+                    return PropertyInfo.GetValue(instance);
                 else
-                    return _propertyInfo.Value.GetValue(instance, new object[] { index });
+                    return PropertyInfo.GetValue(instance, new object[] { index });
             }
             public void SetValue(object instance, object? value, object? index = null)
             {
                 if (index is null)
-                    _propertyInfo.Value.SetValue(instance, value);
+                    PropertyInfo.SetValue(instance, value);
                 else
-                    _propertyInfo.Value.SetValue(instance, value, new object[] { index });
+                    PropertyInfo.SetValue(instance, value, new object[] { index });
             }
-            private readonly Lazy<PropertyInfo> _propertyInfo;
+
+            private PropertyInfo PropertyInfo => _propertyInfo.Value ?? throw new MissingMethodException();
+            private readonly Lazy<PropertyInfo?> _propertyInfo;
         }
         internal sealed class StaticMethod
         {
             internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments)
             {
-                _methodInfo = new Lazy<MethodInfo>(delegate ()
+                _methodInfo = new Lazy<MethodInfo?>(delegate ()
                 {
                     MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Static, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
                     if (methodInfo?.ReturnType == returnType.Type)
                         return methodInfo;
 
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
             internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, params DriverTypeInfo[] arguments)
             {
-                _methodInfo = new Lazy<MethodInfo>(delegate ()
+                _methodInfo = new Lazy<MethodInfo?>(delegate ()
                 {
                     foreach (string name in names)
                     {
@@ -283,52 +293,56 @@ namespace Blueprint41.Persistence
                         if (methodInfo?.ReturnType == returnType.Type)
                             return methodInfo;
                     }
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
 
+            public bool Exists => (_methodInfo.Value is not null);
+
             public object Invoke()
             {
-                return _methodInfo.Value.Invoke(null, new object?[0]);
+                return MethodInfo.Invoke(null, new object?[0]);
             }
             public object Invoke(object? arg1)
             {
-                return _methodInfo.Value.Invoke(null, new object?[] { arg1 });
+                return MethodInfo.Invoke(null, new object?[] { arg1 });
             }
             public object Invoke(object? arg1, object? arg2)
             {
-                return _methodInfo.Value.Invoke(null, new object?[] { arg1, arg2 });
+                return MethodInfo.Invoke(null, new object?[] { arg1, arg2 });
             }
             public object Invoke(object? arg1, object? arg2, object? arg3)
             {
-                return _methodInfo.Value.Invoke(null, new object?[] { arg1, arg2, arg3 });
+                return MethodInfo.Invoke(null, new object?[] { arg1, arg2, arg3 });
             }
             public object Invoke(object? arg1, object? arg2, object? arg3, object? arg4)
             {
-                return _methodInfo.Value.Invoke(null, new object?[] { arg1, arg2, arg3, arg4 });
+                return MethodInfo.Invoke(null, new object?[] { arg1, arg2, arg3, arg4 });
             }
             public object Invoke(object? arg1, object? arg2, object? arg3, object? arg4, object? arg5)
             {
-                return _methodInfo.Value.Invoke(null, new object?[] { arg1, arg2, arg3, arg4, arg5 });
+                return MethodInfo.Invoke(null, new object?[] { arg1, arg2, arg3, arg4, arg5 });
             }
-            private readonly Lazy<MethodInfo> _methodInfo;
+
+            private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
+            private readonly Lazy<MethodInfo?> _methodInfo; 
         }
         internal sealed class InstanceMethod
         {
             internal InstanceMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments)
             {
-                _methodInfo = new Lazy<MethodInfo>(delegate ()
+                _methodInfo = new Lazy<MethodInfo?>(delegate ()
                 {
                     MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
                     if (methodInfo?.ReturnType == returnType.Type)
                         return methodInfo;
 
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
             internal InstanceMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, params DriverTypeInfo[] arguments)
             {
-                _methodInfo = new Lazy<MethodInfo>(delegate ()
+                _methodInfo = new Lazy<MethodInfo?>(delegate ()
                 {
                     foreach (string name in names)
                     {
@@ -336,52 +350,56 @@ namespace Blueprint41.Persistence
                         if (methodInfo?.ReturnType == returnType.Type)
                             return methodInfo;
                     }
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
 
+            public bool Exists => (_methodInfo.Value is not null);
+
             public object Invoke(object instance)
             {
-                return _methodInfo.Value.Invoke(instance, new object?[0]);
+                return MethodInfo.Invoke(instance, new object?[0]);
             }
             public object Invoke(object instance, object? arg1)
             {
-                return _methodInfo.Value.Invoke(instance, new object?[] { arg1 });
+                return MethodInfo.Invoke(instance, new object?[] { arg1 });
             }
             public object Invoke(object instance, object? arg1, object? arg2)
             {
-                return _methodInfo.Value.Invoke(instance, new object?[] { arg1, arg2 });
+                return MethodInfo.Invoke(instance, new object?[] { arg1, arg2 });
             }
             public object Invoke(object instance, object? arg1, object? arg2, object? arg3)
             {
-                return _methodInfo.Value.Invoke(instance, new object?[] { arg1, arg2, arg3 });
+                return MethodInfo.Invoke(instance, new object?[] { arg1, arg2, arg3 });
             }
             public object Invoke(object instance, object? arg1, object? arg2, object? arg3, object? arg4)
             {
-                return _methodInfo.Value.Invoke(instance, new object?[] { arg1, arg2, arg3, arg4 });
+                return MethodInfo.Invoke(instance, new object?[] { arg1, arg2, arg3, arg4 });
             }
             public object Invoke(object instance, object? arg1, object? arg2, object? arg3, object? arg4, object? arg5)
             {
-                return _methodInfo.Value.Invoke(instance, new object?[] { arg1, arg2, arg3, arg4, arg5 });
+                return MethodInfo.Invoke(instance, new object?[] { arg1, arg2, arg3, arg4, arg5 });
             }
-            private readonly Lazy<MethodInfo> _methodInfo;
+
+            private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
+            private readonly Lazy<MethodInfo?> _methodInfo;
         }
         internal sealed class EnumField
         {
             internal EnumField(DriverTypeInfo parent, string name)
             {
-                _fieldInfo = new Lazy<FieldInfo>(delegate ()
+                _fieldInfo = new Lazy<FieldInfo?>(delegate ()
                 {
                     FieldInfo? fieldInfo = parent.Type.GetFields().FirstOrDefault(fi => fi.IsLiteral && fi.Name == name);
                     if (fieldInfo is not null)
                         return fieldInfo;
 
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
             internal EnumField(DriverTypeInfo parent, string[] names)
             {
-                _fieldInfo = new Lazy<FieldInfo>(delegate ()
+                _fieldInfo = new Lazy<FieldInfo?>(delegate ()
                 {
                     foreach (string name in names)
                     {
@@ -389,14 +407,17 @@ namespace Blueprint41.Persistence
                         if (fieldInfo is not null)
                             return fieldInfo;
                     }
-                    throw new MissingMethodException();
+                    return null;
                 }, true);
             }
 
-            public object Value => _fieldInfo.Value.GetRawConstantValue();
+            public bool Exists => (_fieldInfo.Value is not null);
+
+            public object Value => FieldInfo.GetRawConstantValue();
             public bool Test(object instance) => Value == instance;
 
-            private readonly Lazy<FieldInfo> _fieldInfo;
+            private FieldInfo FieldInfo => _fieldInfo.Value ?? throw new MissingMethodException();
+            private readonly Lazy<FieldInfo?> _fieldInfo;
         }
 
         #endregion
@@ -550,7 +571,7 @@ namespace Blueprint41.Persistence
             public IAsyncSessionInfo(params string[] names) : base(names) { }
 
             public Bookmark LastBookmarks(object instance) => Bookmark.FromToken(BOOKMARKS.Values(_lastBookmarks.Value.GetValue(instance)));
-            private readonly Lazy<InstanceProperty> _lastBookmarks = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ASYNC_SESSION, BOOKMARKS, "LastBookmarks"), true);
+            private readonly Lazy<InstanceProperty> _lastBookmarks = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ASYNC_SESSION, BOOKMARKS, new string[] { "LastBookmarks", "LastBookmark" }), true);
 
             public Task<DriverTransaction> BeginTransactionAsync(object instance) => AsTask(_beginTransactionAsync1.Value.Invoke(instance), instance => new DriverTransaction(instance));
             private readonly Lazy<InstanceMethod> _beginTransactionAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, TASK_OF_I_ASYNC_TRANSACTION, "BeginTransactionAsync"), true);
@@ -591,8 +612,15 @@ namespace Blueprint41.Persistence
         {
             public TransactionConfigBuilderInfo(params string[] names) : base(names) { }
 
-            public void WithTimeout(object instance, TimeSpan? timeout) => _withTimeout.Value.Invoke(instance, timeout);
-            private readonly Lazy<InstanceMethod> _withTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", NULLABLE_TIMESPAN), true);
+            public void WithTimeout(object instance, TimeSpan? timeout)
+            {
+                if (_withTimeout.Value.Exists)
+                    _withTimeout.Value.Invoke(instance, timeout);
+                else
+                    _withTimeoutOld.Value.Invoke(instance, timeout ?? TimeSpan.Zero);
+            }
+            private readonly Lazy<InstanceMethod> _withTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", NULLABLE_TIMESPAN), true); // Driver 5
+            private readonly Lazy<InstanceMethod> _withTimeoutOld = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", TIMESPAN), true); // Driver 4
 
             public void WithMetadata(object instance, IDictionary<string, object> metadata) => _withMetadata.Value.Invoke(instance, metadata);
             private readonly Lazy<InstanceMethod> _withMetadata = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithMetadata", I_DICT_OF_STRING_AND_OBJECT), true);
