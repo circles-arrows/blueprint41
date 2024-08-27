@@ -6,7 +6,7 @@ namespace Blueprint41.Persistence
 {
     public sealed class AuthToken
     {
-        private AuthToken(object value)
+        internal AuthToken(object value)
         {
             Value = value;
         }
@@ -20,7 +20,7 @@ namespace Blueprint41.Persistence
         //
         // Remarks:
         //     Neo4j.Driver.GraphDatabase.Driver(System.String,Neo4j.Driver.IAuthToken,System.Action{Neo4j.Driver.ConfigBuilder})
-        public static AuthToken None => new AuthToken(Driver.AUTH_TOKENS.None);
+        public static AuthToken None => Driver.AUTH_TOKENS.None;
 
         //
         // Summary:
@@ -38,7 +38,7 @@ namespace Blueprint41.Persistence
         //
         // Remarks:
         //     Neo4j.Driver.GraphDatabase.Driver(System.String,Neo4j.Driver.IAuthToken,System.Action{Neo4j.Driver.ConfigBuilder})
-        public static AuthToken Basic(string username, string password) => new AuthToken(Driver.AUTH_TOKENS.Basic(username, password));
+        public static AuthToken Basic(string username, string password) => Driver.AUTH_TOKENS.Basic(username, password);
 
         //
         // Summary:
@@ -60,7 +60,7 @@ namespace Blueprint41.Persistence
         //
         // Remarks:
         //     Neo4j.Driver.GraphDatabase.Driver(System.String,Neo4j.Driver.IAuthToken,System.Action{Neo4j.Driver.ConfigBuilder})
-        public static AuthToken Basic(string username, string password, string realm) => new AuthToken(Driver.AUTH_TOKENS.Basic(username, password, realm));
+        public static AuthToken Basic(string username, string password, string realm) => Driver.AUTH_TOKENS.Basic(username, password, realm);
 
         //
         // Summary:
@@ -75,7 +75,7 @@ namespace Blueprint41.Persistence
         //
         // Remarks:
         //     Neo4j.Driver.GraphDatabase.Driver(System.String,Neo4j.Driver.IAuthToken,System.Action{Neo4j.Driver.ConfigBuilder})
-        public static AuthToken Kerberos(string base64EncodedTicket) => new AuthToken(Driver.AUTH_TOKENS.Kerberos(base64EncodedTicket));
+        public static AuthToken Kerberos(string base64EncodedTicket) => Driver.AUTH_TOKENS.Kerberos(base64EncodedTicket);
 
         //
         // Summary:
@@ -102,7 +102,7 @@ namespace Blueprint41.Persistence
         //
         // Remarks:
         //     Neo4j.Driver.GraphDatabase.Driver(System.String,Neo4j.Driver.IAuthToken,System.Action{Neo4j.Driver.ConfigBuilder})
-        public static AuthToken Custom(string principal, string credentials, string realm, string scheme) => new AuthToken(Driver.AUTH_TOKENS.Custom(principal, credentials, realm, scheme));
+        public static AuthToken Custom(string principal, string credentials, string realm, string scheme) => Driver.AUTH_TOKENS.Custom(principal, credentials, realm, scheme);
 
         //
         // Summary:
@@ -133,7 +133,7 @@ namespace Blueprint41.Persistence
         //
         // Remarks:
         //     Neo4j.Driver.GraphDatabase.Driver(System.String,Neo4j.Driver.IAuthToken,System.Action{Neo4j.Driver.ConfigBuilder})
-        public static AuthToken Custom(string principal, string credentials, string realm, string scheme, Dictionary<string, object> parameters) => new AuthToken(Driver.AUTH_TOKENS.Custom(principal, credentials, realm, scheme, parameters));
+        public static AuthToken Custom(string principal, string credentials, string realm, string scheme, Dictionary<string, object> parameters) => Driver.AUTH_TOKENS.Custom(principal, credentials, realm, scheme, parameters);
 
         //
         // Summary:
@@ -150,6 +150,6 @@ namespace Blueprint41.Persistence
         //
         // Remarks:
         //     Neo4j.Driver.GraphDatabase.Driver(System.String,Neo4j.Driver.IAuthToken,System.Action{Neo4j.Driver.ConfigBuilder})
-        public static AuthToken Bearer(string token) => new AuthToken(Driver.AUTH_TOKENS.Bearer(token));
+        public static AuthToken Bearer(string token) => Driver.AUTH_TOKENS.Bearer(token);
     }
 }

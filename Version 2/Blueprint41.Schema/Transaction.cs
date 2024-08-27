@@ -337,8 +337,7 @@ namespace Blueprint41
         public OptimizeFor OptimizeFor { get; private set; }
         public ReadWriteMode ReadWriteMode { get; private set; }
 
-        public virtual Bookmark GetConsistency() => NullConsistency;
-        private static readonly Bookmark NullConsistency = new Bookmark();
+        public virtual Bookmark GetConsistency() => Bookmark.NullBookmark;
 
         public bool DisableForeignKeyChecks { get; set; }
 
