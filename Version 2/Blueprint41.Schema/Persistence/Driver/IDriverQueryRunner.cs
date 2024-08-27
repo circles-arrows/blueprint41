@@ -6,7 +6,7 @@ namespace Blueprint41.Persistence
 {
     public interface IDriverQueryRunner
     {
-        Task<DriverResultSet> RunAsync(string query);
-        Task<DriverResultSet> RunAsync(string query, Dictionary<string, object?> parameters);
+        Task<DriverRecordSet> RunAsync(string query);
+        Task<DriverRecordSet> RunAsync(string query, Dictionary<string, object?> parameters);
     }
 }

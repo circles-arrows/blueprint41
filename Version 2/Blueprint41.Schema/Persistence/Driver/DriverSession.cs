@@ -19,8 +19,8 @@ namespace Blueprint41.Persistence
         public Task<DriverTransaction> BeginTransactionAsync() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(Value);
         public Task<DriverTransaction> BeginTransactionAsync(Action<TransactionConfigBuilder> configBuilder) => Driver.I_ASYNC_SESSION.BeginTransactionAsync(Value, configBuilder);
 
-        public Task<DriverResultSet> RunAsync(string query) => Driver.I_ASYNC_QUERY_RUNNER.RunAsync(Value, query);
-        public Task<DriverResultSet> RunAsync(string query, Dictionary<string, object?> parameters) => Driver.I_ASYNC_QUERY_RUNNER.RunAsync(Value, query, parameters);
+        public Task<DriverRecordSet> RunAsync(string query) => Driver.I_ASYNC_QUERY_RUNNER.RunAsync(Value, query);
+        public Task<DriverRecordSet> RunAsync(string query, Dictionary<string, object?> parameters) => Driver.I_ASYNC_QUERY_RUNNER.RunAsync(Value, query, parameters);
 
         public void Dispose() => ((IDisposable)Value).Dispose();
         public ValueTask DisposeAsync() => ((IAsyncDisposable)Value).DisposeAsync();

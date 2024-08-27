@@ -629,10 +629,10 @@ namespace Blueprint41.Persistence
         {
             public IAsyncQueryRunnerInfo(params string[] names) : base(names) { }
 
-            public Task<DriverResultSet> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new DriverResultSet(instance));
+            public Task<DriverRecordSet> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new DriverRecordSet(instance));
             private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, TASK_OF_I_RESULT_CURSOR, "RunAsync", STRING), true);
 
-            public Task<DriverResultSet> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new DriverResultSet(instance));
+            public Task<DriverRecordSet> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new DriverRecordSet(instance));
             private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, TASK_OF_I_RESULT_CURSOR, "RunAsync", STRING, I_DICT_OF_STRING_AND_OBJECT), true);
         }
         internal sealed class AccessModeInfo : DriverTypeInfo

@@ -157,6 +157,44 @@ namespace Laboratory
 
             #endregion
 
+            /* 
+            Missing:
+
+            ResultSet -> 
+            ResultSet -> Summary
+            ResultSet -> Notifications
+
+            ResultSet -> IsOpen
+            ResultSet -> KeysAsync()
+            ResultSet -> ConsumeAsync()     -> ResultSummary
+            ResultSet -> PeekAsync()
+            ResultSet -> FetchAsync()
+
+            Record -> Item
+            Record -> Keys
+
+            ResultSummary -> BINDINGS MISSING
+            INode         -> BINDINGS MISSING
+            IRelationship -> BINDINGS MISSING
+
+            INode -> ElementId;
+            INode -> Labels
+            INode -> Properties
+            INode -> Node[key]
+            INode -> Equals(INode other)
+            IsINode(object instance)
+
+            IRelationship -> Id              ?ElementId?
+            IRelationship -> Type
+            IRelationship -> StartNodeId     ?ElementId?
+            IRelationship -> EndNodeId       ?ElementId?
+            IRelationship -> Properties
+            IRelationship -> Relationship[key]
+            IRelationship -> Equals(IRelationship other)
+            IsIRelationship(object instance)
+
+             */
+
 
             //MockModel model = MockModel.Connect(uri, AuthToken.Basic(username, password), database, config);
             //model.Execute(true);

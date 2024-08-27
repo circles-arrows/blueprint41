@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Kerberos.NET" Version="4.6.64" />
-    <PackageReference Include="Neo4j.Driver.Signed" Version="4.4.0" />
+    <PackageReference Include="Neo4j.Driver.Signed" Version="5.23.0" />
   </ItemGroup>
 
   <ItemGroup>
