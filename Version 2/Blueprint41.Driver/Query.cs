@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Persistence
+namespace Blueprint41.Driver
 {
-    public class DriverQuery
+    public class Query
     {
-        public DriverQuery(object value)
+        public Query(object value)
         {
             Value = value;
         }

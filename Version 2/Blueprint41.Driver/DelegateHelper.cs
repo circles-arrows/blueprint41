@@ -11,7 +11,7 @@ namespace Blueprint41.Core
     ///   TODO: Add extra contracts to reenforce correct usage.
     /// </summary>
     /// <author>Steven Jeuris</author>
-    public static class DelegateHelper
+    internal static class DelegateHelper
     {
         /// <summary>
         ///   Options which specify what type of delegate should be created.

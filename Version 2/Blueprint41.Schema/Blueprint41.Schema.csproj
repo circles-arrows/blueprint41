@@ -68,6 +68,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Driver\Blueprint41.Driver.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="DatastoreTemplates\Domain_Data_Entity_Relation.tt">
       <LastGenOutput>Domain_Data_Entity_Relation.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>

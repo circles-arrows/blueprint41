@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+    <ProjectReference Include="..\Blueprint41.Driver\Blueprint41.Driver.csproj" />
     <ProjectReference Include="..\DatastoreBP41v2\DatastoreBP41v2.csproj" />
   </ItemGroup>
 

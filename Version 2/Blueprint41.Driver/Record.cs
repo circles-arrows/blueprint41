@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Persistence
+namespace Blueprint41.Driver
 {
-    public class DriverRecord
+    public class Record
     {
         public static object Item(object neo4jRecord, int index) => Driver.I_RECORD.Item(neo4jRecord, index);
         public static object Item(object neo4jRecord, string key) => Driver.I_RECORD.Item(neo4jRecord, key);

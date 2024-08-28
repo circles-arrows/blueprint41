@@ -2,16 +2,27 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Persistence
+namespace Blueprint41.Driver
 {
-    public class DriverResultSummary
+    public class ResultSummary
     {
-        internal DriverResultSummary(object value)
+        internal ResultSummary(object value)
         {
             Value = value;
         }
         internal object Value { get; private set; }
 
+        public Query Query => Driver.I_RESULT_SUMMARY.Query(Value);
+
+        ////
+        //// Summary:
+        ////     Gets query that has been executed.
+        //Query Query { get; }
+
+        ////
+        //// Summary:
+        ////     Gets statistics counts for the query.
+        //ICounters Counters { get; }
         public DriverQuery Query => Driver.I_RESULT_SUMMARY.Query(Value);
         public DriverCounters Counters => Driver.I_RESULT_SUMMARY.Counters(Value);
 
