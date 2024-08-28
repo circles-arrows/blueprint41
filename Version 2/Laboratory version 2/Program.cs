@@ -116,7 +116,8 @@ namespace Laboratory
                     {
 
                         DriverRecordSet result = await transaction.RunAsync(query).ConfigureAwait(false);
-                        await result.ConsumeAsync().ConfigureAwait(false);
+                        DriverResultSummary resultSummary = await result.ConsumeAsync().ConfigureAwait(false);
+                        System.Diagnostics.Debug.WriteLine(resultSummary.Query.Text);
 
                         await transaction.CommitAsync();
                     }
