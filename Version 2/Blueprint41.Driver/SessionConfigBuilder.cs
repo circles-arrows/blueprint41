@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Blueprint41.Persistence
+namespace Blueprint41.Driver
 {
     public sealed class SessionConfigBuilder
     {
@@ -19,12 +19,12 @@ namespace Blueprint41.Persistence
             return this;
         }
 
-        public SessionConfigBuilder WithDefaultAccessMode(ReadWriteMode defaultAccessMode)
+        public SessionConfigBuilder WithDefaultAccessMode(AccessMode defaultAccessMode)
         {
             object readwrite = defaultAccessMode switch
             {
-                ReadWriteMode.ReadWrite => Driver.ACCESS_MODE.Write,
-                ReadWriteMode.ReadOnly  => Driver.ACCESS_MODE.Read,
+                AccessMode.Read  => Driver.ACCESS_MODE.Read,
+                AccessMode.Write => Driver.ACCESS_MODE.Write,
                 _ => throw new NotSupportedException()
             };
 
@@ -32,11 +32,9 @@ namespace Blueprint41.Persistence
             return this;
         }
 
-        public SessionConfigBuilder WithBookmarks(params Bookmark[] bookmarks)
+        public SessionConfigBuilder WithBookmarks(params Bookmarks[] bookmarks)
         {
-            object[] tokens = bookmarks.Select(item => Driver.BOOKMARKS.From(item.ToToken())).ToArray();
-
-            Driver.SESSION_CONFIG_BUILDER.WithBookmarks(Value, tokens);
+            Driver.SESSION_CONFIG_BUILDER.WithBookmarks(Value, bookmarks);
             return this;
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 
 using Blueprint41.Core;
+using Blueprint41.Driver;
 using Blueprint41.Refactoring;
 using Blueprint41.Refactoring.Schema;
 

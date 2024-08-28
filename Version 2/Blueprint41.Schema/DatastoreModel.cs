@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Force.Crc32;
 
 using Blueprint41.Core;
+using Blueprint41.Driver;
 using Blueprint41.Refactoring;
 using model = Blueprint41.Model;
 using Blueprint41.Refactoring.Schema;

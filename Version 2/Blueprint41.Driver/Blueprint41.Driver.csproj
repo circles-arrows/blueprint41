@@ -2,8 +2,8 @@
 
   <PropertyGroup Label="Build">
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <RootNamespace>Blueprint41.Query</RootNamespace>
-    <AssemblyName>Blueprint41.Query</AssemblyName>
+    <RootNamespace>Blueprint41.Driver</RootNamespace>
+    <AssemblyName>Blueprint41.Driver</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -23,8 +23,8 @@
 
   <PropertyGroup Label="Package">
     <PackageVersion>2.0.0</PackageVersion>
-    <PackageId>Blueprint41.Query</PackageId>
-    <Title>Blueprint41.Query</Title>
+    <PackageId>Blueprint41.Driver</PackageId>
+    <Title>Blueprint41.Driver</Title>
     <Authors>Circles Arrows</Authors>
     <Description>An Object Graph Mapper for CSharp to connect to Neo4j or Memgraph. It has support for defining the object model as a schema. It support refactor scripts written in CSharp, which you can add to your project. When you run your program and the graph is of an older version, the upgrade script will automatically be executed against the graph. It also support generation of type-safe data objects, so you know at compile time if your code is compatible with the latest upgrades.</Description>
     <Copyright>Copyright 2017, 2024 (c) Circles Arrows</Copyright>
@@ -50,25 +50,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Docs\**" />
-    <Compile Remove="Nuget\**" />
-    <EmbeddedResource Remove="Docs\**" />
-    <EmbeddedResource Remove="Nuget\**" />
-    <None Remove="Docs\**" />
-    <None Remove="Nuget\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Crc32.NET" Version="1.*" />
-    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.*" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.CodeDom" Version="4.*" />
-    <PackageReference Include="System.Text.Json" Version="6.*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 
 </Project>

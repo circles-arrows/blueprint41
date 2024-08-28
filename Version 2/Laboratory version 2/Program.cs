@@ -6,8 +6,7 @@ using System.IO;
 
 using Kerberos.NET.Win32;
 
-using Blueprint41;
-using Blueprint41.Persistence;
+using Blueprint41.Driver;
 
 using DataStore;
 
@@ -55,17 +54,17 @@ namespace Laboratory
 
             #region Test Running a Query on the Session
 
-            Bookmark bookmark;
+            Bookmarks bookmark;
 
             await CleanDB().ConfigureAwait(false);
 
-            await using (DriverSession session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(ReadWriteMode.ReadWrite); }))
+            await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
             {
                 foreach (string query in queries)
                 {
                     Console.WriteLine(query);
 
-                    DriverRecordSet result = await session.RunAsync(query).ConfigureAwait(false);
+                    ResultCursor result = await session.RunAsync(query).ConfigureAwait(false);
                     await result.ConsumeAsync().ConfigureAwait(false);
                 }
                 bookmark = session.LastBookmarks;
@@ -73,13 +72,13 @@ namespace Laboratory
 
             Console.Clear();
 
-            await using (DriverSession session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(ReadWriteMode.ReadOnly); config.WithBookmarks(bookmark); }))
+            await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Read); config.WithBookmarks(bookmark); }))
             {
                 Dictionary<string, object?> parameters = new Dictionary<string, object?>()
                 {
                     { "actor", "Keanu Reeves" },
                 };
-                DriverRecordSet result = await session.RunAsync("""
+                ResultCursor result = await session.RunAsync("""
                     MATCH (m:Movie)<-[:ACTED_IN]-(p:Person)
                     WHERE p.name = $actor
                     RETURN m.title AS Movie, p.name AS Actor
@@ -89,7 +88,7 @@ namespace Laboratory
                 bool fetch = await result.FetchAsync().ConfigureAwait(false);
                 while (fetch)
                 {
-                    IReadOnlyDictionary<string, object?> values = DriverRecord.Values(result.Current);
+                    IReadOnlyDictionary<string, object?> values = Record.Values(result.Current);
 
                     Console.WriteLine($"Movie: '{values["Movie"]}', Actor: '{values["Actor"]}'.");
 
@@ -106,16 +105,16 @@ namespace Laboratory
             
             await CleanDB().ConfigureAwait(false);
 
-            await using (DriverSession session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(ReadWriteMode.ReadWrite); }))
+            await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
             {
                 foreach (string query in queries)
                 {
                     Console.WriteLine(query);
-                    await using (DriverTransaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); }).ConfigureAwait(false))
+                    await using (Transaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); }).ConfigureAwait(false))
                     {
 
-                        DriverRecordSet result = await transaction.RunAsync(query).ConfigureAwait(false);
-                        DriverResultSummary resultSummary = await result.ConsumeAsync().ConfigureAwait(false);
+                        ResultCursor result = await transaction.RunAsync(query).ConfigureAwait(false);
+                        ResultSummary resultSummary = await result.ConsumeAsync().ConfigureAwait(false);
                         System.Diagnostics.Debug.WriteLine(resultSummary.Query.Text);
 
                         await transaction.CommitAsync();
@@ -125,13 +124,13 @@ namespace Laboratory
 
                 Console.Clear();
 
-                await using (DriverTransaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); config.WithMetadata(new Dictionary<string, object>() { { "Hello", "World" } }); }).ConfigureAwait(false))
+                await using (Transaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); config.WithMetadata(new Dictionary<string, object>() { { "Hello", "World" } }); }).ConfigureAwait(false))
                 {
                     Dictionary<string, object?> parameters = new Dictionary<string, object?>()
                     {
                         { "actor", "Keanu Reeves" },
                     };
-                    DriverRecordSet result = await transaction.RunAsync("""
+                    ResultCursor result = await transaction.RunAsync("""
                     MATCH (m:Movie)<-[:ACTED_IN]-(p:Person)
                     WHERE p.name = $actor
                     RETURN m.title AS Movie, p.name AS Actor
@@ -141,7 +140,7 @@ namespace Laboratory
                     bool fetch = await result.FetchAsync().ConfigureAwait(false);
                     while (fetch)
                     {
-                        IReadOnlyDictionary<string, object?> values = DriverRecord.Values(result.Current);
+                        IReadOnlyDictionary<string, object?> values = Record.Values(result.Current);
 
                         Console.WriteLine($"Movie: '{values["Movie"]}', Actor: '{values["Actor"]}'.");
 
@@ -213,9 +212,9 @@ namespace Laboratory
 
             async Task CleanDB()
             {
-                DriverRecordSet result;
+                ResultCursor result;
 
-                await using (DriverSession session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(ReadWriteMode.ReadWrite); }))
+                await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
                 {
                     result = await session.RunAsync("MATCH (n) DETACH DELETE n;").ConfigureAwait(false);
                     await result.ConsumeAsync().ConfigureAwait(false);
