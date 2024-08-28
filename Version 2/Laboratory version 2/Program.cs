@@ -23,7 +23,7 @@ namespace Laboratory
         static async Task Main(string[] args)
         {
             string path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            string[] queries = File.ReadAllText(Path.Combine(path, "movies.cypher")).Split(';', StringSplitOptions.RemoveEmptyEntries);
+            string[] queries = File.ReadAllText(Path.Combine(path, "movies.cypher")).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
             Driver.Configure<Neo4j.Driver.IDriver>();
 
@@ -66,7 +66,7 @@ namespace Laboratory
                 {
                     Console.WriteLine(query);
 
-                    DriverResultSet result = await session.RunAsync(query).ConfigureAwait(false);
+                    DriverRecordSet result = await session.RunAsync(query).ConfigureAwait(false);
                     await result.ConsumeAsync().ConfigureAwait(false);
                 }
                 bookmark = session.LastBookmarks;
@@ -80,7 +80,7 @@ namespace Laboratory
                 {
                     { "actor", "Keanu Reeves" },
                 };
-                DriverResultSet result = await session.RunAsync("""
+                DriverRecordSet result = await session.RunAsync("""
                     MATCH (m:Movie)<-[:ACTED_IN]-(p:Person)
                     WHERE p.name = $actor
                     RETURN m.title AS Movie, p.name AS Actor
@@ -115,7 +115,7 @@ namespace Laboratory
                     await using (DriverTransaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); }).ConfigureAwait(false))
                     {
 
-                        DriverResultSet result = await transaction.RunAsync(query).ConfigureAwait(false);
+                        DriverRecordSet result = await transaction.RunAsync(query).ConfigureAwait(false);
                         await result.ConsumeAsync().ConfigureAwait(false);
 
                         await transaction.CommitAsync();
@@ -131,7 +131,7 @@ namespace Laboratory
                     {
                         { "actor", "Keanu Reeves" },
                     };
-                    DriverResultSet result = await transaction.RunAsync("""
+                    DriverRecordSet result = await transaction.RunAsync("""
                     MATCH (m:Movie)<-[:ACTED_IN]-(p:Person)
                     WHERE p.name = $actor
                     RETURN m.title AS Movie, p.name AS Actor
@@ -213,7 +213,7 @@ namespace Laboratory
 
             async Task CleanDB()
             {
-                DriverResultSet result;
+                DriverRecordSet result;
 
                 await using (DriverSession session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(ReadWriteMode.ReadWrite); }))
                 {
