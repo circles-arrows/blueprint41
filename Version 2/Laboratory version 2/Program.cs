@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Reflection;
+using System.IO;
 
 using Kerberos.NET.Win32;
 
@@ -8,9 +10,6 @@ using Blueprint41;
 using Blueprint41.Persistence;
 
 using DataStore;
-using System.Reflection;
-using System.IO;
-
 
 namespace Laboratory
 {
