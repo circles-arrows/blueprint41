@@ -48,7 +48,7 @@ namespace Blueprint41.Persistence
         internal static readonly IAuthTokenInfo               I_AUTH_TOKEN                         = new IAuthTokenInfo("Neo4j.Driver.IAuthToken");
         internal static readonly AuthTokensInfo               AUTH_TOKENS                          = new AuthTokensInfo("Neo4j.Driver.AuthTokens");
         internal static readonly IResultCursorInfo            I_RESULT_CURSOR                      = new IResultCursorInfo("Neo4j.Driver.IResultCursor");
-        internal static readonly IResultCursorInfo            I_RESULT_SUMMARY                     = new IResultCursorInfo("Neo4j.Driver.IResultSummary");
+        internal static readonly IResultSummaryInfo           I_RESULT_SUMMARY                     = new IResultSummaryInfo("Neo4j.Driver.IResultSummary");
         internal static readonly IRecord                      I_RECORD                             = new IRecord("Neo4j.Driver.IRecord");
         internal static readonly IAsyncSessionInfo            I_ASYNC_SESSION                      = new IAsyncSessionInfo("Neo4j.Driver.IAsyncSession");
         internal static readonly SessionConfigBuilderInfo     SESSION_CONFIG_BUILDER               = new SessionConfigBuilderInfo("Neo4j.Driver.SessionConfigBuilder");
@@ -57,6 +57,7 @@ namespace Blueprint41.Persistence
         internal static readonly IAsyncQueryRunnerInfo        I_ASYNC_QUERY_RUNNER                 = new IAsyncQueryRunnerInfo("Neo4j.Driver.IAsyncQueryRunner");
         internal static readonly AccessModeInfo               ACCESS_MODE                          = new AccessModeInfo("Neo4j.Driver.AccessMode");
         internal static readonly BookmarksInfo                BOOKMARKS                            = new BookmarksInfo("Neo4j.Driver.Bookmarks", "Neo4j.Driver.Bookmark");
+        internal static readonly QueryInfo                    QUERY                                = new QueryInfo("Neo4j.Driver.Query");
 
         internal static readonly DriverTypeInfo               TASK                                 = new DriverTypeInfo(typeof(Task));
         internal static readonly DriverTypeInfo               TASK_OF_BOOLEAN                      = new DriverTypeInfo(typeof(Task<bool>));
@@ -549,6 +550,24 @@ namespace Blueprint41.Persistence
 
             public Task<bool> FetchAsync(object instance) => AsTask<bool>(_fetchAsync.Value.Invoke(instance));
             private readonly Lazy<InstanceMethod> _fetchAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_BOOLEAN, "FetchAsync"), true);
+        }
+        internal sealed class IResultSummaryInfo : DriverTypeInfo
+        {
+            public IResultSummaryInfo(params string[] names) : base(names) { }
+
+            public DriverQuery Query(object instance) => new DriverQuery(_query.Value.GetValue(instance));
+            private readonly Lazy<InstanceProperty> _query = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, QUERY, "Query"), true);
+        }
+        internal sealed class QueryInfo : DriverTypeInfo
+        {
+            public QueryInfo(params string[] names) : base(names) { }
+
+            public string Text(object instance) => (string)_text.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _text = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, STRING, "Text"), true);
+
+            public IReadOnlyDictionary<string, object?> Parameters(object instance) => (IReadOnlyDictionary<string, object?>)_parameters.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _parameters = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, I_READONLY_DICT_OF_STRING_AND_OBJECT, "Parameters"), true);
+
         }
         internal sealed class IRecord : DriverTypeInfo
         {
