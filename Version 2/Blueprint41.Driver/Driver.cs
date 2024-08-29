@@ -575,7 +575,7 @@ namespace Blueprint41.Driver
             public Query Query(object instance) => new Query(_query.Value.GetValue(instance));
             private readonly Lazy<InstanceProperty> _query = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, QUERY, "Query"), true);
 
-            public DriverCounters Counters(object instance) => new DriverCounters(_counters.Value.GetValue(instance));
+            public Counters Counters(object instance) => new Counters(_counters.Value.GetValue(instance));
             private readonly Lazy<InstanceProperty> _counters = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, ICOUNTERS, "Counters"), true);
         }
         internal sealed class QueryInfo : DriverTypeInfo
