@@ -586,7 +586,8 @@ namespace Blueprint41.Driver
         {
             public IResultCursorInfo(params string[] names) : base(names) { }
 
-            public object Current(object instance) => _current.Value.GetValue(instance); //IRecord Current { get; }
+            public Record Current(object instance) => new Record(_current.Value.GetValue(instance));
+            public object CurrentInternal(object instance) => _current.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _current = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_CURSOR, I_RECORD, "Current"), true);
 
             public bool IsOpen(object instance) => (bool)_isOpen.Value.GetValue(instance);
@@ -598,7 +599,8 @@ namespace Blueprint41.Driver
             public Task<ResultSummary> ConsumeAsync(object instance) => AsTask(_consumeAsync.Value.Invoke(instance), instance => new ResultSummary(instance));
             private readonly Lazy<InstanceMethod> _consumeAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_I_RESULT_SUMMARY, "ConsumeAsync"), true);
 
-            public Task<object> PeekAsync(object instance) => AsTask<object>(_peekAsync.Value.Invoke(instance));
+            public Task<Record> PeekAsync(object instance) => AsTask(_peekAsync.Value.Invoke(instance), instance => new Record(instance));
+            public Task<object> PeekAsyncInternal(object instance) => AsTask<object>(_peekAsync.Value.Invoke(instance));
             private readonly Lazy<InstanceMethod> _peekAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_I_RECORD, "PeekAsync"), true);
 
             public Task<bool> FetchAsync(object instance) => AsTask<bool>(_fetchAsync.Value.Invoke(instance));
