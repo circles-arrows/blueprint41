@@ -172,6 +172,21 @@ namespace Laboratory
             Record -> Item
             Record -> Keys
 
+            Counters -> ContainsUpdates
+            Counters -> NodesCreated
+            Counters -> NodesDeleted
+            Counters -> RelationshipsCreated
+            Counters -> RelationshipsDeleted
+            Counters -> PropertiesSet
+            Counters -> LabelsAdded
+            Counters -> LabelsRemoved
+            Counters -> IndexesAdded
+            Counters -> IndexesRemoved
+            Counters -> ConstraintsAdded
+            Counters -> ConstraintsRemoved
+            Counters -> SystemUpdates
+            Counters -> ContainsSystemUpdates
+
             ResultSummary -> BINDINGS MISSING
             INode         -> BINDINGS MISSING
             IRelationship -> BINDINGS MISSING

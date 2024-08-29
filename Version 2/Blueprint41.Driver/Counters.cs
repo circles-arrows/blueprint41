@@ -19,71 +19,71 @@ namespace Blueprint41.Driver
         //
         // Value:
         //     Returns true if the query made any updates, false otherwise.
-        public bool ContainsUpdates => Driver.ICOUNTERS.ContainsUpdates(Value);
+        public bool ContainsUpdates => Driver.I_COUNTERS.ContainsUpdates(Value);
 
         //
         // Summary:
         //     Gets the number of nodes created.
-        public int NodesCreated => Driver.ICOUNTERS.NodesCreated(Value);
+        public int NodesCreated => Driver.I_COUNTERS.NodesCreated(Value);
 
         //
         // Summary:
         //     Gets the number of nodes deleted.
-        public int NodesDeleted => Driver.ICOUNTERS.NodesDeleted(Value);
+        public int NodesDeleted => Driver.I_COUNTERS.NodesDeleted(Value);
 
         //
         // Summary:
         //     Gets the number of relationships created.
-        public int RelationshipsCreated => Driver.ICOUNTERS.RelationshipsCreated(Value);
+        public int RelationshipsCreated => Driver.I_COUNTERS.RelationshipsCreated(Value);
 
         //
         // Summary:
         //     Gets the number of relationships deleted.
-        public int RelationshipsDeleted => Driver.ICOUNTERS.RelationshipsDeleted(Value);
+        public int RelationshipsDeleted => Driver.I_COUNTERS.RelationshipsDeleted(Value);
 
         //
         // Summary:
         //     Gets the number of properties (on both nodes and relationships) set.
-        public int PropertiesSet => Driver.ICOUNTERS.PropertiesSet(Value);
+        public int PropertiesSet => Driver.I_COUNTERS.PropertiesSet(Value);
 
         //
         // Summary:
         //     Gets the number of labels added to nodes.
-        public int LabelsAdded => Driver.ICOUNTERS.LabelsAdded(Value);
+        public int LabelsAdded => Driver.I_COUNTERS.LabelsAdded(Value);
 
         //
         // Summary:
         //     Gets the number of labels removed from nodes.
-        public int LabelsRemoved => Driver.ICOUNTERS.LabelsRemoved(Value);
+        public int LabelsRemoved => Driver.I_COUNTERS.LabelsRemoved(Value);
 
         //
         // Summary:
         //     Gets the number of indexes added to the schema.
-        public int IndexesAdded => Driver.ICOUNTERS.IndexesAdded(Value);
+        public int IndexesAdded => Driver.I_COUNTERS.IndexesAdded(Value);
 
         //
         // Summary:
         //     Gets the number of indexes removed from the schema.
-        public int IndexesRemoved => Driver.ICOUNTERS.IndexesRemoved(Value);
+        public int IndexesRemoved => Driver.I_COUNTERS.IndexesRemoved(Value);
 
         //
         // Summary:
         //     Gets the number of constraints added to the schema.
-        public int ConstraintsAdded => Driver.ICOUNTERS.ConstraintsAdded(Value);
+        public int ConstraintsAdded => Driver.I_COUNTERS.ConstraintsAdded(Value);
 
         //
         // Summary:
         //     Gets the number of constraints removed from the schema.
-        public int ConstraintsRemoved => Driver.ICOUNTERS.ConstraintsRemoved(Value);
+        public int ConstraintsRemoved => Driver.I_COUNTERS.ConstraintsRemoved(Value);
 
         //
         // Summary:
         //     Gets the number of system updates performed by this query.
-        public int SystemUpdates => Driver.ICOUNTERS.SystemUpdates(Value);
+        public int SystemUpdates => Driver.I_COUNTERS.SystemUpdates(Value);
 
         //
         // Summary:
         //     If the query updated the system graph in any way, this method will return true.
-        public bool ContainsSystemUpdates => Driver.ICOUNTERS.ContainsSystemUpdates(Value);
+        public bool ContainsSystemUpdates => Driver.I_COUNTERS.ContainsSystemUpdates(Value);
     }
 }

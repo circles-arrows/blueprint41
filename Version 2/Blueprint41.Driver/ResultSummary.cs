@@ -14,11 +14,12 @@ namespace Blueprint41.Driver
 
         public Query Query => Driver.I_RESULT_SUMMARY.Query(Value);
         public Counters Counters => Driver.I_RESULT_SUMMARY.Counters(Value);
+        public IReadOnlyList<Notification> Notifications => Driver.I_RESULT_SUMMARY.Notifications(Value);
 
         ////
         //// Summary:
         ////     Gets type of query that has been executed.
-        //QueryType QueryType { get; }
+        ////
 
         ////
         //// Summary:
@@ -51,18 +52,6 @@ namespace Blueprint41.Driver
         ////     detailed information about what each step of the plan did. That more in-depth
         ////     version of the query plan becomes available here.
         //IProfiledPlan Profile { get; }
-
-        ////
-        //// Summary:
-        ////     Gets a list of notifications produced while executing the query. The list will
-        ////     be empty if no notifications produced while executing the query.
-        ////
-        //// Remarks:
-        ////     A list of notifications that might arise when executing the query. Notifications
-        ////     can be warnings about problematic queries or other valuable information that
-        ////     can be presented in a client. Unlike failures or errors, notifications do not
-        ////     affect the execution of a query.
-        //IList<INotification> Notifications { get; }
 
         ////
         //// Summary:
