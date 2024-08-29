@@ -13,6 +13,6 @@ namespace Blueprint41.Persistence
         internal object Value { get; private set; }
 
         public string Text => Driver.QUERY.Text(Value);
-        public IReadOnlyDictionary<string, object?> Parameters => Driver.QUERY.Parameters(Value);
+        public IDictionary<string, object> Parameters => Driver.QUERY.Parameters(Value);
     }
 }

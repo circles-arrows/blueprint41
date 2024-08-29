@@ -13,16 +13,7 @@ namespace Blueprint41.Persistence
         internal object Value { get; private set; }
 
         public DriverQuery Query => Driver.I_RESULT_SUMMARY.Query(Value);
-
-        ////
-        //// Summary:
-        ////     Gets query that has been executed.
-        //Query Query { get; }
-
-        ////
-        //// Summary:
-        ////     Gets statistics counts for the query.
-        //ICounters Counters { get; }
+        public DriverCounters Counters => Driver.I_RESULT_SUMMARY.Counters(Value);
 
         ////
         //// Summary:
