@@ -159,18 +159,23 @@ namespace Laboratory
             /* 
             Missing:
 
-            ResultSet -> 
-            ResultSet -> Summary
-            ResultSet -> Notifications
-
-            ResultSet -> IsOpen
-            ResultSet -> KeysAsync()
-            ResultSet -> ConsumeAsync()     -> ResultSummary
-            ResultSet -> PeekAsync()
-            ResultSet -> FetchAsync()
+            ResultCursor -> 
+            ResultCursor -> Summary
+            ResultCursor -> IsOpen
+            ResultCursor -> KeysAsync()
+            ResultCursor -> ConsumeAsync()
+            ResultCursor -> PeekAsync()
+            ResultCursor -> FetchAsync()
 
             Record -> Item
             Record -> Keys
+
+            ResultSummary -> Query
+            ResultSummary -> Counters
+            ResultSummary -> Notifications
+
+            Query -> Text
+            Query -> Parameters
 
             Counters -> ContainsUpdates
             Counters -> NodesCreated
@@ -187,7 +192,15 @@ namespace Laboratory
             Counters -> SystemUpdates
             Counters -> ContainsSystemUpdates
 
-            ResultSummary -> BINDINGS MISSING
+            Notification -> Code
+            Notification -> Title
+            Notification -> Description
+            Notification -> Offset
+            Notification -> Line
+            Notification -> Column
+
+
+
             INode         -> BINDINGS MISSING
             IRelationship -> BINDINGS MISSING
 
