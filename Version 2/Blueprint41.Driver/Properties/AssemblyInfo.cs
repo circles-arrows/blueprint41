@@ -36,3 +36,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("2.0.0.0")]
 
 [assembly: InternalsVisibleTo("Blueprint41.Schema")]
+[assembly: InternalsVisibleTo("Laboratory version 2")]

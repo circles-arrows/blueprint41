@@ -88,7 +88,7 @@ namespace Laboratory
                 bool fetch = await result.FetchAsync().ConfigureAwait(false);
                 while (fetch)
                 {
-                    IReadOnlyDictionary<string, object?> values = Record.Values(result.Current);
+                    IReadOnlyDictionary<string, object?> values = Record.ValuesInternal(result.Current);
 
                     Console.WriteLine($"Movie: '{values["Movie"]}', Actor: '{values["Actor"]}'.");
 
@@ -140,7 +140,7 @@ namespace Laboratory
                     bool fetch = await result.FetchAsync().ConfigureAwait(false);
                     while (fetch)
                     {
-                        IReadOnlyDictionary<string, object?> values = Record.Values(result.Current);
+                        IReadOnlyDictionary<string, object?> values = Record.ValuesInternal(result.Current);
 
                         Console.WriteLine($"Movie: '{values["Movie"]}', Actor: '{values["Actor"]}'.");
 

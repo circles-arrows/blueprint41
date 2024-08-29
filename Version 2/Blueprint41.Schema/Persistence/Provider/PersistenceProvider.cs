@@ -4,9 +4,9 @@ using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 
 using Blueprint41.Core;
-using Blueprint41.Driver;
 using Blueprint41.Refactoring;
 using Blueprint41.Refactoring.Schema;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Persistence
 {
@@ -18,12 +18,12 @@ namespace Blueprint41.Persistence
         public TransactionLogger? TransactionLogger { get; private set; }
 
         public Uri? Uri { get; private set; }
-        public AuthToken? AuthToken { get; private set; }
+        public driver.AuthToken? AuthToken { get; private set; }
         public string? Database { get; private set; }
         public AdvancedConfig? AdvancedConfig { get; private set; }
 
 #pragma warning disable IDE0200
-        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
+        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, driver.AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
         {
             DatastoreModel = model;
 
