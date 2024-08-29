@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Blueprint41.Core;
@@ -56,6 +57,9 @@ namespace Blueprint41.Driver
         internal static readonly ICountersInfo                I_COUNTERS                           = new ICountersInfo("Neo4j.Driver.ICounters");
         internal static readonly INotificationInfo            I_NOTIFICATION                       = new INotificationInfo("Neo4j.Driver.INotification");
         internal static readonly IInputPositionInfo           I_INPUT_POSITION                     = new IInputPositionInfo("Neo4j.Driver.IInputPosition");
+        internal static readonly ValueExtensionsInfo          VALUE_EXTENSIONS                     = new ValueExtensionsInfo("Neo4j.Driver.ValueExtensions");
+        internal static readonly INodeInfo                    I_NODE                               = new INodeInfo("Neo4j.Driver.INode");
+        internal static readonly IRelationshipInfo            I_RELATIONSHIP                       = new IRelationshipInfo("Neo4j.Driver.IRelationship");
 
         internal static readonly DriverTypeInfo               TASK                                 = new DriverTypeInfo(typeof(Task));
         internal static readonly DriverTypeInfo               TASK_OF_BOOLEAN                      = new DriverTypeInfo(typeof(Task<bool>));
@@ -68,10 +72,10 @@ namespace Blueprint41.Driver
         internal static readonly DriverTypeInfo               BOOKMARKS_ARRAY                      = new DriverTypeInfo(() => BOOKMARKS.Type.MakeArrayType());
 
         internal static readonly DriverTypeInfo               VOID                                 = new DriverTypeInfo(typeof(void));
-        internal static readonly DriverTypeInfo               OBJECT                               = new DriverTypeInfo(typeof(object));
-        internal static readonly DriverTypeInfo               BOOLEAN                              = new DriverTypeInfo(typeof(bool));
-        internal static readonly DriverTypeInfo               INTEGER                              = new DriverTypeInfo(typeof(int));
-        internal static readonly DriverTypeInfo               BIGINTEGER                           = new DriverTypeInfo(typeof(long));
+        internal static readonly DriverTypeInfo               OBJECT                               = GenericInfo<object>.Type;
+        internal static readonly DriverTypeInfo               BOOLEAN                              = GenericInfo<bool>.Type;
+        internal static readonly DriverTypeInfo               INTEGER                              = GenericInfo<int>.Type;
+        internal static readonly DriverTypeInfo               BIGINTEGER                           = GenericInfo<long>.Type;
         internal static readonly DriverTypeInfo               STRING                               = new DriverTypeInfo(typeof(string));
         internal static readonly DriverTypeInfo               STRING_ARRAY                         = new DriverTypeInfo(typeof(string[]));
         internal static readonly DriverTypeInfo               TIMESPAN                             = new DriverTypeInfo(typeof(TimeSpan));
@@ -85,6 +89,11 @@ namespace Blueprint41.Driver
         internal static readonly DriverTypeInfo               ACTION_OF_CONFIG_BUILDER             = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(CONFIG_BUILDER.Type));
         internal static readonly DriverTypeInfo               ACTION_OF_SESSION_BUILDER            = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(SESSION_CONFIG_BUILDER.Type));
         internal static readonly DriverTypeInfo               ACTION_OF_TRANSACTION_BUILDER        = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(TRANSACTION_CONFIG_BUILDER.Type));
+
+        internal static class GenericInfo<T>
+        {
+            internal static readonly DriverTypeInfo Type = new DriverTypeInfo(typeof(T));
+        }
 
         #endregion
 
@@ -230,7 +239,8 @@ namespace Blueprint41.Driver
 
 #nullable enable
         }
-        internal sealed class StaticProperty
+        internal interface IMember { }
+        internal sealed class StaticProperty : IMember
         {
             internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null)
             {
@@ -277,7 +287,7 @@ namespace Blueprint41.Driver
             private PropertyInfo PropertyInfo => _propertyInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<PropertyInfo?> _propertyInfo;
         }
-        internal sealed class InstanceProperty
+        internal sealed class InstanceProperty : IMember
         {
             internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null)
             {
@@ -324,7 +334,7 @@ namespace Blueprint41.Driver
             private PropertyInfo PropertyInfo => _propertyInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<PropertyInfo?> _propertyInfo;
         }
-        internal sealed class StaticMethod
+        internal sealed class StaticMethod : IMember
         {
             internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments)
             {
@@ -381,7 +391,7 @@ namespace Blueprint41.Driver
             private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<MethodInfo?> _methodInfo; 
         }
-        internal sealed class InstanceMethod
+        internal sealed class InstanceMethod : IMember
         {
             internal InstanceMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments)
             {
@@ -438,7 +448,7 @@ namespace Blueprint41.Driver
             private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<MethodInfo?> _methodInfo;
         }
-        internal sealed class EnumField
+        internal sealed class EnumField : IMember
         {
             internal EnumField(DriverTypeInfo parent, string name)
             {
@@ -473,6 +483,135 @@ namespace Blueprint41.Driver
             private FieldInfo FieldInfo => _fieldInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<FieldInfo?> _fieldInfo;
         }
+
+        internal sealed class Generic<TMember>
+            where TMember : IMember
+        {
+            internal Generic(DriverTypeInfo parent, string name)
+            {
+                Parent = parent;
+                Name = name;
+                Names = null;
+                HasReturnType = (typeof(TMember) != typeof(EnumField));
+            }
+            internal Generic(DriverTypeInfo parent, string[] names)
+            {
+                Parent = parent;
+                Name = null;
+                Names = names;
+                HasReturnType = (typeof(TMember) != typeof(EnumField));
+            }
+
+            private readonly DriverTypeInfo Parent;
+            private readonly string? Name;
+            private readonly string[]? Names;
+            private readonly bool HasReturnType;
+
+            public TMember ForTypes(DriverTypeInfo returnType, params DriverTypeInfo[] arguments)
+            {
+                TMember member;
+
+                GenericSignature signature = new GenericSignature(returnType, arguments);
+                if (!_cache.TryGetValue(signature, out member))
+                {
+                    lock (_cache)
+                    {
+                        if (!_cache.TryGetValue(signature, out member))
+                        {
+                            Dictionary<GenericSignature, TMember> _newCache = new Dictionary<GenericSignature, TMember>(_cache);
+                            member = CreateInstance(Name is not null ? Name : Names);
+                            _newCache.Add(signature, member);
+
+                            Interlocked.Exchange(ref _cache, _newCache);
+                        }
+                    }
+                }
+                return member;
+
+                TMember CreateInstance(object? name)
+                {
+                    if (name is null)
+                        throw new InvalidOperationException();
+                    
+                    object? instance;
+                    if (HasReturnType)
+                    {
+                        instance = Activator.CreateInstance(typeof(TMember), new object[] { Parent, returnType, name, arguments });
+                    }
+                    else
+                    {
+                        instance = Activator.CreateInstance(typeof(TMember), new object[] { Parent, name, arguments });
+                    }
+                    
+                    if (instance is null)
+                        throw new InvalidOperationException();
+
+                    return (TMember)instance;
+                }
+            }
+            private Dictionary<GenericSignature, TMember> _cache = new Dictionary<GenericSignature, TMember>();
+
+            internal struct GenericSignature
+            {
+                internal GenericSignature(DriverTypeInfo returnType, DriverTypeInfo[] arguments)
+                {
+                    ReturnType = returnType;
+                    Arguments = arguments;
+                }
+
+                public DriverTypeInfo ReturnType {get; private set; }
+                public DriverTypeInfo[] Arguments { get; private set; }
+
+                public override int GetHashCode()
+                {
+                    int hashcode = CombineHashCodes(ReturnType?.Type?.GetHashCode(), Arguments?.Length.GetHashCode());
+
+                    if (Arguments is not null)
+                    {
+                        for (int index = 0; index < Arguments.Length; index++)
+                        {
+                            hashcode = CombineHashCodes(hashcode, Arguments[index]?.Type?.GetHashCode());
+                        }
+                    }
+
+                    return hashcode;
+
+                    static int CombineHashCodes(int? h1, int? h2)
+                    {
+                        unchecked
+                        {
+                            // Code copied from System.Tuple so it must be the best way to combine hash codes or at least a good one.
+                            return (((h1 ?? 0) << 5) + (h1 ?? 0)) ^ (h2 ?? 0);
+                        }
+                    }
+                }
+                public override bool Equals(object obj)
+                {
+                    if (obj is null)
+                        return false;
+
+                    if (obj is not GenericSignature)
+                        return false;
+
+                    GenericSignature other = (GenericSignature)obj;
+
+                    if (ReturnType != other.ReturnType)
+                        return false;
+
+                    if (Arguments.Length != other.Arguments.Length)
+                        return false;
+
+                    for (int index = 0; index < Arguments.Length; index++)
+                    {
+                        if (Arguments[index] != other.Arguments[index])
+                            return false;
+                    }
+
+                    return true;
+                }
+            }
+        }
+
 
         #endregion
 
@@ -812,6 +951,23 @@ namespace Blueprint41.Driver
 
             public int Column(object instance) => (int)_column.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _column = new Lazy<InstanceProperty>(() => new InstanceProperty(I_INPUT_POSITION, INTEGER, "Column"), true);
+        }
+        internal sealed class ValueExtensionsInfo : DriverTypeInfo
+        {
+            public ValueExtensionsInfo(params string[] names) : base(names) { }
+
+            public T As<T>(object value) => (T)_as.Value.ForTypes(VALUE_EXTENSIONS, GenericInfo<T>.Type, OBJECT).Invoke(value);
+            public object As(DriverTypeInfo type, object value) => _as.Value.ForTypes(VALUE_EXTENSIONS, type, OBJECT).Invoke(value);
+
+            private readonly Lazy<Generic<StaticMethod>> _as = new Lazy<Generic<StaticMethod>>(() => new Generic<StaticMethod>(VALUE_EXTENSIONS, "As"));
+        }
+        internal sealed class INodeInfo : DriverTypeInfo
+        {
+            public INodeInfo(params string[] names) : base(names) { }
+        }
+        internal sealed class IRelationshipInfo : DriverTypeInfo
+        {
+            public IRelationshipInfo(params string[] names) : base(names) { }
         }
 
         #endregion
