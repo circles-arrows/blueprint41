@@ -58,6 +58,8 @@ namespace Blueprint41.Persistence
         internal static readonly AccessModeInfo               ACCESS_MODE                          = new AccessModeInfo("Neo4j.Driver.AccessMode");
         internal static readonly BookmarksInfo                BOOKMARKS                            = new BookmarksInfo("Neo4j.Driver.Bookmarks", "Neo4j.Driver.Bookmark");
         internal static readonly QueryInfo                    QUERY                                = new QueryInfo("Neo4j.Driver.Query");
+        internal static readonly ICountersInfo                ICOUNTERS                            = new ICountersInfo("Neo4j.Driver.ICounters");
+        
 
         internal static readonly DriverTypeInfo               TASK                                 = new DriverTypeInfo(typeof(Task));
         internal static readonly DriverTypeInfo               TASK_OF_BOOLEAN                      = new DriverTypeInfo(typeof(Task<bool>));
@@ -557,6 +559,9 @@ namespace Blueprint41.Persistence
 
             public DriverQuery Query(object instance) => new DriverQuery(_query.Value.GetValue(instance));
             private readonly Lazy<InstanceProperty> _query = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, QUERY, "Query"), true);
+
+            public DriverCounters Counters(object instance) => new DriverCounters(_counters.Value.GetValue(instance));
+            private readonly Lazy<InstanceProperty> _counters = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, ICOUNTERS, "Counters"), true);
         }
         internal sealed class QueryInfo : DriverTypeInfo
         {
@@ -565,8 +570,55 @@ namespace Blueprint41.Persistence
             public string Text(object instance) => (string)_text.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _text = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, STRING, "Text"), true);
 
-            public IReadOnlyDictionary<string, object?> Parameters(object instance) => (IReadOnlyDictionary<string, object?>)_parameters.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _parameters = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, I_READONLY_DICT_OF_STRING_AND_OBJECT, "Parameters"), true);
+            public IDictionary<string, object> Parameters(object instance) => (IDictionary<string, object>)_parameters.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _parameters = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, I_DICT_OF_STRING_AND_OBJECT, "Parameters"), true);
+
+        }
+        internal sealed class ICountersInfo : DriverTypeInfo
+        {
+            public ICountersInfo(params string[] names) : base(names) { }
+
+            public bool ContainsUpdates(object instance) => (bool)_ContainsUpdates.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _ContainsUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, BOOLEAN, "ContainsUpdates"), true);
+
+            public int NodesCreated(object instance) => (int)_NodesCreated.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _NodesCreated = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "NodesCreated"), true);
+
+            public int NodesDeleted(object instance) => (int)_NodesDeleted.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _NodesDeleted = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "NodesDeleted"), true);
+
+            public int RelationshipsCreated(object instance) => (int)_RelationshipsCreated.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _RelationshipsCreated = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "RelationshipsCreated"), true);
+
+            public int RelationshipsDeleted(object instance) => (int)_RelationshipsDeleted.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _RelationshipsDeleted = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "RelationshipsDeleted"), true);
+
+            public int PropertiesSet(object instance) => (int)_PropertiesSet.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _PropertiesSet = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "PropertiesSet"), true);
+
+            public int LabelsAdded(object instance) => (int)_LabelsAdded.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _LabelsAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "LabelsAdded"), true);
+
+            public int LabelsRemoved(object instance) => (int)_LabelsRemoved.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _LabelsRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "LabelsRemoved"), true);
+
+            public int IndexesAdded(object instance) => (int)_IndexesAdded.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _IndexesAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "IndexesAdded"), true);
+
+            public int IndexesRemoved(object instance) => (int)_IndexesRemoved.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _IndexesRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "IndexesRemoved"), true);
+
+            public int ConstraintsAdded(object instance) => (int)_ConstraintsAdded.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _ConstraintsAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "ConstraintsAdded"), true);
+
+            public int ConstraintsRemoved(object instance) => (int)_ConstraintsRemoved.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _ConstraintsRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "ConstraintsRemoved"), true);
+
+            public int SystemUpdates(object instance) => (int)_SystemUpdates.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _SystemUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, INTEGER, "SystemUpdates"), true);
+
+            public bool ContainsSystemUpdates(object instance) => (bool)_ContainsSystemUpdates.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _ContainsSystemUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(ICOUNTERS, BOOLEAN, "ContainsSystemUpdates"), true);
 
         }
         internal sealed class IRecord : DriverTypeInfo
