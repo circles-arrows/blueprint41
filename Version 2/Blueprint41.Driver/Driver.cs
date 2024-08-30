@@ -61,38 +61,15 @@ namespace Blueprint41.Driver
         internal static readonly INodeInfo                    I_NODE                               = new INodeInfo("Neo4j.Driver.INode");
         internal static readonly IRelationshipInfo            I_RELATIONSHIP                       = new IRelationshipInfo("Neo4j.Driver.IRelationship");
 
-        internal static readonly DriverTypeInfo               TASK                                 = new DriverTypeInfo(typeof(Task));
-        internal static readonly DriverTypeInfo               TASK_OF_BOOLEAN                      = new DriverTypeInfo(typeof(Task<bool>));
-        internal static readonly DriverTypeInfo               TASK_OF_STRING                       = new DriverTypeInfo(typeof(Task<string>));
-        internal static readonly DriverTypeInfo               TASK_OF_STRING_ARRAY                 = new DriverTypeInfo(typeof(Task<string[]>));
-        internal static readonly DriverTypeInfo               TASK_OF_I_ASYNC_TRANSACTION          = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_ASYNC_TRANSACTION.Type));
-        internal static readonly DriverTypeInfo               TASK_OF_I_RESULT_CURSOR              = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_RESULT_CURSOR.Type));
-        internal static readonly DriverTypeInfo               TASK_OF_I_RESULT_SUMMARY             = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_RESULT_SUMMARY.Type));
-        internal static readonly DriverTypeInfo               TASK_OF_I_RECORD                     = new DriverTypeInfo(() => typeof(Task<>).MakeGenericType(I_RECORD.Type));
-        internal static readonly DriverTypeInfo               BOOKMARKS_ARRAY                      = new DriverTypeInfo(() => BOOKMARKS.Type.MakeArrayType());
+        internal static readonly DriverTypeInfo               I_ENTITY                             = new DriverTypeInfo("Neo4j.Driver.IEntity");
 
-        internal static readonly DriverTypeInfo               VOID                                 = new DriverTypeInfo(typeof(void));
-        internal static readonly DriverTypeInfo               OBJECT                               = GenericInfo<object>.Type;
-        internal static readonly DriverTypeInfo               BOOLEAN                              = GenericInfo<bool>.Type;
-        internal static readonly DriverTypeInfo               INTEGER                              = GenericInfo<int>.Type;
-        internal static readonly DriverTypeInfo               BIGINTEGER                           = GenericInfo<long>.Type;
-        internal static readonly DriverTypeInfo               STRING                               = new DriverTypeInfo(typeof(string));
-        internal static readonly DriverTypeInfo               STRING_ARRAY                         = new DriverTypeInfo(typeof(string[]));
-        internal static readonly DriverTypeInfo               TIMESPAN                             = new DriverTypeInfo(typeof(TimeSpan));
-        internal static readonly DriverTypeInfo               NULLABLE_TIMESPAN                    = new DriverTypeInfo(typeof(TimeSpan?));
-        internal static readonly DriverTypeInfo               URI                                  = new DriverTypeInfo(typeof(Uri));
-        internal static readonly DriverTypeInfo               I_READONLY_LIST_OF_STRING            = new DriverTypeInfo(typeof(IReadOnlyList<string>));
-        internal static readonly DriverTypeInfo               I_LIST_OF_I_NOTIFICATION             = new DriverTypeInfo(() => typeof(IList<>).MakeGenericType(I_NOTIFICATION.Type));
-        internal static readonly DriverTypeInfo               DICT_OF_STRING_AND_OBJECT            = new DriverTypeInfo(typeof(Dictionary<string, object>));
-        internal static readonly DriverTypeInfo               I_DICT_OF_STRING_AND_OBJECT          = new DriverTypeInfo(typeof(IDictionary<string, object>));
-        internal static readonly DriverTypeInfo               I_READONLY_DICT_OF_STRING_AND_OBJECT = new DriverTypeInfo(typeof(IReadOnlyDictionary<string, object>));
-        internal static readonly DriverTypeInfo               ACTION_OF_CONFIG_BUILDER             = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(CONFIG_BUILDER.Type));
-        internal static readonly DriverTypeInfo               ACTION_OF_SESSION_BUILDER            = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(SESSION_CONFIG_BUILDER.Type));
-        internal static readonly DriverTypeInfo               ACTION_OF_TRANSACTION_BUILDER        = new DriverTypeInfo(() => typeof(Action<>).MakeGenericType(TRANSACTION_CONFIG_BUILDER.Type));
-
-        internal static class GenericInfo<T>
+        internal static class Generic
         {
-            internal static readonly DriverTypeInfo Type = new DriverTypeInfo(typeof(T));
+            internal static DriverTypeInfo Of(Type type, params DriverTypeInfo[] args) => new DriverTypeInfo(type.MakeGenericType(args.Select(item => item.Type).ToArray()));
+        }
+        internal static class Type<T>
+        {
+            internal static readonly DriverTypeInfo Info = new DriverTypeInfo(typeof(T));
         }
 
         #endregion
@@ -114,16 +91,22 @@ namespace Blueprint41.Driver
                     return null;
                 }, true);
                 Names = string.Join("or ", names.Select(name => $"'{name}'"));
+
+                ARRAY = new DriverTypeInfo(() => Type.MakeArrayType());
             }
             internal DriverTypeInfo(Type type)
             {
                 _typeInit = new Lazy<Type?>(() => type, true);
                 Names = null;
+
+                ARRAY = new DriverTypeInfo(() => Type.MakeArrayType());
             }
             internal DriverTypeInfo(Func<Type?> typeInitializer)
             {
                 _typeInit = new Lazy<Type?>(typeInitializer, true);
                 Names = null;
+
+                ARRAY = new DriverTypeInfo(() => Type.MakeArrayType());
             }
 
             public Type Type => _typeInit.Value ?? Throw();
@@ -238,13 +221,15 @@ namespace Blueprint41.Driver
             }
 
 #nullable enable
+
+            public readonly DriverTypeInfo ARRAY;
         }
         internal interface IMember { }
         internal sealed class StaticProperty : IMember
         {
             internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null)
             {
-                _propertyInfo = new Lazy<PropertyInfo?>(delegate()
+                _propertyInfo = new Lazy<PropertyInfo?>(delegate ()
                 {
                     PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
                     if (propertyInfo is not null)
@@ -389,7 +374,7 @@ namespace Blueprint41.Driver
             }
 
             private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
-            private readonly Lazy<MethodInfo?> _methodInfo; 
+            private readonly Lazy<MethodInfo?> _methodInfo;
         }
         internal sealed class InstanceMethod : IMember
         {
@@ -532,7 +517,7 @@ namespace Blueprint41.Driver
                 {
                     if (name is null)
                         throw new InvalidOperationException();
-                    
+
                     object? instance;
                     if (HasReturnType)
                     {
@@ -542,7 +527,7 @@ namespace Blueprint41.Driver
                     {
                         instance = Activator.CreateInstance(typeof(TMember), new object[] { Parent, name, arguments });
                     }
-                    
+
                     if (instance is null)
                         throw new InvalidOperationException();
 
@@ -559,7 +544,7 @@ namespace Blueprint41.Driver
                     Arguments = arguments;
                 }
 
-                public DriverTypeInfo ReturnType {get; private set; }
+                public DriverTypeInfo ReturnType { get; private set; }
                 public DriverTypeInfo[] Arguments { get; private set; }
 
                 public override int GetHashCode()
@@ -619,78 +604,78 @@ namespace Blueprint41.Driver
 
         internal sealed class IDriverInfo : DriverTypeInfo
         {
-            public IDriverInfo(params string[] names) : base (names) { }
+            public IDriverInfo(params string[] names) : base(names) { }
 
             //bool Encrypted { get; }
 
             public Session AsyncSession(Driver driver) => new Session(_asyncSession1.Value.Invoke(driver.Value));
             private readonly Lazy<InstanceMethod> _asyncSession1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession"), true);
 
-            public Session AsyncSession(Driver driver, Action<SessionConfigBuilder> configBuilder) => new Session(_asyncSession2.Value.Invoke(driver.Value, DelegateHelper.WrapDelegate(ACTION_OF_SESSION_BUILDER.Type, (object o) => configBuilder.Invoke(new SessionConfigBuilder(o)))));
-            private readonly Lazy<InstanceMethod> _asyncSession2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession", ACTION_OF_SESSION_BUILDER), true);
+            public Session AsyncSession(Driver driver, Action<SessionConfigBuilder> configBuilder) => new Session(_asyncSession2.Value.Invoke(driver.Value, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new SessionConfigBuilder(o)))));
+            private readonly Lazy<InstanceMethod> _asyncSession2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
 
             //Task<IServerInfo> GetServerInfoAsync();
 
             public Task<bool> TryVerifyConnectivityAsync(Driver driver) => AsTask<bool>(_tryVerifyConnectivityAsync.Value.Invoke(driver.Value));
-            private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_BOOLEAN, "TryVerifyConnectivityAsync", ACTION_OF_SESSION_BUILDER), true);
+            private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "TryVerifyConnectivityAsync", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
 
             //Task VerifyConnectivityAsync();
 
             public Task<bool> SupportsMultiDbAsync(Driver driver) => AsTask<bool>(_supportsMultiDbAsync.Value.Invoke(driver.Value));
-            private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, TASK_OF_BOOLEAN, "SupportsMultiDbAsync", ACTION_OF_SESSION_BUILDER), true);
+            private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "SupportsMultiDbAsync", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
         }
         internal sealed class ConfigBuilderInfo : DriverTypeInfo
         {
             public ConfigBuilderInfo(params string[] names) : base(names) { }
 
             public void WithMaxIdleConnectionPoolSize(object instance, int size) => _withMaxIdleConnectionPoolSize.Value.Invoke(instance, size);
-            private readonly Lazy<InstanceMethod> _withMaxIdleConnectionPoolSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxIdleConnectionPoolSize", INTEGER), true);
+            private readonly Lazy<InstanceMethod> _withMaxIdleConnectionPoolSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxIdleConnectionPoolSize", Type<int>.Info), true);
 
             public void WithMaxConnectionPoolSize(object instance, int size) => _withMaxConnectionPoolSize.Value.Invoke(instance, size);
-            private readonly Lazy<InstanceMethod> _withMaxConnectionPoolSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxConnectionPoolSize", INTEGER), true);
+            private readonly Lazy<InstanceMethod> _withMaxConnectionPoolSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxConnectionPoolSize", Type<int>.Info), true);
 
             public void WithConnectionAcquisitionTimeout(object instance, TimeSpan timeSpan) => _withConnectionAcquisitionTimeout.Value.Invoke(instance, timeSpan);
-            private readonly Lazy<InstanceMethod> _withConnectionAcquisitionTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithConnectionAcquisitionTimeout", TIMESPAN), true);
+            private readonly Lazy<InstanceMethod> _withConnectionAcquisitionTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithConnectionAcquisitionTimeout", Type<TimeSpan>.Info), true);
 
             public void WithConnectionTimeout(object instance, TimeSpan timeSpan) => _withConnectionTimeout.Value.Invoke(instance, timeSpan);
-            private readonly Lazy<InstanceMethod> _withConnectionTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithConnectionTimeout", TIMESPAN), true);
+            private readonly Lazy<InstanceMethod> _withConnectionTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithConnectionTimeout", Type<TimeSpan>.Info), true);
 
             public void WithSocketKeepAliveEnabled(object instance, bool enable) => _withSocketKeepAliveEnabled.Value.Invoke(instance, enable);
-            private readonly Lazy<InstanceMethod> _withSocketKeepAliveEnabled = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithSocketKeepAliveEnabled", BOOLEAN), true);
-            
+            private readonly Lazy<InstanceMethod> _withSocketKeepAliveEnabled = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithSocketKeepAliveEnabled", Type<bool>.Info), true);
+
             public void WithMaxTransactionRetryTime(object instance, TimeSpan time) => _withMaxTransactionRetryTime.Value.Invoke(instance, time);
-            private readonly Lazy<InstanceMethod> _withMaxTransactionRetryTime = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxTransactionRetryTime", TIMESPAN), true);
+            private readonly Lazy<InstanceMethod> _withMaxTransactionRetryTime = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxTransactionRetryTime", Type<TimeSpan>.Info), true);
 
             public void WithConnectionIdleTimeout(object instance, TimeSpan timeSpan) => _withConnectionIdleTimeout.Value.Invoke(instance, timeSpan);
-            private readonly Lazy<InstanceMethod> _withConnectionIdleTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithConnectionIdleTimeout", TIMESPAN), true);
+            private readonly Lazy<InstanceMethod> _withConnectionIdleTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithConnectionIdleTimeout", Type<TimeSpan>.Info), true);
 
             public void WithMaxConnectionLifetime(object instance, TimeSpan timeSpan) => _withMaxConnectionLifetime.Value.Invoke(instance, timeSpan);
-            private readonly Lazy<InstanceMethod> _withMaxConnectionLifetime = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxConnectionLifetime", TIMESPAN), true);
+            private readonly Lazy<InstanceMethod> _withMaxConnectionLifetime = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxConnectionLifetime", Type<TimeSpan>.Info), true);
 
             public void WithIpv6Enabled(object instance, bool enable) => _withIpv6Enabled.Value.Invoke(instance, enable);
-            private readonly Lazy<InstanceMethod> _withIpv6Enabled = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithIpv6Enabled", BOOLEAN), true);
+            private readonly Lazy<InstanceMethod> _withIpv6Enabled = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithIpv6Enabled", Type<bool>.Info), true);
 
             public void WithDefaultReadBufferSize(object instance, int defaultReadBufferSize) => _withDefaultReadBufferSize.Value.Invoke(instance, defaultReadBufferSize);
-            private readonly Lazy<InstanceMethod> _withDefaultReadBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithDefaultReadBufferSize", INTEGER), true);
+            private readonly Lazy<InstanceMethod> _withDefaultReadBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithDefaultReadBufferSize", Type<int>.Info), true);
 
             public void WithMaxReadBufferSize(object instance, int maxReadBufferSize) => _withMaxReadBufferSize.Value.Invoke(instance, maxReadBufferSize);
-            private readonly Lazy<InstanceMethod> _withMaxReadBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxReadBufferSize", INTEGER), true);
+            private readonly Lazy<InstanceMethod> _withMaxReadBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxReadBufferSize", Type<int>.Info), true);
 
             public void WithDefaultWriteBufferSize(object instance, int defaultWriteBufferSize) => _withDefaultWriteBufferSize.Value.Invoke(instance, defaultWriteBufferSize);
-            private readonly Lazy<InstanceMethod> _withDefaultWriteBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithDefaultWriteBufferSize", INTEGER), true);
+            private readonly Lazy<InstanceMethod> _withDefaultWriteBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithDefaultWriteBufferSize", Type<int>.Info), true);
 
             public void WithMaxWriteBufferSize(object instance, int maxWriteBufferSize) => _withMaxWriteBufferSize.Value.Invoke(instance, maxWriteBufferSize);
-            private readonly Lazy<InstanceMethod> _withMaxWriteBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxWriteBufferSize", INTEGER), true);
+            private readonly Lazy<InstanceMethod> _withMaxWriteBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxWriteBufferSize", Type<int>.Info), true);
 
             public void WithFetchSize(object instance, long size) => _withFetchSize.Value.Invoke(instance, size);
-            private readonly Lazy<InstanceMethod> _withFetchSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithFetchSize", BIGINTEGER), true);
+            private readonly Lazy<InstanceMethod> _withFetchSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithFetchSize", Type<long>.Info), true);
         }
         internal sealed class GraphDatabaseInfo : DriverTypeInfo
         {
             public GraphDatabaseInfo(params string[] names) : base(names) { }
 
-            public Driver Driver(Uri uri, AuthToken authToken, Action<ConfigBuilder> configBuilder) => new Driver(_driver.Value.Invoke(uri, authToken.Value, DelegateHelper.WrapDelegate(ACTION_OF_CONFIG_BUILDER.Type, (object o) => configBuilder.Invoke(new ConfigBuilder(o)))));
-            private readonly Lazy<StaticMethod> _driver = new Lazy<StaticMethod>(() => new StaticMethod(GRAPH_DATABASE, I_DRIVER, "Driver", URI, I_AUTH_TOKEN, ACTION_OF_CONFIG_BUILDER), true);
+            public Driver Driver(Uri uri, AuthToken authToken, Action<ConfigBuilder> configBuilder) => new Driver(_driver.Value.Invoke(uri, authToken.Value, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new ConfigBuilder(o)))));
+            private readonly Lazy<StaticMethod> _driver = new Lazy<StaticMethod>(() => new StaticMethod(GRAPH_DATABASE, I_DRIVER, "Driver", Type<Uri>.Info, I_AUTH_TOKEN, Generic.Of(typeof(Action<>), CONFIG_BUILDER)), true);
         }
         internal sealed class IAuthTokenInfo : DriverTypeInfo
         {
@@ -704,22 +689,22 @@ namespace Blueprint41.Driver
             private readonly Lazy<StaticProperty> _none = new Lazy<StaticProperty>(() => new StaticProperty(AUTH_TOKENS, I_AUTH_TOKEN, "None"), true);
 
             public AuthToken Basic(string username, string password) => new AuthToken(_basic1.Value.Invoke(username, password));
-            private readonly Lazy<StaticMethod> _basic1 = new Lazy<StaticMethod>(()=> new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Basic", STRING, STRING), true);
+            private readonly Lazy<StaticMethod> _basic1 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Basic", Type<string>.Info, Type<string>.Info), true);
 
             public AuthToken Basic(string username, string password, string realm) => new AuthToken(_basic2.Value.Invoke(username, password, realm));
-            private readonly Lazy<StaticMethod> _basic2 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Basic", STRING, STRING, STRING), true);
+            private readonly Lazy<StaticMethod> _basic2 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Basic", Type<string>.Info, Type<string>.Info, Type<string>.Info), true);
 
             public AuthToken Kerberos(string base64EncodedTicket) => new AuthToken(_kerberos.Value.Invoke(base64EncodedTicket));
-            private readonly Lazy<StaticMethod> _kerberos = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Kerberos", STRING), true);
+            private readonly Lazy<StaticMethod> _kerberos = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Kerberos", Type<string>.Info), true);
 
             public AuthToken Custom(string principal, string credentials, string realm, string scheme) => new AuthToken(_custom1.Value.Invoke(principal, credentials, realm, scheme));
-            private readonly Lazy<StaticMethod> _custom1 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Custom", STRING, STRING, STRING, STRING), true);
+            private readonly Lazy<StaticMethod> _custom1 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Custom", Type<string>.Info, Type<string>.Info, Type<string>.Info, Type<string>.Info), true);
 
             public AuthToken Custom(string principal, string credentials, string realm, string scheme, Dictionary<string, object> parameters) => new AuthToken(_custom2.Value.Invoke(principal, credentials, realm, scheme, parameters));
-            private readonly Lazy<StaticMethod> _custom2 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Custom", STRING, STRING, STRING, STRING, DICT_OF_STRING_AND_OBJECT), true);
+            private readonly Lazy<StaticMethod> _custom2 = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Custom", Type<string>.Info, Type<string>.Info, Type<string>.Info, Type<string>.Info, Type<Dictionary<string, object>>.Info), true);
 
             public AuthToken Bearer(string token) => new AuthToken(_bearer.Value.Invoke(token));
-            private readonly Lazy<StaticMethod> _bearer = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Bearer", STRING), true);
+            private readonly Lazy<StaticMethod> _bearer = new Lazy<StaticMethod>(() => new StaticMethod(AUTH_TOKENS, I_AUTH_TOKEN, "Bearer", Type<string>.Info), true);
         }
         internal sealed class IResultCursorInfo : DriverTypeInfo
         {
@@ -730,20 +715,20 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceProperty> _current = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_CURSOR, I_RECORD, "Current"), true);
 
             public bool IsOpen(object instance) => (bool)_isOpen.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _isOpen = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_CURSOR, BOOLEAN, "IsOpen"), true);
+            private readonly Lazy<InstanceProperty> _isOpen = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_CURSOR, Type<bool>.Info, "IsOpen"), true);
 
             public Task<string[]> KeysAsync(object instance) => AsTask<string[]>(_keysAsync.Value.Invoke(instance));
-            private readonly Lazy<InstanceMethod> _keysAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_STRING_ARRAY, "KeysAsync"), true);
+            private readonly Lazy<InstanceMethod> _keysAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, Type<Task<string[]>>.Info, "KeysAsync"), true);
 
             public Task<ResultSummary> ConsumeAsync(object instance) => AsTask(_consumeAsync.Value.Invoke(instance), instance => new ResultSummary(instance));
-            private readonly Lazy<InstanceMethod> _consumeAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_I_RESULT_SUMMARY, "ConsumeAsync"), true);
+            private readonly Lazy<InstanceMethod> _consumeAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, Generic.Of(typeof(Task<>), I_RESULT_SUMMARY), "ConsumeAsync"), true);
 
             public Task<Record> PeekAsync(object instance) => AsTask(_peekAsync.Value.Invoke(instance), instance => new Record(instance));
             public Task<object> PeekAsyncInternal(object instance) => AsTask<object>(_peekAsync.Value.Invoke(instance));
-            private readonly Lazy<InstanceMethod> _peekAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_I_RECORD, "PeekAsync"), true);
+            private readonly Lazy<InstanceMethod> _peekAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, Generic.Of(typeof(Task<>), I_RECORD), "PeekAsync"), true);
 
             public Task<bool> FetchAsync(object instance) => AsTask<bool>(_fetchAsync.Value.Invoke(instance));
-            private readonly Lazy<InstanceMethod> _fetchAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, TASK_OF_BOOLEAN, "FetchAsync"), true);
+            private readonly Lazy<InstanceMethod> _fetchAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, Type<Task<bool>>.Info, "FetchAsync"), true);
         }
         internal sealed class IResultSummaryInfo : DriverTypeInfo
         {
@@ -756,17 +741,17 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceProperty> _counters = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, I_COUNTERS, "Counters"), true);
 
             public List<Notification> Notifications(object instance) => (List<Notification>)ToList((IList)_notifications.Value.GetValue(instance)); //  IList<INotification> Notifications { get; }
-            private readonly Lazy<InstanceProperty> _notifications = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, I_LIST_OF_I_NOTIFICATION, "Notifications"), true);
+            private readonly Lazy<InstanceProperty> _notifications = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, Generic.Of(typeof(IList<>), I_NOTIFICATION), "Notifications"), true);
         }
         internal sealed class QueryInfo : DriverTypeInfo
         {
             public QueryInfo(params string[] names) : base(names) { }
 
             public string Text(object instance) => (string)_text.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _text = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, STRING, "Text"), true);
+            private readonly Lazy<InstanceProperty> _text = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, Type<string>.Info, "Text"), true);
 
             public IDictionary<string, object> Parameters(object instance) => (IDictionary<string, object>)_parameters.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _parameters = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, I_DICT_OF_STRING_AND_OBJECT, "Parameters"), true);
+            private readonly Lazy<InstanceProperty> _parameters = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, Type<IDictionary<string, object>>.Info, "Parameters"), true);
 
         }
         internal sealed class ICountersInfo : DriverTypeInfo
@@ -774,46 +759,46 @@ namespace Blueprint41.Driver
             public ICountersInfo(params string[] names) : base(names) { }
 
             public bool ContainsUpdates(object instance) => (bool)_ContainsUpdates.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _ContainsUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, BOOLEAN, "ContainsUpdates"), true);
+            private readonly Lazy<InstanceProperty> _ContainsUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<bool>.Info, "ContainsUpdates"), true);
 
             public int NodesCreated(object instance) => (int)_NodesCreated.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _NodesCreated = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "NodesCreated"), true);
+            private readonly Lazy<InstanceProperty> _NodesCreated = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "NodesCreated"), true);
 
             public int NodesDeleted(object instance) => (int)_NodesDeleted.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _NodesDeleted = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "NodesDeleted"), true);
+            private readonly Lazy<InstanceProperty> _NodesDeleted = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "NodesDeleted"), true);
 
             public int RelationshipsCreated(object instance) => (int)_RelationshipsCreated.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _RelationshipsCreated = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "RelationshipsCreated"), true);
+            private readonly Lazy<InstanceProperty> _RelationshipsCreated = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "RelationshipsCreated"), true);
 
             public int RelationshipsDeleted(object instance) => (int)_RelationshipsDeleted.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _RelationshipsDeleted = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "RelationshipsDeleted"), true);
+            private readonly Lazy<InstanceProperty> _RelationshipsDeleted = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "RelationshipsDeleted"), true);
 
             public int PropertiesSet(object instance) => (int)_PropertiesSet.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _PropertiesSet = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "PropertiesSet"), true);
+            private readonly Lazy<InstanceProperty> _PropertiesSet = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "PropertiesSet"), true);
 
             public int LabelsAdded(object instance) => (int)_LabelsAdded.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _LabelsAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "LabelsAdded"), true);
+            private readonly Lazy<InstanceProperty> _LabelsAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "LabelsAdded"), true);
 
             public int LabelsRemoved(object instance) => (int)_LabelsRemoved.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _LabelsRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "LabelsRemoved"), true);
+            private readonly Lazy<InstanceProperty> _LabelsRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "LabelsRemoved"), true);
 
             public int IndexesAdded(object instance) => (int)_IndexesAdded.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _IndexesAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "IndexesAdded"), true);
+            private readonly Lazy<InstanceProperty> _IndexesAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "IndexesAdded"), true);
 
             public int IndexesRemoved(object instance) => (int)_IndexesRemoved.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _IndexesRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "IndexesRemoved"), true);
+            private readonly Lazy<InstanceProperty> _IndexesRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "IndexesRemoved"), true);
 
             public int ConstraintsAdded(object instance) => (int)_ConstraintsAdded.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _ConstraintsAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "ConstraintsAdded"), true);
+            private readonly Lazy<InstanceProperty> _ConstraintsAdded = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "ConstraintsAdded"), true);
 
             public int ConstraintsRemoved(object instance) => (int)_ConstraintsRemoved.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _ConstraintsRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "ConstraintsRemoved"), true);
+            private readonly Lazy<InstanceProperty> _ConstraintsRemoved = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "ConstraintsRemoved"), true);
 
             public int SystemUpdates(object instance) => (int)_SystemUpdates.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _SystemUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, INTEGER, "SystemUpdates"), true);
+            private readonly Lazy<InstanceProperty> _SystemUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<int>.Info, "SystemUpdates"), true);
 
             public bool ContainsSystemUpdates(object instance) => (bool)_ContainsSystemUpdates.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _ContainsSystemUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, BOOLEAN, "ContainsSystemUpdates"), true);
+            private readonly Lazy<InstanceProperty> _ContainsSystemUpdates = new Lazy<InstanceProperty>(() => new InstanceProperty(I_COUNTERS, Type<bool>.Info, "ContainsSystemUpdates"), true);
 
         }
         internal sealed class IRecord : DriverTypeInfo
@@ -821,16 +806,16 @@ namespace Blueprint41.Driver
             public IRecord(params string[] names) : base(names) { }
 
             public object Item(object instance, int index) => _item1.Value.GetValue(instance, index);
-            private readonly Lazy<InstanceProperty> _item1 = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, OBJECT, "Item", INTEGER), true);
+            private readonly Lazy<InstanceProperty> _item1 = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, Type<object>.Info, "Item", Type<int>.Info), true);
 
             public object Item(object instance, string key) => _item2.Value.GetValue(instance, key);
-            private readonly Lazy<InstanceProperty> _item2 = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, OBJECT, "Item", STRING), true);
+            private readonly Lazy<InstanceProperty> _item2 = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, Type<object>.Info, "Item", Type<string>.Info), true);
 
             public IReadOnlyDictionary<string, object?> Values(object instance) => (IReadOnlyDictionary<string, object?>)_values.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _values = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, I_READONLY_DICT_OF_STRING_AND_OBJECT, "Values"), true);
+            private readonly Lazy<InstanceProperty> _values = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, Type<IReadOnlyDictionary<string, object>>.Info, "Values"), true);
 
             public IReadOnlyList<string> Keys(object instance) => (IReadOnlyList<string>)_keys.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _keys = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, I_READONLY_LIST_OF_STRING, "Keys"), true);
+            private readonly Lazy<InstanceProperty> _keys = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, Type<IReadOnlyList<string>>.Info, "Keys"), true);
         }
         internal sealed class IAsyncSessionInfo : DriverTypeInfo
         {
@@ -840,39 +825,39 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceProperty> _lastBookmarks = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ASYNC_SESSION, BOOKMARKS, new string[] { "LastBookmarks", "LastBookmark" }), true);
 
             public Task<Transaction> BeginTransactionAsync(object instance) => AsTask(_beginTransactionAsync1.Value.Invoke(instance), instance => new Transaction(instance));
-            private readonly Lazy<InstanceMethod> _beginTransactionAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, TASK_OF_I_ASYNC_TRANSACTION, "BeginTransactionAsync"), true);
+            private readonly Lazy<InstanceMethod> _beginTransactionAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, Generic.Of(typeof(Task<>), I_ASYNC_TRANSACTION), "BeginTransactionAsync"), true);
 
-            public Task<Transaction> BeginTransactionAsync(object instance, Action<TransactionConfigBuilder> configBuilder) => AsTask(_beginTransactionAsync2.Value.Invoke(instance, DelegateHelper.WrapDelegate(ACTION_OF_TRANSACTION_BUILDER.Type, (object o) => configBuilder.Invoke(new TransactionConfigBuilder(o)))), instance => new Transaction(instance));
-            private readonly Lazy<InstanceMethod> _beginTransactionAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, TASK_OF_I_ASYNC_TRANSACTION, "BeginTransactionAsync", ACTION_OF_TRANSACTION_BUILDER), true);
+            public Task<Transaction> BeginTransactionAsync(object instance, Action<TransactionConfigBuilder> configBuilder) => AsTask(_beginTransactionAsync2.Value.Invoke(instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), TRANSACTION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new TransactionConfigBuilder(o)))), instance => new Transaction(instance));
+            private readonly Lazy<InstanceMethod> _beginTransactionAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, Generic.Of(typeof(Task<>), I_ASYNC_TRANSACTION), "BeginTransactionAsync", Generic.Of(typeof(Action<>), TRANSACTION_CONFIG_BUILDER)), true);
         }
         internal sealed class SessionConfigBuilderInfo : DriverTypeInfo
         {
             public SessionConfigBuilderInfo(params string[] names) : base(names) { }
 
             public void WithDatabase(object instance, string database) => _withDatabase.Value.Invoke(instance, database);
-            private readonly Lazy<InstanceMethod> _withDatabase = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithDatabase", STRING), true);
+            private readonly Lazy<InstanceMethod> _withDatabase = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithDatabase", Type<string>.Info), true);
 
             public void WithDefaultAccessMode(object instance, object defaultAccessMode) => _withDefaultAccessMode.Value.Invoke(instance, defaultAccessMode);
             private readonly Lazy<InstanceMethod> _withDefaultAccessMode = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithDefaultAccessMode", ACCESS_MODE), true);
 
             public void WithBookmarks(object instance, Bookmarks[] bookmarks) => _withBookmarks.Value.Invoke(instance, BOOKMARKS.ToArray(bookmarks.Select(item => item.Value), bookmarks.Length));
-            private readonly Lazy<InstanceMethod> _withBookmarks = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithBookmarks", BOOKMARKS_ARRAY), true);
+            private readonly Lazy<InstanceMethod> _withBookmarks = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithBookmarks", BOOKMARKS.ARRAY), true);
 
             public void WithFetchSize(object instance, long size) => _withFetchSize.Value.Invoke(instance, size);
-            private readonly Lazy<InstanceMethod> _withFetchSize = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithFetchSize", BIGINTEGER), true);
+            private readonly Lazy<InstanceMethod> _withFetchSize = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithFetchSize", Type<long>.Info), true);
 
             public void WithImpersonatedUser(object instance, string impersonatedUser) => _withImpersonatedUser.Value.Invoke(instance, impersonatedUser);
-            private readonly Lazy<InstanceMethod> _withImpersonatedUser = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithImpersonatedUser", STRING), true);
+            private readonly Lazy<InstanceMethod> _withImpersonatedUser = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithImpersonatedUser", Type<string>.Info), true);
         }
         internal sealed class IAsyncTransactionInfo : DriverTypeInfo
         {
             public IAsyncTransactionInfo(params string[] names) : base(names) { }
 
             public Task CommitAsync(object instance) => AsTask(_commitAsync.Value.Invoke(instance));
-            private readonly Lazy<InstanceMethod> _commitAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, TASK, "CommitAsync"), true);
+            private readonly Lazy<InstanceMethod> _commitAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, Type<Task>.Info, "CommitAsync"), true);
 
             public Task RollbackAsync(object instance) => AsTask(_rollbackAsync.Value.Invoke(instance));
-            private readonly Lazy<InstanceMethod> _rollbackAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, TASK, "RollbackAsync"), true);
+            private readonly Lazy<InstanceMethod> _rollbackAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, Type<Task>.Info, "RollbackAsync"), true);
         }
         internal sealed class TransactionConfigBuilderInfo : DriverTypeInfo
         {
@@ -885,21 +870,21 @@ namespace Blueprint41.Driver
                 else
                     _withTimeoutOld.Value.Invoke(instance, timeout ?? TimeSpan.Zero);
             }
-            private readonly Lazy<InstanceMethod> _withTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", NULLABLE_TIMESPAN), true); // Driver 5
-            private readonly Lazy<InstanceMethod> _withTimeoutOld = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", TIMESPAN), true); // Driver 4
+            private readonly Lazy<InstanceMethod> _withTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", Type<TimeSpan?>.Info), true); // Driver 5
+            private readonly Lazy<InstanceMethod> _withTimeoutOld = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", Type<TimeSpan>.Info), true); // Driver 4
 
             public void WithMetadata(object instance, IDictionary<string, object> metadata) => _withMetadata.Value.Invoke(instance, metadata);
-            private readonly Lazy<InstanceMethod> _withMetadata = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithMetadata", I_DICT_OF_STRING_AND_OBJECT), true);
+            private readonly Lazy<InstanceMethod> _withMetadata = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithMetadata", Type<IDictionary<string, object>>.Info), true);
         }
         internal sealed class IAsyncQueryRunnerInfo : DriverTypeInfo
         {
             public IAsyncQueryRunnerInfo(params string[] names) : base(names) { }
 
             public Task<ResultCursor> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new ResultCursor(instance));
-            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, TASK_OF_I_RESULT_CURSOR, "RunAsync", STRING), true);
+            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info), true);
 
             public Task<ResultCursor> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new ResultCursor(instance));
-            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, TASK_OF_I_RESULT_CURSOR, "RunAsync", STRING, I_DICT_OF_STRING_AND_OBJECT), true);
+            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info, Type<IDictionary<string, object>>.Info), true);
         }
         internal sealed class AccessModeInfo : DriverTypeInfo
         {
@@ -918,23 +903,23 @@ namespace Blueprint41.Driver
             public BookmarksInfo(params string[] names) : base(names) { }
 
             public object From(string[] bookmarks) => _from.Value.Invoke(bookmarks);
-            private readonly Lazy<StaticMethod> _from = new Lazy<StaticMethod>(() => new StaticMethod(BOOKMARKS, BOOKMARKS, "From", STRING_ARRAY), true);
-            
+            private readonly Lazy<StaticMethod> _from = new Lazy<StaticMethod>(() => new StaticMethod(BOOKMARKS, BOOKMARKS, "From", Type<string[]>.Info), true);
+
             public string[] Values(object instance) => (string[])_values.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _values = new Lazy<InstanceProperty>(() => new InstanceProperty(BOOKMARKS, STRING_ARRAY, "Values"), true);
+            private readonly Lazy<InstanceProperty> _values = new Lazy<InstanceProperty>(() => new InstanceProperty(BOOKMARKS, Type<string[]>.Info, "Values"), true);
         }
         internal sealed class INotificationInfo : DriverTypeInfo
         {
             public INotificationInfo(params string[] names) : base(names) { }
 
             public string Code(object instance) => (string)_code.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _code = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NOTIFICATION, STRING, "Code"), true);
+            private readonly Lazy<InstanceProperty> _code = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NOTIFICATION, Type<string>.Info, "Code"), true);
 
             public string Title(object instance) => (string)_title.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _title = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NOTIFICATION, STRING, "Title"), true);
+            private readonly Lazy<InstanceProperty> _title = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NOTIFICATION, Type<string>.Info, "Title"), true);
 
             public string Description(object instance) => (string)_description.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _description = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NOTIFICATION, STRING, "Description"), true);
+            private readonly Lazy<InstanceProperty> _description = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NOTIFICATION, Type<string>.Info, "Description"), true);
 
             public object Position(object instance) => _position.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _position = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NOTIFICATION, I_INPUT_POSITION, "Position"), true);
@@ -944,30 +929,66 @@ namespace Blueprint41.Driver
             public IInputPositionInfo(params string[] names) : base(names) { }
 
             public int Offset(object instance) => (int)_code.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _code = new Lazy<InstanceProperty>(() => new InstanceProperty(I_INPUT_POSITION, INTEGER, "Offset"), true);
+            private readonly Lazy<InstanceProperty> _code = new Lazy<InstanceProperty>(() => new InstanceProperty(I_INPUT_POSITION, Type<int>.Info, "Offset"), true);
 
             public int Line(object instance) => (int)_line.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _line = new Lazy<InstanceProperty>(() => new InstanceProperty(I_INPUT_POSITION, INTEGER, "Line"), true);
+            private readonly Lazy<InstanceProperty> _line = new Lazy<InstanceProperty>(() => new InstanceProperty(I_INPUT_POSITION, Type<int>.Info, "Line"), true);
 
             public int Column(object instance) => (int)_column.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _column = new Lazy<InstanceProperty>(() => new InstanceProperty(I_INPUT_POSITION, INTEGER, "Column"), true);
+            private readonly Lazy<InstanceProperty> _column = new Lazy<InstanceProperty>(() => new InstanceProperty(I_INPUT_POSITION, Type<int>.Info, "Column"), true);
         }
         internal sealed class ValueExtensionsInfo : DriverTypeInfo
         {
             public ValueExtensionsInfo(params string[] names) : base(names) { }
 
-            public T As<T>(object value) => (T)_as.Value.ForTypes(VALUE_EXTENSIONS, GenericInfo<T>.Type, OBJECT).Invoke(value);
-            public object As(DriverTypeInfo type, object value) => _as.Value.ForTypes(VALUE_EXTENSIONS, type, OBJECT).Invoke(value);
+            public T As<T>(object value) => (T)_as.Value.ForTypes(VALUE_EXTENSIONS, Type<T>.Info, Type<object>.Info).Invoke(value);
+            public object As(DriverTypeInfo type, object value) => _as.Value.ForTypes(VALUE_EXTENSIONS, type, Type<object>.Info).Invoke(value);
 
             private readonly Lazy<Generic<StaticMethod>> _as = new Lazy<Generic<StaticMethod>>(() => new Generic<StaticMethod>(VALUE_EXTENSIONS, "As"));
         }
         internal sealed class INodeInfo : DriverTypeInfo
         {
             public INodeInfo(params string[] names) : base(names) { }
+
+            public string ElementId(object instance) => (string)_elementId.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _elementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<string>.Info, "ElementId"), true);
+
+            public IReadOnlyList<string> Labels(object instance) => (IReadOnlyList<string>)_labels.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _labels = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<IReadOnlyList<string>>.Info, "Labels"), true);
+
+            public object Item(object instance, string key) => _item.Value.GetValue(instance, key);
+            private readonly Lazy<InstanceProperty> _item = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<object>.Info, "Item", Type<string>.Info), true);
+
+            public IReadOnlyDictionary<string, object?> Properties(object instance) => (IReadOnlyDictionary<string, object?>)_properties.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _properties = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<IReadOnlyDictionary<string, object>>.Info, "Properties"), true);
+
+            public bool EqualsINode(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
+            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(Generic.Of(typeof(IEquatable<>), I_NODE), Type<bool>.Info, "Equals", I_NODE));
         }
         internal sealed class IRelationshipInfo : DriverTypeInfo
         {
             public IRelationshipInfo(params string[] names) : base(names) { }
+
+            public string ElementId(object instance) => (string)_elementId.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _elementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<string>.Info, "ElementId"), true);
+
+            public string RelationshipType(object instance) => (string)_type.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _type = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "Type"), true);
+
+            public string StartNodeElementId(object instance) => (string)_startNodeElementId.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _startNodeElementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "StartNodeElementId"), true);
+
+            public string EndNodeElementId(object instance) => (string)_endNodeElementId.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _endNodeElementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "EndNodeElementId"), true);
+
+            public object Item(object instance, string key) => _item.Value.GetValue(instance, key);
+            private readonly Lazy<InstanceProperty> _item = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<object>.Info, "Item", Type<string>.Info), true);
+
+            public IReadOnlyDictionary<string, object?> Properties(object instance) => (IReadOnlyDictionary<string, object?>)_properties.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _properties = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<IReadOnlyDictionary<string, object>>.Info, "Properties"), true);
+
+            public bool EqualsIRelationship(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
+            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(Generic.Of(typeof(IEquatable<>), I_RELATIONSHIP), Type<bool>.Info, "Equals", I_NODE));
         }
 
         #endregion

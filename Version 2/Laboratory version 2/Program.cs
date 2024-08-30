@@ -199,11 +199,6 @@ namespace Laboratory
             Notification -> Line
             Notification -> Column
 
-
-
-            INode         -> BINDINGS MISSING
-            IRelationship -> BINDINGS MISSING
-
             INode -> ElementId;
             INode -> Labels
             INode -> Properties
