@@ -6,13 +6,13 @@ namespace Blueprint41.Driver
 {
     public class Query
     {
-        public Query(object value)
+        public Query(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
-        public string Text => Driver.QUERY.Text(Value);
-        public IDictionary<string, object> Parameters => Driver.QUERY.Parameters(Value);
+        public string Text => Driver.QUERY.Text(_instance);
+        public IDictionary<string, object> Parameters => Driver.QUERY.Parameters(_instance);
     }
 }

@@ -6,15 +6,15 @@ namespace Blueprint41.Driver
 {
     public class ResultSummary
     {
-        internal ResultSummary(object value)
+        internal ResultSummary(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
-        public Query Query => Driver.I_RESULT_SUMMARY.Query(Value);
-        public Counters Counters => Driver.I_RESULT_SUMMARY.Counters(Value);
-        public IReadOnlyList<Notification> Notifications => Driver.I_RESULT_SUMMARY.Notifications(Value);
+        public Query Query => Driver.I_RESULT_SUMMARY.Query(_instance);
+        public Counters Counters => Driver.I_RESULT_SUMMARY.Counters(_instance);
+        public IReadOnlyList<Notification> Notifications => Driver.I_RESULT_SUMMARY.Notifications(_instance);
 
         ////
         //// Summary:

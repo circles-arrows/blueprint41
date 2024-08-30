@@ -6,13 +6,13 @@ namespace Blueprint41.Driver
 {
     public  class Bookmarks
     {
-        internal Bookmarks(object value)
+        internal Bookmarks(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
-        public string[] Values => Driver.BOOKMARKS.Values(Value);
+        public string[] Values => Driver.BOOKMARKS.Values(_instance);
         public static Bookmarks From(string[] bookmarks) => new Bookmarks(Driver.BOOKMARKS.From(bookmarks));
     }
 }

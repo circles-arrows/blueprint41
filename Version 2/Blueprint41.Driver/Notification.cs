@@ -6,17 +6,17 @@ namespace Blueprint41.Driver
 {
     public class Notification
     {
-        internal Notification(object value)
+        internal Notification(object instance)
         {
-            Value = value;
-            InputPosition = new Lazy<object>(() => Driver.I_NOTIFICATION.Position(Value), true);
+            _instance = instance;
+            InputPosition = new Lazy<object>(() => Driver.I_NOTIFICATION.Position(_instance), true);
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
         private readonly Lazy<object> InputPosition;
 
-        public string Code => Driver.I_NOTIFICATION.Code(Value);
-        public string Title => Driver.I_NOTIFICATION.Title(Value);
-        public string Description => Driver.I_NOTIFICATION.Description(Value);
+        public string Code => Driver.I_NOTIFICATION.Code(_instance);
+        public string Title => Driver.I_NOTIFICATION.Title(_instance);
+        public string Description => Driver.I_NOTIFICATION.Description(_instance);
 
         public int Offset => Driver.I_INPUT_POSITION.Offset(InputPosition);
         public int Line => Driver.I_INPUT_POSITION.Line(InputPosition);

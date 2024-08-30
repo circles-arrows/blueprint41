@@ -6,19 +6,19 @@ namespace Blueprint41.Driver
 {
     public class Relationship
     {
-        internal Relationship(object value)
+        internal Relationship(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
-        public string ElementId => Driver.I_RELATIONSHIP.ElementId(Value);
-        public string Type => Driver.I_RELATIONSHIP.RelationshipType(Value);
-        public string StartNodeElementId => Driver.I_RELATIONSHIP.StartNodeElementId(Value);
-        public string EndNodeElementId => Driver.I_RELATIONSHIP.EndNodeElementId(Value);
-        public object this[string key] => Driver.I_RELATIONSHIP.Item(Value, key);
-        public IReadOnlyDictionary<string, object?> Properties => Driver.I_RELATIONSHIP.Properties(Value);
-        public bool Equals(Relationship relationship) => Driver.I_RELATIONSHIP.EqualsIRelationship(Value, relationship.Value);
+        public string ElementId => Driver.I_RELATIONSHIP.ElementId(_instance);
+        public string Type => Driver.I_RELATIONSHIP.RelationshipType(_instance);
+        public string StartNodeElementId => Driver.I_RELATIONSHIP.StartNodeElementId(_instance);
+        public string EndNodeElementId => Driver.I_RELATIONSHIP.EndNodeElementId(_instance);
+        public object this[string key] => Driver.I_RELATIONSHIP.Item(_instance, key);
+        public IReadOnlyDictionary<string, object?> Properties => Driver.I_RELATIONSHIP.Properties(_instance);
+        public bool Equals(Relationship relationship) => Driver.I_RELATIONSHIP.EqualsIRelationship(_instance, relationship._instance);
 
         internal static string ElementIdInternal(object neo4jIRelationship) => Driver.I_RELATIONSHIP.ElementId(neo4jIRelationship);
         internal static string TypeInternal(object neo4jIRelationship) => Driver.I_RELATIONSHIP.RelationshipType(neo4jIRelationship);
