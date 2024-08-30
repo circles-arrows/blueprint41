@@ -156,66 +156,6 @@ namespace Laboratory
 
             #endregion
 
-            /* 
-            Missing:
-
-            ResultCursor -> 
-            ResultCursor -> Summary
-            ResultCursor -> IsOpen
-            ResultCursor -> KeysAsync()
-            ResultCursor -> ConsumeAsync()
-            ResultCursor -> PeekAsync()
-            ResultCursor -> FetchAsync()
-
-            Record -> Item
-            Record -> Keys
-
-            ResultSummary -> Query
-            ResultSummary -> Counters
-            ResultSummary -> Notifications
-
-            Query -> Text
-            Query -> Parameters
-
-            Counters -> ContainsUpdates
-            Counters -> NodesCreated
-            Counters -> NodesDeleted
-            Counters -> RelationshipsCreated
-            Counters -> RelationshipsDeleted
-            Counters -> PropertiesSet
-            Counters -> LabelsAdded
-            Counters -> LabelsRemoved
-            Counters -> IndexesAdded
-            Counters -> IndexesRemoved
-            Counters -> ConstraintsAdded
-            Counters -> ConstraintsRemoved
-            Counters -> SystemUpdates
-            Counters -> ContainsSystemUpdates
-
-            Notification -> Code
-            Notification -> Title
-            Notification -> Description
-            Notification -> Offset
-            Notification -> Line
-            Notification -> Column
-
-            INode -> ElementId;
-            INode -> Labels
-            INode -> Properties
-            INode -> Node[key]
-            INode -> Equals(INode other)
-            IsINode(object instance)
-
-            IRelationship -> Id              ?ElementId?
-            IRelationship -> Type
-            IRelationship -> StartNodeId     ?ElementId?
-            IRelationship -> EndNodeId       ?ElementId?
-            IRelationship -> Properties
-            IRelationship -> Relationship[key]
-            IRelationship -> Equals(IRelationship other)
-            IsIRelationship(object instance)
-
-             */
 
 
             //MockModel model = MockModel.Connect(uri, AuthToken.Basic(username, password), database, config);

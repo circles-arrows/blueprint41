@@ -6,17 +6,17 @@ namespace Blueprint41.Driver
 {
     public class Node
     {
-        internal Node(object value)
+        internal Node(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
-        public string ElementId => Driver.I_NODE.ElementId(Value);
-        public IReadOnlyList<string> Labels => Driver.I_NODE.Labels(Value);
-        public object this[string key] => Driver.I_NODE.Item(Value, key);
-        public IReadOnlyDictionary<string, object?> Properties => Driver.I_NODE.Properties(Value);
-        public bool Equals(Node node) => Driver.I_NODE.EqualsINode(Value, node.Value);
+        public string ElementId => Driver.I_NODE.ElementId(_instance);
+        public IReadOnlyList<string> Labels => Driver.I_NODE.Labels(_instance);
+        public object this[string key] => Driver.I_NODE.Item(_instance, key);
+        public IReadOnlyDictionary<string, object?> Properties => Driver.I_NODE.Properties(_instance);
+        public bool Equals(Node node) => Driver.I_NODE.EqualsINode(_instance, node._instance);
 
         internal static string ElementIdInternal(object neo4jINode) => Driver.I_NODE.ElementId(neo4jINode);
         internal static IReadOnlyList<string> LabelsInternal(object neo4jINode) => Driver.I_NODE.Labels(neo4jINode);

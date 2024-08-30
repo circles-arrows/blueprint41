@@ -6,19 +6,19 @@ namespace Blueprint41.Driver
 {
     public class Transaction : IQueryRunner, IDisposable, IAsyncDisposable
     {
-        internal Transaction(object value)
+        internal Transaction(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
-        public Task CommitAsync() => Driver.I_ASYNC_TRANSACTION.CommitAsync(Value);
-        public Task RollbackAsync() => Driver.I_ASYNC_TRANSACTION.RollbackAsync(Value);
+        public Task CommitAsync() => Driver.I_ASYNC_TRANSACTION.CommitAsync(_instance);
+        public Task RollbackAsync() => Driver.I_ASYNC_TRANSACTION.RollbackAsync(_instance);
 
-        public Task<ResultCursor> RunAsync(string query) => Driver.I_ASYNC_QUERY_RUNNER.RunAsync(Value, query);
-        public Task<ResultCursor> RunAsync(string query, Dictionary<string, object?> parameters) => Driver.I_ASYNC_QUERY_RUNNER.RunAsync(Value, query, parameters);
+        public Task<ResultCursor> RunAsync(string query) => Driver.I_ASYNC_TRANSACTION.RunAsync(_instance, query);
+        public Task<ResultCursor> RunAsync(string query, Dictionary<string, object?> parameters) => Driver.I_ASYNC_TRANSACTION.RunAsync(_instance, query, parameters);
 
-        public void Dispose() => ((IDisposable)Value).Dispose();
-        public ValueTask DisposeAsync() => ((IAsyncDisposable)Value).DisposeAsync();
+        public void Dispose() => ((IDisposable)_instance).Dispose();
+        public ValueTask DisposeAsync() => ((IAsyncDisposable)_instance).DisposeAsync();
     }
 }

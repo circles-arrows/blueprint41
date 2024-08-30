@@ -50,7 +50,7 @@ namespace Blueprint41.Core
         /// <returns>The method info for the given delegate type.</returns>
         public static MethodInfo MethodInfoFromDelegateType(Type delegateType)
         {
-            MethodInfo? methodInfo = delegateType.GetMethod(InvokeMethod);
+            MethodInfo methodInfo = delegateType.GetMethod(InvokeMethod);
             if (methodInfo is null)
                 throw new ArgumentException($"The argument '{nameof(delegateType)}' is not a type definition of a delegate.", nameof(delegateType));
 

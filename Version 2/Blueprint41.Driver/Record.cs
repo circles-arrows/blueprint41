@@ -10,18 +10,18 @@ namespace Blueprint41.Driver
 {
     public class Record
     {
-        internal Record(object value)
+        internal Record(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
-        public object? this[int index] => WrapIEntity(Driver.I_RECORD.Item(Value, index));
-        public object? this[string key] => WrapIEntity(Driver.I_RECORD.Item(Value, key));
+        public object? this[int index] => WrapIEntity(Driver.I_RECORD.Item(_instance, index));
+        public object? this[string key] => WrapIEntity(Driver.I_RECORD.Item(_instance, key));
 
         [Obsolete("Using record[name] or record[index] performs better than using record.Values.", false)]
-        public IReadOnlyDictionary<string, object?> Values => WrapIEntity(Driver.I_RECORD.Values(Value));
-        public IReadOnlyList<string> Keys => Driver.I_RECORD.Keys(Value);
+        public IReadOnlyDictionary<string, object?> Values => WrapIEntity(Driver.I_RECORD.Values(_instance));
+        public IReadOnlyList<string> Keys => Driver.I_RECORD.Keys(_instance);
 
         internal static object? ItemInternal(object neo4jRecord, int index) => Driver.I_RECORD.Item(neo4jRecord, index);
         internal static object? ItemInternal(object neo4jRecord, string key) => Driver.I_RECORD.Item(neo4jRecord, key);

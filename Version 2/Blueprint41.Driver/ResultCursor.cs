@@ -6,28 +6,28 @@ namespace Blueprint41.Driver
 {
     public class ResultCursor
     {
-        internal ResultCursor(object value)
+        internal ResultCursor(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
-        public Record Current => Driver.I_RESULT_CURSOR.Current(Value);
-        internal object CurrentInternal => Driver.I_RESULT_CURSOR.CurrentInternal(Value);
+        public Record Current => Driver.I_RESULT_CURSOR.Current(_instance);
+        internal object CurrentInternal => Driver.I_RESULT_CURSOR.CurrentInternal(_instance);
 
-        public bool IsOpen => Driver.I_RESULT_CURSOR.IsOpen(Value);
-        public Task<string[]> KeysAsync() => Driver.I_RESULT_CURSOR.KeysAsync(Value);
-        public Task<ResultSummary> ConsumeAsync() => Driver.I_RESULT_CURSOR.ConsumeAsync(Value);
-        public Task<Record> PeekAsync() => Driver.I_RESULT_CURSOR.PeekAsync(Value);
-        internal Task<object> PeekAsyncInternal() => Driver.I_RESULT_CURSOR.PeekAsyncInternal(Value);
+        public bool IsOpen => Driver.I_RESULT_CURSOR.IsOpen(_instance);
+        public Task<string[]> KeysAsync() => Driver.I_RESULT_CURSOR.KeysAsync(_instance);
+        public Task<ResultSummary> ConsumeAsync() => Driver.I_RESULT_CURSOR.ConsumeAsync(_instance);
+        public Task<Record> PeekAsync() => Driver.I_RESULT_CURSOR.PeekAsync(_instance);
+        internal Task<object> PeekAsyncInternal() => Driver.I_RESULT_CURSOR.PeekAsyncInternal(_instance);
 
-        public Task<bool> FetchAsync() => Driver.I_RESULT_CURSOR.FetchAsync(Value);
+        public Task<bool> FetchAsync() => Driver.I_RESULT_CURSOR.FetchAsync(_instance);
 
         public async Task<List<Record>> ToListAsync()
         {
             List<Record> records = new List<Record>(64);
 
-            if (Value is not null)
+            if (_instance is not null)
             {
                 while (await FetchAsync())
                     records.Add(Current);
@@ -39,7 +39,7 @@ namespace Blueprint41.Driver
         {
             List<object> records = new List<object>(64);
 
-            if (Value is not null)
+            if (_instance is not null)
             {
                 while (await FetchAsync())
                     records.Add(CurrentInternal);

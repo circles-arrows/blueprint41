@@ -7,15 +7,15 @@ namespace Blueprint41.Driver
 {
     public sealed class SessionConfigBuilder
     {
-        internal SessionConfigBuilder(object value)
+        internal SessionConfigBuilder(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
         public SessionConfigBuilder WithDatabase(string database)
         {
-            Driver.SESSION_CONFIG_BUILDER.WithDatabase(Value, database);
+            Driver.SESSION_CONFIG_BUILDER.WithDatabase(_instance, database);
             return this;
         }
 
@@ -28,25 +28,25 @@ namespace Blueprint41.Driver
                 _ => throw new NotSupportedException()
             };
 
-            Driver.SESSION_CONFIG_BUILDER.WithDefaultAccessMode(Value, readwrite);
+            Driver.SESSION_CONFIG_BUILDER.WithDefaultAccessMode(_instance, readwrite);
             return this;
         }
 
         public SessionConfigBuilder WithBookmarks(params Bookmarks[] bookmarks)
         {
-            Driver.SESSION_CONFIG_BUILDER.WithBookmarks(Value, bookmarks);
+            Driver.SESSION_CONFIG_BUILDER.WithBookmarks(_instance, bookmarks);
             return this;
         }
 
         public SessionConfigBuilder WithFetchSize(long size)
         {
-            Driver.SESSION_CONFIG_BUILDER.WithFetchSize(Value, size);
+            Driver.SESSION_CONFIG_BUILDER.WithFetchSize(_instance, size);
             return this;
         }
 
         public SessionConfigBuilder WithImpersonatedUser(string impersonatedUser)
         {
-            Driver.SESSION_CONFIG_BUILDER.WithImpersonatedUser(Value, impersonatedUser);
+            Driver.SESSION_CONFIG_BUILDER.WithImpersonatedUser(_instance, impersonatedUser);
             return this;
         }
     }

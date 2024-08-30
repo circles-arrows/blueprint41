@@ -14,11 +14,11 @@ namespace Blueprint41.Driver
 {
     public sealed class Driver : IDisposable, IAsyncDisposable
     {
-        internal Driver(object value)
+        internal Driver(object instance)
         {
-            Value = value;
+            _instance = instance;
         }
-        internal object Value { get; private set; }
+        internal object _instance { get; private set; }
 
         public static Driver Get(Uri uri, AuthToken authToken, Action<ConfigBuilder> configBuilder)
         {
@@ -41,7 +41,6 @@ namespace Blueprint41.Driver
         internal static readonly IDriverInfo                  I_DRIVER                             = new IDriverInfo("Neo4j.Driver.IDriver");
         internal static readonly ConfigBuilderInfo            CONFIG_BUILDER                       = new ConfigBuilderInfo("Neo4j.Driver.ConfigBuilder");
         internal static readonly GraphDatabaseInfo            GRAPH_DATABASE                       = new GraphDatabaseInfo("Neo4j.Driver.GraphDatabase");
-        internal static readonly IAuthTokenInfo               I_AUTH_TOKEN                         = new IAuthTokenInfo("Neo4j.Driver.IAuthToken");
         internal static readonly AuthTokensInfo               AUTH_TOKENS                          = new AuthTokensInfo("Neo4j.Driver.AuthTokens");
         internal static readonly IResultCursorInfo            I_RESULT_CURSOR                      = new IResultCursorInfo("Neo4j.Driver.IResultCursor");
         internal static readonly IResultSummaryInfo           I_RESULT_SUMMARY                     = new IResultSummaryInfo("Neo4j.Driver.IResultSummary");
@@ -50,7 +49,6 @@ namespace Blueprint41.Driver
         internal static readonly SessionConfigBuilderInfo     SESSION_CONFIG_BUILDER               = new SessionConfigBuilderInfo("Neo4j.Driver.SessionConfigBuilder");
         internal static readonly IAsyncTransactionInfo        I_ASYNC_TRANSACTION                  = new IAsyncTransactionInfo("Neo4j.Driver.IAsyncTransaction");
         internal static readonly TransactionConfigBuilderInfo TRANSACTION_CONFIG_BUILDER           = new TransactionConfigBuilderInfo("Neo4j.Driver.TransactionConfigBuilder");
-        internal static readonly IAsyncQueryRunnerInfo        I_ASYNC_QUERY_RUNNER                 = new IAsyncQueryRunnerInfo("Neo4j.Driver.IAsyncQueryRunner");
         internal static readonly AccessModeInfo               ACCESS_MODE                          = new AccessModeInfo("Neo4j.Driver.AccessMode");
         internal static readonly BookmarksInfo                BOOKMARKS                            = new BookmarksInfo("Neo4j.Driver.Bookmarks", "Neo4j.Driver.Bookmark");
         internal static readonly QueryInfo                    QUERY                                = new QueryInfo("Neo4j.Driver.Query");
@@ -60,7 +58,8 @@ namespace Blueprint41.Driver
         internal static readonly ValueExtensionsInfo          VALUE_EXTENSIONS                     = new ValueExtensionsInfo("Neo4j.Driver.ValueExtensions");
         internal static readonly INodeInfo                    I_NODE                               = new INodeInfo("Neo4j.Driver.INode");
         internal static readonly IRelationshipInfo            I_RELATIONSHIP                       = new IRelationshipInfo("Neo4j.Driver.IRelationship");
-
+        internal static readonly DriverTypeInfo               I_AUTH_TOKEN                         = new DriverTypeInfo("Neo4j.Driver.IAuthToken");
+        internal static readonly DriverTypeInfo               I_ASYNC_QUERY_RUNNER                 = new DriverTypeInfo("Neo4j.Driver.IAsyncQueryRunner");
         internal static readonly DriverTypeInfo               I_ENTITY                             = new DriverTypeInfo("Neo4j.Driver.IEntity");
 
         internal static class Generic
@@ -608,20 +607,20 @@ namespace Blueprint41.Driver
 
             //bool Encrypted { get; }
 
-            public Session AsyncSession(Driver driver) => new Session(_asyncSession1.Value.Invoke(driver.Value));
+            public Session AsyncSession(Driver driver) => new Session(_asyncSession1.Value.Invoke(driver._instance));
             private readonly Lazy<InstanceMethod> _asyncSession1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession"), true);
 
-            public Session AsyncSession(Driver driver, Action<SessionConfigBuilder> configBuilder) => new Session(_asyncSession2.Value.Invoke(driver.Value, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new SessionConfigBuilder(o)))));
+            public Session AsyncSession(Driver driver, Action<SessionConfigBuilder> configBuilder) => new Session(_asyncSession2.Value.Invoke(driver._instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new SessionConfigBuilder(o)))));
             private readonly Lazy<InstanceMethod> _asyncSession2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
 
             //Task<IServerInfo> GetServerInfoAsync();
 
-            public Task<bool> TryVerifyConnectivityAsync(Driver driver) => AsTask<bool>(_tryVerifyConnectivityAsync.Value.Invoke(driver.Value));
+            public Task<bool> TryVerifyConnectivityAsync(Driver driver) => AsTask<bool>(_tryVerifyConnectivityAsync.Value.Invoke(driver._instance));
             private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "TryVerifyConnectivityAsync", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
 
             //Task VerifyConnectivityAsync();
 
-            public Task<bool> SupportsMultiDbAsync(Driver driver) => AsTask<bool>(_supportsMultiDbAsync.Value.Invoke(driver.Value));
+            public Task<bool> SupportsMultiDbAsync(Driver driver) => AsTask<bool>(_supportsMultiDbAsync.Value.Invoke(driver._instance));
             private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "SupportsMultiDbAsync", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
         }
         internal sealed class ConfigBuilderInfo : DriverTypeInfo
@@ -674,18 +673,14 @@ namespace Blueprint41.Driver
         {
             public GraphDatabaseInfo(params string[] names) : base(names) { }
 
-            public Driver Driver(Uri uri, AuthToken authToken, Action<ConfigBuilder> configBuilder) => new Driver(_driver.Value.Invoke(uri, authToken.Value, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new ConfigBuilder(o)))));
+            public Driver Driver(Uri uri, AuthToken authToken, Action<ConfigBuilder> configBuilder) => new Driver(_driver.Value.Invoke(uri, authToken._instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new ConfigBuilder(o)))));
             private readonly Lazy<StaticMethod> _driver = new Lazy<StaticMethod>(() => new StaticMethod(GRAPH_DATABASE, I_DRIVER, "Driver", Type<Uri>.Info, I_AUTH_TOKEN, Generic.Of(typeof(Action<>), CONFIG_BUILDER)), true);
-        }
-        internal sealed class IAuthTokenInfo : DriverTypeInfo
-        {
-            public IAuthTokenInfo(params string[] names) : base(names) { }
         }
         internal sealed class AuthTokensInfo : DriverTypeInfo
         {
             public AuthTokensInfo(params string[] names) : base(names) { }
 
-            public AuthToken None { get => new AuthToken(_none.Value.GetValue()); set => _none.Value.SetValue(value.Value); }
+            public AuthToken None { get => new AuthToken(_none.Value.GetValue()); set => _none.Value.SetValue(value._instance); }
             private readonly Lazy<StaticProperty> _none = new Lazy<StaticProperty>(() => new StaticProperty(AUTH_TOKENS, I_AUTH_TOKEN, "None"), true);
 
             public AuthToken Basic(string username, string password) => new AuthToken(_basic1.Value.Invoke(username, password));
@@ -752,7 +747,6 @@ namespace Blueprint41.Driver
 
             public IDictionary<string, object> Parameters(object instance) => (IDictionary<string, object>)_parameters.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _parameters = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, Type<IDictionary<string, object>>.Info, "Parameters"), true);
-
         }
         internal sealed class ICountersInfo : DriverTypeInfo
         {
@@ -829,6 +823,12 @@ namespace Blueprint41.Driver
 
             public Task<Transaction> BeginTransactionAsync(object instance, Action<TransactionConfigBuilder> configBuilder) => AsTask(_beginTransactionAsync2.Value.Invoke(instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), TRANSACTION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new TransactionConfigBuilder(o)))), instance => new Transaction(instance));
             private readonly Lazy<InstanceMethod> _beginTransactionAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, Generic.Of(typeof(Task<>), I_ASYNC_TRANSACTION), "BeginTransactionAsync", Generic.Of(typeof(Action<>), TRANSACTION_CONFIG_BUILDER)), true);
+
+            public Task<ResultCursor> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new ResultCursor(instance));
+            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info), true);
+
+            public Task<ResultCursor> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new ResultCursor(instance));
+            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info, Type<IDictionary<string, object>>.Info), true);
         }
         internal sealed class SessionConfigBuilderInfo : DriverTypeInfo
         {
@@ -840,7 +840,7 @@ namespace Blueprint41.Driver
             public void WithDefaultAccessMode(object instance, object defaultAccessMode) => _withDefaultAccessMode.Value.Invoke(instance, defaultAccessMode);
             private readonly Lazy<InstanceMethod> _withDefaultAccessMode = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithDefaultAccessMode", ACCESS_MODE), true);
 
-            public void WithBookmarks(object instance, Bookmarks[] bookmarks) => _withBookmarks.Value.Invoke(instance, BOOKMARKS.ToArray(bookmarks.Select(item => item.Value), bookmarks.Length));
+            public void WithBookmarks(object instance, Bookmarks[] bookmarks) => _withBookmarks.Value.Invoke(instance, BOOKMARKS.ToArray(bookmarks.Select(item => item._instance), bookmarks.Length));
             private readonly Lazy<InstanceMethod> _withBookmarks = new Lazy<InstanceMethod>(() => new InstanceMethod(SESSION_CONFIG_BUILDER, SESSION_CONFIG_BUILDER, "WithBookmarks", BOOKMARKS.ARRAY), true);
 
             public void WithFetchSize(object instance, long size) => _withFetchSize.Value.Invoke(instance, size);
@@ -858,6 +858,12 @@ namespace Blueprint41.Driver
 
             public Task RollbackAsync(object instance) => AsTask(_rollbackAsync.Value.Invoke(instance));
             private readonly Lazy<InstanceMethod> _rollbackAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, Type<Task>.Info, "RollbackAsync"), true);
+
+            public Task<ResultCursor> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new ResultCursor(instance));
+            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info), true);
+
+            public Task<ResultCursor> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new ResultCursor(instance));
+            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info, Type<IDictionary<string, object>>.Info), true);
         }
         internal sealed class TransactionConfigBuilderInfo : DriverTypeInfo
         {
@@ -875,16 +881,6 @@ namespace Blueprint41.Driver
 
             public void WithMetadata(object instance, IDictionary<string, object> metadata) => _withMetadata.Value.Invoke(instance, metadata);
             private readonly Lazy<InstanceMethod> _withMetadata = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithMetadata", Type<IDictionary<string, object>>.Info), true);
-        }
-        internal sealed class IAsyncQueryRunnerInfo : DriverTypeInfo
-        {
-            public IAsyncQueryRunnerInfo(params string[] names) : base(names) { }
-
-            public Task<ResultCursor> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new ResultCursor(instance));
-            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info), true);
-
-            public Task<ResultCursor> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new ResultCursor(instance));
-            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info, Type<IDictionary<string, object>>.Info), true);
         }
         internal sealed class AccessModeInfo : DriverTypeInfo
         {
@@ -937,15 +933,6 @@ namespace Blueprint41.Driver
             public int Column(object instance) => (int)_column.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _column = new Lazy<InstanceProperty>(() => new InstanceProperty(I_INPUT_POSITION, Type<int>.Info, "Column"), true);
         }
-        internal sealed class ValueExtensionsInfo : DriverTypeInfo
-        {
-            public ValueExtensionsInfo(params string[] names) : base(names) { }
-
-            public T As<T>(object value) => (T)_as.Value.ForTypes(VALUE_EXTENSIONS, Type<T>.Info, Type<object>.Info).Invoke(value);
-            public object As(DriverTypeInfo type, object value) => _as.Value.ForTypes(VALUE_EXTENSIONS, type, Type<object>.Info).Invoke(value);
-
-            private readonly Lazy<Generic<StaticMethod>> _as = new Lazy<Generic<StaticMethod>>(() => new Generic<StaticMethod>(VALUE_EXTENSIONS, "As"));
-        }
         internal sealed class INodeInfo : DriverTypeInfo
         {
             public INodeInfo(params string[] names) : base(names) { }
@@ -990,10 +977,19 @@ namespace Blueprint41.Driver
             public bool EqualsIRelationship(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(Generic.Of(typeof(IEquatable<>), I_RELATIONSHIP), Type<bool>.Info, "Equals", I_NODE));
         }
+        internal sealed class ValueExtensionsInfo : DriverTypeInfo
+        {
+            public ValueExtensionsInfo(params string[] names) : base(names) { }
+
+            public T As<T>(object value) => (T)_as.Value.ForTypes(VALUE_EXTENSIONS, Type<T>.Info, Type<object>.Info).Invoke(value);
+            public object As(DriverTypeInfo type, object value) => _as.Value.ForTypes(VALUE_EXTENSIONS, type, Type<object>.Info).Invoke(value);
+
+            private readonly Lazy<Generic<StaticMethod>> _as = new Lazy<Generic<StaticMethod>>(() => new Generic<StaticMethod>(VALUE_EXTENSIONS, "As"));
+        }
 
         #endregion
 
-        public void Dispose() => ((IDisposable)Value).Dispose();
-        public ValueTask DisposeAsync() => ((IAsyncDisposable)Value).DisposeAsync();
+        public void Dispose() => ((IDisposable)_instance).Dispose();
+        public ValueTask DisposeAsync() => ((IAsyncDisposable)_instance).DisposeAsync();
     }
 }

@@ -1,0 +1,99 @@
+﻿Missing Tests:
+
+Driver -> Encrypted
+Driver -> GetServerInfoAsync()
+Driver -> VerifyConnectivityAsync()
+
+ResultCursor -> Summary
+ResultCursor -> IsOpen
+ResultCursor -> KeysAsync()
+ResultCursor -> ConsumeAsync()
+ResultCursor -> PeekAsync()
+ResultCursor -> FetchAsync()
+
+Record -> Item
+Record -> Keys
+
+ResultSummary -> Query
+ResultSummary -> Counters
+ResultSummary -> Notifications
+
+Query -> Text
+Query -> Parameters
+
+Counters -> ContainsUpdates
+Counters -> NodesCreated
+Counters -> NodesDeleted
+Counters -> RelationshipsCreated
+Counters -> RelationshipsDeleted
+Counters -> PropertiesSet
+Counters -> LabelsAdded
+Counters -> LabelsRemoved
+Counters -> IndexesAdded
+Counters -> IndexesRemoved
+Counters -> ConstraintsAdded
+Counters -> ConstraintsRemoved
+Counters -> SystemUpdates
+Counters -> ContainsSystemUpdates
+
+Notification -> Code
+Notification -> Title
+Notification -> Description
+Notification -> Offset
+Notification -> Line
+Notification -> Column
+
+INode -> ElementId;
+INode -> Labels
+INode -> Properties
+INode -> Node[key]
+INode -> Equals(INode other)
+IsINode(object instance)
+
+IRelationship -> Id              ?ElementId?
+IRelationship -> Type
+IRelationship -> StartNodeId     ?ElementId?
+IRelationship -> EndNodeId       ?ElementId?
+IRelationship -> Properties
+IRelationship -> Relationship[key]
+IRelationship -> Equals(IRelationship other)
+IsIRelationship(object instance)
+
+Missing:
+
+ConfigBuilder               (several methods not implemented)
+
+EncryptionLevel             (enum)
+Category                    (enum)
+Severity                    (enum)
+CertificateTrustRule        (enum)
+
+ServerAddress
+TrustManager
+
+Notification                (missing some stuff that we thought before is not needed, since thats the last ... maybe we can add it anyway?)
+ResultSummary               (missing some stuff that we thought before is not needed, since thats the last ... maybe we can add it anyway?)
+
+IServerAddressResolver      (needs implementation via DLR & dynamic interface implementation...)
+Logger & ILogger            (needs implementation via DLR & dynamic interface implementation...)
+
+
+
+--------------------------------------
+DLR & dynamic interface implementation
+--------------------------------------
+
+From: https://stackoverflow.com/questions/12496837/dynamically-implementing-c-sharp-interfaces-possible-or-not
+
+It is possible dynamically implement an interface in C# without emitting code using reflection, maybe with the help of DLR.
+Yes, I would think so. Bill Wagner has an article named Implementing Dynamic Interfaces. It demonstrates how you can use
+	IDynamicMetaObjectProvide interface and in particular the DynamicMetaObject class to roll you very own dynamic object.
+	However, it is a somewhat complex concept and at some point it will require some reflection to hook up the members of
+	the interface to the corresponding DLR representation.
+You cannot use an already existing dynamic object like ExpandoObject because the implemented interfaces (actually just one
+	interface) cannot be changed dynamically.
+
+https://download.microsoft.com/download/5/4/B/54B83DFE-D7AA-4155-9687-B0CF58FF65D7/implementing-dynamic-interfaces.pdf
+
+https://learn.microsoft.com/en-us/dotnet/api/system.dynamic.idynamicmetaobjectprovider?view=net-8.0&redirectedfrom=MSDN
+https://learn.microsoft.com/en-us/dotnet/api/system.dynamic.dynamicmetaobject?view=net-8.0&redirectedfrom=MSDN
