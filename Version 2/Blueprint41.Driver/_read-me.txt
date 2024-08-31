@@ -58,11 +58,36 @@ IRelationship -> Relationship[key]
 IRelationship -> Equals(IRelationship other)
 IsIRelationship(object instance)
 
+EncryptionLevel -> None
+EncryptionLevel -> Encrypted
+
+Category -> 
+Category -> 
+Category -> 
+Category -> 
+Category -> 
+
+Severity -> 
+Severity -> 
+Severity -> 
+Severity -> 
+Severity -> 
+
+CertificateTrustRule  -> 
+CertificateTrustRule  -> 
+CertificateTrustRule  -> 
+CertificateTrustRule  -> 
+CertificateTrustRule  -> 
+
+
+
+
+
+
 Missing:
 
 ConfigBuilder               (several methods not implemented)
 
-EncryptionLevel             (enum)
 Category                    (enum)
 Severity                    (enum)
 CertificateTrustRule        (enum)
