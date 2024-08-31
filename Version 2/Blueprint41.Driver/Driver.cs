@@ -91,21 +91,31 @@ namespace Blueprint41.Driver
                 }, true);
                 Names = string.Join("or ", names.Select(name => $"'{name}'"));
 
-                ARRAY = new DriverTypeInfo(() => Type.MakeArrayType());
+                _array = InitArray();
             }
             internal DriverTypeInfo(Type type)
             {
                 _typeInit = new Lazy<Type?>(() => type, true);
                 Names = null;
 
-                ARRAY = new DriverTypeInfo(() => Type.MakeArrayType());
+                _array = InitArray();
             }
             internal DriverTypeInfo(Func<Type?> typeInitializer)
             {
                 _typeInit = new Lazy<Type?>(typeInitializer, true);
                 Names = null;
 
-                ARRAY = new DriverTypeInfo(() => Type.MakeArrayType());
+                _array = InitArray();
+            }
+            private Lazy<DriverTypeInfo> InitArray()
+            {
+                return new Lazy<DriverTypeInfo>(delegate ()
+                {
+                    if (Type.IsArray)
+                        return this;
+
+                    return new DriverTypeInfo(() => Type.MakeArrayType());
+                });
             }
 
             public Type Type => _typeInit.Value ?? Throw();
@@ -221,37 +231,211 @@ namespace Blueprint41.Driver
 
 #nullable enable
 
-            public readonly DriverTypeInfo ARRAY;
+            public DriverTypeInfo ARRAY => _array.Value;
+            private readonly Lazy<DriverTypeInfo> _array;
         }
-        internal interface IMember { }
-        internal sealed class StaticProperty : IMember
+        internal abstract class Member
         {
-            internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null)
+            protected Member(DriverTypeInfo parent, DriverTypeInfo? returnType, string[] names, DriverTypeInfo?[]? arguments = null)
             {
-                _propertyInfo = new Lazy<PropertyInfo?>(delegate ()
-                {
-                    PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
-                    if (propertyInfo is not null)
-                        return propertyInfo;
+                Parent = parent;
+                ReturnType = returnType ?? parent;
+                Names = names;
+                Arguments = (arguments is null) ? new DriverTypeInfo[0] : arguments.Cast<DriverTypeInfo>().ToArray();
+                IsEnum = (returnType is null);
 
-                    return null;
-                }, true);
+                if (arguments is not null && Array.Exists(arguments, item => item is null))
+                    throw new InvalidOperationException("Argument types can never be defined as null");
+
+                if (returnType is null && arguments is not null)
+                    throw new InvalidOperationException("Enum must have both returnType and arguments set to null");
             }
-            internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null)
+
+            public DriverTypeInfo Parent { get; private set; }
+            public DriverTypeInfo ReturnType { get; private set; }
+            public string[] Names { get; private set; }
+            public DriverTypeInfo[] Arguments { get; private set; }
+            public bool IsEnum { get; private set; }
+
+            public abstract bool Exists { get; }
+
+            protected MemberType GetMemberType<T>() where T : Member => GetMemberType(typeof(T));
+            protected MemberType GetMemberType(Type type)
             {
-                _propertyInfo = new Lazy<PropertyInfo?>(delegate ()
+                if (type.IsAssignableFrom(typeof(StaticMethod)) || type.IsAssignableFrom(typeof(InstanceMethod)))
+                    return MemberType.Method;
+                else if (type.IsAssignableFrom(typeof(StaticProperty)) || type.IsAssignableFrom(typeof(InstanceProperty)))
+                    return MemberType.Property;
+                else if (type.IsAssignableFrom(typeof(EnumField)))
+                    return MemberType.EnumValue;
+                else if (type.IsAssignableFrom(typeof(Generic)))
+                    return MemberType.Generic;
+                else
+                    throw new NotSupportedException();
+            }
+
+            protected MethodInfo? GetMethodInfo(BindingFlags flags, Type declaringType, Type returnType, string name, Type[] arguments)
+            {
+                foreach (MethodInfo method in declaringType.GetMethods(flags| BindingFlags.Public | BindingFlags.NonPublic))
                 {
-                    foreach (string name in names)
+                    List<Mapping>? mapping = null;
+
+                    if (method.Name != name)
+                        continue;
+
+                    ParameterInfo[] parameters = method.GetParameters();
+                    if (arguments.Length != parameters.Length)
+                        continue;
+
+                    bool all = true;
+                    for (int index = 0; index < arguments.Length; index++)
                     {
-                        PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
-                        if (propertyInfo is not null)
-                            return propertyInfo;
+                        if (!MatchesType(parameters[index].ParameterType, arguments[index], ref mapping))
+                        {
+                            all = false;
+                            break;
+                        }
+                    }
+                    if (!all)
+                        continue;
+                    
+                    if (!MatchesType(method.ReturnType, returnType, ref mapping))
+                        continue;
+
+                    if (method.ContainsGenericParameters)
+                    {
+                        if (mapping is null)
+                            continue;
+
+                        bool incompatibleGenericParameters = false;
+                        foreach ((Type key, List<Mapping> items) in mapping.GroupBy(item => item.GenericParameter).Select(item => (key: item.Key, items: item.ToList())))
+                        {
+                            if (items.Count > 0)
+                            {
+                                Type specialized = items[0].SpecializedParameter;
+                                if (items.Exists(item => item.SpecializedParameter != specialized))
+                                {
+                                    incompatibleGenericParameters = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (incompatibleGenericParameters)
+                            continue;
+
+                        Type[] genericParameters = method.GetGenericArguments();
+                        Type[] specializedParameters = new Type[genericParameters.Length];
+
+                        for (int index = 0; index < genericParameters.Length; index++)
+                        {
+                            Type? specializedParameter = mapping.FirstOrDefault(item => true)?.SpecializedParameter;
+                            if (specializedParameter is null)
+                                throw new InvalidOperationException("Generic type mapping is missing...");
+
+                            specializedParameters[index] = specializedParameter;
+                        }
+                        return method.MakeGenericMethod(specializedParameters);
+                    }
+
+                    return method;
+                }
+                return null;
+            }
+            private bool MatchesType(Type memberType, Type passedInType, ref List<Mapping>? genericParameterMapping)
+            {
+                if (memberType.IsGenericParameter)
+                {
+                    genericParameterMapping ??= new List<Mapping>();
+                    genericParameterMapping.Add(new Mapping(memberType, passedInType));
+                    return true;
+                }
+
+                return memberType.IsAssignableFrom(passedInType);
+            }
+            private sealed class Mapping
+            {
+                internal Mapping(Type generic, Type specialized)
+                {
+                    GenericParameter = generic;
+                    SpecializedParameter = specialized;
+                }
+
+                public Type GenericParameter { get; private set; }
+                public Type SpecializedParameter { get; private set; }
+            } 
+        }
+        internal abstract class Member<T> : Member
+            where T : MemberInfo
+        {
+            protected Member(DriverTypeInfo parent, DriverTypeInfo? returnType, string name, DriverTypeInfo?[]? arguments = null) : base(parent, returnType, new string[] { name }, arguments) { }
+            protected Member(DriverTypeInfo parent, DriverTypeInfo? returnType, string[] names, DriverTypeInfo?[]? arguments = null) : base(parent, returnType, names, arguments) { }
+
+            protected abstract T? Search(Type type, string name, Type? returnType, Type[] args);
+            
+            protected Lazy<T?> ForEachType(bool deepSearch = true)
+            {
+                return new Lazy<T?>(delegate()
+                {
+                    foreach (string name in Names)
+                    {
+                        T? member = ForEachType(Parent.Type, name, ReturnType.Type, Arguments.Select(item => item.Type).ToArray(), deepSearch);
+                        if (member is not null)
+                            return member;
                     }
                     return null;
                 }, true);
             }
+            private T? ForEachType(Type type, string name, Type? returnType, Type[] arguments, bool deepSearch)
+            {
+                T? result = null;
+                if (type is not null)
+                {
+                    result = Search(type, name, returnType, arguments);
 
-            public bool Exists => (_propertyInfo.Value is not null);
+                    if (deepSearch)
+                    {
+                        if (result is null)
+                        {
+                            foreach (Type iface in type.GetInterfaces())
+                            {
+                                result = ForEachType(iface, name, returnType, arguments, deepSearch);
+                                if (result is not null)
+                                    break;
+                            }
+                        }
+
+                        if (result is null && !type.IsInterface)
+                        {
+                            result = ForEachType(type.BaseType, name, returnType, arguments, deepSearch);
+                        }
+                    }
+                }
+                return result;
+            }
+        }
+        internal enum MemberType
+        {
+            Method,
+            Property,
+            EnumValue,
+            Generic
+        }
+
+        internal sealed class StaticProperty : Member<PropertyInfo>
+        {
+            internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null) : base(parent, returnType, name, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
+            {
+                _propertyInfo = ForEachType();
+            }
+            internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null) : base(parent, returnType, names, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
+            {
+                _propertyInfo = ForEachType();
+            }
+            protected override PropertyInfo? Search(Type type, string name, Type? returnType, Type[] args)
+            {
+                return type.GetProperty(name, BindingFlags.Public | BindingFlags.Static, null, returnType, args, null);
+            }
+            public override bool Exists => (_propertyInfo.Value is not null);
 
             public object GetValue(object? index = null)
             {
@@ -271,34 +455,21 @@ namespace Blueprint41.Driver
             private PropertyInfo PropertyInfo => _propertyInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<PropertyInfo?> _propertyInfo;
         }
-        internal sealed class InstanceProperty : IMember
+        internal sealed class InstanceProperty : Member<PropertyInfo>
         {
-            internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null)
+            internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null) : base(parent, returnType, name, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
             {
-                _propertyInfo = new Lazy<PropertyInfo?>(delegate ()
-                {
-                    PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
-                    if (propertyInfo is not null)
-                        return propertyInfo;
-
-                    return null;
-                }, true);
+                _propertyInfo = ForEachType();
             }
-            internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null)
+            internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null) : base(parent, returnType, names, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
             {
-                _propertyInfo = new Lazy<PropertyInfo?>(delegate ()
-                {
-                    foreach (string name in names)
-                    {
-                        PropertyInfo? propertyInfo = parent.Type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance, null, returnType.Type, (indexer is null) ? new Type[0] : new Type[] { indexer.Type }, null);
-                        if (propertyInfo is not null)
-                            return propertyInfo;
-                    }
-                    return null;
-                }, true);
+                _propertyInfo = ForEachType();
             }
-
-            public bool Exists => (_propertyInfo.Value is not null);
+            protected override PropertyInfo? Search(Type type, string name, Type? returnType, Type[] args)
+            {
+                return type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance, null, returnType, args, null);
+            }
+            public override bool Exists => (_propertyInfo.Value is not null);
 
             public object GetValue(object instance, object? index = null)
             {
@@ -318,34 +489,21 @@ namespace Blueprint41.Driver
             private PropertyInfo PropertyInfo => _propertyInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<PropertyInfo?> _propertyInfo;
         }
-        internal sealed class StaticMethod : IMember
+        internal sealed class StaticMethod : Member<MethodInfo>
         {
-            internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments)
+            internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments) : base(parent, returnType, name, arguments)
             {
-                _methodInfo = new Lazy<MethodInfo?>(delegate ()
-                {
-                    MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Static, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
-                    if (methodInfo?.ReturnType == returnType.Type)
-                        return methodInfo;
-
-                    return null;
-                }, true);
+                _methodInfo = ForEachType();
             }
-            internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, params DriverTypeInfo[] arguments)
+            internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, params DriverTypeInfo[] arguments) : base(parent, returnType, names, arguments)
             {
-                _methodInfo = new Lazy<MethodInfo?>(delegate ()
-                {
-                    foreach (string name in names)
-                    {
-                        MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Static, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
-                        if (methodInfo?.ReturnType == returnType.Type)
-                            return methodInfo;
-                    }
-                    return null;
-                }, true);
+                _methodInfo = ForEachType();
             }
-
-            public bool Exists => (_methodInfo.Value is not null);
+            protected override MethodInfo? Search(Type type, string name, Type? returnType, Type[] args)
+            {
+                return GetMethodInfo(BindingFlags.Static, type, returnType!, name, args);
+            }
+            public override bool Exists => (_methodInfo.Value is not null);
 
             public object Invoke()
             {
@@ -375,34 +533,23 @@ namespace Blueprint41.Driver
             private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<MethodInfo?> _methodInfo;
         }
-        internal sealed class InstanceMethod : IMember
+        internal sealed class InstanceMethod : Member<MethodInfo>
         {
-            internal InstanceMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments)
+            internal InstanceMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments) : base(parent, returnType, name, arguments)
             {
-                _methodInfo = new Lazy<MethodInfo?>(delegate ()
-                {
-                    MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
-                    if (methodInfo?.ReturnType == returnType.Type)
-                        return methodInfo;
+                _methodInfo = ForEachType();
 
-                    return null;
-                }, true);
             }
-            internal InstanceMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, params DriverTypeInfo[] arguments)
+            internal InstanceMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, params DriverTypeInfo[] arguments) : base(parent, returnType, names, arguments)
             {
-                _methodInfo = new Lazy<MethodInfo?>(delegate ()
-                {
-                    foreach (string name in names)
-                    {
-                        MethodInfo? methodInfo = parent.Type.GetMethod(name, BindingFlags.Public | BindingFlags.Instance, null, arguments?.Select(info => info.Type).ToArray() ?? new Type[0], null);
-                        if (methodInfo?.ReturnType == returnType.Type)
-                            return methodInfo;
-                    }
-                    return null;
-                }, true);
-            }
+                _methodInfo = ForEachType();
 
-            public bool Exists => (_methodInfo.Value is not null);
+            }
+            protected override MethodInfo? Search(Type type, string name, Type? returnType, Type[] args)
+            {
+                return GetMethodInfo(BindingFlags.Instance, type, returnType!, name, args);
+            }
+            public override bool Exists => (_methodInfo.Value is not null);
 
             public object Invoke(object instance)
             {
@@ -432,34 +579,21 @@ namespace Blueprint41.Driver
             private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
             private readonly Lazy<MethodInfo?> _methodInfo;
         }
-        internal sealed class EnumField : IMember
+        internal sealed class EnumField : Member<FieldInfo>
         {
-            internal EnumField(DriverTypeInfo parent, string name)
+            internal EnumField(DriverTypeInfo parent, string name) : base(parent, null, name)
             {
-                _fieldInfo = new Lazy<FieldInfo?>(delegate ()
-                {
-                    FieldInfo? fieldInfo = parent.Type.GetFields().FirstOrDefault(fi => fi.IsLiteral && fi.Name == name);
-                    if (fieldInfo is not null)
-                        return fieldInfo;
-
-                    return null;
-                }, true);
+                _fieldInfo = ForEachType(false);
             }
-            internal EnumField(DriverTypeInfo parent, string[] names)
+            internal EnumField(DriverTypeInfo parent, string[] names) : base(parent, null, names)
             {
-                _fieldInfo = new Lazy<FieldInfo?>(delegate ()
-                {
-                    foreach (string name in names)
-                    {
-                        FieldInfo? fieldInfo = parent.Type.GetFields().FirstOrDefault(fi => fi.IsLiteral && fi.Name == name);
-                        if (fieldInfo is not null)
-                            return fieldInfo;
-                    }
-                    return null;
-                }, true);
+                _fieldInfo = ForEachType(false);
             }
-
-            public bool Exists => (_fieldInfo.Value is not null);
+            protected override FieldInfo? Search(Type type, string name, Type? returnType, Type[] args)
+            {
+                return type.GetFields().FirstOrDefault(fi => fi.IsLiteral && fi.Name == name);
+            }
+            public override bool Exists => (_fieldInfo.Value is not null);
 
             public object Value => FieldInfo.GetRawConstantValue();
             public bool Test(object instance) => Value == instance;
@@ -468,28 +602,34 @@ namespace Blueprint41.Driver
             private readonly Lazy<FieldInfo?> _fieldInfo;
         }
 
-        internal sealed class Generic<TMember>
-            where TMember : IMember
+        internal sealed class Generic<TMember> : Member<ConstructorInfo>
+            where TMember : Member
         {
-            internal Generic(DriverTypeInfo parent, string name)
+            internal Generic(DriverTypeInfo parent, string name) : base(parent, Type<TMember>.Info, name, null)
             {
-                Parent = parent;
-                Name = name;
-                Names = null;
-                HasReturnType = (typeof(TMember) != typeof(EnumField));
+                MemberType = GetMemberType<TMember>();
+                _constructorInfo = ForEachType(false);
             }
-            internal Generic(DriverTypeInfo parent, string[] names)
+            internal Generic(DriverTypeInfo parent, string[] names) : base(parent, Type<TMember>.Info, names, null)
             {
-                Parent = parent;
-                Name = null;
-                Names = names;
-                HasReturnType = (typeof(TMember) != typeof(EnumField));
+                MemberType = GetMemberType<TMember>();
+                _constructorInfo = ForEachType(false);
             }
+            private readonly MemberType MemberType;
 
-            private readonly DriverTypeInfo Parent;
-            private readonly string? Name;
-            private readonly string[]? Names;
-            private readonly bool HasReturnType;
+            protected override ConstructorInfo? Search(Type type, string name, Type? returnType, Type[] args)
+            {
+                Type[] signature = MemberType switch
+                {
+                    MemberType.Method => new Type[] { typeof(DriverTypeInfo), typeof(DriverTypeInfo), typeof(string[]), typeof(DriverTypeInfo[]) },
+                    MemberType.Property => new Type[] { typeof(DriverTypeInfo), typeof(DriverTypeInfo), typeof(string[]), typeof(DriverTypeInfo) },
+                    MemberType.EnumValue => new Type[] { typeof(DriverTypeInfo), typeof(string[]) },
+                    _ => throw new NotImplementedException()
+                };
+
+                return typeof(TMember).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, signature, null);
+            }
+            public override bool Exists => (_constructorInfo.Value is not null);
 
             public TMember ForTypes(DriverTypeInfo returnType, params DriverTypeInfo[] arguments)
             {
@@ -503,7 +643,7 @@ namespace Blueprint41.Driver
                         if (!_cache.TryGetValue(signature, out member))
                         {
                             Dictionary<GenericSignature, TMember> _newCache = new Dictionary<GenericSignature, TMember>(_cache);
-                            member = CreateInstance(Name is not null ? Name : Names);
+                            member = CreateInstance(Names);
                             _newCache.Add(signature, member);
 
                             Interlocked.Exchange(ref _cache, _newCache);
@@ -512,21 +652,19 @@ namespace Blueprint41.Driver
                 }
                 return member;
 
-                TMember CreateInstance(object? name)
+                TMember CreateInstance(string[] names)
                 {
-                    if (name is null)
-                        throw new InvalidOperationException();
+                    DriverTypeInfo? argument = (arguments.Length > 0 ? arguments[0] : null);
 
-                    object? instance;
-                    if (HasReturnType)
+                    object?[] args = MemberType switch
                     {
-                        instance = Activator.CreateInstance(typeof(TMember), new object[] { Parent, returnType, name, arguments });
-                    }
-                    else
-                    {
-                        instance = Activator.CreateInstance(typeof(TMember), new object[] { Parent, name, arguments });
-                    }
+                        MemberType.Method => new object?[] { Parent, returnType, names, arguments },
+                        MemberType.Property => new object?[] { Parent, returnType, names, argument },
+                        MemberType.EnumValue => new object?[] { Parent, names },
+                        _ => throw new NotImplementedException()
+                    };
 
+                    object? instance = ConstructorInfo.Invoke(args);
                     if (instance is null)
                         throw new InvalidOperationException();
 
@@ -534,6 +672,9 @@ namespace Blueprint41.Driver
                 }
             }
             private Dictionary<GenericSignature, TMember> _cache = new Dictionary<GenericSignature, TMember>();
+            
+            private ConstructorInfo ConstructorInfo => _constructorInfo.Value ?? throw new MissingMethodException();
+            private readonly Lazy<ConstructorInfo?> _constructorInfo;
 
             internal struct GenericSignature
             {
@@ -981,7 +1122,7 @@ namespace Blueprint41.Driver
         {
             public ValueExtensionsInfo(params string[] names) : base(names) { }
 
-            public T As<T>(object value) => (T)_as.Value.ForTypes(VALUE_EXTENSIONS, Type<T>.Info, Type<object>.Info).Invoke(value);
+            public T As<T>(object value) => (T)_as.Value.ForTypes(Type<T>.Info, Type<object>.Info).Invoke(value);
             public object As(DriverTypeInfo type, object value) => _as.Value.ForTypes(VALUE_EXTENSIONS, type, Type<object>.Info).Invoke(value);
 
             private readonly Lazy<Generic<StaticMethod>> _as = new Lazy<Generic<StaticMethod>>(() => new Generic<StaticMethod>(VALUE_EXTENSIONS, "As"));

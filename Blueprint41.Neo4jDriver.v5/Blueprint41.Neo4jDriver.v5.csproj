@@ -48,11 +48,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Docs\LICENSE.txt" Pack="true" PackagePath=""/>
+    <None Include="Docs\LICENSE.txt" Pack="true" PackagePath="" />
   </ItemGroup>
 	
   <ItemGroup>
-    <PackageReference Include="Neo4j.Driver" Version="5.8.0" />
+    <PackageReference Include="Neo4j.Driver" Version="5.24.0" />
   </ItemGroup>
 
   <ItemGroup>

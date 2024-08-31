@@ -9,10 +9,9 @@ ResultCursor -> IsOpen
 ResultCursor -> KeysAsync()
 ResultCursor -> ConsumeAsync()
 ResultCursor -> PeekAsync()
-ResultCursor -> FetchAsync()
 
-Record -> Item
 Record -> Keys
+Record -> Values
 
 ResultSummary -> Query
 ResultSummary -> Counters
