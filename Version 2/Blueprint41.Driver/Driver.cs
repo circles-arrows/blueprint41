@@ -34,6 +34,42 @@ namespace Blueprint41.Driver
 
             if (typeof(TDriverInterface) != I_DRIVER.Type)
                 throw new InvalidOperationException($"Please pass type of {I_DRIVER.Names} as generic argument TDriverInterface.");
+
+            foreach (FieldInfo field in typeof(Driver).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(item => typeof(DriverTypeInfo).IsAssignableFrom(item.FieldType) && item.Name == item.Name.ToUpperInvariant()))
+            {
+                DriverTypeInfo typeInfo = (DriverTypeInfo)field.GetValue(null);
+                if (!typeInfo.Exists)
+                    throw new TypeLoadException(typeInfo.Names);
+
+                Dictionary<string, List<Member>> fieldGroups = new Dictionary<string, List<Member>>();
+
+                foreach (FieldInfo member in typeInfo.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(item => item.FieldType.IsGenericType && item.FieldType.GenericTypeArguments.Length == 1 && item.FieldType.Name == "Lazy`1" && typeof(Member).IsAssignableFrom(item.FieldType.GenericTypeArguments[0]) && item.Name.StartsWith("_")))
+                {
+                    OneOfAttribute? oneOf = (OneOfAttribute?)member.GetCustomAttribute(typeof(OneOfAttribute));
+
+                    Member memberInfo = (Member)((dynamic)member.GetValue(typeInfo)).Value;
+                    if (oneOf is null && !memberInfo.Exists)
+                    {
+                        throw new MissingMemberException($"Member {string.Join("or ", memberInfo.Names.Select(name => $"'{name}'"))} missing on type {typeInfo.Names}.");
+                    }
+                    else if (oneOf is not null)
+                    {
+                        List<Member> group;
+                        if (!fieldGroups.TryGetValue(oneOf.Group, out group))
+                        {
+                            group = new List<Member>();
+                            fieldGroups.Add(oneOf.Group, group);
+                        }
+                        group.Add(memberInfo);
+                    }
+                }
+
+                foreach (KeyValuePair<string, List<Member>> group in fieldGroups)
+                {
+                    if (!group.Value.Exists(item => item.Exists))
+                        throw new MissingMemberException($"At least 1 member from the group '{group.Key}' must exist on type {typeInfo.Names}.");
+                }
+            }
         }
 
         #region DriverTypeInfo definitions 
@@ -58,9 +94,20 @@ namespace Blueprint41.Driver
         internal static readonly ValueExtensionsInfo          VALUE_EXTENSIONS                     = new ValueExtensionsInfo("Neo4j.Driver.ValueExtensions");
         internal static readonly INodeInfo                    I_NODE                               = new INodeInfo("Neo4j.Driver.INode");
         internal static readonly IRelationshipInfo            I_RELATIONSHIP                       = new IRelationshipInfo("Neo4j.Driver.IRelationship");
+        internal static readonly EncryptionLevelInfo          ENCRYPTION_LEVEL                     = new EncryptionLevelInfo("Neo4j.Driver.EncryptionLevel");
+        internal static readonly CategoryInfo                 CATEGORY                             = new CategoryInfo("Neo4j.Driver.Category");
+        internal static readonly SeverityInfo                 SEVERITY                             = new SeverityInfo("Neo4j.Driver.Severity");
+        internal static readonly CertificateTrustRuleInfo     CERTIFICATE_TRUST_RULE               = new CertificateTrustRuleInfo("Neo4j.Driver.CertificateTrustRule");
+        internal static readonly ServerAddressInfo            SERVER_ADDRESS                       = new ServerAddressInfo("Neo4j.Driver.ServerAddress");
+        internal static readonly TrustManagerInfo             TRUST_MANAGER                        = new TrustManagerInfo("Neo4j.Driver.TrustManager");
+
         internal static readonly DriverTypeInfo               I_AUTH_TOKEN                         = new DriverTypeInfo("Neo4j.Driver.IAuthToken");
-        internal static readonly DriverTypeInfo               I_ASYNC_QUERY_RUNNER                 = new DriverTypeInfo("Neo4j.Driver.IAsyncQueryRunner");
-        internal static readonly DriverTypeInfo               I_ENTITY                             = new DriverTypeInfo("Neo4j.Driver.IEntity");
+        //IServerAddressResolver
+        //Logger & ILogger
+
+        #endregion
+
+        #region Type, Property, Method & Enum helpers
 
         internal static class Generic
         {
@@ -70,10 +117,16 @@ namespace Blueprint41.Driver
         {
             internal static readonly DriverTypeInfo Info = new DriverTypeInfo(typeof(T));
         }
+        [AttributeUsage(AttributeTargets.Field)]
+        internal class OneOfAttribute : Attribute
+        {
+            public OneOfAttribute(string group)
+            {
+                Group = group;
+            }
 
-        #endregion
-
-        #region Type, Property, Method & Enum helpers
+            public string Group { get; private set; }
+        }
 
         internal class DriverTypeInfo
         {
@@ -166,27 +219,42 @@ namespace Blueprint41.Driver
                 }
             }
 
-            public object ToArray(Array items)
+            public Array ToArray(object items, int? count = null)
             {
-                Array array = Array.CreateInstance(Type, items.Length);
+                if (items is null)
+                    throw new ArgumentNullException("items");
+
+                Type type = items.GetType();
+                if (typeof(Array).IsAssignableFrom(type))
+                    return ToArray((Array)items);
+                else if (typeof(IList).IsAssignableFrom(type))
+                    return ToArray((IList)items);
+                else if (typeof(IEnumerable).IsAssignableFrom(type))
+                    return ToArray((IEnumerable)items, count);
+                else
+                    throw new NotSupportedException();
+            }
+            public Array ToArray(Array items)
+            {
+                Array array = CreateArray(Type, items.Length);
 
                 for (int index = 0; index < items.Length; index++)
                     array.SetValue(items.GetValue(index), index);
 
                 return array;
             }
-            public object ToArray(IList items)
+            public Array ToArray(IList items)
             {
-                Array array = Array.CreateInstance(Type, items.Count);
+                Array array = CreateArray(Type, items.Count);
 
                 for (int index = 0; index < items.Count; index++)
                     array.SetValue(items[index], index);
 
                 return array;
             }
-            public object ToArray<T>(IEnumerable<T> items, int? count = null)
+            public Array ToArray(IEnumerable items, int? count = null)
             {
-                Array array = Array.CreateInstance(Type, count ?? items.Count());
+                Array array = CreateArray(Type, count ?? items.Cast<object>().Count());
 
                 int index = 0;
                 foreach (object item in items)
@@ -194,38 +262,153 @@ namespace Blueprint41.Driver
 
                 return array;
             }
-
-            public object ToList(Array items)
+            public T[] ToArray<T>(object items, Func<object, T> wrapper, int? count = null)
             {
-                IList list = CreateList(items.Length);
+                if (items is null)
+                    throw new ArgumentNullException("items");
+
+                Type type = items.GetType();
+                if (typeof(Array).IsAssignableFrom(type))
+                    return ToArray((Array)items, wrapper);
+                else if (typeof(IList).IsAssignableFrom(type))
+                    return ToArray((IList)items, wrapper);
+                else if (typeof(IEnumerable).IsAssignableFrom(type))
+                    return ToArray((IEnumerable)items, wrapper, count);
+                else
+                    throw new NotSupportedException();
+            }
+            public T[] ToArray<T>(Array items, Func<object, T> wrapper)
+            {
+                T[] array = CreateArray<T>(items.Length);
+
+                for (int index = 0; index < items.Length; index++)
+                    array.SetValue(wrapper.Invoke(items.GetValue(index)), index);
+
+                return array;
+            }
+            public T[] ToArray<T>(IList items, Func<object, T> wrapper)
+            {
+                T[] array = CreateArray<T>(items.Count);
+
+                for (int index = 0; index < items.Count; index++)
+                    array.SetValue(wrapper.Invoke(items[index]), index);
+
+                return array;
+            }
+            public T[] ToArray<T>(IEnumerable items, Func<object, T> wrapper, int? count = null)
+            {
+                T[] array = CreateArray<T>(count ?? items.Cast<object>().Count());
+
+                int index = 0;
+                foreach (object item in items)
+                    array.SetValue(wrapper.Invoke(item), index++);
+
+                return array;
+            }
+
+            public IList ToList(object items, int? count = null)
+            {
+                if (items is null)
+                    throw new ArgumentNullException("items");
+
+                Type type = items.GetType();
+                if (typeof(Array).IsAssignableFrom(type))
+                    return ToList((Array)items);
+                else if (typeof(IList).IsAssignableFrom(type))
+                    return ToList((IList)items);
+                else if (typeof(IEnumerable).IsAssignableFrom(type))
+                    return ToList((IEnumerable)items, count);
+                else
+                    throw new NotSupportedException();
+            }
+            public IList ToList(Array items)
+            {
+                IList list = CreateList(Type, items.Length);
 
                 for (int index = 0; index < items.Length; index++)
                     list.Add(items.GetValue(index));
 
                 return list;
             }
-            public object ToList(IList items)
+            public IList ToList(IList items)
             {
-                IList list = CreateList(items.Count);
+                IList list = CreateList(Type, items.Count);
 
                 for (int index = 0; index < items.Count; index++)
                     list.Add(items[index]);
 
                 return list;
             }
-            public object ToList<T>(IEnumerable<T> items, int? count = null)
+            public IList ToList(IEnumerable items, int? count = null)
             {
-                IList list = CreateList(count);
+                IList list = CreateList(Type, count);
 
                 foreach (object item in items)
                     list.Add(item);
 
                 return list;
             }
-            private IList CreateList(int? count)
+            public List<T> ToList<T>(object items, Func<object, T> wrapper, int? count = null)
             {
-                Type genericListType = typeof(List<>).MakeGenericType(Type);
+                if (items is null)
+                    throw new ArgumentNullException("items");
+
+                Type type = items.GetType();
+                if (typeof(Array).IsAssignableFrom(type))
+                    return ToList((Array)items, wrapper);
+                else if (typeof(IList).IsAssignableFrom(type))
+                    return ToList((IList)items, wrapper);
+                else if (typeof(IEnumerable).IsAssignableFrom(type))
+                    return ToList((IEnumerable)items, wrapper, count);
+                else
+                    throw new NotSupportedException();
+            }
+            public List<T> ToList<T>(Array items, Func<object, T> wrapper)
+            {
+                List<T> list = CreateList<T>(items.Length);
+
+                for (int index = 0; index < items.Length; index++)
+                    list.Add(wrapper.Invoke(items.GetValue(index)));
+
+                return list;
+            }
+            public List<T> ToList<T>(IList items, Func<object, T> wrapper)
+            {
+                List<T> list = CreateList<T>(items.Count);
+
+                for (int index = 0; index < items.Count; index++)
+                    list.Add(wrapper.Invoke(items[index]));
+
+                return list;
+            }
+            public List<T> ToList<T>(IEnumerable items, Func<object, T> wrapper, int? count = null)
+            {
+                List<T> list = CreateList<T>(count);
+
+                foreach (object item in items)
+                    list.Add(wrapper.Invoke(item));
+
+                return list;
+            }
+
+            private Array CreateArray(Type type, int count)
+            {
+                return Array.CreateInstance(type, count);
+            }
+            private T[] CreateArray<T>(int count)
+            {
+                return (T[])Array.CreateInstance(typeof(T), count);
+            }
+            private IList CreateList(Type type, int? count)
+            {
+                Type genericListType = typeof(List<>).MakeGenericType(type);
                 IList list = (count.HasValue) ? (IList)Activator.CreateInstance(genericListType, count) : (IList)Activator.CreateInstance(genericListType);
+                return list;
+            }
+            private List<T> CreateList<T>(int? count)
+            {
+                Type genericListType = typeof(List<>).MakeGenericType(typeof(T));
+                List<T> list = (count.HasValue) ? (List<T>)Activator.CreateInstance(genericListType, count) : (List<T>)Activator.CreateInstance(genericListType);
                 return list;
             }
 
@@ -757,12 +940,12 @@ namespace Blueprint41.Driver
             //Task<IServerInfo> GetServerInfoAsync();
 
             public Task<bool> TryVerifyConnectivityAsync(Driver driver) => AsTask<bool>(_tryVerifyConnectivityAsync.Value.Invoke(driver._instance));
-            private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "TryVerifyConnectivityAsync", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
+            private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "TryVerifyConnectivityAsync"), true);
 
             //Task VerifyConnectivityAsync();
 
             public Task<bool> SupportsMultiDbAsync(Driver driver) => AsTask<bool>(_supportsMultiDbAsync.Value.Invoke(driver._instance));
-            private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "SupportsMultiDbAsync", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
+            private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "SupportsMultiDbAsync"), true);
         }
         internal sealed class ConfigBuilderInfo : DriverTypeInfo
         {
@@ -876,7 +1059,7 @@ namespace Blueprint41.Driver
             public Counters Counters(object instance) => new Counters(_counters.Value.GetValue(instance));
             private readonly Lazy<InstanceProperty> _counters = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, I_COUNTERS, "Counters"), true);
 
-            public List<Notification> Notifications(object instance) => (List<Notification>)ToList((IList)_notifications.Value.GetValue(instance)); //  IList<INotification> Notifications { get; }
+            public List<Notification> Notifications(object instance) => ToList<Notification>(_notifications.Value.GetValue(instance), item => new Notification(item)); //  IList<INotification> Notifications { get; }
             private readonly Lazy<InstanceProperty> _notifications = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, Generic.Of(typeof(IList<>), I_NOTIFICATION), "Notifications"), true);
         }
         internal sealed class QueryInfo : DriverTypeInfo
@@ -966,10 +1149,10 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceMethod> _beginTransactionAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, Generic.Of(typeof(Task<>), I_ASYNC_TRANSACTION), "BeginTransactionAsync", Generic.Of(typeof(Action<>), TRANSACTION_CONFIG_BUILDER)), true);
 
             public Task<ResultCursor> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new ResultCursor(instance));
-            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info), true);
+            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info), true);
 
             public Task<ResultCursor> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new ResultCursor(instance));
-            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info, Type<IDictionary<string, object>>.Info), true);
+            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info, Type<IDictionary<string, object>>.Info), true);
         }
         internal sealed class SessionConfigBuilderInfo : DriverTypeInfo
         {
@@ -1001,10 +1184,10 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceMethod> _rollbackAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, Type<Task>.Info, "RollbackAsync"), true);
 
             public Task<ResultCursor> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new ResultCursor(instance));
-            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info), true);
+            private readonly Lazy<InstanceMethod> _runAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info), true);
 
             public Task<ResultCursor> RunAsync(object instance, string query, IDictionary<string, object?> parameters) => AsTask(_runAsync2.Value.Invoke(instance, query, parameters), instance => new ResultCursor(instance));
-            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_QUERY_RUNNER, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info, Type<IDictionary<string, object>>.Info), true);
+            private readonly Lazy<InstanceMethod> _runAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_TRANSACTION, Generic.Of(typeof(Task<>), I_RESULT_CURSOR), "RunAsync", Type<string>.Info, Type<IDictionary<string, object>>.Info), true);
         }
         internal sealed class TransactionConfigBuilderInfo : DriverTypeInfo
         {
@@ -1017,7 +1200,9 @@ namespace Blueprint41.Driver
                 else
                     _withTimeoutOld.Value.Invoke(instance, timeout ?? TimeSpan.Zero);
             }
+            [OneOf(nameof(WithTimeout))]
             private readonly Lazy<InstanceMethod> _withTimeout = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", Type<TimeSpan?>.Info), true); // Driver 5
+            [OneOf(nameof(WithTimeout))]
             private readonly Lazy<InstanceMethod> _withTimeoutOld = new Lazy<InstanceMethod>(() => new InstanceMethod(TRANSACTION_CONFIG_BUILDER, TRANSACTION_CONFIG_BUILDER, "WithTimeout", Type<TimeSpan>.Info), true); // Driver 4
 
             public void WithMetadata(object instance, IDictionary<string, object> metadata) => _withMetadata.Value.Invoke(instance, metadata);
@@ -1079,26 +1264,26 @@ namespace Blueprint41.Driver
             public INodeInfo(params string[] names) : base(names) { }
 
             public string ElementId(object instance) => (string)_elementId.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _elementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<string>.Info, "ElementId"), true);
+            private readonly Lazy<InstanceProperty> _elementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<string>.Info, "ElementId"), true);
 
             public IReadOnlyList<string> Labels(object instance) => (IReadOnlyList<string>)_labels.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _labels = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<IReadOnlyList<string>>.Info, "Labels"), true);
+            private readonly Lazy<InstanceProperty> _labels = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<IReadOnlyList<string>>.Info, "Labels"), true);
 
             public object Item(object instance, string key) => _item.Value.GetValue(instance, key);
-            private readonly Lazy<InstanceProperty> _item = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<object>.Info, "Item", Type<string>.Info), true);
+            private readonly Lazy<InstanceProperty> _item = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<object>.Info, "Item", Type<string>.Info), true);
 
             public IReadOnlyDictionary<string, object?> Properties(object instance) => (IReadOnlyDictionary<string, object?>)_properties.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _properties = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<IReadOnlyDictionary<string, object>>.Info, "Properties"), true);
+            private readonly Lazy<InstanceProperty> _properties = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<IReadOnlyDictionary<string, object>>.Info, "Properties"), true);
 
             public bool EqualsINode(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
-            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(Generic.Of(typeof(IEquatable<>), I_NODE), Type<bool>.Info, "Equals", I_NODE));
+            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(I_NODE, Type<bool>.Info, "Equals", I_NODE));
         }
         internal sealed class IRelationshipInfo : DriverTypeInfo
         {
             public IRelationshipInfo(params string[] names) : base(names) { }
 
             public string ElementId(object instance) => (string)_elementId.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _elementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<string>.Info, "ElementId"), true);
+            private readonly Lazy<InstanceProperty> _elementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "ElementId"), true);
 
             public string RelationshipType(object instance) => (string)_type.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _type = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "Type"), true);
@@ -1110,13 +1295,13 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceProperty> _endNodeElementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "EndNodeElementId"), true);
 
             public object Item(object instance, string key) => _item.Value.GetValue(instance, key);
-            private readonly Lazy<InstanceProperty> _item = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<object>.Info, "Item", Type<string>.Info), true);
+            private readonly Lazy<InstanceProperty> _item = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<object>.Info, "Item", Type<string>.Info), true);
 
             public IReadOnlyDictionary<string, object?> Properties(object instance) => (IReadOnlyDictionary<string, object?>)_properties.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _properties = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ENTITY, Type<IReadOnlyDictionary<string, object>>.Info, "Properties"), true);
+            private readonly Lazy<InstanceProperty> _properties = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<IReadOnlyDictionary<string, object>>.Info, "Properties"), true);
 
             public bool EqualsIRelationship(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
-            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(Generic.Of(typeof(IEquatable<>), I_RELATIONSHIP), Type<bool>.Info, "Equals", I_NODE));
+            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RELATIONSHIP, Type<bool>.Info, "Equals", I_RELATIONSHIP));
         }
         internal sealed class ValueExtensionsInfo : DriverTypeInfo
         {
@@ -1126,6 +1311,62 @@ namespace Blueprint41.Driver
             public object As(DriverTypeInfo type, object value) => _as.Value.ForTypes(VALUE_EXTENSIONS, type, Type<object>.Info).Invoke(value);
 
             private readonly Lazy<Generic<StaticMethod>> _as = new Lazy<Generic<StaticMethod>>(() => new Generic<StaticMethod>(VALUE_EXTENSIONS, "As"));
+        }
+        internal sealed class EncryptionLevelInfo : DriverTypeInfo
+        {
+            public EncryptionLevelInfo(params string[] names) : base(names) { }
+
+            public object None => _none.Value.Value;
+            public bool IsNone(object value) => _none.Value.Test(value);
+            private readonly Lazy<EnumField> _none = new Lazy<EnumField>(() => new EnumField(ENCRYPTION_LEVEL, "None"), true);
+
+            public object Encrypted => _encrypted.Value.Value;
+            public bool IsEncrypted(object value) => _encrypted.Value.Test(value);
+            private readonly Lazy<EnumField> _encrypted = new Lazy<EnumField>(() => new EnumField(ENCRYPTION_LEVEL, "Encrypted"), true);
+        }
+        internal sealed class CategoryInfo : DriverTypeInfo
+        {
+            public CategoryInfo(params string[] names) : base(names) { }
+
+            //Hint,
+            //Unrecognized,
+            //Unsupported,
+            //Performance,
+            //Deprecation,
+            //Generic
+        }
+        internal sealed class SeverityInfo : DriverTypeInfo
+        {
+            public SeverityInfo(params string[] names) : base(names) { }
+
+            //Warning,
+            //Information
+        }
+        internal sealed class CertificateTrustRuleInfo : DriverTypeInfo
+        {
+            public CertificateTrustRuleInfo(params string[] names) : base(names) { }
+
+            //TrustSystem,
+            //TrustList,
+            //TrustAny
+        }
+        internal sealed class ServerAddressInfo : DriverTypeInfo
+        {
+            public ServerAddressInfo(params string[] names) : base(names) { }
+
+            //public static ServerAddress From(string host, int port) => null!;
+            //public static ServerAddress From(Uri uri) => null!;
+
+            //public bool Equals(ServerAddress other) => false!;
+        }
+        internal sealed class TrustManagerInfo : DriverTypeInfo
+        {
+            public TrustManagerInfo(params string[] names) : base(names) { }
+
+            //public static TrustManager CreateInsecure(bool verifyHostname = false) => null!;
+            //public static TrustManager CreateChainTrust(bool verifyHostname = true, X509RevocationMode revocationMode = X509RevocationMode.NoCheck, X509RevocationFlag revocationFlag = X509RevocationFlag.ExcludeRoot, bool useMachineContext = false) => null!;
+            //public static TrustManager CreatePeerTrust(bool verifyHostname = true, bool useMachineContext = false) => null!;
+            //public static TrustManager CreateCertTrust(IEnumerable<X509Certificate2> trusted, bool verifyHostname = true) => null!;
         }
 
         #endregion
