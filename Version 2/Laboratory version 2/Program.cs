@@ -85,14 +85,12 @@ namespace Laboratory
                     """,
                     parameters).ConfigureAwait(false);
 
-                bool fetch = await result.FetchAsync().ConfigureAwait(false);
-                while (fetch)
+                foreach (Record record in await result.ToListAsync())
                 {
-                    IReadOnlyDictionary<string, object?> values = Record.ValuesInternal(result.Current);
+                    string movie = record["Movie"].As<string>();
+                    string actor = record["Actor"].As<string>();
 
-                    Console.WriteLine($"Movie: '{values["Movie"]}', Actor: '{values["Actor"]}'.");
-
-                    fetch = await result.FetchAsync().ConfigureAwait(false);
+                    Console.WriteLine($"Movie: '{movie}', Actor: '{actor}'.");
                 }
             }
 
@@ -137,14 +135,12 @@ namespace Laboratory
                     """,
                         parameters).ConfigureAwait(false);
 
-                    bool fetch = await result.FetchAsync().ConfigureAwait(false);
-                    while (fetch)
+                    foreach (object record in await result.ToListAsyncInternal())
                     {
-                        IReadOnlyDictionary<string, object?> values = Record.ValuesInternal(result.Current);
+                        string movie = Record.ItemInternal(record, "Movie").As("NULL");
+                        string actor = Record.ItemInternal(record, "Actor").As("NULL");
 
-                        Console.WriteLine($"Movie: '{values["Movie"]}', Actor: '{values["Actor"]}'.");
-
-                        fetch = await result.FetchAsync().ConfigureAwait(false);
+                        Console.WriteLine($"Movie: '{movie}', Actor: '{actor}'.");
                     }
 
                     await transaction.RollbackAsync();
