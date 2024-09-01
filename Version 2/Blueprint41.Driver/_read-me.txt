@@ -5,7 +5,6 @@ Driver -> GetServerInfoAsync()
 Driver -> VerifyConnectivityAsync()
 
 ResultCursor -> Summary
-ResultCursor -> IsOpen
 ResultCursor -> KeysAsync()
 ResultCursor -> ConsumeAsync()
 ResultCursor -> PeekAsync()
@@ -61,6 +60,8 @@ IsIRelationship(object instance)
 EncryptionLevel -> None
 EncryptionLevel -> Encrypted
 
+NOT SUPPORTED IN DRIVER v4.4
+
 Category -> 
 Category -> 
 Category -> 
@@ -111,13 +112,47 @@ From: https://stackoverflow.com/questions/12496837/dynamically-implementing-c-sh
 
 It is possible dynamically implement an interface in C# without emitting code using reflection, maybe with the help of DLR.
 Yes, I would think so. Bill Wagner has an article named Implementing Dynamic Interfaces. It demonstrates how you can use
-	IDynamicMetaObjectProvide interface and in particular the DynamicMetaObject class to roll you very own dynamic object.
-	However, it is a somewhat complex concept and at some point it will require some reflection to hook up the members of
-	the interface to the corresponding DLR representation.
+    IDynamicMetaObjectProvide interface and in particular the DynamicMetaObject class to roll you very own dynamic object.
+    However, it is a somewhat complex concept and at some point it will require some reflection to hook up the members of
+    the interface to the corresponding DLR representation.
 You cannot use an already existing dynamic object like ExpandoObject because the implemented interfaces (actually just one
-	interface) cannot be changed dynamically.
+    interface) cannot be changed dynamically.
 
 https://download.microsoft.com/download/5/4/B/54B83DFE-D7AA-4155-9687-B0CF58FF65D7/implementing-dynamic-interfaces.pdf
 
 https://learn.microsoft.com/en-us/dotnet/api/system.dynamic.idynamicmetaobjectprovider?view=net-8.0&redirectedfrom=MSDN
 https://learn.microsoft.com/en-us/dotnet/api/system.dynamic.dynamicmetaobject?view=net-8.0&redirectedfrom=MSDN
+
+
+
+
+https://houseofbilz.com/archive/2009/09/18/introducing-dynamicwrapper.aspx
+http://web.archive.org/web/20160305010445/http://houseofbilz.com/archives/2009/09/18/introducing-dynamicwrapper/
+http://web.archive.org/web/20170319205407/http://dynamicwrapper.codeplex.com/
+https://github.com/skyguy94/dynamic-wrapper
+
+
+https://stackoverflow.com/questions/2974736/dynamically-implementing-an-interface-in-net-4-0-c
+
+dynamic wrapper = new Proxy(new Foo());
+IFoo foo = wrapper;
+foo.Bar();
+
+class Proxy : DynamicObject
+{
+    ...
+
+    public override bool TryConvert(ConvertBinder binder, out object result)
+    {
+        Type bindingType = binder.Type;
+        if (bindingType.IsInstanceOfType(target))
+        {
+            result = target;
+            return true;
+        }
+        result = null;
+        return false;
+
+    }
+
+}

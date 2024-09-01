@@ -20,10 +20,20 @@ namespace Laboratory
 
         static async Task Main(string[] args)
         {
+            Driver.Configure<Neo4j.Driver.IDriver>();
+
+            // Prove new 
+            ServerAddressResolver resolver = new ServerAddressResolver(null, null);
+            Neo4j.Driver.IServerAddressResolver instance = (Neo4j.Driver.IServerAddressResolver)Driver.I_SERVER_ADDRESS_RESOLVER.ConvertToIServerAddressResolver(resolver);
+
+            //await TestDriver().ConfigureAwait(false);
+        }
+
+        private static async Task TestDriver()
+        {
             string path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             string[] queries = File.ReadAllText(Path.Combine(path, "movies.cypher")).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
-            Driver.Configure<Neo4j.Driver.IDriver>();
 
             #region Test Auth Tokens
 
@@ -100,7 +110,7 @@ namespace Laboratory
             #endregion
 
             #region Test Running a Query on the Transaction
-            
+
             await CleanDB().ConfigureAwait(false);
 
             await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
@@ -184,4 +194,22 @@ namespace Laboratory
             }
         }
     }
+
+//#nullable disable
+//    public class ServerAddressResolverProxy : Neo4j.Driver.IServerAddressResolver
+//    {
+//        public ServerAddressResolverProxy(ServerAddressResolver instance)
+//        {
+//            _instance = instance;
+//        }
+//        private readonly ServerAddressResolver _instance;
+        
+//        public ISet<Neo4j.Driver.ServerAddress> Resolve(Neo4j.Driver.ServerAddress address)
+//        {
+//            ISet<ServerAddress> result = _instance.Resolve(new ServerAddress(address));
+
+//            return new HashSet<Neo4j.Driver.ServerAddress>(result.Select(item => (Neo4j.Driver.ServerAddress)item._instance));
+//        }
+//    }
+//#nullable enable
 }

@@ -14,8 +14,6 @@ namespace Blueprint41.Driver
 
         public Record Current => Driver.I_RESULT_CURSOR.Current(_instance);
         internal object CurrentInternal => Driver.I_RESULT_CURSOR.CurrentInternal(_instance);
-
-        public bool IsOpen => Driver.I_RESULT_CURSOR.IsOpen(_instance);
         public Task<string[]> KeysAsync() => Driver.I_RESULT_CURSOR.KeysAsync(_instance);
         public Task<ResultSummary> ConsumeAsync() => Driver.I_RESULT_CURSOR.ConsumeAsync(_instance);
         public Task<Record> PeekAsync() => Driver.I_RESULT_CURSOR.PeekAsync(_instance);

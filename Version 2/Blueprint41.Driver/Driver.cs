@@ -1,12 +1,14 @@
 ﻿#pragma warning disable S3881
 
 using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CSharp;
 
 using Blueprint41.Core;
 
@@ -95,15 +97,21 @@ namespace Blueprint41.Driver
         internal static readonly INodeInfo                    I_NODE                               = new INodeInfo("Neo4j.Driver.INode");
         internal static readonly IRelationshipInfo            I_RELATIONSHIP                       = new IRelationshipInfo("Neo4j.Driver.IRelationship");
         internal static readonly EncryptionLevelInfo          ENCRYPTION_LEVEL                     = new EncryptionLevelInfo("Neo4j.Driver.EncryptionLevel");
-        internal static readonly CategoryInfo                 CATEGORY                             = new CategoryInfo("Neo4j.Driver.Category");
-        internal static readonly SeverityInfo                 SEVERITY                             = new SeverityInfo("Neo4j.Driver.Severity");
-        internal static readonly CertificateTrustRuleInfo     CERTIFICATE_TRUST_RULE               = new CertificateTrustRuleInfo("Neo4j.Driver.CertificateTrustRule");
         internal static readonly ServerAddressInfo            SERVER_ADDRESS                       = new ServerAddressInfo("Neo4j.Driver.ServerAddress");
         internal static readonly TrustManagerInfo             TRUST_MANAGER                        = new TrustManagerInfo("Neo4j.Driver.TrustManager");
 
+
+        internal static readonly IServerAddressResolverInfo   I_SERVER_ADDRESS_RESOLVER            = new IServerAddressResolverInfo("Neo4j.Driver.IServerAddressResolver");
+
         internal static readonly DriverTypeInfo               I_AUTH_TOKEN                         = new DriverTypeInfo("Neo4j.Driver.IAuthToken");
-        //IServerAddressResolver
+        internal static readonly DriverTypeInfo               SERVER_ADDRESS_RESOLVER_PROXY        = new DriverTypeInfo(RuntimeCodeGen.MakeServerAddressResolverProxy);
         //Logger & ILogger
+
+        // NOT SUPPORTED IN DRIVER v4.4
+
+        //internal static readonly CategoryInfo                 CATEGORY                             = new CategoryInfo("Neo4j.Driver.Category");
+        //internal static readonly SeverityInfo                 SEVERITY                             = new SeverityInfo("Neo4j.Driver.Severity");
+        //internal static readonly CertificateTrustRuleInfo     CERTIFICATE_TRUST_RULE               = new CertificateTrustRuleInfo("Neo4j.Driver.CertificateTrustRule");
 
         #endregion
 
@@ -126,6 +134,64 @@ namespace Blueprint41.Driver
             }
 
             public string Group { get; private set; }
+        }
+        internal static class RuntimeCodeGen
+        {
+            public static Type MakeServerAddressResolverProxy()
+            {
+                string code = """
+                    using System;
+                    using System.Linq;
+                    using System.Collections.Generic;
+                    using System.Reflection;
+
+                    using neo4j = Neo4j.Driver;
+                    using bp41 = Blueprint41.Driver;
+
+                    namespace Blueprint41.Driver.RuntimeGeneration
+                    {
+                        public class ServerAddressResolverProxy : neo4j.IServerAddressResolver
+                        {
+                            public static ServerAddressResolverProxy Get(bp41.ServerAddressResolver instance) => new ServerAddressResolverProxy() { _instance = instance };
+                            private bp41.ServerAddressResolver _instance;
+
+                            public ISet<neo4j.ServerAddress> Resolve(neo4j.ServerAddress address)
+                            {
+                                ISet<bp41.ServerAddress> result = _instance.Resolve(new ServerAddress(address));
+
+                                return new HashSet<neo4j.ServerAddress>(result.Select(item => (neo4j.ServerAddress)item._instance));
+                            }
+                        }
+                    }
+                    """;
+
+                CompilerParameters options = new CompilerParameters();
+                options.GenerateExecutable = false;
+                options.GenerateInMemory = true;
+                options.CoreAssemblyFileName = typeof(object).Assembly.Location;
+                var netstandard = Assembly.Load("netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51");
+                options.ReferencedAssemblies.Add(netstandard.Location);
+                options.ReferencedAssemblies.Add(typeof(ISet<>).Assembly.Location);
+                options.ReferencedAssemblies.Add(typeof(Enumerable).Assembly.Location);
+                options.ReferencedAssemblies.Add(typeof(Driver).Assembly.Location);
+                options.ReferencedAssemblies.Add(I_DRIVER.Type.Assembly.Location);
+                options.OutputAssembly = "Blueprint41.Driver.RuntimeGeneration.dll";
+
+                CSharpCodeProvider provider = new CSharpCodeProvider();
+                CompilerResults compile = provider.CompileAssemblyFromSource(options, code);
+
+                return compile.CompiledAssembly.GetType("Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy");
+
+                //object abc = Activator.CreateInstance(type);
+
+                //MethodInfo method = type.GetMethod("Get");
+                //object result = method.Invoke(abc, null);
+
+                //Console.WriteLine(result); //output: abc
+
+                //return type;
+            }
+
         }
 
         internal class DriverTypeInfo
@@ -920,7 +986,6 @@ namespace Blueprint41.Driver
             }
         }
 
-
         #endregion
 
         #region Specific Neo4j Driver Types
@@ -939,8 +1004,8 @@ namespace Blueprint41.Driver
 
             //Task<IServerInfo> GetServerInfoAsync();
 
-            public Task<bool> TryVerifyConnectivityAsync(Driver driver) => AsTask<bool>(_tryVerifyConnectivityAsync.Value.Invoke(driver._instance));
-            private readonly Lazy<InstanceMethod> _tryVerifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "TryVerifyConnectivityAsync"), true);
+            public Task VerifyConnectivityAsync(Driver driver) => AsTask(_verifyConnectivityAsync.Value.Invoke(driver._instance));
+            private readonly Lazy<InstanceMethod> _verifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task>.Info, "VerifyConnectivityAsync"), true);
 
             //Task VerifyConnectivityAsync();
 
@@ -1032,9 +1097,6 @@ namespace Blueprint41.Driver
             public Record Current(object instance) => new Record(_current.Value.GetValue(instance));
             public object CurrentInternal(object instance) => _current.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _current = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_CURSOR, I_RECORD, "Current"), true);
-
-            public bool IsOpen(object instance) => (bool)_isOpen.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _isOpen = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_CURSOR, Type<bool>.Info, "IsOpen"), true);
 
             public Task<string[]> KeysAsync(object instance) => AsTask<string[]>(_keysAsync.Value.Invoke(instance));
             private readonly Lazy<InstanceMethod> _keysAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RESULT_CURSOR, Type<Task<string[]>>.Info, "KeysAsync"), true);
@@ -1263,8 +1325,17 @@ namespace Blueprint41.Driver
         {
             public INodeInfo(params string[] names) : base(names) { }
 
-            public string ElementId(object instance) => (string)_elementId.Value.GetValue(instance);
+            public string ElementId(object instance)
+            {
+                if (_elementId.Value.Exists)
+                    return (string)_elementId.Value.GetValue(instance);
+                else
+                    return ((long)_id.Value.GetValue(instance)).ToString();
+            }
+            [OneOf(nameof(ElementId))]
             private readonly Lazy<InstanceProperty> _elementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<string>.Info, "ElementId"), true);
+            [OneOf(nameof(ElementId))]
+            private readonly Lazy<InstanceProperty> _id = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<long>.Info, "Id"), true);
 
             public IReadOnlyList<string> Labels(object instance) => (IReadOnlyList<string>)_labels.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _labels = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<IReadOnlyList<string>>.Info, "Labels"), true);
@@ -1282,17 +1353,44 @@ namespace Blueprint41.Driver
         {
             public IRelationshipInfo(params string[] names) : base(names) { }
 
-            public string ElementId(object instance) => (string)_elementId.Value.GetValue(instance);
+            public string ElementId(object instance)
+            {
+                if (_elementId.Value.Exists)
+                    return (string)_elementId.Value.GetValue(instance);
+                else
+                    return ((long)_id.Value.GetValue(instance)).ToString();
+            }
+            [OneOf(nameof(ElementId))]
             private readonly Lazy<InstanceProperty> _elementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "ElementId"), true);
+            [OneOf(nameof(ElementId))]
+            private readonly Lazy<InstanceProperty> _id = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<long>.Info, "Id"), true);
 
             public string RelationshipType(object instance) => (string)_type.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _type = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "Type"), true);
 
-            public string StartNodeElementId(object instance) => (string)_startNodeElementId.Value.GetValue(instance);
+            public string StartNodeElementId(object instance)
+            {
+                if (_elementId.Value.Exists)
+                    return (string)_startNodeElementId.Value.GetValue(instance);
+                else
+                    return ((long)_startNodeId.Value.GetValue(instance)).ToString();
+            }
+            [OneOf(nameof(StartNodeElementId))]
             private readonly Lazy<InstanceProperty> _startNodeElementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "StartNodeElementId"), true);
+            [OneOf(nameof(StartNodeElementId))]
+            private readonly Lazy<InstanceProperty> _startNodeId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<long>.Info, "StartNodeId"), true);
 
-            public string EndNodeElementId(object instance) => (string)_endNodeElementId.Value.GetValue(instance);
+            public string EndNodeElementId(object instance)
+            {
+                if (_elementId.Value.Exists)
+                    return (string)_endNodeElementId.Value.GetValue(instance);
+                else
+                    return ((long)_endNodeId.Value.GetValue(instance)).ToString();
+            }
+            [OneOf(nameof(EndNodeElementId))] 
             private readonly Lazy<InstanceProperty> _endNodeElementId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<string>.Info, "EndNodeElementId"), true);
+            [OneOf(nameof(EndNodeElementId))] 
+            private readonly Lazy<InstanceProperty> _endNodeId = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<long>.Info, "EndNodeId"), true);
 
             public object Item(object instance, string key) => _item.Value.GetValue(instance, key);
             private readonly Lazy<InstanceProperty> _item = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<object>.Info, "Item", Type<string>.Info), true);
@@ -1367,6 +1465,13 @@ namespace Blueprint41.Driver
             //public static TrustManager CreateChainTrust(bool verifyHostname = true, X509RevocationMode revocationMode = X509RevocationMode.NoCheck, X509RevocationFlag revocationFlag = X509RevocationFlag.ExcludeRoot, bool useMachineContext = false) => null!;
             //public static TrustManager CreatePeerTrust(bool verifyHostname = true, bool useMachineContext = false) => null!;
             //public static TrustManager CreateCertTrust(IEnumerable<X509Certificate2> trusted, bool verifyHostname = true) => null!;
+        }
+        internal sealed class IServerAddressResolverInfo : DriverTypeInfo
+        {
+            public IServerAddressResolverInfo(params string[] names) : base(names) { }
+
+            public object ConvertToIServerAddressResolver(ServerAddressResolver instance) => _get.Value.Invoke(instance);
+            private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS_RESOLVER_PROXY, SERVER_ADDRESS_RESOLVER_PROXY, "Get", Type<ServerAddressResolver>.Info), true);
         }
 
         #endregion
