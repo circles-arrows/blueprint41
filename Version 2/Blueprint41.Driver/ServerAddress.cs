@@ -11,6 +11,7 @@ namespace Blueprint41.Driver
             _instance = instance;
         }
         internal object _instance { get; private set; }
+        public object AsNeo4jServerAddress() => _instance;
 
         public static ServerAddress From(string host, int port) => null!;
         public static ServerAddress From(Uri uri) => null!;

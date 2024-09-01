@@ -81,8 +81,10 @@ namespace Blueprint41.Driver
         }
 
         // Not Implemented
-        public ConfigBuilder WithResolver(IServerAddressResolver resolver)
+        public ConfigBuilder WithResolver(ServerAddressResolver resolver)
         {
+            object neo4jResolver = Driver.I_SERVER_ADDRESS_RESOLVER.ConvertToIServerAddressResolver(resolver);
+
             throw new NotImplementedException();
             return this;
         }
@@ -125,29 +127,37 @@ namespace Blueprint41.Driver
             throw new NotImplementedException();
             return this;
         }
-        // Not Implemented
-        public ConfigBuilder WithCertificateTrustRule(CertificateTrustRule certificateTrustRule, IReadOnlyList<X509Certificate2>? trustedCaCertificates = null)
-        {
-            throw new NotImplementedException();
-            return this;
-        }
-        // Not Implemented
-        public ConfigBuilder WithCertificateTrustRule(CertificateTrustRule certificateTrustRule, IReadOnlyList<string>? trustedCaCertificateFileNames = null)
-        {
-            throw new NotImplementedException();
-            return this;
-        }
-        // Not Implemented
-        public ConfigBuilder WithNotifications(Severity? minimumSeverity, Category[] disabledCategories)
-        {
-            throw new NotImplementedException();
-            return this;
-        }
-        // Not Implemented
-        public ConfigBuilder WithNotificationsDisabled()
-        {
-            throw new NotImplementedException();
-            return this;
-        }
+
+
+
+
+
+        // NOT SUPPORTED IN DRIVER v4.4
+
+
+        //// Not Implemented
+        //public ConfigBuilder WithCertificateTrustRule(CertificateTrustRule certificateTrustRule, IReadOnlyList<X509Certificate2>? trustedCaCertificates = null)
+        //{
+        //    throw new NotImplementedException();
+        //    return this;
+        //}
+        //// Not Implemented
+        //public ConfigBuilder WithCertificateTrustRule(CertificateTrustRule certificateTrustRule, IReadOnlyList<string>? trustedCaCertificateFileNames = null)
+        //{
+        //    throw new NotImplementedException();
+        //    return this;
+        //}
+        //// Not Implemented
+        //public ConfigBuilder WithNotifications(Severity? minimumSeverity, Category[] disabledCategories)
+        //{
+        //    throw new NotImplementedException();
+        //    return this;
+        //}
+        //// Not Implemented
+        //public ConfigBuilder WithNotificationsDisabled()
+        //{
+        //    throw new NotImplementedException();
+        //    return this;
+        //}
     }
 }
