@@ -45,7 +45,7 @@ namespace Blueprint41.Driver
         ////     (Neo4j.Driver.IResultSummary.HasProfile was profiled), the query plan will contain
         ////     detailed information about what each step of the plan did. That more in-depth
         ////     version of the query plan becomes available here.
-        //IProfiledPlan Profile { get; }
+        public QueryProfile Profile => Driver.I_RESULT_SUMMARY.Profile(_instance);
 
         ////
         //// Summary:
