@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.CSharp;
 
 using Blueprint41.Core;
@@ -107,12 +108,6 @@ namespace Blueprint41.Driver
         internal static readonly DriverTypeInfo               I_AUTH_TOKEN                         = new DriverTypeInfo("Neo4j.Driver.IAuthToken");
         internal static readonly DriverTypeInfo               LOGGER_PROXY                         = new DriverTypeInfo(RuntimeCodeGen.GetLoggerProxyProxyType);
         internal static readonly DriverTypeInfo               SERVER_ADDRESS_RESOLVER_PROXY        = new DriverTypeInfo(RuntimeCodeGen.GetServerAddressResolverProxyType);
-
-        // NOT SUPPORTED IN DRIVER v4.4
-
-        //internal static readonly CategoryInfo                 CATEGORY                             = new CategoryInfo("Neo4j.Driver.Category");
-        //internal static readonly SeverityInfo                 SEVERITY                             = new SeverityInfo("Neo4j.Driver.Severity");
-        //internal static readonly CertificateTrustRuleInfo     CERTIFICATE_TRUST_RULE               = new CertificateTrustRuleInfo("Neo4j.Driver.CertificateTrustRule");
 
         #endregion
 
@@ -684,7 +679,7 @@ namespace Blueprint41.Driver
             protected Member(DriverTypeInfo parent, DriverTypeInfo? returnType, string[] names, DriverTypeInfo?[]? arguments = null) : base(parent, returnType, names, arguments) { }
 
             protected abstract T? Search(Type type, string name, Type? returnType, Type[] args);
-            
+
             protected Lazy<T?> ForEachType(bool deepSearch = true)
             {
                 return new Lazy<T?>(delegate()
@@ -1058,20 +1053,14 @@ namespace Blueprint41.Driver
         {
             public IDriverInfo(params string[] names) : base(names) { }
 
-            //bool Encrypted { get; }
-
             public Session AsyncSession(Driver driver) => new Session(_asyncSession1.Value.Invoke(driver._instance));
             private readonly Lazy<InstanceMethod> _asyncSession1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession"), true);
 
             public Session AsyncSession(Driver driver, Action<SessionConfigBuilder> configBuilder) => new Session(_asyncSession2.Value.Invoke(driver._instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new SessionConfigBuilder(o)))));
             private readonly Lazy<InstanceMethod> _asyncSession2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
 
-            //Task<IServerInfo> GetServerInfoAsync();
-
             public Task VerifyConnectivityAsync(Driver driver) => AsTask(_verifyConnectivityAsync.Value.Invoke(driver._instance));
             private readonly Lazy<InstanceMethod> _verifyConnectivityAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task>.Info, "VerifyConnectivityAsync"), true);
-
-            //Task VerifyConnectivityAsync();
 
             public Task<bool> SupportsMultiDbAsync(Driver driver) => AsTask<bool>(_supportsMultiDbAsync.Value.Invoke(driver._instance));
             private readonly Lazy<InstanceMethod> _supportsMultiDbAsync = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, Type<Task<bool>>.Info, "SupportsMultiDbAsync"), true);
@@ -1079,6 +1068,12 @@ namespace Blueprint41.Driver
         internal sealed class ConfigBuilderInfo : DriverTypeInfo
         {
             public ConfigBuilderInfo(params string[] names) : base(names) { }
+
+            public void WithEncryptionLevel(object instance, object level) => _withEncryptionLevel.Value.Invoke(instance, level);
+            private readonly Lazy<InstanceMethod> _withEncryptionLevel = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithEncryptionLevel", ENCRYPTION_LEVEL), true);
+
+            public void WithTrustManager(object instance, TrustManager manager) => _withTrustManager.Value.Invoke(instance, manager._instance);
+            private readonly Lazy<InstanceMethod> _withTrustManager = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithTrustManager", TRUST_MANAGER), true);
 
             public void WithLogger(object instance, ILogger logger) => _withLogger.Value.Invoke(instance, I_LOGGER.ConvertToNeo4jILogger(logger));
             private readonly Lazy<InstanceMethod> _withLogger = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithLogger", I_LOGGER), true);
@@ -1127,6 +1122,10 @@ namespace Blueprint41.Driver
 
             public void WithFetchSize(object instance, long size) => _withFetchSize.Value.Invoke(instance, size);
             private readonly Lazy<InstanceMethod> _withFetchSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithFetchSize", Type<long>.Info), true);
+
+            public void WithUserAgent(object instance, string userAgent) => _withUserAgent.Value.Invoke(instance, userAgent);
+            private readonly Lazy<InstanceMethod> _withUserAgent = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithUserAgent", Type<string>.Info), true);
+
         }
         internal sealed class GraphDatabaseInfo : DriverTypeInfo
         {
@@ -1492,49 +1491,34 @@ namespace Blueprint41.Driver
             public bool IsEncrypted(object value) => _encrypted.Value.Test(value);
             private readonly Lazy<EnumField> _encrypted = new Lazy<EnumField>(() => new EnumField(ENCRYPTION_LEVEL, "Encrypted"), true);
         }
-        internal sealed class CategoryInfo : DriverTypeInfo
-        {
-            public CategoryInfo(params string[] names) : base(names) { }
-
-            //Hint,
-            //Unrecognized,
-            //Unsupported,
-            //Performance,
-            //Deprecation,
-            //Generic
-        }
-        internal sealed class SeverityInfo : DriverTypeInfo
-        {
-            public SeverityInfo(params string[] names) : base(names) { }
-
-            //Warning,
-            //Information
-        }
-        internal sealed class CertificateTrustRuleInfo : DriverTypeInfo
-        {
-            public CertificateTrustRuleInfo(params string[] names) : base(names) { }
-
-            //TrustSystem,
-            //TrustList,
-            //TrustAny
-        }
         internal sealed class ServerAddressInfo : DriverTypeInfo
         {
             public ServerAddressInfo(params string[] names) : base(names) { }
 
-            //public static ServerAddress From(string host, int port) => null!;
-            //public static ServerAddress From(Uri uri) => null!;
+            public ServerAddress From(string host, int port) => new ServerAddress(_fromHostAndPort.Value.Invoke(host, port));
+            private readonly Lazy<StaticMethod> _fromHostAndPort = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS, SERVER_ADDRESS, "From", Type<string>.Info, Type<int>.Info));
 
-            //public bool Equals(ServerAddress other) => false!;
+            public ServerAddress From(Uri uri) => new ServerAddress(_fromUri.Value.Invoke(uri));
+            private readonly Lazy<StaticMethod> _fromUri = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS, SERVER_ADDRESS, "From", Type<Uri>.Info));
+
+            public bool EqualsServerAddress(object instance, ServerAddress other) => (bool)_equals.Value.Invoke(instance, other._instance);
+            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(SERVER_ADDRESS, Type<bool>.Info, "Equals", SERVER_ADDRESS));
         }
         internal sealed class TrustManagerInfo : DriverTypeInfo
         {
             public TrustManagerInfo(params string[] names) : base(names) { }
 
-            //public static TrustManager CreateInsecure(bool verifyHostname = false) => null!;
-            //public static TrustManager CreateChainTrust(bool verifyHostname = true, X509RevocationMode revocationMode = X509RevocationMode.NoCheck, X509RevocationFlag revocationFlag = X509RevocationFlag.ExcludeRoot, bool useMachineContext = false) => null!;
-            //public static TrustManager CreatePeerTrust(bool verifyHostname = true, bool useMachineContext = false) => null!;
-            //public static TrustManager CreateCertTrust(IEnumerable<X509Certificate2> trusted, bool verifyHostname = true) => null!;
+            public TrustManager CreateInsecure(bool verifyHostname = false) => new TrustManager( _createInsecure.Value.Invoke(verifyHostname));
+            private readonly Lazy<StaticMethod> _createInsecure = new Lazy<StaticMethod>(() => new StaticMethod(TRUST_MANAGER, TRUST_MANAGER, "CreateInsecure", Type<bool>.Info));
+
+            public TrustManager CreateChainTrust(bool verifyHostname = true, X509RevocationMode revocationMode = X509RevocationMode.NoCheck, X509RevocationFlag revocationFlag = X509RevocationFlag.ExcludeRoot, bool useMachineContext = false) => new TrustManager(_createChainTrust.Value.Invoke(verifyHostname, revocationMode, revocationFlag, useMachineContext));
+            private readonly Lazy<StaticMethod> _createChainTrust = new Lazy<StaticMethod>(() => new StaticMethod(TRUST_MANAGER, TRUST_MANAGER, "CreateChainTrust", Type<bool>.Info, Type<X509RevocationMode>.Info, Type<X509RevocationFlag>.Info, Type<bool>.Info));
+
+            public TrustManager CreatePeerTrust(bool verifyHostname = true, bool useMachineContext = false) => new TrustManager(_createPeerTrust.Value.Invoke(verifyHostname, useMachineContext));
+            private readonly Lazy<StaticMethod> _createPeerTrust = new Lazy<StaticMethod>(() => new StaticMethod(TRUST_MANAGER, TRUST_MANAGER, "CreatePeerTrust", Type<bool>.Info, Type<bool>.Info));
+
+            public TrustManager CreateCertTrust(IEnumerable<X509Certificate2> trusted, bool verifyHostname = true) => new TrustManager(_createCertTrust.Value.Invoke(trusted, verifyHostname));
+            private readonly Lazy<StaticMethod> _createCertTrust = new Lazy<StaticMethod>(() => new StaticMethod(TRUST_MANAGER, TRUST_MANAGER, "CreateCertTrust", Type<IEnumerable<X509Certificate2>>.Info, Type<bool>.Info));
         }
         internal sealed class IServerAddressResolverInfo : DriverTypeInfo
         {

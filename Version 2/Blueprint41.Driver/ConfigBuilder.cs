@@ -19,16 +19,23 @@ namespace Blueprint41.Driver
         public const int Infinite = -1;
         public static readonly TimeSpan InfiniteInterval = TimeSpan.FromMilliseconds(-1.0);
 
-        //public ConfigBuilder WithEncryptionLevel(EncryptionLevel level)
-        //{
-        //    _config.NullableEncryptionLevel = level;
-        //    return this;
-        //}
-        //public ConfigBuilder WithTrustManager(TrustManager manager)
-        //{
-        //    _config.TrustManager = manager;
-        //    return this;
-        //}
+        public ConfigBuilder WithEncryptionLevel(EncryptionLevel level)
+        {
+            object lvl = level switch
+            {
+                EncryptionLevel.Encrypted => Driver.ENCRYPTION_LEVEL.Encrypted,
+                EncryptionLevel.None      => Driver.ENCRYPTION_LEVEL.None,
+                _ => throw new NotSupportedException()
+            };
+
+            Driver.CONFIG_BUILDER.WithEncryptionLevel(_instance, lvl);
+            return this;
+        }
+        public ConfigBuilder WithTrustManager(TrustManager manager)
+        {
+            Driver.CONFIG_BUILDER.WithTrustManager(_instance, manager);
+            return this;
+        }
         public ConfigBuilder WithLogger(ILogger logger)
         {
             Driver.CONFIG_BUILDER.WithLogger(_instance, logger);
@@ -109,50 +116,10 @@ namespace Blueprint41.Driver
             Driver.CONFIG_BUILDER.WithFetchSize(_instance, size);
             return this;
         }
-
-        // Not Implemented
-        internal ConfigBuilder WithMetricsEnabled(bool enabled)
-        {
-            throw new NotImplementedException();
-            return this;
-        }
-        // Not Implemented
         public ConfigBuilder WithUserAgent(string userAgent)
         {
-            throw new NotImplementedException();
+            Driver.CONFIG_BUILDER.WithUserAgent(_instance, userAgent);
             return this;
         }
-
-
-
-
-
-        // NOT SUPPORTED IN DRIVER v4.4
-
-
-        //// Not Implemented
-        //public ConfigBuilder WithCertificateTrustRule(CertificateTrustRule certificateTrustRule, IReadOnlyList<X509Certificate2>? trustedCaCertificates = null)
-        //{
-        //    throw new NotImplementedException();
-        //    return this;
-        //}
-        //// Not Implemented
-        //public ConfigBuilder WithCertificateTrustRule(CertificateTrustRule certificateTrustRule, IReadOnlyList<string>? trustedCaCertificateFileNames = null)
-        //{
-        //    throw new NotImplementedException();
-        //    return this;
-        //}
-        //// Not Implemented
-        //public ConfigBuilder WithNotifications(Severity? minimumSeverity, Category[] disabledCategories)
-        //{
-        //    throw new NotImplementedException();
-        //    return this;
-        //}
-        //// Not Implemented
-        //public ConfigBuilder WithNotificationsDisabled()
-        //{
-        //    throw new NotImplementedException();
-        //    return this;
-        //}
     }
 }
