@@ -93,6 +93,7 @@ namespace Blueprint41.Driver
         internal static readonly AccessModeInfo               ACCESS_MODE                          = new AccessModeInfo("Neo4j.Driver.AccessMode");
         internal static readonly BookmarksInfo                BOOKMARKS                            = new BookmarksInfo("Neo4j.Driver.Bookmarks", "Neo4j.Driver.Bookmark");
         internal static readonly QueryInfo                    QUERY                                = new QueryInfo("Neo4j.Driver.Query");
+        internal static readonly QueryPlanInfo                QUERY_PLAN                           = new QueryPlanInfo("Neo4j.Driver.IPlan");
         internal static readonly ICountersInfo                I_COUNTERS                           = new ICountersInfo("Neo4j.Driver.ICounters");
         internal static readonly INotificationInfo            I_NOTIFICATION                       = new INotificationInfo("Neo4j.Driver.INotification");
         internal static readonly IInputPositionInfo           I_INPUT_POSITION                     = new IInputPositionInfo("Neo4j.Driver.IInputPosition");
@@ -1192,6 +1193,16 @@ namespace Blueprint41.Driver
 
             public List<Notification> Notifications(object instance) => ToList<Notification>(_notifications.Value.GetValue(instance), item => new Notification(item)); //  IList<INotification> Notifications { get; }
             private readonly Lazy<InstanceProperty> _notifications = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, Generic.Of(typeof(IList<>), I_NOTIFICATION), "Notifications"), true);
+
+            public bool HasPlan(object instance) => (bool)_hasPlan.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _hasPlan = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, Type<bool>.Info, "HasPlan"), true);
+
+            public bool HasProfile(object instance) => (bool)_hasProfile.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _hasProfile = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, Type<bool>.Info, "HasProfile"), true);
+
+            public QueryPlan Plan(object instance) => new QueryPlan(_Plan.Value.GetValue(instance));
+            private readonly Lazy<InstanceProperty> _Plan = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, QUERY_PLAN, "Plan"), true);
+
         }
         internal sealed class QueryInfo : DriverTypeInfo
         {
@@ -1203,6 +1214,23 @@ namespace Blueprint41.Driver
             public IDictionary<string, object> Parameters(object instance) => (IDictionary<string, object>)_parameters.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _parameters = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY, Type<IDictionary<string, object>>.Info, "Parameters"), true);
         }
+        internal sealed class QueryPlanInfo : DriverTypeInfo
+        {
+            public QueryPlanInfo(params string[] names) : base(names) { }
+
+            public string OperatorType(object instance) => (string)_OperatorType.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _OperatorType = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PLAN, Type<string>.Info, "OperatorType"), true);
+
+            public IDictionary<string, object> Arguments(object instance) => (IDictionary<string, object>)_Arguments.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Arguments = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PLAN, Type<IDictionary<string, object>>.Info, "Arguments"), true);
+
+            public IList<string> Identifiers(object instance) => (IList<string>)_Identifiers.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Identifiers = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PLAN, Type<IList<string>>.Info, "Identifiers"), true);
+
+            public IList<QueryPlan> Children(object instance) => ToList<QueryPlan>(_Children.Value.GetValue(instance), item => new QueryPlan(item));
+            private readonly Lazy<InstanceProperty> _Children = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PLAN, Generic.Of(typeof(IList<>), QUERY_PLAN), "Children"), true);
+        }
+        
         internal sealed class ICountersInfo : DriverTypeInfo
         {
             public ICountersInfo(params string[] names) : base(names) { }
