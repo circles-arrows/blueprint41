@@ -95,6 +95,8 @@ namespace Blueprint41.Driver
         internal static readonly QueryInfo                    QUERY                                = new QueryInfo("Neo4j.Driver.Query");
         internal static readonly QueryPlanInfo                QUERY_PLAN                           = new QueryPlanInfo("Neo4j.Driver.IPlan");
         internal static readonly QueryProfileInfo             QUERY_PROFILE                        = new QueryProfileInfo("Neo4j.Driver.IProfiledPlan");
+        internal static readonly IServerInfo                  SERVER_INFO                          = new IServerInfo("Neo4j.Driver.IServerInfo");
+        internal static readonly IDatabaseInfo                DATABASE_INFO                        = new IDatabaseInfo("Neo4j.Driver.IDatabaseInfo");
         internal static readonly ICountersInfo                I_COUNTERS                           = new ICountersInfo("Neo4j.Driver.ICounters");
         internal static readonly INotificationInfo            I_NOTIFICATION                       = new INotificationInfo("Neo4j.Driver.INotification");
         internal static readonly IInputPositionInfo           I_INPUT_POSITION                     = new IInputPositionInfo("Neo4j.Driver.IInputPosition");
@@ -1207,6 +1209,18 @@ namespace Blueprint41.Driver
             public QueryProfile Profile(object instance) => new QueryProfile(_Profile.Value.GetValue(instance));
             private readonly Lazy<InstanceProperty> _Profile = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, QUERY_PROFILE, "Profile"), true);
 
+            public TimeSpan ResultAvailableAfter(object instance) => (TimeSpan)_ResultAvailableAfter.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _ResultAvailableAfter = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, Type<TimeSpan>.Info, "ResultAvailableAfter"), true);
+
+            public TimeSpan ResultConsumedAfter(object instance) => (TimeSpan)_ResultConsumedAfter.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _ResultConsumedAfter = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, Type<TimeSpan>.Info, "ResultConsumedAfter"), true);
+
+            public ServerInfo Server(object instance) => new ServerInfo(_Server.Value.GetValue(instance));
+            private readonly Lazy<InstanceProperty> _Server = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, SERVER_INFO, "Server"), true);
+
+            public DatabaseInfo Database(object instance) => new DatabaseInfo(_Database.Value.GetValue(instance));
+            private readonly Lazy<InstanceProperty> _Database = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, DATABASE_INFO, "Database"), true);
+
         }
         internal sealed class QueryInfo : DriverTypeInfo
         {
@@ -1270,6 +1284,30 @@ namespace Blueprint41.Driver
 
             public bool HasPageCacheStats(object instance) => (bool)_HasPageCacheStats.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _HasPageCacheStats = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<bool>.Info, "HasPageCacheStats"), true);
+        }
+        internal sealed class IServerInfo : DriverTypeInfo
+        {
+            public IServerInfo(params string[] names) : base(names) { }
+
+            public string Address(object instance) => (string)_Address.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Address = new Lazy<InstanceProperty>(() => new InstanceProperty(SERVER_INFO, Type<string>.Info, "Address"), true);
+
+            public string ProtocolVersion(object instance) => (string)_ProtocolVersion.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _ProtocolVersion = new Lazy<InstanceProperty>(() => new InstanceProperty(SERVER_INFO, Type<string>.Info, "ProtocolVersion"), true);
+
+            public string Agent(object instance) => (string)_Agent.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Agent = new Lazy<InstanceProperty>(() => new InstanceProperty(SERVER_INFO, Type<string>.Info, "Agent"), true);
+
+            public string Version(object instance) => (string)_Version.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Version = new Lazy<InstanceProperty>(() => new InstanceProperty(SERVER_INFO, Type<string>.Info, "Version"), true);
+        }
+        internal sealed class IDatabaseInfo : DriverTypeInfo
+        {
+            public IDatabaseInfo(params string[] names) : base(names) { }
+
+            public string Name(object instance) => (string)_Name.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Name = new Lazy<InstanceProperty>(() => new InstanceProperty(DATABASE_INFO, Type<string>.Info, "Name"), true);
+
         }
         internal sealed class ICountersInfo : DriverTypeInfo
         {
