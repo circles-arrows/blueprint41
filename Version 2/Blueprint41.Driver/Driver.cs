@@ -94,6 +94,7 @@ namespace Blueprint41.Driver
         internal static readonly BookmarksInfo                BOOKMARKS                            = new BookmarksInfo("Neo4j.Driver.Bookmarks", "Neo4j.Driver.Bookmark");
         internal static readonly QueryInfo                    QUERY                                = new QueryInfo("Neo4j.Driver.Query");
         internal static readonly QueryPlanInfo                QUERY_PLAN                           = new QueryPlanInfo("Neo4j.Driver.IPlan");
+        internal static readonly QueryProfileInfo             QUERY_PROFILE                        = new QueryProfileInfo("Neo4j.Driver.IProfiledPlan");
         internal static readonly ICountersInfo                I_COUNTERS                           = new ICountersInfo("Neo4j.Driver.ICounters");
         internal static readonly INotificationInfo            I_NOTIFICATION                       = new INotificationInfo("Neo4j.Driver.INotification");
         internal static readonly IInputPositionInfo           I_INPUT_POSITION                     = new IInputPositionInfo("Neo4j.Driver.IInputPosition");
@@ -1203,6 +1204,9 @@ namespace Blueprint41.Driver
             public QueryPlan Plan(object instance) => new QueryPlan(_Plan.Value.GetValue(instance));
             private readonly Lazy<InstanceProperty> _Plan = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, QUERY_PLAN, "Plan"), true);
 
+            public QueryProfile Profile(object instance) => new QueryProfile(_Profile.Value.GetValue(instance));
+            private readonly Lazy<InstanceProperty> _Profile = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RESULT_SUMMARY, QUERY_PROFILE, "Profile"), true);
+
         }
         internal sealed class QueryInfo : DriverTypeInfo
         {
@@ -1230,7 +1234,43 @@ namespace Blueprint41.Driver
             public IList<QueryPlan> Children(object instance) => ToList<QueryPlan>(_Children.Value.GetValue(instance), item => new QueryPlan(item));
             private readonly Lazy<InstanceProperty> _Children = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PLAN, Generic.Of(typeof(IList<>), QUERY_PLAN), "Children"), true);
         }
-        
+        internal sealed class QueryProfileInfo : DriverTypeInfo
+        {
+            public QueryProfileInfo(params string[] names) : base(names) { }
+
+            public string OperatorType(object instance) => (string)_OperatorType.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _OperatorType = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<string>.Info, "OperatorType"), true);
+
+            public IDictionary<string, object> Arguments(object instance) => (IDictionary<string, object>)_Arguments.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Arguments = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<IDictionary<string, object>>.Info, "Arguments"), true);
+
+            public IList<string> Identifiers(object instance) => (IList<string>)_Identifiers.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Identifiers = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<IList<string>>.Info, "Identifiers"), true);
+
+            public IList<QueryProfile> Children(object instance) => ToList<QueryProfile>(_Children.Value.GetValue(instance), item => new QueryProfile(item));
+            private readonly Lazy<InstanceProperty> _Children = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Generic.Of(typeof(IList<>), QUERY_PROFILE), "Children"), true);
+
+            public long DbHits(object instance) => (long)_DbHits.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _DbHits = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<long>.Info, "DbHits"), true);
+
+            public long Records(object instance) => (long)_Records.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Records = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<long>.Info, "Records"), true);
+
+            public long PageCacheHits(object instance) => (long)_PageCacheHits.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _PageCacheHits = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<long>.Info, "PageCacheHits"), true);
+
+            public long PageCacheMisses(object instance) => (long)_PageCacheMisses.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _PageCacheMisses = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<long>.Info, "PageCacheMisses"), true);
+
+            public double PageCacheHitRatio(object instance) => (double)_PageCacheHitRatio.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _PageCacheHitRatio = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<double>.Info, "PageCacheHitRatio"), true);
+            
+            public long Time(object instance) => (long)_Time.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _Time = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<long>.Info, "Time"), true);
+
+            public bool HasPageCacheStats(object instance) => (bool)_HasPageCacheStats.Value.GetValue(instance);
+            private readonly Lazy<InstanceProperty> _HasPageCacheStats = new Lazy<InstanceProperty>(() => new InstanceProperty(QUERY_PROFILE, Type<bool>.Info, "HasPageCacheStats"), true);
+        }
         internal sealed class ICountersInfo : DriverTypeInfo
         {
             public ICountersInfo(params string[] names) : base(names) { }
