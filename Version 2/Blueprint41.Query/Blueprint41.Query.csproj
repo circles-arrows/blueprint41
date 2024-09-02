@@ -59,12 +59,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Crc32.NET" Version="1.*" />
-    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.*" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.CodeDom" Version="4.*" />
-    <PackageReference Include="System.Text.Json" Version="6.*" />
   </ItemGroup>
 
   <ItemGroup>

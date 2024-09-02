@@ -1365,7 +1365,7 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(BOOKMARKS, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
-            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(BOOKMARKS, Type<bool>.Info, "GetHashCode", Type<object>.Info));
+            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(BOOKMARKS, Type<int>.Info, "GetHashCode"));
         }
         internal sealed class INotificationInfo : DriverTypeInfo
         {
@@ -1425,10 +1425,10 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceMethod> _equalsINode = new Lazy<InstanceMethod>(() => new InstanceMethod(I_NODE, Type<bool>.Info, "Equals", I_NODE));
 
             new public bool Equals(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
-            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(I_NODE, Type<bool>.Info, "Equals", Type<object>.Info));
+            private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(Type<object>.Info, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
-            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(I_NODE, Type<bool>.Info, "GetHashCode", Type<object>.Info));
+            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(Type<object>.Info, Type<int>.Info, "GetHashCode"));
         }
         internal sealed class IRelationshipInfo : DriverTypeInfo
         {
@@ -1483,10 +1483,10 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RELATIONSHIP, Type<bool>.Info, "Equals", I_RELATIONSHIP));
 
             new public bool Equals(object instance, object value) => (bool)_equalsIRelationship.Value.Invoke(instance, value);
-            private readonly Lazy<InstanceMethod> _equalsIRelationship = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RELATIONSHIP, Type<bool>.Info, "Equals", Type<object>.Info));
+            private readonly Lazy<InstanceMethod> _equalsIRelationship = new Lazy<InstanceMethod>(() => new InstanceMethod(Type<object>.Info, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
-            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RELATIONSHIP, Type<bool>.Info, "GetHashCode", Type<object>.Info));
+            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(Type<object>.Info, Type<int>.Info, "GetHashCode"));
         }
         internal sealed class ValueExtensionsInfo : DriverTypeInfo
         {
@@ -1526,7 +1526,7 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(SERVER_ADDRESS, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
-            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(SERVER_ADDRESS, Type<bool>.Info, "GetHashCode", Type<object>.Info));
+            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(SERVER_ADDRESS, Type<int>.Info, "GetHashCode"));
         }
         internal sealed class TrustManagerInfo : DriverTypeInfo
         {
@@ -1548,7 +1548,7 @@ namespace Blueprint41.Driver
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(TRUST_MANAGER, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
-            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(TRUST_MANAGER, Type<bool>.Info, "GetHashCode", Type<object>.Info));
+            private readonly Lazy<InstanceMethod> _getHashCode = new Lazy<InstanceMethod>(() => new InstanceMethod(TRUST_MANAGER, Type<int>.Info, "GetHashCode"));
         }
         internal sealed class IServerAddressResolverInfo : DriverTypeInfo
         {
