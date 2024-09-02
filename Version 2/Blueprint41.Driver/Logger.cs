@@ -14,14 +14,4 @@ namespace Blueprint41.Driver
         bool IsTraceEnabled();
         bool IsDebugEnabled();
     }
-    internal class Logger
-    {
-        internal Logger(object instance, ILogger logger)
-        {
-            _instance = instance;
-            _logger = logger;
-        }
-        internal object _instance { get; private set; }
-        internal ILogger _logger { get; private set; }
-    }
 }

@@ -29,11 +29,11 @@ namespace Blueprint41.Driver
         //    _config.TrustManager = manager;
         //    return this;
         //}
-        //public ConfigBuilder WithLogger(ILogger logger)
-        //{
-        //    _config.Logger = logger;
-        //    return this;
-        //}
+        public ConfigBuilder WithLogger(ILogger logger)
+        {
+            Driver.CONFIG_BUILDER.WithLogger(_instance, logger);
+            return this;
+        }
         public ConfigBuilder WithMaxIdleConnectionPoolSize(int size)
         {
             Driver.CONFIG_BUILDER.WithMaxIdleConnectionPoolSize(_instance, size);
@@ -79,16 +79,11 @@ namespace Blueprint41.Driver
             Driver.CONFIG_BUILDER.WithIpv6Enabled(_instance, enable);
             return this;
         }
-
-        // Not Implemented
         public ConfigBuilder WithResolver(ServerAddressResolver resolver)
         {
-            object neo4jResolver = Driver.I_SERVER_ADDRESS_RESOLVER.ConvertToIServerAddressResolver(resolver);
-
-            throw new NotImplementedException();
+            Driver.CONFIG_BUILDER.WithResolver(_instance, resolver);
             return this;
         }
-
         public ConfigBuilder WithDefaultReadBufferSize(int defaultReadBufferSize)
         {
             Driver.CONFIG_BUILDER.WithDefaultReadBufferSize(_instance, defaultReadBufferSize);
