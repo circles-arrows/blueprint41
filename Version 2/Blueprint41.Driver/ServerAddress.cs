@@ -16,5 +16,8 @@ namespace Blueprint41.Driver
         public static ServerAddress From(Uri uri) => Driver.SERVER_ADDRESS.From(uri);
 
         public bool Equals(ServerAddress other) => Driver.SERVER_ADDRESS.EqualsServerAddress(_instance, other);
+        public override bool Equals(object obj) => Driver.SERVER_ADDRESS.Equals(_instance, obj);
+        public override int GetHashCode() => Driver.SERVER_ADDRESS.GetHashCode(_instance);
+
     }
 }
