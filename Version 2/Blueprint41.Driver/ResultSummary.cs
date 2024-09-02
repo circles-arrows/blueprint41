@@ -18,20 +18,14 @@ namespace Blueprint41.Driver
 
         ////
         //// Summary:
-        ////     Gets type of query that has been executed.
-        ////
-
-        ////
-        //// Summary:
         ////     Gets if the result contained a query plan or not, i.e. is the summary of a Cypher
         ////     PROFILE or EXPLAIN query.
-        //bool HasPlan { get; }
-
+        public bool HasPlan => Driver.I_RESULT_SUMMARY.HasPlan(_instance);
         ////
         //// Summary:
         ////     Gets if the result contained profiling information or not, i.e. is the summary
         ////     of a Cypher PROFILE query.
-        //bool HasProfile { get; }
+        public bool HasProfile => Driver.I_RESULT_SUMMARY.HasProfile(_instance);
 
         ////
         //// Summary:
@@ -39,7 +33,7 @@ namespace Blueprint41.Driver
         ////
         //// Remarks:
         ////     This describes how the database will execute your query.
-        //IPlan Plan { get; }
+        public QueryPlan Plan => Driver.I_RESULT_SUMMARY.Plan(_instance);
 
         ////
         //// Summary:
