@@ -11,11 +11,10 @@ namespace Blueprint41.Driver
             _instance = instance;
         }
         internal object _instance { get; private set; }
-        public object AsNeo4jServerAddress() => _instance;
 
-        public static ServerAddress From(string host, int port) => null!;
-        public static ServerAddress From(Uri uri) => null!;
+        public static ServerAddress From(string host, int port) => Driver.SERVER_ADDRESS.From(host, port);
+        public static ServerAddress From(Uri uri) => Driver.SERVER_ADDRESS.From(uri);
 
-        public bool Equals(ServerAddress other) => false!;
+        public bool Equals(ServerAddress other) => Driver.SERVER_ADDRESS.EqualsServerAddress(_instance, other);
     }
 }
