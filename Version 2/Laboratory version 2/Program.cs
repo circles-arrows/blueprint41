@@ -9,6 +9,7 @@ using Kerberos.NET.Win32;
 using Blueprint41.Driver;
 
 using DataStore;
+using System.Linq;
 
 namespace Laboratory
 {
@@ -22,18 +23,24 @@ namespace Laboratory
         {
             Driver.Configure<Neo4j.Driver.IDriver>();
 
+            string version = Driver.NugetVersion;
+
             // Prove new 
             ServerAddressResolver resolver = new ServerAddressResolver(null, null);
-            Neo4j.Driver.IServerAddressResolver instance = (Neo4j.Driver.IServerAddressResolver)Driver.I_SERVER_ADDRESS_RESOLVER.ConvertToIServerAddressResolver(resolver);
+            Neo4j.Driver.IServerAddressResolver neo4jResolver = (Neo4j.Driver.IServerAddressResolver)Driver.I_SERVER_ADDRESS_RESOLVER.ConvertToNeo4jIServerAddressResolver(resolver);
+
+            ILogger logger = new InMemoryLogger(true, true, 100);
+            Neo4j.Driver.ILogger neo4jLogger = (Neo4j.Driver.ILogger)Driver.I_LOGGER.ConvertToNeo4jILogger(logger);
 
             //await TestDriver().ConfigureAwait(false);
         }
 
         private static async Task TestDriver()
         {
-            string path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            string path = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+#pragma warning disable S6966
             string[] queries = File.ReadAllText(Path.Combine(path, "movies.cypher")).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-
+#pragma warning restore S6966
 
             #region Test Auth Tokens
 
@@ -195,21 +202,84 @@ namespace Laboratory
         }
     }
 
-//#nullable disable
-//    public class ServerAddressResolverProxy : Neo4j.Driver.IServerAddressResolver
-//    {
-//        public ServerAddressResolverProxy(ServerAddressResolver instance)
-//        {
-//            _instance = instance;
-//        }
-//        private readonly ServerAddressResolver _instance;
-        
-//        public ISet<Neo4j.Driver.ServerAddress> Resolve(Neo4j.Driver.ServerAddress address)
-//        {
-//            ISet<ServerAddress> result = _instance.Resolve(new ServerAddress(address));
+    public class InMemoryLogger : ILogger
+    {
+        public InMemoryLogger(bool debug, bool trace, int maxEntries = 1000)
+        {
+            _debug = debug;
+            _trace = trace;
+            _maxEntries = maxEntries;
+        }
 
-//            return new HashSet<Neo4j.Driver.ServerAddress>(result.Select(item => (Neo4j.Driver.ServerAddress)item._instance));
-//        }
-//    }
-//#nullable enable
+        public void Debug(string message, params object[] args)
+        {
+            if (_debug)
+                Add(new LogEntry(LogEntryType.Debug, message, args));
+        }
+        public void Error(Exception cause, string message, params object[] args)
+        {
+            Add(new LogEntry(LogEntryType.Error, message, args, cause));
+        }
+        public void Info(string message, params object[] args)
+        {
+            Add(new LogEntry(LogEntryType.Info, message, args));
+        }
+        public void Trace(string message, params object[] args)
+        {
+            if (_trace)
+                Add(new LogEntry(LogEntryType.Trace, message, args));
+        }
+        public void Warn(Exception cause, string message, params object[] args)
+        {
+            Add(new LogEntry(LogEntryType.Warn, message, args, cause));
+        }
+
+        public bool IsDebugEnabled() => _debug;
+        private readonly bool _debug;
+
+        public bool IsTraceEnabled() => _trace;
+        private readonly bool _trace;
+
+        public IReadOnlyList<LogEntry> GetLog()
+        {
+            lock (_log)
+            {
+                return _log.ToList();
+            }
+        }
+        private void Add(LogEntry entry)
+        {
+            lock (_log)
+            {
+                _log.AddLast(entry);
+                while (_log.Count > _maxEntries)
+                    _log.RemoveFirst();
+            }
+        }
+        private readonly LinkedList<LogEntry> _log = new LinkedList<LogEntry>();
+        private readonly int _maxEntries;
+    }
+    public class LogEntry
+    {
+        internal LogEntry(LogEntryType type, string message, object[] arguments, Exception? cause = null)
+        {
+            Type = type;
+            Message = message;
+            Arguments = arguments;
+            Cause = cause;
+        }
+
+        public LogEntryType Type { get; private set; }
+        public string Message { get; private set; }
+        public object[] Arguments { get; private set; }
+        public Exception? Cause { get; private set; }
+    }
+    public enum LogEntryType
+    {
+        Debug,
+        Error,
+        Info,
+        Trace,
+        Warn,
+    }
 }

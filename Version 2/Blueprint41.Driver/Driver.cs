@@ -73,6 +73,8 @@ namespace Blueprint41.Driver
                 }
             }
         }
+        public static Version AssemblyVersion => DriverTypeInfo.SearchAssembly?.GetName().Version ?? throw new InvalidOperationException("Please configure which Neo4j.Driver to use by running 'Driver.Configure<IDriver>();' first.");
+        public static string NugetVersion => DriverTypeInfo.SearchAssembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion ?? throw new InvalidOperationException("Please configure which Neo4j.Driver to use by running 'Driver.Configure<IDriver>();' first.");
 
         #region DriverTypeInfo definitions 
 
@@ -99,13 +101,12 @@ namespace Blueprint41.Driver
         internal static readonly EncryptionLevelInfo          ENCRYPTION_LEVEL                     = new EncryptionLevelInfo("Neo4j.Driver.EncryptionLevel");
         internal static readonly ServerAddressInfo            SERVER_ADDRESS                       = new ServerAddressInfo("Neo4j.Driver.ServerAddress");
         internal static readonly TrustManagerInfo             TRUST_MANAGER                        = new TrustManagerInfo("Neo4j.Driver.TrustManager");
-
-
+        internal static readonly ILoggerInfo                  I_LOGGER                             = new ILoggerInfo("Neo4j.Driver.ILogger");
         internal static readonly IServerAddressResolverInfo   I_SERVER_ADDRESS_RESOLVER            = new IServerAddressResolverInfo("Neo4j.Driver.IServerAddressResolver");
 
         internal static readonly DriverTypeInfo               I_AUTH_TOKEN                         = new DriverTypeInfo("Neo4j.Driver.IAuthToken");
-        internal static readonly DriverTypeInfo               SERVER_ADDRESS_RESOLVER_PROXY        = new DriverTypeInfo(RuntimeCodeGen.MakeServerAddressResolverProxy);
-        //Logger & ILogger
+        internal static readonly DriverTypeInfo               LOGGER_PROXY                         = new DriverTypeInfo(RuntimeCodeGen.GetLoggerProxyProxyType);
+        internal static readonly DriverTypeInfo               SERVER_ADDRESS_RESOLVER_PROXY        = new DriverTypeInfo(RuntimeCodeGen.GetServerAddressResolverProxyType);
 
         // NOT SUPPORTED IN DRIVER v4.4
 
@@ -137,34 +138,104 @@ namespace Blueprint41.Driver
         }
         internal static class RuntimeCodeGen
         {
-            public static Type MakeServerAddressResolverProxy()
+            // Be aware that the compiler being used is not guaranteed to be a compiler supporting modern C# features
+            // Like the readonly keyword or expression bodied members (the => implementation)
+
+            private readonly static string[] Code = new string[]
             {
-                string code = """
-                    using System;
-                    using System.Linq;
-                    using System.Collections.Generic;
-                    using System.Reflection;
+                """
+                using System;
+                using System.Linq;
+                using System.Collections.Generic;
+                using System.Reflection;
 
-                    using neo4j = Neo4j.Driver;
-                    using bp41 = Blueprint41.Driver;
+                using neo4j = Neo4j.Driver;
+                using bp41 = Blueprint41.Driver;
 
-                    namespace Blueprint41.Driver.RuntimeGeneration
+                namespace Blueprint41.Driver.RuntimeGeneration
+                {
+                    public sealed class ServerAddressResolverProxy : neo4j.IServerAddressResolver
                     {
-                        public class ServerAddressResolverProxy : neo4j.IServerAddressResolver
+                        private ServerAddressResolverProxy(bp41.ServerAddressResolver resolver)
                         {
-                            public static ServerAddressResolverProxy Get(bp41.ServerAddressResolver instance) => new ServerAddressResolverProxy() { _instance = instance };
-                            private bp41.ServerAddressResolver _instance;
+                            _resolver = resolver;
+                        }
+                        public static ServerAddressResolverProxy Get(bp41.ServerAddressResolver resolver)
+                        {
+                            return new ServerAddressResolverProxy(resolver);
+                        }
+                        private bp41.ServerAddressResolver _resolver;
 
-                            public ISet<neo4j.ServerAddress> Resolve(neo4j.ServerAddress address)
-                            {
-                                ISet<bp41.ServerAddress> result = _instance.Resolve(new ServerAddress(address));
+                        public ISet<neo4j.ServerAddress> Resolve(neo4j.ServerAddress address)
+                        {
+                            ISet<bp41.ServerAddress> result = _resolver.Resolve(new ServerAddress(address));
+                            if (result == null)
+                                return null;
 
-                                return new HashSet<neo4j.ServerAddress>(result.Select(item => (neo4j.ServerAddress)item._instance));
-                            }
+                            return new HashSet<neo4j.ServerAddress>(result.Select(item => (neo4j.ServerAddress)item._instance));
                         }
                     }
-                    """;
+                }
+                """,
+                """
+                using System;
+                using System.Linq;
+                using System.Collections.Generic;
+                using System.Reflection;
+                
+                using neo4j = Neo4j.Driver;
+                using bp41 = Blueprint41.Driver;
+                
+                namespace Blueprint41.Driver.RuntimeGeneration
+                {
+                    public sealed class LoggerProxy : neo4j.ILogger
+                    {
+                        private LoggerProxy(bp41.ILogger logger)
+                        {
+                            _logger = logger;
+                        }
+                        public static LoggerProxy Get(bp41.ILogger logger)
+                        {
+                            return new LoggerProxy(logger);
+                        }
+                        private bp41.ILogger _logger;
 
+
+                        public void Debug(string message, params object[] args)
+                        {
+                            _logger.Debug(message, args);
+                        }
+                        public void Error(Exception cause, string message, params object[] args)
+                        {
+                            _logger.Error(cause, message, args);
+                        }
+                        public void Info(string message, params object[] args)
+                        {
+                            _logger.Info(message, args);
+                        }
+                        public bool IsDebugEnabled()
+                        {
+                            return _logger.IsDebugEnabled();
+                        }
+                        public bool IsTraceEnabled()
+                        {
+                            return _logger.IsTraceEnabled();
+                        }
+                        public void Trace(string message, params object[] args)
+                        {
+                            _logger.Trace(message, args);
+                        }
+                        public void Warn(Exception cause, string message, params object[] args)
+                        {
+                            _logger.Warn(cause, message, args);
+                        }
+                    }
+                }
+                """,
+            };
+
+            private readonly static Lazy<Assembly> DynamicAssembly = new Lazy<Assembly>(delegate ()
+            {
                 CompilerParameters options = new CompilerParameters();
                 options.GenerateExecutable = false;
                 options.GenerateInMemory = true;
@@ -178,20 +249,13 @@ namespace Blueprint41.Driver
                 options.OutputAssembly = "Blueprint41.Driver.RuntimeGeneration.dll";
 
                 CSharpCodeProvider provider = new CSharpCodeProvider();
-                CompilerResults compile = provider.CompileAssemblyFromSource(options, code);
+                CompilerResults compile = provider.CompileAssemblyFromSource(options, Code);
 
-                return compile.CompiledAssembly.GetType("Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy");
+                return compile.CompiledAssembly;
+            }, true);
 
-                //object abc = Activator.CreateInstance(type);
-
-                //MethodInfo method = type.GetMethod("Get");
-                //object result = method.Invoke(abc, null);
-
-                //Console.WriteLine(result); //output: abc
-
-                //return type;
-            }
-
+            internal static Type GetServerAddressResolverProxyType() => DynamicAssembly.Value.GetType("Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy", true, false);
+            internal static Type GetLoggerProxyProxyType() => DynamicAssembly.Value.GetType("Blueprint41.Driver.RuntimeGeneration.LoggerProxy", true, false);
         }
 
         internal class DriverTypeInfo
@@ -1016,6 +1080,9 @@ namespace Blueprint41.Driver
         {
             public ConfigBuilderInfo(params string[] names) : base(names) { }
 
+            public void WithLogger(object instance, ILogger logger) => _withLogger.Value.Invoke(instance, I_LOGGER.ConvertToNeo4jILogger(logger));
+            private readonly Lazy<InstanceMethod> _withLogger = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithLogger", I_LOGGER), true);
+
             public void WithMaxIdleConnectionPoolSize(object instance, int size) => _withMaxIdleConnectionPoolSize.Value.Invoke(instance, size);
             private readonly Lazy<InstanceMethod> _withMaxIdleConnectionPoolSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithMaxIdleConnectionPoolSize", Type<int>.Info), true);
 
@@ -1042,6 +1109,9 @@ namespace Blueprint41.Driver
 
             public void WithIpv6Enabled(object instance, bool enable) => _withIpv6Enabled.Value.Invoke(instance, enable);
             private readonly Lazy<InstanceMethod> _withIpv6Enabled = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithIpv6Enabled", Type<bool>.Info), true);
+
+            public void WithResolver(object instance, ServerAddressResolver resolver) => _withResolver.Value.Invoke(instance, I_SERVER_ADDRESS_RESOLVER.ConvertToNeo4jIServerAddressResolver(resolver));
+            private readonly Lazy<InstanceMethod> _withResolver = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithResolver", I_SERVER_ADDRESS_RESOLVER), true);
 
             public void WithDefaultReadBufferSize(object instance, int defaultReadBufferSize) => _withDefaultReadBufferSize.Value.Invoke(instance, defaultReadBufferSize);
             private readonly Lazy<InstanceMethod> _withDefaultReadBufferSize = new Lazy<InstanceMethod>(() => new InstanceMethod(CONFIG_BUILDER, CONFIG_BUILDER, "WithDefaultReadBufferSize", Type<int>.Info), true);
@@ -1470,8 +1540,15 @@ namespace Blueprint41.Driver
         {
             public IServerAddressResolverInfo(params string[] names) : base(names) { }
 
-            public object ConvertToIServerAddressResolver(ServerAddressResolver instance) => _get.Value.Invoke(instance);
+            public object ConvertToNeo4jIServerAddressResolver(ServerAddressResolver instance) => _get.Value.Invoke(instance);
             private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS_RESOLVER_PROXY, SERVER_ADDRESS_RESOLVER_PROXY, "Get", Type<ServerAddressResolver>.Info), true);
+        }
+        internal sealed class ILoggerInfo : DriverTypeInfo
+        {
+            public ILoggerInfo(params string[] names) : base(names) { }
+
+            public object ConvertToNeo4jILogger(ILogger instance) => _get.Value.Invoke(instance);
+            private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(LOGGER_PROXY, LOGGER_PROXY, "Get", Type<ILogger>.Info), true);
         }
 
         #endregion

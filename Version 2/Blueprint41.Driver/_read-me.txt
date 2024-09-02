@@ -4,6 +4,9 @@ Driver -> Encrypted
 Driver -> GetServerInfoAsync()
 Driver -> VerifyConnectivityAsync()
 
+DriverConfig -> WithResolver
+DriverConfig -> WithLogger
+
 ResultCursor -> Summary
 ResultCursor -> KeysAsync()
 ResultCursor -> ConsumeAsync()
