@@ -15,10 +15,10 @@ namespace Laboratory
         static async Task Main(string[] args)
         {
             //DryRunModel();
-            //ApplyModelToDB();
+            ApplyModelToDB();
 
             //await DriverTests.TestAll().ConfigureAwait(false);
-            await DriverTests.TestConnectivity().ConfigureAwait(false);
+            //await DriverTests.TestConnectivity().ConfigureAwait(false);
 
             Console.WriteLine("Press any key...");
             Console.ReadKey(true);

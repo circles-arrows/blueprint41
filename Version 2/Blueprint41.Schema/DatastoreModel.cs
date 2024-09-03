@@ -240,7 +240,7 @@ namespace Blueprint41
             foreach (UpgradeScript script in scripts.Where(item => predicate.Invoke(item)))
             {
                 bool scriptCommitted = false;
-                if (upgradeDatastore && PersistenceProvider.IsNeo4j && !PersistenceProvider.IsVoidProvider)
+                if (upgradeDatastore && !PersistenceProvider.IsVoidProvider)
                 {
                     if (PersistenceProvider.IsMemgraph)
                     {
@@ -615,6 +615,7 @@ namespace Blueprint41
         {
             TSelf instance = new TSelf();
             instance._persistenceProvider = new PersistenceProvider(instance, uri, authToken, database, advancedConfig);
+            instance._persistenceProvider.Initialize();
 
             return instance;
         }
