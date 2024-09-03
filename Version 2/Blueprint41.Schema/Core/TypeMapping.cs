@@ -40,7 +40,7 @@ namespace Blueprint41.Core
         public MethodInfo GetGetConverter()
         {
             if (getConverter is null)
-                getConverter = typeof(Conversion<,>).MakeGenericType(new Type[] { ReturnType, PersistedType }).GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert");
+                getConverter = typeof(Conversion<,>).MakeGenericType(new Type[] { ReturnType, PersistedType }).GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert") ?? throw new MissingMethodException();
 
             return getConverter;
         }
@@ -49,7 +49,7 @@ namespace Blueprint41.Core
         public MethodInfo GetSetConverter()
         {
             if (setConverter is null)
-                setConverter = typeof(Conversion<,>).MakeGenericType(new Type[] { PersistedType, ReturnType }).GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert");
+                setConverter = typeof(Conversion<,>).MakeGenericType(new Type[] { PersistedType, ReturnType }).GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert") ?? throw new MissingMethodException();
 
             return setConverter;
         }

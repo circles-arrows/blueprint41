@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <RootNamespace>Datastore</RootNamespace>
     <AssemblyName>DatastoreBP41v2</AssemblyName>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -10,6 +10,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+    <PackageReference Include="Nullable" Version="1.3.1" Condition=" '$(TargetFramework)' == 'net472' ">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

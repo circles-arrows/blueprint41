@@ -30,7 +30,7 @@ namespace Blueprint41.Core
             Type keyType = type.GetGenericArguments()[0];
             Type valueType = type.GetGenericArguments()[1];
 
-            JsonConverter converter = (JsonConverter)Activator.CreateInstance(
+            JsonConverter? converter = (JsonConverter?)Activator.CreateInstance(
                 typeof(DictionaryConverterInner<,>).MakeGenericType(
                     new Type[] { keyType, valueType }),
                 BindingFlags.Instance | BindingFlags.Public,
@@ -38,7 +38,7 @@ namespace Blueprint41.Core
                 args: new object[] { options },
                 culture: null);
 
-            return converter;
+            return converter ?? throw new TypeLoadException();
         }
 
         private class DictionaryConverterInner<TKey, TValue> :
@@ -198,7 +198,7 @@ namespace Blueprint41.Core
 
                 foreach (KeyValuePair<TKey, TValue> kvp in dictionary)
                 {
-                    var propertyName = kvp.Key!.ToString();
+                    string propertyName = kvp.Key!.ToString()!;
                     writer.WritePropertyName(options.PropertyNamingPolicy?.ConvertName(propertyName) ?? propertyName);
 
                     if (_valueConverter != null)

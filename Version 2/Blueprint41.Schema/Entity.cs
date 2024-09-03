@@ -44,9 +44,9 @@ namespace Blueprint41
 
             this.functionalId = functionalId;
 
-            key = new Lazy<EntityProperty>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey); }, true);
-            nodeType = new Lazy<EntityProperty>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType); }, true);
-            rowVersion = new Lazy<EntityProperty>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
+            key = new Lazy<EntityProperty?>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey); }, true);
+            nodeType = new Lazy<EntityProperty?>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType); }, true);
+            rowVersion = new Lazy<EntityProperty?>(delegate () { return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion); }, true);
 
             Parent.SubModels["Main"].AddEntityInternal(this);
         }
@@ -314,17 +314,17 @@ namespace Blueprint41
             get
             {
                 if (Parent.IsUpgraded)
-                    return key.Value;
+                    return key.Value ?? throw new NotSupportedException("No key has been defined for this entity.");
 
-                return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey);
+                return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsKey) ?? throw new NotSupportedException("No key has been defined for this entity.");
             }
         }
-        private Lazy<EntityProperty> key;
+        private Lazy<EntityProperty?> key;
 
         /// <summary>
         /// The definition for the property that represents the concrete type
         /// </summary>
-        public EntityProperty NodeType
+        public EntityProperty? NodeType
         {
             get
             {
@@ -334,7 +334,7 @@ namespace Blueprint41
                 return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsNodeType);
             }
         }
-        private Lazy<EntityProperty> nodeType;
+        private Lazy<EntityProperty?> nodeType;
         /// <summary>
         /// The name of the property that represents the concrete type
         /// </summary>
@@ -349,7 +349,7 @@ namespace Blueprint41
         /// <summary>
         /// The definition for the property that represents the row-version and will be used for optimistic locking
         /// </summary>
-        public EntityProperty RowVersion
+        public EntityProperty? RowVersion
         {
             get
             {
@@ -359,7 +359,7 @@ namespace Blueprint41
                 return GetPropertiesOfBaseTypesAndSelf().SingleOrDefault(x => x.IsRowVersion);
             }
         }
-        private Lazy<EntityProperty> rowVersion;
+        private Lazy<EntityProperty?> rowVersion;
 
         /// <summary>
         /// Marks if the entity is abstract. Abstract entities must be inherited
@@ -556,16 +556,18 @@ namespace Blueprint41
         /// <summary>
         /// The dot-net type at runtime that was generated (either a class or an interface)
         /// </summary>
-        public Type? RuntimeReturnType { get; private set; }
+        public Type RuntimeReturnType => _runtimeReturnType ?? throw new InvalidOperationException("Runtime types are not yet initialized.");
+        private Type? _runtimeReturnType = null;
 
         /// <summary>
         /// The dot-net type at runtime that was generated (the class, not the interface)
         /// </summary>
-        public Type? RuntimeClassType { get; private set; }
+        public Type RuntimeClassType => _runtimeClassType ?? throw new InvalidOperationException("Runtime types are not yet initialized.");
+        private Type? _runtimeClassType = null;
         void ISetRuntimeType.SetRuntimeTypes(Type returnType, Type classType)
         {
-            RuntimeReturnType = returnType;
-            RuntimeClassType = classType;
+            _runtimeReturnType = returnType;
+            _runtimeClassType = classType;
 
             Parent.TypesRegistered = true;
         }
@@ -621,7 +623,7 @@ namespace Blueprint41
 
             foreach (string key in fields.Keys)
             {
-                Property property = GetPropertiesOfBaseTypesAndSelf().FirstOrDefault(item => item.Name == key);
+                Property? property = GetPropertiesOfBaseTypesAndSelf().FirstOrDefault(item => item.Name == key);
                 if (property is null)
                     throw new ArgumentException(string.Format("The field '{0}' was not present on entity '{1}'. ", key, Name));
 
@@ -723,6 +725,9 @@ namespace Blueprint41
         /// <returns>The node</returns>
         dynamic? IRefactorEntity.MatchNode(object key)
         {
+            if (Key is null)
+                throw new NotSupportedException("No key has been defined for this entity.");
+
             //Parent.EnsureSchemaMigration();
 
             if (key is null)
@@ -734,7 +739,7 @@ namespace Blueprint41
             if (Parent.IsDataMigration)
                 return DynamicEntity.Load(Transaction.RunningTransaction, this, key);
 
-            DynamicEntity value;
+            DynamicEntity? value;
             if (!staticData.TryGetValue(key, out value))
                 throw new ArgumentOutOfRangeException($"Only statically created data (via the upgrade script) can be loaded here.");
 
@@ -750,6 +755,9 @@ namespace Blueprint41
         /// <param name="key">The primary key value for the node to be deleted</param>
         void IRefactorEntity.DeleteNode(object key)
         {
+            if (Key is null)
+                throw new NotSupportedException("No key has been defined for this entity.");
+
             //Parent.EnsureSchemaMigration();
 
             if (key is null)
@@ -1722,7 +1730,7 @@ namespace Blueprint41
                     if (mapMethod is null)
                     {
                         MethodInfo? method = RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(RawNode), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
-                        mapMethod = (method is null) ? null : (Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>)Delegate.CreateDelegate(typeof(Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
+                        mapMethod = (method is null) ? null : (Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
                     }
                 }
             }

@@ -991,10 +991,7 @@ namespace Blueprint41
                 else
                     throw new FormatException("The node cannot have multiple aliases");
 
-                Entity = model.Entities.FirstOrDefault(item => item.Name == EntityName);
-
-                if (Entity is null)
-                    throw new FormatException($"The node '{EntityName}' does not seem to exist");
+                Entity = model.Entities.FirstOrDefault(item => item.Name == EntityName) ?? throw new FormatException($"The node '{EntityName}' does not seem to exist");
 
                 if (!string.IsNullOrWhiteSpace(next))
                     Next = new RelationshipPattern(model, next);
@@ -1522,7 +1519,7 @@ namespace Blueprint41
 
         internal Type GetPropertyEventArgsType(Type senderType)
         {
-            Type type;
+            Type? type;
             if (!propertyEventArgsType.TryGetValue(senderType.Name, out type))
             {
                 lock (this)

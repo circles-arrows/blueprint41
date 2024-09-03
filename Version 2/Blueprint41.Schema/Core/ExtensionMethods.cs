@@ -269,14 +269,14 @@ namespace System.Linq
 
         public static TValue GetValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default!)
         {
-            if (dictionary.TryGetValue(key, out TValue value))
+            if (dictionary.TryGetValue(key, out TValue? value))
                 return value;
 
             return defaultValue;
         }
         public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default!)
         {
-            if (dictionary.TryGetValue(key, out TValue value))
+            if (dictionary.TryGetValue(key, out TValue? value))
                 return value;
 
             return defaultValue;
@@ -456,7 +456,8 @@ namespace System
         }
         private static Lazy<Func<Task, Delegate?>> getActionDelegate = new Lazy<Func<Task, Delegate?>>(delegate ()
         {
-            FieldInfo field = typeof(Task).GetField("m_action", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo field = typeof(Task).GetField("m_action", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new MissingFieldException();
+
 
             ParameterExpression parameter = Expression.Parameter(typeof(Task), "task");
             Expression accessField = Expression.Convert(Expression.Field(parameter, field), typeof(Delegate));
@@ -497,7 +498,7 @@ namespace Blueprint41.Core
             Type type2 = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
             if (type2 == typeof(string))
             {
-                return value.ToString().AsItIs<T>();
+                return value.ToString()!.AsItIs<T>();
             }
             if (type2 == typeof(short))
             {
@@ -575,13 +576,13 @@ namespace Blueprint41.Core
         private static T AsDictionary<T>(this IDictionary dict, TypeInfo typeInfo)
         {
             Type[] genericTypeArguments = typeInfo.GenericTypeArguments;
-            IDictionary dictionary = (IDictionary)Activator.CreateInstance(typeof(Dictionary<,>).MakeGenericType(genericTypeArguments));
+            IDictionary dictionary = (IDictionary)Activator.CreateInstance(typeof(Dictionary<,>).MakeGenericType(genericTypeArguments))!;
             MethodInfo invocableAsMethod = GetInvocableAsMethod(genericTypeArguments[0]);
             MethodInfo invocableAsMethod2 = GetInvocableAsMethod(genericTypeArguments[1]);
             IDictionaryEnumerator enumerator = dict.GetEnumerator();
             while (enumerator.MoveNext())
             {
-                dictionary.Add(invocableAsMethod.InvokeStatic(enumerator.Key), invocableAsMethod2.InvokeStatic(enumerator.Value));
+                dictionary.Add(invocableAsMethod.InvokeStatic(enumerator.Key)!, invocableAsMethod2.InvokeStatic(enumerator.Value!));
             }
             return dictionary.AsItIs<T>();
         }
@@ -590,7 +591,7 @@ namespace Blueprint41.Core
         private static T AsList<T>(this IEnumerable value, TypeInfo typeInfo)
         {
             Type[] genericTypeArguments = typeInfo.GenericTypeArguments;
-            IList list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(genericTypeArguments));
+            IList list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(genericTypeArguments))!;
             MethodInfo invocableAsMethod = GetInvocableAsMethod(genericTypeArguments[0]);
             foreach (object item in value)
             {
@@ -607,7 +608,7 @@ namespace Blueprint41.Core
 
         private static MethodInfo GetInvocableAsMethod(params Type[] genericParameters)
         {
-            return typeof(ExtensionMethods).GetRuntimeMethod("As", genericParameters).MakeGenericMethod(genericParameters);
+            return typeof(ExtensionMethods).GetRuntimeMethod(nameof(ExtensionMethods.As), genericParameters)!.MakeGenericMethod(genericParameters);
         }
 
         [return: NotNullIfNotNull("value")]

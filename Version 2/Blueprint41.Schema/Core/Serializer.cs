@@ -75,6 +75,8 @@ namespace Blueprint41
                 }
             }
         }
+#nullable disable
+
         public T Deserialize(string value)
         {
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(value)))
@@ -85,5 +87,6 @@ namespace Blueprint41
                     return JsonSerializer.Deserialize<T>(ms)!;
             }
         }
+#nullable enable
     }
 }

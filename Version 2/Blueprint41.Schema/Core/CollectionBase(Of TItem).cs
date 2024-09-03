@@ -31,7 +31,7 @@ namespace Blueprint41.Core
         {
             get
             {
-                TItem value;
+                TItem? value;
                 if (!collection.TryGetValue(name, out value))
                     throw new ArgumentOutOfRangeException(string.Format("{0} with name '{1}' was not found.", typeof(TItem).Name, name));
 

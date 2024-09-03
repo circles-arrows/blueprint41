@@ -19,7 +19,7 @@ namespace Blueprint41.Driver
         public object this[string key] => Driver.I_RELATIONSHIP.Item(_instance, key);
         public IReadOnlyDictionary<string, object?> Properties => Driver.I_RELATIONSHIP.Properties(_instance);
         public bool Equals(Relationship relationship) => Driver.I_RELATIONSHIP.EqualsIRelationship(_instance, relationship._instance);
-        public override bool Equals(object obj) => Driver.I_RELATIONSHIP.Equals(_instance, obj);
+        public override bool Equals(object? obj) => Driver.I_RELATIONSHIP.Equals(_instance, obj);
         public override int GetHashCode() => Driver.I_RELATIONSHIP.GetHashCode(_instance);
 
         internal static string ElementIdInternal(object neo4jIRelationship) => Driver.I_RELATIONSHIP.ElementId(neo4jIRelationship);

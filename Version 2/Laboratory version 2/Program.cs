@@ -10,9 +10,11 @@ using DataStore;
 
 namespace Laboratory
 {
-    internal class Program
+    internal static class Program
     {
+#pragma warning disable CS1998
         static async Task Main(string[] args)
+#pragma warning restore CS1998
         {
             //DryRunModel();
             ApplyModelToDB();
