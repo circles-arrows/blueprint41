@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 
 namespace Blueprint41.Persistence
@@ -738,12 +738,12 @@ namespace Blueprint41.Persistence
 
         #region Upgrade Script Parser
 
-        internal virtual bool HasFullTextSearchIndexes()
+        internal virtual async Task<bool> HasFullTextSearchIndexes()
         {
             using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
             {
-                var result = Transaction.RunningTransaction.Run(FtiList);
-                return result.Count() > 0;
+                var result = await Transaction.RunningTransaction.Run(FtiList);
+                return result.FirstOrDefault() is not null;
             }
         }
 

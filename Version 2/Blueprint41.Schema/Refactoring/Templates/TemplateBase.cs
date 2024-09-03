@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 
 namespace Blueprint41.Refactoring.Templates
@@ -304,7 +304,7 @@ namespace Blueprint41.Refactoring.Templates
 
         internal Func<TSelf> CreateInstance { get; set; }
         internal Action<TSelf> Setup { get; set; }
-        public long Run(bool withTransaction = false)
+        public async Task<long> RunAsync(bool withTransaction = false)
         {
             long retval = 0;
 
@@ -315,12 +315,12 @@ namespace Blueprint41.Refactoring.Templates
             {
                 using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                 {
-                    RawResult result = Execute();
+                    Driver.ResultCursor result = await Execute();
                     if (result != null)
                     {
-                        IDictionary<string, object> record = result.FirstOrDefault();
-                        if (record is not null && record.TryGetValue("Count", out object cnt))
-                            retval = cnt.As<long>();
+                        Driver.Record record = await result.FirstOrDefault();
+                        if (record is not null)
+                            retval = record["Count"]?.As<long>() ?? 0;
                     }
                     Transaction.Commit();
                 }
@@ -329,24 +329,24 @@ namespace Blueprint41.Refactoring.Templates
             {
                 using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                 {
-                    RawResult result = Execute();
+                    Driver.ResultCursor result = await Execute();
                     if (result != null)
                     {
-                        IDictionary<string, object> record = result.FirstOrDefault();
-                        if (record is not null && record.TryGetValue("Count", out object cnt))
-                            retval = cnt.As<long>();
+                        Driver.Record record = await result.FirstOrDefault();
+                        if (record is not null)
+                            retval = record["Count"]?.As<long>() ?? 0;
                     }
                 }
             }
 
             return retval;
         }
-        public void RunBatched()
+        public async Task RunBatched()
         {
             if (!Parser.ShouldExecute)
                 return;
 
-            RawResultStatistics counters;
+            Driver.Counters counters;
             do
             {
                 using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
@@ -354,18 +354,18 @@ namespace Blueprint41.Refactoring.Templates
                     TSelf template = CreateInstance();
                     Setup?.Invoke(template);
 
-                    RawResult result = template.Execute();
-                    counters = result.Statistics();
+                    Driver.ResultCursor result = await template.Execute();
+                    counters = await result.Statistics();
                     Transaction.Commit();
                 }
             }
             while (counters.ContainsUpdates);
         }
 
-        private RawResult Execute()
+        private Task<Driver.ResultCursor> Execute()
         {
             if (!Parser.ShouldExecute)
-                return null;
+                return Task.FromResult(new Driver.ResultCursor());
 
             string cypher = TransformText();
 

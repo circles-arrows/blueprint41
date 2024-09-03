@@ -15,6 +15,7 @@ using Blueprint41.Refactoring;
 using model = Blueprint41.Model;
 using Blueprint41.Refactoring.Schema;
 using Blueprint41.Persistence;
+using System.Threading.Tasks;
 
 namespace Blueprint41
 {
@@ -528,7 +529,7 @@ namespace Blueprint41
             /// <param name="cypher">The query</param>
             /// <param name="parameters">Any parameters used in the query</param>
             /// <returns>An ExecuteResult object</returns>
-            public RawResult ExecuteCypher(string cypher, Dictionary<string, object?>? parameters = null)
+            public Task<ResultCursor> ExecuteCypher(string cypher, Dictionary<string, object?>? parameters = null)
             {
                 Dictionary<string, object?> convertedParams;
 

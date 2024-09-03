@@ -14,6 +14,9 @@ namespace Blueprint41.Persistence
     {
         // Precision (roughly) 10.8
         internal const decimal DECIMAL_FACTOR = 100000000m;
+        private const int MAX_CONNECTION_POOL_SIZE = 400;
+        private const int DEFAULT_READWRITESIZE = 65536;
+        private const int DEFAULT_READWRITESIZE_MAX = 655360;
 
         public TransactionLogger? TransactionLogger { get; private set; }
 
@@ -21,6 +24,40 @@ namespace Blueprint41.Persistence
         public driver.AuthToken? AuthToken { get; private set; }
         public string? Database { get; private set; }
         public AdvancedConfig? AdvancedConfig { get; private set; }
+        private driver.Driver? _driver = null;
+        public driver.Driver Driver
+        {
+            get
+            {
+                if (IsVoidProvider)
+                    throw new NotSupportedException("Cannot use driver when the connection is not specified.");
+
+                if (_driver is null)
+                {
+                    lock (typeof(driver.Driver))
+                    {
+                        if (_driver is null)
+                        {
+                            _driver = driver.Driver.Get(Uri!, AuthToken!, delegate (driver.ConfigBuilder o)
+                            {
+                                o.WithFetchSize(driver.ConfigBuilder.Infinite);
+                                o.WithMaxConnectionPoolSize(MAX_CONNECTION_POOL_SIZE);
+                                o.WithDefaultReadBufferSize(DEFAULT_READWRITESIZE);
+                                o.WithDefaultWriteBufferSize(DEFAULT_READWRITESIZE);
+                                o.WithMaxReadBufferSize(DEFAULT_READWRITESIZE_MAX);
+                                o.WithMaxWriteBufferSize(DEFAULT_READWRITESIZE_MAX);
+                                o.WithMaxTransactionRetryTime(TimeSpan.Zero);
+
+                                //if (AdvancedConfig?.DNSResolverHook is not null)
+                                //    o.WithResolver(new driver.ServerAddressResolver(AdvancedConfig));
+                            });
+                        }
+                    }
+                }
+
+                return _driver;
+            }
+        }
 
 #pragma warning disable IDE0200
         internal protected PersistenceProvider(DatastoreModel model, Uri? uri, driver.AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
@@ -76,7 +113,26 @@ namespace Blueprint41.Persistence
 
         internal void Initialize()
         {
-            throw new NotImplementedException();
+            if (IsVoidProvider)
+                return;
+
+            if (DatastoreTechnology == GDMS.Neo4j)
+            {
+                using (NewTransaction(ReadWriteMode.ReadOnly))
+                {
+                    var components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
+
+                    string d = components["name"].As<string>();
+                    // Test and throw instead of just retrieving it???
+
+                    Version = components["version"].As<string>();
+                    IsEnterpriseEdition = components["edition"].As<string>().ToLowerInvariant() == "enterprise";
+
+                    ParseVersion(Version);
+                    LoadDbmsFunctions();
+                    LoadDbmsProcedures();
+                }
+            }
         }
 
         public GDMS DatastoreTechnology => DatastoreModel.DatastoreTechnology;
@@ -114,24 +170,28 @@ namespace Blueprint41.Persistence
         }
         protected HashSet<string> procedures = new HashSet<string>();
 
-        private void FetchDatabaseInfo()
+        private async void FetchDatabaseInfo()
         {
             if (IsVoidProvider)
                 return;
 
-            using (NewTransaction(ReadWriteMode.ReadOnly))
+            if (DatastoreTechnology == GDMS.Neo4j)
             {
-                var components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
+                using (NewTransaction(ReadWriteMode.ReadOnly))
+                {
+                    var components = await Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition");
+                    var record = components.First();
 
-                //DBMSName = components["name"].As<string>();
-                // Test and throw instead of just retrieving it???
+                    //DBMSName = components["name"].As<string>();
+                    // Test and throw instead of just retrieving it???
 
-                Version = components["version"].As<string>();
-                IsEnterpriseEdition = components["edition"].As<string>().ToLowerInvariant() == "enterprise";
+                    Version = record["version"].As<string>();
+                    IsEnterpriseEdition = record["edition"].As<string>().ToLowerInvariant() == "enterprise";
 
-                ParseVersion(Version);
-                LoadDbmsFunctions();
-                LoadDbmsProcedures();
+                    ParseVersion(Version);
+                    LoadDbmsFunctions();
+                    LoadDbmsProcedures();
+                }
             }
         }
 
