@@ -1,0 +1,163 @@
+﻿.class public auto ansi sealed beforefieldinit Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy
+    extends [System.Runtime]System.Object
+    implements .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = (
+        01 00 00 00 00
+    )
+    [Neo4j.Driver]Neo4j.Driver.IServerAddressResolver
+{
+    .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableContextAttribute::.ctor(uint8) = (
+        01 00 01 00 00
+    )
+    .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = (
+        01 00 00 00 00
+    )
+    // Nested Types
+    .class nested private auto ansi sealed serializable beforefieldinit '<>c'
+        extends [System.Runtime]System.Object
+    {
+        .custom instance void [System.Runtime]System.Runtime.CompilerServices.CompilerGeneratedAttribute::.ctor() = (
+            01 00 00 00
+        )
+        // Fields
+        .field public static initonly class Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c' '<>9'
+        .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = (
+            01 00 00 00 00
+        )
+        .field public static class [System.Runtime]System.Func`2<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress, class [Neo4j.Driver]Neo4j.Driver.ServerAddress> '<>9__3_0'
+        .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = (
+            01 00 00 00 00
+        )
+
+        // Methods
+        .method private hidebysig specialname rtspecialname static 
+            void .cctor () cil managed 
+        {
+            // Method begins at RVA 0x2538
+            // Header size: 1
+            // Code size: 11 (0xb)
+            .maxstack 8
+
+            IL_0000: newobj instance void Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c'::.ctor()
+            IL_0005: stsfld class Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c' Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c'::'<>9'
+            IL_000a: ret
+        } // end of method '<>c'::.cctor
+
+        .method public hidebysig specialname rtspecialname 
+            instance void .ctor () cil managed 
+        {
+            // Method begins at RVA 0x2544
+            // Header size: 1
+            // Code size: 7 (0x7)
+            .maxstack 8
+
+            IL_0000: ldarg.0
+            IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+            IL_0006: ret
+        } // end of method '<>c'::.ctor
+
+        .method assembly hidebysig 
+            instance class [Neo4j.Driver]Neo4j.Driver.ServerAddress '<Resolve>b__3_0' (
+                class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress item
+            ) cil managed 
+        {
+            .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableContextAttribute::.ctor(uint8) = (
+                01 00 00 00 00
+            )
+            // Method begins at RVA 0x254c
+            // Header size: 1
+            // Code size: 12 (0xc)
+            .maxstack 8
+
+            IL_0000: ldarg.1
+            IL_0001: callvirt instance object [Blueprint41.Driver]Blueprint41.Driver.ServerAddress::get__instance()
+            IL_0006: castclass [Neo4j.Driver]Neo4j.Driver.ServerAddress
+            IL_000b: ret
+        } // end of method '<>c'::'<Resolve>b__3_0'
+
+    } // end of class <>c
+
+
+    // Fields
+    .field private class [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver _resolver
+
+    // Methods
+    .method private hidebysig specialname rtspecialname 
+        instance void .ctor (
+            class [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver resolver
+        ) cil managed 
+    {
+        // Method begins at RVA 0x2050
+        // Header size: 1
+        // Code size: 14 (0xe)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+        IL_0006: ldarg.0
+        IL_0007: ldarg.1
+        IL_0008: stfld class [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy::_resolver
+        IL_000d: ret
+    } // end of method ServerAddressResolverProxy::.ctor
+
+    .method public hidebysig static 
+        class Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy Get (
+            class [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver resolver
+        ) cil managed 
+    {
+        // Method begins at RVA 0x205f
+        // Header size: 1
+        // Code size: 7 (0x7)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: newobj instance void Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy::.ctor(class [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver)
+        IL_0006: ret
+    } // end of method ServerAddressResolverProxy::Get
+
+    .method public final hidebysig newslot virtual 
+        instance class [System.Runtime]System.Collections.Generic.ISet`1<class [Neo4j.Driver]Neo4j.Driver.ServerAddress> Resolve (
+            class [Neo4j.Driver]Neo4j.Driver.ServerAddress address
+        ) cil managed 
+    {
+        .param [0]
+            .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8[]) = (
+                01 00 02 00 00 00 02 01 00 00
+            )
+        // Method begins at RVA 0x2068
+        // Header size: 12
+        // Code size: 66 (0x42)
+        .maxstack 3
+        .locals init (
+            [0] class [System.Runtime]System.Collections.Generic.ISet`1<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress> result
+        )
+
+        IL_0000: ldarg.0
+        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy::_resolver
+        IL_0006: ldarg.1
+        IL_0007: newobj instance void [Blueprint41.Driver]Blueprint41.Driver.ServerAddress::.ctor(object)
+        IL_000c: callvirt instance class [System.Runtime]System.Collections.Generic.ISet`1<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress> [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver::Resolve(class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress)
+        IL_0011: stloc.0
+        IL_0012: ldloc.0
+        IL_0013: brtrue.s IL_0017
+
+        IL_0015: ldnull
+        IL_0016: ret
+
+        IL_0017: ldloc.0
+        IL_0018: ldsfld class [System.Runtime]System.Func`2<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress, class [Neo4j.Driver]Neo4j.Driver.ServerAddress> Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c'::'<>9__3_0'
+        IL_001d: dup
+        IL_001e: brtrue.s IL_0037
+
+        IL_0020: pop
+        IL_0021: ldsfld class Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c' Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c'::'<>9'
+        IL_0026: ldftn instance class [Neo4j.Driver]Neo4j.Driver.ServerAddress Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c'::'<Resolve>b__3_0'(class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress)
+        IL_002c: newobj instance void class [System.Runtime]System.Func`2<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress, class [Neo4j.Driver]Neo4j.Driver.ServerAddress>::.ctor(object, native int)
+        IL_0031: dup
+        IL_0032: stsfld class [System.Runtime]System.Func`2<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress, class [Neo4j.Driver]Neo4j.Driver.ServerAddress> Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy/'<>c'::'<>9__3_0'
+
+        IL_0037: call class [System.Runtime]System.Collections.Generic.IEnumerable`1<!!1> [System.Linq]System.Linq.Enumerable::Select<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress, class [Neo4j.Driver]Neo4j.Driver.ServerAddress>(class [System.Runtime]System.Collections.Generic.IEnumerable`1<!!0>, class [System.Runtime]System.Func`2<!!0, !!1>)
+        IL_003c: newobj instance void class [System.Collections]System.Collections.Generic.HashSet`1<class [Neo4j.Driver]Neo4j.Driver.ServerAddress>::.ctor(class [System.Runtime]System.Collections.Generic.IEnumerable`1<!0>)
+        IL_0041: ret
+    } // end of method ServerAddressResolverProxy::Resolve
+
+} // end of class Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy
