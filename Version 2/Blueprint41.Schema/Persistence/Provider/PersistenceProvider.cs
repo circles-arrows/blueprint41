@@ -74,7 +74,12 @@ namespace Blueprint41.Persistence
         }
 #pragma warning restore IDE0200
 
-        public string DBMSName { get; internal set; } = string.Empty;
+        internal void Initialize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public GDMS DatastoreTechnology => DatastoreModel.DatastoreTechnology;
         public string Version { get; internal set; } = "0.0.0";
         public int Major { get; internal set; } = 0;
         public int Minor { get; internal set; } = 0;
@@ -118,7 +123,9 @@ namespace Blueprint41.Persistence
             {
                 var components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
 
-                DBMSName = components["name"].As<string>();
+                //DBMSName = components["name"].As<string>();
+                // Test and throw instead of just retrieving it???
+
                 Version = components["version"].As<string>();
                 IsEnterpriseEdition = components["edition"].As<string>().ToLowerInvariant() == "enterprise";
 
