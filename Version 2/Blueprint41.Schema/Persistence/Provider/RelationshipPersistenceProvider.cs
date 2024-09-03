@@ -263,7 +263,7 @@ namespace Blueprint41.Persistence
                 {
                     if (targetEntity.Parent.IsUpgraded)
                     {
-                        Type type = typeCache.TryGetOrAdd(typeName, key =>
+                        Type? type = typeCache.TryGetOrAdd(typeName, key =>
                         {
                             type = parent.GetType().Assembly.GetTypes().FirstOrDefault(x => x.Name == typeName);
                             if (type is null)
@@ -559,7 +559,7 @@ namespace Blueprint41.Persistence
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
                 RawResult result = trans.Run(find, parameters);
-                IDictionary<string, object> record = result.FirstOrDefault();
+                IDictionary<string, object> record = result.First();
                 int count = record["Count"].As<int>();
                 if (count > 0)
                 {

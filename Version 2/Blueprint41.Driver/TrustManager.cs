@@ -17,7 +17,7 @@ namespace Blueprint41.Driver
         public static TrustManager CreatePeerTrust(bool verifyHostname = true, bool useMachineContext = false) => Driver.TRUST_MANAGER.CreatePeerTrust(verifyHostname, useMachineContext);
         public static TrustManager CreateCertTrust(IEnumerable<X509Certificate2> trusted, bool verifyHostname = true) => Driver.TRUST_MANAGER.CreateCertTrust(trusted, verifyHostname);
 
-        public override bool Equals(object obj) => Driver.TRUST_MANAGER.Equals(_instance, obj);
+        public override bool Equals(object? obj) => Driver.TRUST_MANAGER.Equals(_instance, obj);
         public override int GetHashCode() => Driver.TRUST_MANAGER.GetHashCode(_instance);
     }
 }

@@ -96,7 +96,7 @@ namespace Blueprint41.Core
 
         private void AddIndex(T item, int index)
         {
-            List<int> indexes;
+            List<int>? indexes;
             if (!InnerDict.TryGetValue(item, out indexes))
             {
                 indexes = new List<int>();
@@ -127,7 +127,7 @@ namespace Blueprint41.Core
         }
         public bool Contains(T item)
         {
-            if (InnerDict.TryGetValue(item, out List<int> indexes))
+            if (InnerDict.TryGetValue(item, out List<int>? indexes))
             {
                 foreach (int index in indexes)
                 {
@@ -140,7 +140,7 @@ namespace Blueprint41.Core
         }
         public bool Contains(CollectionItem<T> item)
         {
-            if (InnerDict.TryGetValue(item.Item, out List<int> indexes))
+            if (InnerDict.TryGetValue(item.Item, out List<int>? indexes))
             {
                 foreach (int index in indexes)
                 {
@@ -157,7 +157,7 @@ namespace Blueprint41.Core
         }
         public int[] IndexOf(T item)
         {
-            if (InnerDict.TryGetValue(item, out List<int> indexes))
+            if (InnerDict.TryGetValue(item, out List<int>? indexes))
                 return indexes.ToArray();
 
             return EMPTY_INT_ARRAY;
@@ -165,7 +165,7 @@ namespace Blueprint41.Core
 
         public bool Remove(T item)
         {
-            if (InnerDict.TryGetValue(item, out List<int> indexes))
+            if (InnerDict.TryGetValue(item, out List<int>? indexes))
             {
                 bool result = false;
                 for (int ptr = indexes.Count - 1; ptr >= 0; ptr--)

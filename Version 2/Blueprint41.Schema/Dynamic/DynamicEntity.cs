@@ -456,6 +456,9 @@ namespace Blueprint41.Dynamic
 
         void OGM.SetKey(object key)
         {
+            if (DynamicEntityType.Key is null)
+                throw new NotSupportedException("No key has been defined for this entity.");
+
             object? convertedKey = PersistenceProvider.ConvertFromStoredType(DynamicEntityType.Key.SystemReturnType!, key);
             if (DynamicEntityValues.ContainsKey(DynamicEntityType.Key.Name))
                 DynamicEntityValues[DynamicEntityType.Key.Name] = convertedKey;

@@ -1706,7 +1706,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, bool>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<bool, bool>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfBoolBoolToDictOfObjectObject : Conversion<Dictionary<bool, bool>?, string?>
@@ -1726,7 +1726,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, bool?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<bool, bool?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfBoolBoolNullableToDictOfObjectObject : Conversion<Dictionary<bool, bool?>?, string?>
@@ -1746,7 +1746,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<bool, long>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfBoolSbyteToDictOfObjectObject : Conversion<Dictionary<bool, sbyte>?, string?>
@@ -1766,7 +1766,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<bool, long?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfBoolSbyteNullableToDictOfObjectObject : Conversion<Dictionary<bool, sbyte?>?, string?>
@@ -1786,7 +1786,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<bool, long>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfBoolShortToDictOfObjectObject : Conversion<Dictionary<bool, short>?, string?>
@@ -1806,7 +1806,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<bool, long?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfBoolShortNullableToDictOfObjectObject : Conversion<Dictionary<bool, short?>?, string?>
@@ -1826,7 +1826,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<bool, long>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfBoolIntToDictOfObjectObject : Conversion<Dictionary<bool, int>?, string?>
@@ -1846,7 +1846,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<bool, long?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfBoolIntNullableToDictOfObjectObject : Conversion<Dictionary<bool, int?>?, string?>
@@ -1866,7 +1866,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<bool, long>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfBoolLongToDictOfObjectObject : Conversion<Dictionary<bool, long>?, string?>
@@ -1886,7 +1886,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<bool, long?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfBoolLongNullableToDictOfObjectObject : Conversion<Dictionary<bool, long?>?, string?>
@@ -1906,7 +1906,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, double>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<bool, double>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfBoolFloatToDictOfObjectObject : Conversion<Dictionary<bool, float>?, string?>
@@ -1926,7 +1926,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, double?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<bool, double?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfBoolFloatNullableToDictOfObjectObject : Conversion<Dictionary<bool, float?>?, string?>
@@ -1946,7 +1946,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, double>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<bool, double>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfBoolDoubleToDictOfObjectObject : Conversion<Dictionary<bool, double>?, string?>
@@ -1966,7 +1966,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, double?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<bool, double?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfBoolDoubleNullableToDictOfObjectObject : Conversion<Dictionary<bool, double?>?, string?>
@@ -1986,7 +1986,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, string>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<bool, string>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfBoolCharToDictOfObjectObject : Conversion<Dictionary<bool, char>?, string?>
@@ -2006,7 +2006,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, string>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<bool, string>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfBoolCharNullableToDictOfObjectObject : Conversion<Dictionary<bool, char?>?, string?>
@@ -2026,7 +2026,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, string>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<bool, string>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfBoolStringToDictOfObjectObject : Conversion<Dictionary<bool, string?>?, string?>
@@ -2046,7 +2046,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<bool, long>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfBoolDateTimeToDictOfObjectObject : Conversion<Dictionary<bool, DateTime>?, string?>
@@ -2066,7 +2066,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<bool, long?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfBoolDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<bool, DateTime?>?, string?>
@@ -2086,7 +2086,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, string>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<bool, string>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfBoolGuidToDictOfObjectObject : Conversion<Dictionary<bool, Guid>?, string?>
@@ -2106,7 +2106,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, string>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<bool, string>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfBoolGuidNullableToDictOfObjectObject : Conversion<Dictionary<bool, Guid?>?, string?>
@@ -2126,7 +2126,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<bool, long>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfBoolDecimalToDictOfObjectObject : Conversion<Dictionary<bool, decimal>?, string?>
@@ -2146,7 +2146,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, long?>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<bool, long?>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfBoolDecimalNullableToDictOfObjectObject : Conversion<Dictionary<bool, decimal?>?, string?>
@@ -2166,7 +2166,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<bool, byte[]>>().ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<bool, byte[]>>()?.ToDictionary(item => Conversion<bool, bool>.Convert((bool)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfBoolCompressedStringToDictOfObjectObject : Conversion<Dictionary<bool, CompressedString?>?, string?>
@@ -2186,7 +2186,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<long, bool>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfSbyteBoolToDictOfObjectObject : Conversion<Dictionary<sbyte, bool>?, string?>
@@ -2206,7 +2206,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<long, bool?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfSbyteBoolNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, bool?>?, string?>
@@ -2226,7 +2226,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfSbyteSbyteToDictOfObjectObject : Conversion<Dictionary<sbyte, sbyte>?, string?>
@@ -2246,7 +2246,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfSbyteSbyteNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, sbyte?>?, string?>
@@ -2266,7 +2266,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfSbyteShortToDictOfObjectObject : Conversion<Dictionary<sbyte, short>?, string?>
@@ -2286,7 +2286,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfSbyteShortNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, short?>?, string?>
@@ -2306,7 +2306,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfSbyteIntToDictOfObjectObject : Conversion<Dictionary<sbyte, int>?, string?>
@@ -2326,7 +2326,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfSbyteIntNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, int?>?, string?>
@@ -2346,7 +2346,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfSbyteLongToDictOfObjectObject : Conversion<Dictionary<sbyte, long>?, string?>
@@ -2366,7 +2366,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfSbyteLongNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, long?>?, string?>
@@ -2386,7 +2386,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfSbyteFloatToDictOfObjectObject : Conversion<Dictionary<sbyte, float>?, string?>
@@ -2406,7 +2406,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfSbyteFloatNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, float?>?, string?>
@@ -2426,7 +2426,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfSbyteDoubleToDictOfObjectObject : Conversion<Dictionary<sbyte, double>?, string?>
@@ -2446,7 +2446,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfSbyteDoubleNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, double?>?, string?>
@@ -2466,7 +2466,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfSbyteCharToDictOfObjectObject : Conversion<Dictionary<sbyte, char>?, string?>
@@ -2486,7 +2486,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfSbyteCharNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, char?>?, string?>
@@ -2506,7 +2506,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfSbyteStringToDictOfObjectObject : Conversion<Dictionary<sbyte, string?>?, string?>
@@ -2526,7 +2526,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfSbyteDateTimeToDictOfObjectObject : Conversion<Dictionary<sbyte, DateTime>?, string?>
@@ -2546,7 +2546,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfSbyteDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, DateTime?>?, string?>
@@ -2566,7 +2566,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfSbyteGuidToDictOfObjectObject : Conversion<Dictionary<sbyte, Guid>?, string?>
@@ -2586,7 +2586,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfSbyteGuidNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, Guid?>?, string?>
@@ -2606,7 +2606,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfSbyteDecimalToDictOfObjectObject : Conversion<Dictionary<sbyte, decimal>?, string?>
@@ -2626,7 +2626,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfSbyteDecimalNullableToDictOfObjectObject : Conversion<Dictionary<sbyte, decimal?>?, string?>
@@ -2646,7 +2646,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<long, byte[]>>()?.ToDictionary(item => Conversion<long, sbyte>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfSbyteCompressedStringToDictOfObjectObject : Conversion<Dictionary<sbyte, CompressedString?>?, string?>
@@ -2666,7 +2666,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<long, bool>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfShortBoolToDictOfObjectObject : Conversion<Dictionary<short, bool>?, string?>
@@ -2686,7 +2686,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<long, bool?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfShortBoolNullableToDictOfObjectObject : Conversion<Dictionary<short, bool?>?, string?>
@@ -2706,7 +2706,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfShortSbyteToDictOfObjectObject : Conversion<Dictionary<short, sbyte>?, string?>
@@ -2726,7 +2726,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfShortSbyteNullableToDictOfObjectObject : Conversion<Dictionary<short, sbyte?>?, string?>
@@ -2746,7 +2746,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfShortShortToDictOfObjectObject : Conversion<Dictionary<short, short>?, string?>
@@ -2766,7 +2766,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfShortShortNullableToDictOfObjectObject : Conversion<Dictionary<short, short?>?, string?>
@@ -2786,7 +2786,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfShortIntToDictOfObjectObject : Conversion<Dictionary<short, int>?, string?>
@@ -2806,7 +2806,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfShortIntNullableToDictOfObjectObject : Conversion<Dictionary<short, int?>?, string?>
@@ -2826,7 +2826,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfShortLongToDictOfObjectObject : Conversion<Dictionary<short, long>?, string?>
@@ -2846,7 +2846,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfShortLongNullableToDictOfObjectObject : Conversion<Dictionary<short, long?>?, string?>
@@ -2866,7 +2866,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfShortFloatToDictOfObjectObject : Conversion<Dictionary<short, float>?, string?>
@@ -2886,7 +2886,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfShortFloatNullableToDictOfObjectObject : Conversion<Dictionary<short, float?>?, string?>
@@ -2906,7 +2906,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfShortDoubleToDictOfObjectObject : Conversion<Dictionary<short, double>?, string?>
@@ -2926,7 +2926,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfShortDoubleNullableToDictOfObjectObject : Conversion<Dictionary<short, double?>?, string?>
@@ -2946,7 +2946,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfShortCharToDictOfObjectObject : Conversion<Dictionary<short, char>?, string?>
@@ -2966,7 +2966,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfShortCharNullableToDictOfObjectObject : Conversion<Dictionary<short, char?>?, string?>
@@ -2986,7 +2986,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfShortStringToDictOfObjectObject : Conversion<Dictionary<short, string?>?, string?>
@@ -3006,7 +3006,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfShortDateTimeToDictOfObjectObject : Conversion<Dictionary<short, DateTime>?, string?>
@@ -3026,7 +3026,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfShortDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<short, DateTime?>?, string?>
@@ -3046,7 +3046,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfShortGuidToDictOfObjectObject : Conversion<Dictionary<short, Guid>?, string?>
@@ -3066,7 +3066,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfShortGuidNullableToDictOfObjectObject : Conversion<Dictionary<short, Guid?>?, string?>
@@ -3086,7 +3086,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfShortDecimalToDictOfObjectObject : Conversion<Dictionary<short, decimal>?, string?>
@@ -3106,7 +3106,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfShortDecimalNullableToDictOfObjectObject : Conversion<Dictionary<short, decimal?>?, string?>
@@ -3126,7 +3126,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<long, byte[]>>()?.ToDictionary(item => Conversion<long, short>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfShortCompressedStringToDictOfObjectObject : Conversion<Dictionary<short, CompressedString?>?, string?>
@@ -3146,7 +3146,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<long, bool>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfIntBoolToDictOfObjectObject : Conversion<Dictionary<int, bool>?, string?>
@@ -3166,7 +3166,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<long, bool?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfIntBoolNullableToDictOfObjectObject : Conversion<Dictionary<int, bool?>?, string?>
@@ -3186,7 +3186,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfIntSbyteToDictOfObjectObject : Conversion<Dictionary<int, sbyte>?, string?>
@@ -3206,7 +3206,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfIntSbyteNullableToDictOfObjectObject : Conversion<Dictionary<int, sbyte?>?, string?>
@@ -3226,7 +3226,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfIntShortToDictOfObjectObject : Conversion<Dictionary<int, short>?, string?>
@@ -3246,7 +3246,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfIntShortNullableToDictOfObjectObject : Conversion<Dictionary<int, short?>?, string?>
@@ -3266,7 +3266,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfIntIntToDictOfObjectObject : Conversion<Dictionary<int, int>?, string?>
@@ -3286,7 +3286,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfIntIntNullableToDictOfObjectObject : Conversion<Dictionary<int, int?>?, string?>
@@ -3306,7 +3306,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfIntLongToDictOfObjectObject : Conversion<Dictionary<int, long>?, string?>
@@ -3326,7 +3326,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfIntLongNullableToDictOfObjectObject : Conversion<Dictionary<int, long?>?, string?>
@@ -3346,7 +3346,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfIntFloatToDictOfObjectObject : Conversion<Dictionary<int, float>?, string?>
@@ -3366,7 +3366,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfIntFloatNullableToDictOfObjectObject : Conversion<Dictionary<int, float?>?, string?>
@@ -3386,7 +3386,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfIntDoubleToDictOfObjectObject : Conversion<Dictionary<int, double>?, string?>
@@ -3406,7 +3406,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfIntDoubleNullableToDictOfObjectObject : Conversion<Dictionary<int, double?>?, string?>
@@ -3426,7 +3426,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfIntCharToDictOfObjectObject : Conversion<Dictionary<int, char>?, string?>
@@ -3446,7 +3446,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfIntCharNullableToDictOfObjectObject : Conversion<Dictionary<int, char?>?, string?>
@@ -3466,7 +3466,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfIntStringToDictOfObjectObject : Conversion<Dictionary<int, string?>?, string?>
@@ -3486,7 +3486,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfIntDateTimeToDictOfObjectObject : Conversion<Dictionary<int, DateTime>?, string?>
@@ -3506,7 +3506,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfIntDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<int, DateTime?>?, string?>
@@ -3526,7 +3526,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfIntGuidToDictOfObjectObject : Conversion<Dictionary<int, Guid>?, string?>
@@ -3546,7 +3546,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfIntGuidNullableToDictOfObjectObject : Conversion<Dictionary<int, Guid?>?, string?>
@@ -3566,7 +3566,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfIntDecimalToDictOfObjectObject : Conversion<Dictionary<int, decimal>?, string?>
@@ -3586,7 +3586,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfIntDecimalNullableToDictOfObjectObject : Conversion<Dictionary<int, decimal?>?, string?>
@@ -3606,7 +3606,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<long, byte[]>>()?.ToDictionary(item => Conversion<long, int>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfIntCompressedStringToDictOfObjectObject : Conversion<Dictionary<int, CompressedString?>?, string?>
@@ -3626,7 +3626,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<long, bool>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfLongBoolToDictOfObjectObject : Conversion<Dictionary<long, bool>?, string?>
@@ -3646,7 +3646,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<long, bool?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfLongBoolNullableToDictOfObjectObject : Conversion<Dictionary<long, bool?>?, string?>
@@ -3666,7 +3666,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfLongSbyteToDictOfObjectObject : Conversion<Dictionary<long, sbyte>?, string?>
@@ -3686,7 +3686,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfLongSbyteNullableToDictOfObjectObject : Conversion<Dictionary<long, sbyte?>?, string?>
@@ -3706,7 +3706,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfLongShortToDictOfObjectObject : Conversion<Dictionary<long, short>?, string?>
@@ -3726,7 +3726,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfLongShortNullableToDictOfObjectObject : Conversion<Dictionary<long, short?>?, string?>
@@ -3746,7 +3746,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfLongIntToDictOfObjectObject : Conversion<Dictionary<long, int>?, string?>
@@ -3766,7 +3766,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfLongIntNullableToDictOfObjectObject : Conversion<Dictionary<long, int?>?, string?>
@@ -3786,7 +3786,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfLongLongToDictOfObjectObject : Conversion<Dictionary<long, long>?, string?>
@@ -3806,7 +3806,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfLongLongNullableToDictOfObjectObject : Conversion<Dictionary<long, long?>?, string?>
@@ -3826,7 +3826,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfLongFloatToDictOfObjectObject : Conversion<Dictionary<long, float>?, string?>
@@ -3846,7 +3846,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfLongFloatNullableToDictOfObjectObject : Conversion<Dictionary<long, float?>?, string?>
@@ -3866,7 +3866,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfLongDoubleToDictOfObjectObject : Conversion<Dictionary<long, double>?, string?>
@@ -3886,7 +3886,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfLongDoubleNullableToDictOfObjectObject : Conversion<Dictionary<long, double?>?, string?>
@@ -3906,7 +3906,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfLongCharToDictOfObjectObject : Conversion<Dictionary<long, char>?, string?>
@@ -3926,7 +3926,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfLongCharNullableToDictOfObjectObject : Conversion<Dictionary<long, char?>?, string?>
@@ -3946,7 +3946,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfLongStringToDictOfObjectObject : Conversion<Dictionary<long, string?>?, string?>
@@ -3966,7 +3966,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfLongDateTimeToDictOfObjectObject : Conversion<Dictionary<long, DateTime>?, string?>
@@ -3986,7 +3986,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfLongDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<long, DateTime?>?, string?>
@@ -4006,7 +4006,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfLongGuidToDictOfObjectObject : Conversion<Dictionary<long, Guid>?, string?>
@@ -4026,7 +4026,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfLongGuidNullableToDictOfObjectObject : Conversion<Dictionary<long, Guid?>?, string?>
@@ -4046,7 +4046,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfLongDecimalToDictOfObjectObject : Conversion<Dictionary<long, decimal>?, string?>
@@ -4066,7 +4066,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfLongDecimalNullableToDictOfObjectObject : Conversion<Dictionary<long, decimal?>?, string?>
@@ -4086,7 +4086,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<long, byte[]>>()?.ToDictionary(item => Conversion<long, long>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfLongCompressedStringToDictOfObjectObject : Conversion<Dictionary<long, CompressedString?>?, string?>
@@ -4106,7 +4106,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, bool>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<double, bool>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfFloatBoolToDictOfObjectObject : Conversion<Dictionary<float, bool>?, string?>
@@ -4126,7 +4126,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, bool?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<double, bool?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfFloatBoolNullableToDictOfObjectObject : Conversion<Dictionary<float, bool?>?, string?>
@@ -4146,7 +4146,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfFloatSbyteToDictOfObjectObject : Conversion<Dictionary<float, sbyte>?, string?>
@@ -4166,7 +4166,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfFloatSbyteNullableToDictOfObjectObject : Conversion<Dictionary<float, sbyte?>?, string?>
@@ -4186,7 +4186,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfFloatShortToDictOfObjectObject : Conversion<Dictionary<float, short>?, string?>
@@ -4206,7 +4206,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfFloatShortNullableToDictOfObjectObject : Conversion<Dictionary<float, short?>?, string?>
@@ -4226,7 +4226,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfFloatIntToDictOfObjectObject : Conversion<Dictionary<float, int>?, string?>
@@ -4246,7 +4246,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfFloatIntNullableToDictOfObjectObject : Conversion<Dictionary<float, int?>?, string?>
@@ -4266,7 +4266,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfFloatLongToDictOfObjectObject : Conversion<Dictionary<float, long>?, string?>
@@ -4286,7 +4286,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfFloatLongNullableToDictOfObjectObject : Conversion<Dictionary<float, long?>?, string?>
@@ -4306,7 +4306,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, double>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<double, double>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfFloatFloatToDictOfObjectObject : Conversion<Dictionary<float, float>?, string?>
@@ -4326,7 +4326,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, double?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<double, double?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfFloatFloatNullableToDictOfObjectObject : Conversion<Dictionary<float, float?>?, string?>
@@ -4346,7 +4346,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, double>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<double, double>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfFloatDoubleToDictOfObjectObject : Conversion<Dictionary<float, double>?, string?>
@@ -4366,7 +4366,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, double?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<double, double?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfFloatDoubleNullableToDictOfObjectObject : Conversion<Dictionary<float, double?>?, string?>
@@ -4386,7 +4386,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfFloatCharToDictOfObjectObject : Conversion<Dictionary<float, char>?, string?>
@@ -4406,7 +4406,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfFloatCharNullableToDictOfObjectObject : Conversion<Dictionary<float, char?>?, string?>
@@ -4426,7 +4426,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfFloatStringToDictOfObjectObject : Conversion<Dictionary<float, string?>?, string?>
@@ -4446,7 +4446,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfFloatDateTimeToDictOfObjectObject : Conversion<Dictionary<float, DateTime>?, string?>
@@ -4466,7 +4466,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfFloatDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<float, DateTime?>?, string?>
@@ -4486,7 +4486,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfFloatGuidToDictOfObjectObject : Conversion<Dictionary<float, Guid>?, string?>
@@ -4506,7 +4506,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfFloatGuidNullableToDictOfObjectObject : Conversion<Dictionary<float, Guid?>?, string?>
@@ -4526,7 +4526,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfFloatDecimalToDictOfObjectObject : Conversion<Dictionary<float, decimal>?, string?>
@@ -4546,7 +4546,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfFloatDecimalNullableToDictOfObjectObject : Conversion<Dictionary<float, decimal?>?, string?>
@@ -4566,7 +4566,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, byte[]>>().ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<double, byte[]>>()?.ToDictionary(item => Conversion<double, float>.Convert((double)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfFloatCompressedStringToDictOfObjectObject : Conversion<Dictionary<float, CompressedString?>?, string?>
@@ -4586,7 +4586,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, bool>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<double, bool>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfDoubleBoolToDictOfObjectObject : Conversion<Dictionary<double, bool>?, string?>
@@ -4606,7 +4606,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, bool?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<double, bool?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfDoubleBoolNullableToDictOfObjectObject : Conversion<Dictionary<double, bool?>?, string?>
@@ -4626,7 +4626,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDoubleSbyteToDictOfObjectObject : Conversion<Dictionary<double, sbyte>?, string?>
@@ -4646,7 +4646,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDoubleSbyteNullableToDictOfObjectObject : Conversion<Dictionary<double, sbyte?>?, string?>
@@ -4666,7 +4666,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDoubleShortToDictOfObjectObject : Conversion<Dictionary<double, short>?, string?>
@@ -4686,7 +4686,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDoubleShortNullableToDictOfObjectObject : Conversion<Dictionary<double, short?>?, string?>
@@ -4706,7 +4706,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDoubleIntToDictOfObjectObject : Conversion<Dictionary<double, int>?, string?>
@@ -4726,7 +4726,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDoubleIntNullableToDictOfObjectObject : Conversion<Dictionary<double, int?>?, string?>
@@ -4746,7 +4746,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDoubleLongToDictOfObjectObject : Conversion<Dictionary<double, long>?, string?>
@@ -4766,7 +4766,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDoubleLongNullableToDictOfObjectObject : Conversion<Dictionary<double, long?>?, string?>
@@ -4786,7 +4786,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, double>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<double, double>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfDoubleFloatToDictOfObjectObject : Conversion<Dictionary<double, float>?, string?>
@@ -4806,7 +4806,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, double?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<double, double?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfDoubleFloatNullableToDictOfObjectObject : Conversion<Dictionary<double, float?>?, string?>
@@ -4826,7 +4826,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, double>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<double, double>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfDoubleDoubleToDictOfObjectObject : Conversion<Dictionary<double, double>?, string?>
@@ -4846,7 +4846,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, double?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<double, double?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfDoubleDoubleNullableToDictOfObjectObject : Conversion<Dictionary<double, double?>?, string?>
@@ -4866,7 +4866,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfDoubleCharToDictOfObjectObject : Conversion<Dictionary<double, char>?, string?>
@@ -4886,7 +4886,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDoubleCharNullableToDictOfObjectObject : Conversion<Dictionary<double, char?>?, string?>
@@ -4906,7 +4906,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDoubleStringToDictOfObjectObject : Conversion<Dictionary<double, string?>?, string?>
@@ -4926,7 +4926,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDoubleDateTimeToDictOfObjectObject : Conversion<Dictionary<double, DateTime>?, string?>
@@ -4946,7 +4946,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDoubleDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<double, DateTime?>?, string?>
@@ -4966,7 +4966,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfDoubleGuidToDictOfObjectObject : Conversion<Dictionary<double, Guid>?, string?>
@@ -4986,7 +4986,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, string>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<double, string>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDoubleGuidNullableToDictOfObjectObject : Conversion<Dictionary<double, Guid?>?, string?>
@@ -5006,7 +5006,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<double, long>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDoubleDecimalToDictOfObjectObject : Conversion<Dictionary<double, decimal>?, string?>
@@ -5026,7 +5026,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, long?>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<double, long?>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDoubleDecimalNullableToDictOfObjectObject : Conversion<Dictionary<double, decimal?>?, string?>
@@ -5046,7 +5046,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<double, byte[]>>().ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<double, byte[]>>()?.ToDictionary(item => Conversion<double, double>.Convert((double)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfDoubleCompressedStringToDictOfObjectObject : Conversion<Dictionary<double, CompressedString?>?, string?>
@@ -5066,7 +5066,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, bool>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<string, bool>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfCharBoolToDictOfObjectObject : Conversion<Dictionary<char, bool>?, string?>
@@ -5086,7 +5086,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, bool?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<string, bool?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfCharBoolNullableToDictOfObjectObject : Conversion<Dictionary<char, bool?>?, string?>
@@ -5106,7 +5106,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCharSbyteToDictOfObjectObject : Conversion<Dictionary<char, sbyte>?, string?>
@@ -5126,7 +5126,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCharSbyteNullableToDictOfObjectObject : Conversion<Dictionary<char, sbyte?>?, string?>
@@ -5146,7 +5146,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCharShortToDictOfObjectObject : Conversion<Dictionary<char, short>?, string?>
@@ -5166,7 +5166,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCharShortNullableToDictOfObjectObject : Conversion<Dictionary<char, short?>?, string?>
@@ -5186,7 +5186,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCharIntToDictOfObjectObject : Conversion<Dictionary<char, int>?, string?>
@@ -5206,7 +5206,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCharIntNullableToDictOfObjectObject : Conversion<Dictionary<char, int?>?, string?>
@@ -5226,7 +5226,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCharLongToDictOfObjectObject : Conversion<Dictionary<char, long>?, string?>
@@ -5246,7 +5246,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCharLongNullableToDictOfObjectObject : Conversion<Dictionary<char, long?>?, string?>
@@ -5266,7 +5266,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<string, double>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfCharFloatToDictOfObjectObject : Conversion<Dictionary<char, float>?, string?>
@@ -5286,7 +5286,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<string, double?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfCharFloatNullableToDictOfObjectObject : Conversion<Dictionary<char, float?>?, string?>
@@ -5306,7 +5306,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<string, double>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfCharDoubleToDictOfObjectObject : Conversion<Dictionary<char, double>?, string?>
@@ -5326,7 +5326,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<string, double?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfCharDoubleNullableToDictOfObjectObject : Conversion<Dictionary<char, double?>?, string?>
@@ -5346,7 +5346,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfCharCharToDictOfObjectObject : Conversion<Dictionary<char, char>?, string?>
@@ -5366,7 +5366,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfCharCharNullableToDictOfObjectObject : Conversion<Dictionary<char, char?>?, string?>
@@ -5386,7 +5386,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfCharStringToDictOfObjectObject : Conversion<Dictionary<char, string?>?, string?>
@@ -5406,7 +5406,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCharDateTimeToDictOfObjectObject : Conversion<Dictionary<char, DateTime>?, string?>
@@ -5426,7 +5426,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCharDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<char, DateTime?>?, string?>
@@ -5446,7 +5446,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfCharGuidToDictOfObjectObject : Conversion<Dictionary<char, Guid>?, string?>
@@ -5466,7 +5466,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfCharGuidNullableToDictOfObjectObject : Conversion<Dictionary<char, Guid?>?, string?>
@@ -5486,7 +5486,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCharDecimalToDictOfObjectObject : Conversion<Dictionary<char, decimal>?, string?>
@@ -5506,7 +5506,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCharDecimalNullableToDictOfObjectObject : Conversion<Dictionary<char, decimal?>?, string?>
@@ -5526,7 +5526,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, byte[]>>().ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<string, byte[]>>()?.ToDictionary(item => Conversion<string, char>.Convert((string)item.Key)!, item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfCharCompressedStringToDictOfObjectObject : Conversion<Dictionary<char, CompressedString?>?, string?>
@@ -5546,7 +5546,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, bool>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<string, bool>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfStringBoolToDictOfObjectObject : Conversion<Dictionary<string, bool>?, string?>
@@ -5566,7 +5566,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, bool?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<string, bool?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfStringBoolNullableToDictOfObjectObject : Conversion<Dictionary<string, bool?>?, string?>
@@ -5586,7 +5586,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfStringSbyteToDictOfObjectObject : Conversion<Dictionary<string, sbyte>?, string?>
@@ -5606,7 +5606,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfStringSbyteNullableToDictOfObjectObject : Conversion<Dictionary<string, sbyte?>?, string?>
@@ -5626,7 +5626,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfStringShortToDictOfObjectObject : Conversion<Dictionary<string, short>?, string?>
@@ -5646,7 +5646,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfStringShortNullableToDictOfObjectObject : Conversion<Dictionary<string, short?>?, string?>
@@ -5666,7 +5666,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfStringIntToDictOfObjectObject : Conversion<Dictionary<string, int>?, string?>
@@ -5686,7 +5686,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfStringIntNullableToDictOfObjectObject : Conversion<Dictionary<string, int?>?, string?>
@@ -5706,7 +5706,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfStringLongToDictOfObjectObject : Conversion<Dictionary<string, long>?, string?>
@@ -5726,7 +5726,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfStringLongNullableToDictOfObjectObject : Conversion<Dictionary<string, long?>?, string?>
@@ -5746,7 +5746,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<string, double>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfStringFloatToDictOfObjectObject : Conversion<Dictionary<string, float>?, string?>
@@ -5766,7 +5766,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<string, double?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfStringFloatNullableToDictOfObjectObject : Conversion<Dictionary<string, float?>?, string?>
@@ -5786,7 +5786,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<string, double>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfStringDoubleToDictOfObjectObject : Conversion<Dictionary<string, double>?, string?>
@@ -5806,7 +5806,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<string, double?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfStringDoubleNullableToDictOfObjectObject : Conversion<Dictionary<string, double?>?, string?>
@@ -5826,7 +5826,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfStringCharToDictOfObjectObject : Conversion<Dictionary<string, char>?, string?>
@@ -5846,7 +5846,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfStringCharNullableToDictOfObjectObject : Conversion<Dictionary<string, char?>?, string?>
@@ -5866,7 +5866,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfStringStringToDictOfObjectObject : Conversion<Dictionary<string, string?>?, string?>
@@ -5886,7 +5886,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfStringDateTimeToDictOfObjectObject : Conversion<Dictionary<string, DateTime>?, string?>
@@ -5906,7 +5906,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfStringDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<string, DateTime?>?, string?>
@@ -5926,7 +5926,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfStringGuidToDictOfObjectObject : Conversion<Dictionary<string, Guid>?, string?>
@@ -5946,7 +5946,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfStringGuidNullableToDictOfObjectObject : Conversion<Dictionary<string, Guid?>?, string?>
@@ -5966,7 +5966,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfStringDecimalToDictOfObjectObject : Conversion<Dictionary<string, decimal>?, string?>
@@ -5986,7 +5986,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfStringDecimalNullableToDictOfObjectObject : Conversion<Dictionary<string, decimal?>?, string?>
@@ -6006,7 +6006,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, byte[]>>().ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<string, byte[]>>()?.ToDictionary(item => Conversion<string, string>.Convert((string)item.Key)!, item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfStringCompressedStringToDictOfObjectObject : Conversion<Dictionary<string, CompressedString?>?, string?>
@@ -6026,7 +6026,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<long, bool>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfDateTimeBoolToDictOfObjectObject : Conversion<Dictionary<DateTime, bool>?, string?>
@@ -6046,7 +6046,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<long, bool?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeBoolNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, bool?>?, string?>
@@ -6066,7 +6066,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDateTimeSbyteToDictOfObjectObject : Conversion<Dictionary<DateTime, sbyte>?, string?>
@@ -6086,7 +6086,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeSbyteNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, sbyte?>?, string?>
@@ -6106,7 +6106,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDateTimeShortToDictOfObjectObject : Conversion<Dictionary<DateTime, short>?, string?>
@@ -6126,7 +6126,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeShortNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, short?>?, string?>
@@ -6146,7 +6146,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDateTimeIntToDictOfObjectObject : Conversion<Dictionary<DateTime, int>?, string?>
@@ -6166,7 +6166,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeIntNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, int?>?, string?>
@@ -6186,7 +6186,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDateTimeLongToDictOfObjectObject : Conversion<Dictionary<DateTime, long>?, string?>
@@ -6206,7 +6206,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeLongNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, long?>?, string?>
@@ -6226,7 +6226,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfDateTimeFloatToDictOfObjectObject : Conversion<Dictionary<DateTime, float>?, string?>
@@ -6246,7 +6246,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeFloatNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, float?>?, string?>
@@ -6266,7 +6266,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfDateTimeDoubleToDictOfObjectObject : Conversion<Dictionary<DateTime, double>?, string?>
@@ -6286,7 +6286,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeDoubleNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, double?>?, string?>
@@ -6306,7 +6306,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfDateTimeCharToDictOfObjectObject : Conversion<Dictionary<DateTime, char>?, string?>
@@ -6326,7 +6326,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDateTimeCharNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, char?>?, string?>
@@ -6346,7 +6346,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDateTimeStringToDictOfObjectObject : Conversion<Dictionary<DateTime, string?>?, string?>
@@ -6366,7 +6366,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDateTimeDateTimeToDictOfObjectObject : Conversion<Dictionary<DateTime, DateTime>?, string?>
@@ -6386,7 +6386,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, DateTime?>?, string?>
@@ -6406,7 +6406,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfDateTimeGuidToDictOfObjectObject : Conversion<Dictionary<DateTime, Guid>?, string?>
@@ -6426,7 +6426,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDateTimeGuidNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, Guid?>?, string?>
@@ -6446,7 +6446,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDateTimeDecimalToDictOfObjectObject : Conversion<Dictionary<DateTime, decimal>?, string?>
@@ -6466,7 +6466,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDateTimeDecimalNullableToDictOfObjectObject : Conversion<Dictionary<DateTime, decimal?>?, string?>
@@ -6486,7 +6486,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<long, byte[]>>()?.ToDictionary(item => Conversion<long, DateTime>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfDateTimeCompressedStringToDictOfObjectObject : Conversion<Dictionary<DateTime, CompressedString?>?, string?>
@@ -6506,7 +6506,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, bool>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<string, bool>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfGuidBoolToDictOfObjectObject : Conversion<Dictionary<Guid, bool>?, string?>
@@ -6526,7 +6526,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, bool?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<string, bool?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfGuidBoolNullableToDictOfObjectObject : Conversion<Dictionary<Guid, bool?>?, string?>
@@ -6546,7 +6546,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfGuidSbyteToDictOfObjectObject : Conversion<Dictionary<Guid, sbyte>?, string?>
@@ -6566,7 +6566,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfGuidSbyteNullableToDictOfObjectObject : Conversion<Dictionary<Guid, sbyte?>?, string?>
@@ -6586,7 +6586,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfGuidShortToDictOfObjectObject : Conversion<Dictionary<Guid, short>?, string?>
@@ -6606,7 +6606,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfGuidShortNullableToDictOfObjectObject : Conversion<Dictionary<Guid, short?>?, string?>
@@ -6626,7 +6626,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfGuidIntToDictOfObjectObject : Conversion<Dictionary<Guid, int>?, string?>
@@ -6646,7 +6646,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfGuidIntNullableToDictOfObjectObject : Conversion<Dictionary<Guid, int?>?, string?>
@@ -6666,7 +6666,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfGuidLongToDictOfObjectObject : Conversion<Dictionary<Guid, long>?, string?>
@@ -6686,7 +6686,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfGuidLongNullableToDictOfObjectObject : Conversion<Dictionary<Guid, long?>?, string?>
@@ -6706,7 +6706,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<string, double>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfGuidFloatToDictOfObjectObject : Conversion<Dictionary<Guid, float>?, string?>
@@ -6726,7 +6726,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<string, double?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfGuidFloatNullableToDictOfObjectObject : Conversion<Dictionary<Guid, float?>?, string?>
@@ -6746,7 +6746,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<string, double>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfGuidDoubleToDictOfObjectObject : Conversion<Dictionary<Guid, double>?, string?>
@@ -6766,7 +6766,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, double?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<string, double?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfGuidDoubleNullableToDictOfObjectObject : Conversion<Dictionary<Guid, double?>?, string?>
@@ -6786,7 +6786,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfGuidCharToDictOfObjectObject : Conversion<Dictionary<Guid, char>?, string?>
@@ -6806,7 +6806,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfGuidCharNullableToDictOfObjectObject : Conversion<Dictionary<Guid, char?>?, string?>
@@ -6826,7 +6826,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfGuidStringToDictOfObjectObject : Conversion<Dictionary<Guid, string?>?, string?>
@@ -6846,7 +6846,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfGuidDateTimeToDictOfObjectObject : Conversion<Dictionary<Guid, DateTime>?, string?>
@@ -6866,7 +6866,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfGuidDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<Guid, DateTime?>?, string?>
@@ -6886,7 +6886,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfGuidGuidToDictOfObjectObject : Conversion<Dictionary<Guid, Guid>?, string?>
@@ -6906,7 +6906,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, string>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<string, string>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfGuidGuidNullableToDictOfObjectObject : Conversion<Dictionary<Guid, Guid?>?, string?>
@@ -6926,7 +6926,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<string, long>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfGuidDecimalToDictOfObjectObject : Conversion<Dictionary<Guid, decimal>?, string?>
@@ -6946,7 +6946,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, long?>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<string, long?>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfGuidDecimalNullableToDictOfObjectObject : Conversion<Dictionary<Guid, decimal?>?, string?>
@@ -6966,7 +6966,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<string, byte[]>>().ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<string, byte[]>>()?.ToDictionary(item => Conversion<string, Guid>.Convert((string)item.Key)!, item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfGuidCompressedStringToDictOfObjectObject : Conversion<Dictionary<Guid, CompressedString?>?, string?>
@@ -6986,7 +6986,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<long, bool>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfDecimalBoolToDictOfObjectObject : Conversion<Dictionary<decimal, bool>?, string?>
@@ -7006,7 +7006,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, bool?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<long, bool?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfDecimalBoolNullableToDictOfObjectObject : Conversion<Dictionary<decimal, bool?>?, string?>
@@ -7026,7 +7026,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDecimalSbyteToDictOfObjectObject : Conversion<Dictionary<decimal, sbyte>?, string?>
@@ -7046,7 +7046,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDecimalSbyteNullableToDictOfObjectObject : Conversion<Dictionary<decimal, sbyte?>?, string?>
@@ -7066,7 +7066,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDecimalShortToDictOfObjectObject : Conversion<Dictionary<decimal, short>?, string?>
@@ -7086,7 +7086,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDecimalShortNullableToDictOfObjectObject : Conversion<Dictionary<decimal, short?>?, string?>
@@ -7106,7 +7106,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDecimalIntToDictOfObjectObject : Conversion<Dictionary<decimal, int>?, string?>
@@ -7126,7 +7126,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDecimalIntNullableToDictOfObjectObject : Conversion<Dictionary<decimal, int?>?, string?>
@@ -7146,7 +7146,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDecimalLongToDictOfObjectObject : Conversion<Dictionary<decimal, long>?, string?>
@@ -7166,7 +7166,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDecimalLongNullableToDictOfObjectObject : Conversion<Dictionary<decimal, long?>?, string?>
@@ -7186,7 +7186,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfDecimalFloatToDictOfObjectObject : Conversion<Dictionary<decimal, float>?, string?>
@@ -7206,7 +7206,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfDecimalFloatNullableToDictOfObjectObject : Conversion<Dictionary<decimal, float?>?, string?>
@@ -7226,7 +7226,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<long, double>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfDecimalDoubleToDictOfObjectObject : Conversion<Dictionary<decimal, double>?, string?>
@@ -7246,7 +7246,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, double?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<long, double?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfDecimalDoubleNullableToDictOfObjectObject : Conversion<Dictionary<decimal, double?>?, string?>
@@ -7266,7 +7266,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfDecimalCharToDictOfObjectObject : Conversion<Dictionary<decimal, char>?, string?>
@@ -7286,7 +7286,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDecimalCharNullableToDictOfObjectObject : Conversion<Dictionary<decimal, char?>?, string?>
@@ -7306,7 +7306,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDecimalStringToDictOfObjectObject : Conversion<Dictionary<decimal, string?>?, string?>
@@ -7326,7 +7326,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDecimalDateTimeToDictOfObjectObject : Conversion<Dictionary<decimal, DateTime>?, string?>
@@ -7346,7 +7346,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDecimalDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<decimal, DateTime?>?, string?>
@@ -7366,7 +7366,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfDecimalGuidToDictOfObjectObject : Conversion<Dictionary<decimal, Guid>?, string?>
@@ -7386,7 +7386,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, string>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<long, string>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfDecimalGuidNullableToDictOfObjectObject : Conversion<Dictionary<decimal, Guid?>?, string?>
@@ -7406,7 +7406,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<long, long>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfDecimalDecimalToDictOfObjectObject : Conversion<Dictionary<decimal, decimal>?, string?>
@@ -7426,7 +7426,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, long?>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<long, long?>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfDecimalDecimalNullableToDictOfObjectObject : Conversion<Dictionary<decimal, decimal?>?, string?>
@@ -7446,7 +7446,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<long, byte[]>>().ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<long, byte[]>>()?.ToDictionary(item => Conversion<long, decimal>.Convert((long)item.Key), item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfDecimalCompressedStringToDictOfObjectObject : Conversion<Dictionary<decimal, CompressedString?>?, string?>
@@ -7466,7 +7466,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], bool>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<bool, bool>.Convert((bool)item.Value)!);
+            return value.FromJson<Dictionary<byte[], bool>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<bool, bool>.Convert((bool)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringBoolToDictOfObjectObject : Conversion<Dictionary<CompressedString, bool>?, string?>
@@ -7486,7 +7486,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], bool?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], bool?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<bool?, bool?>.Convert((bool?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringBoolNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, bool?>?, string?>
@@ -7506,7 +7506,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, sbyte>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, sbyte>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringSbyteToDictOfObjectObject : Conversion<Dictionary<CompressedString, sbyte>?, string?>
@@ -7526,7 +7526,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, sbyte?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringSbyteNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, sbyte?>?, string?>
@@ -7546,7 +7546,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, short>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, short>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringShortToDictOfObjectObject : Conversion<Dictionary<CompressedString, short>?, string?>
@@ -7566,7 +7566,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, short?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, short?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringShortNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, short?>?, string?>
@@ -7586,7 +7586,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, int>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, int>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringIntToDictOfObjectObject : Conversion<Dictionary<CompressedString, int>?, string?>
@@ -7606,7 +7606,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, int?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, int?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringIntNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, int?>?, string?>
@@ -7626,7 +7626,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, long>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, long>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringLongToDictOfObjectObject : Conversion<Dictionary<CompressedString, long>?, string?>
@@ -7646,7 +7646,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, long?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, long?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringLongNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, long?>?, string?>
@@ -7666,7 +7666,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], double>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<double, float>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<byte[], double>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<double, float>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringFloatToDictOfObjectObject : Conversion<Dictionary<CompressedString, float>?, string?>
@@ -7686,7 +7686,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], double?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<double?, float?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], double?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<double?, float?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringFloatNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, float?>?, string?>
@@ -7706,7 +7706,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], double>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<double, double>.Convert((double)item.Value)!);
+            return value.FromJson<Dictionary<byte[], double>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<double, double>.Convert((double)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringDoubleToDictOfObjectObject : Conversion<Dictionary<CompressedString, double>?, string?>
@@ -7726,7 +7726,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], double?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<double?, double?>.Convert((double?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], double?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<double?, double?>.Convert((double?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringDoubleNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, double?>?, string?>
@@ -7746,7 +7746,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, char>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<byte[], string>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, char>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringCharToDictOfObjectObject : Conversion<Dictionary<CompressedString, char>?, string?>
@@ -7766,7 +7766,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, char?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<byte[], string>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, char?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfCompressedStringCharNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, char?>?, string?>
@@ -7786,7 +7786,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, string?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<byte[], string>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, string?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfCompressedStringStringToDictOfObjectObject : Conversion<Dictionary<CompressedString, string?>?, string?>
@@ -7806,7 +7806,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, DateTime>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, DateTime>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringDateTimeToDictOfObjectObject : Conversion<Dictionary<CompressedString, DateTime>?, string?>
@@ -7826,7 +7826,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, DateTime?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringDateTimeNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, DateTime?>?, string?>
@@ -7846,7 +7846,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, Guid>.Convert((string)item.Value)!);
+            return value.FromJson<Dictionary<byte[], string>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, Guid>.Convert((string)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringGuidToDictOfObjectObject : Conversion<Dictionary<CompressedString, Guid>?, string?>
@@ -7866,7 +7866,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], string>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, Guid?>.Convert((string)item.Value));
+            return value.FromJson<Dictionary<byte[], string>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<string, Guid?>.Convert((string)item.Value));
         }
     }    
     internal class DictOfCompressedStringGuidNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, Guid?>?, string?>
@@ -7886,7 +7886,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, decimal>.Convert((long)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long, decimal>.Convert((long)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringDecimalToDictOfObjectObject : Conversion<Dictionary<CompressedString, decimal>?, string?>
@@ -7906,7 +7906,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], long?>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
+            return value.FromJson<Dictionary<byte[], long?>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<long?, decimal?>.Convert((long?)item.Value)!);
         }
     }    
     internal class DictOfCompressedStringDecimalNullableToDictOfObjectObject : Conversion<Dictionary<CompressedString, decimal?>?, string?>
@@ -7926,7 +7926,7 @@ namespace Blueprint41.TypeConversion
             if (value is null)
                 return null;
 
-            return value.FromJson<Dictionary<byte[], byte[]>>().ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
+            return value.FromJson<Dictionary<byte[], byte[]>>()?.ToDictionary(item => Conversion<byte[], CompressedString>.Convert((byte[])item.Key)!, item => Conversion<byte[], CompressedString?>.Convert((byte[])item.Value));
         }
     }    
     internal class DictOfCompressedStringCompressedStringToDictOfObjectObject : Conversion<Dictionary<CompressedString, CompressedString?>?, string?>

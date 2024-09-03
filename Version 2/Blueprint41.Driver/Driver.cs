@@ -40,7 +40,7 @@ namespace Blueprint41.Driver
 
             foreach (FieldInfo field in typeof(Driver).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(item => typeof(DriverTypeInfo).IsAssignableFrom(item.FieldType) && item.Name == item.Name.ToUpperInvariant()))
             {
-                DriverTypeInfo typeInfo = (DriverTypeInfo)field.GetValue(null);
+                DriverTypeInfo typeInfo = (DriverTypeInfo)field.GetValue(null)!;
                 if (!typeInfo.Exists)
                     throw new TypeLoadException(typeInfo.Names);
 
@@ -50,14 +50,14 @@ namespace Blueprint41.Driver
                 {
                     OneOfAttribute? oneOf = (OneOfAttribute?)member.GetCustomAttribute(typeof(OneOfAttribute));
 
-                    Member memberInfo = (Member)((dynamic)member.GetValue(typeInfo)).Value;
+                    Member memberInfo = (Member)((dynamic)member.GetValue(typeInfo)!).Value;
                     if (oneOf is null && !memberInfo.Exists)
                     {
                         throw new MissingMemberException($"Member {string.Join("or ", memberInfo.Names.Select(name => $"'{name}'"))} missing on type {typeInfo.Names}.");
                     }
                     else if (oneOf is not null)
                     {
-                        List<Member> group;
+                        List<Member>? group;
                         if (!fieldGroups.TryGetValue(oneOf.Group, out group))
                         {
                             group = new List<Member>();
@@ -75,7 +75,7 @@ namespace Blueprint41.Driver
             }
         }
         public static Version AssemblyVersion => DriverTypeInfo.SearchAssembly?.GetName().Version ?? throw new InvalidOperationException("Please configure which Neo4j.Driver to use by running 'Driver.Configure<IDriver>();' first.");
-        public static string NugetVersion => DriverTypeInfo.SearchAssembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion ?? throw new InvalidOperationException("Please configure which Neo4j.Driver to use by running 'Driver.Configure<IDriver>();' first.");
+        public static string NugetVersion => DriverTypeInfo.SearchAssembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? throw new InvalidOperationException("Please configure which Neo4j.Driver to use by running 'Driver.Configure<IDriver>();' first.");
 
         #region DriverTypeInfo definitions 
 
@@ -697,7 +697,7 @@ namespace Blueprint41.Driver
                     return null;
                 }, true);
             }
-            private T? ForEachType(Type type, string name, Type? returnType, Type[] arguments, bool deepSearch)
+            private T? ForEachType(Type? type, string name, Type? returnType, Type[] arguments, bool deepSearch)
             {
                 T? result = null;
                 if (type is not null)
@@ -739,21 +739,21 @@ namespace Blueprint41.Driver
             {
                 _propertyInfo = ForEachType();
 
-                _getValue = new Lazy<Func<object?>>(() => DelegateHelper.CreateDelegate<Func<object?>>(PropertyInfo.GetGetMethod(), null, DelegateHelper.CreateOptions.Downcasting), true);
-                _getValueWithIndexer = new Lazy<Func<object?, object?>>(() => DelegateHelper.CreateDelegate<Func<object?, object?>>(PropertyInfo.GetGetMethod(), null, DelegateHelper.CreateOptions.Downcasting), true);
+                _getValue = new Lazy<Func<object?>>(() => DelegateHelper.CreateDelegate<Func<object?>>(PropertyInfo.GetGetMethod()!, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _getValueWithIndexer = new Lazy<Func<object?, object?>>(() => DelegateHelper.CreateDelegate<Func<object?, object?>>(PropertyInfo.GetGetMethod()!, null, DelegateHelper.CreateOptions.Downcasting), true);
 
-                _setValue = new Lazy<Action<object?>>(() => DelegateHelper.CreateDelegate<Action<object?>>(PropertyInfo.GetSetMethod(), null, DelegateHelper.CreateOptions.Downcasting), false);
-                _setValueWithIndexer = new Lazy<Action<object?, object?>>(() => DelegateHelper.CreateDelegate<Action<object?, object?>>(PropertyInfo.GetSetMethod(), null, DelegateHelper.CreateOptions.Downcasting), false);
+                _setValue = new Lazy<Action<object?>>(() => DelegateHelper.CreateDelegate<Action<object?>>(PropertyInfo.GetSetMethod()!, null, DelegateHelper.CreateOptions.Downcasting), false);
+                _setValueWithIndexer = new Lazy<Action<object?, object?>>(() => DelegateHelper.CreateDelegate<Action<object?, object?>>(PropertyInfo.GetSetMethod()!, null, DelegateHelper.CreateOptions.Downcasting), false);
             }
             internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null) : base(parent, returnType, names, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
             {
                 _propertyInfo = ForEachType();
 
-                _getValue = new Lazy<Func<object?>>(() => DelegateHelper.CreateDelegate<Func<object?>>(PropertyInfo.GetGetMethod(), null, DelegateHelper.CreateOptions.Downcasting), true);
-                _getValueWithIndexer = new Lazy<Func<object?, object?>>(() => DelegateHelper.CreateDelegate<Func<object?, object?>>(PropertyInfo.GetGetMethod(), null, DelegateHelper.CreateOptions.Downcasting), true);
+                _getValue = new Lazy<Func<object?>>(() => DelegateHelper.CreateDelegate<Func<object?>>(PropertyInfo.GetGetMethod()!, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _getValueWithIndexer = new Lazy<Func<object?, object?>>(() => DelegateHelper.CreateDelegate<Func<object?, object?>>(PropertyInfo.GetGetMethod()!, null, DelegateHelper.CreateOptions.Downcasting), true);
 
-                _setValue = new Lazy<Action<object?>>(() => DelegateHelper.CreateDelegate<Action<object?>>(PropertyInfo.GetSetMethod(), null, DelegateHelper.CreateOptions.Downcasting), false);
-                _setValueWithIndexer = new Lazy<Action<object?, object?>>(() => DelegateHelper.CreateDelegate<Action<object?, object?>>(PropertyInfo.GetSetMethod(), null, DelegateHelper.CreateOptions.Downcasting), false);
+                _setValue = new Lazy<Action<object?>>(() => DelegateHelper.CreateDelegate<Action<object?>>(PropertyInfo.GetSetMethod()!, null, DelegateHelper.CreateOptions.Downcasting), false);
+                _setValueWithIndexer = new Lazy<Action<object?, object?>>(() => DelegateHelper.CreateDelegate<Action<object?, object?>>(PropertyInfo.GetSetMethod()!, null, DelegateHelper.CreateOptions.Downcasting), false);
             }
             protected override PropertyInfo? Search(Type type, string name, Type? returnType, Type[] args)
             {
@@ -780,19 +780,19 @@ namespace Blueprint41.Driver
             {
                 _propertyInfo = ForEachType();
 
-                _getValue0 = new Lazy<Func<object, object?>>(() =>            DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?>>(PropertyInfo.GetGetMethod(), DelegateHelper.CreateOptions.Downcasting), true);
-                _getValue1 = new Lazy<Func<object, object?, object?>>(() =>   DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?>>(PropertyInfo.GetGetMethod(), DelegateHelper.CreateOptions.Downcasting), true);
-                _setValue0 = new Lazy<Action<object, object?>>(() =>          DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?>>(PropertyInfo.GetSetMethod(), DelegateHelper.CreateOptions.Downcasting), false);
-                _setValue1 = new Lazy<Action<object, object?, object?>>(() => DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?, object?>>(PropertyInfo.GetSetMethod(), DelegateHelper.CreateOptions.Downcasting), false);
+                _getValue0 = new Lazy<Func<object, object?>>(() =>            DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?>>(PropertyInfo.GetGetMethod()!, DelegateHelper.CreateOptions.Downcasting), true);
+                _getValue1 = new Lazy<Func<object, object?, object?>>(() =>   DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?>>(PropertyInfo.GetGetMethod()!, DelegateHelper.CreateOptions.Downcasting), true);
+                _setValue0 = new Lazy<Action<object, object?>>(() =>          DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?>>(PropertyInfo.GetSetMethod()!, DelegateHelper.CreateOptions.Downcasting), false);
+                _setValue1 = new Lazy<Action<object, object?, object?>>(() => DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?, object?>>(PropertyInfo.GetSetMethod()!, DelegateHelper.CreateOptions.Downcasting), false);
             }
             internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null) : base(parent, returnType, names, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
             {
                 _propertyInfo = ForEachType();
 
-                _getValue0 = new Lazy<Func<object, object?>>(() =>            DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?>>(PropertyInfo.GetGetMethod(), DelegateHelper.CreateOptions.Downcasting), true);
-                _getValue1 = new Lazy<Func<object, object?, object?>>(() =>   DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?>>(PropertyInfo.GetGetMethod(), DelegateHelper.CreateOptions.Downcasting), true);
-                _setValue0 = new Lazy<Action<object, object?>>(() =>          DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?>>(PropertyInfo.GetSetMethod(), DelegateHelper.CreateOptions.Downcasting), false);
-                _setValue1 = new Lazy<Action<object, object?, object?>>(() => DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?, object?>>(PropertyInfo.GetSetMethod(), DelegateHelper.CreateOptions.Downcasting), false);
+                _getValue0 = new Lazy<Func<object, object?>>(() =>            DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?>>(PropertyInfo.GetGetMethod()!, DelegateHelper.CreateOptions.Downcasting), true);
+                _getValue1 = new Lazy<Func<object, object?, object?>>(() =>   DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?>>(PropertyInfo.GetGetMethod()!, DelegateHelper.CreateOptions.Downcasting), true);
+                _setValue0 = new Lazy<Action<object, object?>>(() =>          DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?>>(PropertyInfo.GetSetMethod()!, DelegateHelper.CreateOptions.Downcasting), false);
+                _setValue1 = new Lazy<Action<object, object?, object?>>(() => DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?, object?>>(PropertyInfo.GetSetMethod()!, DelegateHelper.CreateOptions.Downcasting), false);
             }
             protected override PropertyInfo? Search(Type type, string name, Type? returnType, Type[] args)
             {
@@ -930,7 +930,7 @@ namespace Blueprint41.Driver
                     if (value is null)
                         value = FieldInfo.GetRawConstantValue();
 
-                    return value;
+                    return value!;
                 }
             }
             private object? value;
@@ -971,7 +971,7 @@ namespace Blueprint41.Driver
 
             public TMember ForTypes(DriverTypeInfo returnType, params DriverTypeInfo[] arguments)
             {
-                TMember member;
+                TMember? member;
 
                 GenericSignature signature = new GenericSignature(returnType, arguments);
                 if (!_cache.TryGetValue(signature, out member))
@@ -1048,7 +1048,7 @@ namespace Blueprint41.Driver
                         }
                     }
                 }
-                public override bool Equals(object obj)
+                public override bool Equals(object? obj)
                 {
                     if (obj is null)
                         return false;
@@ -1490,7 +1490,7 @@ namespace Blueprint41.Driver
             public string[] Values(object instance) => (string[])_values.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _values = new Lazy<InstanceProperty>(() => new InstanceProperty(BOOKMARKS, Type<string[]>.Info, "Values"), true);
 
-            new public bool Equals(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
+            new public bool Equals(object instance, object? value) => (bool)_equals.Value.Invoke(instance, value);
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(BOOKMARKS, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
@@ -1550,10 +1550,10 @@ namespace Blueprint41.Driver
             public IReadOnlyDictionary<string, object?> Properties(object instance) => (IReadOnlyDictionary<string, object?>)_properties.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _properties = new Lazy<InstanceProperty>(() => new InstanceProperty(I_NODE, Type<IReadOnlyDictionary<string, object>>.Info, "Properties"), true);
 
-            public bool EqualsINode(object instance, object value) => (bool)_equalsINode.Value.Invoke(instance, value);
+            public bool EqualsINode(object instance, object? value) => (bool)_equalsINode.Value.Invoke(instance, value);
             private readonly Lazy<InstanceMethod> _equalsINode = new Lazy<InstanceMethod>(() => new InstanceMethod(I_NODE, Type<bool>.Info, "Equals", I_NODE));
 
-            new public bool Equals(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
+            new public bool Equals(object instance, object? value) => (bool)_equals.Value.Invoke(instance, value);
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(Type<object>.Info, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
@@ -1608,10 +1608,10 @@ namespace Blueprint41.Driver
             public IReadOnlyDictionary<string, object?> Properties(object instance) => (IReadOnlyDictionary<string, object?>)_properties.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _properties = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RELATIONSHIP, Type<IReadOnlyDictionary<string, object>>.Info, "Properties"), true);
 
-            public bool EqualsIRelationship(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
+            public bool EqualsIRelationship(object instance, object? value) => (bool)_equals.Value.Invoke(instance, value);
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(I_RELATIONSHIP, Type<bool>.Info, "Equals", I_RELATIONSHIP));
 
-            new public bool Equals(object instance, object value) => (bool)_equalsIRelationship.Value.Invoke(instance, value);
+            new public bool Equals(object instance, object? value) => (bool)_equalsIRelationship.Value.Invoke(instance, value);
             private readonly Lazy<InstanceMethod> _equalsIRelationship = new Lazy<InstanceMethod>(() => new InstanceMethod(Type<object>.Info, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
@@ -1648,10 +1648,10 @@ namespace Blueprint41.Driver
             public ServerAddress From(Uri uri) => new ServerAddress(_fromUri.Value.Invoke(uri));
             private readonly Lazy<StaticMethod> _fromUri = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS, SERVER_ADDRESS, "From", Type<Uri>.Info));
 
-            public bool EqualsServerAddress(object instance, ServerAddress other) => (bool)_equalsServerAddress.Value.Invoke(instance, other._instance);
+            public bool EqualsServerAddress(object instance, ServerAddress? other) => (bool)_equalsServerAddress.Value.Invoke(instance, other?._instance);
             private readonly Lazy<InstanceMethod> _equalsServerAddress = new Lazy<InstanceMethod>(() => new InstanceMethod(SERVER_ADDRESS, Type<bool>.Info, "Equals", SERVER_ADDRESS));
 
-            new public bool Equals(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
+            new public bool Equals(object instance, object? value) => (bool)_equals.Value.Invoke(instance, value);
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(SERVER_ADDRESS, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);
@@ -1673,7 +1673,7 @@ namespace Blueprint41.Driver
             public TrustManager CreateCertTrust(IEnumerable<X509Certificate2> trusted, bool verifyHostname = true) => new TrustManager(_createCertTrust.Value.Invoke(trusted, verifyHostname));
             private readonly Lazy<StaticMethod> _createCertTrust = new Lazy<StaticMethod>(() => new StaticMethod(TRUST_MANAGER, TRUST_MANAGER, "CreateCertTrust", Type<IEnumerable<X509Certificate2>>.Info, Type<bool>.Info));
 
-            new public bool Equals(object instance, object value) => (bool)_equals.Value.Invoke(instance, value);
+            new public bool Equals(object instance, object? value) => (bool)_equals.Value.Invoke(instance, value);
             private readonly Lazy<InstanceMethod> _equals = new Lazy<InstanceMethod>(() => new InstanceMethod(TRUST_MANAGER, Type<bool>.Info, "Equals", Type<object>.Info));
 
             public int GetHashCode(object instance) => (int)_getHashCode.Value.Invoke(instance);

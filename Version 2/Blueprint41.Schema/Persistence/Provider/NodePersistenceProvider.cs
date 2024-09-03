@@ -42,7 +42,7 @@ namespace Blueprint41.Persistence
 
             var result = trans.Run(args.Cypher, args.Parameters);
 
-            IDictionary<string, object> record = result.FirstOrDefault();
+            IDictionary<string, object>? record = result.FirstOrDefault();
             if (record is null || record["node"] is null)
             {
                 item.PersistenceState = PersistenceState.DoesntExist;
@@ -171,7 +171,7 @@ namespace Blueprint41.Persistence
             var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
             var result = trans.Run(args.Cypher, args.Parameters);
-            IDictionary<string, object> record = result.FirstOrDefault();
+            IDictionary<string, object>? record = result.FirstOrDefault();
             if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
@@ -264,7 +264,7 @@ namespace Blueprint41.Persistence
 
             if (orderBy is not null && orderBy.Length != 0)
             {
-                Property odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
+                Property? odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
                 if (odd is not null)
                     throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2)'.", odd.Name, odd.Parent.Name, entity.Name));
 
@@ -452,7 +452,7 @@ namespace Blueprint41.Persistence
 
             if (orderBy is not null && orderBy.Length != 0)
             {
-                Property odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
+                Property? odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
                 if (odd is not null)
                     throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2)'.", odd.Name, odd.Parent.Name, entity.Name));
 

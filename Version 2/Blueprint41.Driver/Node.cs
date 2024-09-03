@@ -17,7 +17,7 @@ namespace Blueprint41.Driver
         public object this[string key] => Driver.I_NODE.Item(_instance, key);
         public IReadOnlyDictionary<string, object?> Properties => Driver.I_NODE.Properties(_instance);
         public bool Equals(Node node) => Driver.I_NODE.EqualsINode(_instance, node._instance);
-        public override bool Equals(object obj) => Driver.I_NODE.Equals(_instance, obj);
+        public override bool Equals(object? obj) => Driver.I_NODE.Equals(_instance, obj);
         public override int GetHashCode() => Driver.I_NODE.GetHashCode(_instance);
 
         internal static string ElementIdInternal(object neo4jINode) => Driver.I_NODE.ElementId(neo4jINode);

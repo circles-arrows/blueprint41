@@ -15,7 +15,7 @@ namespace Blueprint41.Driver
         public string[] Values => Driver.BOOKMARKS.Values(_instance);
         public static Bookmarks From(string[] bookmarks) => new Bookmarks(Driver.BOOKMARKS.From(bookmarks));
 
-        public override bool Equals(object obj) => Driver.BOOKMARKS.Equals(_instance, obj);
+        public override bool Equals(object? obj) => Driver.BOOKMARKS.Equals(_instance, obj);
         public override int GetHashCode() => Driver.BOOKMARKS.GetHashCode(_instance);
     }
 }

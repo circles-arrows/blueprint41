@@ -147,18 +147,18 @@ namespace Blueprint41.Persistence
 
         private void LoadDbmsFunctions()
         {
-            functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(DBMSName, Major))
+            functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(DatastoreTechnology, Major))
                 .Select(item => item["name"].As<string>()));
         }
         private void LoadDbmsProcedures()
         {
-            procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(DBMSName, Major))
+            procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(DatastoreTechnology, Major))
                 .Select(item => item["name"].As<string>()));
         }
 
         private QueryTranslator DetermineTranslator()
         {
-            if (DBMSName.IndexOf("memgraph", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            if (DatastoreTechnology == GDMS.Memgraph)
                 return new MemgraphQueryTranslatorV1(DatastoreModel);
 
             return Major switch
@@ -168,9 +168,9 @@ namespace Blueprint41.Persistence
                 _ => throw new NotSupportedException($"Neo4j v{Version} is not supported by this version of Blueprint41, please upgrade to a later version.")
             };
         }
-        static string GetFunctions(string name, int version)
+        static string GetFunctions(GDMS datastoreTechnology, int version)
         {
-            if (name.IndexOf("neo4j", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            if (datastoreTechnology == GDMS.Neo4j)
             {
                 return version switch
                 {
@@ -178,7 +178,7 @@ namespace Blueprint41.Persistence
                     >= 5 => "show functions yield name return name",
                 };
             }
-            else if (name.IndexOf("memgraph", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            else if (datastoreTechnology == GDMS.Memgraph)
             {
                 return "call mg.functions() yield name return name";
             }
@@ -187,9 +187,9 @@ namespace Blueprint41.Persistence
                 return string.Empty;
             }
         }
-        static string GetProcedures(string name, int version)
+        static string GetProcedures(GDMS datastoreTechnology, int version)
         {
-            if (name.IndexOf("neo4j", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            if (datastoreTechnology == GDMS.Neo4j)
             {
                 return version switch
                 {
@@ -197,7 +197,7 @@ namespace Blueprint41.Persistence
                     >= 5 => "show procedures yield name return name",
                 };
             }
-            else if (name.IndexOf("memgraph", StringComparison.InvariantCultureIgnoreCase) >= 0)
+            else if (datastoreTechnology == GDMS.Memgraph)
             {
                 return "call mg.procedures() yield name return name";
             }

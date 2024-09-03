@@ -66,7 +66,7 @@ namespace Blueprint41.Core
                         }
 
                         // Basic cast conversion
-                        MethodInfo op_Impl_Expl = IsCastable();
+                        MethodInfo? op_Impl_Expl = IsCastable();
                         if (converterMethod is null && op_Impl_Expl is not null)
                         {
                             ParameterExpression fromParam = Expression.Parameter(typeof(TFrom), "value");
@@ -87,7 +87,7 @@ namespace Blueprint41.Core
 
         #region Standard Conversions
 
-        static private MethodInfo IsCastable()
+        static private MethodInfo? IsCastable()
         {
             var methods =   typeof(TFrom).GetMethods(BindingFlags.Public | BindingFlags.Static)
                                 .Where(
@@ -107,17 +107,17 @@ namespace Blueprint41.Core
         private static Expression<Func<TFrom, TTo>>? CreateNullableVersion(Type fromType, bool fromIsNullable, Type toType, bool toIsNullable)
         {
             Type converterType = typeof(Conversion<,>).MakeGenericType(new Type[] { fromType, toType });
-            MethodInfo canConvert = converterType.GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "CanConvert");
+            MethodInfo? canConvert = converterType.GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "CanConvert");
 
-            object? canConv = canConvert.Invoke(null, new object[0]);
+            object? canConv = canConvert?.Invoke(null, new object[0]);
             if (canConv is null || !(canConv is bool))
                 throw new NotSupportedException($"You cannot convert a {typeof(TFrom).Name} to a {typeof(TTo).Name}.");
 
-            if ((bool)canConv == true)
+            if ((bool)canConv)
             {
-                MethodInfo convertMethodInfo = converterType.GetTypeInfo().DeclaredMethods.FirstOrDefault(item => item.Name == "Convert");
-                PropertyInfo valuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.FirstOrDefault(item => item.Name == "Value");
-                PropertyInfo hasValuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.FirstOrDefault(item => item.Name == "HasValue");
+                MethodInfo convertMethodInfo = converterType.GetTypeInfo().DeclaredMethods.First(item => item.Name == "Convert");
+                PropertyInfo valuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.First(item => item.Name == "Value");
+                PropertyInfo hasValuePropertyInfo = typeof(TFrom).GetTypeInfo().DeclaredProperties.First(item => item.Name == "HasValue");
 
                 ParameterExpression fromParam = Expression.Parameter(typeof(TFrom), "value");
                 ParameterExpression toParam = Expression.Parameter(typeof(TTo));

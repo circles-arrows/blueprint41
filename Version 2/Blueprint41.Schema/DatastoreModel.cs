@@ -157,7 +157,7 @@ namespace Blueprint41
 
             if (unitTestScript is not null)
             {
-                UpgradeScript prevScript = scripts.LastOrDefault();
+                UpgradeScript? prevScript = scripts.LastOrDefault();
                 long major = prevScript?.Major ?? 0;
                 long minor = prevScript?.Minor ?? 0;
                 long patch = prevScript?.Patch ?? 0;
@@ -589,14 +589,14 @@ namespace Blueprint41
         }
         private readonly HashSet<Guid> knownGuids = new HashSet<Guid>();
 
-        private readonly AtomicDictionary<string, Entity> entityByLabel = new AtomicDictionary<string, Entity>();
+        private readonly AtomicDictionary<string, Entity?> entityByLabel = new AtomicDictionary<string, Entity?>();
         internal Entity? GetEntity(IEnumerable<string> labels)
         {
             Entity? entity = null;
             foreach (string label in labels)
             {
                 entity = entityByLabel.TryGetOrAdd(label, key => Entities.FirstOrDefault(item => item.Label.Name == label));
-                if (!entity.IsAbstract)
+                if (!entity?.IsAbstract ?? false)
                     return entity;
             }
             return null;

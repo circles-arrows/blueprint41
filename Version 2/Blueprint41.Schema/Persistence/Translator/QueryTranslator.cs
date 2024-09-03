@@ -791,7 +791,7 @@ namespace Blueprint41.Persistence
             string query = "MATCH (version:RefactorVersion) RETURN version;";
             var result = Transaction.RunningTransaction.Run(query);
 
-            IDictionary<string, object> record = result.FirstOrDefault();
+            IDictionary<string, object>? record = result.FirstOrDefault();
             if (record is null)
                 return false;
 
@@ -841,7 +841,7 @@ namespace Blueprint41.Persistence
             string query = "MATCH (version:RefactorVersion) RETURN version.LastRun as LastRun";
             var result = Transaction.RunningTransaction.Run(query);
 
-            IDictionary<string, object> record = result.FirstOrDefault();
+            IDictionary<string, object>? record = result.FirstOrDefault();
             if (record is null)
                 return true;
 
@@ -910,7 +910,7 @@ namespace Blueprint41.Persistence
         //}
         protected string GetConversionGroup(Type type, IReadOnlyDictionary<Type, TypeMapping> mappings)
         {
-            mappings.TryGetValue(type, out TypeMapping mapping);
+            mappings.TryGetValue(type, out TypeMapping? mapping);
             if (mapping is null)
                 throw new InvalidOperationException($"An unexpected technical mapping failure while trying to find the conversion for type {type.Name}. Please contact the developer.");
 
