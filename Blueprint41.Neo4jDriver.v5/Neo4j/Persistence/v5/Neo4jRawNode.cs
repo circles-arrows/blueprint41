@@ -17,7 +17,9 @@ namespace Blueprint41.Neo4j.Persistence.Driver.v5
         }
         private readonly INode Node;
 
+#pragma warning disable CS0618 // Type or member is obsolete
         public override long Id => Node.Id;
+#pragma warning restore CS0618 // Type or member is obsolete
         public override IReadOnlyList<string> Labels => Node.Labels;
         public override IReadOnlyDictionary<string, object?> Properties => Node.Properties;
         public override object? this[string key] => Node[key];
