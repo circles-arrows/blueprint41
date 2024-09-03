@@ -12,16 +12,6 @@ namespace Blueprint41.Driver
         }
         internal object _instance { get; private set; }
 
-        //
-        // Summary:
-        //     The name of the database where the query is processed.
-        //
-        // Remarks:
-        //     Returns
-        //
-        //     null
-        //
-        //     if the source server does not support multiple databases.
         public string Name => Driver.DATABASE_INFO.Name(_instance);
     }
 }

@@ -110,8 +110,8 @@ namespace Blueprint41.Driver
         internal static readonly IServerAddressResolverInfo   I_SERVER_ADDRESS_RESOLVER            = new IServerAddressResolverInfo("Neo4j.Driver.IServerAddressResolver");
 
         internal static readonly DriverTypeInfo               I_AUTH_TOKEN                         = new DriverTypeInfo("Neo4j.Driver.IAuthToken");
-        internal static readonly DriverTypeInfo               LOGGER_PROXY                         = new DriverTypeInfo(RuntimeCodeGen.GetLoggerProxyProxyType);
-        internal static readonly DriverTypeInfo               SERVER_ADDRESS_RESOLVER_PROXY        = new DriverTypeInfo(RuntimeCodeGen.GetServerAddressResolverProxyType);
+        //internal static readonly DriverTypeInfo               LOGGER_PROXY                         = new DriverTypeInfo(RuntimeCodeGen.GetLoggerProxyProxyType);
+        //internal static readonly DriverTypeInfo               SERVER_ADDRESS_RESOLVER_PROXY        = new DriverTypeInfo(RuntimeCodeGen.GetServerAddressResolverProxyType);
 
         #endregion
 
@@ -137,124 +137,124 @@ namespace Blueprint41.Driver
         }
         internal static class RuntimeCodeGen
         {
-            // Be aware that the compiler being used is not guaranteed to be a compiler supporting modern C# features
-            // Like the readonly keyword or expression bodied members (the => implementation)
+        //    // Be aware that the compiler being used is not guaranteed to be a compiler supporting modern C# features
+        //    // Like the readonly keyword or expression bodied members (the => implementation)
 
-            private readonly static string[] Code = new string[]
-            {
-                """
-                using System;
-                using System.Linq;
-                using System.Collections.Generic;
-                using System.Reflection;
+        //    private readonly static string[] Code = new string[]
+        //    {
+        //        """
+        //        using System;
+        //        using System.Linq;
+        //        using System.Collections.Generic;
+        //        using System.Reflection;
 
-                using neo4j = Neo4j.Driver;
-                using bp41 = Blueprint41.Driver;
+        //        using neo4j = Neo4j.Driver;
+        //        using bp41 = Blueprint41.Driver;
 
-                namespace Blueprint41.Driver.RuntimeGeneration
-                {
-                    public sealed class ServerAddressResolverProxy : neo4j.IServerAddressResolver
-                    {
-                        private ServerAddressResolverProxy(bp41.ServerAddressResolver resolver)
-                        {
-                            _resolver = resolver;
-                        }
-                        public static ServerAddressResolverProxy Get(bp41.ServerAddressResolver resolver)
-                        {
-                            return new ServerAddressResolverProxy(resolver);
-                        }
-                        private bp41.ServerAddressResolver _resolver;
+        //        namespace Blueprint41.Driver.RuntimeGeneration
+        //        {
+        //            public sealed class ServerAddressResolverProxy : neo4j.IServerAddressResolver
+        //            {
+        //                private ServerAddressResolverProxy(bp41.ServerAddressResolver resolver)
+        //                {
+        //                    _resolver = resolver;
+        //                }
+        //                public static ServerAddressResolverProxy Get(bp41.ServerAddressResolver resolver)
+        //                {
+        //                    return new ServerAddressResolverProxy(resolver);
+        //                }
+        //                private bp41.ServerAddressResolver _resolver;
 
-                        public ISet<neo4j.ServerAddress> Resolve(neo4j.ServerAddress address)
-                        {
-                            ISet<bp41.ServerAddress> result = _resolver.Resolve(new ServerAddress(address));
-                            if (result == null)
-                                return null;
+        //                public ISet<neo4j.ServerAddress> Resolve(neo4j.ServerAddress address)
+        //                {
+        //                    ISet<bp41.ServerAddress> result = _resolver.Resolve(new ServerAddress(address));
+        //                    if (result == null)
+        //                        return null;
 
-                            return new HashSet<neo4j.ServerAddress>(result.Select(item => (neo4j.ServerAddress)item._instance));
-                        }
-                    }
-                }
-                """,
-                """
-                using System;
-                using System.Linq;
-                using System.Collections.Generic;
-                using System.Reflection;
+        //                    return new HashSet<neo4j.ServerAddress>(result.Select(item => (neo4j.ServerAddress)item._instance));
+        //                }
+        //            }
+        //        }
+        //        """,
+        //        """
+        //        using System;
+        //        using System.Linq;
+        //        using System.Collections.Generic;
+        //        using System.Reflection;
                 
-                using neo4j = Neo4j.Driver;
-                using bp41 = Blueprint41.Driver;
+        //        using neo4j = Neo4j.Driver;
+        //        using bp41 = Blueprint41.Driver;
                 
-                namespace Blueprint41.Driver.RuntimeGeneration
-                {
-                    public sealed class LoggerProxy : neo4j.ILogger
-                    {
-                        private LoggerProxy(bp41.ILogger logger)
-                        {
-                            _logger = logger;
-                        }
-                        public static LoggerProxy Get(bp41.ILogger logger)
-                        {
-                            return new LoggerProxy(logger);
-                        }
-                        private bp41.ILogger _logger;
+        //        namespace Blueprint41.Driver.RuntimeGeneration
+        //        {
+        //            public sealed class LoggerProxy : neo4j.ILogger
+        //            {
+        //                private LoggerProxy(bp41.ILogger logger)
+        //                {
+        //                    _logger = logger;
+        //                }
+        //                public static LoggerProxy Get(bp41.ILogger logger)
+        //                {
+        //                    return new LoggerProxy(logger);
+        //                }
+        //                private bp41.ILogger _logger;
 
 
-                        public void Debug(string message, params object[] args)
-                        {
-                            _logger.Debug(message, args);
-                        }
-                        public void Error(Exception cause, string message, params object[] args)
-                        {
-                            _logger.Error(cause, message, args);
-                        }
-                        public void Info(string message, params object[] args)
-                        {
-                            _logger.Info(message, args);
-                        }
-                        public bool IsDebugEnabled()
-                        {
-                            return _logger.IsDebugEnabled();
-                        }
-                        public bool IsTraceEnabled()
-                        {
-                            return _logger.IsTraceEnabled();
-                        }
-                        public void Trace(string message, params object[] args)
-                        {
-                            _logger.Trace(message, args);
-                        }
-                        public void Warn(Exception cause, string message, params object[] args)
-                        {
-                            _logger.Warn(cause, message, args);
-                        }
-                    }
-                }
-                """,
-            };
+        //                public void Debug(string message, params object[] args)
+        //                {
+        //                    _logger.Debug(message, args);
+        //                }
+        //                public void Error(Exception cause, string message, params object[] args)
+        //                {
+        //                    _logger.Error(cause, message, args);
+        //                }
+        //                public void Info(string message, params object[] args)
+        //                {
+        //                    _logger.Info(message, args);
+        //                }
+        //                public bool IsDebugEnabled()
+        //                {
+        //                    return _logger.IsDebugEnabled();
+        //                }
+        //                public bool IsTraceEnabled()
+        //                {
+        //                    return _logger.IsTraceEnabled();
+        //                }
+        //                public void Trace(string message, params object[] args)
+        //                {
+        //                    _logger.Trace(message, args);
+        //                }
+        //                public void Warn(Exception cause, string message, params object[] args)
+        //                {
+        //                    _logger.Warn(cause, message, args);
+        //                }
+        //            }
+        //        }
+        //        """,
+        //    };
 
-            private readonly static Lazy<Assembly> DynamicAssembly = new Lazy<Assembly>(delegate ()
-            {
-                CompilerParameters options = new CompilerParameters();
-                options.GenerateExecutable = false;
-                options.GenerateInMemory = true;
-                options.CoreAssemblyFileName = typeof(object).Assembly.Location;
-                var netstandard = Assembly.Load("netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51");
-                options.ReferencedAssemblies.Add(netstandard.Location);
-                options.ReferencedAssemblies.Add(typeof(ISet<>).Assembly.Location);
-                options.ReferencedAssemblies.Add(typeof(Enumerable).Assembly.Location);
-                options.ReferencedAssemblies.Add(typeof(Driver).Assembly.Location);
-                options.ReferencedAssemblies.Add(I_DRIVER.Type.Assembly.Location);
-                options.OutputAssembly = "Blueprint41.Driver.RuntimeGeneration.dll";
+        //    private readonly static Lazy<Assembly> DynamicAssembly = new Lazy<Assembly>(delegate ()
+        //    {
+        //        CompilerParameters options = new CompilerParameters();
+        //        options.GenerateExecutable = false;
+        //        options.GenerateInMemory = true;
+        //        options.CoreAssemblyFileName = typeof(object).Assembly.Location;
+        //        var netstandard = Assembly.Load("netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51");
+        //        options.ReferencedAssemblies.Add(netstandard.Location);
+        //        options.ReferencedAssemblies.Add(typeof(ISet<>).Assembly.Location);
+        //        options.ReferencedAssemblies.Add(typeof(Enumerable).Assembly.Location);
+        //        options.ReferencedAssemblies.Add(typeof(Driver).Assembly.Location);
+        //        options.ReferencedAssemblies.Add(I_DRIVER.Type.Assembly.Location);
+        //        options.OutputAssembly = "Blueprint41.Driver.RuntimeGeneration.dll";
 
-                CSharpCodeProvider provider = new CSharpCodeProvider();
-                CompilerResults compile = provider.CompileAssemblyFromSource(options, Code);
+        //        CSharpCodeProvider provider = new CSharpCodeProvider();
+        //        CompilerResults compile = provider.CompileAssemblyFromSource(options, Code);
 
-                return compile.CompiledAssembly;
-            }, true);
+        //        return compile.CompiledAssembly;
+        //    }, true);
 
-            internal static Type GetServerAddressResolverProxyType() => DynamicAssembly.Value.GetType("Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy", true, false);
-            internal static Type GetLoggerProxyProxyType() => DynamicAssembly.Value.GetType("Blueprint41.Driver.RuntimeGeneration.LoggerProxy", true, false);
+        //    internal static Type GetServerAddressResolverProxyType() => DynamicAssembly.Value.GetType("Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy", true, false);
+        //    internal static Type GetLoggerProxyProxyType() => DynamicAssembly.Value.GetType("Blueprint41.Driver.RuntimeGeneration.LoggerProxy", true, false);
         }
 
         internal class DriverTypeInfo
@@ -738,10 +738,22 @@ namespace Blueprint41.Driver
             internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null) : base(parent, returnType, name, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
             {
                 _propertyInfo = ForEachType();
+
+                _getValue = new Lazy<Func<object?>>(() => DelegateHelper.CreateDelegate<Func<object?>>(PropertyInfo.GetGetMethod(), null, DelegateHelper.CreateOptions.Downcasting), true);
+                _getValueWithIndexer = new Lazy<Func<object?, object?>>(() => DelegateHelper.CreateDelegate<Func<object?, object?>>(PropertyInfo.GetGetMethod(), null, DelegateHelper.CreateOptions.Downcasting), true);
+
+                _setValue = new Lazy<Action<object?>>(() => DelegateHelper.CreateDelegate<Action<object?>>(PropertyInfo.GetSetMethod(), null, DelegateHelper.CreateOptions.Downcasting), false);
+                _setValueWithIndexer = new Lazy<Action<object?, object?>>(() => DelegateHelper.CreateDelegate<Action<object?, object?>>(PropertyInfo.GetSetMethod(), null, DelegateHelper.CreateOptions.Downcasting), false);
             }
             internal StaticProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null) : base(parent, returnType, names, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
             {
                 _propertyInfo = ForEachType();
+
+                _getValue = new Lazy<Func<object?>>(() => DelegateHelper.CreateDelegate<Func<object?>>(PropertyInfo.GetGetMethod(), null, DelegateHelper.CreateOptions.Downcasting), true);
+                _getValueWithIndexer = new Lazy<Func<object?, object?>>(() => DelegateHelper.CreateDelegate<Func<object?, object?>>(PropertyInfo.GetGetMethod(), null, DelegateHelper.CreateOptions.Downcasting), true);
+
+                _setValue = new Lazy<Action<object?>>(() => DelegateHelper.CreateDelegate<Action<object?>>(PropertyInfo.GetSetMethod(), null, DelegateHelper.CreateOptions.Downcasting), false);
+                _setValueWithIndexer = new Lazy<Action<object?, object?>>(() => DelegateHelper.CreateDelegate<Action<object?, object?>>(PropertyInfo.GetSetMethod(), null, DelegateHelper.CreateOptions.Downcasting), false);
             }
             protected override PropertyInfo? Search(Type type, string name, Type? returnType, Type[] args)
             {
@@ -749,22 +761,17 @@ namespace Blueprint41.Driver
             }
             public override bool Exists => (_propertyInfo.Value is not null);
 
-            public object GetValue(object? index = null)
-            {
-                if (index is null)
-                    return PropertyInfo.GetValue(null);
-                else
-                    return PropertyInfo.GetValue(null, new object[] { index });
-            }
-            public void SetValue(object? value, object? index = null)
-            {
-                if (index is null)
-                    PropertyInfo.SetValue(null, value);
-                else
-                    PropertyInfo.SetValue(null, value, new object[] { index });
-            }
+            public object GetValue() => _getValue.Value.Invoke()!;
+            public object GetValue(object? index) => _getValueWithIndexer.Value.Invoke(index)!;
+            public void SetValue(object? value) => _setValue.Value.Invoke(value);
+            public void SetValue(object? value, object? index) => _setValueWithIndexer.Value.Invoke(value, index);
 
             private PropertyInfo PropertyInfo => _propertyInfo.Value ?? throw new MissingMethodException();
+
+            private readonly Lazy<Func<object?>> _getValue;
+            private readonly Lazy<Func<object?, object?>> _getValueWithIndexer;
+            private readonly Lazy<Action<object?>> _setValue;
+            private readonly Lazy<Action<object?, object?>> _setValueWithIndexer;
             private readonly Lazy<PropertyInfo?> _propertyInfo;
         }
         internal sealed class InstanceProperty : Member<PropertyInfo>
@@ -772,10 +779,20 @@ namespace Blueprint41.Driver
             internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string name, DriverTypeInfo? indexer = null) : base(parent, returnType, name, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
             {
                 _propertyInfo = ForEachType();
+
+                _getValue0 = new Lazy<Func<object, object?>>(() =>            DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?>>(PropertyInfo.GetGetMethod(), DelegateHelper.CreateOptions.Downcasting), true);
+                _getValue1 = new Lazy<Func<object, object?, object?>>(() =>   DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?>>(PropertyInfo.GetGetMethod(), DelegateHelper.CreateOptions.Downcasting), true);
+                _setValue0 = new Lazy<Action<object, object?>>(() =>          DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?>>(PropertyInfo.GetSetMethod(), DelegateHelper.CreateOptions.Downcasting), false);
+                _setValue1 = new Lazy<Action<object, object?, object?>>(() => DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?, object?>>(PropertyInfo.GetSetMethod(), DelegateHelper.CreateOptions.Downcasting), false);
             }
             internal InstanceProperty(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, DriverTypeInfo? indexer = null) : base(parent, returnType, names, (indexer is null) ? new DriverTypeInfo[0] : new DriverTypeInfo[] { indexer })
             {
                 _propertyInfo = ForEachType();
+
+                _getValue0 = new Lazy<Func<object, object?>>(() =>            DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?>>(PropertyInfo.GetGetMethod(), DelegateHelper.CreateOptions.Downcasting), true);
+                _getValue1 = new Lazy<Func<object, object?, object?>>(() =>   DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?>>(PropertyInfo.GetGetMethod(), DelegateHelper.CreateOptions.Downcasting), true);
+                _setValue0 = new Lazy<Action<object, object?>>(() =>          DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?>>(PropertyInfo.GetSetMethod(), DelegateHelper.CreateOptions.Downcasting), false);
+                _setValue1 = new Lazy<Action<object, object?, object?>>(() => DelegateHelper.CreateOpenInstanceDelegate<Action<object, object?, object?>>(PropertyInfo.GetSetMethod(), DelegateHelper.CreateOptions.Downcasting), false);
             }
             protected override PropertyInfo? Search(Type type, string name, Type? returnType, Type[] args)
             {
@@ -783,22 +800,17 @@ namespace Blueprint41.Driver
             }
             public override bool Exists => (_propertyInfo.Value is not null);
 
-            public object GetValue(object instance, object? index = null)
-            {
-                if (index is null)
-                    return PropertyInfo.GetValue(instance);
-                else
-                    return PropertyInfo.GetValue(instance, new object[] { index });
-            }
-            public void SetValue(object instance, object? value, object? index = null)
-            {
-                if (index is null)
-                    PropertyInfo.SetValue(instance, value);
-                else
-                    PropertyInfo.SetValue(instance, value, new object[] { index });
-            }
+            public object GetValue(object instance)                            => _getValue0.Value.Invoke(instance)!;
+            public object GetValue(object instance, object? index)             => _getValue1.Value.Invoke(instance, index)!;
+            public void SetValue(object instance, object? value)                => _setValue0.Value.Invoke(instance, value);
+            public void SetValue(object instance, object? value, object? index) => _setValue1.Value.Invoke(instance, value, index);
 
             private PropertyInfo PropertyInfo => _propertyInfo.Value ?? throw new MissingMethodException();
+
+            private readonly Lazy<Func<object, object?>>            _getValue0;
+            private readonly Lazy<Func<object, object?, object?>>   _getValue1;
+            private readonly Lazy<Action<object, object?>>          _setValue0;
+            private readonly Lazy<Action<object, object?, object?>> _setValue1;
             private readonly Lazy<PropertyInfo?> _propertyInfo;
         }
         internal sealed class StaticMethod : Member<MethodInfo>
@@ -806,10 +818,24 @@ namespace Blueprint41.Driver
             internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string name, params DriverTypeInfo[] arguments) : base(parent, returnType, name, arguments)
             {
                 _methodInfo = ForEachType();
+
+                _invoke0 = new Lazy<Func<object?>>(() =>                                              DelegateHelper.CreateDelegate<Func<object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke1 = new Lazy<Func<object?, object?>>(() =>                                     DelegateHelper.CreateDelegate<Func<object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke2 = new Lazy<Func<object?, object?, object?>>(() =>                            DelegateHelper.CreateDelegate<Func<object?, object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke3 = new Lazy<Func<object?, object?, object?, object?>>(() =>                   DelegateHelper.CreateDelegate<Func<object?, object?, object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke4 = new Lazy<Func<object?, object?, object?, object?, object?>>(() =>          DelegateHelper.CreateDelegate<Func<object?, object?, object?, object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke5 = new Lazy<Func<object?, object?, object?, object?, object?, object?>>(() => DelegateHelper.CreateDelegate<Func<object?, object?, object?, object?, object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
             }
             internal StaticMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, params DriverTypeInfo[] arguments) : base(parent, returnType, names, arguments)
             {
                 _methodInfo = ForEachType();
+
+                _invoke0 = new Lazy<Func<object?>>(() =>                                              DelegateHelper.CreateDelegate<Func<object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke1 = new Lazy<Func<object?, object?>>(() =>                                     DelegateHelper.CreateDelegate<Func<object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke2 = new Lazy<Func<object?, object?, object?>>(() =>                            DelegateHelper.CreateDelegate<Func<object?, object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke3 = new Lazy<Func<object?, object?, object?, object?>>(() =>                   DelegateHelper.CreateDelegate<Func<object?, object?, object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke4 = new Lazy<Func<object?, object?, object?, object?, object?>>(() =>          DelegateHelper.CreateDelegate<Func<object?, object?, object?, object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke5 = new Lazy<Func<object?, object?, object?, object?, object?, object?>>(() => DelegateHelper.CreateDelegate<Func<object?, object?, object?, object?, object?, object?>>(MethodInfo, null, DelegateHelper.CreateOptions.Downcasting), true);
             }
             protected override MethodInfo? Search(Type type, string name, Type? returnType, Type[] args)
             {
@@ -817,32 +843,21 @@ namespace Blueprint41.Driver
             }
             public override bool Exists => (_methodInfo.Value is not null);
 
-            public object Invoke()
-            {
-                return MethodInfo.Invoke(null, new object?[0]);
-            }
-            public object Invoke(object? arg1)
-            {
-                return MethodInfo.Invoke(null, new object?[] { arg1 });
-            }
-            public object Invoke(object? arg1, object? arg2)
-            {
-                return MethodInfo.Invoke(null, new object?[] { arg1, arg2 });
-            }
-            public object Invoke(object? arg1, object? arg2, object? arg3)
-            {
-                return MethodInfo.Invoke(null, new object?[] { arg1, arg2, arg3 });
-            }
-            public object Invoke(object? arg1, object? arg2, object? arg3, object? arg4)
-            {
-                return MethodInfo.Invoke(null, new object?[] { arg1, arg2, arg3, arg4 });
-            }
-            public object Invoke(object? arg1, object? arg2, object? arg3, object? arg4, object? arg5)
-            {
-                return MethodInfo.Invoke(null, new object?[] { arg1, arg2, arg3, arg4, arg5 });
-            }
+            public object Invoke()                                                                     => _invoke0.Value.Invoke()!;
+            public object Invoke(object? arg1)                                                         => _invoke1.Value.Invoke(arg1)!;
+            public object Invoke(object? arg1, object? arg2)                                           => _invoke2.Value.Invoke(arg1, arg2)!;
+            public object Invoke(object? arg1, object? arg2, object? arg3)                             => _invoke3.Value.Invoke(arg1, arg2, arg3)!;
+            public object Invoke(object? arg1, object? arg2, object? arg3, object? arg4)               => _invoke4.Value.Invoke(arg1, arg2, arg3, arg4)!;
+            public object Invoke(object? arg1, object? arg2, object? arg3, object? arg4, object? arg5) => _invoke5.Value.Invoke(arg1, arg2, arg3, arg4, arg5)!;
 
             private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
+            
+            private readonly Lazy<Func<object?>> _invoke0;
+            private readonly Lazy<Func<object?, object?>> _invoke1;
+            private readonly Lazy<Func<object?, object?, object?>> _invoke2;
+            private readonly Lazy<Func<object?, object?, object?, object?>> _invoke3;
+            private readonly Lazy<Func<object?, object?, object?, object?, object?>> _invoke4;
+            private readonly Lazy<Func<object?, object?, object?, object?, object?, object?>> _invoke5;
             private readonly Lazy<MethodInfo?> _methodInfo;
         }
         internal sealed class InstanceMethod : Member<MethodInfo>
@@ -851,11 +866,23 @@ namespace Blueprint41.Driver
             {
                 _methodInfo = ForEachType();
 
+                _invoke0 = new Lazy<Func<object, object?>>(() =>                                              DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke1 = new Lazy<Func<object, object?, object?>>(() =>                                     DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke2 = new Lazy<Func<object, object?, object?, object?>>(() =>                            DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke3 = new Lazy<Func<object, object?, object?, object?, object?>>(() =>                   DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke4 = new Lazy<Func<object, object?, object?, object?, object?, object?>>(() =>          DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?, object?, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke5 = new Lazy<Func<object, object?, object?, object?, object?, object?, object?>>(() => DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?, object?, object?, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
             }
             internal InstanceMethod(DriverTypeInfo parent, DriverTypeInfo returnType, string[] names, params DriverTypeInfo[] arguments) : base(parent, returnType, names, arguments)
             {
                 _methodInfo = ForEachType();
 
+                _invoke0 = new Lazy<Func<object, object?>>(() =>                                              DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke1 = new Lazy<Func<object, object?, object?>>(() =>                                     DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke2 = new Lazy<Func<object, object?, object?, object?>>(() =>                            DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke3 = new Lazy<Func<object, object?, object?, object?, object?>>(() =>                   DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke4 = new Lazy<Func<object, object?, object?, object?, object?, object?>>(() =>          DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?, object?, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
+                _invoke5 = new Lazy<Func<object, object?, object?, object?, object?, object?, object?>>(() => DelegateHelper.CreateOpenInstanceDelegate<Func<object, object?, object?, object?, object?, object?, object?>>(MethodInfo, DelegateHelper.CreateOptions.Downcasting), true);
             }
             protected override MethodInfo? Search(Type type, string name, Type? returnType, Type[] args)
             {
@@ -863,32 +890,21 @@ namespace Blueprint41.Driver
             }
             public override bool Exists => (_methodInfo.Value is not null);
 
-            public object Invoke(object instance)
-            {
-                return MethodInfo.Invoke(instance, new object?[0]);
-            }
-            public object Invoke(object instance, object? arg1)
-            {
-                return MethodInfo.Invoke(instance, new object?[] { arg1 });
-            }
-            public object Invoke(object instance, object? arg1, object? arg2)
-            {
-                return MethodInfo.Invoke(instance, new object?[] { arg1, arg2 });
-            }
-            public object Invoke(object instance, object? arg1, object? arg2, object? arg3)
-            {
-                return MethodInfo.Invoke(instance, new object?[] { arg1, arg2, arg3 });
-            }
-            public object Invoke(object instance, object? arg1, object? arg2, object? arg3, object? arg4)
-            {
-                return MethodInfo.Invoke(instance, new object?[] { arg1, arg2, arg3, arg4 });
-            }
-            public object Invoke(object instance, object? arg1, object? arg2, object? arg3, object? arg4, object? arg5)
-            {
-                return MethodInfo.Invoke(instance, new object?[] { arg1, arg2, arg3, arg4, arg5 });
-            }
+            public object Invoke(object instance)                                                                       => _invoke0.Value.Invoke(instance)!;
+            public object Invoke(object instance, object? arg1)                                                         => _invoke1.Value.Invoke(instance, arg1)!;
+            public object Invoke(object instance, object? arg1, object? arg2)                                           => _invoke2.Value.Invoke(instance, arg1, arg2)!;
+            public object Invoke(object instance, object? arg1, object? arg2, object? arg3)                             => _invoke3.Value.Invoke(instance, arg1, arg2, arg3)!;
+            public object Invoke(object instance, object? arg1, object? arg2, object? arg3, object? arg4)               => _invoke4.Value.Invoke(instance, arg1, arg2, arg3, arg4)!;
+            public object Invoke(object instance, object? arg1, object? arg2, object? arg3, object? arg4, object? arg5) => _invoke5.Value.Invoke(instance, arg1, arg2, arg3, arg4, arg5)!;
 
             private MethodInfo MethodInfo => _methodInfo.Value ?? throw new MissingMethodException();
+
+            private readonly Lazy<Func<object, object?>> _invoke0;
+            private readonly Lazy<Func<object, object?, object?>> _invoke1;
+            private readonly Lazy<Func<object, object?, object?, object?>> _invoke2;
+            private readonly Lazy<Func<object, object?, object?, object?, object?>> _invoke3;
+            private readonly Lazy<Func<object, object?, object?, object?, object?, object?>> _invoke4;
+            private readonly Lazy<Func<object, object?, object?, object?, object?, object?, object?>> _invoke5;
             private readonly Lazy<MethodInfo?> _methodInfo;
         }
         internal sealed class EnumField : Member<FieldInfo>
@@ -907,7 +923,17 @@ namespace Blueprint41.Driver
             }
             public override bool Exists => (_fieldInfo.Value is not null);
 
-            public object Value => FieldInfo.GetRawConstantValue();
+            public object Value
+            {
+                get
+                {
+                    if (value is null)
+                        value = FieldInfo.GetRawConstantValue();
+
+                    return value;
+                }
+            }
+            private object? value;
             public bool Test(object instance) => Value == instance;
 
             private FieldInfo FieldInfo => _fieldInfo.Value ?? throw new MissingMethodException();
@@ -1297,9 +1323,6 @@ namespace Blueprint41.Driver
 
             public string Agent(object instance) => (string)_Agent.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _Agent = new Lazy<InstanceProperty>(() => new InstanceProperty(SERVER_INFO, Type<string>.Info, "Agent"), true);
-
-            public string Version(object instance) => (string)_Version.Value.GetValue(instance);
-            private readonly Lazy<InstanceProperty> _Version = new Lazy<InstanceProperty>(() => new InstanceProperty(SERVER_INFO, Type<string>.Info, "Version"), true);
         }
         internal sealed class IDatabaseInfo : DriverTypeInfo
         {
@@ -1660,15 +1683,15 @@ namespace Blueprint41.Driver
         {
             public IServerAddressResolverInfo(params string[] names) : base(names) { }
 
-            public object ConvertToNeo4jIServerAddressResolver(ServerAddressResolver instance) => _get.Value.Invoke(instance);
-            private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS_RESOLVER_PROXY, SERVER_ADDRESS_RESOLVER_PROXY, "Get", Type<ServerAddressResolver>.Info), true);
+            public object ConvertToNeo4jIServerAddressResolver(ServerAddressResolver instance) => null!; // _get.Value.Invoke(instance);
+            //private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS_RESOLVER_PROXY, SERVER_ADDRESS_RESOLVER_PROXY, "Get", Type<ServerAddressResolver>.Info), true);
         }
         internal sealed class ILoggerInfo : DriverTypeInfo
         {
             public ILoggerInfo(params string[] names) : base(names) { }
 
-            public object ConvertToNeo4jILogger(ILogger instance) => _get.Value.Invoke(instance);
-            private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(LOGGER_PROXY, LOGGER_PROXY, "Get", Type<ILogger>.Info), true);
+            public object ConvertToNeo4jILogger(ILogger instance) => null!; //_get.Value.Invoke(instance);
+            //private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(LOGGER_PROXY, LOGGER_PROXY, "Get", Type<ILogger>.Info), true);
         }
 
         #endregion

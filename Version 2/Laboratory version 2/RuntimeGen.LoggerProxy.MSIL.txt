@@ -1,0 +1,198 @@
+﻿.class public auto ansi sealed beforefieldinit Blueprint41.Driver.RuntimeGeneration.LoggerProxy
+    extends [System.Runtime]System.Object
+    implements .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = (
+        01 00 00 00 00
+    )
+    [Neo4j.Driver]Neo4j.Driver.ILogger
+{
+    .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableContextAttribute::.ctor(uint8) = (
+        01 00 01 00 00
+    )
+    .custom instance void [System.Runtime]System.Runtime.CompilerServices.NullableAttribute::.ctor(uint8) = (
+        01 00 00 00 00
+    )
+    // Fields
+    .field private class [Blueprint41.Driver]Blueprint41.Driver.ILogger _logger
+
+    // Methods
+    .method private hidebysig specialname rtspecialname 
+        instance void .ctor (
+            class [Blueprint41.Driver]Blueprint41.Driver.ILogger logger
+        ) cil managed 
+    {
+        // Method begins at RVA 0x20b6
+        // Header size: 1
+        // Code size: 14 (0xe)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+        IL_0006: ldarg.0
+        IL_0007: ldarg.1
+        IL_0008: stfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+        IL_000d: ret
+    } // end of method LoggerProxy::.ctor
+
+    .method public hidebysig static 
+        class Blueprint41.Driver.RuntimeGeneration.LoggerProxy Get (
+            class [Blueprint41.Driver]Blueprint41.Driver.ILogger logger
+        ) cil managed 
+    {
+        // Method begins at RVA 0x20c5
+        // Header size: 1
+        // Code size: 7 (0x7)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: newobj instance void Blueprint41.Driver.RuntimeGeneration.LoggerProxy::.ctor(class [Blueprint41.Driver]Blueprint41.Driver.ILogger)
+        IL_0006: ret
+    } // end of method LoggerProxy::Get
+
+    .method public final hidebysig newslot virtual 
+        instance void Debug (
+            string message,
+            object[] args
+        ) cil managed 
+    {
+        .param [2]
+            .custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+                01 00 00 00
+            )
+        // Method begins at RVA 0x20cd
+        // Header size: 1
+        // Code size: 14 (0xe)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+        IL_0006: ldarg.1
+        IL_0007: ldarg.2
+        IL_0008: callvirt instance void [Blueprint41.Driver]Blueprint41.Driver.ILogger::Debug(string, object[])
+        IL_000d: ret
+    } // end of method LoggerProxy::Debug
+
+    .method public final hidebysig newslot virtual 
+        instance void Error (
+            class [System.Runtime]System.Exception cause,
+            string message,
+            object[] args
+        ) cil managed 
+    {
+        .param [3]
+            .custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+                01 00 00 00
+            )
+        // Method begins at RVA 0x20dc
+        // Header size: 1
+        // Code size: 15 (0xf)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+        IL_0006: ldarg.1
+        IL_0007: ldarg.2
+        IL_0008: ldarg.3
+        IL_0009: callvirt instance void [Blueprint41.Driver]Blueprint41.Driver.ILogger::Error(class [System.Runtime]System.Exception, string, object[])
+        IL_000e: ret
+    } // end of method LoggerProxy::Error
+
+    .method public final hidebysig newslot virtual 
+        instance void Info (
+            string message,
+            object[] args
+        ) cil managed 
+    {
+        .param [2]
+            .custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+                01 00 00 00
+            )
+        // Method begins at RVA 0x20ec
+        // Header size: 1
+        // Code size: 14 (0xe)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+        IL_0006: ldarg.1
+        IL_0007: ldarg.2
+        IL_0008: callvirt instance void [Blueprint41.Driver]Blueprint41.Driver.ILogger::Info(string, object[])
+        IL_000d: ret
+    } // end of method LoggerProxy::Info
+
+    .method public final hidebysig newslot virtual 
+        instance bool IsDebugEnabled () cil managed 
+    {
+        // Method begins at RVA 0x20fb
+        // Header size: 1
+        // Code size: 12 (0xc)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+        IL_0006: callvirt instance bool [Blueprint41.Driver]Blueprint41.Driver.ILogger::IsDebugEnabled()
+        IL_000b: ret
+    } // end of method LoggerProxy::IsDebugEnabled
+
+    .method public final hidebysig newslot virtual 
+        instance bool IsTraceEnabled () cil managed 
+    {
+        // Method begins at RVA 0x2108
+        // Header size: 1
+        // Code size: 12 (0xc)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+        IL_0006: callvirt instance bool [Blueprint41.Driver]Blueprint41.Driver.ILogger::IsTraceEnabled()
+        IL_000b: ret
+    } // end of method LoggerProxy::IsTraceEnabled
+
+    .method public final hidebysig newslot virtual 
+        instance void Trace (
+            string message,
+            object[] args
+        ) cil managed 
+    {
+        .param [2]
+            .custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+                01 00 00 00
+            )
+        // Method begins at RVA 0x2115
+        // Header size: 1
+        // Code size: 14 (0xe)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+        IL_0006: ldarg.1
+        IL_0007: ldarg.2
+        IL_0008: callvirt instance void [Blueprint41.Driver]Blueprint41.Driver.ILogger::Trace(string, object[])
+        IL_000d: ret
+    } // end of method LoggerProxy::Trace
+
+    .method public final hidebysig newslot virtual 
+        instance void Warn (
+            class [System.Runtime]System.Exception cause,
+            string message,
+            object[] args
+        ) cil managed 
+    {
+        .param [3]
+            .custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+                01 00 00 00
+            )
+        // Method begins at RVA 0x2124
+        // Header size: 1
+        // Code size: 15 (0xf)
+        .maxstack 8
+
+        IL_0000: ldarg.0
+        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+        IL_0006: ldarg.1
+        IL_0007: ldarg.2
+        IL_0008: ldarg.3
+        IL_0009: callvirt instance void [Blueprint41.Driver]Blueprint41.Driver.ILogger::Warn(class [System.Runtime]System.Exception, string, object[])
+        IL_000e: ret
+    } // end of method LoggerProxy::Warn
+
+} // end of class Blueprint41.Driver.RuntimeGeneration.LoggerProxy
