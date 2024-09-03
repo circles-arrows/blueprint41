@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Events;
@@ -49,7 +49,7 @@ namespace Blueprint41.Persistence
                 throw new NotImplementedException("New entities should be saved first before it can participate in relationships.");
         }
 
-        public IEnumerable<CollectionItem> Load(OGM parent, Core.EntityCollectionBase target)
+        public async Task<IEnumerable<CollectionItem>> Load(OGM parent, Core.EntityCollectionBase target)
         {
             Entity targetEntity = target.ForeignEntity;
             string[] nodeNames = target.Parent.GetEntity().GetDbNames("node");
@@ -83,7 +83,7 @@ namespace Blueprint41.Persistence
             parameters2.Add("key", parent.GetKey());
 
             List<CollectionItem> items = new List<CollectionItem>();
-            var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
+            var result = await Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
 
             foreach (var record in result)
             {
@@ -308,7 +308,7 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        protected void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties)
+        protected async Task Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties)
         {
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
@@ -336,9 +336,9 @@ namespace Blueprint41.Persistence
             string query = match + "\r\n" + create;
             relationship.RaiseOnRelationCreate(trans);
 
-            RawResult result = trans.Run(query, parameters);
+            RawResult result = await trans.Run(query, parameters);
         }
-        protected void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties, DateTime moment)
+        protected async Task Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties, DateTime moment)
         {
             long momentConv = Conversion<DateTime, long>.Convert(moment);
             if (momentConv >= Conversion.MaxDateTimeInMS)
@@ -405,15 +405,15 @@ namespace Blueprint41.Persistence
 #if DEBUG_QUERY
             Peek("Before Delete");
 #endif
-            RawResult deleteResult = trans.Run(delete, parameters);
+            RawResult deleteResult = await trans.Run(delete, parameters);
 #if DEBUG_QUERY
             Peek("After Delete & Before Update");
 #endif
-            RawResult updateResult = trans.Run(update, parameters);
+            RawResult updateResult = await trans.Run(update, parameters);
 #if DEBUG_QUERY
             Peek("After Update & Before Create");
 #endif
-            RawResult createResult = trans.Run(create, parameters);
+            RawResult createResult = await trans.Run(create, parameters);
 #if DEBUG_QUERY
             Peek("After Create");
 #endif
@@ -482,7 +482,7 @@ namespace Blueprint41.Persistence
 
             RawResult result = trans.Run(cypher, parameters);
         }
-        protected void Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem, DateTime moment)
+        protected async Task Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem, DateTime moment)
         {
             long momentConv = Conversion<DateTime, long>.Convert(moment);
             if (momentConv >= Conversion.MaxDateTimeInMS)
@@ -525,11 +525,11 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationCreate(trans);
 
-            RawResult deleteResult = trans.Run(delete, parameters);
-            RawResult updateResult = trans.Run(update, parameters);
+            RawResult deleteResult = await trans.Run(delete, parameters);
+            RawResult updateResult = await trans.Run(update, parameters);
         }
 
-        public void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
+        public async Task AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
         {
             if (properties is not null && properties.Count > 0)
                 throw new NotImplementedException("Support for setting properties via the unmanaged relationship interface is not implemented yet.");
@@ -558,7 +558,7 @@ namespace Blueprint41.Persistence
                 parameters.Add("MinDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
-                RawResult result = trans.Run(find, parameters);
+                RawResult result = await trans.Run(find, parameters);
                 IDictionary<string, object> record = result.First();
                 int count = record["Count"].As<int>();
                 if (count > 0)
@@ -582,7 +582,7 @@ namespace Blueprint41.Persistence
                     relationship.StartDate,
                     relationship.EndDate);
 
-                trans.Run(delete, parameters);
+                await trans.Run(delete, parameters);
             }
 
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey MATCH (out:{2}) WHERE out.{3} = $outKey",
@@ -609,11 +609,11 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationCreate(trans);
 
-            trans.Run(query, parameters2);
+            await trans.Run(query, parameters2);
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        public void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate)
+        public async Task RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate)
         {
             Transaction trans = Transaction.RunningTransaction;
 
@@ -639,7 +639,7 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationDelete(trans);
 
-            trans.Run(match, parameters);
+            await trans.Run(match, parameters);
 
             relationship.RaiseOnRelationDeleted(trans);
         }

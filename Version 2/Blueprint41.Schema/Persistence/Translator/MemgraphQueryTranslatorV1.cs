@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 
 namespace Blueprint41.Persistence
@@ -25,10 +25,10 @@ namespace Blueprint41.Persistence
 
         #region Full Text Indexes
 
-        internal override bool HasFullTextSearchIndexes()
+        internal override Task<bool> HasFullTextSearchIndexes()
         {
             //TODO: memgraph does not support Full-Text search indexes
-            return false;
+            return Task.FromResult(false);
         }
 
         internal override void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)

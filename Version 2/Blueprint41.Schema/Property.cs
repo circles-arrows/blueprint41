@@ -562,7 +562,7 @@ namespace Blueprint41
                         template.To = target;
                         template.Caller = entity; // ConcreteParent
                         template.MergeAlgorithm = mergeAlgorithm;
-                    }).Run();
+                    }).RunAsync();
 
                     if (conflicts > 0)
                         throw new InvalidOperationException($"MergeProperty detected {conflicts} conflicts.");
@@ -640,11 +640,11 @@ namespace Blueprint41
                     {
                         list = new List<object>();
 
-                        Parser.Execute(cypherRead, null, true, delegate (RawResult result)
+                        Parser.Execute(cypherRead, null, true, async delegate(Driver.ResultCursor result)
                         {
-                            foreach (RawRecord item in result)
+                            foreach (Driver.Record item in await result.ToListAsync())
                             {
-                                string text = item["Text"].As<string>();
+                                string text = item["Text"]!.As<string>();
 
                                 Dictionary<string, object?> map = new Dictionary<string, object?>();
                                 map.Add("Text", text);
@@ -845,7 +845,7 @@ namespace Blueprint41
                 if (Parent is Entity entity)
                 {
                     string cypher = $"MATCH (n:{entity.Label.Name}) WHERE n.{Name} IS NULL RETURN count(n) as count";
-                    Parser.Execute(cypher, null, true, delegate(RawResult result)
+                    Parser.Execute(cypher, null, true, delegate(Driver.ResultCursor result)
                     {
                         IDictionary<string, object> record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;
@@ -857,7 +857,7 @@ namespace Blueprint41
                 else if (Parent is Relationship relationship)
                 {
                     string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
-                    Parser.Execute(cypher, null, true, delegate (RawResult result)
+                    Parser.Execute(cypher, null, true, delegate (Driver.ResultCursor result)
                     {
                         IDictionary<string, object> record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;

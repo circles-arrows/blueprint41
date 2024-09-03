@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Persistence;
 
@@ -30,11 +30,16 @@ namespace Blueprint41.Refactoring.Schema
                 RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
             }
         }
-        protected IReadOnlyList<string> LoadSimpleData(string procedure, string resultname)
+        protected Task<IReadOnlyList<string>> LoadSimpleData(string procedure, string resultname)
         {
-            return LoadData<string>(procedure, record => record[resultname].As<string>());
+            return LoadData<string>(procedure, record => record[resultname]?.As<string>()!);
         }
         protected IReadOnlyList<T> LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)
+        {
+            Task<IReadOnlyList<T>> task = new Task<IReadOnlyList<T>>(() => LoadDataInternal(procedure, processor));
+            return task.Result;
+        }
+        protected async Task<IReadOnlyList<T>> LoadDataInternal<T>(string procedure, Func<IDictionary<string, object>, T> processor)
         {
             IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
 
@@ -45,8 +50,9 @@ namespace Blueprint41.Refactoring.Schema
                 try
                 {
                     retry = false;
-                    RawResult result = runner.Run(procedure);
-                    data = result.Select(processor).ToArray();
+                    Driver.ResultCursor result = await runner.Run(procedure);
+                    var records = await result.ToListAsync();
+                    data = records.Select(item => processor.Invoke(item.Values.ToDictionary(k => k.Key, v => v.Value!))).ToArray();
                 }
                 catch (Exception clientException)
                 {

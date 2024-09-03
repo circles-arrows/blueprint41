@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Persistence;
@@ -28,7 +28,7 @@ namespace Blueprint41.Persistence
             return LoadWhere<T>(entity, string.Empty, null, page, pageSize, ascending, orderBy);
         }
 
-        public void Load(OGM item, bool locked = false)
+        public async void Load(OGM item, bool locked = false)
         {
             Transaction trans = Transaction.RunningTransaction;
 
@@ -40,16 +40,16 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = item.GetEntity().RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
 
-            var result = trans.Run(args.Cypher, args.Parameters);
+            var result = await trans.Run(args.Cypher, args.Parameters);
 
-            IDictionary<string, object>? record = result.FirstOrDefault();
+            Driver.Record? record = await result.FirstOrDefault();
             if (record is null || record["node"] is null)
             {
                 item.PersistenceState = PersistenceState.DoesntExist;
                 return;
             }
 
-            RawNode loaded = record["node"].As<RawNode>();
+            RawNode loaded = record["node"]!.As<RawNode>();
 
             args.Id = loaded.Id;
             args.Labels = loaded.Labels;
@@ -66,7 +66,7 @@ namespace Blueprint41.Persistence
             }
         }
 
-        public void Delete(OGM item)
+        public async Task Delete(OGM item)
         {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
@@ -88,15 +88,16 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            RawResult result = trans.Run(args.Cypher, args.Parameters);
-            if (result.Statistics().NodesDeleted == 0)
+            var result = await trans.Run(args.Cypher, args.Parameters);
+            var counters = await result.Statistics();
+            if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeDeleted(trans, args);
             item.PersistenceState = PersistenceState.Deleted;
         }
 
-        public void ForceDelete(OGM item)
+        public async Task ForceDelete(OGM item)
         {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
@@ -118,8 +119,9 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            RawResult result = trans.Run(args.Cypher, args.Parameters);
-            if (result.Statistics().NodesDeleted == 0)
+            var result = await trans.Run(args.Cypher, args.Parameters);
+            var counters = await result.Statistics();
+            if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeDeleted(trans, args);
@@ -336,15 +338,15 @@ namespace Blueprint41.Persistence
         //    return Load<T>(entity, args, result, trans);
         //}
 
-        private List<T> Load<T>(Entity entity, NodeEventArgs args, RawResult result, Transaction trans)
+        private async Task<List<T>> Load<T>(Entity entity, NodeEventArgs args, Driver.ResultCursor result, Transaction trans)
             where T : class, OGM
         {
             IReadOnlyList<Entity> concretes = entity.GetConcreteClasses();
 
             List<T> items = new List<T>();
-            foreach (var record in result)
+            foreach (var record in await result.ToListAsync())
             {
-                var node = record["node"].As<RawNode>();
+                var node = record["node"]?.As<RawNode>();
                 if (node is null)
                     continue;
 

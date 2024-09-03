@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Collections.Generic;
 
+using System.Threading.Tasks;
 using Blueprint41.Core;
 
 namespace Blueprint41.Refactoring
@@ -10,7 +11,7 @@ namespace Blueprint41.Refactoring
     {
         #region Parser Logic
 
-        private static RawResult PrivateExecute(string cypher, Dictionary<string, object?>? parameters)
+        private static Task<Driver.ResultCursor> PrivateExecute(string cypher, Dictionary<string, object?>? parameters)
         {
             IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
 
@@ -20,7 +21,7 @@ namespace Blueprint41.Refactoring
                 return runner.Run(cypher, parameters);
         }
 
-        internal static void Execute(string cypher, Dictionary<string, object?>? parameters, bool withTransaction = true, Action<RawResult>? logic = null)
+        internal static void Execute(string cypher, Dictionary<string, object?>? parameters, bool withTransaction = true, Action<Driver.ResultCursor>? logic = null)
         {
             throw new NotImplementedException();
 
