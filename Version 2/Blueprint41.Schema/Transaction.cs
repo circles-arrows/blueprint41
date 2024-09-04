@@ -112,7 +112,7 @@ namespace Blueprint41
             return this;
         }
 
-        public virtual Task<driver.ResultCursor> Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public virtual Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -131,7 +131,7 @@ namespace Blueprint41
                 return StatementRunner.RunAsync(cypher);
             }
         }
-        public virtual Task<driver.ResultCursor> Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public virtual Task<driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -153,6 +153,47 @@ namespace Blueprint41
                     return StatementRunner.RunAsync(cypher, parameters);
             }
         }
+        public virtual driver.ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            if (PersistenceProvider.IsVoidProvider)
+            {
+#if DEBUG
+                Logger?.Start();
+                if (Logger is not null)
+                    Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
+#endif
+                return new driver.ResultCursor();
+            }
+            else
+            {
+                if (StatementRunner is null)
+                    throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+                return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
+            }
+        }
+        public virtual driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            if (PersistenceProvider.IsVoidProvider)
+            {
+#if DEBUG
+                Logger?.Start();
+                if (Logger is not null)
+                    Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
+#endif
+                return new driver.ResultCursor();
+            }
+            else
+            {
+                if (StatementRunner is null)
+                    throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+                if (parameters is null)
+                    return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
+                else
+                    return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher, parameters), cypher);
+            }
+        }
         protected virtual void ApplyFunctionalId(FunctionalId functionalId)
         {
             if (functionalId is null)
@@ -164,8 +205,9 @@ namespace Blueprint41
             lock (functionalId)
             {
                 string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
-                RawResult result = Run(getFidQuery);
-                long? currentFid = result.FirstOrDefault()?["Sequence"].As<long?>();
+                driver.ResultCursor result = Run(getFidQuery);
+                driver.Record? record = PersistenceProvider.TaskScheduler.RunBlocking(result.FirstOrDefault, "Transaction.ApplyFunctionalId(FunctionalId functionalId)");
+                long ? currentFid = record?["Sequence"].As<long?>();
                 if (currentFid.HasValue)
                     functionalId.SeenUid(currentFid.Value);
 

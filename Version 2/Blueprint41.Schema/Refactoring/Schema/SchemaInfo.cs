@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Blueprint41.Core;
 using Blueprint41.Persistence;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Refactoring.Schema
 {
@@ -30,16 +32,11 @@ namespace Blueprint41.Refactoring.Schema
                 RelationshipTypes = LoadSimpleData("CALL db.relationshipTypes()", "relationshipType");
             }
         }
-        protected Task<IReadOnlyList<string>> LoadSimpleData(string procedure, string resultname)
+        protected IReadOnlyList<string> LoadSimpleData(string procedure, string resultname)
         {
             return LoadData<string>(procedure, record => record[resultname]?.As<string>()!);
         }
         protected IReadOnlyList<T> LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)
-        {
-            Task<IReadOnlyList<T>> task = new Task<IReadOnlyList<T>>(() => LoadDataInternal(procedure, processor));
-            return task.Result;
-        }
-        protected async Task<IReadOnlyList<T>> LoadDataInternal<T>(string procedure, Func<IDictionary<string, object>, T> processor)
         {
             IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
 
@@ -50,8 +47,8 @@ namespace Blueprint41.Refactoring.Schema
                 try
                 {
                     retry = false;
-                    Driver.ResultCursor result = await runner.Run(procedure);
-                    var records = await result.ToListAsync();
+                    driver.ResultCursor result = runner.Run(procedure);
+                    var records = RunBlocking(result.ToListAsync, "SchemaInfo.LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)");
                     data = records.Select(item => processor.Invoke(item.Values.ToDictionary(k => k.Key, v => v.Value!))).ToArray();
                 }
                 catch (Exception clientException)
@@ -201,7 +198,7 @@ namespace Blueprint41.Refactoring.Schema
                     {
                         foreach (string query in action.ToCypher())
                         {
-                            Parser.Execute(query, null, !DatastoreModel.PersistenceProvider.IsMemgraph);
+                            Parser.Execute(DatastoreModel, query, null, !DatastoreModel.PersistenceProvider.IsMemgraph);
                         }
                     }
                 }
@@ -290,6 +287,9 @@ namespace Blueprint41.Refactoring.Schema
 
             return commands;
         }
+
+        protected void RunBlocking(Func<Task> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
+        protected TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
 
     }
 }

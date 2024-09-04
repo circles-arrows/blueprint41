@@ -11,6 +11,6 @@ namespace Blueprint41.Core
         public abstract object? this[string key] { get; }
         public abstract IReadOnlyDictionary<string, object?> Properties { get; }
 
-        public abstract bool Equals(RawNode other);
+        public abstract bool Equals(RawNode? other);
     }
  }

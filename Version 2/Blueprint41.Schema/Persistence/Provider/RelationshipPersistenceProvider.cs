@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Events;
 using Blueprint41.Refactoring;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Persistence
 {
@@ -25,7 +27,9 @@ namespace Blueprint41.Persistence
         }
 
         public PersistenceProvider PersistenceProvider { get; private set; }
-        
+        private void RunBlocking(Func<Task> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
+        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
+
         private void Checks(Relationship relationship, OGM? inItem, OGM? outItem)
         {
             if (inItem is null && outItem is null)
@@ -83,9 +87,9 @@ namespace Blueprint41.Persistence
             parameters2.Add("key", parent.GetKey());
 
             List<CollectionItem> items = new List<CollectionItem>();
-            var result = await Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
+            var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
 
-            foreach (var record in result)
+            foreach (var record in RunBlocking(result.ToListAsync, "PersistenceProvider.Load(OGM parent, Core.EntityCollectionBase target)"))
             {
                 RawNode node = record["out"].As<RawNode>();
                 if (node is null)
@@ -162,7 +166,7 @@ namespace Blueprint41.Persistence
             string cypher = string.Join(" UNION ", fullMatch);
             var result = Transaction.RunningTransaction.Run(cypher, parameters);
             List<CollectionItem> items = new List<CollectionItem>();
-            foreach (var record in result)
+            foreach (var record in RunBlocking(result.ToListAsync, "PersistenceProvider.Load(IEnumerable<OGM> parents, Core.EntityCollectionBase target)"))
             {
                 DateTime? startDate = null;
                 DateTime? endDate = null;
@@ -205,7 +209,7 @@ namespace Blueprint41.Persistence
             var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
 
             Dictionary<object, List<RawNode>> retval = new Dictionary<object, List<RawNode>>();
-            foreach (var record in result)
+            foreach (var record in RunBlocking(result.ToListAsync, "PersistenceProvider.Load(Entity targetEntity, IEnumerable<object> keys)"))
             {
                 List<RawNode>? items;
                 if (!retval.TryGetValue(record["key"].As<object>(), out items))
@@ -308,7 +312,7 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        protected async Task Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties)
+        protected void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties)
         {
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey \r\n MATCH (out:{2}) WHERE out.{3} = $outKey",
                 inItem.GetEntity().Label.Name,
@@ -336,9 +340,9 @@ namespace Blueprint41.Persistence
             string query = match + "\r\n" + create;
             relationship.RaiseOnRelationCreate(trans);
 
-            RawResult result = await trans.Run(query, parameters);
+            driver.ResultCursor result = trans.Run(query, parameters);
         }
-        protected async Task Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties, DateTime moment)
+        protected void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties, DateTime moment)
         {
             long momentConv = Conversion<DateTime, long>.Convert(moment);
             if (momentConv >= Conversion.MaxDateTimeInMS)
@@ -405,15 +409,15 @@ namespace Blueprint41.Persistence
 #if DEBUG_QUERY
             Peek("Before Delete");
 #endif
-            RawResult deleteResult = await trans.Run(delete, parameters);
+            driver.ResultCursor deleteResult = trans.Run(delete, parameters);
 #if DEBUG_QUERY
             Peek("After Delete & Before Update");
 #endif
-            RawResult updateResult = await trans.Run(update, parameters);
+            driver.ResultCursor updateResult = trans.Run(update, parameters);
 #if DEBUG_QUERY
             Peek("After Update & Before Create");
 #endif
-            RawResult createResult = await trans.Run(create, parameters);
+            driver.ResultCursor createResult = trans.Run(create, parameters);
 #if DEBUG_QUERY
             Peek("After Create");
 #endif
@@ -480,9 +484,9 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationDelete(trans);
 
-            RawResult result = trans.Run(cypher, parameters);
+            driver.ResultCursor result = trans.Run(cypher, parameters);
         }
-        protected async Task Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem, DateTime moment)
+        protected void Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem, DateTime moment)
         {
             long momentConv = Conversion<DateTime, long>.Convert(moment);
             if (momentConv >= Conversion.MaxDateTimeInMS)
@@ -525,11 +529,11 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationCreate(trans);
 
-            RawResult deleteResult = await trans.Run(delete, parameters);
-            RawResult updateResult = await trans.Run(update, parameters);
+            driver.ResultCursor deleteResult = trans.Run(delete, parameters);
+            driver.ResultCursor updateResult = trans.Run(update, parameters);
         }
 
-        public async Task AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
+        public void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
         {
             if (properties is not null && properties.Count > 0)
                 throw new NotImplementedException("Support for setting properties via the unmanaged relationship interface is not implemented yet.");
@@ -558,8 +562,8 @@ namespace Blueprint41.Persistence
                 parameters.Add("MinDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
-                RawResult result = await trans.Run(find, parameters);
-                IDictionary<string, object> record = result.First();
+                driver.ResultCursor result = trans.Run(find, parameters);
+                driver.Record? record = RunBlocking(() => result.First(), "PersistenceProvider.AddUnmanaged");
                 int count = record["Count"].As<int>();
                 if (count > 0)
                 {
@@ -582,7 +586,7 @@ namespace Blueprint41.Persistence
                     relationship.StartDate,
                     relationship.EndDate);
 
-                await trans.Run(delete, parameters);
+                trans.Run(delete, parameters);
             }
 
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey MATCH (out:{2}) WHERE out.{3} = $outKey",
@@ -609,11 +613,11 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationCreate(trans);
 
-            await trans.Run(query, parameters2);
+            trans.Run(query, parameters2);
 
             relationship.RaiseOnRelationCreated(trans);
         }
-        public async Task RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate)
+        public void RemoveUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate)
         {
             Transaction trans = Transaction.RunningTransaction;
 
@@ -639,7 +643,7 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationDelete(trans);
 
-            await trans.Run(match, parameters);
+            trans.Run(match, parameters);
 
             relationship.RaiseOnRelationDeleted(trans);
         }

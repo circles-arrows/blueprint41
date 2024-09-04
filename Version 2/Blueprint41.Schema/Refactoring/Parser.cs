@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 
-using System.Threading.Tasks;
 using Blueprint41.Core;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Refactoring
 {
@@ -11,7 +11,7 @@ namespace Blueprint41.Refactoring
     {
         #region Parser Logic
 
-        private static Task<Driver.ResultCursor> PrivateExecute(string cypher, Dictionary<string, object?>? parameters)
+        private static driver.ResultCursor PrivateExecute(string cypher, Dictionary<string, object?>? parameters)
         {
             IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
 
@@ -21,50 +21,46 @@ namespace Blueprint41.Refactoring
                 return runner.Run(cypher, parameters);
         }
 
-        internal static void Execute(string cypher, Dictionary<string, object?>? parameters, bool withTransaction = true, Action<Driver.ResultCursor>? logic = null)
+        internal static void Execute(DatastoreModel model, string cypher, Dictionary<string, object?>? parameters, bool withTransaction = true, Action<driver.ResultCursor>? logic = null)
         {
-            throw new NotImplementedException();
+            if (!ShouldExecute)
+                return;
 
-            //if (!ShouldExecute)
-            //    return;
-
-            //if (withTransaction)
-            //{
-            //    using (DatastoreModel.PersistenceProvider.NewTransaction(true))
-            //    {
-            //        RawResult result = PrivateExecute(cypher, parameters);
-            //        logic?.Invoke(result);
-            //        Transaction.Commit();
-            //    }
-            //}
-            //else
-            //{
-            //    using (DatastoreModel.PersistenceProvider.NewSession(true))
-            //    {
-            //        RawResult result = PrivateExecute(cypher, parameters);
-            //        logic?.Invoke(result);
-            //    }
-            //}
+            if (withTransaction)
+            {
+                using (model.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+                {
+                    driver.ResultCursor result = PrivateExecute(cypher, parameters);
+                    logic?.Invoke(result);
+                    Transaction.Commit();
+                }
+            }
+            else
+            {
+                using (model.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
+                {
+                    driver.ResultCursor result = PrivateExecute(cypher, parameters);
+                    logic?.Invoke(result);
+                }
+            }
         }
-        internal static void ExecuteBatched(string cypher, Dictionary<string, object?>? parameters)
+        internal static void ExecuteBatched(DatastoreModel model, string cypher, Dictionary<string, object?>? parameters)
         {
-            throw new NotImplementedException();
+            if (!ShouldExecute)
+                return;
 
-            //if (!ShouldExecute)
-            //    return;
+            driver.Counters counters;
+            do
+            {
+                using (model.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
+                {
+                    driver.ResultCursor result = Parser.PrivateExecute(cypher, parameters);
+                    Transaction.Commit();
 
-            //RawResultStatistics counters;
-            //do
-            //{
-            //    using (DatastoreModel.PersistenceProvider.NewTransaction(true))
-            //    {
-            //        RawResult result = Parser.PrivateExecute(cypher, parameters);
-            //        Transaction.Commit();
-
-            //        counters = result.Statistics();
-            //    }
-            //}
-            //while (counters.ContainsUpdates);
+                    counters = model.PersistenceProvider.TaskScheduler.RunBlocking(result.Statistics, "Parser.ExecuteBatched(DatastoreModel model, string cypher, Dictionary<string, object?>? parameters)");
+                }
+            }
+            while (counters.ContainsUpdates);
         }
 
         internal static bool LogToDebugger { get; set; } = true;

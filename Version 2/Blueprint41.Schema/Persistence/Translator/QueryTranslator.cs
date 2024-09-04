@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Blueprint41.Core;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Persistence
 {
@@ -13,7 +15,13 @@ namespace Blueprint41.Persistence
         private protected QueryTranslator(DatastoreModel datastoreModel)
         {
             DatastoreModel = datastoreModel;
+            PersistenceProvider = datastoreModel.PersistenceProvider;
         }
+
+        public PersistenceProvider PersistenceProvider { get; private set; }
+        private void RunBlocking(Func<Task> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
+        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
+
 
         #region Compile Query Parts
 
@@ -738,12 +746,12 @@ namespace Blueprint41.Persistence
 
         #region Upgrade Script Parser
 
-        internal virtual async Task<bool> HasFullTextSearchIndexes()
+        internal virtual bool HasFullTextSearchIndexes()
         {
             using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
             {
-                var result = await Transaction.RunningTransaction.Run(FtiList);
-                return result.FirstOrDefault() is not null;
+                var result = Transaction.RunningTransaction.Run(FtiList);
+                return RunBlocking(result.FirstOrDefault, "QueryTranslator.HasFullTextSearchIndexes()") is not null;
             }
         }
 
@@ -791,7 +799,7 @@ namespace Blueprint41.Persistence
             string query = "MATCH (version:RefactorVersion) RETURN version;";
             var result = Transaction.RunningTransaction.Run(query);
 
-            IDictionary<string, object>? record = result.FirstOrDefault();
+            Driver.Record? record = RunBlocking(result.FirstOrDefault, "Translator.HasScript(UpgradeScript script)");
             if (record is null)
                 return false;
 
@@ -841,7 +849,7 @@ namespace Blueprint41.Persistence
             string query = "MATCH (version:RefactorVersion) RETURN version.LastRun as LastRun";
             var result = Transaction.RunningTransaction.Run(query);
 
-            IDictionary<string, object>? record = result.FirstOrDefault();
+            driver.Record? record = RunBlocking(result.FirstOrDefault, "QueryTranslator.ShouldRefreshFunctionalIds()");
             if (record is null)
                 return true;
 

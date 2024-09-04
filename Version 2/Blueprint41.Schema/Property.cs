@@ -10,6 +10,7 @@ using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Events;
 using Blueprint41.Refactoring;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41
 {
@@ -489,7 +490,7 @@ namespace Blueprint41
             string right = (Direction == DirectionEnum.In) ? "->" : "-";
             string cypher = $"MATCH (anchor:{original.Label.Name}){left}[{Relationship.Neo4JRelationshipType}]{right}{decoded.Compile()} MERGE (anchor){left}[:{newNeo4jRelationshipType}]{right}(to)";
 
-            Parser.Execute(cypher, null);
+            Parser.Execute(Parent.Parent, cypher, null);
 
             Entity? inEntity = Relationship.InEntity;
             Property? inProperty = Relationship.InProperty;
@@ -562,7 +563,7 @@ namespace Blueprint41
                         template.To = target;
                         template.Caller = entity; // ConcreteParent
                         template.MergeAlgorithm = mergeAlgorithm;
-                    }).RunAsync();
+                    }).Run();
 
                     if (conflicts > 0)
                         throw new InvalidOperationException($"MergeProperty detected {conflicts} conflicts.");
@@ -640,7 +641,7 @@ namespace Blueprint41
                     {
                         list = new List<object>();
 
-                        Parser.Execute(cypherRead, null, true, async delegate(Driver.ResultCursor result)
+                        Parser.Execute(Parent.Parent, cypherRead, null, true, async delegate(Driver.ResultCursor result)
                         {
                             foreach (Driver.Record item in await result.ToListAsync())
                             {
@@ -659,7 +660,7 @@ namespace Blueprint41
                             Dictionary<string, object?> batch = new Dictionary<string, object?>();
                             batch.Add("Batch", list);
 
-                            Parser.Execute(cypherWrite, batch, true);
+                            Parser.Execute(Parent.Parent, cypherWrite, batch, true);
                         }
 #pragma warning restore S2583 // Conditionally executed code should be reachable
                     }
@@ -845,9 +846,9 @@ namespace Blueprint41
                 if (Parent is Entity entity)
                 {
                     string cypher = $"MATCH (n:{entity.Label.Name}) WHERE n.{Name} IS NULL RETURN count(n) as count";
-                    Parser.Execute(cypher, null, true, delegate(Driver.ResultCursor result)
+                    Parser.Execute(Parent.Parent, cypher, null, true, delegate(driver.ResultCursor result)
                     {
-                        IDictionary<string, object> record = result.First();
+                        driver.Record? record = Parent.Parent.PersistenceProvider.TaskScheduler.RunBlocking(result.First, "Property.MakeMandatory()");
                         bool hasNullProperty = record["count"].As<long>() > 0;
                         if (hasNullProperty)
                             throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", entity.Name, Name));
@@ -857,9 +858,9 @@ namespace Blueprint41
                 else if (Parent is Relationship relationship)
                 {
                     string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
-                    Parser.Execute(cypher, null, true, delegate (Driver.ResultCursor result)
+                    Parser.Execute(Parent.Parent, cypher, null, true, delegate (Driver.ResultCursor result)
                     {
-                        IDictionary<string, object> record = result.First();
+                        driver.Record? record = Parent.Parent.PersistenceProvider.TaskScheduler.RunBlocking(result.First, "Property.MakeMandatory()");
                         bool hasNullProperty = record["count"].As<long>() > 0;
                         if (hasNullProperty)
                             throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", relationship.Name, Name));
@@ -880,7 +881,7 @@ namespace Blueprint41
         {
             Parent.Parent.EnsureSchemaMigration();
 
-            if (Nullable == false)
+            if (!Nullable)
                 throw new NotSupportedException("The property is already mandatory.");
 
             if (PropertyType == PropertyType.Attribute && !(SystemReturnType is null))
