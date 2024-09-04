@@ -456,6 +456,7 @@ namespace Blueprint41
                 return;
 
             PersistenceProvider.SchemaInfo.UpdateConstraints();
+            PersistenceProvider.AfterScript();
         }
 
         /// <summary>
