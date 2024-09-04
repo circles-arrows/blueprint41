@@ -22,6 +22,7 @@ namespace Blueprint41
             //DisableForeignKeyChecks = false;
 
             PersistenceProvider = provider;
+            Attach();
         }
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningSession.Logger?.Log(message);
