@@ -563,12 +563,12 @@ namespace Blueprint41.Persistence
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
                 driver.ResultCursor result = trans.Run(find, parameters);
-                driver.Record? record = RunBlocking(() => result.First(), "PersistenceProvider.AddUnmanaged");
-                int count = record["Count"].As<int>();
+                driver.Record? record = RunBlocking(() => result.FirstOrDefault(), "PersistenceProvider.AddUnmanaged");
+                int count = record?["Count"].As<int>() ?? 0;
                 if (count > 0)
                 {
-                    DateTime? minStartDate = Conversion<long?, DateTime?>.Convert(record["MinStartDate"].As<long?>());
-                    DateTime? maxEndDate = Conversion<long?, DateTime?>.Convert(record["MaxEndDate"].As<long?>());
+                    DateTime? minStartDate = Conversion<long?, DateTime?>.Convert(record?["MinStartDate"].As<long?>());
+                    DateTime? maxEndDate = Conversion<long?, DateTime?>.Convert(record?["MaxEndDate"].As<long?>());
                     if (startDate > minStartDate)
                         startDate = minStartDate ?? DateTime.MinValue;
 

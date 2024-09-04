@@ -6,6 +6,10 @@ namespace Blueprint41.Driver
 {
     public class ResultSummary
     {
+        internal ResultSummary()
+        {
+            _instance = null!;
+        }
         internal ResultSummary(object instance)
         {
             _instance = instance;

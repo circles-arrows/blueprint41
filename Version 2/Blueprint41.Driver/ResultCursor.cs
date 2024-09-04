@@ -15,31 +15,24 @@ namespace Blueprint41.Driver
             _instance = instance;
         }
         internal object? _instance;
-        internal object Instance
-        {
-            get
-            {
-                if (_instance is null)
-                    throw new NotSupportedException("Cannot use void cursor.");
 
-                return _instance;
-            }
-        }
-
-        public Record Current => Driver.I_RESULT_CURSOR.Current(Instance);
-        internal object CurrentInternal => Driver.I_RESULT_CURSOR.CurrentInternal(Instance);
-        public Task<string[]> KeysAsync() => Driver.I_RESULT_CURSOR.KeysAsync(Instance);
-        public Task<ResultSummary> ConsumeAsync() => Driver.I_RESULT_CURSOR.ConsumeAsync(Instance);
-        public Task<Record> PeekAsync() => Driver.I_RESULT_CURSOR.PeekAsync(Instance);
-        internal Task<object> PeekAsyncInternal() => Driver.I_RESULT_CURSOR.PeekAsyncInternal(Instance);
+        public Record Current => IsVoid(Driver.I_RESULT_CURSOR.Current, null!);
+        internal object CurrentInternal => IsVoid(Driver.I_RESULT_CURSOR.CurrentInternal, null!);
+        public Task<string[]> KeysAsync() => IsVoid(Driver.I_RESULT_CURSOR.KeysAsync, voidKeys);
+        public Task<ResultSummary> ConsumeAsync() => IsVoid(Driver.I_RESULT_CURSOR.ConsumeAsync, voidResultSummary);
+        public Task<Record> PeekAsync() => IsVoid(Driver.I_RESULT_CURSOR.PeekAsync, voidRecord);
+        internal Task<object> PeekAsyncInternal() => IsVoid(Driver.I_RESULT_CURSOR.PeekAsyncInternal, voidObject);
 
         public async Task<Counters> Statistics()
         {
+            if (_instance is null)
+                return voidStatistics;
+
             ResultSummary resultSummary = await ConsumeAsync();
             return resultSummary.Counters;
         }
 
-        public Task<bool> FetchAsync() => Driver.I_RESULT_CURSOR.FetchAsync(Instance);
+        public Task<bool> FetchAsync() => IsVoid(Driver.I_RESULT_CURSOR.FetchAsync, voidFalse);
         public async Task<Record> First()
         {
             Record? result = await FirstOrDefault();
@@ -104,5 +97,20 @@ namespace Blueprint41.Driver
 
             return records;
         }
+
+        private T IsVoid<T>(Func<object, T> value, T defaultValue)
+        {
+            if (_instance is null)
+                return defaultValue;
+
+            return value.Invoke(_instance);
+        }
+
+        private static readonly Task<bool> voidFalse = Task.FromResult(false);
+        private static readonly Task<object> voidObject = Task.FromResult<object>(default!);
+        private static readonly Task<Record> voidRecord = Task.FromResult<Record>(default!);
+        private static readonly Task<string[]> voidKeys = Task.FromResult(new string[0]);
+        private static readonly Counters voidStatistics = new Counters();
+        private static readonly Task<ResultSummary> voidResultSummary = Task.FromResult(new ResultSummary());
     }
 }

@@ -365,7 +365,7 @@ namespace Blueprint41
                         }
                         trans.forRetry.Clear();
 
-                        foreach (OGMImpl entity in trans.registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OGMImpl).ToList())
+                        foreach (OGMImpl entity in trans.registeredEntities.Values.SelectMany(item => item.Values).OfType<OGMImpl>().ToList())
                         {
                             if (trans.beforeCommitEntityState.TryGetValue(entity, out var state))
                                 entity.PersistenceState = state;
