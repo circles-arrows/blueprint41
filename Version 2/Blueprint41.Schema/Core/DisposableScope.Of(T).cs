@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Blueprint41.Core
 {
-    public abstract class DisposableScope<T> : IDisposable
+    public abstract class DisposableScope<T> : IDisposable, IAsyncDisposable
         where T : DisposableScope<T>
     {
         protected T Attach()
@@ -72,6 +73,11 @@ namespace Blueprint41.Core
                     isDisposed = true;
                 }
             }
+        }
+        public ValueTask DisposeAsync()
+        {
+            Dispose();
+            return default;
         }
 
         protected virtual void Initialize() { }

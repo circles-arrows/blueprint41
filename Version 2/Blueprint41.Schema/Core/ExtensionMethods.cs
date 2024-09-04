@@ -476,102 +476,102 @@ namespace Blueprint41.Core
 
         private static readonly TypeInfo DictionaryTypeInfo = typeof(IDictionary).GetTypeInfo();
 
-        [return: NotNullIfNotNull("value")]
-        public static T As<T>(this object value)
-        {
-            if (value is null)
-            {
-                if (default(T) is null)
-                {
-                    return default!;
-                }
-                throw new InvalidCastException($"Unable to cast `null` to `{typeof(T)}`.");
-            }
-            if (value is T)
-            {
-                return (T)value;
-            }
+        //[return: NotNullIfNotNull("value")]
+        //public static T As<T>(this object value)
+        //{
+        //    if (value is null)
+        //    {
+        //        if (default(T) is null)
+        //        {
+        //            return default!;
+        //        }
+        //        throw new InvalidCastException($"Unable to cast `null` to `{typeof(T)}`.");
+        //    }
+        //    if (value is T)
+        //    {
+        //        return (T)value;
+        //    }
 
-            if (AsRegistered(value, out T converted))
-                return converted;
+        //    if (AsRegistered(value, out T converted))
+        //        return converted;
 
-            Type type = value.GetType();
-            Type type2 = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-            if (type2 == typeof(string))
-            {
-                return value.ToString()!.AsItIs<T>();
-            }
-            if (type2 == typeof(short))
-            {
-                return Convert.ToInt16(value).AsItIs<T>();
-            }
-            if (type2 == typeof(int))
-            {
-                return Convert.ToInt32(value).AsItIs<T>();
-            }
-            if (type2 == typeof(long))
-            {
-                return Convert.ToInt64(value).AsItIs<T>();
-            }
-            if (type2 == typeof(float))
-            {
-                return Convert.ToSingle(value, CultureInfo.InvariantCulture).AsItIs<T>();
-            }
-            if (type2 == typeof(double))
-            {
-                return Convert.ToDouble(value, CultureInfo.InvariantCulture).AsItIs<T>();
-            }
-            if (type2 == typeof(sbyte))
-            {
-                return Convert.ToSByte(value).AsItIs<T>();
-            }
-            if (type2 == typeof(ulong))
-            {
-                return Convert.ToUInt64(value).AsItIs<T>();
-            }
-            if (type2 == typeof(uint))
-            {
-                return Convert.ToUInt32(value).AsItIs<T>();
-            }
-            if (type2 == typeof(ushort))
-            {
-                return Convert.ToUInt16(value).AsItIs<T>();
-            }
-            if (type2 == typeof(byte))
-            {
-                return Convert.ToByte(value).AsItIs<T>();
-            }
-            if (type2 == typeof(char))
-            {
-                return Convert.ToChar(value).AsItIs<T>();
-            }
-            if (type2 == typeof(bool))
-            {
-                return Convert.ToBoolean(value).AsItIs<T>();
-            }
-            if (value is IConvertible)
-            {
-                return Convert.ChangeType(value, type2).AsItIs<T>();
-            }
-            TypeInfo typeInfo = type2.GetTypeInfo();
-            IDictionary? dict;
-            if (DictionaryTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (dict = (value as IDictionary)) is not null)
-            {
-                return dict.AsDictionary<T>(typeInfo);
-            }
-            IEnumerable? value2;
-            if (EnumerableTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (value2 = (value as IEnumerable)) is not null)
-            {
-                return value2.AsList<T>(typeInfo);
-            }
-            throw new InvalidCastException($"Unable to cast object of type `{type}` to type `{typeof(T)}`.");
-        }
+        //    Type type = value.GetType();
+        //    Type type2 = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+        //    if (type2 == typeof(string))
+        //    {
+        //        return value.ToString()!.AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(short))
+        //    {
+        //        return Convert.ToInt16(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(int))
+        //    {
+        //        return Convert.ToInt32(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(long))
+        //    {
+        //        return Convert.ToInt64(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(float))
+        //    {
+        //        return Convert.ToSingle(value, CultureInfo.InvariantCulture).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(double))
+        //    {
+        //        return Convert.ToDouble(value, CultureInfo.InvariantCulture).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(sbyte))
+        //    {
+        //        return Convert.ToSByte(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(ulong))
+        //    {
+        //        return Convert.ToUInt64(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(uint))
+        //    {
+        //        return Convert.ToUInt32(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(ushort))
+        //    {
+        //        return Convert.ToUInt16(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(byte))
+        //    {
+        //        return Convert.ToByte(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(char))
+        //    {
+        //        return Convert.ToChar(value).AsItIs<T>();
+        //    }
+        //    if (type2 == typeof(bool))
+        //    {
+        //        return Convert.ToBoolean(value).AsItIs<T>();
+        //    }
+        //    if (value is IConvertible)
+        //    {
+        //        return Convert.ChangeType(value, type2).AsItIs<T>();
+        //    }
+        //    TypeInfo typeInfo = type2.GetTypeInfo();
+        //    IDictionary? dict;
+        //    if (DictionaryTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (dict = (value as IDictionary)) is not null)
+        //    {
+        //        return dict.AsDictionary<T>(typeInfo);
+        //    }
+        //    IEnumerable? value2;
+        //    if (EnumerableTypeInfo.IsAssignableFrom(typeInfo) && typeInfo.IsGenericType && (value2 = (value as IEnumerable)) is not null)
+        //    {
+        //        return value2.AsList<T>(typeInfo);
+        //    }
+        //    throw new InvalidCastException($"Unable to cast object of type `{type}` to type `{typeof(T)}`.");
+        //}
 
-        [return: NotNullIfNotNull("value")]
-        internal static T ValueAs<T>(this object value)
-        {
-            return value.As<T>();
-        }
+        //[return: NotNullIfNotNull("value")]
+        //internal static T ValueAs<T>(this object value)
+        //{
+        //    return value.As<T>();
+        //}
 
         [return: NotNullIfNotNull("dict")]
         private static T AsDictionary<T>(this IDictionary dict, TypeInfo typeInfo)
@@ -609,7 +609,7 @@ namespace Blueprint41.Core
 
         private static MethodInfo GetInvocableAsMethod(params Type[] genericParameters)
         {
-            return typeof(ExtensionMethods).GetRuntimeMethod(nameof(ExtensionMethods.As), genericParameters)!.MakeGenericMethod(genericParameters);
+            return typeof(ValueExtensions).GetRuntimeMethod(nameof(ValueExtensions.As), genericParameters)!.MakeGenericMethod(genericParameters);
         }
 
         [return: NotNullIfNotNull("value")]
