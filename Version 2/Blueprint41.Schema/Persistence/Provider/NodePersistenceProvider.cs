@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Events;
-using Blueprint41.Persistence;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Persistence
 {
@@ -16,6 +16,8 @@ namespace Blueprint41.Persistence
             PersistenceProvider = datastoreModel.PersistenceProvider;
         }
         public PersistenceProvider PersistenceProvider { get; private set; }
+        private void RunBlocking(Func<Task> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
+        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
 
         public List<T> GetAll<T>(Entity entity)
             where T : class, OGM
@@ -28,7 +30,7 @@ namespace Blueprint41.Persistence
             return LoadWhere<T>(entity, string.Empty, null, page, pageSize, ascending, orderBy);
         }
 
-        public async void Load(OGM item, bool locked = false)
+        public void Load(OGM item, bool locked = false)
         {
             Transaction trans = Transaction.RunningTransaction;
 
@@ -40,9 +42,9 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = item.GetEntity().RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
 
-            var result = await trans.Run(args.Cypher, args.Parameters);
+            var result = trans.Run(args.Cypher, args.Parameters);
 
-            Driver.Record? record = await result.FirstOrDefault();
+            Driver.Record? record = RunBlocking(result.FirstOrDefault, "Provider.Load(OGM item)");
             if (record is null || record["node"] is null)
             {
                 item.PersistenceState = PersistenceState.DoesntExist;
@@ -66,7 +68,7 @@ namespace Blueprint41.Persistence
             }
         }
 
-        public async Task Delete(OGM item)
+        public void Delete(OGM item)
         {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
@@ -88,8 +90,8 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            var result = await trans.Run(args.Cypher, args.Parameters);
-            var counters = await result.Statistics();
+            var result = trans.Run(args.Cypher, args.Parameters);
+            var counters = RunBlocking(result.Statistics, "NodePersistenceProvider.Delete(OGM item)");
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
@@ -97,7 +99,7 @@ namespace Blueprint41.Persistence
             item.PersistenceState = PersistenceState.Deleted;
         }
 
-        public async Task ForceDelete(OGM item)
+        public void ForceDelete(OGM item)
         {
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
@@ -119,8 +121,8 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            var result = await trans.Run(args.Cypher, args.Parameters);
-            var counters = await result.Statistics();
+            var result = trans.Run(args.Cypher, args.Parameters);
+            var counters =  RunBlocking(result.Statistics, "NodePersistenceProvider.ForceDelete(OGM item)");
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
@@ -133,7 +135,7 @@ namespace Blueprint41.Persistence
             Transaction trans = Transaction.RunningTransaction;
             Entity entity = item.GetEntity();
 
-            string labels = string.Join(":", entity.GetBaseTypesAndSelf().Where(x => x.IsVirtual == false).Select(x => x.Label.Name));
+            string labels = string.Join(":", entity.GetBaseTypesAndSelf().Where(x => !x.IsVirtual).Select(x => x.Label.Name));
 
             if (entity.RowVersion is not null)
                 item.SetRowVersion(trans.TransactionDate);
@@ -173,7 +175,7 @@ namespace Blueprint41.Persistence
             var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
             var result = trans.Run(args.Cypher, args.Parameters);
-            IDictionary<string, object>? record = result.FirstOrDefault();
+            driver.Record? record = RunBlocking(result.FirstOrDefault, "NodePersistenceProvider.Insert(OGM item)");
             if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
@@ -218,8 +220,8 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
 
-            RawResult result = trans.Run(args.Cypher, args.Parameters);
-            if (!result.Statistics().ContainsUpdates)
+            driver.ResultCursor result = trans.Run(args.Cypher, args.Parameters);
+            if (!GetStatistics(result).ContainsUpdates)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
             entity.RaiseOnNodeUpdated(trans, args);
@@ -231,8 +233,8 @@ namespace Blueprint41.Persistence
             if (functionalId is null)
                 throw new ArgumentNullException("functionalId");
 
-            var result = Transaction.RunningTransaction.Run(NextFunctionalIdQuery(functionalId)).First();
-            return result["key"]?.ToString()!;
+            driver.Record result = RunBlocking(() => Transaction.RunningTransaction.Run(NextFunctionalIdQuery(functionalId)).First(), "NodePersistenceProvider.NextFunctionID(FunctionalId functionalId)");
+            return result["key"].ToString()!;
         }
         private string NextFunctionalIdQuery(FunctionalId functionalId)
         {
@@ -272,7 +274,7 @@ namespace Blueprint41.Persistence
 
                 sb.Append(" ORDER BY ");
                 sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
-                if (ascending == false)
+                if (!ascending)
                     sb.Append(" DESC ");
             }
 
@@ -319,7 +321,7 @@ namespace Blueprint41.Persistence
 
         //        sb.Append(" ORDER BY ");
         //        sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
-        //        if (ascending == false)
+        //        if (!ascending)
         //            sb.Append(" DESC ");
         //    }
 
@@ -338,13 +340,13 @@ namespace Blueprint41.Persistence
         //    return Load<T>(entity, args, result, trans);
         //}
 
-        private async Task<List<T>> Load<T>(Entity entity, NodeEventArgs args, Driver.ResultCursor result, Transaction trans)
+        private List<T> Load<T>(Entity entity, NodeEventArgs args, Driver.ResultCursor result, Transaction trans)
             where T : class, OGM
         {
             IReadOnlyList<Entity> concretes = entity.GetConcreteClasses();
 
             List<T> items = new List<T>();
-            foreach (var record in await result.ToListAsync())
+            foreach (var record in RunBlocking(result.ToListAsync, "NodePersistenceProvider.Load<T>(Entity entity, NodeEventArgs args, Driver.ResultCursor result, Transaction trans)"))
             {
                 var node = record["node"]?.As<RawNode>();
                 if (node is null)
@@ -427,7 +429,7 @@ namespace Blueprint41.Persistence
             List<string> queries = new List<string>();
             foreach (var property in fullTextProperties)
             {
-                if (entity.FullTextIndexProperties.Contains(property) == false)
+                if (!entity.FullTextIndexProperties.Contains(property))
                     throw new ArgumentException("Property {0} is not included in the full text index.");
 
                 queries.Add(string.Format("({0}.{1}:{2})", entity.Label.Name, property.Name, search));
@@ -460,7 +462,7 @@ namespace Blueprint41.Persistence
 
                 sb.Append(" ORDER BY ");
                 sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
-                if (ascending == false)
+                if (!ascending)
                     sb.Append(" DESC ");
             }
 
@@ -498,7 +500,12 @@ namespace Blueprint41.Persistence
             parameters.Add("key", item.GetKey());
 
             var result = Transaction.RunningTransaction.Run(match, parameters);
-            return result.Any();
+            return RunBlocking(result.FirstOrDefault, "NodePersistenceProvider.RelationshipExists(EntityProperty foreignProperty, OGM item)") is not null;
+        }
+
+        private driver.Counters GetStatistics(driver.ResultCursor result)
+        {
+            return RunBlocking(result.Statistics, "NodePersistenceProvider.GetStatistics(ResultCursor result)");
         }
     }
 }

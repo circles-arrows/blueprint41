@@ -60,15 +60,15 @@ namespace Blueprint41.Persistence
         public override string FtiSeparator => ", ";
         public override string FtiRemove => "CALL db.index.fulltext.drop(\"fts\")";
         public override string FtiList => "SHOW FULLTEXT INDEXES";
-        internal override async void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
+        internal override void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)
         {
-            if (await HasFullTextSearchIndexes())
+            if (HasFullTextSearchIndexes())
             {
                 try
                 {
                     using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                     {
-                        await Transaction.RunningTransaction.Run(FtiRemove);
+                        Transaction.RunningTransaction.Run(FtiRemove);
                         Transaction.Commit();
                     }
                 }
@@ -97,7 +97,7 @@ namespace Blueprint41.Persistence
                     );
                 string query = string.Format(FtiCreate, e, p);
 
-                await Transaction.RunningTransaction.Run(query);
+                Transaction.RunningTransaction.Run(query);
                 Transaction.Commit();
             }
         }

@@ -25,10 +25,10 @@ namespace Blueprint41.Persistence
 
         #region Full Text Indexes
 
-        internal override Task<bool> HasFullTextSearchIndexes()
+        internal override bool HasFullTextSearchIndexes()
         {
             //TODO: memgraph does not support Full-Text search indexes
-            return Task.FromResult(false);
+            return false;
         }
 
         internal override void ApplyFullTextSearchIndexes(IEnumerable<Entity> entities)

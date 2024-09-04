@@ -40,6 +40,14 @@ namespace Blueprint41.Driver
         }
 
         public Task<bool> FetchAsync() => Driver.I_RESULT_CURSOR.FetchAsync(Instance);
+        public async Task<Record> First()
+        {
+            Record? result = await FirstOrDefault();
+            if (result is null)
+                throw new InvalidOperationException("Sequence contains no elements");
+
+            return result;
+        }
         public async Task<Record?> FirstOrDefault()
         {
             if (_instance is not null && await FetchAsync())
@@ -47,6 +55,7 @@ namespace Blueprint41.Driver
 
             return null;
         }
+
         public async Task<List<Record>> ToListAsync()
         {
             List<Record> records = new List<Record>(64);
@@ -59,6 +68,18 @@ namespace Blueprint41.Driver
 
             return records;
         }
+        public async Task<List<T>> ToListAsync<T>(Func<Record, T> selector)
+        {
+            List<T> records = new List<T>(64);
+
+            if (_instance is not null)
+            {
+                while (await FetchAsync())
+                    records.Add(selector.Invoke(Current));
+            }
+
+            return records;
+        }
         internal async Task<List<object>> ToListAsyncInternal()
         {
             List<object> records = new List<object>(64);
@@ -67,6 +88,18 @@ namespace Blueprint41.Driver
             {
                 while (await FetchAsync())
                     records.Add(CurrentInternal);
+            }
+
+            return records;
+        }
+        internal async Task<List<T>> ToListAsyncInternal<T>(Func<object, T> selector)
+        {
+            List<T> records = new List<T>(64);
+
+            if (_instance is not null)
+            {
+                while (await FetchAsync())
+                    records.Add(selector.Invoke(CurrentInternal));
             }
 
             return records;

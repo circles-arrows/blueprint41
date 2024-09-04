@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Blueprint41.Refactoring;
 using Blueprint41.Refactoring.Schema;
 using driver = Blueprint41.Driver;
+using System.Threading.Tasks;
 
 namespace Blueprint41.Persistence
 {
@@ -120,7 +121,7 @@ namespace Blueprint41.Persistence
             {
                 using (NewTransaction(ReadWriteMode.ReadOnly))
                 {
-                    var components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
+                    var components = RunBlocking(() => Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First(), "PersistenceProvider.Initialize()");
 
                     string d = components["name"].As<string>();
                     // Test and throw instead of just retrieving it???
@@ -170,7 +171,7 @@ namespace Blueprint41.Persistence
         }
         protected HashSet<string> procedures = new HashSet<string>();
 
-        private async void FetchDatabaseInfo()
+        private void FetchDatabaseInfo()
         {
             if (IsVoidProvider)
                 return;
@@ -179,8 +180,7 @@ namespace Blueprint41.Persistence
             {
                 using (NewTransaction(ReadWriteMode.ReadOnly))
                 {
-                    var components = await Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition");
-                    var record = components.First();
+                    var record = RunBlocking(() => Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First(), "PersistenceProvider.FetchDatabaseInfo()");
 
                     //DBMSName = components["name"].As<string>();
                     // Test and throw instead of just retrieving it???
@@ -207,13 +207,17 @@ namespace Blueprint41.Persistence
 
         private void LoadDbmsFunctions()
         {
-            functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(DatastoreTechnology, Major))
-                .Select(item => item["name"].As<string>()));
+            functions = new HashSet<string>(
+                RunBlocking(() => Transaction.RunningTransaction.Run(GetFunctions(DatastoreTechnology, Major))
+                    .ToListAsync(item => item["name"].As<string>()), "PersistenceProvider.LoadDbmsFunctions()")
+                );
         }
         private void LoadDbmsProcedures()
         {
-            procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(DatastoreTechnology, Major))
-                .Select(item => item["name"].As<string>()));
+            procedures = new HashSet<string>(
+                RunBlocking(() => Transaction.RunningTransaction.Run(GetProcedures(DatastoreTechnology, Major))
+                    .ToListAsync(item => item["name"].As<string>()), "PersistenceProvider.LoadDbmsFunctions()")
+                );
         }
 
         private QueryTranslator DetermineTranslator()
@@ -449,6 +453,9 @@ namespace Blueprint41.Persistence
 
         internal DatastoreModel DatastoreModel { get; private set; }
 
+        private void RunBlocking(Func<Task> work, string description) => TaskScheduler.RunBlocking(work, description);
+        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => TaskScheduler.RunBlocking(work, description);
+
         internal virtual NodePersistenceProvider NodePersistenceProvider => GetOrInit(ref _nodePersistenceProvider, delegate ()
         {
             return new NodePersistenceProvider(DatastoreModel);
@@ -528,5 +535,42 @@ namespace Blueprint41.Persistence
         private static readonly object _syncObject = new object();
 
         #endregion Factory
+
+        internal CustomTaskScheduler TaskScheduler
+        {
+            get
+            {
+                if (taskScheduler is null)
+                {
+                    lock (sync)
+                    {
+                        if (taskScheduler is null)
+                        {
+                            CustomTaskQueueOptions main = new CustomTaskQueueOptions(10, 50);
+                            CustomTaskQueueOptions sub = new CustomTaskQueueOptions(4, 20);
+                            taskScheduler = new CustomThreadSafeTaskScheduler(main, sub);
+                        }
+                    }
+                }
+
+                return taskScheduler;
+            }
+        }
+        private CustomTaskScheduler? taskScheduler = null;
+        private static readonly object sync = new object();
+
+        public PersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue) => ConfigureTaskScheduler(mainQueue, CustomTaskQueueOptions.Disabled);
+        public PersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue, CustomTaskQueueOptions subQueue)
+        {
+            lock (sync)
+            {
+                if (taskScheduler is not null)
+                    throw new InvalidOperationException("You can only configure the TaskScheduler during initialization of Blueprint41.");
+
+                taskScheduler = new CustomThreadSafeTaskScheduler(mainQueue, subQueue);
+            }
+
+            return this;
+        }
     }
 }
