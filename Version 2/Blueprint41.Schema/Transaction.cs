@@ -34,7 +34,7 @@ namespace Blueprint41
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningTransaction.Logger?.Log(message);
 
-        protected async override void Initialize()
+        protected override void Initialize()
         {
             DriverSession = PersistenceProvider.Driver.Session(c =>
             {
@@ -48,7 +48,7 @@ namespace Blueprint41
                 //    c.WithBookmarks(Consistency.Select(item => item.ToBookmark()).ToArray());
             });
 
-            DriverTransaction = await DriverSession.BeginTransactionAsync();
+            DriverTransaction = DriverSession.BeginTransaction();
 
             StatementRunner = DriverTransaction;
             base.Initialize();
