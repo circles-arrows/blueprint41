@@ -57,7 +57,7 @@ namespace Blueprint41.Refactoring
                     driver.ResultCursor result = Parser.PrivateExecute(cypher, parameters);
                     Transaction.Commit();
 
-                    counters = model.PersistenceProvider.TaskScheduler.RunBlocking(result.Statistics, "Parser.ExecuteBatched(DatastoreModel model, string cypher, Dictionary<string, object?>? parameters)");
+                    counters = result.Statistics();
                 }
             }
             while (counters.ContainsUpdates);

@@ -435,37 +435,37 @@ namespace System
             return self.ContinueWith(task => callback.Invoke(task.GetAwaiter().GetResult()));
         }
 
-        public static string? GetAsyncTaskDescription(this Task task)
-        {
-            Delegate? action = getActionDelegate.Value.Invoke(task);
-            if (action is null)
-                return null;
+        //public static string? GetAsyncTaskDescription(this Task task)
+        //{
+        //    Delegate? action = getActionDelegate.Value.Invoke(task);
+        //    if (action is null)
+        //        return null;
 
-            return SanitizeName(action.Method.Name, action.Method.ReturnType.Name);
+        //    return SanitizeName(action.Method.Name, action.Method.ReturnType.Name);
 
-            static string? SanitizeName(string name, string returns)
-            {
-                if (name.First() != '<')
-                    return null;
+        //    static string? SanitizeName(string name, string returns)
+        //    {
+        //        if (name.First() != '<')
+        //            return null;
 
-                int index = name.IndexOf('>');
-                if (index == -1)
-                    return null;
+        //        int index = name.IndexOf('>');
+        //        if (index == -1)
+        //            return null;
 
-                return $"async callback from method '{name.Substring(1, index - 1)}', returning type '{returns}'.";
-            }
-        }
-        private static Lazy<Func<Task, Delegate?>> getActionDelegate = new Lazy<Func<Task, Delegate?>>(delegate ()
-        {
-            FieldInfo field = typeof(Task).GetField("m_action", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new MissingFieldException();
+        //        return $"async callback from method '{name.Substring(1, index - 1)}', returning type '{returns}'.";
+        //    }
+        //}
+        //private static Lazy<Func<Task, Delegate?>> getActionDelegate = new Lazy<Func<Task, Delegate?>>(delegate ()
+        //{
+        //    FieldInfo field = typeof(Task).GetField("m_action", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new MissingFieldException();
 
 
-            ParameterExpression parameter = Expression.Parameter(typeof(Task), "task");
-            Expression accessField = Expression.Convert(Expression.Field(parameter, field), typeof(Delegate));
+        //    ParameterExpression parameter = Expression.Parameter(typeof(Task), "task");
+        //    Expression accessField = Expression.Convert(Expression.Field(parameter, field), typeof(Delegate));
 
-            return Expression.Lambda<Func<Task, Delegate?>>(accessField, parameter).Compile();
+        //    return Expression.Lambda<Func<Task, Delegate?>>(accessField, parameter).Compile();
 
-        }, true);
+        //}, true);
     }
 }
 namespace Blueprint41.Core

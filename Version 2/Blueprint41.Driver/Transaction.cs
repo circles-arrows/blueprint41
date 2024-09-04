@@ -12,9 +12,13 @@ namespace Blueprint41.Driver
         }
         internal object _instance { get; private set; }
 
+        public void Commit() => Driver.RunBlocking(() => Driver.I_ASYNC_TRANSACTION.CommitAsync(_instance), "Transaction.Commit()");
         public Task CommitAsync() => Driver.I_ASYNC_TRANSACTION.CommitAsync(_instance);
+        public void Rollback() => Driver.RunBlocking(() => Driver.I_ASYNC_TRANSACTION.RollbackAsync(_instance), "Transaction.Rollback()");
         public Task RollbackAsync() => Driver.I_ASYNC_TRANSACTION.RollbackAsync(_instance);
 
+        public ResultCursor Run(string query) => Driver.RunBlocking(() => Driver.I_ASYNC_TRANSACTION.RunAsync(_instance, query), "Transaction.Run(string query)");
+        public ResultCursor Run(string query, Dictionary<string, object?> parameters) => Driver.RunBlocking(() => Driver.I_ASYNC_TRANSACTION.RunAsync(_instance, query, parameters), "Transaction.Run(string query, Dictionary<string, object?> parameters)");
         public Task<ResultCursor> RunAsync(string query) => Driver.I_ASYNC_TRANSACTION.RunAsync(_instance, query);
         public Task<ResultCursor> RunAsync(string query, Dictionary<string, object?> parameters) => Driver.I_ASYNC_TRANSACTION.RunAsync(_instance, query, parameters);
 

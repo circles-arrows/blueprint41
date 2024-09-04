@@ -19,9 +19,6 @@ namespace Blueprint41.Persistence
         }
 
         public PersistenceProvider PersistenceProvider { get; private set; }
-        private void RunBlocking(Func<Task> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
-        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
-
 
         #region Compile Query Parts
 
@@ -751,7 +748,7 @@ namespace Blueprint41.Persistence
             using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
             {
                 var result = Transaction.RunningTransaction.Run(FtiList);
-                return RunBlocking(result.FirstOrDefault, "QueryTranslator.HasFullTextSearchIndexes()") is not null;
+                return result.FirstOrDefault() is not null;
             }
         }
 
@@ -799,7 +796,7 @@ namespace Blueprint41.Persistence
             string query = "MATCH (version:RefactorVersion) RETURN version;";
             var result = Transaction.RunningTransaction.Run(query);
 
-            Driver.Record? record = RunBlocking(result.FirstOrDefault, "Translator.HasScript(UpgradeScript script)");
+            Driver.Record? record = result.FirstOrDefault();
             if (record is null)
                 return false;
 
@@ -849,7 +846,7 @@ namespace Blueprint41.Persistence
             string query = "MATCH (version:RefactorVersion) RETURN version.LastRun as LastRun";
             var result = Transaction.RunningTransaction.Run(query);
 
-            driver.Record? record = RunBlocking(result.FirstOrDefault, "QueryTranslator.ShouldRefreshFunctionalIds()");
+            driver.Record? record = result.FirstOrDefault();
             if (record is null)
                 return true;
 

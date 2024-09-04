@@ -28,11 +28,19 @@ namespace Blueprint41.Driver
             return GRAPH_DATABASE.Driver(uri, authToken, configBuilder);
         }
 
-        public Session AsyncSession() => I_DRIVER.AsyncSession(this);
-        public Session AsyncSession(Action<SessionConfigBuilder> configBuilder) => I_DRIVER.AsyncSession(this, configBuilder);
+        public Session Session() => I_DRIVER.AsyncSession(this);
+        public Session Session(Action<SessionConfigBuilder> configBuilder) => I_DRIVER.AsyncSession(this, configBuilder);
 
-        public static void Configure<TDriverInterface>()
+
+        public static void Configure<TDriverInterface>() => Configure<TDriverInterface>(new CustomTaskQueueOptions(10, 50), new CustomTaskQueueOptions(4, 20));
+        public static void Configure<TDriverInterface>(CustomTaskQueueOptions mainQueue) => Configure<TDriverInterface>(mainQueue, CustomTaskQueueOptions.Disabled);
+        public static void Configure<TDriverInterface>(CustomTaskQueueOptions mainQueue, CustomTaskQueueOptions subQueue)
         {
+            lock (sync)
+            {
+                _taskScheduler = new CustomThreadSafeTaskScheduler(mainQueue, subQueue);
+            }
+
             DriverTypeInfo.SearchAssembly = typeof(TDriverInterface).Assembly;
 
             if (typeof(TDriverInterface) != I_DRIVER.Type)
@@ -1693,6 +1701,35 @@ namespace Blueprint41.Driver
             public object ConvertToNeo4jILogger(ILogger instance) => null!; //_get.Value.Invoke(instance);
             //private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(LOGGER_PROXY, LOGGER_PROXY, "Get", Type<ILogger>.Info), true);
         }
+
+        #endregion
+
+        #region TaskScheduler
+
+        internal static void RunBlocking(Func<Task> work, string description) => TaskScheduler.RunBlocking(work, description);
+        internal static TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => TaskScheduler.RunBlocking(work, description);
+        internal static CustomTaskScheduler TaskScheduler
+        {
+            get
+            {
+                if (_taskScheduler is null)
+                {
+                    lock (sync)
+                    {
+                        if (_taskScheduler is null)
+                        {
+                            CustomTaskQueueOptions main = new CustomTaskQueueOptions(10, 50);
+                            CustomTaskQueueOptions sub = new CustomTaskQueueOptions(4, 20);
+                            _taskScheduler = new CustomThreadSafeTaskScheduler(main, sub);
+                        }
+                    }
+                }
+
+                return _taskScheduler;
+            }
+        }
+        private static CustomTaskScheduler? _taskScheduler = null;
+        private static readonly object sync = new object();
 
         #endregion
 

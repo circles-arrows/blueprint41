@@ -6,10 +6,6 @@ namespace Blueprint41.Driver
 {
     public class Record
     {
-        internal Record()
-        {
-            _instance = null!;
-        }
         internal Record(object instance)
         {
             _instance = instance;

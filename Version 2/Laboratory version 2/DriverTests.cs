@@ -55,7 +55,7 @@ namespace Laboratory
 
             await CleanDB().ConfigureAwait(false);
 
-            await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
+            await using (Session session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
             {
                 foreach (string query in queries)
                 {
@@ -69,7 +69,7 @@ namespace Laboratory
 
             Console.Clear();
 
-            await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Read); config.WithBookmarks(bookmark); }))
+            await using (Session session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Read); config.WithBookmarks(bookmark); }))
             {
                 Dictionary<string, object?> parameters = new Dictionary<string, object?>()
                 {
@@ -97,7 +97,7 @@ namespace Laboratory
 
             await CleanDB().ConfigureAwait(false);
 
-            await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
+            await using (Session session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
             {
                 foreach (string query in queries)
                 {
@@ -151,7 +151,7 @@ namespace Laboratory
             {
                 ResultCursor result;
 
-                await using (Session session = driver.AsyncSession(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
+                await using (Session session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
                 {
                     result = await session.RunAsync("MATCH (n) DETACH DELETE n;").ConfigureAwait(false);
                     await result.ConsumeAsync().ConfigureAwait(false);

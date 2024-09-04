@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace Blueprint41.Core
 {
-    public static class AsyncHelper
+    internal static class AsyncHelper
     {
         private static readonly TaskFactory _myTaskFactory = new
              TaskFactory(CancellationToken.None,

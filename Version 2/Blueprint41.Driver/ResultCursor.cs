@@ -18,12 +18,17 @@ namespace Blueprint41.Driver
 
         public Record Current => IsVoid(Driver.I_RESULT_CURSOR.Current, null!);
         internal object CurrentInternal => IsVoid(Driver.I_RESULT_CURSOR.CurrentInternal, null!);
-        public Task<string[]> KeysAsync() => IsVoid(Driver.I_RESULT_CURSOR.KeysAsync, voidKeys);
-        public Task<ResultSummary> ConsumeAsync() => IsVoid(Driver.I_RESULT_CURSOR.ConsumeAsync, voidResultSummary);
+        public string[] Keys() => Driver.RunBlocking(KeysAsync, "ResultCursor.Keys()");
+        public Task<string[]> KeysAsync() => IsVoid(Driver.I_RESULT_CURSOR.KeysAsync, voidKeysAsync);
+        public ResultSummary Consume() => Driver.RunBlocking(ConsumeAsync, "ResultCursor.Consume()");
+        public Task<ResultSummary> ConsumeAsync() => IsVoid(Driver.I_RESULT_CURSOR.ConsumeAsync, voidResultSummaryAsync);
+        public Record Peek() => Driver.RunBlocking(PeekAsync, "ResultCursor.Peek()");
         public Task<Record> PeekAsync() => IsVoid(Driver.I_RESULT_CURSOR.PeekAsync, voidRecord);
+        internal object PeekInternal() => Driver.RunBlocking(PeekAsyncInternal, "ResultCursor.PeekInternal()");
         internal Task<object> PeekAsyncInternal() => IsVoid(Driver.I_RESULT_CURSOR.PeekAsyncInternal, voidObject);
 
-        public async Task<Counters> Statistics()
+        public Counters Statistics() => Driver.RunBlocking(StatisticsAsync, "ResultCursor.Statistics()");
+        public async Task<Counters> StatisticsAsync()
         {
             if (_instance is null)
                 return voidStatistics;
@@ -32,16 +37,20 @@ namespace Blueprint41.Driver
             return resultSummary.Counters;
         }
 
+        public bool Fetch() => Driver.RunBlocking(FetchAsync, "ResultCursor.Fetch()");
         public Task<bool> FetchAsync() => IsVoid(Driver.I_RESULT_CURSOR.FetchAsync, voidFalse);
-        public async Task<Record> First()
+
+        public Record First() => Driver.RunBlocking(FirstAsync, "ResultCursor.First()");
+        public async Task<Record> FirstAsync()
         {
-            Record? result = await FirstOrDefault();
+            Record? result = await FirstOrDefaultAsync();
             if (result is null)
                 throw new InvalidOperationException("Sequence contains no elements");
 
             return result;
         }
-        public async Task<Record?> FirstOrDefault()
+        public Record? FirstOrDefault() => Driver.RunBlocking(FirstOrDefaultAsync, "ResultCursor.FirstOrDefault()");
+        public async Task<Record?> FirstOrDefaultAsync()
         {
             if (_instance is not null && await FetchAsync())
                 return Current;
@@ -49,6 +58,8 @@ namespace Blueprint41.Driver
             return null;
         }
 
+        public List<Record> ToList() => Driver.RunBlocking(ToListAsync, "ResultCursor.ToList()");
+        public List<T> ToList<T>(Func<Record, T> selector) => Driver.RunBlocking(() => ToListAsync(selector), "ResultCursor.ToList<T>(Func<Record, T> selector)");
         public async Task<List<Record>> ToListAsync()
         {
             List<Record> records = new List<Record>(64);
@@ -73,6 +84,10 @@ namespace Blueprint41.Driver
 
             return records;
         }
+
+        internal List<object> ToListInternal() => Driver.RunBlocking(ToListAsyncInternal, "ResultCursor.ToListInternal()");
+        internal List<T> ToListInternal<T>(Func<object, T> selector) => Driver.RunBlocking(() => ToListAsyncInternal(selector), "ResultCursor.ToListInternal<T>(Func<object, T> selector)");
+
         internal async Task<List<object>> ToListAsyncInternal()
         {
             List<object> records = new List<object>(64);
@@ -109,8 +124,8 @@ namespace Blueprint41.Driver
         private static readonly Task<bool> voidFalse = Task.FromResult(false);
         private static readonly Task<object> voidObject = Task.FromResult<object>(default!);
         private static readonly Task<Record> voidRecord = Task.FromResult<Record>(default!);
-        private static readonly Task<string[]> voidKeys = Task.FromResult(new string[0]);
+        private static readonly Task<string[]> voidKeysAsync = Task.FromResult(new string[0]);
         private static readonly Counters voidStatistics = new Counters();
-        private static readonly Task<ResultSummary> voidResultSummary = Task.FromResult(new ResultSummary());
+        private static readonly Task<ResultSummary> voidResultSummaryAsync = Task.FromResult(new ResultSummary());
     }
 }

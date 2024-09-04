@@ -48,7 +48,7 @@ namespace Blueprint41.Refactoring.Schema
                 {
                     retry = false;
                     driver.ResultCursor result = runner.Run(procedure);
-                    var records = RunBlocking(result.ToListAsync, "SchemaInfo.LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)");
+                    var records = result.ToList();
 #pragma warning disable CS0618 // Type or member is obsolete
                     data = records.Select(item => processor.Invoke(item.Values.ToDictionary(k => k.Key, v => v.Value!))).ToArray();
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -289,9 +289,5 @@ namespace Blueprint41.Refactoring.Schema
 
             return commands;
         }
-
-        protected void RunBlocking(Func<Task> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
-        protected TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
-
     }
 }
