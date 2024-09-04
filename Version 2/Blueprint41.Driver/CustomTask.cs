@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Blueprint41.Core
 {
-    public sealed class CustomTask
+    internal sealed class CustomTask
     {
         internal CustomTask(Task task, string? description, List<CustomTask>? waitsFor = null)
         {
             MainTask = this;
             Task = task;
             Type = (description is null) ? CustomTaskQueueType.Sub : CustomTaskQueueType.Main;
-            Description = description ?? task.GetAsyncTaskDescription() ?? "Unknown task";
+            Description = description ?? GetAsyncTaskDescription(task) ?? "Unknown task";
 
             antecedentTasks = waitsFor ?? new List<CustomTask>(0);
             foreach (CustomTask successor in successiveTasks)
@@ -39,12 +42,45 @@ namespace Blueprint41.Core
             subTask.ParentTask = parentTask;
             subTask.MainTask = parentTask.MainTask;
 
-            string? description = subTask.Task.GetAsyncTaskDescription();
+            string? description = GetAsyncTaskDescription(subTask.Task);
             if (string.IsNullOrEmpty(description))
                 subTask.Description = parentTask.MainTask.Description;
             else
                 subTask.Description = $"{parentTask.MainTask.Description} ({description})";
         }
+
+        private static string? GetAsyncTaskDescription(Task task)
+        {
+            Delegate? action = getActionDelegate.Value.Invoke(task);
+            if (action is null)
+                return null;
+
+            return SanitizeName(action.Method.Name, action.Method.ReturnType.Name);
+
+            static string? SanitizeName(string name, string returns)
+            {
+                if (name.First() != '<')
+                    return null;
+
+                int index = name.IndexOf('>');
+                if (index == -1)
+                    return null;
+
+                return $"async callback from method '{name.Substring(1, index - 1)}', returning type '{returns}'.";
+            }
+
+        }
+        private static Lazy<Func<Task, Delegate?>> getActionDelegate = new Lazy<Func<Task, Delegate?>>(delegate ()
+        {
+            FieldInfo field = typeof(Task).GetField("m_action", BindingFlags.Instance | BindingFlags.NonPublic) ?? throw new MissingFieldException();
+
+
+            ParameterExpression parameter = Expression.Parameter(typeof(Task), "task");
+            Expression accessField = Expression.Convert(Expression.Field(parameter, field), typeof(Delegate));
+
+            return Expression.Lambda<Func<Task, Delegate?>>(accessField, parameter).Compile();
+
+        }, true);
 
         public Task Task { get; private set; }
         public CustomTaskQueueType Type { get; private set; }

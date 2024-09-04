@@ -27,8 +27,6 @@ namespace Blueprint41.Persistence
         }
 
         public PersistenceProvider PersistenceProvider { get; private set; }
-        private void RunBlocking(Func<Task> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
-        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
 
         private void Checks(Relationship relationship, OGM? inItem, OGM? outItem)
         {
@@ -89,7 +87,7 @@ namespace Blueprint41.Persistence
             List<CollectionItem> items = new List<CollectionItem>();
             var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
 
-            foreach (var record in RunBlocking(result.ToListAsync, "PersistenceProvider.Load(OGM parent, Core.EntityCollectionBase target)"))
+            foreach (var record in result.ToList())
             {
                 RawNode node = record["out"].As<RawNode>();
                 if (node is null)
@@ -166,7 +164,7 @@ namespace Blueprint41.Persistence
             string cypher = string.Join(" UNION ", fullMatch);
             var result = Transaction.RunningTransaction.Run(cypher, parameters);
             List<CollectionItem> items = new List<CollectionItem>();
-            foreach (var record in RunBlocking(result.ToListAsync, "PersistenceProvider.Load(IEnumerable<OGM> parents, Core.EntityCollectionBase target)"))
+            foreach (var record in result.ToList())
             {
                 DateTime? startDate = null;
                 DateTime? endDate = null;
@@ -209,7 +207,7 @@ namespace Blueprint41.Persistence
             var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
 
             Dictionary<object, List<RawNode>> retval = new Dictionary<object, List<RawNode>>();
-            foreach (var record in RunBlocking(result.ToListAsync, "PersistenceProvider.Load(Entity targetEntity, IEnumerable<object> keys)"))
+            foreach (var record in result.ToList())
             {
                 List<RawNode>? items;
                 if (!retval.TryGetValue(record["key"].As<object>(), out items))
@@ -563,7 +561,7 @@ namespace Blueprint41.Persistence
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
                 driver.ResultCursor result = trans.Run(find, parameters);
-                driver.Record? record = RunBlocking(() => result.FirstOrDefault(), "PersistenceProvider.AddUnmanaged");
+                driver.Record? record = result.FirstOrDefault();
                 int count = record?["Count"].As<int>() ?? 0;
                 if (count > 0)
                 {

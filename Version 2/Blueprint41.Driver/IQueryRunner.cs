@@ -6,6 +6,9 @@ namespace Blueprint41.Driver
 {
     public interface IQueryRunner
     {
+        ResultCursor Run(string query);
+        ResultCursor Run(string query, Dictionary<string, object?> parameters);
+
         Task<ResultCursor> RunAsync(string query);
         Task<ResultCursor> RunAsync(string query, Dictionary<string, object?> parameters);
     }

@@ -166,10 +166,24 @@ namespace Blueprint41.Core
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) => Read(dict => dict.CopyTo(array, arrayIndex));
         public void Add(TKey key, TValue value) => Write(dict => dict.Add(key, value));
         public void Add(KeyValuePair<TKey, TValue> item) => Write(dict => dict.Add(item));
-        public void Add(IEnumerable<KeyValuePair<TKey, TValue>> items) => Write(dict => items.ForEach(item => AddIfNotExists(dict, item)));
+        public void Add(IEnumerable<KeyValuePair<TKey, TValue>> items)
+        {
+            Write(dict =>
+            {
+                foreach (KeyValuePair<TKey, TValue> item in items)
+                    AddIfNotExists(dict, item);
+            });
+        }
         public bool Remove(TKey key) => Write(dict => dict.Remove(key));
         public bool Remove(KeyValuePair<TKey, TValue> item) => Write(dict => dict.Remove(item));
-        public void Remove(IEnumerable<TKey> keys) => Write(dict => keys.ForEach(key => dict.Remove(key)));
+        public void Remove(IEnumerable<TKey> keys)
+        {
+            Write(dict =>
+            {
+                foreach (TKey key in keys)
+                    dict.Remove(key);
+            });
+        }
         public void Clear() => Write(dict => dict.Clear());
 
         public ICollection<TKey> Keys => Read(dict => dict.Keys.ToList());
@@ -229,7 +243,9 @@ namespace Blueprint41.Core
             }, delegate (IDictionary<TKey, TValue> dictWrite)
             {
                 IEnumerable<KeyValuePair<TKey, TValue>> values = valueFactory.Invoke(key);
-                values.ForEach(item => dictWrite.Add(item.Key, item.Value));
+                foreach (var item in values)
+                    dictWrite.Add(item.Key, item.Value);
+
                 return dictWrite[key]; 
             });
         }

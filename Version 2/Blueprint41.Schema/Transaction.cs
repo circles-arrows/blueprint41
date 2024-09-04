@@ -36,7 +36,7 @@ namespace Blueprint41
 
         protected async override void Initialize()
         {
-            DriverSession = PersistenceProvider.Driver.AsyncSession(c =>
+            DriverSession = PersistenceProvider.Driver.Session(c =>
             {
                 if (PersistenceProvider.Database is not null)
                     c.WithDatabase(PersistenceProvider.Database);
@@ -169,7 +169,7 @@ namespace Blueprint41
                 if (StatementRunner is null)
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-                return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
+                return StatementRunner.Run(cypher);
             }
         }
         public virtual driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
@@ -189,9 +189,9 @@ namespace Blueprint41
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
                 if (parameters is null)
-                    return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
+                    return StatementRunner.Run(cypher);
                 else
-                    return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher, parameters), cypher);
+                    return StatementRunner.Run(cypher, parameters);
             }
         }
         protected virtual void ApplyFunctionalId(FunctionalId functionalId)
@@ -206,7 +206,7 @@ namespace Blueprint41
             {
                 string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
                 driver.ResultCursor result = Run(getFidQuery);
-                driver.Record? record = PersistenceProvider.TaskScheduler.RunBlocking(result.FirstOrDefault, "Transaction.ApplyFunctionalId(FunctionalId functionalId)");
+                driver.Record? record = result.FirstOrDefault();
                 long ? currentFid = record?["Sequence"].As<long?>();
                 if (currentFid.HasValue)
                     functionalId.SeenUid(currentFid.Value);

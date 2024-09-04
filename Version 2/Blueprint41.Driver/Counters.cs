@@ -16,19 +16,28 @@ namespace Blueprint41.Driver
         }
         internal object _instance { get; private set; }
 
-        public bool ContainsUpdates => Driver.I_COUNTERS.ContainsUpdates(_instance);
-        public int NodesCreated => Driver.I_COUNTERS.NodesCreated(_instance);
-        public int NodesDeleted => Driver.I_COUNTERS.NodesDeleted(_instance);
-        public int RelationshipsCreated => Driver.I_COUNTERS.RelationshipsCreated(_instance);
-        public int RelationshipsDeleted => Driver.I_COUNTERS.RelationshipsDeleted(_instance);
-        public int PropertiesSet => Driver.I_COUNTERS.PropertiesSet(_instance);
-        public int LabelsAdded => Driver.I_COUNTERS.LabelsAdded(_instance);
-        public int LabelsRemoved => Driver.I_COUNTERS.LabelsRemoved(_instance);
-        public int IndexesAdded => Driver.I_COUNTERS.IndexesAdded(_instance);
-        public int IndexesRemoved => Driver.I_COUNTERS.IndexesRemoved(_instance);
-        public int ConstraintsAdded => Driver.I_COUNTERS.ConstraintsAdded(_instance);
-        public int ConstraintsRemoved => Driver.I_COUNTERS.ConstraintsRemoved(_instance);
-        public int SystemUpdates => Driver.I_COUNTERS.SystemUpdates(_instance);
-        public bool ContainsSystemUpdates => Driver.I_COUNTERS.ContainsSystemUpdates(_instance);
+        public bool ContainsUpdates => IsVoid(Driver.I_COUNTERS.ContainsUpdates, false);
+        public int NodesCreated => IsVoid(Driver.I_COUNTERS.NodesCreated);
+        public int NodesDeleted => IsVoid(Driver.I_COUNTERS.NodesDeleted);
+        public int RelationshipsCreated => IsVoid(Driver.I_COUNTERS.RelationshipsCreated);
+        public int RelationshipsDeleted => IsVoid(Driver.I_COUNTERS.RelationshipsDeleted);
+        public int PropertiesSet => IsVoid(Driver.I_COUNTERS.PropertiesSet);
+        public int LabelsAdded => IsVoid(Driver.I_COUNTERS.LabelsAdded);
+        public int LabelsRemoved => IsVoid(Driver.I_COUNTERS.LabelsRemoved);
+        public int IndexesAdded => IsVoid(Driver.I_COUNTERS.IndexesAdded);
+        public int IndexesRemoved => IsVoid(Driver.I_COUNTERS.IndexesRemoved);
+        public int ConstraintsAdded => IsVoid(Driver.I_COUNTERS.ConstraintsAdded);
+        public int ConstraintsRemoved => IsVoid(Driver.I_COUNTERS.ConstraintsRemoved);
+        public int SystemUpdates => IsVoid(Driver.I_COUNTERS.SystemUpdates);
+        public bool ContainsSystemUpdates => IsVoid(Driver.I_COUNTERS.ContainsSystemUpdates);
+
+        private T IsVoid<T>(Func<object, T> value, T? defaultValue = null)
+            where T : struct
+        {
+            if (_instance is null)
+                return defaultValue ?? default;
+
+            return value.Invoke(_instance);
+        }
     }
 }

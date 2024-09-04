@@ -121,7 +121,7 @@ namespace Blueprint41.Persistence
             {
                 using (NewTransaction(ReadWriteMode.ReadOnly))
                 {
-                    var components = RunBlocking(() => Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First(), "PersistenceProvider.Initialize()");
+                    var components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
 
                     string d = components["name"].As<string>();
                     // Test and throw instead of just retrieving it???
@@ -180,7 +180,7 @@ namespace Blueprint41.Persistence
             {
                 using (NewTransaction(ReadWriteMode.ReadOnly))
                 {
-                    var record = RunBlocking(() => Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First(), "PersistenceProvider.FetchDatabaseInfo()");
+                    var record = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
 
                     //DBMSName = components["name"].As<string>();
                     // Test and throw instead of just retrieving it???
@@ -207,17 +207,11 @@ namespace Blueprint41.Persistence
 
         private void LoadDbmsFunctions()
         {
-            functions = new HashSet<string>(
-                RunBlocking(() => Transaction.RunningTransaction.Run(GetFunctions(DatastoreTechnology, Major))
-                    .ToListAsync(item => item["name"].As<string>()), "PersistenceProvider.LoadDbmsFunctions()")
-                );
+            functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(DatastoreTechnology, Major)).ToList(item => item["name"].As<string>()));
         }
         private void LoadDbmsProcedures()
         {
-            procedures = new HashSet<string>(
-                RunBlocking(() => Transaction.RunningTransaction.Run(GetProcedures(DatastoreTechnology, Major))
-                    .ToListAsync(item => item["name"].As<string>()), "PersistenceProvider.LoadDbmsFunctions()")
-                );
+            procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(DatastoreTechnology, Major)).ToList(item => item["name"].As<string>()));
         }
 
         private QueryTranslator DetermineTranslator()
@@ -453,9 +447,6 @@ namespace Blueprint41.Persistence
 
         internal DatastoreModel DatastoreModel { get; private set; }
 
-        private void RunBlocking(Func<Task> work, string description) => TaskScheduler.RunBlocking(work, description);
-        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => TaskScheduler.RunBlocking(work, description);
-
         internal virtual NodePersistenceProvider NodePersistenceProvider => GetOrInit(ref _nodePersistenceProvider, delegate ()
         {
             return new NodePersistenceProvider(DatastoreModel);
@@ -535,42 +526,5 @@ namespace Blueprint41.Persistence
         private static readonly object _syncObject = new object();
 
         #endregion Factory
-
-        internal CustomTaskScheduler TaskScheduler
-        {
-            get
-            {
-                if (taskScheduler is null)
-                {
-                    lock (sync)
-                    {
-                        if (taskScheduler is null)
-                        {
-                            CustomTaskQueueOptions main = new CustomTaskQueueOptions(10, 50);
-                            CustomTaskQueueOptions sub = new CustomTaskQueueOptions(4, 20);
-                            taskScheduler = new CustomThreadSafeTaskScheduler(main, sub);
-                        }
-                    }
-                }
-
-                return taskScheduler;
-            }
-        }
-        private CustomTaskScheduler? taskScheduler = null;
-        private static readonly object sync = new object();
-
-        public PersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue) => ConfigureTaskScheduler(mainQueue, CustomTaskQueueOptions.Disabled);
-        public PersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue, CustomTaskQueueOptions subQueue)
-        {
-            lock (sync)
-            {
-                if (taskScheduler is not null)
-                    throw new InvalidOperationException("You can only configure the TaskScheduler during initialization of Blueprint41.");
-
-                taskScheduler = new CustomThreadSafeTaskScheduler(mainQueue, subQueue);
-            }
-
-            return this;
-        }
-    }
+     }
 }

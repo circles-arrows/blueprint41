@@ -28,7 +28,7 @@ namespace Blueprint41
 
         protected override void Initialize()
         {
-            DriverSession = PersistenceProvider.Driver.AsyncSession(c =>
+            DriverSession = PersistenceProvider.Driver.Session(c =>
             {
                 if (PersistenceProvider.Database is not null)
                     c.WithDatabase(PersistenceProvider.Database);
@@ -137,7 +137,7 @@ namespace Blueprint41
                 if (StatementRunner is null)
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-                return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
+                return StatementRunner.Run(cypher);
             }
         }
         public virtual driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
@@ -158,9 +158,9 @@ namespace Blueprint41
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
                 if (parameters is null)
-                    return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
+                    return StatementRunner.Run(cypher);
                 else
-                    return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher, parameters), cypher);
+                    return StatementRunner.Run(cypher, parameters);
             }
         }
 

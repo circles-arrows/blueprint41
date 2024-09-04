@@ -320,7 +320,7 @@ namespace Blueprint41.Refactoring.Templates
                     driver.ResultCursor result = Execute();
                     if (result != null)
                     {
-                        driver.Record record = RunBlocking(result.FirstOrDefault, "TemplateBase<TSelf>.Run(bool withTransaction)");
+                        driver.Record record = result.FirstOrDefault();
                         if (record is not null)
                             retval = record["Count"]?.As<long>() ?? 0;
                     }
@@ -334,7 +334,7 @@ namespace Blueprint41.Refactoring.Templates
                     driver.ResultCursor result = Execute();
                     if (result != null)
                     {
-                        driver.Record record = RunBlocking(result.FirstOrDefault, "TemplateBase<TSelf>.Run(bool withTransaction)");
+                        driver.Record record = result.FirstOrDefault();
                         if (record is not null)
                             retval = record["Count"]?.As<long>() ?? 0;
                     }
@@ -357,7 +357,7 @@ namespace Blueprint41.Refactoring.Templates
                     Setup?.Invoke(template);
 
                     driver.ResultCursor result = template.Execute();
-                    counters = RunBlocking(result.Statistics, "TemplateBase<TSelf>.RunBatched()");
+                    counters = result.Statistics();
                     Transaction.Commit();
                 }
             }
@@ -376,9 +376,6 @@ namespace Blueprint41.Refactoring.Templates
             else
                 return Transaction.RunningTransaction.Run(cypher, OutputParameters);
         }
-
-        private void RunBlocking(Func<Task> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
-        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
     }
 
     public abstract class ApplyFunctionalIdBase : TemplateBase<ApplyFunctionalIdBase>

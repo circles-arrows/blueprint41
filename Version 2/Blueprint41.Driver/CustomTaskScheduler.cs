@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Blueprint41.Core
 {
-    public class CustomTaskScheduler : TaskScheduler, IDisposable
+    internal class CustomTaskScheduler : TaskScheduler, IDisposable
     {
         private readonly TaskFactory taskFactory;
 
@@ -214,7 +214,7 @@ namespace Blueprint41.Core
 
         #endregion
     }
-    public class CustomThreadSafeTaskScheduler : CustomTaskScheduler
+    internal class CustomThreadSafeTaskScheduler : CustomTaskScheduler
     {
         public CustomThreadSafeTaskScheduler(CustomTaskQueueOptions? mainQueue = null, CustomTaskQueueOptions? subQueue = null) : base(mainQueue, subQueue) { }
 
@@ -226,5 +226,5 @@ namespace Blueprint41.Core
                 ClearHistory();
         }
     }
-    public delegate void StatusUpdate(int pending);
+    internal delegate void StatusUpdate(int pending);
 }

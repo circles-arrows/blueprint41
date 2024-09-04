@@ -16,8 +16,6 @@ namespace Blueprint41.Persistence
             PersistenceProvider = datastoreModel.PersistenceProvider;
         }
         public PersistenceProvider PersistenceProvider { get; private set; }
-        private void RunBlocking(Func<Task> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
-        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => PersistenceProvider.TaskScheduler.RunBlocking(work, description);
 
         public List<T> GetAll<T>(Entity entity)
             where T : class, OGM
@@ -44,7 +42,7 @@ namespace Blueprint41.Persistence
 
             var result = trans.Run(args.Cypher, args.Parameters);
 
-            Driver.Record? record = RunBlocking(result.FirstOrDefault, "Provider.Load(OGM item)");
+            Driver.Record? record = result.FirstOrDefault();
             if (record is null || record["node"] is null)
             {
                 item.PersistenceState = PersistenceState.DoesntExist;
@@ -91,7 +89,7 @@ namespace Blueprint41.Persistence
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
             var result = trans.Run(args.Cypher, args.Parameters);
-            var counters = RunBlocking(result.Statistics, "NodePersistenceProvider.Delete(OGM item)");
+            var counters = result.Statistics();
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
@@ -122,7 +120,7 @@ namespace Blueprint41.Persistence
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
             var result = trans.Run(args.Cypher, args.Parameters);
-            var counters =  RunBlocking(result.Statistics, "NodePersistenceProvider.ForceDelete(OGM item)");
+            var counters =  result.Statistics();
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
@@ -175,7 +173,7 @@ namespace Blueprint41.Persistence
             var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
             var result = trans.Run(args.Cypher, args.Parameters);
-            driver.Record? record = RunBlocking(result.FirstOrDefault, "NodePersistenceProvider.Insert(OGM item)");
+            driver.Record? record = result.FirstOrDefault();
             if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
@@ -233,7 +231,7 @@ namespace Blueprint41.Persistence
             if (functionalId is null)
                 throw new ArgumentNullException("functionalId");
 
-            driver.Record? result = RunBlocking(() => Transaction.RunningTransaction.Run(NextFunctionalIdQuery(functionalId)).FirstOrDefault(), "NodePersistenceProvider.NextFunctionID(FunctionalId functionalId)");
+            driver.Record? result = Transaction.RunningTransaction.Run(NextFunctionalIdQuery(functionalId)).FirstOrDefault();
             return result?["key"]?.ToString()!;
         }
         private string NextFunctionalIdQuery(FunctionalId functionalId)
@@ -346,7 +344,7 @@ namespace Blueprint41.Persistence
             IReadOnlyList<Entity> concretes = entity.GetConcreteClasses();
 
             List<T> items = new List<T>();
-            foreach (var record in RunBlocking(result.ToListAsync, "NodePersistenceProvider.Load<T>(Entity entity, NodeEventArgs args, Driver.ResultCursor result, Transaction trans)"))
+            foreach (var record in result.ToList())
             {
                 var node = record["node"]?.As<RawNode>();
                 if (node is null)
@@ -500,12 +498,12 @@ namespace Blueprint41.Persistence
             parameters.Add("key", item.GetKey());
 
             var result = Transaction.RunningTransaction.Run(match, parameters);
-            return RunBlocking(result.FirstOrDefault, "NodePersistenceProvider.RelationshipExists(EntityProperty foreignProperty, OGM item)") is not null;
+            return result.FirstOrDefault() is not null;
         }
 
         private driver.Counters GetStatistics(driver.ResultCursor result)
         {
-            return RunBlocking(result.Statistics, "NodePersistenceProvider.GetStatistics(ResultCursor result)");
+            return result.Statistics();
         }
     }
 }

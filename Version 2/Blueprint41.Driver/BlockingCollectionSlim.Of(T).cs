@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Blueprint41.Core
 {
-    public class BlockingCollectionSlim<T> : IDisposable, IEnumerable<T>
+    internal class BlockingCollectionSlim<T> : IDisposable, IEnumerable<T>
     {
         private readonly ConcurrentQueue<T> queue = new ConcurrentQueue<T>();
         private readonly AutoResetEvent itemAdded = new AutoResetEvent(false);
