@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+
 using Blueprint41.Core;
+using Blueprint41.Driver;
 using Blueprint41.Events;
 using Blueprint41.Persistence;
 using driver = Blueprint41.Driver;
@@ -36,16 +38,18 @@ namespace Blueprint41
 
         protected override void Initialize()
         {
+            driver.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? driver.AccessMode.Write : driver.AccessMode.Read;
+
             DriverSession = PersistenceProvider.Driver.Session(c =>
             {
                 if (PersistenceProvider.Database is not null)
                     c.WithDatabase(PersistenceProvider.Database);
 
-                c.WithFetchSize(Driver.ConfigBuilder.Infinite);
-                c.WithDefaultAccessMode(ReadWriteMode == ReadWriteMode.ReadWrite ? Driver.AccessMode.Write : Driver.AccessMode.Read);
+                c.WithFetchSize(ConfigBuilder.Infinite);
+                c.WithDefaultAccessMode(accessMode);
 
-                //if (Consistency is not null)
-                //    c.WithBookmarks(Consistency.Select(item => item.ToBookmark()).ToArray());
+                if (Consistency is not null)
+                    c.WithBookmarks(Consistency);
             });
 
             DriverTransaction = DriverSession.BeginTransaction();
@@ -111,6 +115,8 @@ namespace Blueprint41
 
             return this;
         }
+        protected internal driver.Bookmarks[]? Consistency;
+
 
         public virtual Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
@@ -207,7 +213,7 @@ namespace Blueprint41
                 string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
                 driver.ResultCursor result = Run(getFidQuery);
                 driver.Record? record = result.FirstOrDefault();
-                long ? currentFid = record?["Sequence"].As<long?>();
+                long? currentFid = record?["Sequence"].As<long?>();
                 if (currentFid.HasValue)
                     functionalId.SeenUid(currentFid.Value);
 
