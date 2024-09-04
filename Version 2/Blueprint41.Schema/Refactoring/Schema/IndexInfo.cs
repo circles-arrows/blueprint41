@@ -62,7 +62,11 @@ namespace Blueprint41.Refactoring.Schema
 
         #region Regex
 
+#pragma warning disable S6444
+
         private static readonly Regex index = new Regex(@"^ *index* on *: *(?<entity>[a-z0-9_]+) *\( *(?<field>[a-z0-9_]+) *\) *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+#pragma warning restore S6444
 
         // description                  state       type
         // -----------                  -----       ----

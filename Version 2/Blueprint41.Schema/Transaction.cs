@@ -375,7 +375,7 @@ namespace Blueprint41
                         trans.RetryInternal();
                     }
                     else
-                        throw e;
+                        throw;
                 }
             }
             while (repeat);

@@ -53,7 +53,7 @@ namespace Blueprint41.Persistence
                 throw new NotImplementedException("New entities should be saved first before it can participate in relationships.");
         }
 
-        public async Task<IEnumerable<CollectionItem>> Load(OGM parent, Core.EntityCollectionBase target)
+        public IEnumerable<CollectionItem> Load(OGM parent, Core.EntityCollectionBase target)
         {
             Entity targetEntity = target.ForeignEntity;
             string[] nodeNames = target.Parent.GetEntity().GetDbNames("node");

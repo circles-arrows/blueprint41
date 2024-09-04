@@ -266,17 +266,17 @@ namespace System.Linq
             }
         }
 
-
+#nullable disable
         public static TValue GetValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default!)
         {
-            if (dictionary.TryGetValue(key, out TValue? value))
+            if (dictionary.TryGetValue(key, out TValue value))
                 return value;
 
             return defaultValue;
         }
         public static TValue GetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default!)
         {
-            if (dictionary.TryGetValue(key, out TValue? value))
+            if (dictionary.TryGetValue(key, out TValue value))
                 return value;
 
             return defaultValue;
@@ -296,6 +296,7 @@ namespace System.Linq
             else
                 dictionary.Add(key, value);
         }
+#nullable enable
     }
 }
 namespace System
