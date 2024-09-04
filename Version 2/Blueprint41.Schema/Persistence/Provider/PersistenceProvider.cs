@@ -497,6 +497,11 @@ namespace Blueprint41.Persistence
             }
             throw new NotSupportedException();
         });
+        internal void AfterScript()
+        {
+            _schemaInfo = null;
+            _ = SchemaInfo;
+        }
         private protected SchemaInfo? _schemaInfo = null;
 
         internal virtual QueryTranslator Translator => GetOrInit(ref _translator, delegate ()
