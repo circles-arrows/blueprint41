@@ -93,9 +93,9 @@ namespace Blueprint41.Core
             CollectionChanged?.Invoke(this, eventArgs);
             return result;
         }
-        public bool TryGetValue(TKey key, out TValue? value)
+        public bool TryGetValue(TKey key, out TValue value)
         {
-            return InnerDictionary.TryGetValue(key, out value);
+            return InnerDictionary.TryGetValue(key, out value!);
         }
         IEnumerator IEnumerable.GetEnumerator()
         {

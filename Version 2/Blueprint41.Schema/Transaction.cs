@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-
+using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Persistence;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41
 {
     public class Transaction : DisposableScope<Transaction>, IStatementRunner
     {
+        public driver.Session? DriverSession { get; set; }
+        public driver.Transaction? DriverTransaction { get; set; }
+        public driver.IQueryRunner? StatementRunner { get; set; }
+
         internal Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
@@ -28,6 +33,26 @@ namespace Blueprint41
         }
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningTransaction.Logger?.Log(message);
+
+        protected async override void Initialize()
+        {
+            DriverSession = PersistenceProvider.Driver.AsyncSession(c =>
+            {
+                if (PersistenceProvider.Database is not null)
+                    c.WithDatabase(PersistenceProvider.Database);
+
+                c.WithFetchSize(Driver.ConfigBuilder.Infinite);
+                c.WithDefaultAccessMode(ReadWriteMode == ReadWriteMode.ReadWrite ? Driver.AccessMode.Write : Driver.AccessMode.Read);
+
+                //if (Consistency is not null)
+                //    c.WithBookmarks(Consistency.Select(item => item.ToBookmark()).ToArray());
+            });
+
+            DriverTransaction = await DriverSession.BeginTransactionAsync();
+
+            StatementRunner = DriverTransaction;
+            base.Initialize();
+        }
 
         #region Transaction Logic
 
@@ -87,7 +112,7 @@ namespace Blueprint41
             return this;
         }
 
-        public virtual RawResult Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public virtual Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -96,14 +121,17 @@ namespace Blueprint41
                 if (Logger is not null)
                     Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
-                return new RawResult(0);
+                return Task.FromResult(new driver.ResultCursor());
             }
             else
             {
-                throw new NotImplementedException();
+                if (StatementRunner is null)
+                    throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+                return StatementRunner.RunAsync(cypher);
             }
         }
-        public virtual RawResult Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        public virtual Task<driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -112,11 +140,58 @@ namespace Blueprint41
                 if (Logger is not null)
                     Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
-                return new RawResult(0);
+                return Task.FromResult(new driver.ResultCursor());
             }
             else
             {
-                throw new NotImplementedException();
+                if (StatementRunner is null)
+                    throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+                if (parameters is null)
+                    return StatementRunner.RunAsync(cypher);
+                else
+                    return StatementRunner.RunAsync(cypher, parameters);
+            }
+        }
+        public virtual driver.ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            if (PersistenceProvider.IsVoidProvider)
+            {
+#if DEBUG
+                Logger?.Start();
+                if (Logger is not null)
+                    Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
+#endif
+                return new driver.ResultCursor();
+            }
+            else
+            {
+                if (StatementRunner is null)
+                    throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+                return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
+            }
+        }
+        public virtual driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            if (PersistenceProvider.IsVoidProvider)
+            {
+#if DEBUG
+                Logger?.Start();
+                if (Logger is not null)
+                    Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
+#endif
+                return new driver.ResultCursor();
+            }
+            else
+            {
+                if (StatementRunner is null)
+                    throw new InvalidOperationException("The current transaction was already committed or rolled back.");
+
+                if (parameters is null)
+                    return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher), cypher);
+                else
+                    return PersistenceProvider.TaskScheduler.RunBlocking(() => StatementRunner.RunAsync(cypher, parameters), cypher);
             }
         }
         protected virtual void ApplyFunctionalId(FunctionalId functionalId)
@@ -130,8 +205,9 @@ namespace Blueprint41
             lock (functionalId)
             {
                 string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
-                RawResult result = Run(getFidQuery);
-                long? currentFid = result.FirstOrDefault()?["Sequence"].As<long?>();
+                driver.ResultCursor result = Run(getFidQuery);
+                driver.Record? record = PersistenceProvider.TaskScheduler.RunBlocking(result.FirstOrDefault, "Transaction.ApplyFunctionalId(FunctionalId functionalId)");
+                long ? currentFid = record?["Sequence"].As<long?>();
                 if (currentFid.HasValue)
                     functionalId.SeenUid(currentFid.Value);
 
@@ -299,7 +375,7 @@ namespace Blueprint41
                         trans.RetryInternal();
                     }
                     else
-                        throw e;
+                        throw;
                 }
             }
             while (repeat);

@@ -1389,7 +1389,7 @@ namespace Blueprint41.Driver
             public object Item(object instance, string key) => _item2.Value.GetValue(instance, key);
             private readonly Lazy<InstanceProperty> _item2 = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, Type<object>.Info, "Item", Type<string>.Info), true);
 
-            public IReadOnlyDictionary<string, object?> Values(object instance) => (IReadOnlyDictionary<string, object?>)_values.Value.GetValue(instance);
+            public IReadOnlyDictionary<string, object> Values(object instance) => (IReadOnlyDictionary<string, object>)_values.Value.GetValue(instance);
             private readonly Lazy<InstanceProperty> _values = new Lazy<InstanceProperty>(() => new InstanceProperty(I_RECORD, Type<IReadOnlyDictionary<string, object>>.Info, "Values"), true);
 
             public IReadOnlyList<string> Keys(object instance) => (IReadOnlyList<string>)_keys.Value.GetValue(instance);

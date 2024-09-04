@@ -3,8 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Blueprint41.Core;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Refactoring.Templates
 {
@@ -315,12 +317,12 @@ namespace Blueprint41.Refactoring.Templates
             {
                 using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                 {
-                    RawResult result = Execute();
+                    driver.ResultCursor result = Execute();
                     if (result != null)
                     {
-                        IDictionary<string, object> record = result.FirstOrDefault();
-                        if (record is not null && record.TryGetValue("Count", out object cnt))
-                            retval = cnt.As<long>();
+                        driver.Record record = RunBlocking(result.FirstOrDefault, "TemplateBase<TSelf>.Run(bool withTransaction)");
+                        if (record is not null)
+                            retval = record["Count"]?.As<long>() ?? 0;
                     }
                     Transaction.Commit();
                 }
@@ -329,12 +331,12 @@ namespace Blueprint41.Refactoring.Templates
             {
                 using (DatastoreModel.PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                 {
-                    RawResult result = Execute();
+                    driver.ResultCursor result = Execute();
                     if (result != null)
                     {
-                        IDictionary<string, object> record = result.FirstOrDefault();
-                        if (record is not null && record.TryGetValue("Count", out object cnt))
-                            retval = cnt.As<long>();
+                        driver.Record record = RunBlocking(result.FirstOrDefault, "TemplateBase<TSelf>.Run(bool withTransaction)");
+                        if (record is not null)
+                            retval = record["Count"]?.As<long>() ?? 0;
                     }
                 }
             }
@@ -346,7 +348,7 @@ namespace Blueprint41.Refactoring.Templates
             if (!Parser.ShouldExecute)
                 return;
 
-            RawResultStatistics counters;
+            driver.Counters counters;
             do
             {
                 using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
@@ -354,18 +356,18 @@ namespace Blueprint41.Refactoring.Templates
                     TSelf template = CreateInstance();
                     Setup?.Invoke(template);
 
-                    RawResult result = template.Execute();
-                    counters = result.Statistics();
+                    driver.ResultCursor result = template.Execute();
+                    counters = RunBlocking(result.Statistics, "TemplateBase<TSelf>.RunBatched()");
                     Transaction.Commit();
                 }
             }
             while (counters.ContainsUpdates);
         }
 
-        private RawResult Execute()
+        private driver.ResultCursor Execute()
         {
             if (!Parser.ShouldExecute)
-                return null;
+                return new driver.ResultCursor();
 
             string cypher = TransformText();
 
@@ -374,6 +376,9 @@ namespace Blueprint41.Refactoring.Templates
             else
                 return Transaction.RunningTransaction.Run(cypher, OutputParameters);
         }
+
+        private void RunBlocking(Func<Task> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
+        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
     }
 
     public abstract class ApplyFunctionalIdBase : TemplateBase<ApplyFunctionalIdBase>

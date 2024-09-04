@@ -7,6 +7,7 @@ using Blueprint41.Core;
 using Blueprint41.Refactoring;
 using Blueprint41.Refactoring.Schema;
 using driver = Blueprint41.Driver;
+using System.Threading.Tasks;
 
 namespace Blueprint41.Persistence
 {
@@ -14,6 +15,9 @@ namespace Blueprint41.Persistence
     {
         // Precision (roughly) 10.8
         internal const decimal DECIMAL_FACTOR = 100000000m;
+        private const int MAX_CONNECTION_POOL_SIZE = 400;
+        private const int DEFAULT_READWRITESIZE = 65536;
+        private const int DEFAULT_READWRITESIZE_MAX = 655360;
 
         public TransactionLogger? TransactionLogger { get; private set; }
 
@@ -21,6 +25,40 @@ namespace Blueprint41.Persistence
         public driver.AuthToken? AuthToken { get; private set; }
         public string? Database { get; private set; }
         public AdvancedConfig? AdvancedConfig { get; private set; }
+        private driver.Driver? _driver = null;
+        public driver.Driver Driver
+        {
+            get
+            {
+                if (IsVoidProvider)
+                    throw new NotSupportedException("Cannot use driver when the connection is not specified.");
+
+                if (_driver is null)
+                {
+                    lock (typeof(driver.Driver))
+                    {
+                        if (_driver is null)
+                        {
+                            _driver = driver.Driver.Get(Uri!, AuthToken!, delegate (driver.ConfigBuilder o)
+                            {
+                                o.WithFetchSize(driver.ConfigBuilder.Infinite);
+                                o.WithMaxConnectionPoolSize(MAX_CONNECTION_POOL_SIZE);
+                                o.WithDefaultReadBufferSize(DEFAULT_READWRITESIZE);
+                                o.WithDefaultWriteBufferSize(DEFAULT_READWRITESIZE);
+                                o.WithMaxReadBufferSize(DEFAULT_READWRITESIZE_MAX);
+                                o.WithMaxWriteBufferSize(DEFAULT_READWRITESIZE_MAX);
+                                o.WithMaxTransactionRetryTime(TimeSpan.Zero);
+
+                                //if (AdvancedConfig?.DNSResolverHook is not null)
+                                //    o.WithResolver(new driver.ServerAddressResolver(AdvancedConfig));
+                            });
+                        }
+                    }
+                }
+
+                return _driver;
+            }
+        }
 
 #pragma warning disable IDE0200
         internal protected PersistenceProvider(DatastoreModel model, Uri? uri, driver.AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
@@ -76,7 +114,26 @@ namespace Blueprint41.Persistence
 
         internal void Initialize()
         {
-            throw new NotImplementedException();
+            if (IsVoidProvider)
+                return;
+
+            if (DatastoreTechnology == GDMS.Neo4j)
+            {
+                using (NewTransaction(ReadWriteMode.ReadOnly))
+                {
+                    var components = RunBlocking(() => Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First(), "PersistenceProvider.Initialize()");
+
+                    string d = components["name"].As<string>();
+                    // Test and throw instead of just retrieving it???
+
+                    Version = components["version"].As<string>();
+                    IsEnterpriseEdition = components["edition"].As<string>().ToLowerInvariant() == "enterprise";
+
+                    ParseVersion(Version);
+                    LoadDbmsFunctions();
+                    LoadDbmsProcedures();
+                }
+            }
         }
 
         public GDMS DatastoreTechnology => DatastoreModel.DatastoreTechnology;
@@ -119,19 +176,22 @@ namespace Blueprint41.Persistence
             if (IsVoidProvider)
                 return;
 
-            using (NewTransaction(ReadWriteMode.ReadOnly))
+            if (DatastoreTechnology == GDMS.Neo4j)
             {
-                var components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
+                using (NewTransaction(ReadWriteMode.ReadOnly))
+                {
+                    var record = RunBlocking(() => Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First(), "PersistenceProvider.FetchDatabaseInfo()");
 
-                //DBMSName = components["name"].As<string>();
-                // Test and throw instead of just retrieving it???
+                    //DBMSName = components["name"].As<string>();
+                    // Test and throw instead of just retrieving it???
 
-                Version = components["version"].As<string>();
-                IsEnterpriseEdition = components["edition"].As<string>().ToLowerInvariant() == "enterprise";
+                    Version = record["version"].As<string>();
+                    IsEnterpriseEdition = record["edition"].As<string>().ToLowerInvariant() == "enterprise";
 
-                ParseVersion(Version);
-                LoadDbmsFunctions();
-                LoadDbmsProcedures();
+                    ParseVersion(Version);
+                    LoadDbmsFunctions();
+                    LoadDbmsProcedures();
+                }
             }
         }
 
@@ -147,13 +207,17 @@ namespace Blueprint41.Persistence
 
         private void LoadDbmsFunctions()
         {
-            functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(DatastoreTechnology, Major))
-                .Select(item => item["name"].As<string>()));
+            functions = new HashSet<string>(
+                RunBlocking(() => Transaction.RunningTransaction.Run(GetFunctions(DatastoreTechnology, Major))
+                    .ToListAsync(item => item["name"].As<string>()), "PersistenceProvider.LoadDbmsFunctions()")
+                );
         }
         private void LoadDbmsProcedures()
         {
-            procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(DatastoreTechnology, Major))
-                .Select(item => item["name"].As<string>()));
+            procedures = new HashSet<string>(
+                RunBlocking(() => Transaction.RunningTransaction.Run(GetProcedures(DatastoreTechnology, Major))
+                    .ToListAsync(item => item["name"].As<string>()), "PersistenceProvider.LoadDbmsFunctions()")
+                );
         }
 
         private QueryTranslator DetermineTranslator()
@@ -389,6 +453,9 @@ namespace Blueprint41.Persistence
 
         internal DatastoreModel DatastoreModel { get; private set; }
 
+        private void RunBlocking(Func<Task> work, string description) => TaskScheduler.RunBlocking(work, description);
+        private TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => TaskScheduler.RunBlocking(work, description);
+
         internal virtual NodePersistenceProvider NodePersistenceProvider => GetOrInit(ref _nodePersistenceProvider, delegate ()
         {
             return new NodePersistenceProvider(DatastoreModel);
@@ -468,5 +535,42 @@ namespace Blueprint41.Persistence
         private static readonly object _syncObject = new object();
 
         #endregion Factory
+
+        internal CustomTaskScheduler TaskScheduler
+        {
+            get
+            {
+                if (taskScheduler is null)
+                {
+                    lock (sync)
+                    {
+                        if (taskScheduler is null)
+                        {
+                            CustomTaskQueueOptions main = new CustomTaskQueueOptions(10, 50);
+                            CustomTaskQueueOptions sub = new CustomTaskQueueOptions(4, 20);
+                            taskScheduler = new CustomThreadSafeTaskScheduler(main, sub);
+                        }
+                    }
+                }
+
+                return taskScheduler;
+            }
+        }
+        private CustomTaskScheduler? taskScheduler = null;
+        private static readonly object sync = new object();
+
+        public PersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue) => ConfigureTaskScheduler(mainQueue, CustomTaskQueueOptions.Disabled);
+        public PersistenceProvider ConfigureTaskScheduler(CustomTaskQueueOptions mainQueue, CustomTaskQueueOptions subQueue)
+        {
+            lock (sync)
+            {
+                if (taskScheduler is not null)
+                    throw new InvalidOperationException("You can only configure the TaskScheduler during initialization of Blueprint41.");
+
+                taskScheduler = new CustomThreadSafeTaskScheduler(mainQueue, subQueue);
+            }
+
+            return this;
+        }
     }
 }

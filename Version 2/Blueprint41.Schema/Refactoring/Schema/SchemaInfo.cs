@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Blueprint41.Core;
 using Blueprint41.Persistence;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Refactoring.Schema
 {
@@ -32,7 +34,7 @@ namespace Blueprint41.Refactoring.Schema
         }
         protected IReadOnlyList<string> LoadSimpleData(string procedure, string resultname)
         {
-            return LoadData<string>(procedure, record => record[resultname].As<string>());
+            return LoadData<string>(procedure, record => record[resultname]?.As<string>()!);
         }
         protected IReadOnlyList<T> LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)
         {
@@ -45,8 +47,11 @@ namespace Blueprint41.Refactoring.Schema
                 try
                 {
                     retry = false;
-                    RawResult result = runner.Run(procedure);
-                    data = result.Select(processor).ToArray();
+                    driver.ResultCursor result = runner.Run(procedure);
+                    var records = RunBlocking(result.ToListAsync, "SchemaInfo.LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)");
+#pragma warning disable CS0618 // Type or member is obsolete
+                    data = records.Select(item => processor.Invoke(item.Values.ToDictionary(k => k.Key, v => v.Value!))).ToArray();
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
                 catch (Exception clientException)
                 {
@@ -195,7 +200,7 @@ namespace Blueprint41.Refactoring.Schema
                     {
                         foreach (string query in action.ToCypher())
                         {
-                            Parser.Execute(query, null, !DatastoreModel.PersistenceProvider.IsMemgraph);
+                            Parser.Execute(DatastoreModel, query, null, !DatastoreModel.PersistenceProvider.IsMemgraph);
                         }
                     }
                 }
@@ -284,6 +289,9 @@ namespace Blueprint41.Refactoring.Schema
 
             return commands;
         }
+
+        protected void RunBlocking(Func<Task> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
+        protected TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description) => DatastoreModel.PersistenceProvider.TaskScheduler.RunBlocking(work, description);
 
     }
 }

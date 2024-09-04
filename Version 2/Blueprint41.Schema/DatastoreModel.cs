@@ -15,6 +15,7 @@ using Blueprint41.Refactoring;
 using model = Blueprint41.Model;
 using Blueprint41.Refactoring.Schema;
 using Blueprint41.Persistence;
+using System.Threading.Tasks;
 
 namespace Blueprint41
 {
@@ -384,8 +385,11 @@ namespace Blueprint41
             public long Patch { get; private set; }
             public string Name { get; private set; }
 
-            int IComparable<UpgradeScript>.CompareTo(UpgradeScript other)
+            int IComparable<UpgradeScript>.CompareTo(UpgradeScript? other)
             {
+                if (other is null)
+                    return -1;
+
                 int result = this.Major.CompareTo(other.Major);
                 if (result != 0)
                     return result;
@@ -528,7 +532,7 @@ namespace Blueprint41
             /// <param name="cypher">The query</param>
             /// <param name="parameters">Any parameters used in the query</param>
             /// <returns>An ExecuteResult object</returns>
-            public RawResult ExecuteCypher(string cypher, Dictionary<string, object?>? parameters = null)
+            public ResultCursor ExecuteCypher(string cypher, Dictionary<string, object?>? parameters = null)
             {
                 Dictionary<string, object?> convertedParams;
 
