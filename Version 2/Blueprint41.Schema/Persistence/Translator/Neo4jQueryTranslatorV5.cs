@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Blueprint41.Persistence
 {
-    internal class Neo4jQueryTranslatorV5 : QueryTranslator
+    internal class Neo4jQueryTranslatorV5 : Neo4jQueryTranslatorV4
     {
         internal Neo4jQueryTranslatorV5(DatastoreModel datastoreModel) : base(datastoreModel)
         {
