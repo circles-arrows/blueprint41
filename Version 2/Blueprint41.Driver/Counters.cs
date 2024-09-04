@@ -6,6 +6,10 @@ namespace Blueprint41.Driver
 {
     public class Counters
     {
+        internal Counters()
+        {
+            _instance = null!;
+        }
         internal Counters(object instance)
         {
             _instance = instance;

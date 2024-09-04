@@ -233,8 +233,8 @@ namespace Blueprint41.Persistence
             if (functionalId is null)
                 throw new ArgumentNullException("functionalId");
 
-            driver.Record result = RunBlocking(() => Transaction.RunningTransaction.Run(NextFunctionalIdQuery(functionalId)).First(), "NodePersistenceProvider.NextFunctionID(FunctionalId functionalId)");
-            return result["key"].ToString()!;
+            driver.Record? result = RunBlocking(() => Transaction.RunningTransaction.Run(NextFunctionalIdQuery(functionalId)).FirstOrDefault(), "NodePersistenceProvider.NextFunctionID(FunctionalId functionalId)");
+            return result?["key"]?.ToString()!;
         }
         private string NextFunctionalIdQuery(FunctionalId functionalId)
         {
