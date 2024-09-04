@@ -73,10 +73,14 @@ namespace Blueprint41.Refactoring.Schema
             return result;
         }
 
+#pragma warning disable S6444
+
         private static readonly Regex unique_old = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *\1\.(?<field>[a-z0-9_]+) *is *unique *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
         private static readonly Regex unique = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *\( *\1\.(?<field>[a-z0-9_]+) *\) *is *unique *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
         private static readonly Regex notnull_old = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *exists *\( *\1\.(?<field>[a-z0-9_]+) *\) *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
         private static readonly Regex notnull = new Regex(@"^ *constraint *on *\( *([a-z0-9_]+): *(?<entity>[a-z0-9_]+) *\) *assert *\( *\1\.(?<field>[a-z0-9_]+) *\) *is *not *null *$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+#pragma warning restore S6444
 
         // description
         // -----------

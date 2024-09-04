@@ -49,7 +49,9 @@ namespace Blueprint41.Refactoring.Schema
                     retry = false;
                     driver.ResultCursor result = runner.Run(procedure);
                     var records = RunBlocking(result.ToListAsync, "SchemaInfo.LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)");
+#pragma warning disable CS0618 // Type or member is obsolete
                     data = records.Select(item => processor.Invoke(item.Values.ToDictionary(k => k.Key, v => v.Value!))).ToArray();
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
                 catch (Exception clientException)
                 {

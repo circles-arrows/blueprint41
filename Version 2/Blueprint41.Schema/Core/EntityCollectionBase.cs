@@ -151,7 +151,7 @@ namespace Blueprint41.Core
         internal abstract CollectionItem NewCollectionItem(OGM parent, OGM item, DateTime? startDate, DateTime? endDate);
 
         private static readonly List<CollectionItem> empty = new List<CollectionItem>();
-        protected virtual async void LazyLoad()
+        protected virtual void LazyLoad()
         {
             if (IsLoaded)
                 return;
@@ -169,7 +169,7 @@ namespace Blueprint41.Core
                 return;
             }
 
-            IEnumerable<CollectionItem> items = await RelationshipPersistenceProvider.Load(Parent, this);
+            IEnumerable<CollectionItem> items = RelationshipPersistenceProvider.Load(Parent, this);
             InitialLoad(items);
         }
         internal protected abstract void AfterFlush();

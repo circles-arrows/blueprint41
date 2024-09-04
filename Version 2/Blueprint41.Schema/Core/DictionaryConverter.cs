@@ -41,14 +41,15 @@ namespace Blueprint41.Core
             return converter ?? throw new TypeLoadException();
         }
 
-        private class DictionaryConverterInner<TKey, TValue> :
-            JsonConverter<Dictionary<TKey, TValue>>
+#nullable disable
+        private sealed class DictionaryConverterInner<TKey, TValue> : JsonConverter<Dictionary<TKey, TValue>>
         {
             private readonly JsonConverter<TKey> _keyConverter;
             private readonly JsonConverter<TValue> _valueConverter;
             private readonly Type _keyType;
             private readonly Type _valueType;
 
+#pragma warning disable S1144 // Unused private types or members should be removed
             public DictionaryConverterInner(JsonSerializerOptions options)
             {
                 // For performance, use the existing converter if available.
@@ -63,6 +64,7 @@ namespace Blueprint41.Core
                 _keyType = typeof(TKey);
                 _valueType = typeof(TValue);
             }
+#pragma warning restore S1144 // Unused private types or members should be removed
 
             public override Dictionary<TKey, TValue> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
@@ -82,8 +84,8 @@ namespace Blueprint41.Core
                         return dictionary;
                     }
 
-                    TKey? key;
-                    TValue? value;
+                    TKey key;
+                    TValue value;
                     if (simpleDictionary)
                         reader = ParseSimple(reader, options, out key, out value);
                     else
@@ -100,7 +102,7 @@ namespace Blueprint41.Core
                 throw new JsonException();
             }
 
-            private Utf8JsonReader ParseSimple(Utf8JsonReader reader, JsonSerializerOptions options, out TKey? key, out TValue? value)
+            private Utf8JsonReader ParseSimple(Utf8JsonReader reader, JsonSerializerOptions options, out TKey key, out TValue value)
             {
                 // Get the key.
                 if (reader.TokenType != JsonTokenType.PropertyName)
@@ -131,7 +133,7 @@ namespace Blueprint41.Core
 
                 return reader;
             }
-            private Utf8JsonReader ParseComplex(Utf8JsonReader reader, JsonSerializerOptions options, out TKey? key, out TValue? value)
+            private Utf8JsonReader ParseComplex(Utf8JsonReader reader, JsonSerializerOptions options, out TKey key, out TValue value)
             {
                 // Get the key.
                 if (reader.TokenType != JsonTokenType.StartObject)
@@ -220,5 +222,6 @@ namespace Blueprint41.Core
                 writer.WriteEndObject();
             }
         }
+#nullable  enable
     }
 }
