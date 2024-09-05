@@ -15,9 +15,22 @@ namespace Blueprint41
     {
         public driver.Session? DriverSession { get; set; }
         public driver.Transaction? DriverTransaction { get; set; }
-        public driver.IQueryRunner? StatementRunner { get; set; }
+        public driver.IQueryRunner? StatementRunner => DriverTransaction;
 
-        internal Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        static internal Transaction Get(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        {
+            Transaction transaction = new Transaction(provider, readwrite, optimize, logger);
+            transaction.InitializeDriver();
+            return transaction;
+        }
+        static internal async Task<Transaction> GetAsync(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        {
+            Transaction transaction = new Transaction(provider, readwrite, optimize, logger);
+            await transaction.InitializeDriverAsync();
+            return transaction;
+        }
+
+        private Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
             OptimizeFor = optimize;
@@ -32,14 +45,27 @@ namespace Blueprint41
             TransactionDate = DateTime.UtcNow;
             FireEvents = EventOptions.AllEvents;
         }
+
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningTransaction.Logger?.Log(message);
 
-        protected override void Initialize()
+        private void InitializeDriver()
+        {
+            DriverSession = InitializeDriverSession();
+            DriverTransaction = DriverSession.BeginTransaction();
+        }
+
+        private async Task InitializeDriverAsync()
+        {
+            DriverSession = InitializeDriverSession();
+            DriverTransaction = await DriverSession.BeginTransactionAsync();
+        }
+
+        private driver.Session InitializeDriverSession()
         {
             driver.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? driver.AccessMode.Write : driver.AccessMode.Read;
 
-            DriverSession = PersistenceProvider.Driver.Session(c =>
+            return PersistenceProvider.Driver.Session(c =>
             {
                 if (PersistenceProvider.Database is not null)
                     c.WithDatabase(PersistenceProvider.Database);
@@ -50,11 +76,6 @@ namespace Blueprint41
                 if (Consistency is not null)
                     c.WithBookmarks(Consistency);
             });
-
-            DriverTransaction = DriverSession.BeginTransaction();
-
-            StatementRunner = DriverTransaction;
-            base.Initialize();
         }
 
         #region Transaction Logic
@@ -475,7 +496,6 @@ namespace Blueprint41
             driver.Driver.TaskScheduler.ClearHistory();
 
             DriverTransaction = null;
-            StatementRunner = null;
             DriverSession = null;
         }
 

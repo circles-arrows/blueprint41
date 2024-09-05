@@ -688,5 +688,10 @@ namespace Blueprint41
         public static IStatementRunner BeginTransaction(ReadWriteMode readWriteMode) => BeginTransaction(readWriteMode, OptimizeFor.PartialSubGraphAccess);
         public static IStatementRunner BeginTransaction(OptimizeFor mode) => BeginTransaction(ReadWriteMode.ReadWrite, mode);
         public static IStatementRunner BeginTransaction(ReadWriteMode readWriteMode, OptimizeFor mode) => Model.PersistenceProvider.NewTransaction(readWriteMode, mode);
+
+        public static async Task<IStatementRunner> BeginTransactionAsync() => await BeginTransactionAsync(ReadWriteMode.ReadWrite, OptimizeFor.PartialSubGraphAccess);
+        public static async Task<IStatementRunner> BeginTransactionAsync(ReadWriteMode readWriteMode) => await BeginTransactionAsync(readWriteMode, OptimizeFor.PartialSubGraphAccess);
+        public static async Task<IStatementRunner> BeginTransactionAsync(OptimizeFor mode) => await BeginTransactionAsync(ReadWriteMode.ReadWrite, mode);
+        public static async Task<IStatementRunner> BeginTransactionAsync(ReadWriteMode readWriteMode, OptimizeFor mode) => await Model.PersistenceProvider.NewTransactionAsync(readWriteMode, mode);
     }
 }

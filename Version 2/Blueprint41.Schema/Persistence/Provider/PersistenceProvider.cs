@@ -267,11 +267,15 @@ namespace Blueprint41.Persistence
 
         public virtual Session NewSession(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
         {
-            return new Session(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
+            return Session.Get(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
         }
         public virtual Transaction NewTransaction(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
         {
-            return new Transaction(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
+            return Transaction.Get(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
+        }
+        public virtual Task<Transaction> NewTransactionAsync(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
+        {
+            return Transaction.GetAsync(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
         }
 
         public bool IsNeo4j => (DatastoreModel.DatastoreTechnology == GDMS.Neo4j);
