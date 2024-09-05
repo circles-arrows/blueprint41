@@ -121,7 +121,7 @@ namespace Blueprint41.Persistence
             {
                 using (NewTransaction(ReadWriteMode.ReadOnly))
                 {
-                    var components = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
+                    var components = Transaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
 
                     string d = components["name"].As<string>();
                     // Test and throw instead of just retrieving it???
@@ -180,7 +180,7 @@ namespace Blueprint41.Persistence
             {
                 using (NewTransaction(ReadWriteMode.ReadOnly))
                 {
-                    var record = Transaction.RunningTransaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
+                    var record = Transaction.Run("call dbms.components() yield name, versions, edition unwind versions as version return name, version, edition").First();
 
                     //DBMSName = components["name"].As<string>();
                     // Test and throw instead of just retrieving it???
@@ -207,11 +207,11 @@ namespace Blueprint41.Persistence
 
         private void LoadDbmsFunctions()
         {
-            functions = new HashSet<string>(Transaction.RunningTransaction.Run(GetFunctions(DatastoreTechnology, Major)).ToList(item => item["name"].As<string>()));
+            functions = new HashSet<string>(Transaction.Run(GetFunctions(DatastoreTechnology, Major)).ToList(item => item["name"].As<string>()));
         }
         private void LoadDbmsProcedures()
         {
-            procedures = new HashSet<string>(Transaction.RunningTransaction.Run(GetProcedures(DatastoreTechnology, Major)).ToList(item => item["name"].As<string>()));
+            procedures = new HashSet<string>(Transaction.Run(GetProcedures(DatastoreTechnology, Major)).ToList(item => item["name"].As<string>()));
         }
 
         private QueryTranslator DetermineTranslator()

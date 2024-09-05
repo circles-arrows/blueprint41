@@ -251,7 +251,7 @@ namespace Blueprint41
                         using (PersistenceProvider.NewSession(ReadWriteMode.ReadWrite))
                         {
                             string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
-                            Session.RunningSession.Run(clearSchema);
+                            Session.Run(clearSchema);
                         }
                     }
 
@@ -542,7 +542,7 @@ namespace Blueprint41
                 else
                     convertedParams = parameters.ToDictionary(item => item.Key, item => (item.Value is null) ? null : Model.PersistenceProvider.ConvertToStoredType(item.Value.GetType(), item.Value));
 
-                return Transaction.RunningTransaction.Run(cypher, convertedParams);
+                return Transaction.Run(cypher, convertedParams);
             }
 
             #endregion
@@ -622,6 +622,8 @@ namespace Blueprint41
             instance._persistenceProvider = new PersistenceProvider(instance, uri, authToken, database, advancedConfig);
             instance._persistenceProvider.Initialize();
 
+            Model._persistenceProvider = new PersistenceProvider(instance, uri, authToken, database, advancedConfig);
+
             return instance;
         }
 
@@ -675,5 +677,16 @@ namespace Blueprint41
         /// Whether or not queries should be logged to the debugger
         /// </summary>
         public bool LogToDebugger { get => Parser.LogToDebugger; set => Parser.LogToDebugger= value; }
+
+
+        public static IStatementRunner BeginSession() => BeginSession(ReadWriteMode.ReadWrite, OptimizeFor.PartialSubGraphAccess);
+        public static IStatementRunner BeginSession(ReadWriteMode readWriteMode) => BeginSession(readWriteMode, OptimizeFor.PartialSubGraphAccess);
+        public static IStatementRunner BeginSession(OptimizeFor mode) => BeginSession(ReadWriteMode.ReadWrite, mode);
+        public static IStatementRunner BeginSession(ReadWriteMode readWriteMode, OptimizeFor mode) => Model.PersistenceProvider.NewSession(readWriteMode, mode);
+
+        public static IStatementRunner BeginTransaction() => BeginTransaction(ReadWriteMode.ReadWrite, OptimizeFor.PartialSubGraphAccess);
+        public static IStatementRunner BeginTransaction(ReadWriteMode readWriteMode) => BeginTransaction(readWriteMode, OptimizeFor.PartialSubGraphAccess);
+        public static IStatementRunner BeginTransaction(OptimizeFor mode) => BeginTransaction(ReadWriteMode.ReadWrite, mode);
+        public static IStatementRunner BeginTransaction(ReadWriteMode readWriteMode, OptimizeFor mode) => Model.PersistenceProvider.NewTransaction(readWriteMode, mode);
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Blueprint41.Core
+namespace Blueprint41
 {
-    internal interface IStatementRunner
+    public interface IStatementRunner : IDisposable, IAsyncDisposable
     {
         DateTime TransactionDate { get; }
         OptimizeFor OptimizeFor { get; }

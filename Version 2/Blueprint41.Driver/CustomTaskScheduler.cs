@@ -21,7 +21,7 @@ namespace Blueprint41.Core
         public CustomTaskScheduler(CustomTaskQueueOptions? mainQueue = null, CustomTaskQueueOptions? subQueue = null)
         {
             taskFactory = new TaskFactory(CancellationToken.None,
-                                          TaskCreationOptions.None,
+                                          TaskCreationOptions.LongRunning | TaskCreationOptions.RunContinuationsAsynchronously,
                                           TaskContinuationOptions.None,
                                           this);
 
@@ -102,14 +102,14 @@ namespace Blueprint41.Core
 
         public virtual void RunBlocking(Func<Task> work, string description)
         {
-            var task = RunAsync(work, description).Unwrap();
+            Task task = RunAsync(work, description).Unwrap();
 
             CustomTask customTask = CreateTask(task);
             customTask.Wait(true);
         }
         public virtual TResult RunBlocking<TResult>(Func<Task<TResult>> work, string description)
         {
-            var task = RunAsync(work, description).Unwrap();
+            Task<TResult> task = RunAsync(work, description).Unwrap();
 
             CustomTask customTask = CreateTask(task);
             customTask.Wait(true);

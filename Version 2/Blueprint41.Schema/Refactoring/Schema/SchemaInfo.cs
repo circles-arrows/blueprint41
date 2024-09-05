@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Blueprint41.Core;
 using Blueprint41.Persistence;
 using driver = Blueprint41.Driver;
 
@@ -162,7 +160,7 @@ namespace Blueprint41.Refactoring.Schema
                     Parser.Log(diff.ToString());
                     foreach (var query in diff.ToCypher())
                     {
-                        Transaction.RunningTransaction.Run(query);
+                        Transaction.Run(query);
                     }
                 }
                 Transaction.Commit();
@@ -179,7 +177,7 @@ namespace Blueprint41.Refactoring.Schema
                         foreach (var cql in action.ToCypher())
                         {
                             Parser.Log(cql);
-                            Session.RunningSession.Run(cql);
+                            Session.Run(cql);
                         }
                     }
                 }

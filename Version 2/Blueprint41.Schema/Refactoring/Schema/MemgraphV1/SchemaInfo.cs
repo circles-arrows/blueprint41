@@ -42,7 +42,7 @@ namespace Blueprint41.Refactoring.Schema
                     Parser.Log(diff.ToString());
                     foreach (var query in diff.ToCypher())
                     {
-                        Session.RunningSession.Run(query);
+                        Session.Run(query);
                     }
                 }
             }
@@ -58,7 +58,7 @@ namespace Blueprint41.Refactoring.Schema
                         foreach (var cql in action.ToCypher())
                         {
                             Parser.Log(cql);
-                            Session.RunningSession.Run(cql);
+                            Session.Run(cql);
                         }
                     }
                 }
