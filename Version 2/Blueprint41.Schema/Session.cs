@@ -12,9 +12,17 @@ namespace Blueprint41
     public class Session : DisposableScope<Session>, IStatementRunner
     {
         public driver.Session? DriverSession { get; set; }
-        public driver.IQueryRunner? StatementRunner { get; set; }
+        public driver.IQueryRunner? StatementRunner => DriverSession;
 
-        internal Session(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+
+        static internal Session Get(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        {
+            Session session = new Session(provider, readwrite, optimize, logger);
+            session.InitializeDriverAsync();
+            return session;
+        }
+
+        private Session(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
             OptimizeFor = optimize;
@@ -27,22 +35,21 @@ namespace Blueprint41
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningSession.Logger?.Log(message);
 
-        protected override void Initialize()
+        private void InitializeDriverAsync()
         {
+            driver.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? driver.AccessMode.Write : driver.AccessMode.Read;
+
             DriverSession = PersistenceProvider.Driver.Session(c =>
             {
                 if (PersistenceProvider.Database is not null)
                     c.WithDatabase(PersistenceProvider.Database);
 
-                c.WithFetchSize(Driver.ConfigBuilder.Infinite);
-                c.WithDefaultAccessMode(ReadWriteMode == ReadWriteMode.ReadWrite ? Driver.AccessMode.Write : Driver.AccessMode.Read);
+                c.WithFetchSize(driver.ConfigBuilder.Infinite);
+                c.WithDefaultAccessMode(accessMode);
 
                 //if (Consistency is not null)
-                //    c.WithBookmarks(Consistency.Select(item => item.ToBookmark()).ToArray());
+                //    c.WithBookmarks(Consistency);
             });
-
-            StatementRunner = DriverSession;
-            base.Initialize();
         }
 
         public DateTime TransactionDate { get; private set; }
