@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-using Blueprint41.Driver;
+using Blueprint41;
 using Blueprint41.Persistence;
+using AuthToken = Blueprint41.Driver.AuthToken;
+using Driver = Blueprint41.Driver.Driver;
+using ResultCursor = Blueprint41.Driver.ResultCursor;
 
 using DataStore;
 
@@ -54,11 +57,34 @@ namespace Laboratory
             };
 
             MockModel model = MockModel.Connect(new Uri(@"bolt://localhost:7687"), AuthToken.Basic("neo4j", "neoneoneo"), "unittest", config);
+            CleanDB();
+
             model.Execute(true);
 
             Debug.Assert(model.HasExecuted);
             Debug.Assert(model.IsUpgraded);
             // Model ready to be used for both  model inspection and database access (e.g. executing transactions on the DB)
+
+
+            void CleanDB()
+            {
+                using (MockModel.BeginSession())
+                {
+                    Session.Run("MATCH (n) DETACH DELETE n;");
+                    Session.Run("CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *;");
+                }
+            }
+
+            void CopyDB()
+            {
+                using (IStatementRunner a = MockModel.BeginSession())
+                using (IStatementRunner b = MockModel.BeginSession())
+                {
+                    a.Run("MATCH ____");
+                    b.Run("MERGE ____");
+                }
+            }
+
         }
     }
 }

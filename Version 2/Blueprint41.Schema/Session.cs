@@ -80,7 +80,12 @@ namespace Blueprint41
             return this;
         }
 
-        public virtual Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        static public Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningSession).RunAsync(cypher, memberName, sourceFilePath,sourceLineNumber);
+        static public Task<driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningSession).RunAsync(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+        static public driver.ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningSession).Run(cypher, memberName, sourceFilePath, sourceLineNumber);
+        static public driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningSession).Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+
+        Task<driver.ResultCursor> IStatementRunner.RunAsync(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -99,7 +104,7 @@ namespace Blueprint41
                 return StatementRunner.RunAsync(cypher);
             }
         }
-        public virtual Task<driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        Task<driver.ResultCursor> IStatementRunner.RunAsync(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -116,13 +121,13 @@ namespace Blueprint41
                 if (StatementRunner is null)
                     throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-                if(parameters is null)
+                if (parameters is null)
                     return StatementRunner.RunAsync(cypher);
                 else
                     return StatementRunner.RunAsync(cypher, parameters);
             }
         }
-        public virtual driver.ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        driver.ResultCursor IStatementRunner.Run(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -141,7 +146,7 @@ namespace Blueprint41
                 return StatementRunner.Run(cypher);
             }
         }
-        public virtual driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        driver.ResultCursor IStatementRunner.Run(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {

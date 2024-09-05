@@ -38,7 +38,7 @@ namespace Blueprint41.Persistence
                 {
                     using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
                     {
-                        Transaction.RunningTransaction.Run(FtiRemove);
+                        Transaction.Run(FtiRemove);
                         Transaction.Commit();
                     }
                 }
@@ -67,7 +67,7 @@ namespace Blueprint41.Persistence
                     );
                 string query = string.Format(FtiCreate, e, p);
 
-                Transaction.RunningTransaction.Run(query);
+                Transaction.Run(query);
                 Transaction.Commit();
             }
         }

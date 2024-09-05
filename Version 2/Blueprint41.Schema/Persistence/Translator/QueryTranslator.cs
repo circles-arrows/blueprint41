@@ -747,7 +747,7 @@ namespace Blueprint41.Persistence
         {
             using (DatastoreModel.PersistenceProvider.NewTransaction(ReadWriteMode.ReadWrite))
             {
-                var result = Transaction.RunningTransaction.Run(FtiList);
+                var result = Transaction.Run(FtiList);
                 return result.FirstOrDefault() is not null;
             }
         }
@@ -794,7 +794,7 @@ namespace Blueprint41.Persistence
         internal virtual bool HasScript(DatastoreModel.UpgradeScript script)
         {
             string query = "MATCH (version:RefactorVersion) RETURN version;";
-            var result = Transaction.RunningTransaction.Run(query);
+            var result = Transaction.Run(query);
 
             Driver.Record? record = result.FirstOrDefault();
             if (record is null)
@@ -838,13 +838,13 @@ namespace Blueprint41.Persistence
                 { "node", node }
             };
 
-            Transaction.RunningTransaction.Run(create, parameters);
+            Transaction.Run(create, parameters);
             Transaction.Commit();
         }
         internal virtual bool ShouldRefreshFunctionalIds()
         {
             string query = "MATCH (version:RefactorVersion) RETURN version.LastRun as LastRun";
-            var result = Transaction.RunningTransaction.Run(query);
+            var result = Transaction.Run(query);
 
             driver.Record? record = result.FirstOrDefault();
             if (record is null)
@@ -869,7 +869,7 @@ namespace Blueprint41.Persistence
                 { "LastRun", Conversion<DateTime, long>.Convert(DateTime.UtcNow) }
             };
 
-            Transaction.RunningTransaction.Run(query, parameters);
+            Transaction.Run(query, parameters);
         }
 
         #endregion

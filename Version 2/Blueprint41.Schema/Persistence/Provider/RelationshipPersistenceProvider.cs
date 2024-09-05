@@ -85,7 +85,7 @@ namespace Blueprint41.Persistence
             parameters2.Add("key", parent.GetKey());
 
             List<CollectionItem> items = new List<CollectionItem>();
-            var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters2);
+            var result = Transaction.Run(string.Join(" UNION ", fullMatch), parameters2);
 
             foreach (var record in result.ToList())
             {
@@ -162,7 +162,7 @@ namespace Blueprint41.Persistence
                 throw new InvalidOperationException("This code should only load collections of the same concrete parent class.");
 
             string cypher = string.Join(" UNION ", fullMatch);
-            var result = Transaction.RunningTransaction.Run(cypher, parameters);
+            var result = Transaction.Run(cypher, parameters);
             List<CollectionItem> items = new List<CollectionItem>();
             foreach (var record in result.ToList())
             {
@@ -204,7 +204,7 @@ namespace Blueprint41.Persistence
 
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("keys", keys.Distinct().ToList());
-            var result = Transaction.RunningTransaction.Run(string.Join(" UNION ", fullMatch), parameters);
+            var result = Transaction.Run(string.Join(" UNION ", fullMatch), parameters);
 
             Dictionary<object, List<RawNode>> retval = new Dictionary<object, List<RawNode>>();
             foreach (var record in result.ToList())
@@ -338,7 +338,7 @@ namespace Blueprint41.Persistence
             string query = match + "\r\n" + create;
             relationship.RaiseOnRelationCreate(trans);
 
-            driver.ResultCursor result = trans.Run(query, parameters);
+            driver.ResultCursor result = ((IStatementRunner)trans).Run(query, parameters);
         }
         protected void Add(Transaction trans, Relationship relationship, OGM inItem, OGM outItem, Dictionary<string, object>? properties, DateTime moment)
         {
@@ -407,15 +407,15 @@ namespace Blueprint41.Persistence
 #if DEBUG_QUERY
             Peek("Before Delete");
 #endif
-            driver.ResultCursor deleteResult = trans.Run(delete, parameters);
+            driver.ResultCursor deleteResult = ((IStatementRunner)trans).Run(delete, parameters);
 #if DEBUG_QUERY
             Peek("After Delete & Before Update");
 #endif
-            driver.ResultCursor updateResult = trans.Run(update, parameters);
+            driver.ResultCursor updateResult = ((IStatementRunner)trans).Run(update, parameters);
 #if DEBUG_QUERY
             Peek("After Update & Before Create");
 #endif
-            driver.ResultCursor createResult = trans.Run(create, parameters);
+            driver.ResultCursor createResult = ((IStatementRunner)trans).Run(create, parameters);
 #if DEBUG_QUERY
             Peek("After Create");
 #endif
@@ -482,7 +482,7 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationDelete(trans);
 
-            driver.ResultCursor result = trans.Run(cypher, parameters);
+            driver.ResultCursor result = ((IStatementRunner)trans).Run(cypher, parameters);
         }
         protected void Remove(Transaction trans, Relationship relationship, OGM? inItem, OGM? outItem, DateTime moment)
         {
@@ -527,8 +527,8 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationCreate(trans);
 
-            driver.ResultCursor deleteResult = trans.Run(delete, parameters);
-            driver.ResultCursor updateResult = trans.Run(update, parameters);
+            driver.ResultCursor deleteResult = ((IStatementRunner)trans).Run(delete, parameters);
+            driver.ResultCursor updateResult = ((IStatementRunner)trans).Run(update, parameters);
         }
 
         public void AddUnmanaged(Relationship relationship, OGM inItem, OGM outItem, DateTime? startDate, DateTime? endDate, Dictionary<string, object>? properties, bool fullyUnmanaged = false)
@@ -560,7 +560,7 @@ namespace Blueprint41.Persistence
                 parameters.Add("MinDateTime", Conversion<DateTime, long>.Convert(DateTime.MinValue));
                 parameters.Add("MaxDateTime", Conversion<DateTime, long>.Convert(DateTime.MaxValue));
 
-                driver.ResultCursor result = trans.Run(find, parameters);
+                driver.ResultCursor result = ((IStatementRunner)trans).Run(find, parameters);
                 driver.Record? record = result.FirstOrDefault();
                 int count = record?["Count"].As<int>() ?? 0;
                 if (count > 0)
@@ -584,7 +584,7 @@ namespace Blueprint41.Persistence
                     relationship.StartDate,
                     relationship.EndDate);
 
-                trans.Run(delete, parameters);
+                ((IStatementRunner)trans).Run(delete, parameters);
             }
 
             string match = string.Format("MATCH (in:{0}) WHERE in.{1} = $inKey MATCH (out:{2}) WHERE out.{3} = $outKey",
@@ -611,7 +611,7 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationCreate(trans);
 
-            trans.Run(query, parameters2);
+            ((IStatementRunner)trans).Run(query, parameters2);
 
             relationship.RaiseOnRelationCreated(trans);
         }
@@ -641,7 +641,7 @@ namespace Blueprint41.Persistence
 
             relationship.RaiseOnRelationDelete(trans);
 
-            trans.Run(match, parameters);
+            ((IStatementRunner)trans).Run(match, parameters);
 
             relationship.RaiseOnRelationDeleted(trans);
         }

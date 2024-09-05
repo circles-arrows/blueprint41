@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-
-using Blueprint41.Core;
 using driver = Blueprint41.Driver;
 
 namespace Blueprint41.Refactoring

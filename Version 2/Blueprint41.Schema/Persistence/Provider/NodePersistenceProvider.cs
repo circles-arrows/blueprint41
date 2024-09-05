@@ -40,7 +40,7 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = item.GetEntity().RaiseOnNodeLoading(trans, item, match + returnStatement, parameters, ref customState);
 
-            var result = trans.Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
 
             Driver.Record? record = result.FirstOrDefault();
             if (record is null || record["node"] is null)
@@ -88,7 +88,7 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            var result = trans.Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
             var counters = result.Statistics();
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
@@ -119,7 +119,7 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeDelete(trans, item, match, parameters, ref customState);
 
-            var result = trans.Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
             var counters =  result.Statistics();
             if (counters.NodesDeleted == 0)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
@@ -172,7 +172,7 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeCreate(trans, item, create, parameters, ref customState);
 
-            var result = trans.Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
             driver.Record? record = result.FirstOrDefault();
             if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
@@ -218,7 +218,7 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeUpdate(trans, item, match, parameters, ref customState);
 
-            driver.ResultCursor result = trans.Run(args.Cypher, args.Parameters);
+            driver.ResultCursor result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
             if (!GetStatistics(result).ContainsUpdates)
                 throw new DBConcurrencyException($"The {entity.Name} with {entity.Key.Name} '{item.GetKey()?.ToString() ?? "<NULL>"}' was changed or deleted by another process or thread.");
 
@@ -231,7 +231,7 @@ namespace Blueprint41.Persistence
             if (functionalId is null)
                 throw new ArgumentNullException("functionalId");
 
-            driver.Record? result = Transaction.RunningTransaction.Run(NextFunctionalIdQuery(functionalId)).FirstOrDefault();
+            driver.Record? result = Transaction.Run(NextFunctionalIdQuery(functionalId)).FirstOrDefault();
             return result?["key"]?.ToString()!;
         }
         private string NextFunctionalIdQuery(FunctionalId functionalId)
@@ -292,7 +292,7 @@ namespace Blueprint41.Persistence
 
             var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), arguments, ref customState);
 
-            var result = trans.Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
             return Load<T>(entity, args, result, trans);
         }
         //public List<T> LoadWhere<T>(Entity entity, ICompiled query, Parameter[] parameters, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
@@ -475,7 +475,7 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), null, ref customState);
 
-            var result = trans.Run(args.Cypher, args.Parameters);
+            var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
             return Load<T>(entity, args, result, trans);
         }
 
@@ -497,7 +497,7 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?> parameters = new Dictionary<string, object?>();
             parameters.Add("key", item.GetKey());
 
-            var result = Transaction.RunningTransaction.Run(match, parameters);
+            var result = Transaction.Run(match, parameters);
             return result.FirstOrDefault() is not null;
         }
 

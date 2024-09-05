@@ -372,9 +372,9 @@ namespace Blueprint41.Refactoring.Templates
             string cypher = TransformText();
 
             if (OutputParameters.Count == 0)
-                return Transaction.RunningTransaction.Run(cypher);
+                return Transaction.Run(cypher);
             else
-                return Transaction.RunningTransaction.Run(cypher, OutputParameters);
+                return Transaction.Run(cypher, OutputParameters);
         }
     }
 
