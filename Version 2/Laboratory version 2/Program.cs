@@ -20,9 +20,10 @@ namespace Laboratory
 #pragma warning restore CS1998
         {
             //DryRunModel();
-            await ApplyModelToDB();
+            //await ApplyModelToDB();
 
-            //await DriverTests.TestAll().ConfigureAwait(false);
+
+            await DriverTests.TestAll().ConfigureAwait(false);
             //await DriverTests.TestConnectivity().ConfigureAwait(false);
 
             Console.WriteLine("Press any key...");
