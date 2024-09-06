@@ -41,7 +41,6 @@ namespace Blueprint41.Core
             }
         }
 
-        [ThreadStatic]
         private static AsyncLocal<Stack<T>?> current = new AsyncLocal<Stack<T>?>();
 
         private bool isInitialized;

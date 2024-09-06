@@ -89,12 +89,12 @@ namespace Blueprint41.Persistence
 
             foreach (var record in result.ToList())
             {
-                RawNode node = record["out"].As<RawNode>();
+                driver.Node node = record["out"].As<driver.Node>();
                 if (node is null)
                     continue;
 
                 OGM item = ReadNode(parent, targetEntity, node);
-                RawRelationship rel = record["rel"].As<RawRelationship>();
+                driver.Relationship rel = record["rel"].As<driver.Relationship>();
 
                 DateTime? startDate = null;
                 DateTime? endDate = null;
@@ -103,9 +103,9 @@ namespace Blueprint41.Persistence
                 {
                     object? value;
                     if (rel.Properties.TryGetValue(target.Relationship.StartDate, out value))
-                        startDate = Conversion<long, DateTime>.Convert((long)value);
+                        startDate = Conversion<long, DateTime>.Convert((long?)value ?? Conversion.MinDateTimeInMS);
                     if (rel.Properties.TryGetValue(target.Relationship.EndDate, out value))
-                        endDate = Conversion<long, DateTime>.Convert((long)value);
+                        endDate = Conversion<long, DateTime>.Convert((long?)value ?? Conversion.MaxDateTimeInMS);
                 }
 
                 items.Add(target.NewCollectionItem(parent, item, startDate, endDate));
@@ -174,8 +174,8 @@ namespace Blueprint41.Persistence
                     startDate = (record["StartDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record["StartDate"].As<long>()) : (DateTime?)null;
                     endDate = (record["EndDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record["EndDate"].As<long>()) : (DateTime?)null;
                 }
-                OGM? parent = target.Parent.GetEntity().Map(record["Parent"].As<RawNode>(), NodeMapping.AsWritableEntity);
-                OGM? item = targetEntity.Map(record["Item"].As<RawNode>(), NodeMapping.AsWritableEntity);
+                OGM? parent = target.Parent.GetEntity().Map(record["Parent"].As<driver.Node>(), NodeMapping.AsWritableEntity);
+                OGM? item = targetEntity.Map(record["Item"].As<driver.Node>(), NodeMapping.AsWritableEntity);
 
                 if (parent is null || item is null)
                     throw new NotSupportedException("The cypher query expected to have a parent node and a child node.");
@@ -187,7 +187,7 @@ namespace Blueprint41.Persistence
             return CollectionItemList.Get(items);
         }
 
-        private Dictionary<object, List<RawNode>> Load(Entity targetEntity, IEnumerable<object> keys)
+        private Dictionary<object, List<driver.Node>> Load(Entity targetEntity, IEnumerable<object> keys)
         {
             string[] nodeNames = targetEntity.GetDbNames("node");
 
@@ -206,21 +206,21 @@ namespace Blueprint41.Persistence
             parameters.Add("keys", keys.Distinct().ToList());
             var result = Transaction.Run(string.Join(" UNION ", fullMatch), parameters);
 
-            Dictionary<object, List<RawNode>> retval = new Dictionary<object, List<RawNode>>();
+            Dictionary<object, List<driver.Node>> retval = new Dictionary<object, List<driver.Node>>();
             foreach (var record in result.ToList())
             {
-                List<RawNode>? items;
+                List<driver.Node>? items;
                 if (!retval.TryGetValue(record["key"].As<object>(), out items))
                 {
-                    items = new List<RawNode>();
+                    items = new List<driver.Node>();
                     retval.Add(record["key"].As<object>(), items);
                 }
-                items.Add(record["node"].As<RawNode>());
+                items.Add(record["node"].As<driver.Node>());
             }
 
             return retval;
         }
-        private OGM ReadNode(OGM parent, Entity targetEntity, RawNode node)
+        private OGM ReadNode(OGM parent, Entity targetEntity, driver.Node node)
         {
             object? keyObject = null;
             if (targetEntity.Key is not null)

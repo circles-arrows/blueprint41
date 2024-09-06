@@ -42,21 +42,21 @@ namespace Blueprint41.Persistence
 
             var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
 
-            Driver.Record? record = result.FirstOrDefault();
+            driver.Record? record = result.FirstOrDefault();
             if (record is null || record["node"] is null)
             {
                 item.PersistenceState = PersistenceState.DoesntExist;
                 return;
             }
 
-            RawNode loaded = record["node"]!.As<RawNode>();
+            driver.Node loaded = record["node"]!.As<driver.Node>();
 
-            args.Id = loaded.Id;
+            args.ElementId = loaded.ElementId;
             args.Labels = loaded.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
-            args = item.GetEntity().RaiseOnNodeLoaded(trans, args, loaded.Id, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
+            args = item.GetEntity().RaiseOnNodeLoaded(trans, args, loaded.ElementId, loaded.Labels, (Dictionary<string, object?>)loaded.Properties);
 
             if (item.PersistenceState == PersistenceState.HasUid || item.PersistenceState == PersistenceState.Loaded)
             {
@@ -177,15 +177,15 @@ namespace Blueprint41.Persistence
             if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
-            RawNode inserted = record["inserted"].As<RawNode>();
+            driver.Node inserted = record["inserted"].As<driver.Node>();
 
-            args.Id = inserted.Id;
+            args.ElementId = inserted.ElementId;
             args.Labels = inserted.Labels;
             // HACK: To make it faster we do not copy/replicate the Dictionary here, but it means someone
             //       could be changing the INode content from within an event. Possibly dangerous, but
             //       turns out the Neo4j driver can deal with it ... for now ... 
             args.Properties = (Dictionary<string, object?>)inserted.Properties;
-            args = entity.RaiseOnNodeCreated(trans, args, inserted.Id, inserted.Labels, (Dictionary<string, object?>)inserted.Properties);
+            args = entity.RaiseOnNodeCreated(trans, args, inserted.ElementId, inserted.Labels, (Dictionary<string, object?>)inserted.Properties);
 
             item.SetData(args.Properties!);
             item.PersistenceState = PersistenceState.Persisted;
@@ -346,7 +346,7 @@ namespace Blueprint41.Persistence
             List<T> items = new List<T>();
             foreach (var record in result.ToList())
             {
-                var node = record["node"]?.As<RawNode>();
+                var node = record["node"]?.As<driver.Node>();
                 if (node is null)
                     continue;
 
@@ -378,7 +378,7 @@ namespace Blueprint41.Persistence
                     wrapper = (T)concrete.Activator();
                     wrapper.SetKey(key);
                     args.Sender = wrapper;
-                    args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
+                    args = entity.RaiseOnNodeLoaded(trans, args, node.ElementId, node.Labels, (Dictionary<string, object?>)node.Properties);
                     wrapper.SetData(args.Properties!);
                     wrapper.PersistenceState = PersistenceState.Loaded;
                     wrapper.OriginalPersistenceState = PersistenceState.Loaded;
@@ -386,7 +386,7 @@ namespace Blueprint41.Persistence
                 else
                 {
                     args.Sender = wrapper;
-                    args = entity.RaiseOnNodeLoaded(trans, args, node.Id, node.Labels, (Dictionary<string, object?>)node.Properties);
+                    args = entity.RaiseOnNodeLoaded(trans, args, node.ElementId, node.Labels, (Dictionary<string, object?>)node.Properties);
 
                     PersistenceState tmp = wrapper.PersistenceState;
                     if (tmp == PersistenceState.HasUid || tmp == PersistenceState.Loaded || tmp == PersistenceState.Persisted)

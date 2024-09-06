@@ -5,14 +5,14 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Blueprint41.Events;
 
-using Blueprint41.Dynamic;
-using Blueprint41.Refactoring;
-
-using model = Blueprint41.Model;
 using Blueprint41.Core;
+using Blueprint41.Dynamic;
+using Blueprint41.Events;
 using Blueprint41.Persistence;
+using Blueprint41.Refactoring;
+using model = Blueprint41.Model;
+using driver = Blueprint41.Driver;
 
 namespace Blueprint41
 {
@@ -1081,9 +1081,9 @@ namespace Blueprint41
             add { onNodeLoaded += value; }
             remove { onNodeLoaded -= value; }
         }
-        internal NodeEventArgs RaiseOnNodeLoaded(Transaction trans, NodeEventArgs previousArgs, long id, IReadOnlyList<string> labels, Dictionary<string, object?> properties)
+        internal NodeEventArgs RaiseOnNodeLoaded(Transaction trans, NodeEventArgs previousArgs, string elementId, IReadOnlyList<string> labels, Dictionary<string, object?> properties)
         {
-            NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeLoaded, previousArgs, id, labels, properties);
+            NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeLoaded, previousArgs, elementId, labels, properties);
             if (!trans.FireGraphEvents)
                 return args;
 
@@ -1153,9 +1153,9 @@ namespace Blueprint41
             add { onNodeCreated += value; }
             remove { onNodeCreated -= value; }
         }
-        internal NodeEventArgs RaiseOnNodeCreated(Transaction trans, NodeEventArgs previousArgs, long id, IReadOnlyList<string> labels, Dictionary<string, object?> properties)
+        internal NodeEventArgs RaiseOnNodeCreated(Transaction trans, NodeEventArgs previousArgs, string elementId, IReadOnlyList<string> labels, Dictionary<string, object?> properties)
         {
-            NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeCreated, previousArgs, id, labels, properties);
+            NodeEventArgs args = new NodeEventArgs(EventTypeEnum.OnNodeCreated, previousArgs, elementId, labels, properties);
             if (!trans.FireGraphEvents)
                 return args;
 
@@ -1716,12 +1716,12 @@ namespace Blueprint41
             item.Delete(false);
         }
 
-        internal OGM? Map(RawNode node, NodeMapping mappingMode)
+        internal OGM? Map(driver.Node node, NodeMapping mappingMode)
         {
             return Map(node, null!, null!, mappingMode);
         }
 
-        internal OGM? Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
+        internal OGM? Map(driver.Node node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
         {
             if(mapMethod is null)
             {
@@ -1729,15 +1729,15 @@ namespace Blueprint41
                 {
                     if (mapMethod is null)
                     {
-                        MethodInfo? method = RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(RawNode), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
-                        mapMethod = (method is null) ? null : (Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
+                        MethodInfo? method = RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.Node), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                        mapMethod = (method is null) ? null : (Func<driver.Node, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.Node, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
                     }
                 }
             }
 
             return mapMethod?.Invoke(node, cypher, parameters, mappingMode);
         }
-        private Func<RawNode, string, Dictionary<string, object?>?, NodeMapping, OGM?>? mapMethod = null;
+        private Func<driver.Node, string, Dictionary<string, object?>?, NodeMapping, OGM?>? mapMethod = null;
 
         #region IEntityAdvancedFeatures
 
@@ -1781,7 +1781,7 @@ namespace Blueprint41
         /// <param name="node">The raw cypher node</param>
         /// <param name="mappingMode">The node mapping mode</param>
         /// <returns>The new node</returns>
-        OGM? IEntityAdvancedFeatures.Map(RawNode node, NodeMapping mappingMode) => Map(node, mappingMode);
+        OGM? IEntityAdvancedFeatures.Map(driver.Node node, NodeMapping mappingMode) => Map(node, mappingMode);
 
         /// <summary>
         /// Map a node loaded via a query into a new node instance
@@ -1791,7 +1791,7 @@ namespace Blueprint41
         /// <param name="parameters">The cypher query parameters</param>
         /// <param name="mappingMode">The node mapping mode</param>
         /// <returns>The new node</returns>
-        OGM? IEntityAdvancedFeatures.Map(RawNode node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode) => Map(node, cypher, parameters, mappingMode);
+        OGM? IEntityAdvancedFeatures.Map(driver.Node node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode) => Map(node, cypher, parameters, mappingMode);
 
         #endregion
 
