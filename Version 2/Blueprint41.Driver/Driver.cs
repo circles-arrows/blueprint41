@@ -171,15 +171,16 @@ namespace Blueprint41.Driver
                 TypeBuilder loggerBuilder = moduleBuilder.DefineType(RESOLVER, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout);
                 // TODO: Type does not yet inherit interface
 
-                FieldBuilder loggerField = BuildInitialization(resolverBuilder, typeof(ILogger));
+                FieldBuilder loggerField = BuildInitialization(loggerBuilder, typeof(ILogger));
 
-                // TODO: Type does not yet implement method: public void Debug(string message, params object[] args)
-                // TODO: Type does not yet implement method: public void Error(Exception cause, string message, params object[] args)
-                // TODO: Type does not yet implement method: public void Info(string message, params object[] args)
+                BuildLoggerMethod(loggerBuilder, loggerField, "Debug", false);
+                BuildLoggerMethod(loggerBuilder, loggerField, "Error", true);
+                BuildLoggerMethod(loggerBuilder, loggerField, "Info", false);
+                BuildLoggerMethod(loggerBuilder, loggerField, "Trace", false);
+                BuildLoggerMethod(loggerBuilder, loggerField, "Warn", true);
+
                 // TODO: Type does not yet implement method: public bool IsDebugEnabled()
                 // TODO: Type does not yet implement method: public bool IsTraceEnabled()
-                // TODO: Type does not yet implement method: public void Trace(string message, params object[] args)
-                // TODO: Type does not yet implement method: public void Warn(Exception cause, string message, params object[] args)
 
                 #endregion
 
@@ -230,7 +231,7 @@ namespace Blueprint41.Driver
 
                     MethodBuilder method = builder.DefineMethod("Get", MethodAttributes.HideBySig, CallingConventions.Standard, builder, new Type[] { argument });
 
-                    il = ctor.GetILGenerator();
+                    il = method.GetILGenerator();
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Newobj, ctor);
                     il.Emit(OpCodes.Ret);
@@ -257,6 +258,16 @@ namespace Blueprint41.Driver
                     return field;
                 }
 
+                MethodBuilder BuildLoggerMethod(TypeBuilder builder, FieldBuilder field, string name, bool withException)
+                {
+                    // TODO: Type does not yet implement method: public void Debug(string message, params object[] args)
+                    // TODO: Type does not yet implement method: public void Error(Exception cause, string message, params object[] args)
+                    // TODO: Type does not yet implement method: public void Info(string message, params object[] args)
+                    // TODO: Type does not yet implement method: public void Trace(string message, params object[] args)
+                    // TODO: Type does not yet implement method: public void Warn(Exception cause, string message, params object[] args)
+
+                    return null!;
+                }
 
             }, true);
 
