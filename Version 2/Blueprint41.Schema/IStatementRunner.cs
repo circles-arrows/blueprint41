@@ -5,7 +5,16 @@ using System.Threading.Tasks;
 
 namespace Blueprint41
 {
-    public interface IStatementRunner : IDisposable, IAsyncDisposable
+    public interface IStatementRunner : IDisposable
+    {
+        DateTime TransactionDate { get; }
+        OptimizeFor OptimizeFor { get; }
+        ReadWriteMode ReadWriteMode { get; }
+
+        Driver.ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
+        Driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
+    }
+    public interface IStatementRunnerAsync : IAsyncDisposable
     {
         DateTime TransactionDate { get; }
         OptimizeFor OptimizeFor { get; }
@@ -13,7 +22,5 @@ namespace Blueprint41
 
         Task<Driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
         Task<Driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
-        Driver.ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
-        Driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0);
     }
 }

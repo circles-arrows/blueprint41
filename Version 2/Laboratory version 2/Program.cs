@@ -20,7 +20,7 @@ namespace Laboratory
 #pragma warning restore CS1998
         {
             //DryRunModel();
-            ApplyModelToDB();
+            await ApplyModelToDB();
 
             //await DriverTests.TestAll().ConfigureAwait(false);
             //await DriverTests.TestConnectivity().ConfigureAwait(false);
@@ -37,7 +37,7 @@ namespace Laboratory
             // Model ready to be used for model inspection (e.g. generation of code or documentation)
         }
 
-        private static void ApplyModelToDB()
+        private static async Task ApplyModelToDB()
         {
             Driver.Configure<Neo4j.Driver.IDriver>();
 
@@ -57,7 +57,7 @@ namespace Laboratory
             };
 
             MockModel model = MockModel.Connect(new Uri(@"bolt://localhost:7687"), AuthToken.Basic("neo4j", "neoneoneo"), "unittest", config);
-            CleanDB();
+            await CleanDB();
 
             model.Execute(true);
 
@@ -65,26 +65,26 @@ namespace Laboratory
             Debug.Assert(model.IsUpgraded);
             // Model ready to be used for both  model inspection and database access (e.g. executing transactions on the DB)
 
-
-            void CleanDB()
-            {
-                using (MockModel.BeginSession())
-                {
-                    Session.Run("MATCH (n) DETACH DELETE n;");
-                    Session.Run("CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *;");
-                }
-            }
-
-            void CopyDB()
-            {
-                using (IStatementRunner a = MockModel.BeginSession())
-                using (IStatementRunner b = MockModel.BeginSession())
-                {
-                    a.Run("MATCH ____");
-                    b.Run("MERGE ____");
-                }
-            }
-
         }
+
+        private static async Task CleanDB()
+        {
+            await using (var trans = await MockModel.BeginTransactionAsync())
+            {
+                await trans.RunAsync("MATCH (n) DETACH DELETE n;");
+                await trans.RunAsync("CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *;");
+            }
+        }
+
+        private static void CopyDB()
+        {
+            using (IStatementRunner a = MockModel.BeginSession())
+            using (IStatementRunner b = MockModel.BeginSession())
+            {
+                a.Run("MATCH ____");
+                b.Run("MERGE ____");
+            }
+        }
+
     }
 }

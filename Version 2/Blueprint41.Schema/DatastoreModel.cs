@@ -684,14 +684,19 @@ namespace Blueprint41
         public static IStatementRunner BeginSession(OptimizeFor mode) => BeginSession(ReadWriteMode.ReadWrite, mode);
         public static IStatementRunner BeginSession(ReadWriteMode readWriteMode, OptimizeFor mode) => Model.PersistenceProvider.NewSession(readWriteMode, mode);
 
+        public static IStatementRunnerAsync BeginSessionAsync() => BeginSessionAsync(ReadWriteMode.ReadWrite, OptimizeFor.PartialSubGraphAccess);
+        public static IStatementRunnerAsync BeginSessionAsync(ReadWriteMode readWriteMode) => BeginSessionAsync(readWriteMode, OptimizeFor.PartialSubGraphAccess);
+        public static IStatementRunnerAsync BeginSessionAsync(OptimizeFor mode) => BeginSessionAsync(ReadWriteMode.ReadWrite, mode);
+        public static IStatementRunnerAsync BeginSessionAsync(ReadWriteMode readWriteMode, OptimizeFor mode) => Model.PersistenceProvider.NewSession(readWriteMode, mode);
+
         public static IStatementRunner BeginTransaction() => BeginTransaction(ReadWriteMode.ReadWrite, OptimizeFor.PartialSubGraphAccess);
         public static IStatementRunner BeginTransaction(ReadWriteMode readWriteMode) => BeginTransaction(readWriteMode, OptimizeFor.PartialSubGraphAccess);
         public static IStatementRunner BeginTransaction(OptimizeFor mode) => BeginTransaction(ReadWriteMode.ReadWrite, mode);
         public static IStatementRunner BeginTransaction(ReadWriteMode readWriteMode, OptimizeFor mode) => Model.PersistenceProvider.NewTransaction(readWriteMode, mode);
 
-        public static async Task<IStatementRunner> BeginTransactionAsync() => await BeginTransactionAsync(ReadWriteMode.ReadWrite, OptimizeFor.PartialSubGraphAccess);
-        public static async Task<IStatementRunner> BeginTransactionAsync(ReadWriteMode readWriteMode) => await BeginTransactionAsync(readWriteMode, OptimizeFor.PartialSubGraphAccess);
-        public static async Task<IStatementRunner> BeginTransactionAsync(OptimizeFor mode) => await BeginTransactionAsync(ReadWriteMode.ReadWrite, mode);
-        public static async Task<IStatementRunner> BeginTransactionAsync(ReadWriteMode readWriteMode, OptimizeFor mode) => await Model.PersistenceProvider.NewTransactionAsync(readWriteMode, mode);
+        public static async Task<IStatementRunnerAsync> BeginTransactionAsync() => await BeginTransactionAsync(ReadWriteMode.ReadWrite, OptimizeFor.PartialSubGraphAccess);
+        public static async Task<IStatementRunnerAsync> BeginTransactionAsync(ReadWriteMode readWriteMode) => await BeginTransactionAsync(readWriteMode, OptimizeFor.PartialSubGraphAccess);
+        public static async Task<IStatementRunnerAsync> BeginTransactionAsync(OptimizeFor mode) => await BeginTransactionAsync(ReadWriteMode.ReadWrite, mode);
+        public static async Task<IStatementRunnerAsync> BeginTransactionAsync(ReadWriteMode readWriteMode, OptimizeFor mode) => await Model.PersistenceProvider.NewTransactionAsync(readWriteMode, mode);
     }
 }

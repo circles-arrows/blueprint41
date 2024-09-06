@@ -9,7 +9,7 @@ using driver = Blueprint41.Driver;
 
 namespace Blueprint41
 {
-    public class Session : DisposableScope<Session>, IStatementRunner
+    public class Session : DisposableScope<Session>, IStatementRunner, IStatementRunnerAsync
     {
         public driver.Session? DriverSession { get; set; }
         public driver.IQueryRunner? StatementRunner => DriverSession;
@@ -87,12 +87,12 @@ namespace Blueprint41
             return this;
         }
 
-        static public Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningSession).RunAsync(cypher, memberName, sourceFilePath,sourceLineNumber);
-        static public Task<driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningSession).RunAsync(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+        static public Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningSession).RunAsync(cypher, memberName, sourceFilePath,sourceLineNumber);
+        static public Task<driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningSession).RunAsync(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
         static public driver.ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningSession).Run(cypher, memberName, sourceFilePath, sourceLineNumber);
         static public driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningSession).Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
 
-        Task<driver.ResultCursor> IStatementRunner.RunAsync(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
+        Task<driver.ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -111,7 +111,7 @@ namespace Blueprint41
                 return StatementRunner.RunAsync(cypher);
             }
         }
-        Task<driver.ResultCursor> IStatementRunner.RunAsync(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
+        Task<driver.ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
