@@ -796,11 +796,11 @@ namespace Blueprint41.Persistence
             string query = "MATCH (version:RefactorVersion) RETURN version;";
             var result = Transaction.Run(query);
 
-            Driver.Record? record = result.FirstOrDefault();
+            driver.Record ? record = result.FirstOrDefault();
             if (record is null)
                 return false;
 
-            RawNode node = record["version"].As<RawNode>();
+            driver.Node node = record["version"].As< driver.Node> ();
             (long major, long minor, long patch) = ((long)node.Properties["Major"]!, (long)node.Properties["Minor"]!, (long)node.Properties["Patch"]!);
 
             if (major < script.Major)

@@ -265,20 +265,18 @@ namespace Blueprint41.Events
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         internal NodeEventArgs(EventTypeEnum eventType, Transaction trans, OGM? sender, string cypher, Dictionary<string, object?>? parameters, IDictionary<string, object?>? customState)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-            : this()
         {
             EventType = eventType;
             Transaction = trans;
             Sender = sender;
             IsBatch = (sender is null);
-            Id = 0;
+            ElementId = "";
             Cypher = cypher;
             Parameters = parameters;
             CustomState = customState;
             Labels = new string[0];
         }
-        internal NodeEventArgs(EventTypeEnum eventType, NodeEventArgs previous, long id = 0, IReadOnlyList<string>? labels = null, Dictionary<string, object?>? properties = null)
-            : this()
+        internal NodeEventArgs(EventTypeEnum eventType, NodeEventArgs previous, string elementId = "", IReadOnlyList<string>? labels = null, Dictionary<string, object?>? properties = null)
         {
             EventType = eventType;
             Transaction = previous.Transaction;
@@ -288,7 +286,7 @@ namespace Blueprint41.Events
             Parameters = previous.Parameters;
             CustomState = previous.CustomState;
 
-            Id = 0;
+            ElementId = elementId;
             Labels = labels ?? new string[0];
             Properties = properties;
         }
@@ -301,7 +299,7 @@ namespace Blueprint41.Events
         public Dictionary<string, object?>? Parameters { get; private set; }
         public Transaction Transaction { get; internal set; }
 
-        public long Id { get; internal set; }
+        public string ElementId { get; internal set; }
         public IReadOnlyList<string> Labels { get; internal set; }
         public Dictionary<string, object?>? Properties { get; internal set; }
 

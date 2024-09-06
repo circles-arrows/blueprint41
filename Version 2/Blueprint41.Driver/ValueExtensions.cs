@@ -20,9 +20,9 @@ namespace System
         }
         public static T As<T>(this object value)
         {
-            if (typeof(T) == typeof(driver .Node))
-                return (T)(object)new driver .Node(driver.Driver.VALUE_EXTENSIONS.As(driver.Driver.I_NODE, value));
-            else if (typeof(T) == typeof(driver .Relationship))
+            if (typeof(T) == typeof(driver.Node))
+                return (T)(object)new driver.Node(driver.Driver.VALUE_EXTENSIONS.As(driver.Driver.I_NODE, value));
+            else if (typeof(T) == typeof(driver.Relationship))
                 return (T)(object)new driver.Relationship(driver .Driver.VALUE_EXTENSIONS.As(driver.Driver.I_RELATIONSHIP, value));
             else
                 return driver.Driver.VALUE_EXTENSIONS.As<T>(value);
