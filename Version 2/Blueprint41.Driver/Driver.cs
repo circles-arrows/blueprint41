@@ -9,10 +9,8 @@ using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.CSharp;
 
 using Blueprint41.Core;
-using System.CodeDom;
 
 namespace Blueprint41.Driver
 {
@@ -119,8 +117,8 @@ namespace Blueprint41.Driver
         internal static readonly IServerAddressResolverInfo   I_SERVER_ADDRESS_RESOLVER            = new IServerAddressResolverInfo("Neo4j.Driver.IServerAddressResolver");
 
         internal static readonly DriverTypeInfo               I_AUTH_TOKEN                         = new DriverTypeInfo("Neo4j.Driver.IAuthToken");
-        //internal static readonly DriverTypeInfo               LOGGER_PROXY                         = new DriverTypeInfo(RuntimeCodeGen.GetLoggerProxyProxyType);
-        //internal static readonly DriverTypeInfo               SERVER_ADDRESS_RESOLVER_PROXY        = new DriverTypeInfo(RuntimeCodeGen.GetServerAddressResolverProxyType);
+        internal static readonly DriverTypeInfo               LOGGER_PROXY                         = new DriverTypeInfo(RuntimeCodeGen.GetLoggerProxyType);
+        internal static readonly DriverTypeInfo               SERVER_ADDRESS_RESOLVER_PROXY        = new DriverTypeInfo(RuntimeCodeGen.GetServerAddressResolverProxyType);
 
         #endregion
 
@@ -149,8 +147,7 @@ namespace Blueprint41.Driver
             private const string LOGGER = "LoggerProxy";
             private const string RESOLVER = "ServerAddressResolverProxy";
 
-
-            private readonly static Lazy<Assembly> DynamicAssembly = new Lazy<Assembly>(delegate ()
+            private static void GenerateTypes()
             {
                 string assemblyName = "Blueprint41.Driver.RuntimeGeneration";
 
@@ -158,45 +155,63 @@ namespace Blueprint41.Driver
                 ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName);
 
                 #region Build ServerAddressResolverProxy
-                TypeBuilder resolverBuilder = moduleBuilder.DefineType(RESOLVER, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout);
-                // TODO: Type does not yet inherit interface
+
+                TypeBuilder resolverBuilder = moduleBuilder.DefineType(
+                        RESOLVER,
+                        TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout,
+                        typeof(object),
+                        new Type[] { I_SERVER_ADDRESS_RESOLVER.Type }
+                    );
 
                 FieldBuilder resolverField = BuildInitialization(resolverBuilder, typeof(ServerAddressResolver));
 
-                // TODO: Type does not yet implement method: public ISet<neo4j.ServerAddress>? Resolve(neo4j.ServerAddress address)
+                BuildResolveMethod(resolverBuilder, resolverField);
 
                 #endregion
 
                 #region Build LoggerProxy
-                TypeBuilder loggerBuilder = moduleBuilder.DefineType(RESOLVER, TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout);
-                // TODO: Type does not yet inherit interface
+
+                TypeBuilder loggerBuilder = moduleBuilder.DefineType(
+                        LOGGER,
+                        TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit | TypeAttributes.AutoLayout,
+                        typeof(object),
+                        new Type[] { I_LOGGER.Type }
+                    );
 
                 FieldBuilder loggerField = BuildInitialization(loggerBuilder, typeof(ILogger));
 
-                BuildLoggerMethod(loggerBuilder, loggerField, "Debug", false);
-                BuildLoggerMethod(loggerBuilder, loggerField, "Error", true);
-                BuildLoggerMethod(loggerBuilder, loggerField, "Info", false);
-                BuildLoggerMethod(loggerBuilder, loggerField, "Trace", false);
-                BuildLoggerMethod(loggerBuilder, loggerField, "Warn", true);
+                BuildLoggerMethod(loggerBuilder, loggerField, "Debug");
+                BuildLoggerMethodEx(loggerBuilder, loggerField, "Error");
+                BuildLoggerMethod(loggerBuilder, loggerField, "Info");
+                BuildLoggerMethod(loggerBuilder, loggerField, "Trace");
+                BuildLoggerMethodEx(loggerBuilder, loggerField, "Warn");
 
-                // TODO: Type does not yet implement method: public bool IsDebugEnabled()
-                // TODO: Type does not yet implement method: public bool IsTraceEnabled()
+                BuildIsEnabledMethod(loggerBuilder, loggerField, "IsDebugEnabled");
+                BuildIsEnabledMethod(loggerBuilder, loggerField, "IsTraceEnabled");
 
                 #endregion
 
 
-                // TODO: Build & load assembly
-                return null!;
+                // Build & load assembly
+                _loggerProxyType = loggerBuilder.CreateType();
+                _serverAddressResolverProxyType = resolverBuilder.CreateType();
 
-                FieldBuilder BuildInitialization(TypeBuilder builder, Type argument) // .ctor + field + static Get method
+
+                static FieldBuilder BuildInitialization(TypeBuilder builder, Type argument) // .ctor + field + static Get method
                 {
                     ILGenerator il;
 
                     FieldBuilder field = builder.DefineField("_instance", argument, FieldAttributes.Private);
 
-                    ConstructorBuilder ctor = builder.DefineConstructor(MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, new Type[] { typeof(ILogger) });
+                    ConstructorBuilder ctor = builder.DefineConstructor(
+                            MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, 
+                            CallingConventions.Standard, 
+                            new Type[] { typeof(ILogger) }
+                        );
 
-                    ConstructorInfo baseCtor = typeof(object).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, CallingConventions.Standard, new Type[0], null) ?? throw new MissingMemberException("object.ctor()");
+                    ConstructorInfo? baseCtor = typeof(object).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, CallingConventions.Standard, new Type[0], null);
+                    if (baseCtor is null)
+                        throw new MissingMemberException();
 
                     il = ctor.GetILGenerator();
                     il.Emit(OpCodes.Ldarg_0);
@@ -229,7 +244,13 @@ namespace Blueprint41.Driver
 
                      */
 
-                    MethodBuilder method = builder.DefineMethod("Get", MethodAttributes.HideBySig, CallingConventions.Standard, builder, new Type[] { argument });
+                    MethodBuilder method = builder.DefineMethod(
+                            "Get", 
+                            MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig, 
+                            CallingConventions.Standard, 
+                            builder, 
+                            new Type[] { argument }
+                        );
 
                     il = method.GetILGenerator();
                     il.Emit(OpCodes.Ldarg_0);
@@ -258,21 +279,290 @@ namespace Blueprint41.Driver
                     return field;
                 }
 
-                MethodBuilder BuildLoggerMethod(TypeBuilder builder, FieldBuilder field, string name, bool withException)
+                static void BuildResolveMethod(TypeBuilder builder, FieldBuilder field)
                 {
-                    // TODO: Type does not yet implement method: public void Debug(string message, params object[] args)
-                    // TODO: Type does not yet implement method: public void Error(Exception cause, string message, params object[] args)
-                    // TODO: Type does not yet implement method: public void Info(string message, params object[] args)
-                    // TODO: Type does not yet implement method: public void Trace(string message, params object[] args)
-                    // TODO: Type does not yet implement method: public void Warn(Exception cause, string message, params object[] args)
+                    // public ISet<neo4j.ServerAddress>? Resolve(neo4j.ServerAddress address)
+                    MethodBuilder method = builder.DefineMethod(
+                            "Resolve",
+                            MethodAttributes.Public | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual,
+                            CallingConventions.HasThis,
+                            typeof(ISet<>).MakeGenericType(SERVER_ADDRESS.Type),
+                            new Type[] { SERVER_ADDRESS.Type }
+                        );
 
-                    return null!;
+                    ILGenerator il = method.GetILGenerator();
+
+                    LocalBuilder intermediate = il.DeclareLocal(typeof(ServerAddress[]));                           // bp41.ServerAddress[] intermediate
+                    LocalBuilder result = il.DeclareLocal(typeof(HashSet<>).MakeGenericType(SERVER_ADDRESS.Type));  // HashSet<neo4j.ServerAddress> result
+                    LocalBuilder index = il.DeclareLocal(typeof(int));                                              // int index
+
+                    var IL_0018 = il.DefineLabel();
+                    var IL_001d = il.DefineLabel();
+                    var IL_0023 = il.DefineLabel();
+                    var IL_002d = il.DefineLabel();
+                    var IL_0045 = il.DefineLabel();
+
+                    ConstructorInfo? sa_ctor = typeof(ServerAddress).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof(object) }, null);
+                    if (sa_ctor is null)
+                        throw new MissingMemberException();
+
+                    MethodInfo? sa_resolve = typeof(ServerAddressResolver).GetMethod("Resolve", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof(ServerAddress) }, null);
+                    if (sa_resolve is null)
+                        throw new MissingMemberException();
+
+                    MethodInfo? sa_toArray = typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public).FirstOrDefault(item => item.Name == "ToArray")?.MakeGenericMethod(typeof(ServerAddress));
+                    if (sa_toArray is null)
+                        throw new MissingMemberException();
+
+                    ConstructorInfo? sa_hs_ctor = typeof(HashSet<>).MakeGenericType(SERVER_ADDRESS.Type).GetConstructor(new Type[0]);
+                    if (sa_hs_ctor is null)
+                        throw new MissingMemberException();
+
+                    MethodInfo? sa_inst = typeof(ServerAddress).GetMethod("get__instance", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null);
+                    if (sa_inst is null)
+                        throw new MissingMemberException();
+
+                    MethodInfo? sa_hs_add = typeof(HashSet<>).MakeGenericType(SERVER_ADDRESS.Type).GetMethod("Add");
+                    if (sa_hs_add is null)
+                        throw new MissingMemberException();
+
+                    Type neo4j_sa = SERVER_ADDRESS.Type;
+
+                    il.Emit(OpCodes.Ldarg_0);               //IL_0000: ldarg.0
+                    il.Emit(OpCodes.Ldfld, field);          //IL_0001: ldfld            >>> ServerAddressResolverProxy._instance                                            >>> field
+                    il.Emit(OpCodes.Ldarg_1);               //IL_0006: ldarg.1
+                    il.Emit(OpCodes.Newobj, sa_ctor);       //IL_0007: newobj           >>> bp41.ServerAddress.ctor(object)                                                 >>> sa_ctor
+                    il.Emit(OpCodes.Callvirt, sa_resolve);  //IL_000c: callvirt         >>> bp41.ServerAddressResolver.Resolve(bp41.ServerAddress)                          >>> sa_resolve
+                    il.Emit(OpCodes.Dup);                   //IL_0011: dup
+                    il.Emit(OpCodes.Brtrue_S, IL_0018);     //IL_0012: brtrue.s IL_0018
+
+                    il.Emit(OpCodes.Pop);                   //IL_0014: pop
+                    il.Emit(OpCodes.Ldnull);                //IL_0015: ldnull
+                    il.Emit(OpCodes.Br_S, IL_001d);         //IL_0016: br.s IL_001d
+
+                    il.MarkLabel(IL_0018);
+                    il.Emit(OpCodes.Call, sa_toArray);      //IL_0018: call             >>> Enumerable.ToArray<bp41.ServerAddress>(this IEnumerable<bp41.ServerAddress>)    >>> sa_toArray
+
+                    il.MarkLabel(IL_001d);
+                    il.Emit(OpCodes.Stloc_0);               //IL_001d: stloc.0
+                    il.Emit(OpCodes.Ldloc_0);               //IL_001e: ldloc.0
+                    il.Emit(OpCodes.Brtrue_S, IL_0023);     //IL_001f: brtrue.s IL_0023
+
+                    il.Emit(OpCodes.Ldnull);                //IL_0021: ldnull
+                    il.Emit(OpCodes.Ret);                   //IL_0022: ret
+
+                    il.MarkLabel(IL_0023);
+                    il.Emit(OpCodes.Newobj, sa_hs_ctor);    //IL_0023: newobj           >>> HashSet<neo4j.ServerAddress>.ctor()                                             >>> sa_hs_ctor
+                    il.Emit(OpCodes.Stloc_1);               //IL_0028: stloc.1
+                    il.Emit(OpCodes.Ldc_I4_0);              //IL_0029: ldc.i4.0
+                    il.Emit(OpCodes.Stloc_2);               //IL_002a: stloc.2
+                    il.Emit(OpCodes.Br_S, IL_0045);         //IL_002b: br.s IL_0045
+
+                    il.MarkLabel(IL_002d);
+                                                            //loop start (head: IL_0045)
+                    il.Emit(OpCodes.Ldloc_1);               //    IL_002d: ldloc.1
+                    il.Emit(OpCodes.Ldloc_0);               //    IL_002e: ldloc.0
+                    il.Emit(OpCodes.Ldloc_2);               //    IL_002f: ldloc.2
+                    il.Emit(OpCodes.Ldelem_Ref);            //    IL_0030: ldelem.ref
+                    il.Emit(OpCodes.Callvirt, sa_inst);     //    IL_0031: callvirt     >>> bp41.ServerAddress.get__instance()                                              >>> sa_inst
+                    il.Emit(OpCodes.Castclass, neo4j_sa);   //    IL_0036: castclass    >>> neo4j.ServerAddress                                                             >>> neo4j_sa
+                    il.Emit(OpCodes.Callvirt, sa_hs_add);   //    IL_003b: callvirt     >>> HashSet<neo4j.ServerAddress>.Add(neo4j.ServerAddress)                           >>> sa_hs_add
+                    il.Emit(OpCodes.Pop);                   //    IL_0040: pop
+                    il.Emit(OpCodes.Ldloc_2);               //    IL_0041: ldloc.2
+                    il.Emit(OpCodes.Ldc_I4_1);              //    IL_0042: ldc.i4.1
+                    il.Emit(OpCodes.Add);                   //    IL_0043: add
+                    il.Emit(OpCodes.Stloc_2);               //    IL_0044: stloc.2
+
+                    il.MarkLabel(IL_0045);
+                    il.Emit(OpCodes.Ldloc_2);               //    IL_0045: ldloc.2
+                    il.Emit(OpCodes.Ldloc_0);               //    IL_0046: ldloc.0
+                    il.Emit(OpCodes.Ldlen);                 //    IL_0047: ldlen
+                    il.Emit(OpCodes.Conv_I4);               //    IL_0048: conv.i4
+                    il.Emit(OpCodes.Blt_S, IL_002d);        //    IL_0049: blt.s IL_002d
+                                                            //end loop
+
+                    il.Emit(OpCodes.Ldloc_1);               //IL_004b: ldloc.1
+                    il.Emit(OpCodes.Ret);                   //IL_004c: ret
+
+                    /*
+
+                    .method public final hidebysig newslot virtual 
+                        instance class [System]System.Collections.Generic.ISet`1<class [Neo4j.Driver]Neo4j.Driver.ServerAddress> Resolve (
+                            class [Neo4j.Driver]Neo4j.Driver.ServerAddress address
+                        ) cil managed 
+                    {
+                        // Method begins at RVA 0x20b4
+                        // Header size: 12
+                        // Code size: 77 (0x4d)
+                        .maxstack 3
+                        .locals init (
+                            [0] class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress[] intermediate,
+                            [1] class [System.Core]System.Collections.Generic.HashSet`1<class [Neo4j.Driver]Neo4j.Driver.ServerAddress> result,
+                            [2] int32 index
+                        )
+
+                        IL_0000: ldarg.0
+                        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver Blueprint41.Driver.RuntimeGeneration.ServerAddressResolverProxy::_instance
+                        IL_0006: ldarg.1
+                        IL_0007: newobj instance void [Blueprint41.Driver]Blueprint41.Driver.ServerAddress::.ctor(object)
+                        IL_000c: callvirt instance class [System]System.Collections.Generic.ISet`1<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress> [Blueprint41.Driver]Blueprint41.Driver.ServerAddressResolver::Resolve(class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress)
+                        IL_0011: dup
+                        IL_0012: brtrue.s IL_0018
+
+                        IL_0014: pop
+                        IL_0015: ldnull
+                        IL_0016: br.s IL_001d
+
+                        IL_0018: call !!0[] [System.Core]System.Linq.Enumerable::ToArray<class [Blueprint41.Driver]Blueprint41.Driver.ServerAddress>(class [mscorlib]System.Collections.Generic.IEnumerable`1<!!0>)
+
+                        IL_001d: stloc.0
+                        IL_001e: ldloc.0
+                        IL_001f: brtrue.s IL_0023
+
+                        IL_0021: ldnull
+                        IL_0022: ret
+
+                        IL_0023: newobj instance void class [System.Core]System.Collections.Generic.HashSet`1<class [Neo4j.Driver]Neo4j.Driver.ServerAddress>::.ctor()
+                        IL_0028: stloc.1
+                        IL_0029: ldc.i4.0
+                        IL_002a: stloc.2
+                        IL_002b: br.s IL_0045
+                        // loop start (head: IL_0045)
+                            IL_002d: ldloc.1
+                            IL_002e: ldloc.0
+                            IL_002f: ldloc.2
+                            IL_0030: ldelem.ref
+                            IL_0031: callvirt instance object [Blueprint41.Driver]Blueprint41.Driver.ServerAddress::get__instance()
+                            IL_0036: castclass [Neo4j.Driver]Neo4j.Driver.ServerAddress
+                            IL_003b: callvirt instance bool class [System.Core]System.Collections.Generic.HashSet`1<class [Neo4j.Driver]Neo4j.Driver.ServerAddress>::Add(!0)
+                            IL_0040: pop
+                            IL_0041: ldloc.2
+                            IL_0042: ldc.i4.1
+                            IL_0043: add
+                            IL_0044: stloc.2
+
+                            IL_0045: ldloc.2
+                            IL_0046: ldloc.0
+                            IL_0047: ldlen
+                            IL_0048: conv.i4
+                            IL_0049: blt.s IL_002d
+                        // end loop
+
+                        IL_004b: ldloc.1
+                        IL_004c: ret
+                    } // end of method ServerAddressResolverProxy::Resolve
+
+                     */
                 }
 
-            }, true);
+                static void BuildLoggerMethod(TypeBuilder builder, FieldBuilder field, string name) => PassThroughMethod(builder, field, name, typeof(void), new Type[] { typeof(string), typeof(object[]) });
 
-            internal static Type GetServerAddressResolverProxyType() => DynamicAssembly.Value.GetType(RESOLVER, true, false)!;
-            internal static Type GetLoggerProxyProxyType() => DynamicAssembly.Value.GetType(LOGGER, true, false)!;
+                static void BuildLoggerMethodEx(TypeBuilder builder, FieldBuilder field, string name) => PassThroughMethod(builder, field, name, typeof(void), new Type[] { typeof(Exception), typeof(string), typeof(object[]) });
+
+                static void BuildIsEnabledMethod(TypeBuilder builder, FieldBuilder field, string name) => PassThroughMethod(builder, field, name, typeof(bool),new Type[0]);
+
+                static void PassThroughMethod(TypeBuilder builder, FieldBuilder field, string name, Type returns, params Type[] args)
+                {
+                    if (args.Length > 5)
+                        throw new NotSupportedException();
+
+                    MethodBuilder method = builder.DefineMethod(
+                        name,
+                        MethodAttributes.Public | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual,
+                        CallingConventions.HasThis,
+                        returns,
+                        args
+                    );
+
+                    MethodInfo? underlying = typeof(ILogger).GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, args, null);
+                    if (underlying is null)
+                        throw new MissingMemberException();
+
+                    ILGenerator il = method.GetILGenerator();
+
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Ldfld, field);
+                    
+                    if (args.Length >= 1)
+                        il.Emit(OpCodes.Ldarg_1);
+
+                    if (args.Length >= 2)
+                        il.Emit(OpCodes.Ldarg_2);
+
+                    if (args.Length >= 3)
+                        il.Emit(OpCodes.Ldarg_3);
+
+                    if (args.Length >= 4)
+                        il.Emit(OpCodes.Ldarg_S, 4);
+
+                    if (args.Length >= 5)
+                        il.Emit(OpCodes.Ldarg_S, 5);
+
+                    il.Emit(OpCodes.Callvirt, underlying);
+                    il.Emit(OpCodes.Ret);
+
+                    /*
+
+                    .method public final hidebysig newslot virtual 
+                        instance void Error (
+                            class [System.Runtime]System.Exception cause,
+                            string message,
+                            object[] args
+                        ) cil managed 
+                    {
+                        .param [3]
+                            .custom instance void [System.Runtime]System.ParamArrayAttribute::.ctor() = (
+                                01 00 00 00
+                            )
+                        // Method begins at RVA 0x20dc
+                        // Header size: 1
+                        // Code size: 15 (0xf)
+                        .maxstack 8
+
+                        IL_0000: ldarg.0
+                        IL_0001: ldfld class [Blueprint41.Driver]Blueprint41.Driver.ILogger Blueprint41.Driver.RuntimeGeneration.LoggerProxy::_logger
+                        IL_0006: ldarg.1
+                        IL_0007: ldarg.2
+                        IL_0008: ldarg.3
+                        IL_0009: callvirt instance void [Blueprint41.Driver]Blueprint41.Driver.ILogger::Error(class [System.Runtime]System.Exception, string, object[])
+                        IL_000e: ret
+                    } // end of method LoggerProxy::Error
+
+                     */
+                }
+            }
+
+            internal static Type GetServerAddressResolverProxyType()
+            {
+                if (_serverAddressResolverProxyType is null)
+                {
+#pragma warning disable S2551 // Shared resources should not be used for locking
+                    lock (typeof(RuntimeCodeGen))
+                    {
+                        if (_serverAddressResolverProxyType is null)
+                            GenerateTypes();
+                    }
+#pragma warning restore S2551 // Shared resources should not be used for locking
+                }
+                return _serverAddressResolverProxyType ?? throw new TypeLoadException("ServerAddressResolverProxy");
+            }
+            private static Type? _serverAddressResolverProxyType = null;
+
+            internal static Type GetLoggerProxyType()
+            {
+                if (_loggerProxyType is null)
+                {
+#pragma warning disable S2551 // Shared resources should not be used for locking
+                    lock (typeof(RuntimeCodeGen))
+                    {
+                        if (_loggerProxyType is null)
+                            GenerateTypes();
+                    }
+#pragma warning restore S2551 // Shared resources should not be used for locking
+                }
+                return _loggerProxyType ?? throw new TypeLoadException("LoggerProxy");
+            }
+            private static Type? _loggerProxyType = null;
         }
 
         internal class DriverTypeInfo
@@ -1704,15 +1994,15 @@ namespace Blueprint41.Driver
         {
             public IServerAddressResolverInfo(params string[] names) : base(names) { }
 
-            public object ConvertToNeo4jIServerAddressResolver(ServerAddressResolver instance) => null!; // _get.Value.Invoke(instance);
-            //private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS_RESOLVER_PROXY, SERVER_ADDRESS_RESOLVER_PROXY, "Get", Type<ServerAddressResolver>.Info), true);
+            public object ConvertToNeo4jIServerAddressResolver(ServerAddressResolver instance) => _get.Value.Invoke(instance);
+            private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(SERVER_ADDRESS_RESOLVER_PROXY, SERVER_ADDRESS_RESOLVER_PROXY, "Get", Type<ServerAddressResolver>.Info), true);
         }
         internal sealed class ILoggerInfo : DriverTypeInfo
         {
             public ILoggerInfo(params string[] names) : base(names) { }
 
-            public object ConvertToNeo4jILogger(ILogger instance) => null!; //_get.Value.Invoke(instance);
-            //private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(LOGGER_PROXY, LOGGER_PROXY, "Get", Type<ILogger>.Info), true);
+            public object ConvertToNeo4jILogger(ILogger instance) => _get.Value.Invoke(instance);
+            private readonly Lazy<StaticMethod> _get = new Lazy<StaticMethod>(() => new StaticMethod(LOGGER_PROXY, LOGGER_PROXY, "Get", Type<ILogger>.Info), true);
         }
 
         #endregion

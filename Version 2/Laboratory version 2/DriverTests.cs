@@ -197,7 +197,14 @@ namespace Laboratory
         {
             Driver.Configure<Neo4j.Driver.IDriver>();
 
-            var logger = AsILogger(new InMemoryLogger(true, true, 100));
+            var bp41Logger = new InMemoryLogger(true, true, 100);
+            var neo4jLogger = AsILogger(bp41Logger);
+
+            neo4jLogger.Info("Hello World");
+
+            var log = bp41Logger.GetLog();
+            Debug.Assert(log.Count == 1);
+            Debug.Assert(log[0].Message == "Hello World");
 
             Neo4j.Driver.ILogger AsILogger(ILogger resolver)
             {
@@ -212,7 +219,38 @@ namespace Laboratory
         {
             Driver.Configure<Neo4j.Driver.IDriver>();
 
-            var resolver = AsIServerAddressResolver(new ServerAddressResolver(null, null));
+            ServerAddress localhost = ServerAddress.From("localhost", 7687);
+            ServerAddress vcluster1 = ServerAddress.From("cluster1", 7687);
+            ServerAddress vcluster2 = ServerAddress.From("cluster2", 7687);
+            HashSet<ServerAddress> cluster1 = new HashSet<ServerAddress>()
+            {
+                ServerAddress.From("127.0.0.1", 7687),
+                ServerAddress.From("127.0.0.2", 7687),
+                ServerAddress.From("127.0.0.3", 7687),
+            };
+            HashSet<ServerAddress> cluster2 = new HashSet<ServerAddress>() 
+            {
+                ServerAddress.From("127.10.0.1", 7687),
+                ServerAddress.From("127.10.0.2", 7687),
+                ServerAddress.From("127.10.0.3", 7687),
+            };
+            var dict = new Dictionary<ServerAddress, ISet<ServerAddress>>()
+            {
+                { vcluster1, cluster1  },
+                { vcluster2, cluster2  },
+            };
+
+            var bp41Resolver = new ServerAddressResolver(dict, new HashSet<ServerAddress>() { localhost });
+            var neo4jResolver = AsIServerAddressResolver(bp41Resolver);
+
+            ISet<ServerAddress> bp41Cluster = bp41Resolver.Resolve(ServerAddress.From("cluster1", 7687));
+            Debug.Assert(bp41Cluster.Count == 3);
+
+            ISet<ServerAddress> bp41Unknown= bp41Resolver.Resolve(ServerAddress.From("unknown", 7687));
+            Debug.Assert(bp41Unknown.Count == 1);
+
+            ISet<Neo4j.Driver.ServerAddress> neo4jCluster = neo4jResolver.Resolve(Neo4j.Driver.ServerAddress.From("cluster2", 7687));
+            Debug.Assert(neo4jCluster.Count == 3);
 
             Neo4j.Driver.IServerAddressResolver AsIServerAddressResolver(ServerAddressResolver resolver)
             {

@@ -13,21 +13,25 @@ namespace Blueprint41.Driver.RuntimeGeneration
     {
         private ServerAddressResolverProxy(bp41.ServerAddressResolver resolver)
         {
-            _resolver = resolver;
+            _instance = resolver;
         }
         public static ServerAddressResolverProxy Get(bp41.ServerAddressResolver resolver)
         {
             return new ServerAddressResolverProxy(resolver);
         }
-        private bp41.ServerAddressResolver _resolver;
+        private bp41.ServerAddressResolver _instance;
 
         public ISet<neo4j.ServerAddress>? Resolve(neo4j.ServerAddress address)
         {
-            ISet<bp41.ServerAddress>? result = _resolver.Resolve(new ServerAddress(address));
-            if (result == null)
+            bp41.ServerAddress[]? intermediate = _instance.Resolve(new ServerAddress(address))?.ToArray();
+            if (intermediate == null)
                 return null;
 
-            return new HashSet<neo4j.ServerAddress>(result.Select(item => (neo4j.ServerAddress)item._instance));
+            HashSet<neo4j.ServerAddress> result = new HashSet<neo4j.ServerAddress>();
+            for (int index = 0; index < intermediate.Length; index++)
+                result.Add((neo4j.ServerAddress)intermediate[index]._instance);
+
+            return result;
         }
     }
 
@@ -35,42 +39,42 @@ namespace Blueprint41.Driver.RuntimeGeneration
     {
         private LoggerProxy(bp41.ILogger logger)
         {
-            _logger = logger;
+            _instance = logger;
         }
         public static LoggerProxy Get(bp41.ILogger logger)
         {
             return new LoggerProxy(logger);
         }
-        private bp41.ILogger _logger;
+        private bp41.ILogger _instance;
 
 
         public void Debug(string message, params object[] args)
         {
-            _logger.Debug(message, args);
+            _instance.Debug(message, args);
         }
         public void Error(Exception cause, string message, params object[] args)
         {
-            _logger.Error(cause, message, args);
+            _instance.Error(cause, message, args);
         }
         public void Info(string message, params object[] args)
         {
-            _logger.Info(message, args);
+            _instance.Info(message, args);
         }
         public bool IsDebugEnabled()
         {
-            return _logger.IsDebugEnabled();
+            return _instance.IsDebugEnabled();
         }
         public bool IsTraceEnabled()
         {
-            return _logger.IsTraceEnabled();
+            return _instance.IsTraceEnabled();
         }
         public void Trace(string message, params object[] args)
         {
-            _logger.Trace(message, args);
+            _instance.Trace(message, args);
         }
         public void Warn(Exception cause, string message, params object[] args)
         {
-            _logger.Warn(cause, message, args);
+            _instance.Warn(cause, message, args);
         }
     }
 }
