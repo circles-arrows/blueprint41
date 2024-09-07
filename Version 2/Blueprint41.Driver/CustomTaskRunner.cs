@@ -1,5 +1,5 @@
-﻿//#define OUTPUT_DEBUG_TO_CONSOLE
-//#define SUPRESS_SUB_TASKS
+﻿#define OUTPUT_DEBUG_TO_CONSOLE
+#define SUPRESS_SUB_TASKS
 
 using System;
 using System.Collections.Generic;

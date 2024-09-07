@@ -55,7 +55,7 @@ namespace Blueprint41.Core
             loadedData = tmp;
 
             IsLoaded = true;
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+            if (Parent is OgmClass || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
                 Transaction?.Replay(this);
         }
         private void BeforeCollectionChanged(object sender, EventArgs args)

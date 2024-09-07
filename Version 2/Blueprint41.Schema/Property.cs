@@ -1444,18 +1444,18 @@ namespace Blueprint41
                 return onChange is not null || ForeignProperty?.onChange is not null;
             }
         }
-        internal bool RaiseOnChange<T>(OGMImpl sender, [AllowNull] T previousValue, [AllowNull] T assignedValue, DateTime? moment, OperationEnum operation)
+        internal bool RaiseOnChange<T>(OgmClass sender, [AllowNull] T previousValue, [AllowNull] T assignedValue, DateTime? moment, OperationEnum operation)
         {
             Transaction trans = Transaction.RunningTransaction;
             if (!trans.FireEntityEvents)
                 return false;
 
-            OGMImpl? otherSender;
+            OgmClass? otherSender;
             bool canceled = false;
 
             if (ForeignProperty is not null)
             {
-                otherSender = previousValue as OGMImpl;
+                otherSender = previousValue as OgmClass;
 
                 if (operation == OperationEnum.Set || operation == OperationEnum.Remove)
                     if (RaiseOther(otherSender, ForeignProperty, sender, null, OperationEnum.Remove))
@@ -1463,7 +1463,7 @@ namespace Blueprint41
 
                 if (assignedValue is not null)
                 {
-                    otherSender = ForeignProperty.GetValue((OGM)assignedValue, moment) as OGMImpl;
+                    otherSender = ForeignProperty.GetValue((OGM)assignedValue, moment) as OgmClass;
                     if (operation == OperationEnum.Set || operation == OperationEnum.Remove)
                         if (RaiseOther(otherSender, this, assignedValue, null, OperationEnum.Remove))
                             canceled = true;
@@ -1472,7 +1472,7 @@ namespace Blueprint41
                 if (RaiseMain(sender, previousValue!, assignedValue!, operation))
                     canceled = true;
 
-                otherSender = assignedValue as OGMImpl;
+                otherSender = assignedValue as OgmClass;
 
                 if (operation == OperationEnum.Set || operation == OperationEnum.Add)
                     if (RaiseOther(otherSender, ForeignProperty, null, sender, OperationEnum.Add))
@@ -1486,7 +1486,7 @@ namespace Blueprint41
 
             return canceled;
 
-            bool RaiseMain(OGMImpl target, T oldValue, T newValue, OperationEnum op)
+            bool RaiseMain(OgmClass target, T oldValue, T newValue, OperationEnum op)
             {
                 if (target is null)
                     return false;
@@ -1497,7 +1497,7 @@ namespace Blueprint41
                 args.Lock();
                 return args.Canceled;
             }
-            bool RaiseOther(OGMImpl? target, Property? property, object? oldValue, object? newValue, OperationEnum op)
+            bool RaiseOther(OgmClass? target, Property? property, object? oldValue, object? newValue, OperationEnum op)
             {
                 if (target is null || property is null)
                     return false;

@@ -69,7 +69,7 @@ namespace Blueprint41.Core
                 EagerLoadLogic.Invoke(item);
 
             if (fireEvents)
-                if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
+                if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
                     return;
 
             ExecuteAction(AddAction(item, moment, properties));
@@ -93,7 +93,7 @@ namespace Blueprint41.Core
                     EagerLoadLogic.Invoke(item);
 
                 if (fireEvents)
-                    if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
+                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, moment, OperationEnum.Add) ?? false)
                         continue;
 
                 actions.AddLast(AddAction(item, moment, properties));
@@ -146,7 +146,7 @@ namespace Blueprint41.Core
                 if (fireEvents)
                 {
 
-                    if (!(ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, item, default(TEntity), moment, OperationEnum.Remove) ?? false))
+                    if (!(ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), moment, OperationEnum.Remove) ?? false))
                         ExecuteAction(RemoveAction(item, moment));
                 }
                 else
@@ -173,7 +173,7 @@ namespace Blueprint41.Core
                 EagerLoadLogic.Invoke(item);
 
             if (fireEvents)
-                if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, item, default(TEntity), moment, OperationEnum.Remove) ?? false)
+                if (ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), moment, OperationEnum.Remove) ?? false)
                     return;
 
             ExecuteAction(RemoveAction(item, moment));
@@ -213,7 +213,7 @@ namespace Blueprint41.Core
                     if (EagerLoadLogic is not null)
                         EagerLoadLogic.Invoke((TEntity)item.Item);
 
-                    if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, item.Item, default(TEntity), moment, (OperationEnum)OperationEnum.Remove) ?? false)
+                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, item.Item, default(TEntity), moment, (OperationEnum)OperationEnum.Remove) ?? false)
                         cancel.Add((CollectionItem)item);
                 });
 

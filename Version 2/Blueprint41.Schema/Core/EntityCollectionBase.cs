@@ -40,7 +40,7 @@ namespace Blueprint41.Core
 
             IsLoaded = false;
 
-            if (parent is OGMImpl || (parent is DynamicEntity && ((DynamicEntity)parent).ShouldExecute))
+            if (parent is OgmClass || (parent is DynamicEntity && ((DynamicEntity)parent).ShouldExecute))
                 Transaction?.Register(this);
         }
 
@@ -199,7 +199,7 @@ namespace Blueprint41.Core
 
         private protected void ExecuteAction(RelationshipAction action)
         {
-            if (Parent is OGMImpl || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
+            if (Parent is OgmClass || (Parent is DynamicEntity && ((DynamicEntity)Parent).ShouldExecute))
                 Transaction?.Register(action);
         }
         private protected void ExecuteAction(LinkedList<RelationshipAction> actions)
