@@ -39,7 +39,7 @@ namespace Blueprint41.Events
     }
     public abstract class EntityEventArgs
     {
-        protected EntityEventArgs(OGMImpl sender)
+        protected EntityEventArgs(OgmClass sender)
         {
             Entity = sender?.GetEntity()!;
             Transaction = sender?.Transaction;
@@ -48,7 +48,7 @@ namespace Blueprint41.Events
             Flushed = false;
         }
 
-        protected abstract OGMImpl SenderInternalBridge { get; set; }
+        protected abstract OgmClass SenderInternalBridge { get; set; }
         public OGM Sender { get { return SenderInternalBridge; } }
 
         public bool IsInsert 
@@ -82,7 +82,7 @@ namespace Blueprint41.Events
 
         public IDictionary<string, object?> CustomState { get { return SenderInternalBridge.CustomState; } }
 
-        internal static EntityEventArgs CreateInstance(EventTypeEnum eventType, OGMImpl sender, Transaction trans, bool locked = false)
+        internal static EntityEventArgs CreateInstance(EventTypeEnum eventType, OgmClass sender, Transaction trans, bool locked = false)
         {
             Type type = sender.GetEntity().EntityEventArgsType;
 
@@ -125,14 +125,14 @@ namespace Blueprint41.Events
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         private EntityEventArgs() : base(null!) { }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public EntityEventArgs(OGMImpl sender) : base(sender)
+        public EntityEventArgs(OgmClass sender) : base(sender)
         {
             Sender = (TSender)(object)sender;
         }
 
-        protected sealed override OGMImpl SenderInternalBridge
+        protected sealed override OgmClass SenderInternalBridge
         {
-            get { return (OGMImpl)(object)Sender; }
+            get { return (OgmClass)(object)Sender; }
             set { Sender = (TSender)(value as OGM)!; }
         }
         new public TSender Sender { get; private set; }
@@ -141,7 +141,7 @@ namespace Blueprint41.Events
 
     public abstract class PropertyEventArgs : EntityEventArgs
     {
-        protected PropertyEventArgs(OGMImpl sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender)
+        protected PropertyEventArgs(OgmClass sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender)
         {
             Property = property;
             Operation = operation;
@@ -160,7 +160,7 @@ namespace Blueprint41.Events
 
         public DateTime Moment { get; private set; }
 
-        internal static PropertyEventArgs CreateInstance(EventTypeEnum eventType, OGMImpl sender, Property property, object? previousValue, object? assignedValue, DateTime moment, OperationEnum operation, Transaction trans)
+        internal static PropertyEventArgs CreateInstance(EventTypeEnum eventType, OgmClass sender, Property property, object? previousValue, object? assignedValue, DateTime moment, OperationEnum operation, Transaction trans)
         {
             Type senderType = sender.GetType();
             Type argsType = property.GetPropertyEventArgsType(senderType);
@@ -182,7 +182,7 @@ namespace Blueprint41.Events
         }
 
         public virtual PropertyEventArgs<TSender, TReturnType> As<TSender, TReturnType>()
-             where TSender : OGMImpl
+             where TSender : OgmClass
         {
             if (Sender is null || !Sender.GetType().IsSubclassOfOrSelf(typeof(TSender)))
                 throw new InvalidCastException(string.Format("The event sender (type={0}) cannot be cast to generic parmameter TSender (type={1})", Sender?.GetType().Name ?? "Unknown", typeof(TSender).Name));
@@ -197,14 +197,14 @@ namespace Blueprint41.Events
     public abstract class PropertyEventArgs<TSender> : PropertyEventArgs
         where TSender : OGM
     {
-        protected PropertyEventArgs(OGMImpl sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender, property, operation, previousValue, assignedValue)
+        protected PropertyEventArgs(OgmClass sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender, property, operation, previousValue, assignedValue)
         {
             Sender = (TSender)(object)sender;
         }
 
-        protected sealed override OGMImpl SenderInternalBridge
+        protected sealed override OgmClass SenderInternalBridge
         {
-            get { return (OGMImpl)(object)Sender; }
+            get { return (OgmClass)(object)Sender; }
             set { Sender = (TSender)(value as OGM); }
         }
         new public TSender Sender { get; private set; }
@@ -230,7 +230,7 @@ namespace Blueprint41.Events
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         private PropertyEventArgs() : base(null!, null!, OperationEnum.Set, default(TReturnType)!, default(TReturnType)!) { }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public PropertyEventArgs(OGMImpl sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender, property, operation, previousValue, assignedValue)
+        public PropertyEventArgs(OgmClass sender, Property property, OperationEnum operation, object? previousValue, object? assignedValue) : base(sender, property, operation, previousValue, assignedValue)
         {
             PreviousValue = (TReturnType)previousValue!;
             AssignedValue = (TReturnType)assignedValue!;

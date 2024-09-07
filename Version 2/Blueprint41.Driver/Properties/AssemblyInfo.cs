@@ -36,5 +36,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("2.0.0.0")]
 
 [assembly: InternalsVisibleTo("Blueprint41.Driver.RuntimeGeneration")]
+
 [assembly: InternalsVisibleTo("Blueprint41.Schema")]
+[assembly: InternalsVisibleTo("Blueprint41.OGM")]
+[assembly: InternalsVisibleTo("Blueprint41.Query")]
+
 [assembly: InternalsVisibleTo("Laboratory version 2")]

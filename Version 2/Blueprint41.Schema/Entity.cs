@@ -969,7 +969,7 @@ namespace Blueprint41
             add { onNew += value; }
             remove { onNew -= value; }
         }
-        internal void RaiseOnNew(OGMImpl sender, Transaction trans)
+        internal void RaiseOnNew(OgmClass sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnNew, sender, trans, true);
             if (!trans.FireEntityEvents)
@@ -991,7 +991,7 @@ namespace Blueprint41
             add { onSave += value; }
             remove { onSave -= value; }
         }
-        internal void RaiseOnSave(OGMImpl sender, Transaction trans)
+        internal void RaiseOnSave(OgmClass sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnSave, sender, trans);
             if (!trans.FireEntityEvents)
@@ -1013,7 +1013,7 @@ namespace Blueprint41
             add { onAfterSave += value; }
             remove { onAfterSave -= value; }
         }
-        internal void RaiseOnAfterSave(OGMImpl sender, Transaction trans)
+        internal void RaiseOnAfterSave(OgmClass sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnAfterSave, sender, trans);
             if (!trans.FireEntityEvents)
@@ -1035,7 +1035,7 @@ namespace Blueprint41
             add { onDelete += value; }
             remove { onDelete -= value; }
         }
-        internal void RaiseOnDelete(OGMImpl sender, Transaction trans)
+        internal void RaiseOnDelete(OgmClass sender, Transaction trans)
         {
             EntityEventArgs args = EntityEventArgs.CreateInstance(EventTypeEnum.OnDelete, sender, trans);
             if (!trans.FireEntityEvents)

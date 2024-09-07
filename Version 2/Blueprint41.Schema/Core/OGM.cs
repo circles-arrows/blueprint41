@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace Blueprint41.Core
 {
+#pragma warning disable S101 // Types should be named in PascalCase
+#pragma warning disable VSSpell001 // Spell Check
     public interface OGM
+#pragma warning restore VSSpell001 // Spell Check
+#pragma warning restore S101 // Types should be named in PascalCase
     {
         object? GetKey();
         void SetKey(object key);

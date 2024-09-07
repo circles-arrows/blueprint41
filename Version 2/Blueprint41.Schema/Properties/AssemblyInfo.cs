@@ -1,8 +1,12 @@
-﻿using Blueprint41.Core;
-using Blueprint41.TypeConversion;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+using Blueprint41.Core;
+using Blueprint41.TypeConversion;
+
+[assembly: InternalsVisibleTo("Blueprint41.OGM")]
+[assembly: InternalsVisibleTo("Blueprint41.Query")]
 
 #region Type Conversions
 

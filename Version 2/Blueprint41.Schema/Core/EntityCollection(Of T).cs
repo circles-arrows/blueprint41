@@ -39,7 +39,7 @@ namespace Blueprint41.Core
                 EagerLoadLogic.Invoke(item);
 
             if (fireEvents)
-                if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
+                if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                     return;
 
             ExecuteAction(AddAction(item, null, properties));
@@ -58,7 +58,7 @@ namespace Blueprint41.Core
                     EagerLoadLogic.Invoke(item);
 
                 if (fireEvents)
-                    if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
+                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, default(TEntity), item, null, OperationEnum.Add) ?? false)
                         return;
 
                 actions.AddLast(AddAction(item, null, properties));
@@ -85,7 +85,7 @@ namespace Blueprint41.Core
                 EagerLoadLogic.Invoke(item);
 
             if (fireEvents)
-                if (ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false)
+                if (ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false)
                     return;
 
             ExecuteAction(RemoveAction(item, null));
@@ -111,7 +111,7 @@ namespace Blueprint41.Core
                     if (EagerLoadLogic is not null)
                         EagerLoadLogic.Invoke((TEntity)item.Item);
 
-                    if (ParentProperty?.RaiseOnChange((OGMImpl)Parent, item.Item, default(TEntity), null , (OperationEnum)OperationEnum.Remove) ?? false)
+                    if (ParentProperty?.RaiseOnChange((OgmClass)Parent, item.Item, default(TEntity), null , (OperationEnum)OperationEnum.Remove) ?? false)
                         cancel.Add(item);
                 });
 
@@ -157,7 +157,7 @@ namespace Blueprint41.Core
                 if (fireEvents)
                 {
 
-                    if (!(ParentProperty?.RaiseOnChange<OGM>((OGMImpl)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false))
+                    if (!(ParentProperty?.RaiseOnChange<OGM>((OgmClass)Parent, item, default(TEntity), null, OperationEnum.Remove) ?? false))
                         ExecuteAction(RemoveAction(item, null));
                 }
                 else

@@ -254,8 +254,8 @@ namespace Blueprint41
         // Flush is private for now, until RelationshipActions will have their own persistence state.
         protected virtual void FlushInternal()
         {
-            List<OGMImpl> entities = registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OGMImpl).Cast<OGMImpl>().ToList();
-            foreach (OGMImpl entity in entities)
+            List<OgmClass> entities = registeredEntities.Values.SelectMany(item => item.Values).Where(item => item is OgmClass).Cast<OgmClass>().ToList();
+            foreach (OgmClass entity in entities)
             {
                 if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                     continue;
@@ -356,7 +356,7 @@ namespace Blueprint41
                 collection.AfterFlush();
             }
 
-            foreach (OGMImpl entity in entities)
+            foreach (OgmClass entity in entities)
             {
                 if (entity.PersistenceState == PersistenceState.Persisted || entity.PersistenceState == PersistenceState.Deleted)
                 {
@@ -398,7 +398,7 @@ namespace Blueprint41
                         }
                         trans.forRetry.Clear();
 
-                        foreach (OGMImpl entity in trans.registeredEntities.Values.SelectMany(item => item.Values).OfType<OGMImpl>().ToList())
+                        foreach (OgmClass entity in trans.registeredEntities.Values.SelectMany(item => item.Values).OfType<OgmClass>().ToList())
                         {
                             if (trans.beforeCommitEntityState.TryGetValue(entity, out var state))
                                 entity.PersistenceState = state;
