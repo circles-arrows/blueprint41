@@ -283,10 +283,10 @@ namespace Blueprint41.Core
         private static bool CanConvertTo(this Type fromType, Type targetType, bool sameHierarchy = true, bool switchVariance = false)
         {
             Func<Type, Type, bool> covarianceCheck = sameHierarchy
-                ? (Func<Type, Type, bool>)IsInHierarchy
+                ? IsInHierarchy
                 : (from, to) => from == to || from.IsSubclassOf(to);
             Func<Type, Type, bool> contravarianceCheck = sameHierarchy
-                ? (Func<Type, Type, bool>)IsInHierarchy
+                ? IsInHierarchy
                 : (from, to) => from == to || to.IsSubclassOf(from);
 
             if (switchVariance)
@@ -303,14 +303,14 @@ namespace Blueprint41.Core
             }
 
             // Interface check.
-            if ((targetType.IsInterface && fromType.ImplementsInterface(targetType))
-                || (sameHierarchy && fromType.IsInterface && targetType.ImplementsInterface(fromType)))
+            if (targetType.IsInterface && fromType.ImplementsInterface(targetType)
+                || sameHierarchy && fromType.IsInterface && targetType.ImplementsInterface(fromType))
             {
                 return true;
             }
 
             // Explicit value type conversions (including enums).
-            if (sameHierarchy && (fromType.IsValueType && targetType.IsValueType))
+            if (sameHierarchy && fromType.IsValueType && targetType.IsValueType)
             {
                 return true;
             }
@@ -332,9 +332,9 @@ namespace Blueprint41.Core
                         (from, to, generic)
                             => !(from.IsValueType || to.IsValueType)    // Variance applies only to reference types.
                                 ? generic.GenericParameterAttributes.HasFlag(GenericParameterAttributes.Covariant)
-                                    ? CanConvertTo(from, to, cast, false)
+                                    ? from.CanConvertTo(to, cast, false)
                                     : generic.GenericParameterAttributes.HasFlag(GenericParameterAttributes.Contravariant)
-                                        ? CanConvertTo(from, to, cast, true)
+                                        ? from.CanConvertTo(to, cast, true)
                                         : false
                                 : false)
                         .All(match => match);

@@ -2,7 +2,7 @@
 
   <PropertyGroup Label="Build">
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    <RootNamespace>Blueprint41.Driver</RootNamespace>
+    <RootNamespace>Blueprint41</RootNamespace>
     <AssemblyName>Blueprint41.Driver</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 

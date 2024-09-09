@@ -13,8 +13,8 @@ namespace Blueprint41
 {
     public class Transaction : DisposableScope<Transaction>, IStatementRunner, IStatementRunnerAsync
     {
-        public driver.Session? DriverSession { get; set; }
-        public driver.Transaction? DriverTransaction { get; set; }
+        public driver.DriverSession? DriverSession { get; set; }
+        public driver.DriverTransaction? DriverTransaction { get; set; }
         public driver.IQueryRunner? StatementRunner => DriverTransaction;
 
         static internal Transaction Get(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
@@ -61,9 +61,16 @@ namespace Blueprint41
             DriverTransaction = await DriverSession.BeginTransactionAsync();
         }
 
-        private driver.Session InitializeDriverSession()
+        private driver.DriverSession InitializeDriverSession()
         {
+
+/* Unmerged change from project 'Blueprint41.Schema (net6.0)'
+Before:
             driver.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? driver.AccessMode.Write : driver.AccessMode.Read;
+After:
+            Blueprint41.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? Blueprint41.AccessMode.Write : Blueprint41.AccessMode.Read;
+*/
+            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
 
             return PersistenceProvider.Driver.Session(c =>
             {
@@ -135,7 +142,7 @@ namespace Blueprint41
 
             return this;
         }
-        protected internal driver.Bookmarks[]? Consistency;
+        protected internal Bookmarks[]? Consistency;
 
         static public Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningTransaction).RunAsync(cypher, memberName, sourceFilePath, sourceLineNumber);
         static public Task<driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningTransaction).RunAsync(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
@@ -463,7 +470,7 @@ namespace Blueprint41
             if (DriverSession is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            driver.Transaction? t = DriverTransaction;
+            driver.DriverTransaction? t = DriverTransaction;
             if (t is not null)
                 t.Commit();
 
@@ -476,7 +483,7 @@ namespace Blueprint41
             if (DriverSession is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            driver.Transaction? t = DriverTransaction;
+            driver.DriverTransaction? t = DriverTransaction;
             if (t is not null)
                 t.Rollback();
 
@@ -489,7 +496,7 @@ namespace Blueprint41
         }
         private void CloseSession()
         {
-            driver.Session? s = DriverSession;
+            driver.DriverSession? s = DriverSession;
             if (s is not null)
                 s.Close();
 

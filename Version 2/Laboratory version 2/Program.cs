@@ -5,9 +5,7 @@ using System.Diagnostics;
 
 using Blueprint41;
 using Blueprint41.Persistence;
-using AuthToken = Blueprint41.Driver.AuthToken;
-using Driver = Blueprint41.Driver.Driver;
-using ResultCursor = Blueprint41.Driver.ResultCursor;
+using d = Blueprint41.Driver;
 
 using DataStore;
 
@@ -40,7 +38,7 @@ namespace Laboratory
 
         private static async Task ApplyModelToDB()
         {
-            Driver.Configure<Neo4j.Driver.IDriver>();
+            d.Driver.Configure<Neo4j.Driver.IDriver>();
 
             AdvancedConfig config = new AdvancedConfig()
             {

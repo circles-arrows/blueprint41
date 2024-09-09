@@ -7,7 +7,8 @@ using System.Diagnostics;
 
 using Kerberos.NET.Win32;
 
-using Blueprint41.Driver;
+using Blueprint41;
+using d = Blueprint41.Driver;
 
 namespace Laboratory
 {
@@ -30,15 +31,15 @@ namespace Laboratory
 
         public static async Task TestConnectivity()
         {
-            Driver.Configure<Neo4j.Driver.IDriver>();
+            d.Driver.Configure<Neo4j.Driver.IDriver>();
 
             string[] queries = GetQueries();
 
             #region Test Connectivity
 
-            Driver driver = Driver.Get(new Uri(@"bolt://localhost:7687"), AuthToken.Basic("neo4j", "neoneoneo"), delegate (ConfigBuilder o)
+            d.Driver driver = d.Driver.Get(new Uri(@"bolt://localhost:7687"), AuthToken.Basic("neo4j", "neoneoneo"), delegate (d.ConfigBuilder o)
             {
-                o.WithFetchSize(ConfigBuilder.Infinite);
+                o.WithFetchSize(d.ConfigBuilder.Infinite);
                 o.WithMaxConnectionPoolSize(MAX_CONNECTION_POOL_SIZE);
                 o.WithDefaultReadBufferSize(DEFAULT_READWRITESIZE);
                 o.WithDefaultWriteBufferSize(DEFAULT_READWRITESIZE);
@@ -55,13 +56,13 @@ namespace Laboratory
 
             await CleanDB().ConfigureAwait(false);
 
-            await using (Session session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
+            await using (d.DriverSession session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
             {
                 foreach (string query in queries)
                 {
                     Console.WriteLine(query);
 
-                    ResultCursor result = await session.RunAsync(query).ConfigureAwait(false);
+                    d.ResultCursor result = await session.RunAsync(query).ConfigureAwait(false);
                     await result.ConsumeAsync().ConfigureAwait(false);
                 }
                 bookmark = session.LastBookmarks;
@@ -69,20 +70,20 @@ namespace Laboratory
 
             Console.Clear();
 
-            await using (Session session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Read); config.WithBookmarks(bookmark); }))
+            await using (d.DriverSession session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Read); config.WithBookmarks(bookmark); }))
             {
                 Dictionary<string, object?> parameters = new Dictionary<string, object?>()
                 {
                     { "actor", "Keanu Reeves" },
                 };
-                ResultCursor result = await session.RunAsync("""
+                d.ResultCursor result = await session.RunAsync("""
                     MATCH (m:Movie)<-[:ACTED_IN]-(p:Person)
                     WHERE p.name = $actor
                     RETURN m.title AS Movie, p.name AS Actor
                     """,
                     parameters).ConfigureAwait(false);
 
-                foreach (Record record in await result.ToListAsync())
+                foreach (d.Record record in await result.ToListAsync())
                 {
                     string movie = record["Movie"].As<string>();
                     string actor = record["Actor"].As<string>();
@@ -97,16 +98,16 @@ namespace Laboratory
 
             await CleanDB().ConfigureAwait(false);
 
-            await using (Session session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
+            await using (d.DriverSession session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
             {
                 foreach (string query in queries)
                 {
                     Console.WriteLine(query);
-                    await using (Transaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); }).ConfigureAwait(false))
+                    await using (d.DriverTransaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); }).ConfigureAwait(false))
                     {
 
-                        ResultCursor result = await transaction.RunAsync(query).ConfigureAwait(false);
-                        ResultSummary resultSummary = await result.ConsumeAsync().ConfigureAwait(false);
+                        d.ResultCursor result = await transaction.RunAsync(query).ConfigureAwait(false);
+                        d.ResultSummary resultSummary = await result.ConsumeAsync().ConfigureAwait(false);
                         System.Diagnostics.Debug.WriteLine(resultSummary.Query.Text);
 
                         await transaction.CommitAsync();
@@ -116,13 +117,13 @@ namespace Laboratory
 
                 Console.Clear();
 
-                await using (Transaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); config.WithMetadata(new Dictionary<string, object>() { { "Hello", "World" } }); }).ConfigureAwait(false))
+                await using (d.DriverTransaction transaction = await session.BeginTransactionAsync(config => { config.WithTimeout(TimeSpan.FromSeconds(30)); config.WithMetadata(new Dictionary<string, object>() { { "Hello", "World" } }); }).ConfigureAwait(false))
                 {
                     Dictionary<string, object?> parameters = new Dictionary<string, object?>()
                     {
                         { "actor", "Keanu Reeves" },
                     };
-                    ResultCursor result = await transaction.RunAsync("""
+                    d.ResultCursor result = await transaction.RunAsync("""
                     MATCH (m:Movie)<-[:ACTED_IN]-(p:Person)
                     WHERE p.name = $actor
                     RETURN m.title AS Movie, p.name AS Actor
@@ -131,8 +132,8 @@ namespace Laboratory
 
                     foreach (object record in await result.ToListAsyncInternal())
                     {
-                        string movie = Record.ItemInternal(record, "Movie").As("NULL");
-                        string actor = Record.ItemInternal(record, "Actor").As("NULL");
+                        string movie = d.Record.ItemInternal(record, "Movie").As("NULL");
+                        string actor = d.Record.ItemInternal(record, "Actor").As("NULL");
 
                         Console.WriteLine($"Movie: '{movie}', Actor: '{actor}'.");
                     }
@@ -149,9 +150,9 @@ namespace Laboratory
 
             async Task CleanDB()
             {
-                ResultCursor result;
+                d.ResultCursor result;
 
-                await using (Session session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
+                await using (d.DriverSession session = driver.Session(config => { config.WithDatabase("unittest"); config.WithDefaultAccessMode(AccessMode.Write); }))
                 {
                     result = await session.RunAsync("MATCH (n) DETACH DELETE n;").ConfigureAwait(false);
                     await result.ConsumeAsync().ConfigureAwait(false);
@@ -171,7 +172,7 @@ namespace Laboratory
 
         public static void TestAuthTokens()
         {
-            Driver.Configure<Neo4j.Driver.IDriver>();
+            d.Driver.Configure<Neo4j.Driver.IDriver>();
 
             TestToken(AuthToken.None);
             TestToken(AuthToken.Basic("neo4j", "neoneoneo"));
@@ -195,7 +196,7 @@ namespace Laboratory
 
         public static void TestILogger()
         {
-            Driver.Configure<Neo4j.Driver.IDriver>();
+            d.Driver.Configure<Neo4j.Driver.IDriver>();
 
             var bp41Logger = new InMemoryLogger(true, true, 100);
             var neo4jLogger = AsILogger(bp41Logger);
@@ -206,9 +207,9 @@ namespace Laboratory
             Debug.Assert(log.Count == 1);
             Debug.Assert(log[0].Message == "Hello World");
 
-            Neo4j.Driver.ILogger AsILogger(ILogger resolver)
+            Neo4j.Driver.ILogger AsILogger(d.ILogger resolver)
             {
-                var neo4jILogger = (Neo4j.Driver.ILogger)Driver.I_LOGGER.ConvertToNeo4jILogger(resolver);
+                var neo4jILogger = (Neo4j.Driver.ILogger)d.Driver.I_LOGGER.ConvertToNeo4jILogger(resolver);
 
                 Debug.Assert(neo4jILogger is not null, "Bp41 ILogger could not be converted into a Neo4j ILogger.");
 
@@ -217,44 +218,44 @@ namespace Laboratory
         }
         public static void TestServerAddressResolver()
         {
-            Driver.Configure<Neo4j.Driver.IDriver>();
+            d.Driver.Configure<Neo4j.Driver.IDriver>();
 
-            ServerAddress localhost = ServerAddress.From("localhost", 7687);
-            ServerAddress vcluster1 = ServerAddress.From("cluster1", 7687);
-            ServerAddress vcluster2 = ServerAddress.From("cluster2", 7687);
-            HashSet<ServerAddress> cluster1 = new HashSet<ServerAddress>()
+            d.ServerAddress localhost = d.ServerAddress.From("localhost", 7687);
+            d.ServerAddress vcluster1 = d.ServerAddress.From("cluster1", 7687);
+            d.ServerAddress vcluster2 = d.ServerAddress.From("cluster2", 7687);
+            HashSet<d.ServerAddress> cluster1 = new HashSet<d.ServerAddress>()
             {
-                ServerAddress.From("127.0.0.1", 7687),
-                ServerAddress.From("127.0.0.2", 7687),
-                ServerAddress.From("127.0.0.3", 7687),
+                d.ServerAddress.From("127.0.0.1", 7687),
+                d.ServerAddress.From("127.0.0.2", 7687),
+                d.ServerAddress.From("127.0.0.3", 7687),
             };
-            HashSet<ServerAddress> cluster2 = new HashSet<ServerAddress>() 
+            HashSet<d.ServerAddress> cluster2 = new HashSet<d.ServerAddress>() 
             {
-                ServerAddress.From("127.10.0.1", 7687),
-                ServerAddress.From("127.10.0.2", 7687),
-                ServerAddress.From("127.10.0.3", 7687),
+                d.ServerAddress.From("127.10.0.1", 7687),
+                d.ServerAddress.From("127.10.0.2", 7687),
+                d.ServerAddress.From("127.10.0.3", 7687),
             };
-            var dict = new Dictionary<ServerAddress, ISet<ServerAddress>>()
+            var dict = new Dictionary<d.ServerAddress, ISet<d.ServerAddress>>()
             {
                 { vcluster1, cluster1  },
                 { vcluster2, cluster2  },
             };
 
-            var bp41Resolver = new ServerAddressResolver(dict, new HashSet<ServerAddress>() { localhost });
+            var bp41Resolver = new d.ServerAddressResolver(dict, new HashSet<d.ServerAddress>() { localhost });
             var neo4jResolver = AsIServerAddressResolver(bp41Resolver);
 
-            ISet<ServerAddress> bp41Cluster = bp41Resolver.Resolve(ServerAddress.From("cluster1", 7687));
-            Debug.Assert(bp41Cluster.Count == 3);
+            ISet<d.ServerAddress>? bp41Cluster = bp41Resolver.Resolve(d.ServerAddress.From("cluster1", 7687));
+            Debug.Assert(bp41Cluster?.Count == 3);
 
-            ISet<ServerAddress> bp41Unknown= bp41Resolver.Resolve(ServerAddress.From("unknown", 7687));
-            Debug.Assert(bp41Unknown.Count == 1);
+            ISet<d.ServerAddress>? bp41Unknown= bp41Resolver.Resolve(d.ServerAddress.From("unknown", 7687));
+            Debug.Assert(bp41Unknown?.Count == 1);
 
             ISet<Neo4j.Driver.ServerAddress> neo4jCluster = neo4jResolver.Resolve(Neo4j.Driver.ServerAddress.From("cluster2", 7687));
             Debug.Assert(neo4jCluster.Count == 3);
 
-            Neo4j.Driver.IServerAddressResolver AsIServerAddressResolver(ServerAddressResolver resolver)
+            Neo4j.Driver.IServerAddressResolver AsIServerAddressResolver(d.ServerAddressResolver resolver)
             {
-                var neo4jResolver = (Neo4j.Driver.IServerAddressResolver)Driver.I_SERVER_ADDRESS_RESOLVER.ConvertToNeo4jIServerAddressResolver(resolver);
+                var neo4jResolver = (Neo4j.Driver.IServerAddressResolver)d.Driver.I_SERVER_ADDRESS_RESOLVER.ConvertToNeo4jIServerAddressResolver(resolver);
 
                 Debug.Assert(neo4jResolver is not null, "Bp41 ServerAddressResolver could not be converted into a Neo4j IServerAddressResolver.");
 

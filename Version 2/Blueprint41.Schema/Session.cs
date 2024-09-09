@@ -11,7 +11,7 @@ namespace Blueprint41
 {
     public class Session : DisposableScope<Session>, IStatementRunner, IStatementRunnerAsync
     {
-        public driver.Session? DriverSession { get; set; }
+        public driver.DriverSession? DriverSession { get; set; }
         public driver.IQueryRunner? StatementRunner => DriverSession;
 
 
@@ -37,7 +37,14 @@ namespace Blueprint41
 
         private void InitializeDriverAsync()
         {
+
+/* Unmerged change from project 'Blueprint41.Schema (net6.0)'
+Before:
             driver.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? driver.AccessMode.Write : driver.AccessMode.Read;
+After:
+            Blueprint41.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? Blueprint41.AccessMode.Write : Blueprint41.AccessMode.Read;
+*/
+            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
 
             DriverSession = PersistenceProvider.Driver.Session(c =>
             {

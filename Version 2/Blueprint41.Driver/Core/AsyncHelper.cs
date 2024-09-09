@@ -63,7 +63,7 @@ namespace Blueprint41.Core
                         return true;
 
                     bool isCompleted = true;
-                    OnSubTask(task, subTask =>
+                    task.OnSubTask(subTask =>
                     {
                         if (isCompleted && !subTask.Completed(recursive))
                             isCompleted = false;
@@ -81,7 +81,7 @@ namespace Blueprint41.Core
             return task;
         }
         internal static void WaitEx<T>(T task, bool recursive, Action? status)
-            where T :Task
+            where T : Task
         {
             if (status is null)
             {
@@ -97,12 +97,12 @@ namespace Blueprint41.Core
             }
 
             if (recursive)
-                OnSubTask(task, subTask => WaitEx(subTask, recursive, status));
+                task.OnSubTask(subTask => WaitEx(subTask, recursive, status));
         }
 
         public static void WaitEx(this IEnumerable<Task> tasks, bool recursive = true)
         {
-            WaitEx(tasks, recursive, null);
+            tasks.WaitEx(recursive, null);
         }
         internal static void WaitEx(this IEnumerable<Task> tasks, bool recursive, Action? status)
         {
@@ -187,7 +187,7 @@ namespace Blueprint41.Core
 
         private static Task? GetInnerTask(Task task)
         {
-            if (!Completed(task, false))
+            if (!task.Completed(false))
                 return null;
 
             return getTaskResultMethods.TryGetOrAdd(task.GetType(), delegate (Type type)
@@ -215,7 +215,7 @@ namespace Blueprint41.Core
             if (task is null)
                 return null;
 
-            if (!Completed(task, false))
+            if (!task.Completed(false))
                 return null;
 
             return getTaskResultsMethods.TryGetOrAdd(task.GetType(), delegate (Type type)

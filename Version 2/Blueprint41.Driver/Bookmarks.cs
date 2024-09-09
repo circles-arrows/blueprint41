@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Driver
+using driver = Blueprint41.Driver.Driver;
+
+namespace Blueprint41
 {
     public  class Bookmarks
     {
@@ -12,10 +14,10 @@ namespace Blueprint41.Driver
         }
         internal object _instance { get; private set; }
 
-        public string[] Values => Driver.BOOKMARKS.Values(_instance);
-        public static Bookmarks From(string[] bookmarks) => new Bookmarks(Driver.BOOKMARKS.From(bookmarks));
+        public string[] Values => driver.BOOKMARKS.Values(_instance);
+        public static Bookmarks From(string[] bookmarks) => new Bookmarks(driver.BOOKMARKS.From(bookmarks));
 
-        public override bool Equals(object? obj) => Driver.BOOKMARKS.Equals(_instance, obj);
-        public override int GetHashCode() => Driver.BOOKMARKS.GetHashCode(_instance);
+        public override bool Equals(object? obj) => driver.BOOKMARKS.Equals(_instance, obj);
+        public override int GetHashCode() => driver.BOOKMARKS.GetHashCode(_instance);
     }
 }
