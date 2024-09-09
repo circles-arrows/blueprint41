@@ -1,5 +1,5 @@
-﻿#define OUTPUT_DEBUG_TO_CONSOLE
-#define SUPRESS_SUB_TASKS
+﻿//#define OUTPUT_DEBUG_TO_CONSOLE
+//#define SUPRESS_SUB_TASKS
 
 using System;
 using System.Collections.Generic;
@@ -78,7 +78,7 @@ namespace Blueprint41.Core
                     }
                     finally
                     {
-                        AsyncHelper.OnSubTask(task.Task, subTask => Queue.Scheduler.RegisterTask(subTask));
+                        task.Task.OnSubTask(subTask => Queue.Scheduler.RegisterTask(subTask));
                         RunningTask = null;
                         CustomTask.Current = null;
                         //Idle = DateTime.UtcNow;

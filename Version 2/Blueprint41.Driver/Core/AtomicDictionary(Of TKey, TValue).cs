@@ -246,7 +246,7 @@ namespace Blueprint41.Core
                 foreach (var item in values)
                     dictWrite.Add(item.Key, item.Value);
 
-                return dictWrite[key]; 
+                return dictWrite[key];
             });
         }
 

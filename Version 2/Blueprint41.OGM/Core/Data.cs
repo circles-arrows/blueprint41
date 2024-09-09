@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using Blueprint41.Persistence;
+using Blueprint41.Driver.Core;
 
 namespace Blueprint41.Core
 {

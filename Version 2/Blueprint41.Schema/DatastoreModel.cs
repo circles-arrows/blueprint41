@@ -6,16 +6,17 @@ using System.Threading;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 using Force.Crc32;
 
 using Blueprint41.Core;
 using Blueprint41.Driver;
 using Blueprint41.Refactoring;
-using model = Blueprint41.Model;
 using Blueprint41.Refactoring.Schema;
 using Blueprint41.Persistence;
-using System.Threading.Tasks;
+
+using model = Blueprint41.Model;
 
 namespace Blueprint41
 {

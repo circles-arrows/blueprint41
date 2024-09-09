@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Driver
 {
-    public class Transaction : IQueryRunner, IDisposable, IAsyncDisposable
+    public class DriverTransaction : IQueryRunner, IDisposable, IAsyncDisposable
     {
-        internal Transaction(object instance)
+        internal DriverTransaction(object instance)
         {
             _instance = instance;
         }

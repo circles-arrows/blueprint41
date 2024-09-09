@@ -76,7 +76,7 @@ namespace Blueprint41.Core
                     if (finished.IsSet)
                         return queue.TryDequeue(out item); // if finished is set, nothing will be added anymore. No matter how long we wait...
 
-                    var waitLeft = (wait - stopwatch.Elapsed);
+                    var waitLeft = wait - stopwatch.Elapsed;
                     if (waitLeft <= TimeSpan.Zero)
                     {
                         break; // Stop if no wait time is left
@@ -132,7 +132,7 @@ namespace Blueprint41.Core
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable<T>)this).GetEnumerator();
 
         protected virtual void OnCurrent(T item) { }
-        protected virtual void OnIdle(ref bool exit) {  }
+        protected virtual void OnIdle(ref bool exit) { }
 
         private static readonly TimeSpan minWait = TimeSpan.FromMilliseconds(1);
         private static readonly TimeSpan maxWait = TimeSpan.FromMilliseconds(100);
@@ -156,7 +156,7 @@ namespace Blueprint41.Core
             GC.SuppressFinalize(this);
         }
 
-        public System.Collections.IEnumerator GetEnumerator()
+        public IEnumerator GetEnumerator()
         {
             throw new NotImplementedException();
         }

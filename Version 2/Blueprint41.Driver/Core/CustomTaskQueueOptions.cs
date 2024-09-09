@@ -11,7 +11,7 @@ namespace Blueprint41.Core
         {
             int min = Math.Max(minThreads, 0);
 
-            Enabled = (min > 0);
+            Enabled = min > 0;
             MinThreads = min;
             MaxThreads = Math.Max(maxThreads, min);
             TolerableWaitForExecution = TimeSpan.FromMilliseconds(500);

@@ -10,7 +10,7 @@ using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Events;
 using Blueprint41.Refactoring;
-using driver = Blueprint41.Driver;
+using Blueprint41.Driver;
 
 namespace Blueprint41
 {
@@ -846,9 +846,9 @@ namespace Blueprint41
                 if (Parent is Entity entity)
                 {
                     string cypher = $"MATCH (n:{entity.Label.Name}) WHERE n.{Name} IS NULL RETURN count(n) as count";
-                    Parser.Execute(Parent.Parent, cypher, null, true, delegate(driver.ResultCursor result)
+                    Parser.Execute(Parent.Parent, cypher, null, true, delegate(ResultCursor result)
                     {
-                        driver.Record? record = result.First();
+                        Record? record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;
                         if (hasNullProperty)
                             throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", entity.Name, Name));
@@ -860,7 +860,7 @@ namespace Blueprint41
                     string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
                     Parser.Execute(Parent.Parent, cypher, null, true, delegate (Driver.ResultCursor result)
                     {
-                        driver.Record? record = result.First();
+                        Record? record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;
                         if (hasNullProperty)
                             throw new NotSupportedException(string.Format("Some nodes in the database contains null values for {0}.{1}.", relationship.Name, Name));

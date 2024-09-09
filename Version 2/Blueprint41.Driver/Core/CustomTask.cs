@@ -14,7 +14,7 @@ namespace Blueprint41.Core
         {
             MainTask = this;
             Task = task;
-            Type = (description is null) ? CustomTaskQueueType.Sub : CustomTaskQueueType.Main;
+            Type = description is null ? CustomTaskQueueType.Sub : CustomTaskQueueType.Main;
             Description = description ?? GetAsyncTaskDescription(task) ?? "Unknown task";
 
             antecedentTasks = waitsFor ?? new List<CustomTask>(0);
@@ -107,7 +107,7 @@ namespace Blueprint41.Core
             get
             {
                 if (delay == TimeSpan.Zero)
-                    delay = (scheduled.HasValue) ? (DateTime.UtcNow - scheduled.Value) : TimeSpan.Zero;
+                    delay = scheduled.HasValue ? DateTime.UtcNow - scheduled.Value : TimeSpan.Zero;
 
                 return delay;
             }
@@ -128,7 +128,7 @@ namespace Blueprint41.Core
         {
             if (TaskRunnerId.HasValue)
                 return $"{Type} Task {Task.Id} '{Description}' {Task.Status} on task-runner {TaskRunnerId.Value}";
-            
+
             return $"{Type} Task {Task.Id} '{Description}' {Task.Status}";
         }
     }

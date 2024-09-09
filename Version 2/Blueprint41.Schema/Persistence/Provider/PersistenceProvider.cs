@@ -22,7 +22,16 @@ namespace Blueprint41.Persistence
         public TransactionLogger? TransactionLogger { get; private set; }
 
         public Uri? Uri { get; private set; }
+
+/* Unmerged change from project 'Blueprint41.Schema (net6.0)'
+Before:
         public driver.AuthToken? AuthToken { get; private set; }
+        public string? Database { get; private set; }
+After:
+        public Blueprint41.AuthToken? AuthToken { get; private set; }
+        public string? Database { get; private set; }
+*/
+        public AuthToken? AuthToken { get; private set; }
         public string? Database { get; private set; }
         public AdvancedConfig? AdvancedConfig { get; private set; }
         private driver.Driver? _driver = null;
@@ -61,7 +70,16 @@ namespace Blueprint41.Persistence
         }
 
 #pragma warning disable IDE0200
+
+/* Unmerged change from project 'Blueprint41.Schema (net6.0)'
+Before:
         internal protected PersistenceProvider(DatastoreModel model, Uri? uri, driver.AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
+        {
+After:
+        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, Blueprint41.AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
+        {
+*/
+        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
         {
             DatastoreModel = model;
 

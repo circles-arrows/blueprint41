@@ -27,8 +27,8 @@ namespace Blueprint41.Driver
             return GRAPH_DATABASE.Driver(uri, authToken, configBuilder);
         }
 
-        public Session Session() => I_DRIVER.AsyncSession(this);
-        public Session Session(Action<SessionConfigBuilder> configBuilder) => I_DRIVER.AsyncSession(this, configBuilder);
+        public DriverSession Session() => I_DRIVER.AsyncSession(this);
+        public DriverSession Session(Action<SessionConfigBuilder> configBuilder) => I_DRIVER.AsyncSession(this, configBuilder);
 
 
         public static void Configure<TDriverInterface>() => Configure<TDriverInterface>(new CustomTaskQueueOptions(10, 50), new CustomTaskQueueOptions(4, 20));
@@ -1394,10 +1394,10 @@ namespace Blueprint41.Driver
         {
             public IDriverInfo(params string[] names) : base(names) { }
 
-            public Session AsyncSession(Driver driver) => new Session(_asyncSession1.Value.Invoke(driver._instance));
+            public DriverSession AsyncSession(Driver driver) => new DriverSession(_asyncSession1.Value.Invoke(driver._instance));
             private readonly Lazy<InstanceMethod> _asyncSession1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession"), true);
 
-            public Session AsyncSession(Driver driver, Action<SessionConfigBuilder> configBuilder) => new Session(_asyncSession2.Value.Invoke(driver._instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new SessionConfigBuilder(o)))));
+            public DriverSession AsyncSession(Driver driver, Action<SessionConfigBuilder> configBuilder) => new DriverSession(_asyncSession2.Value.Invoke(driver._instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new SessionConfigBuilder(o)))));
             private readonly Lazy<InstanceMethod> _asyncSession2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_DRIVER, I_ASYNC_SESSION, "AsyncSession", Generic.Of(typeof(Action<>), SESSION_CONFIG_BUILDER)), true);
 
             public Task VerifyConnectivityAsync(Driver driver) => AsTask(_verifyConnectivityAsync.Value.Invoke(driver._instance));
@@ -1713,10 +1713,10 @@ namespace Blueprint41.Driver
             public Bookmarks LastBookmarks(object instance) => new Bookmarks(_lastBookmarks.Value.GetValue(instance));
             private readonly Lazy<InstanceProperty> _lastBookmarks = new Lazy<InstanceProperty>(() => new InstanceProperty(I_ASYNC_SESSION, BOOKMARKS, new string[] { "LastBookmarks", "LastBookmark" }), true);
 
-            public Task<Transaction> BeginTransactionAsync(object instance) => AsTask(_beginTransactionAsync1.Value.Invoke(instance), instance => new Transaction(instance));
+            public Task<DriverTransaction> BeginTransactionAsync(object instance) => AsTask(_beginTransactionAsync1.Value.Invoke(instance), instance => new DriverTransaction(instance));
             private readonly Lazy<InstanceMethod> _beginTransactionAsync1 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, Generic.Of(typeof(Task<>), I_ASYNC_TRANSACTION), "BeginTransactionAsync"), true);
 
-            public Task<Transaction> BeginTransactionAsync(object instance, Action<TransactionConfigBuilder> configBuilder) => AsTask(_beginTransactionAsync2.Value.Invoke(instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), TRANSACTION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new TransactionConfigBuilder(o)))), instance => new Transaction(instance));
+            public Task<DriverTransaction> BeginTransactionAsync(object instance, Action<TransactionConfigBuilder> configBuilder) => AsTask(_beginTransactionAsync2.Value.Invoke(instance, DelegateHelper.WrapDelegate(Generic.Of(typeof(Action<>), TRANSACTION_CONFIG_BUILDER).Type, (object o) => configBuilder.Invoke(new TransactionConfigBuilder(o)))), instance => new DriverTransaction(instance));
             private readonly Lazy<InstanceMethod> _beginTransactionAsync2 = new Lazy<InstanceMethod>(() => new InstanceMethod(I_ASYNC_SESSION, Generic.Of(typeof(Task<>), I_ASYNC_TRANSACTION), "BeginTransactionAsync", Generic.Of(typeof(Action<>), TRANSACTION_CONFIG_BUILDER)), true);
 
             public Task<ResultCursor> RunAsync(object instance, string query) => AsTask(_runAsync1.Value.Invoke(instance, query), instance => new ResultCursor(instance));

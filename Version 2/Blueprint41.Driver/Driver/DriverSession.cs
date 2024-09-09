@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 
 namespace Blueprint41.Driver
 {
-    public class Session : IQueryRunner, IDisposable, IAsyncDisposable
+    public class DriverSession : IQueryRunner, IDisposable, IAsyncDisposable
     {
-        internal Session(object instance)
+        internal DriverSession(object instance)
         {
             _instance = instance;
         }
         internal object _instance { get; private set; }
 
         public Bookmarks LastBookmarks => Driver.I_ASYNC_SESSION.LastBookmarks(_instance);
-        public Transaction BeginTransaction() => Driver.RunBlocking(() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance), "Session.BeginTransaction()");
-        public Transaction BeginTransaction(Action<TransactionConfigBuilder> configBuilder) => Driver.RunBlocking(() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance, configBuilder), "Session.BeginTransaction(Action<TransactionConfigBuilder> configBuilder)");
+        public DriverTransaction BeginTransaction() => Driver.RunBlocking(() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance), "Session.BeginTransaction()");
+        public DriverTransaction BeginTransaction(Action<TransactionConfigBuilder> configBuilder) => Driver.RunBlocking(() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance, configBuilder), "Session.BeginTransaction(Action<TransactionConfigBuilder> configBuilder)");
 
-        public Task<Transaction> BeginTransactionAsync() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance);
-        public Task<Transaction> BeginTransactionAsync(Action<TransactionConfigBuilder> configBuilder) => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance, configBuilder);
+        public Task<DriverTransaction> BeginTransactionAsync() => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance);
+        public Task<DriverTransaction> BeginTransactionAsync(Action<TransactionConfigBuilder> configBuilder) => Driver.I_ASYNC_SESSION.BeginTransactionAsync(_instance, configBuilder);
 
         public ResultCursor Run(string query) => Driver.RunBlocking(() => Driver.I_ASYNC_SESSION.RunAsync(_instance, query), $"Session.Run({query})");
         public ResultCursor Run(string query, Dictionary<string, object?> parameters) => Driver.RunBlocking(() => Driver.I_ASYNC_SESSION.RunAsync(_instance, query, parameters), $"Session.Run({query}, {{ {string.Join(", ", parameters.Select(parameter => $"{parameter.Key}: ({parameter.Value?.GetType().Name ?? "object"}){parameter.Value}"))} }})");

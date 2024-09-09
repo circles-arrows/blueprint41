@@ -64,7 +64,7 @@ namespace Blueprint41.Core
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void ExecuteTask(Task task) => TryExecuteTask(task);
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void RegisterTask(Task task)
         {
@@ -141,7 +141,7 @@ namespace Blueprint41.Core
 
             return task;
         }
-        
+
         static private AsyncLocal<string?> taskDescription = new AsyncLocal<string?>();
 
         public virtual void Wait(bool includeSubTasks = true, bool clearHistory = true, StatusUpdate? status = null)
@@ -156,7 +156,7 @@ namespace Blueprint41.Core
             {
                 KeyValuePair<Task, CustomTask>[] items = history.ToArray();
 
-                AsyncHelper.WaitEx(items.Skip(skip).Select(item => item.Value.Task), includeSubTasks, action);
+                items.Skip(skip).Select(item => item.Value.Task).WaitEx(includeSubTasks, action);
 
                 skip = items.Length;
             }

@@ -39,7 +39,7 @@ namespace Blueprint41.Core
                 lock (taskRunners)
                 {
                     long last = Interlocked.Read(ref lastThreadCountIncrease);
-                    if ((last + Options.DelayBeforeIncreasingAgain.Ticks) > DateTime.UtcNow.Ticks)
+                    if (last + Options.DelayBeforeIncreasingAgain.Ticks > DateTime.UtcNow.Ticks)
                         return;
 
                     // it's 1 second after the last thread count increase
@@ -61,7 +61,7 @@ namespace Blueprint41.Core
         protected override void OnIdle(ref bool exit)
         {
             long last = Interlocked.Read(ref lastItemAccessed);
-            if ((last + Options.WindDownAfter.Ticks) > DateTime.UtcNow.Ticks)
+            if (last + Options.WindDownAfter.Ticks > DateTime.UtcNow.Ticks)
                 return;
 
             exit = true;
