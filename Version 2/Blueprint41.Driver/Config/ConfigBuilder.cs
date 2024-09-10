@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace Blueprint41.Driver
+using Blueprint41.Persistence;
+
+namespace Blueprint41.Config
 {
     //
     // Summary:
@@ -24,7 +26,7 @@ namespace Blueprint41.Driver
             object lvl = level switch
             {
                 EncryptionLevel.Encrypted => Driver.ENCRYPTION_LEVEL.Encrypted,
-                EncryptionLevel.None      => Driver.ENCRYPTION_LEVEL.None,
+                EncryptionLevel.None => Driver.ENCRYPTION_LEVEL.None,
                 _ => throw new NotSupportedException()
             };
 

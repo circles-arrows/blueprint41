@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 using Blueprint41.Core;
 using Blueprint41.Refactoring;
 using Blueprint41.Refactoring.Schema;
-using driver = Blueprint41.Driver;
-using System.Threading.Tasks;
+using Blueprint41.Config;
+using Blueprint41.Persistence;
 
 namespace Blueprint41.Persistence
 {
@@ -25,7 +26,7 @@ namespace Blueprint41.Persistence
 
 /* Unmerged change from project 'Blueprint41.Schema (net6.0)'
 Before:
-        public driver.AuthToken? AuthToken { get; private set; }
+        public AuthToken? AuthToken { get; private set; }
         public string? Database { get; private set; }
 After:
         public Blueprint41.AuthToken? AuthToken { get; private set; }
@@ -34,8 +35,8 @@ After:
         public AuthToken? AuthToken { get; private set; }
         public string? Database { get; private set; }
         public AdvancedConfig? AdvancedConfig { get; private set; }
-        private driver.Driver? _driver = null;
-        public driver.Driver Driver
+        private Driver? _driver = null;
+        public Driver Driver
         {
             get
             {
@@ -44,13 +45,13 @@ After:
 
                 if (_driver is null)
                 {
-                    lock (typeof(driver.Driver))
+                    lock (typeof(Driver))
                     {
                         if (_driver is null)
                         {
-                            _driver = driver.Driver.Get(Uri!, AuthToken!, delegate (driver.ConfigBuilder o)
+                            _driver = Driver.Get(Uri!, AuthToken!, delegate (ConfigBuilder o)
                             {
-                                o.WithFetchSize(driver.ConfigBuilder.Infinite);
+                                o.WithFetchSize(ConfigBuilder.Infinite);
                                 o.WithMaxConnectionPoolSize(MAX_CONNECTION_POOL_SIZE);
                                 o.WithDefaultReadBufferSize(DEFAULT_READWRITESIZE);
                                 o.WithDefaultWriteBufferSize(DEFAULT_READWRITESIZE);
@@ -59,7 +60,7 @@ After:
                                 o.WithMaxTransactionRetryTime(TimeSpan.Zero);
 
                                 //if (AdvancedConfig?.DNSResolverHook is not null)
-                                //    o.WithResolver(new driver.ServerAddressResolver(AdvancedConfig));
+                                //    o.WithResolver(new ServerAddressResolver(AdvancedConfig));
                             });
                         }
                     }
@@ -73,7 +74,7 @@ After:
 
 /* Unmerged change from project 'Blueprint41.Schema (net6.0)'
 Before:
-        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, driver.AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
+        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
         {
 After:
         internal protected PersistenceProvider(DatastoreModel model, Uri? uri, Blueprint41.AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)

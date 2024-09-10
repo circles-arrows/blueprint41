@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blueprint41.Driver
+namespace Blueprint41.Persistence
 {
     public class Record
     {
@@ -38,13 +38,13 @@ namespace Blueprint41.Driver
         {
             if (value is null)
                 return null!;
-            else if (Node.IsINode(value))
-                return new Node(value);
-            else if (Relationship.IsIRelationship(value))
-                return new Relationship(value);
+            else if (NodeResult.IsINode(value))
+                return new NodeResult(value);
+            else if (RelationshipResult.IsIRelationship(value))
+                return new RelationshipResult(value);
             else
                 return value;
         }
-        private bool IsWrapped(object value) => Node.IsINode(value) || Relationship.IsIRelationship(value);
+        private bool IsWrapped(object value) => NodeResult.IsINode(value) || RelationshipResult.IsIRelationship(value);
     }
 }

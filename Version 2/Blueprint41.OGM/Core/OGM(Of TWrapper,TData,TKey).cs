@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Blueprint41.Events;
-using driver = Blueprint41.Driver;
+using driver = Blueprint41.Persistence;
 using model = Blueprint41.Model;
 using persistence = Blueprint41.Persistence;
 
@@ -50,7 +50,7 @@ namespace Blueprint41.Core
             return item;
         }
 
-        internal static OGM? Map(driver.Node node, string cypher, Dictionary<string, object?>? parameters, persistence.NodeMapping mappingMode)
+        internal static OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, persistence.NodeMapping mappingMode)
         {
             object? key = null;
             if (!node.Properties.TryGetValue(Entity.Key.Name, out key))

@@ -6,7 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Blueprint41.Driver
+using Blueprint41.Config;
+
+namespace Blueprint41.Persistence
 {
     public class DriverSession : IQueryRunner, IDisposable, IAsyncDisposable
     {

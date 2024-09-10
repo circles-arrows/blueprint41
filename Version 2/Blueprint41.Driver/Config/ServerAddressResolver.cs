@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace Blueprint41.Driver
+namespace Blueprint41.Config
 {
     public class ServerAddressResolver
     {

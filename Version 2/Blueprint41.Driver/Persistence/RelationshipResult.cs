@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Driver
+namespace Blueprint41.Persistence
 {
-    public class Relationship
+    public class RelationshipResult
     {
-        internal Relationship(object instance)
+        internal RelationshipResult(object instance)
         {
             _instance = instance;
         }
@@ -18,7 +18,7 @@ namespace Blueprint41.Driver
         public string EndNodeElementId => Driver.I_RELATIONSHIP.EndNodeElementId(_instance);
         public object this[string key] => Driver.I_RELATIONSHIP.Item(_instance, key);
         public IReadOnlyDictionary<string, object?> Properties => Driver.I_RELATIONSHIP.Properties(_instance);
-        public bool Equals(Relationship relationship) => Driver.I_RELATIONSHIP.EqualsIRelationship(_instance, relationship._instance);
+        public bool Equals(RelationshipResult relationship) => Driver.I_RELATIONSHIP.EqualsIRelationship(_instance, relationship._instance);
         public override bool Equals(object? obj) => Driver.I_RELATIONSHIP.Equals(_instance, obj);
         public override int GetHashCode() => Driver.I_RELATIONSHIP.GetHashCode(_instance);
 

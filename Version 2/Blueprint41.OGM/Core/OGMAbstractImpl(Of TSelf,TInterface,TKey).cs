@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using driver = Blueprint41.Driver;
+using driver = Blueprint41.Persistence;
 
 namespace Blueprint41.Core
 {
@@ -35,7 +35,7 @@ namespace Blueprint41.Core
 
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, string.Format("{{0}}.{0} = $key", Entity.Key.Name), new Parameter[] { new Parameter("key", key) }, 0, -1, true).FirstOrDefault();
         }
-        internal static OGM? Map(driver.Node node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
+        internal static OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
         {
             Entity? entity = Entity.Parent.GetEntity(node.Labels);
             if (entity is null)

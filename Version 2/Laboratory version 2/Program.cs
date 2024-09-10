@@ -5,7 +5,6 @@ using System.Diagnostics;
 
 using Blueprint41;
 using Blueprint41.Persistence;
-using d = Blueprint41.Driver;
 
 using DataStore;
 
@@ -38,7 +37,7 @@ namespace Laboratory
 
         private static async Task ApplyModelToDB()
         {
-            d.Driver.Configure<Neo4j.Driver.IDriver>();
+            Driver.Configure<Neo4j.Driver.IDriver>();
 
             AdvancedConfig config = new AdvancedConfig()
             {

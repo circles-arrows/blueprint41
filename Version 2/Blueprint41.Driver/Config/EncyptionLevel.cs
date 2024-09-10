@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Driver
+namespace Blueprint41.Config
 {
     public enum EncryptionLevel
     {
