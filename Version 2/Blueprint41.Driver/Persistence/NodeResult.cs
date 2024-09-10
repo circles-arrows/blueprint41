@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Driver
+namespace Blueprint41.Persistence
 {
-    public class Node
+    public class NodeResult
     {
-        internal Node(object instance)
+        internal NodeResult(object instance)
         {
             _instance = instance;
         }
@@ -16,7 +16,7 @@ namespace Blueprint41.Driver
         public IReadOnlyList<string> Labels => Driver.I_NODE.Labels(_instance);
         public object this[string key] => Driver.I_NODE.Item(_instance, key);
         public IReadOnlyDictionary<string, object?> Properties => Driver.I_NODE.Properties(_instance);
-        public bool Equals(Node node) => Driver.I_NODE.EqualsINode(_instance, node._instance);
+        public bool Equals(NodeResult node) => Driver.I_NODE.EqualsINode(_instance, node._instance);
         public override bool Equals(object? obj) => Driver.I_NODE.Equals(_instance, obj);
         public override int GetHashCode() => Driver.I_NODE.GetHashCode(_instance);
 

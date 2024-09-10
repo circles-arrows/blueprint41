@@ -11,10 +11,9 @@ using System.Threading.Tasks;
 using Force.Crc32;
 
 using Blueprint41.Core;
-using Blueprint41.Driver;
+using Blueprint41.Persistence;
 using Blueprint41.Refactoring;
 using Blueprint41.Refactoring.Schema;
-using Blueprint41.Persistence;
 
 using model = Blueprint41.Model;
 

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Blueprint41.Core;
-using driver = Blueprint41.Driver;
+using driver = Blueprint41.Persistence;
 
 namespace Blueprint41.Refactoring.Templates
 {

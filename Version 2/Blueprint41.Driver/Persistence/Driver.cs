@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 
 using Blueprint41.Core;
+using Blueprint41.Config;
 
-namespace Blueprint41.Driver
+namespace Blueprint41.Persistence
 {
     public sealed class Driver : IDisposable, IAsyncDisposable
     {

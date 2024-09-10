@@ -12,7 +12,7 @@ using Blueprint41.Events;
 using Blueprint41.Persistence;
 using Blueprint41.Refactoring;
 using model = Blueprint41.Model;
-using driver = Blueprint41.Driver;
+using driver = Blueprint41.Persistence;
 
 namespace Blueprint41
 {
@@ -1716,12 +1716,12 @@ namespace Blueprint41
             item.Delete(false);
         }
 
-        internal OGM? Map(driver.Node node, NodeMapping mappingMode)
+        internal OGM? Map(driver.NodeResult node, NodeMapping mappingMode)
         {
             return Map(node, null!, null!, mappingMode);
         }
 
-        internal OGM? Map(driver.Node node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
+        internal OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
         {
             if(mapMethod is null)
             {
@@ -1729,15 +1729,15 @@ namespace Blueprint41
                 {
                     if (mapMethod is null)
                     {
-                        MethodInfo? method = RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.Node), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
-                        mapMethod = (method is null) ? null : (Func<driver.Node, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.Node, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
+                        MethodInfo? method = RuntimeClassType!.GetMethod("Map", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy, null, new Type[] { typeof(driver.NodeResult), typeof(string), typeof(Dictionary<string, object>), typeof(NodeMapping) }, null);
+                        mapMethod = (method is null) ? null : (Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>?)Delegate.CreateDelegate(typeof(Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>), method, true);
                     }
                 }
             }
 
             return mapMethod?.Invoke(node, cypher, parameters, mappingMode);
         }
-        private Func<driver.Node, string, Dictionary<string, object?>?, NodeMapping, OGM?>? mapMethod = null;
+        private Func<driver.NodeResult, string, Dictionary<string, object?>?, NodeMapping, OGM?>? mapMethod = null;
 
         #region IEntityAdvancedFeatures
 
@@ -1781,7 +1781,7 @@ namespace Blueprint41
         /// <param name="node">The raw cypher node</param>
         /// <param name="mappingMode">The node mapping mode</param>
         /// <returns>The new node</returns>
-        OGM? IEntityAdvancedFeatures.Map(driver.Node node, NodeMapping mappingMode) => Map(node, mappingMode);
+        OGM? IEntityAdvancedFeatures.Map(driver.NodeResult node, NodeMapping mappingMode) => Map(node, mappingMode);
 
         /// <summary>
         /// Map a node loaded via a query into a new node instance
@@ -1791,7 +1791,7 @@ namespace Blueprint41
         /// <param name="parameters">The cypher query parameters</param>
         /// <param name="mappingMode">The node mapping mode</param>
         /// <returns>The new node</returns>
-        OGM? IEntityAdvancedFeatures.Map(driver.Node node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode) => Map(node, cypher, parameters, mappingMode);
+        OGM? IEntityAdvancedFeatures.Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode) => Map(node, cypher, parameters, mappingMode);
 
         #endregion
 

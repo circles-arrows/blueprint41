@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Blueprint41.Events;
 using Blueprint41.Persistence;
-using driver = Blueprint41.Driver;
+using driver = Blueprint41.Persistence;
 
 namespace Blueprint41.Core
 {
@@ -22,7 +22,7 @@ namespace Blueprint41.Core
         /// <param name="node">The raw cypher node</param>
         /// <param name="mappingMode">The node mapping mode</param>
         /// <returns>The new node</returns>
-        OGM? Map(driver.Node node, NodeMapping mappingMode);
+        OGM? Map(driver.NodeResult node, NodeMapping mappingMode);
 
         /// <summary>
         /// Map a node loaded via a query into a new node instance
@@ -32,7 +32,7 @@ namespace Blueprint41.Core
         /// <param name="parameters">The cypher query parameters</param>
         /// <param name="mappingMode">The node mapping mode</param>
         /// <returns>The new node</returns>
-        OGM? Map(driver.Node node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode);
+        OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode);
 
         /// <summary>
         /// Load an existing node

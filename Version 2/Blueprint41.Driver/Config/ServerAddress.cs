@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Blueprint41.Driver
+using Blueprint41.Persistence;
+
+namespace Blueprint41.Config
 {
     public sealed class ServerAddress : IEquatable<ServerAddress>
     {

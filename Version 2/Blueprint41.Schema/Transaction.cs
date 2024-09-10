@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+
+using Blueprint41.Config;
 using Blueprint41.Core;
-using Blueprint41.Driver;
-using Blueprint41.Events;
 using Blueprint41.Persistence;
-using driver = Blueprint41.Driver;
+using Blueprint41.Events;
 
 namespace Blueprint41
 {
     public class Transaction : DisposableScope<Transaction>, IStatementRunner, IStatementRunnerAsync
     {
-        public driver.DriverSession? DriverSession { get; set; }
-        public driver.DriverTransaction? DriverTransaction { get; set; }
-        public driver.IQueryRunner? StatementRunner => DriverTransaction;
+        public DriverSession? DriverSession { get; set; }
+        public DriverTransaction? DriverTransaction { get; set; }
+        public IQueryRunner? StatementRunner => DriverTransaction;
 
         static internal Transaction Get(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
@@ -61,12 +61,12 @@ namespace Blueprint41
             DriverTransaction = await DriverSession.BeginTransactionAsync();
         }
 
-        private driver.DriverSession InitializeDriverSession()
+        private DriverSession InitializeDriverSession()
         {
 
 /* Unmerged change from project 'Blueprint41.Schema (net6.0)'
 Before:
-            driver.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? driver.AccessMode.Write : driver.AccessMode.Read;
+            AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? AccessMode.Write : AccessMode.Read;
 After:
             Blueprint41.AccessMode accessMode = (ReadWriteMode == ReadWriteMode.ReadWrite) ? Blueprint41.AccessMode.Write : Blueprint41.AccessMode.Read;
 */
@@ -144,12 +144,12 @@ After:
         }
         protected internal Bookmarks[]? Consistency;
 
-        static public Task<driver.ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningTransaction).RunAsync(cypher, memberName, sourceFilePath, sourceLineNumber);
-        static public Task<driver.ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningTransaction).RunAsync(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
-        static public driver.ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningTransaction).Run(cypher, memberName, sourceFilePath, sourceLineNumber);
-        static public driver.ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningTransaction).Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+        static public Task<ResultCursor> RunAsync(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningTransaction).RunAsync(cypher, memberName, sourceFilePath, sourceLineNumber);
+        static public Task<ResultCursor> RunAsync(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunnerAsync)RunningTransaction).RunAsync(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
+        static public ResultCursor Run(string cypher, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningTransaction).Run(cypher, memberName, sourceFilePath, sourceLineNumber);
+        static public ResultCursor Run(string cypher, Dictionary<string, object?>? parameters, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0) => ((IStatementRunner)RunningTransaction).Run(cypher, parameters, memberName, sourceFilePath, sourceLineNumber);
 
-        Task<driver.ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
+        Task<ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -158,7 +158,7 @@ After:
                 if (Logger is not null)
                     Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
-                return Task.FromResult(new driver.ResultCursor());
+                return Task.FromResult(new ResultCursor());
             }
             else
             {
@@ -168,7 +168,7 @@ After:
                 return StatementRunner.RunAsync(cypher);
             }
         }
-        Task<driver.ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
+        Task<ResultCursor> IStatementRunnerAsync.RunAsync(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -177,7 +177,7 @@ After:
                 if (Logger is not null)
                     Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
-                return Task.FromResult(new driver.ResultCursor());
+                return Task.FromResult(new ResultCursor());
             }
             else
             {
@@ -191,7 +191,7 @@ After:
                     return StatementRunner.RunAsync(cypher, parameters);
             }
         }
-        driver.ResultCursor IStatementRunner.Run(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
+        ResultCursor IStatementRunner.Run(string cypher, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -200,7 +200,7 @@ After:
                 if (Logger is not null)
                     Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
-                return new driver.ResultCursor();
+                return new ResultCursor();
             }
             else
             {
@@ -210,7 +210,7 @@ After:
                 return StatementRunner.Run(cypher);
             }
         }
-        driver.ResultCursor IStatementRunner.Run(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
+        ResultCursor IStatementRunner.Run(string cypher, Dictionary<string, object?>? parameters, string memberName, string sourceFilePath, int sourceLineNumber)
         {
             if (PersistenceProvider.IsVoidProvider)
             {
@@ -219,7 +219,7 @@ After:
                 if (Logger is not null)
                     Logger.Stop(cypher, null, memberName, sourceFilePath, sourceLineNumber);
 #endif
-                return new driver.ResultCursor();
+                return new ResultCursor();
             }
             else
             {
@@ -245,8 +245,8 @@ After:
             lock (functionalId)
             {
                 string getFidQuery = $"CALL blueprint41.functionalid.current('{functionalId.Label}')";
-                driver.ResultCursor result = Run(getFidQuery);
-                driver.Record? record = result.FirstOrDefault();
+                ResultCursor result = Run(getFidQuery);
+                Record? record = result.FirstOrDefault();
                 long? currentFid = record?["Sequence"].As<long?>();
                 if (currentFid.HasValue)
                     functionalId.SeenUid(currentFid.Value);
@@ -470,7 +470,7 @@ After:
             if (DriverSession is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            driver.DriverTransaction? t = DriverTransaction;
+            DriverTransaction? t = DriverTransaction;
             if (t is not null)
                 t.Commit();
 
@@ -483,7 +483,7 @@ After:
             if (DriverSession is null)
                 throw new InvalidOperationException("The current transaction was already committed or rolled back.");
 
-            driver.DriverTransaction? t = DriverTransaction;
+            DriverTransaction? t = DriverTransaction;
             if (t is not null)
                 t.Rollback();
 
@@ -496,11 +496,11 @@ After:
         }
         private void CloseSession()
         {
-            driver.DriverSession? s = DriverSession;
+            DriverSession? s = DriverSession;
             if (s is not null)
                 s.Close();
 
-            driver.Driver.TaskScheduler.ClearHistory();
+            Driver.TaskScheduler.ClearHistory();
 
             DriverTransaction = null;
             DriverSession = null;

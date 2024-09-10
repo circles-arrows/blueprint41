@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Blueprint41.Core;
 using Blueprint41.Events;
-using driver = Blueprint41.Driver;
+using driver = Blueprint41.Persistence;
 
 namespace Blueprint41.Persistence
 {
@@ -49,7 +49,7 @@ namespace Blueprint41.Persistence
                 return;
             }
 
-            driver.Node loaded = record["node"]!.As<driver.Node>();
+            driver.NodeResult loaded = record["node"]!.As<driver.NodeResult>();
 
             args.ElementId = loaded.ElementId;
             args.Labels = loaded.Labels;
@@ -177,7 +177,7 @@ namespace Blueprint41.Persistence
             if (record is null)
                 throw new InvalidOperationException($"Due to an unexpected state of the neo4j transaction, it seems impossible to insert the {entity.Name} at this time.");
 
-            driver.Node inserted = record["inserted"].As<driver.Node>();
+            driver.NodeResult inserted = record["inserted"].As<driver.NodeResult>();
 
             args.ElementId = inserted.ElementId;
             args.Labels = inserted.Labels;
@@ -338,7 +338,7 @@ namespace Blueprint41.Persistence
         //    return Load<T>(entity, args, result, trans);
         //}
 
-        private List<T> Load<T>(Entity entity, NodeEventArgs args, Driver.ResultCursor result, Transaction trans)
+        private List<T> Load<T>(Entity entity, NodeEventArgs args, Persistence.ResultCursor result, Transaction trans)
             where T : class, OGM
         {
             IReadOnlyList<Entity> concretes = entity.GetConcreteClasses();
@@ -346,7 +346,7 @@ namespace Blueprint41.Persistence
             List<T> items = new List<T>();
             foreach (var record in result.ToList())
             {
-                var node = record["node"]?.As<driver.Node>();
+                var node = record["node"]?.As<driver.NodeResult>();
                 if (node is null)
                     continue;
 

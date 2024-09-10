@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Blueprint41.Driver
+namespace Blueprint41.Persistence
 {
     public interface IQueryRunner
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Blueprint41.Core;
-using driver = Blueprint41.Driver;
+using driver = Blueprint41.Persistence;
 
 namespace Blueprint41.Persistence
 {
@@ -800,7 +800,7 @@ namespace Blueprint41.Persistence
             if (record is null)
                 return false;
 
-            driver.Node node = record["version"].As< driver.Node> ();
+            driver.NodeResult node = record["version"].As< driver.NodeResult> ();
             (long major, long minor, long patch) = ((long)node.Properties["Major"]!, (long)node.Properties["Minor"]!, (long)node.Properties["Patch"]!);
 
             if (major < script.Major)

@@ -10,7 +10,7 @@ using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Events;
 using Blueprint41.Refactoring;
-using Blueprint41.Driver;
+using Blueprint41.Persistence;
 
 namespace Blueprint41
 {
@@ -641,9 +641,9 @@ namespace Blueprint41
                     {
                         list = new List<object>();
 
-                        Parser.Execute(Parent.Parent, cypherRead, null, true, async delegate(Driver.ResultCursor result)
+                        Parser.Execute(Parent.Parent, cypherRead, null, true, async delegate(Persistence.ResultCursor result)
                         {
-                            foreach (Driver.Record item in await result.ToListAsync())
+                            foreach (Persistence.Record item in await result.ToListAsync())
                             {
                                 string text = item["Text"]!.As<string>();
 
@@ -858,7 +858,7 @@ namespace Blueprint41
                 else if (Parent is Relationship relationship)
                 {
                     string cypher = $"MATCH (:{relationship.InEntity.Label.Name})-[r:{relationship.Neo4JRelationshipType}]->(:{relationship.OutEntity.Label.Name}) WHERE r.{Name} IS NULL RETURN count(r) as count";
-                    Parser.Execute(Parent.Parent, cypher, null, true, delegate (Driver.ResultCursor result)
+                    Parser.Execute(Parent.Parent, cypher, null, true, delegate (Persistence.ResultCursor result)
                     {
                         Record? record = result.First();
                         bool hasNullProperty = record["count"].As<long>() > 0;

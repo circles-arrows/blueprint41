@@ -8,7 +8,7 @@ using Blueprint41.Core;
 using Blueprint41.Dynamic;
 using Blueprint41.Events;
 using Blueprint41.Refactoring;
-using driver = Blueprint41.Driver;
+using driver = Blueprint41.Persistence;
 
 namespace Blueprint41.Persistence
 {
@@ -89,12 +89,12 @@ namespace Blueprint41.Persistence
 
             foreach (var record in result.ToList())
             {
-                driver.Node node = record["out"].As<driver.Node>();
+                driver.NodeResult node = record["out"].As<driver.NodeResult>();
                 if (node is null)
                     continue;
 
                 OGM item = ReadNode(parent, targetEntity, node);
-                driver.Relationship rel = record["rel"].As<driver.Relationship>();
+                driver.RelationshipResult rel = record["rel"].As<driver.RelationshipResult>();
 
                 DateTime? startDate = null;
                 DateTime? endDate = null;
@@ -174,8 +174,8 @@ namespace Blueprint41.Persistence
                     startDate = (record["StartDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record["StartDate"].As<long>()) : (DateTime?)null;
                     endDate = (record["EndDate"] is not null) ? Conversion<long, DateTime>.Convert((long)record["EndDate"].As<long>()) : (DateTime?)null;
                 }
-                OGM? parent = target.Parent.GetEntity().Map(record["Parent"].As<driver.Node>(), NodeMapping.AsWritableEntity);
-                OGM? item = targetEntity.Map(record["Item"].As<driver.Node>(), NodeMapping.AsWritableEntity);
+                OGM? parent = target.Parent.GetEntity().Map(record["Parent"].As<driver.NodeResult>(), NodeMapping.AsWritableEntity);
+                OGM? item = targetEntity.Map(record["Item"].As<driver.NodeResult>(), NodeMapping.AsWritableEntity);
 
                 if (parent is null || item is null)
                     throw new NotSupportedException("The cypher query expected to have a parent node and a child node.");
@@ -187,7 +187,7 @@ namespace Blueprint41.Persistence
             return CollectionItemList.Get(items);
         }
 
-        private Dictionary<object, List<driver.Node>> Load(Entity targetEntity, IEnumerable<object> keys)
+        private Dictionary<object, List<driver.NodeResult>> Load(Entity targetEntity, IEnumerable<object> keys)
         {
             string[] nodeNames = targetEntity.GetDbNames("node");
 
@@ -206,21 +206,21 @@ namespace Blueprint41.Persistence
             parameters.Add("keys", keys.Distinct().ToList());
             var result = Transaction.Run(string.Join(" UNION ", fullMatch), parameters);
 
-            Dictionary<object, List<driver.Node>> retval = new Dictionary<object, List<driver.Node>>();
+            Dictionary<object, List<driver.NodeResult>> retval = new Dictionary<object, List<driver.NodeResult>>();
             foreach (var record in result.ToList())
             {
-                List<driver.Node>? items;
+                List<driver.NodeResult>? items;
                 if (!retval.TryGetValue(record["key"].As<object>(), out items))
                 {
-                    items = new List<driver.Node>();
+                    items = new List<driver.NodeResult>();
                     retval.Add(record["key"].As<object>(), items);
                 }
-                items.Add(record["node"].As<driver.Node>());
+                items.Add(record["node"].As<driver.NodeResult>());
             }
 
             return retval;
         }
-        private OGM ReadNode(OGM parent, Entity targetEntity, driver.Node node)
+        private OGM ReadNode(OGM parent, Entity targetEntity, driver.NodeResult node)
         {
             object? keyObject = null;
             if (targetEntity.Key is not null)
