@@ -338,7 +338,7 @@ namespace Blueprint41.Persistence
         //    return Load<T>(entity, args, result, trans);
         //}
 
-        private List<T> Load<T>(Entity entity, NodeEventArgs args, Persistence.ResultCursor result, Transaction trans)
+        internal List<T> Load<T>(Entity entity, NodeEventArgs args, Persistence.ResultCursor result, Transaction trans)
             where T : class, OGM
         {
             IReadOnlyList<Entity> concretes = entity.GetConcreteClasses();

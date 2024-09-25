@@ -10,6 +10,11 @@ namespace Blueprint41.DatastoreTemplates
 {
     public abstract partial class GeneratorBase
     {
+        public static GeneratorBase? Get(string templateName)
+        {
+            throw new NotImplementedException();
+        }
+
         public abstract string TransformText();
         public Entity? DALModel { get; set; }
         public Relationship? DALRelation { get; set; }
@@ -20,7 +25,7 @@ namespace Blueprint41.DatastoreTemplates
 
         public void Log(string text, params object[] arguments)
         {
-          
+            throw new NotImplementedException();
         }
 
         public GeneratorBase()

@@ -67,4 +67,32 @@
     <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="DatastoreTemplates\Domain_Data_Node.cs">
+      <DependentUpon>Domain_Data_Node.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="DatastoreTemplates\Domain_Data_Relationship.cs">
+      <DependentUpon>Domain_Data_Relationship.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DatastoreTemplates\Domain_Data_Node.tt">
+      <LastGenOutput>Domain_Data_Node.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="DatastoreTemplates\Domain_Data_Relationship.tt">
+      <LastGenOutput>Domain_Data_Relationship.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
 </Project>
