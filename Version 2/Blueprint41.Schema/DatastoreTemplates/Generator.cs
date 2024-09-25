@@ -25,43 +25,47 @@ namespace Blueprint41.DatastoreTemplates
 
             foreach (var entity in model.Entities.Where(item => item.IsAbstract))
             {
-                Domain_Data_Entity_Abstract t4 = new()
+                GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity_Abstract");
+                if (t4 is not null)
                 {
-                    Settings = settings,
-                    DALModel = entity,
-                    Datastore = model
+                    t4.Settings = settings;
+                    t4.DALModel = entity;
+                    t4.Datastore = model;
+                    string content = t4.TransformText();
+                    generatorResult.EntityResult.Add(entity.Name, content);
                 };
-                string content = t4.TransformText();
-                generatorResult.EntityResult.Add(entity.Name, content);
 
-                Domain_Data_Node node = new()
+                GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
+                if (node is not null)
                 {
-                    Settings = settings,
-                    DALModel = entity,
-                    Datastore = model
-                };
-                string nodeContent = node.TransformText();
-                generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
+                    node.Settings = settings;
+                    node.DALModel = entity;
+                    node.Datastore = model;
+                    string nodeContent = node.TransformText();
+                    generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
+                }
             }
             foreach (var entity in model.Entities.Where(item => !item.IsAbstract))
             {
-                Domain_Data_Entity t4 = new()
+                GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity");
+                if (t4 is not null)
                 {
-                    Settings = settings,
-                    DALModel = entity,
-                    Datastore = model
-                };
-                string content = t4.TransformText();
-                generatorResult.EntityResult.Add(entity.Name, content);
+                    t4.Settings = settings;
+                    t4.DALModel = entity;
+                    t4.Datastore = model;
+                    string content = t4.TransformText();
+                    generatorResult.EntityResult.Add(entity.Name, content);
+                }
 
-                Domain_Data_Node node = new()
+                GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
+                if (node is not null)
                 {
-                    Settings = settings,
-                    DALModel = entity,
-                    Datastore = model
-                };
-                string nodeContent = node.TransformText();
-                generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
+                    node.Settings = settings;
+                    node.DALModel = entity;
+                    node.Datastore = model;
+                    string nodeContent = node.TransformText();
+                    generatorResult.NodeResult.Add($"{entity.Name}Node", nodeContent);
+                }
             }
 
             #endregion
@@ -70,46 +74,54 @@ namespace Blueprint41.DatastoreTemplates
 
             foreach (var relation in model.Relations)
             {
-                Domain_Data_Entity_Relation t4 = new Domain_Data_Entity_Relation();
-                t4.Settings = settings;
-                t4.DALRelation = relation;
-                t4.Datastore = model;
-                string content = t4.TransformText();
-                generatorResult.EntityResult.Add(relation.Name, content);
+                GeneratorBase? t4 = GeneratorBase.Get("Domain_Data_Entity_Relation");
+                if (t4 is not null)
+                {
+                    t4.Settings = settings;
+                    t4.DALRelation = relation;
+                    t4.Datastore = model;
+                    string content = t4.TransformText();
+                    generatorResult.EntityResult.Add(relation.Name, content);
+                };
 
-                Domain_Data_Relationship relationship_template = new Domain_Data_Relationship();
-                relationship_template.Settings = settings;
-                relationship_template.DALRelation = relation;
-                relationship_template.Datastore = model;
-                string relContent = relationship_template.TransformText();
-                generatorResult.RelationshipResult.Add(relation.Name, relContent);
+                GeneratorBase? relationship_template = GeneratorBase.Get("Domain_Data_Relationship");
+                if (relationship_template is not null)
+                {
+                    relationship_template.Settings = settings;
+                    relationship_template.DALRelation = relation;
+                    relationship_template.Datastore = model;
+                    string relContent = relationship_template.TransformText();
+                    generatorResult.RelationshipResult.Add(relation.Name, relContent);
+                }
             }
 
             #endregion
 
             #region Register
 
-            Domain_Data_Register register = new()
+            GeneratorBase? register = GeneratorBase.Get("Domain_Data_Register");
+            if (register is not null)
             {
-                Settings = settings,
-                DALModel = null,
-                Datastore = model
-            };
-            string registerContent = register.TransformText();
-            generatorResult.EntityResult.Add("_Register", registerContent);
+                register.Settings = settings;
+                register.DALModel = null;
+                register.Datastore = model;
+                string registerContent = register.TransformText();
+                generatorResult.EntityResult.Add("_Register", registerContent);
+            }
 
             #endregion
 
             #region GraphEvents
 
-            Domain_Data_GraphEvents ge = new()
+            GeneratorBase? ge = GeneratorBase.Get("Domain_Data_GraphEvents");
+            if (ge is not null)
             {
-                Settings = settings,
-                DALModel = null,
-                Datastore = model
-            };
-            string geContent = ge.TransformText();
-            generatorResult.EntityResult.Add("_GraphEvents", geContent);
+                ge.Settings = settings;
+                ge.DALModel = null;
+                ge.Datastore = model;
+                string geContent = ge.TransformText();
+                generatorResult.EntityResult.Add("_GraphEvents", geContent);
+            }
 
             #endregion
 

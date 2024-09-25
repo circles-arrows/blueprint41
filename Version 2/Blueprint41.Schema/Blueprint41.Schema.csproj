@@ -73,34 +73,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DatastoreTemplates\Domain_Data_Entity_Relation.tt">
-      <LastGenOutput>Domain_Data_Entity_Relation.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
-    <None Update="DatastoreTemplates\Domain_Data_Entity.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Domain_Data_Entity.cs</LastGenOutput>
-    </None>
-    <None Update="DatastoreTemplates\Domain_Data_Entity_Abstract.tt">
-      <LastGenOutput>Domain_Data_Entity_Abstract.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
-    <None Update="DatastoreTemplates\Domain_Data_GraphEvents.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Domain_Data_GraphEvents.cs</LastGenOutput>
-    </None>
-    <None Update="DatastoreTemplates\Domain_Data_Node.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Domain_Data_Node.cs</LastGenOutput>
-    </None>
-    <None Update="DatastoreTemplates\Domain_Data_Register.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Domain_Data_Register.cs</LastGenOutput>
-    </None>
-    <None Update="DatastoreTemplates\Domain_Data_Relationship.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Domain_Data_Relationship.cs</LastGenOutput>
-    </None>
     <None Update="Neo4j\Persistence\Void\ListAndDictConverters.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ListAndDictConverters.cs</LastGenOutput>
@@ -318,41 +290,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="DatastoreTemplates\Domain_Data_Entity.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Domain_Data_Entity.tt</DependentUpon>
-    </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Abstract.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Domain_Data_Entity_Abstract.tt</DependentUpon>
-    </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Entity_Relation.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Domain_Data_Entity_Relation.tt</DependentUpon>
-    </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_GraphEvents.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Domain_Data_GraphEvents.tt</DependentUpon>
-    </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Node.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Domain_Data_Node.tt</DependentUpon>
-    </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Register.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Domain_Data_Register.tt</DependentUpon>
-    </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Relationship.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Domain_Data_Relationship.tt</DependentUpon>
-    </Compile>
     <Compile Update="Neo4j\Persistence\Void\ListAndDictConverters.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

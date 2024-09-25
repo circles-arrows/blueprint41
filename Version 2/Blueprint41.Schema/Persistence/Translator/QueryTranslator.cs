@@ -913,7 +913,7 @@ namespace Blueprint41.Persistence
         //        _                   => throw new NotSupportedException("The expression is not supported for compilation."),
         //    };
         //}
-        protected string GetConversionGroup(Type type, IReadOnlyDictionary<Type, TypeMapping> mappings)
+        internal string GetConversionGroup(Type type, IReadOnlyDictionary<Type, TypeMapping> mappings)
         {
             mappings.TryGetValue(type, out TypeMapping? mapping);
             if (mapping is null)
@@ -921,7 +921,7 @@ namespace Blueprint41.Persistence
 
             return mapping.ComparisonGroup;
         }
-        protected Type GetEnumeratedType(Type? type)
+        internal Type GetEnumeratedType(Type? type)
         {
             if (type is null)
                 throw new InvalidOperationException("The type cannot be null");

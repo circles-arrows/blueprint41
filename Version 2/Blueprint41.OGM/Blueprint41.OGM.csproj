@@ -88,18 +88,8 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Node.cs">
-      <DependentUpon>Domain_Data_Node.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="DatastoreTemplates\Domain_Data_Register.cs">
       <DependentUpon>Domain_Data_Register.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="DatastoreTemplates\Domain_Data_Relationship.cs">
-      <DependentUpon>Domain_Data_Relationship.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
@@ -122,16 +112,8 @@
       <LastGenOutput>Domain_Data_GraphEvents.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="DatastoreTemplates\Domain_Data_Node.tt">
-      <LastGenOutput>Domain_Data_Node.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
     <None Update="DatastoreTemplates\Domain_Data_Register.tt">
       <LastGenOutput>Domain_Data_Register.cs</LastGenOutput>
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-    </None>
-    <None Update="DatastoreTemplates\Domain_Data_Relationship.tt">
-      <LastGenOutput>Domain_Data_Relationship.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
   </ItemGroup>
