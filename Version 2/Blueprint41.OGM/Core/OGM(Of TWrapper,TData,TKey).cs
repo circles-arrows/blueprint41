@@ -101,17 +101,17 @@ namespace Blueprint41.Core
         }
 
         [Obsolete("This method will be made internal in the next release.", false)]
-        public static List<TWrapper> LoadWhere(string conditions, Parameter[] parameters)
+        public static List<TWrapper> LoadWhere(string conditions, IParameter[] parameters)
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, conditions, parameters, 0, 0);
         }
         [Obsolete("This method will be made internal in the next release.", false)]
-        public static List<TWrapper> LoadWhere(string conditions, Parameter[] parameters, int page, int pageSize, params Property[] orderBy)
+        public static List<TWrapper> LoadWhere(string conditions, IParameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
             return LoadWhere(conditions, parameters, page, pageSize, true, orderBy);
         }
         [Obsolete("This method will be made internal in the next release.", false)]
-        public static List<TWrapper> LoadWhere(string conditions, Parameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        public static List<TWrapper> LoadWhere(string conditions, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TWrapper>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
         }

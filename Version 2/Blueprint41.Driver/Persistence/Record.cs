@@ -12,29 +12,31 @@ namespace Blueprint41.Persistence
         }
         internal object _instance { get; private set; }
 
+        public IReadOnlyList<string> Keys => Driver.I_RECORD.Keys(_instance);
+
         public object this[int index] => WrapIEntity(Driver.I_RECORD.Item(_instance, index));
         public object this[string key] => WrapIEntity(Driver.I_RECORD.Item(_instance, key));
 
-        [Obsolete("Using record[name] or record[index] performs better than using record.Values.", false)]
-        public IReadOnlyDictionary<string, object> Values => WrapIEntity(Driver.I_RECORD.Values(_instance));
-        public IReadOnlyList<string> Keys => Driver.I_RECORD.Keys(_instance);
+        public bool TryGetValue(string key, out object? value)
+        {
+            if (RawValues.TryGetValue(key, out object? output))
+            {
+                value = WrapIEntity(output);
+                return true;
+            }
+
+            value = null;
+            return false;
+        }
+        internal IReadOnlyDictionary<string, object> RawValues => Driver.I_RECORD.Values(_instance);
+
 
         internal static object ItemInternal(object neo4jRecord, int index) => Driver.I_RECORD.Item(neo4jRecord, index);
         internal static object ItemInternal(object neo4jRecord, string key) => Driver.I_RECORD.Item(neo4jRecord, key);
         internal static IReadOnlyDictionary<string, object> ValuesInternal(object neo4jRecord) => Driver.I_RECORD.Values(neo4jRecord);
         internal static IReadOnlyList<string> KeysInternal(object neo4jRecord) => Driver.I_RECORD.Keys(neo4jRecord);
 
-
-        private IReadOnlyDictionary<string, object> WrapIEntity(IReadOnlyDictionary<string, object> values)
-        {
-            if (values.Values.Any(IsWrapped))
-                return values.ToDictionary(item => item.Key, item => WrapIEntity(item.Value));
-
-            return values;
-
-            // or would it be quicker to just always return: values.ToDictionary(item => item.Key, item => WrapIEntity(item.Value)); ???
-        }
-        private object WrapIEntity(object? value)
+        private static object WrapIEntity(object? value)
         {
             if (value is null)
                 return null!;
@@ -45,6 +47,6 @@ namespace Blueprint41.Persistence
             else
                 return value;
         }
-        private bool IsWrapped(object value) => NodeResult.IsINode(value) || RelationshipResult.IsIRelationship(value);
+        private static bool IsWrapped(object value) => NodeResult.IsINode(value) || RelationshipResult.IsIRelationship(value);
     }
 }

@@ -62,8 +62,8 @@ namespace Blueprint41.Refactoring.Schema
             }
         }
 
-        protected override ConstraintInfo   NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
-        protected override IndexInfo        NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo_Neo4jV4(rawRecord, persistenceProvider);
+        protected override ConstraintInfo   NewConstraintInfo(IReadOnlyDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
+        protected override IndexInfo        NewIndexInfo(IReadOnlyDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo_Neo4jV4(rawRecord, persistenceProvider);
 
         internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, Property property, List<(ApplyConstraintAction, string?)> commands) => new ApplyConstraintProperty_Neo4jV4(parent, property, commands);
         internal  override ApplyConstraintProperty NewApplyConstraintProperty(ApplyConstraintEntity parent, string property, List<(ApplyConstraintAction, string?)> commands)   => new ApplyConstraintProperty_Neo4jV4(parent, property, commands);

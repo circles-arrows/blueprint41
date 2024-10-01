@@ -50,7 +50,8 @@ namespace Blueprint41.Query
         internal Parameter LimitValue = Parameter.Constant(0);
         internal Query? SubQueryPart;
 
-        public CompiledQuery? CompiledQuery { get; private set; }
+        public CompiledQueryInfo? CompiledQuery { get; private set; }
+        ICompiledQueryInfo? ICompiledQuery.CompiledQuery => CompiledQuery;
         Query ICompiled.Query { get { return this; } }
 
         public IBlankQuery Search(Parameter searchWords, SearchOperator searchOperator, Node searchNodeType, params FieldResult[] searchFields)
@@ -433,14 +434,6 @@ namespace Blueprint41.Query
             if (compiled is null)
                 throw new ArgumentNullException(nameof(compiled));
 
-            if (compiled.CompiledQuery is not null)
-            {
-                foreach (var parameter in compiled.CompiledQuery.Parameters.Where(item => item.IsConstant))
-                {
-                    parameter.Name = null!;
-                }
-            }
-
             SetType(PartType.CallSubquery);
             SubQueryPart = compiled.Query;
 
@@ -485,7 +478,7 @@ namespace Blueprint41.Query
             var state = new CompileState(PersistenceProvider.SupportedTypeMappings, PersistenceProvider.Translator);
 
             Query[] parts = CompileParts(state);
-            CompiledQuery = new CompiledQuery(state, parts.LastOrDefault(item => item.Last)?.AsResults ?? new AsResult[0]);
+            CompiledQuery = new CompiledQueryInfo(state, parts.LastOrDefault(item => item.Last)?.AsResults ?? new AsResult[0]);
 
             return CompiledQuery.Errors.Count > 0 ? throw new QueryException(CompiledQuery) : (ICompiled)this;
         }
@@ -514,6 +507,7 @@ namespace Blueprint41.Query
                 ? throw new InvalidOperationException("Sub query should be called within a main query.")
                 : new QueryExecutionContext(CompiledQuery);
         }
+        IQueryExecutionContext ICompiledQuery.GetExecutionContext() => GetExecutionContext();
 
         public override string ToString()
         {
@@ -756,12 +750,12 @@ namespace Blueprint41.Query
         IMergeQuery OnMatchSet(Assignment[] assignments, bool add = false, bool setFunctionalId = false);
     }
 
-    public partial interface ICompiled
+    public partial interface ICompiled : ICompiledQuery
     {
-        QueryExecutionContext GetExecutionContext();
-        CompiledQuery? CompiledQuery { get; }
+        //IQueryExecutionContext GetExecutionContext();
+        //ICompiledQueryInfo? CompiledQuery { get; }
         Query Query { get; }
-        string ToString();
+        //string ToString();
     }
 
     #endregion

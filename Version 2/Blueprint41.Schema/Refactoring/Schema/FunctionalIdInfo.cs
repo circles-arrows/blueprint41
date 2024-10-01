@@ -7,11 +7,11 @@ namespace Blueprint41.Refactoring.Schema
 {
     public class FunctionalIdInfo
     {
-        internal FunctionalIdInfo(IDictionary<string, object> record)
+        internal FunctionalIdInfo(IReadOnlyDictionary<string, object> record)
         {
             Initialize(record);
         }
-        protected virtual void Initialize(IDictionary<string, object> record)
+        protected virtual void Initialize(IReadOnlyDictionary<string, object> record)
         {
             Label = record["Label"].As<string>();
             Prefix = record["Prefix"].As<string>();

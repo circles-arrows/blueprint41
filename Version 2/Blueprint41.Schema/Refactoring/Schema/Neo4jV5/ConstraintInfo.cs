@@ -12,9 +12,9 @@ namespace Blueprint41.Refactoring.Schema
         private bool isKey = false;
         public override bool IsKey => isKey;
 
-        internal ConstraintInfo_Neo4jV5(IDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) { }
+        internal ConstraintInfo_Neo4jV5(IReadOnlyDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) { }
 
-        protected override void Initialize(IDictionary<string, object> record)
+        protected override void Initialize(IReadOnlyDictionary<string, object> record)
         {
             Name = record["name"].As<string>();
             EntityType = record["entityType"].As<string>();

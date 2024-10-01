@@ -16,9 +16,9 @@ using Blueprint41.Persistence;
 namespace Blueprint41
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public class QueryExecutionContext
+    public class QueryExecutionContext : IQueryExecutionContext
     {
-        internal QueryExecutionContext(CompiledQuery query)
+        internal QueryExecutionContext(CompiledQueryInfo query)
         {
             Transaction transaction = Transaction.RunningTransaction;
 
@@ -77,7 +77,7 @@ namespace Blueprint41
                     foreach (var field in CompiledQuery.CompiledResultColumns)
                     {
                         object? value;
-                        if (row.Values.TryGetValue(field.FieldName, out value) && value is not null)
+                        if (row.TryGetValue(field.FieldName, out value) && value is not null)
                         {
                             object? target = (field.ConvertMethod is null) ? value : field.ConvertMethod.Invoke(value);
                             if (target is not null)
@@ -166,9 +166,11 @@ namespace Blueprint41
             return items;
         }
 
-        public CompiledQuery CompiledQuery { get; set; }
+        public CompiledQueryInfo CompiledQuery { get; set; }
+        ICompiledQueryInfo IQueryExecutionContext.CompiledQuery => CompiledQuery;
         public IReadOnlyList<string> Errors { get; private set; }
         internal Dictionary<string, (object? value, bool isConstant)> QueryParameters { get; private set; }
+        Dictionary<string, object?> IQueryExecutionContext.GetParameters() => QueryParameters.ToDictionary(item => item.Key, item => item.Value.value);
         public override string ToString()
         {
             Transaction transaction = Transaction.RunningTransaction;
@@ -219,11 +221,5 @@ namespace Blueprint41
             return value.ToString()!;
         }
         private string DebuggerDisplay { get => ToString(); }
-    }
-    public enum NodeMapping
-    {
-        AsRawResult,
-        AsReadOnlyEntity,
-        AsWritableEntity,
     }
 }

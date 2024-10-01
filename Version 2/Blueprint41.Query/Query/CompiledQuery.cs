@@ -14,9 +14,9 @@ using Blueprint41.Persistence;
 namespace Blueprint41.Query
 {
     [DebuggerDisplay("{DebuggerDisplay}")]
-    public class CompiledQuery
+    public class CompiledQueryInfo : ICompiledQueryInfo
     {
-        internal CompiledQuery(CompileState state, AsResult[] resultColumns)
+        internal CompiledQueryInfo(CompileState state, AsResult[] resultColumns)
         {
             QueryText = state.Text.ToString();
             Parameters = state.Parameters.ToList();
@@ -32,12 +32,19 @@ namespace Blueprint41.Query
         }
 
         public string QueryText { get; private set; }
+
         public IReadOnlyList<Parameter> Parameters { get; private set; }
+        IReadOnlyList<IParameter> ICompiledQueryInfo.Parameters => Parameters;
+
         public IReadOnlyList<Parameter> DefaultValues { get; private set; }
+        IReadOnlyList<IParameter> ICompiledQueryInfo.DefaultValues => DefaultValues;
+
         public IReadOnlyList<Parameter> ConstantValues { get; private set; }
+        IReadOnlyList<IParameter> ICompiledQueryInfo.ConstantValues => ConstantValues;
         public IReadOnlyList<AsResult> ResultColumns { get; private set; }
         internal IReadOnlyList<FieldInfo> CompiledResultColumns { get; private set; }
         public IReadOnlyDictionary<string, Type?> ResultColumnTypeByName { get; private set; }
+
         public IReadOnlyList<string> Errors { get; private set; }
         public override string ToString()
         {

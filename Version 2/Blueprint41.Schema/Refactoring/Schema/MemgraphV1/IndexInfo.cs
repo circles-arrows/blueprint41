@@ -8,9 +8,9 @@ namespace Blueprint41.Refactoring.Schema
 {
     public class IndexInfo_MemgraphV1 : IndexInfo
     {
-        internal IndexInfo_MemgraphV1(IDictionary<string, object> record, PersistenceProvider neo4JPersistenceProvider) : base(record, neo4JPersistenceProvider) { }
+        internal IndexInfo_MemgraphV1(IReadOnlyDictionary<string, object> record, PersistenceProvider neo4JPersistenceProvider) : base(record, neo4JPersistenceProvider) { }
 
-        protected override void Initialize(IDictionary<string, object> record)
+        protected override void Initialize(IReadOnlyDictionary<string, object> record)
         {
             //Name = record.Values["name"].As<string>();
             //State = record.Values["state"].As<string>();

@@ -141,13 +141,8 @@ namespace Blueprint41.Query
             if (parameter.HasValue && !state.Values.Contains(parameter))
                 state.Values.Add(parameter);
 
-            if (parameter.Name == Parameter.CONSTANT_NAME)
-            {
-                parameter.Name = $"param{state.paramSeq}";
-                state.paramSeq++;
-            }
             state.Text.Append("$");
-            state.Text.Append(parameter.Name);
+            state.Text.Append(parameter.Name ?? $"param{state.paramSeq++}");
         }
         internal static void Compile(this QueryTranslator self, QueryCondition condition, CompileState state)
         {
@@ -691,53 +686,6 @@ namespace Blueprint41.Query
             public int Distance { get; set; }
 
             public AliasResultInfo? Inherits { get; set; }
-        }
-
-        #endregion
-
-        #region NodePersistenceProvider
-
-        internal static List<T> LoadWhere<T>(this NodePersistenceProvider self, Entity entity, ICompiled query, Parameter[] parameters, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
-            where T : class, OGM
-        {
-            Transaction trans = Transaction.RunningTransaction;
-
-            QueryExecutionContext context = query.GetExecutionContext();
-            foreach (Parameter queryParameter in parameters)
-            {
-                if (queryParameter.Value is null)
-                    context.SetParameter(queryParameter.Name, null);
-                else
-                    context.SetParameter(queryParameter.Name, entity.Parent.PersistenceProvider.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
-            }
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append(context.CompiledQuery.QueryText);
-            if (orderBy is not null && orderBy.Length != 0)
-            {
-                Property? odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
-                if (odd is not null)
-                    throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2}'.", odd.Name, odd.Parent.Name, entity.Name));
-
-                sb.Append(" ORDER BY ");
-                sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
-                if (!ascending)
-                    sb.Append(" DESC ");
-            }
-
-            if (pageSize > 0)
-            {
-                sb.Append(" SKIP ");
-                sb.Append(page * pageSize);
-                sb.Append(" LIMIT ");
-                sb.Append(pageSize);
-            }
-            Dictionary<string, object?>? customState = null;
-            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters.ToDictionary(item => item.Key, item => (object?)item.Value.value), ref customState);
-
-            var result = Transaction.Run(args.Cypher, args.Parameters);
-
-            return self.Load<T>(entity, args, result, trans);
         }
 
         #endregion

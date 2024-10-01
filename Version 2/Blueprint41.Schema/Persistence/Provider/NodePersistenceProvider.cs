@@ -246,7 +246,7 @@ namespace Blueprint41.Persistence
                 return string.Format(t.CallFunctionalIdNextNumeric, functionalId.Label);
         }
 
-        public List<T> LoadWhere<T>(Entity entity, string conditions, Parameter[]? parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        public List<T> LoadWhere<T>(Entity entity, string conditions, IParameter[]? parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
             where T : class, OGM
         {
             Transaction trans = Transaction.RunningTransaction;
@@ -287,7 +287,7 @@ namespace Blueprint41.Persistence
             Dictionary<string, object?>? customState = null;
             Dictionary<string, object?> arguments = new Dictionary<string, object?>();
             if (parameters is not null)
-                foreach (Parameter parameter in parameters)
+                foreach (IParameter parameter in parameters)
                     arguments.Add(parameter.Name, parameter.Value);
 
             var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), arguments, ref customState);
@@ -295,48 +295,48 @@ namespace Blueprint41.Persistence
             var result = ((IStatementRunner)trans).Run(args.Cypher, args.Parameters);
             return Load<T>(entity, args, result, trans);
         }
-        //public List<T> LoadWhere<T>(Entity entity, ICompiled query, Parameter[] parameters, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
-        //    where T : class, OGM
-        //{
-        //    Transaction trans = Transaction.RunningTransaction;
+        public List<T> LoadWhere<T>(Entity entity, ICompiledQuery query, IParameter[] parameters, int page = 0, int pageSize = 0, bool ascending = true, params Property[] orderBy)
+            where T : class, OGM
+        {
+            Transaction trans = Transaction.RunningTransaction;
 
-        //    QueryExecutionContext context = query.GetExecutionContext();
-        //    foreach (Parameter queryParameter in parameters)
-        //    {
-        //        if (queryParameter.Value is null)
-        //            context.SetParameter(queryParameter.Name, null);
-        //        else
-        //            context.SetParameter(queryParameter.Name, entity.Parent.PersistenceProvider.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
-        //    }
+            IQueryExecutionContext context = query.GetExecutionContext();
+            foreach (IParameter queryParameter in parameters)
+            {
+                if (queryParameter.Value is null)
+                    context.SetParameter(queryParameter.Name, null);
+                else
+                    context.SetParameter(queryParameter.Name, entity.Parent.PersistenceProvider.ConvertToStoredType(queryParameter.Value.GetType(), queryParameter.Value));
+            }
 
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append(context.CompiledQuery.QueryText);
-        //    if (orderBy is not null && orderBy.Length != 0)
-        //    {
-        //        Property odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
-        //        if (odd is not null)
-        //            throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2}'.", odd.Name, odd.Parent.Name, entity.Name));
+            StringBuilder sb = new StringBuilder();
+            sb.Append(context.CompiledQuery.QueryText);
+            if (orderBy is not null && orderBy.Length != 0)
+            {
+                Property? odd = orderBy.FirstOrDefault(item => !entity.IsSelfOrSubclassOf(item.Parent));
+                if (odd is not null)
+                    throw new InvalidOperationException(string.Format("Order property '{0}' belongs to the entity '{1}' while the query only contains entities of type '{2}'.", odd.Name, odd.Parent.Name, entity.Name));
 
-        //        sb.Append(" ORDER BY ");
-        //        sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
-        //        if (!ascending)
-        //            sb.Append(" DESC ");
-        //    }
+                sb.Append(" ORDER BY ");
+                sb.Append(string.Join(", ", orderBy.Select(item => string.Concat("node.", item.Name))));
+                if (!ascending)
+                    sb.Append(" DESC ");
+            }
 
-        //    if (pageSize > 0)
-        //    {
-        //        sb.Append(" SKIP ");
-        //        sb.Append(page * pageSize);
-        //        sb.Append(" LIMIT ");
-        //        sb.Append(pageSize);
-        //    }
-        //    Dictionary<string, object?>? customState = null;
-        //    var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.QueryParameters.ToDictionary(item => item.Key, item => (object?)item.Value.value), ref customState);
+            if (pageSize > 0)
+            {
+                sb.Append(" SKIP ");
+                sb.Append(page * pageSize);
+                sb.Append(" LIMIT ");
+                sb.Append(pageSize);
+            }
+            Dictionary<string, object?>? customState = null;
+            var args = entity.RaiseOnNodeLoading(trans, null, sb.ToString(), context.GetParameters(), ref customState);
 
-        //    var result = trans.Run(args.Cypher, args.Parameters);
+            var result = Transaction.Run(args.Cypher, args.Parameters);
 
-        //    return Load<T>(entity, args, result, trans);
-        //}
+            return Load<T>(entity, args, result, trans);
+        }
 
         internal List<T> Load<T>(Entity entity, NodeEventArgs args, Persistence.ResultCursor result, Transaction trans)
             where T : class, OGM

@@ -1,39 +1,35 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-using Blueprint41.Core;
-
-namespace Blueprint41
+namespace Blueprint41.Core
 {
-    public class Parameter
+    internal class KeyParameter : IParameter
     {
-        static internal readonly string CONSTANT_NAME = null!;
 
-        private Parameter(string name, Type? type = null)
+        internal KeyParameter(object? value, Type? type = null)
         {
-            // Normal parameters
-            Name = name;
+            Name = "key";
             Type = type;
-            IsConstant = false;
-            Value = null;
-            HasValue = false;
-
-            if (name == CONSTANT_NAME)
-                throw new NotSupportedException("A constant has to always have a 'value', consider calling the other constructor.");
-        }
-        public Parameter(string name, object? value, Type? type = null)
-        {
-            // Constants or Optional parameters (used in Query) or actual value (used during Execution)
-            Name = name;
-            Type = type;
-            IsConstant = name == CONSTANT_NAME;
             Value = MaterializeValue(Type, value);
             HasValue = true;
         }
 
-        private static object? MaterializeValue(Type? type, object? value)
+        public string Name { get; private set; }
+
+        public object? Value { get; private set; }
+
+        public bool HasValue { get; private set; }
+
+        public Type? Type { get; private set; }
+
+        public bool IsConstant => (Name is null);
+
+        internal static object? MaterializeValue(Type? type, object? value)
         {
             type = type ?? value?.GetType();
 
@@ -69,7 +65,7 @@ namespace Blueprint41
                             if (iface is not null)
                             {
                                 Type typeT = iface.GenericTypeArguments[0];
-                                MethodInfo? methodInfo = typeof(Parameter).GetMethod(nameof(FromEnumerator), BindingFlags.NonPublic | BindingFlags.Static)?.MakeGenericMethod(typeT);
+                                MethodInfo? methodInfo = typeof(KeyParameter).GetMethod(nameof(FromEnumerator), BindingFlags.NonPublic | BindingFlags.Static)?.MakeGenericMethod(typeT);
                                 if (!(methodInfo is null))
                                     retval = (Func<object, object>)Delegate.CreateDelegate(typeof(Func<object, object>), methodInfo);
                             }
@@ -95,39 +91,5 @@ namespace Blueprint41
             return new List<T>((IEnumerable<T>)value);
         }
         private static AtomicDictionary<Type, Func<object, object>> fromEnumeratorCache = new AtomicDictionary<Type, Func<object, object>>();
-
-        public static Parameter New<T>(string name)
-        {
-            return new Parameter(name, typeof(T));
-        }
-        public static Parameter New(string name, Type type)
-        {
-            return new Parameter(name, type);
-        }
-        public static Parameter New<T>(string name, T value)
-        {
-            return new Parameter(name, value, typeof(T));
-        }
-        public static Parameter New(string name, object? value, Type type)
-        {
-            return new Parameter(name, value, type);
-        }
-
-        public static Parameter Null => Constant(null, null);
-        public static Parameter Constant<T>(T value)
-        {
-            return new Parameter(CONSTANT_NAME, value, typeof(T));
-        }
-        public static Parameter Constant(object? value, Type? type)
-        {
-            return new Parameter(CONSTANT_NAME, value, type);
-        }
-
-        public string Name { get; internal set; }
-        public object? Value { get; private set; }
-        public bool HasValue { get; private set; }
-
-        public Type? Type { get; private set; }
-        public bool IsConstant { get; private set; }
     }
 }
