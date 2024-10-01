@@ -13,7 +13,7 @@ namespace Blueprint41.Query
     public class QueryException : ApplicationException
     {
         public QueryException() { }
-        public QueryException(CompiledQuery query) : base($"There were errors during compilation of the query. Please check the exception details.")
+        public QueryException(CompiledQueryInfo query) : base($"There were errors during compilation of the query. Please check the exception details.")
         {
             QueryText = query.QueryText;
             QueryParameters = query.Parameters.Select(item => $"Parameter: Name = {item.Name}, Type = {item.Type?.FullName ?? "NULL"}").ToArray();

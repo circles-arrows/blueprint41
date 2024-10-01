@@ -9,7 +9,7 @@ namespace Blueprint41.Refactoring.Schema
 {
     public class IndexInfo
     {
-        internal IndexInfo(IDictionary<string, object> record, PersistenceProvider persistenceProvider)
+        internal IndexInfo(IReadOnlyDictionary<string, object> record, PersistenceProvider persistenceProvider)
         {
             PersistenceProvider = persistenceProvider;
             Initialize(record);
@@ -18,7 +18,7 @@ namespace Blueprint41.Refactoring.Schema
         protected PersistenceProvider PersistenceProvider { get; private set; }
         protected bool SupportsRelationshipIndexes => PersistenceProvider.VersionGreaterOrEqual(5, 7);
 
-        protected virtual void Initialize(IDictionary<string, object> record)
+        protected virtual void Initialize(IReadOnlyDictionary<string, object> record)
         {
             EntityType = "NODE";
             Name = record["description"].As<string>();

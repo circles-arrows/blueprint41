@@ -254,41 +254,7 @@ namespace Blueprint41.Core
             return property.RaiseOnChange<T>(this, previousValue, assignValue, moment, OperationEnum.Set);
         }
 
-        #region Events
-
-        private Dictionary<string, object?>? customState = null;
-        internal IDictionary<string, object?> CustomState
-        {
-            get
-            {
-                if (customState is null)
-                {
-                    lock (this)
-                    {
-                        if (customState is null)
-                            customState = new Dictionary<string, object?>();
-                    }
-                }
-                return customState;
-            }
-        }
-
-        public IReadOnlyList<EntityEventArgs> EventHistory
-        {
-            get
-            {
-                return eventHistory;
-            }
-        }
-        internal void AppendEventHistory(EntityEventArgs args)
-        {
-            eventHistory.Add(args);
-        }
-        private List<EntityEventArgs> eventHistory = new List<EntityEventArgs>(16);
-
-        #endregion
-
-        protected TEnum? Parse<TEnum>(string self)
+        protected static TEnum? Parse<TEnum>(string self)
             where TEnum : struct
         {
             if (self is null)

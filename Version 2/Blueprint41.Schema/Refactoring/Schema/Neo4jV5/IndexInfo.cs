@@ -9,11 +9,11 @@ namespace Blueprint41.Refactoring.Schema
 {
     public class IndexInfo_Neo4jV5 : IndexInfo
     {
-        internal IndexInfo_Neo4jV5(IDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) 
+        internal IndexInfo_Neo4jV5(IReadOnlyDictionary<string, object> record, PersistenceProvider persistenceProvider) : base(record, persistenceProvider) 
         {
         }
 
-        protected override void Initialize(IDictionary<string, object> record)
+        protected override void Initialize(IReadOnlyDictionary<string, object> record)
         {
             Name = record["name"].As<string>();
             EntityType = record["entityType"].As<string>();

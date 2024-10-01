@@ -34,7 +34,7 @@ namespace Blueprint41.Refactoring.Schema
         {
             return LoadData<string>(procedure, record => record[resultname]?.As<string>()!);
         }
-        protected IReadOnlyList<T> LoadData<T>(string procedure, Func<IDictionary<string, object>, T> processor)
+        protected IReadOnlyList<T> LoadData<T>(string procedure, Func<IReadOnlyDictionary<string, object>, T> processor)
         {
             IStatementRunner runner = Session.Current as IStatementRunner ?? Transaction.Current ?? throw new InvalidOperationException("Either a Session or an Transaction should be started.");
 
@@ -48,7 +48,7 @@ namespace Blueprint41.Refactoring.Schema
                     driver.ResultCursor result = runner.Run(procedure);
                     var records = result.ToList();
 #pragma warning disable CS0618 // Type or member is obsolete
-                    data = records.Select(item => processor.Invoke(item.Values.ToDictionary(k => k.Key, v => v.Value!))).ToArray();
+                    data = records.Select(item => processor.Invoke(item.RawValues)).ToArray();
 #pragma warning restore CS0618 // Type or member is obsolete
                 }
                 catch (Exception clientException)
@@ -205,9 +205,9 @@ namespace Blueprint41.Refactoring.Schema
             }
         }
 
-        protected virtual FunctionalIdInfo NewFunctionalIdInfo(IDictionary<string, object> rawRecord)                                               => new FunctionalIdInfo(rawRecord);
-        protected virtual ConstraintInfo   NewConstraintInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
-        protected virtual IndexInfo        NewIndexInfo(IDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo(rawRecord, persistenceProvider);
+        protected virtual FunctionalIdInfo NewFunctionalIdInfo(IReadOnlyDictionary<string, object> rawRecord)                                               => new FunctionalIdInfo(rawRecord);
+        protected virtual ConstraintInfo   NewConstraintInfo(IReadOnlyDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)   => new ConstraintInfo(rawRecord, persistenceProvider);
+        protected virtual IndexInfo        NewIndexInfo(IReadOnlyDictionary<string, object> rawRecord, PersistenceProvider persistenceProvider)        => new IndexInfo(rawRecord, persistenceProvider);
 
         internal virtual ApplyConstraintEntity    NewApplyConstraintEntity(IEntity entity)                                                                              => new ApplyConstraintEntity(this, entity);
         internal virtual ApplyFunctionalId        NewApplyFunctionalId(string label, string prefix, long startFrom, ApplyFunctionalIdAction action)                     => new ApplyFunctionalId(this, label, prefix, startFrom, action);

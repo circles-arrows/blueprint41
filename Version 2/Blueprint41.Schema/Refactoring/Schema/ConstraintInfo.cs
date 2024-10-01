@@ -9,7 +9,7 @@ namespace Blueprint41.Refactoring.Schema
 {
     public class ConstraintInfo
     {
-        internal ConstraintInfo(IDictionary<string, object> record, PersistenceProvider persistenceProvider)
+        internal ConstraintInfo(IReadOnlyDictionary<string, object> record, PersistenceProvider persistenceProvider)
         {
             PersistenceProvider = persistenceProvider;
             Initialize(record);
@@ -17,7 +17,7 @@ namespace Blueprint41.Refactoring.Schema
 
         protected PersistenceProvider PersistenceProvider { get; private set; }
 
-        protected virtual void Initialize(IDictionary<string, object> record)
+        protected virtual void Initialize(IReadOnlyDictionary<string, object> record)
         {
             EntityType = "NODE";
             Name = record["description"].As<string>();

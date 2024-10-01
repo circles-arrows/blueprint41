@@ -1,11 +1,11 @@
-﻿using Blueprint41.Events;
-using Blueprint41.Persistence;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Blueprint41.Events;
+using Blueprint41.Persistence;
 using driver = Blueprint41.Persistence;
 
 namespace Blueprint41.Core
@@ -33,7 +33,7 @@ namespace Blueprint41.Core
             if (key is null)
                 return default;
 
-            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, string.Format("{{0}}.{0} = $key", Entity.Key.Name), new Parameter[] { new Parameter("key", key) }, 0, -1, true).FirstOrDefault();
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, string.Format("{{0}}.{0} = $key", Entity.Key.Name), new IParameter[] { new KeyParameter(key) }, 0, -1, true).FirstOrDefault();
         }
         internal static OGM? Map(driver.NodeResult node, string cypher, Dictionary<string, object?>? parameters, NodeMapping mappingMode)
         {
@@ -91,17 +91,17 @@ namespace Blueprint41.Core
         }
 
         [Obsolete("This method will be made internal in the next release.", false)]
-        public static List<TInterface> LoadWhere(string conditions, Parameter[] parameters)
+        public static List<TInterface> LoadWhere(string conditions, IParameter[] parameters)
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, conditions, parameters, 0, 0);
         }
         [Obsolete("This method will be made internal in the next release.", false)]
-        public static List<TInterface> LoadWhere(string conditions, Parameter[] parameters, int page, int pageSize, params Property[] orderBy)
+        public static List<TInterface> LoadWhere(string conditions, IParameter[] parameters, int page, int pageSize, params Property[] orderBy)
         {
             return LoadWhere(conditions, parameters, page, pageSize, true, orderBy);
         }
         [Obsolete("This method will be made internal in the next release.", false)]
-        public static List<TInterface> LoadWhere(string conditions, Parameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
+        public static List<TInterface> LoadWhere(string conditions, IParameter[] parameters, int page, int pageSize, bool ascending = true, params Property[] orderBy)
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
         }
@@ -163,7 +163,7 @@ namespace Blueprint41.Core
 
         //    StoredQueries!.Add(name, query);
         //}
-        public static List<TInterface> FromQuery(string name, params Parameter[] parameters)
+        public static List<TInterface> FromQuery(string name, params IParameter[] parameters)
         {
             throw new NotImplementedException();
             //InitializeStoredQueries();
