@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 
-using NUnit.Framework;
-
 namespace Blueprint41.UnitTest.DataStore
 {
     public class MockModel : DatastoreModel<MockModel>

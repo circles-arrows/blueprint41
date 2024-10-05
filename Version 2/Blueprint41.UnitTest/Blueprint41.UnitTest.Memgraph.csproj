@@ -8,6 +8,7 @@
     <StartupObject />
     <Platforms>AnyCPU;x86</Platforms>
     <DefineConstants>MEMGRAPH;$(COMPUTERNAME.Replace('-','_'))</DefineConstants>
+    <RootNamespace>Blueprint41.UnitTest</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,7 @@
     <ProjectReference Include="..\Blueprint41.OGM\Blueprint41.OGM.csproj" />
     <ProjectReference Include="..\Blueprint41.Query\Blueprint41.Query.csproj" />
     <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+    <ProjectReference Include="..\Blueprint41.UnitTest.Model\Blueprint41.UnitTest.Memgraph.Model.csproj" />
   </ItemGroup>
 
   <ItemGroup>
