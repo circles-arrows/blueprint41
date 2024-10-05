@@ -11,7 +11,7 @@
     <ProjectReference Include="..\Blueprint41.OGM\Blueprint41.OGM.csproj" />
     <ProjectReference Include="..\Blueprint41.Query\Blueprint41.Query.csproj" />
     <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
-    <ProjectReference Include="..\Blueprint41.UnitTest\Blueprint41.UnitTest.Neo4j.csproj" />
+    <ProjectReference Include="..\Blueprint41.UnitTest.Model\Blueprint41.UnitTest.Neo4j.Model.csproj" />
   </ItemGroup>
 
 </Project>

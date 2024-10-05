@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Blueprint41.UnitTest</RootNamespace>
+    <DefineConstants>MEMGRAPH;$(COMPUTERNAME.Replace('-','_'))</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blueprint41.Schema\Blueprint41.Schema.csproj" />
+  </ItemGroup>
+
+</Project>
