@@ -33,7 +33,7 @@ namespace Blueprint41.DatastoreTemplates
                     t4.Datastore = model;
                     string content = t4.TransformText();
                     generatorResult.EntityResult.Add(entity.Name, content);
-                };
+                }
 
                 GeneratorBase? node = GeneratorBase.Get("Domain_Data_Node");
                 if (node is not null)
@@ -82,7 +82,7 @@ namespace Blueprint41.DatastoreTemplates
                     t4.Datastore = model;
                     string content = t4.TransformText();
                     generatorResult.EntityResult.Add(relation.Name, content);
-                };
+                }
 
                 GeneratorBase? relationship_template = GeneratorBase.Get("Domain_Data_Relationship");
                 if (relationship_template is not null)

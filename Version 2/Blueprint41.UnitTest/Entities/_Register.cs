@@ -3,6 +3,7 @@
 
 using System;
 using Blueprint41.Core;
+using Blueprint41.Events;
 
 namespace Datastore.Manipulation
 {
