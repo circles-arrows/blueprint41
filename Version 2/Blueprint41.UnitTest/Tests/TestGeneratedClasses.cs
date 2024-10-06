@@ -27,8 +27,9 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
-            PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+            //MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
+            //PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+            throw new NotImplementedException();
 
             TearDown();
         }
@@ -47,25 +48,25 @@ namespace Blueprint41.UnitTest.Tests
         [TearDown]
         public void TearDown()
         {
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 string reset = "Match (n) detach delete n";
-                Transaction.RunningTransaction.Run(reset);
+                Transaction.Run(reset);
 
                 Transaction.Commit();
             }
 #if NEO4J
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
-                Transaction.RunningTransaction.Run(clearSchema);
+                Transaction.Run(clearSchema);
                 Transaction.Commit();
             }
 #elif MEMGRAPH
-            using (Session.Begin())
+            using (MockModel.BeginSession())
             {
                 string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
-                Session.RunningSession.Run(clearSchema);
+                Session.Run(clearSchema);
             }
 #endif
         }
@@ -77,7 +78,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 // Insert
                 Person a;
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
 
                     a = new Person()
@@ -103,7 +104,7 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.Throws<InvalidOperationException>(() => Person.Load(key));
 
                 Person b;
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     // Load
                     b = Person.Load(key);
@@ -118,7 +119,7 @@ namespace Blueprint41.UnitTest.Tests
                 output.AssertNodeUpdated("Person");
 
                 Person c;
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     c = Person.Load(key);
 
@@ -131,7 +132,7 @@ namespace Blueprint41.UnitTest.Tests
                 output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
 
                 Person d;
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     // Load
                     d = Person.Load(key);
@@ -151,7 +152,7 @@ namespace Blueprint41.UnitTest.Tests
                 Restaurant r1, r2;
 
                 // adding relationships per entity
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     p1 = new Person()
                     {
@@ -195,7 +196,7 @@ namespace Blueprint41.UnitTest.Tests
                 string key4 = GetAndCheckKey(r1);
 
 
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     p2 = new Person()
                     {
@@ -233,7 +234,7 @@ namespace Blueprint41.UnitTest.Tests
 
 
                 // Update
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
 
                     Person person = Person.Load(key5);
@@ -255,7 +256,7 @@ namespace Blueprint41.UnitTest.Tests
                 output.AssertNodeUpdated("Restaurant");
 
                 // Check properties are updated after reloading
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     Person p = Person.Load(key5);
                     City c = City.Load(key6);
@@ -267,7 +268,7 @@ namespace Blueprint41.UnitTest.Tests
                 }
 
                 // Removing relationships by setting
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     Person p = Person.Load(key5);
                     p.City = null;
@@ -286,7 +287,7 @@ namespace Blueprint41.UnitTest.Tests
 
 
                 // Removing relationships via properties
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     Person p = Person.Load(key5);
                     City c = p.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
@@ -311,7 +312,7 @@ namespace Blueprint41.UnitTest.Tests
 
 
                 // Removing relationships and nodes via properties
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     Person p = Person.Load(key5);
                     City c = p.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
@@ -345,7 +346,7 @@ namespace Blueprint41.UnitTest.Tests
 
 
                 // Removing node with existing relationship
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     //load before deleting
                     Person p = Person.Load(key5);
@@ -372,7 +373,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
@@ -412,12 +413,12 @@ namespace Blueprint41.UnitTest.Tests
                 }
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
 #pragma warning disable CS0168 // Variable is declared but never used
                 ICompiled compiled;
 #pragma warning restore CS0168 // Variable is declared but never used
-                IReturnQuery query = Transaction.CompiledQuery
+                IReturnQuery query = Cypher
                     .Match(node.Person.Alias(out PersonAlias p))
                     .With(p, Functions.CollectSubquery<StringListResult>(sq =>
                         sq.Match
@@ -426,11 +427,11 @@ namespace Blueprint41.UnitTest.Tests
                                 .In.PERSON_EATS_AT.Out.
                             Restaurant.Alias(out var restaurantAlias)
                         )
-                        .Where(Functions.CountSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Transaction.CompiledQuery) == 5)
-                        .Return(restaurantAlias.Name), Transaction.CompiledQuery)
+                        .Where(Functions.CountSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Cypher.Query) == 5)
+                        .Return(restaurantAlias.Name), Cypher.Query)
                         .As("restaurants", out var restaurants)
                     )
-                    .Where(Functions.ExistsSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Transaction.CompiledQuery) == true)
+                    .Where(Functions.ExistsSubquery(sq => sq.Match(p.In.PERSON_EATS_AT.Out.Restaurant), Cypher.Query) == true)
                     .Return(p, restaurants);
 #if NEO4J
                 compiled = query.Compile();
@@ -450,7 +451,7 @@ namespace Blueprint41.UnitTest.Tests
                     """,
                     compiled.CompiledQuery.QueryText);
 
-                compiled = Transaction.CompiledQuery
+                compiled = Cypher
                     .Match(node.Person.Alias(out PersonAlias pWithLimit))
                     .Where(pWithLimit.Name.Contains("Smith"))
                     .Return(pWithLimit)
@@ -469,7 +470,7 @@ namespace Blueprint41.UnitTest.Tests
                     """,
                     compiled.CompiledQuery.QueryText);
 
-                compiled = Transaction.CompiledQuery
+                compiled = Cypher
                     .Match(node.Person.Alias(out var pR).In.PERSON_EATS_AT.Out.Restaurant.Alias(out var rP))
                     .Where(rP.Name == "Shakeys")
                     .Return(pR)
@@ -502,7 +503,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
@@ -549,9 +550,9 @@ namespace Blueprint41.UnitTest.Tests
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
-                    ICompiled compiled = Transaction.CompiledQuery
+                    ICompiled compiled = Cypher
                                 .Match(node.Person.Alias(out PersonAlias p))
                                 .Where(p.Name.Contains("Martin Sheen"))
                                 .OptionalMatch(node.Movie.Alias(out MovieAlias m))
@@ -576,7 +577,7 @@ namespace Blueprint41.UnitTest.Tests
                         ORDER BY n1.Title
                         """);
 
-                    compiled = Transaction.CompiledQuery
+                    compiled = Cypher
                             .Match(node.Person.Alias(out PersonAlias pa))
                             .Where(pa.Name.Contains("Martin Sheen"))
                             .OptionalMatch(pa.In.PERSON_DIRECTED.Out.Movie.Alias(out MovieAlias ma))
@@ -604,7 +605,7 @@ namespace Blueprint41.UnitTest.Tests
                         ORDER BY n1.Title
                         """);
 
-                    compiled = Transaction.CompiledQuery
+                    compiled = Cypher
                                 .Match(node.Person.Alias(out PersonAlias pap).In.PERSON_DIRECTED.Out.Movie.Alias(out MovieAlias mam))
                                 .Where(pap.Name.Contains("Martin Sheen"))
                                 .Return(mam.Title)
@@ -640,7 +641,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
@@ -687,10 +688,10 @@ namespace Blueprint41.UnitTest.Tests
 
             using (ConsoleOutput output = new ConsoleOutput())
             {
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     // Force to use index
-                    ICompiled compiled = Transaction.CompiledQuery
+                    ICompiled compiled = Cypher
                             .Match(node.Movie.Alias(out MovieAlias m))
                             .UsingIndex(m.Title)
                             .Where(m.Title == "Wall Street")
@@ -721,7 +722,7 @@ namespace Blueprint41.UnitTest.Tests
 #endif
 
                     // With relationship
-                    compiled = Transaction.CompiledQuery
+                    compiled = Cypher
                                 .Match(node.Movie.Alias(out MovieAlias ma).Out.PERSON_DIRECTED.In.Person.Alias(out PersonAlias p))
                                 .UsingIndex(ma.Title)
                                 .Where(ma.Title == "Wall Street")
@@ -762,7 +763,7 @@ namespace Blueprint41.UnitTest.Tests
 
 #if NEO4J
                     // Use label scan
-                    compiled = Transaction.CompiledQuery
+                    compiled = Cypher
                             .Match(node.Movie.Alias(out MovieAlias mas))
                             .UsingScan(mas)
                             .Where(mas.Title == "Wall Street")
@@ -791,7 +792,7 @@ namespace Blueprint41.UnitTest.Tests
                         """);
 
                     // use label scan with relationship
-                    compiled = Transaction.CompiledQuery
+                    compiled = Cypher
                             .Match(node.Movie.Alias(out MovieAlias mar).Out.PERSON_DIRECTED.In.Person.Alias(out PersonAlias par))
                             .UsingScan(mar)
                             .UsingScan(par)
@@ -827,7 +828,7 @@ namespace Blueprint41.UnitTest.Tests
                         """);
 
                     // use label scan and index
-                    compiled = Transaction.CompiledQuery
+                    compiled = Cypher
                             .Match(node.Movie.Alias(out MovieAlias msi).Out.PERSON_DIRECTED.In.Person.Alias(out PersonAlias psi))
                             .UsingIndex(msi.Title)
                             .UsingScan(psi)

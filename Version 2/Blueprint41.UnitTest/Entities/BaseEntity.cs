@@ -89,7 +89,7 @@ namespace Datastore.Manipulation
 
         }
 
-        sealed public override Entity GetEntity()
+        sealed protected override Entity GetEntity()
         {
             if (entity is null)
             {

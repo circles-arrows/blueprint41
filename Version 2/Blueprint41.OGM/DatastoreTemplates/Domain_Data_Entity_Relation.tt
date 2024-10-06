@@ -17,6 +17,7 @@ using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Query;
+using Blueprint41.Persistence;
 using Blueprint41.DatastoreTemplates;
 using q = <#= Settings.FullQueryNamespace #>;
 using node = <#= Settings.FullQueryNamespace #>.Node;
@@ -39,11 +40,12 @@ namespace <#= Settings.FullCRUDNamespace #>
     foreach (var attr in DALRelation.Properties)
     {
 #>
-            <#= attr.Name #> = (<#= attr.OuterReturnType #>)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnType #>), properties.GetValue("<#= attr.Name #>"));
+            //<#= attr.Name #> = (<#= attr.OuterReturnType #>)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(<#= attr.OuterReturnType #>), properties.GetValue("<#= attr.Name #>"));
 <#
     }
-#>        }
-
+#>
+            throw new NotImplementedException();
+        }
         internal string _elementId { get; private set; }
 
         /// <summary>
@@ -67,7 +69,7 @@ namespace <#= Settings.FullCRUDNamespace #>
 
         public void Assign(<#= DALRelation.Properties.ToJsonNotation(DALRelation) #>)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!DALRelation.InEntity.IsVirtual)
             {
@@ -108,7 +110,7 @@ namespace <#= Settings.FullCRUDNamespace #>
         }
         public static List<<#= DALRelation.Name #>> Where(Func<Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!DALRelation.InEntity.IsVirtual)
             {
@@ -131,7 +133,7 @@ namespace <#= Settings.FullCRUDNamespace #>
         }
         public static List<<#= DALRelation.Name #>> Where(Func<Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!DALRelation.InEntity.IsVirtual)
             {
@@ -353,7 +355,7 @@ namespace <#= Settings.FullCRUDNamespace #>
     {
         public static void Assign(this IEnumerable<<#= DALRelation.Name #>> @this<#= DALRelation.Properties.ToJsonNotation(DALRelation, true) #>)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!DALRelation.InEntity.IsVirtual)
             {

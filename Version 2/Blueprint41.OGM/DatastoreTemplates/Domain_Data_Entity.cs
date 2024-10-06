@@ -601,7 +601,14 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(")\r\n        {\r\n            return FromQuery(nameof(LoadBy");
+            this.Write(")\r\n        {\r\n            return QueryExtensions.FromQuery<");
+            
+            #line 186 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
+            
+            #line default
+            #line hidden
+            this.Write(">(nameof(LoadBy");
             
             #line 186 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
@@ -653,8 +660,14 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(")\r\n        {\r\n            return FromQuery(nameof(LoadByKeys), new Parameter(Para" +
-                    "m0, ");
+            this.Write(")\r\n        {\r\n            return QueryExtensions.FromQuery<");
+            
+            #line 195 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
+            
+            #line default
+            #line hidden
+            this.Write(">(nameof(LoadByKeys), new Parameter(Param0, ");
             
             #line 195 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.Name.ToPlural().ToCamelCase()));
@@ -817,8 +830,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("Alias alias;\r\n\r\n            IMatchQuery matchQuery = Blueprint41.Transaction.Comp" +
-                    "iledQuery.Match(q.Node.");
+            this.Write("Alias alias;\r\n\r\n            IMatchQuery matchQuery = Cypher.Match(q.Node.");
             
             #line 232 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -829,7 +841,7 @@ if (!DALModel.IsAbstract)
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            RegisterQuery(name, compiled);
+            QueryExtensions.RegisterQuery(name, compiled);
         }
 
         public override string ToString()
@@ -1879,7 +1891,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("; }\r\n        public override void SetRowVersion(DateTime? value) { ");
+            this.Write("; }\r\n        protected override void SetRowVersion(DateTime? value) { ");
             
             #line 598 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
@@ -2596,8 +2608,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("Relations = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Transac" +
-                    "tion.CompiledQuery\r\n");
+            this.Write("Relations = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Cypher\r" +
+                    "\n");
             
             #line 754 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -2706,8 +2718,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            var query = Transacti" +
-                    "on.CompiledQuery\r\n");
+            this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            var query = Cypher\r\n");
             
             #line 775 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -2837,8 +2848,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            var query = Transac" +
-                    "tion.CompiledQuery\r\n");
+            this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            var query = Cypher\r" +
+                    "\n");
             
             #line 799 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -3283,8 +3294,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("Relations = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Transac" +
-                    "tion.CompiledQuery\r\n");
+            this.Write("Relations = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Cypher\r" +
+                    "\n");
             
             #line 895 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -3393,8 +3404,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            var query = Transacti" +
-                    "on.CompiledQuery\r\n");
+            this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            var query = Cypher\r\n");
             
             #line 916 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -3524,8 +3534,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            var query = Transac" +
-                    "tion.CompiledQuery\r\n");
+            this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            var query = Cypher\r" +
+                    "\n");
             
             #line 940 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -3979,8 +3989,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("Relation = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Transact" +
-                    "ion.CompiledQuery\r\n");
+            this.Write("Relation = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Cypher\r\n" +
+                    "");
             
             #line 1046 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -4089,8 +4099,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            var query = Transacti" +
-                    "on.CompiledQuery\r\n");
+            this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            var query = Cypher\r\n");
             
             #line 1067 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -4220,8 +4229,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            var query = Transac" +
-                    "tion.CompiledQuery\r\n");
+            this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            var query = Cypher\r" +
+                    "\n");
             
             #line 1091 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -4633,8 +4642,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("Relation = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Transact" +
-                    "ion.CompiledQuery\r\n");
+            this.Write("Relation = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Cypher\r\n" +
+                    "");
             
             #line 1187 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -4765,8 +4774,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("Relations = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Transac" +
-                    "tion.CompiledQuery\r\n");
+            this.Write("Relations = new Lazy<ICompiled>(delegate()\r\n        {\r\n            return Cypher\r" +
+                    "\n");
             
             #line 1213 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -4876,8 +4885,7 @@ if (!DALModel.IsAbstract)
             #line default
             #line hidden
             this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            if (moment is null)\r\n" +
-                    "                moment = DateTime.UtcNow;\r\n\r\n            var query = Transaction" +
-                    ".CompiledQuery\r\n");
+                    "                moment = DateTime.UtcNow;\r\n\r\n            var query = Cypher\r\n");
             
             #line 1237 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -5011,8 +5019,7 @@ if (!DALModel.IsAbstract)
             #line default
             #line hidden
             this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            if (moment is null)" +
-                    "\r\n                moment = DateTime.UtcNow;\r\n\r\n            var query = Transacti" +
-                    "on.CompiledQuery\r\n");
+                    "\r\n                moment = DateTime.UtcNow;\r\n\r\n            var query = Cypher\r\n");
             
             #line 1265 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
 
@@ -5260,8 +5267,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            var query = Transacti" +
-                    "on.CompiledQuery\r\n                .Match(node.");
+            this.Write(".Alias, QueryCondition> expression)\r\n        {\r\n            var query = Cypher\r\n " +
+                    "               .Match(node.");
             
             #line 1320 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.InEntity.Name));
@@ -5340,8 +5347,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            var query = Transac" +
-                    "tion.CompiledQuery\r\n                .Match(node.");
+            this.Write(".Alias, QueryCondition[]> expression)\r\n        {\r\n            var query = Cypher\r" +
+                    "\n                .Match(node.");
             
             #line 1331 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Relationship.InEntity.Name));
@@ -5884,8 +5891,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("        }\r\n\r\n        sealed public override Entity GetEntity()\r\n        {\r\n      " +
-                    "      if (entity is null)\r\n            {\r\n                lock (typeof(");
+            this.Write("        }\r\n\r\n        sealed protected override Entity GetEntity()\r\n        {\r\n   " +
+                    "         if (entity is null)\r\n            {\r\n                lock (typeof(");
             
             #line 1494 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));

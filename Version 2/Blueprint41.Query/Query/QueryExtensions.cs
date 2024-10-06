@@ -689,5 +689,22 @@ namespace Blueprint41.Query
         }
 
         #endregion
+
+        #region Stored Queries
+
+        public static void RegisterQuery(string name, ICompiled query)
+        {
+            throw new NotImplementedException();
+        }
+        public static List<TWrapper> FromQuery<TWrapper>(string name, params Parameter[] parameters)
+        {
+            throw new NotImplementedException();
+        }
+        public static List<TWrapper> FromQuery<TWrapper>(string name, Parameter[] parameters, int page, int size, bool ascending = true, params Property[] orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

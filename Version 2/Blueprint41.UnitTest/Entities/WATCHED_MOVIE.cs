@@ -9,6 +9,7 @@ using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Query;
+using Blueprint41.Persistence;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
 using node = Datastore.Query.Node;
@@ -27,10 +28,10 @@ namespace Datastore.Manipulation
             Person = @in;
             Movie = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            MinutesWatched = (int)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(int), properties.GetValue("MinutesWatched"));
+            //CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            //MinutesWatched = (int)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(int), properties.GetValue("MinutesWatched"));
+            throw new NotImplementedException();
         }
-
         internal string _elementId { get; private set; }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace Datastore.Manipulation
 
         public void Assign(JsNotation<int> MinutesWatched = default)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == Person.Uid, outAlias.Uid == Movie.Uid, relAlias.ElementId == _elementId)
                 .Set(GetAssignments(relAlias))
@@ -67,7 +68,7 @@ namespace Datastore.Manipulation
         }
         public static List<WATCHED_MOVIE> Where(Func<Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -77,7 +78,7 @@ namespace Datastore.Manipulation
         }
         public static List<WATCHED_MOVIE> Where(Func<Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
 
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
@@ -230,7 +231,7 @@ namespace Datastore.Manipulation
     {
         public static void Assign(this IEnumerable<WATCHED_MOVIE> @this, JsNotation<int> MinutesWatched = default)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(relAlias.ElementId.In(@this.Select(item => item._elementId)))
                 .Set(GetAssignments(relAlias))

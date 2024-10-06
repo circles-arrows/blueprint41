@@ -6,11 +6,15 @@ using System.Linq;
 using NUnit.Framework;
 
 using Blueprint41.Core;
+using Blueprint41.UnitTest.DataStore;
+using Blueprint41.Persistence;
+
+
 
 #if NEO4J
-using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
+//using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
 #elif MEMGRAPH
-using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
+//using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
 #endif
 
 namespace Blueprint41.UnitTest.Tests
@@ -26,17 +30,17 @@ namespace Blueprint41.UnitTest.Tests
         {
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                Transaction.RunningTransaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
+                Transaction.Run("CREATE (n:Person { name: 'Address', title: 'Developer' })");
             });
 
-            Assert.That(exception.Message, Contains.Substring("There is no transaction, you should create one first -> using (Transaction.Begin()) { ... Transaction.Commit(); }"));
+            Assert.That(exception.Message, Contains.Substring("There is no transaction, you should create one first -> using (MockModel.BeginTransaction()) { ... Transaction.Commit(); }"));
         }
 
         [Test]
         public void EnsureRunningTransactionIsNeo4jTransaction()
         {
-            using (Transaction.Begin())
-                Assert.IsInstanceOf<driver.Neo4jTransaction>(Transaction.RunningTransaction);
+            using (MockModel.BeginTransaction())
+                Assert.IsInstanceOf<Transaction>(Transaction.RunningTransaction);
         }
 
         [Test]
@@ -44,17 +48,17 @@ namespace Blueprint41.UnitTest.Tests
         {
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     // Let us try to create an entity
-                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
                     Transaction.Commit();
 
                     // This statement should throw invalid operation exception
-                    RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                    RawRecord record = result.FirstOrDefault();
-                    RawNode loaded = record["n"].As<RawNode>();
+                    ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                    Record record = result.FirstOrDefault();
+                    NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
                     Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -67,14 +71,14 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureCanCreateAnEntity()
         {
-            using (Transaction.Begin(true))
+            using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
             {
                 // Let us try to create an entity
-                Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
-                RawNode loaded = record["n"].As<RawNode>();
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
+                NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -86,14 +90,14 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureEntityShouldNotBeAddedAfterRollback()
         {
-            using (Transaction.Begin(true))
+            using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
             {
                 // Let us try to create an entity
-                Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
-                RawNode loaded = record["n"].As<RawNode>();
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
+                NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -101,10 +105,10 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Rollback();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
         }
@@ -114,14 +118,14 @@ namespace Blueprint41.UnitTest.Tests
         {
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     // Let us try to create an entity
-                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                    RawRecord record = result.FirstOrDefault();
-                    RawNode loaded = record["n"].As<RawNode>();
+                    ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                    Record record = result.FirstOrDefault();
+                    NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
                     Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -135,14 +139,14 @@ namespace Blueprint41.UnitTest.Tests
 
             InvalidOperationException exception2 = Assert.Throws<InvalidOperationException>(() =>
             {
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     // Let us try to create an entity
-                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
-                    RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                    RawRecord record = result.FirstOrDefault();
-                    RawNode loaded = record["n"].As<RawNode>();
+                    ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                    Record record = result.FirstOrDefault();
+                    NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
                     Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -160,20 +164,20 @@ namespace Blueprint41.UnitTest.Tests
         {
             Assert.Throws<Exception>(() =>
             {
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     // Let us try to create an entity
-                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                     Transaction.Commit();
                     throw new Exception();
                 }
             });
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
-                RawNode loaded = record["n"].As<RawNode>();
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
+                NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
@@ -185,18 +189,18 @@ namespace Blueprint41.UnitTest.Tests
         {
             Assert.Throws<Exception>(() =>
             {
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     // Let us try to create an entity
-                    Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                    Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                     throw new Exception();
                 }
             });
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
         }
@@ -204,23 +208,23 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureEntityIsFlushedAfterTransaction()
         {
-            using (Transaction.Begin(true))
+            using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
             {
-                Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
+                Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
 
-                RawNode loaded = record["n"].As<RawNode>();
+                NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
                 Transaction.Flush();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
                 Assert.IsNull(record);
             }
         }
@@ -228,25 +232,25 @@ namespace Blueprint41.UnitTest.Tests
         [Test]
         public void EnsureEntityIsCreatedEvenFlushedWithoutTransaction()
         {
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
-                Transaction.RunningTransaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
+                Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
 
-                RawNode loaded = record["n"].As<RawNode>();
+                NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
 
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
-                RawResult result = Transaction.RunningTransaction.Run("Match (n:SampleEntity) Return n");
-                RawRecord record = result.FirstOrDefault();
+                ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
+                Record record = result.FirstOrDefault();
 
-                RawNode loaded = record["n"].As<RawNode>();
+                NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
                 Assert.AreEqual(loaded.Properties["title"], "Developer");
             }

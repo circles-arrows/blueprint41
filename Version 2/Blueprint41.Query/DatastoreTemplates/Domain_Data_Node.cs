@@ -39,7 +39,7 @@ using System.Collections.Generic;
 using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Events;
-using Blueprint41.Neo4j.Model;
+using Blueprint41.Persistence;
 using Blueprint41.Query;
 
 using m = ");

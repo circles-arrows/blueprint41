@@ -21,7 +21,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
 
@@ -42,7 +42,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(RenameAddrLine1);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var linus = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                 var rels = ReadRelationsWithProperties(linus, PERSON_LIVES_IN.Relationship, linus.City);

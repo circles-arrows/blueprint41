@@ -21,7 +21,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             #region Set Movie Certification
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 Rating rating = Rating.Load(DatabaseUids.Ratings.PG);
 
@@ -43,7 +43,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var certification in DatabaseUids.Movies.Movies)
                 {
@@ -56,7 +56,7 @@ namespace Blueprint41.UnitTest.Tests
             #region Set NULL
 
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var certification in DatabaseUids.Movies.Movies)
                 {
@@ -67,7 +67,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var certification in DatabaseUids.Movies.Movies)
                 {
@@ -84,7 +84,7 @@ namespace Blueprint41.UnitTest.Tests
             #region Add Watched Movie
 
 #if NEO4J
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 CleanupRelations(WATCHED_MOVIE.Relationship);
 
@@ -106,7 +106,7 @@ namespace Blueprint41.UnitTest.Tests
             #endregion
 #endif
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 CleanupRelations(WATCHED_MOVIE.Relationship);
 
@@ -120,7 +120,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.ToList())))
                 {
@@ -139,7 +139,7 @@ namespace Blueprint41.UnitTest.Tests
 
             #region Remove Watched Movie
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var notWatched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => item.First()))
                 {
@@ -151,7 +151,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
                 {
@@ -174,7 +174,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             #region Set Movie Certification
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 Rating rating = Rating.Load(DatabaseUids.Ratings.PG);
 
@@ -208,7 +208,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var certification in DatabaseUids.Movies.Movies)
                 {
@@ -230,7 +230,7 @@ namespace Blueprint41.UnitTest.Tests
             #region Set NULL
 
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var certification in DatabaseUids.Movies.Movies)
                 {
@@ -247,7 +247,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var certification in DatabaseUids.Movies.Movies)
                 {
@@ -263,7 +263,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             #region Add Watched Movie
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 CleanupRelations(WATCHED_MOVIE.Relationship);
 
@@ -277,7 +277,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.ToList())))
                 {
@@ -304,7 +304,7 @@ namespace Blueprint41.UnitTest.Tests
 
             #region Remove Watched Movie
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var notWatched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => item.First()))
                 {
@@ -316,7 +316,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
                 {
@@ -343,7 +343,7 @@ namespace Blueprint41.UnitTest.Tests
 
             #region Mutate Watched Movie
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var mutate in SampleDataWatchedMoviesMutations())
                 {
@@ -360,7 +360,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Commit();
             }
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 foreach (var watched in SampleDataWatchedMovies().GroupBy(item => item.person).Select(item => (person: item.Key, watchedMovies: item.Skip(1).ToList())))
                 {
@@ -397,7 +397,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Set City: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var city = City.Load(DatabaseUids.Cities.Metropolis);
@@ -431,7 +431,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Set NULL: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var city = City.Load(DatabaseUids.Cities.Metropolis);
@@ -464,7 +464,7 @@ namespace Blueprint41.UnitTest.Tests
             #region Add Same Streaming Service
 
 #if NEO4J
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 CleanupRelations(SUBSCRIBED_TO_STREAMING_SERVICE.Relationship);
 
@@ -494,7 +494,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Add Streaming Service: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
@@ -539,7 +539,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Remove Streaming Service: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
@@ -588,7 +588,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Set City: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var city = City.Load(DatabaseUids.Cities.Metropolis);
@@ -637,7 +637,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Set City: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var city = City.Load(DatabaseUids.Cities.Metropolis);
@@ -699,7 +699,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Set NULL: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var city = City.Load(DatabaseUids.Cities.Metropolis);
@@ -753,7 +753,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Add Streaming Service: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
@@ -817,7 +817,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Add Streaming Service: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
@@ -892,7 +892,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Debug.WriteLine($"Remove Streaming Service: {scenario}");
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
                     var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);

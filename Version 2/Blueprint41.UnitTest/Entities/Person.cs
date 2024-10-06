@@ -53,18 +53,18 @@ namespace Datastore.Manipulation
 
         public static Dictionary<System.String, Person> LoadByKeys(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return QueryExtensions.FromQuery<Person>(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.PersonAlias, IWhereQuery> query)
         {
             q.PersonAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Person.Alias(out alias, "node"));
+            IMatchQuery matchQuery = Cypher.Match(q.Node.Person.Alias(out alias, "node"));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            RegisterQuery(name, compiled);
+            QueryExtensions.RegisterQuery(name, compiled);
         }
 
         public override string ToString()
@@ -239,7 +239,7 @@ namespace Datastore.Manipulation
         public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
         public System.DateTime LastModifiedOn { get { LazyGet(); return InnerData.LastModifiedOn; } set { if (LazySet(Members.LastModifiedOn, InnerData.LastModifiedOn, value)) InnerData.LastModifiedOn = value; } }
         protected override DateTime GetRowVersion() { return LastModifiedOn; }
-        public override void SetRowVersion(DateTime? value) { LastModifiedOn = value ?? DateTime.MinValue; }
+        protected override void SetRowVersion(DateTime? value) { LastModifiedOn = value ?? DateTime.MinValue; }
 
         #endregion
 
@@ -261,7 +261,7 @@ namespace Datastore.Manipulation
         }
         private readonly Lazy<ICompiled> _queryRestaurantRelations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
                 .Where(inAlias.Uid == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -269,7 +269,7 @@ namespace Datastore.Manipulation
         });
         public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new PERSON_EATS_AT.Alias(relAlias, inAlias, outAlias)))
@@ -280,7 +280,7 @@ namespace Datastore.Manipulation
         }
         public List<PERSON_EATS_AT> RestaurantsWhere(Func<PERSON_EATS_AT.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new PERSON_EATS_AT.Alias(relAlias, inAlias, outAlias)))
@@ -320,7 +320,7 @@ namespace Datastore.Manipulation
         }
         private readonly Lazy<ICompiled> _queryDirectedMovieRelations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -328,7 +328,7 @@ namespace Datastore.Manipulation
         });
         public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new PERSON_DIRECTED.Alias(relAlias, inAlias, outAlias)))
@@ -339,7 +339,7 @@ namespace Datastore.Manipulation
         }
         public List<PERSON_DIRECTED> DirectedMoviesWhere(Func<PERSON_DIRECTED.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_DIRECTED.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new PERSON_DIRECTED.Alias(relAlias, inAlias, outAlias)))
@@ -379,7 +379,7 @@ namespace Datastore.Manipulation
         }
         private readonly Lazy<ICompiled> _queryActedInMovieRelations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -387,7 +387,7 @@ namespace Datastore.Manipulation
         });
         public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
@@ -398,7 +398,7 @@ namespace Datastore.Manipulation
         }
         public List<ACTED_IN> ActedInMoviesWhere(Func<ACTED_IN.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.ACTED_IN.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new ACTED_IN.Alias(relAlias, inAlias, outAlias)))
@@ -438,7 +438,7 @@ namespace Datastore.Manipulation
         }
         private readonly Lazy<ICompiled> _queryStreamingServiceSubscriptionRelations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
                 .Where(inAlias.Uid == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -446,7 +446,7 @@ namespace Datastore.Manipulation
         });
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new SUBSCRIBED_TO_STREAMING_SERVICE.Alias(relAlias, inAlias, outAlias)))
@@ -457,7 +457,7 @@ namespace Datastore.Manipulation
         }
         public List<SUBSCRIBED_TO_STREAMING_SERVICE> StreamingServiceSubscriptionsWhere(Func<SUBSCRIBED_TO_STREAMING_SERVICE.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new SUBSCRIBED_TO_STREAMING_SERVICE.Alias(relAlias, inAlias, outAlias)))
@@ -503,7 +503,7 @@ namespace Datastore.Manipulation
         }
         private readonly Lazy<ICompiled> _queryWatchedMovieRelations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -511,7 +511,7 @@ namespace Datastore.Manipulation
         });
         public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new WATCHED_MOVIE.Alias(relAlias, inAlias, outAlias)))
@@ -522,7 +522,7 @@ namespace Datastore.Manipulation
         }
         public List<WATCHED_MOVIE> WatchedMoviesWhere(Func<WATCHED_MOVIE.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.WATCHED_MOVIE.Alias(out var relAlias).Out.Movie.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new WATCHED_MOVIE.Alias(relAlias, inAlias, outAlias)))
@@ -567,7 +567,7 @@ namespace Datastore.Manipulation
         }
         private readonly Lazy<ICompiled> _queryCityRelation = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(inAlias.Uid == key)
                 .And(relAlias.Moment(moment))
@@ -580,7 +580,7 @@ namespace Datastore.Manipulation
         }
         private readonly Lazy<ICompiled> _queryCityRelations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(inAlias.Uid == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -591,7 +591,7 @@ namespace Datastore.Manipulation
             if (moment is null)
                 moment = DateTime.UtcNow;
 
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new PERSON_LIVES_IN.Alias(relAlias, inAlias, outAlias)))
@@ -606,7 +606,7 @@ namespace Datastore.Manipulation
             if (moment is null)
                 moment = DateTime.UtcNow;
 
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new PERSON_LIVES_IN.Alias(relAlias, inAlias, outAlias)))
@@ -632,7 +632,7 @@ namespace Datastore.Manipulation
         }
         public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new PERSON_LIVES_IN.Alias(relAlias, inAlias, outAlias)))
@@ -643,7 +643,7 @@ namespace Datastore.Manipulation
         }
         public List<PERSON_LIVES_IN> CityWhere(Func<PERSON_LIVES_IN.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_LIVES_IN.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(inAlias.Uid == Uid)
                 .And(expression.Invoke(new PERSON_LIVES_IN.Alias(relAlias, inAlias, outAlias)))
@@ -751,7 +751,7 @@ namespace Datastore.Manipulation
 
         }
 
-        sealed public override Entity GetEntity()
+        sealed protected override Entity GetEntity()
         {
             if (entity is null)
             {

@@ -55,24 +55,24 @@ namespace Datastore.Manipulation
         }
         public static City LoadByName(string name)
         {
-            return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
+            return QueryExtensions.FromQuery<City>(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
         public static Dictionary<System.String, City> LoadByKeys(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return QueryExtensions.FromQuery<City>(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.CityAlias, IWhereQuery> query)
         {
             q.CityAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.City.Alias(out alias, "node"));
+            IMatchQuery matchQuery = Cypher.Match(q.Node.City.Alias(out alias, "node"));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            RegisterQuery(name, compiled);
+            QueryExtensions.RegisterQuery(name, compiled);
         }
 
         public override string ToString()
@@ -214,7 +214,7 @@ namespace Datastore.Manipulation
         public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
         public System.DateTime LastModifiedOn { get { LazyGet(); return InnerData.LastModifiedOn; } set { if (LazySet(Members.LastModifiedOn, InnerData.LastModifiedOn, value)) InnerData.LastModifiedOn = value; } }
         protected override DateTime GetRowVersion() { return LastModifiedOn; }
-        public override void SetRowVersion(DateTime? value) { LastModifiedOn = value ?? DateTime.MinValue; }
+        protected override void SetRowVersion(DateTime? value) { LastModifiedOn = value ?? DateTime.MinValue; }
 
         #endregion
 
@@ -236,7 +236,7 @@ namespace Datastore.Manipulation
         }
         private readonly Lazy<ICompiled> _queryRestaurantRelations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
                 .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(outAlias.Uid == key)
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -244,7 +244,7 @@ namespace Datastore.Manipulation
         });
         public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(outAlias.Uid == Uid)
                 .And(expression.Invoke(new RESTAURANT_LOCATED_AT.Alias(relAlias, inAlias, outAlias)))
@@ -255,7 +255,7 @@ namespace Datastore.Manipulation
         }
         public List<RESTAURANT_LOCATED_AT> RestaurantsWhere(Func<RESTAURANT_LOCATED_AT.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Restaurant.Alias(out var inAlias).In.RESTAURANT_LOCATED_AT.Alias(out var relAlias).Out.City.Alias(out var outAlias))
                 .Where(outAlias.Uid == Uid)
                 .And(expression.Invoke(new RESTAURANT_LOCATED_AT.Alias(relAlias, inAlias, outAlias)))
@@ -353,7 +353,7 @@ namespace Datastore.Manipulation
 
         }
 
-        sealed public override Entity GetEntity()
+        sealed protected override Entity GetEntity()
         {
             if (entity is null)
             {

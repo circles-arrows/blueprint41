@@ -207,6 +207,10 @@ namespace Blueprint41.Core
 
                 return persistenceProvider;
             }
+            set
+            {
+                persistenceProvider = value;
+            }
         }
         private persistence.PersistenceProvider? persistenceProvider = null;
 

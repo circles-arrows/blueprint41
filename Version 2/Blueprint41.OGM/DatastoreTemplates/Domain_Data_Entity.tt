@@ -183,7 +183,7 @@ if (!DALModel.IsAbstract)
 #>
         public static <#= DALModel.ClassName #> LoadBy<#= attr.Name #>(string <#= attr.Name.ToCamelCase() #>)
         {
-            return FromQuery(nameof(LoadBy<#= attr.Name #>), new Parameter(Param0, <#= attr.Name.ToCamelCase() #>)).FirstOrDefault();
+            return QueryExtensions.FromQuery<<#= DALModel.ClassName #>>(nameof(LoadBy<#= attr.Name #>), new Parameter(Param0, <#= attr.Name.ToCamelCase() #>)).FirstOrDefault();
         }
 <#
     }
@@ -192,7 +192,7 @@ if (!DALModel.IsAbstract)
 
         public static Dictionary<<#= DALModel.Key.SystemReturnType #>, <#= DALModel.ClassName #>> LoadByKeys(IEnumerable<<#= DALModel.Key.SystemReturnType #>> <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
+            return QueryExtensions.FromQuery<<#= DALModel.ClassName #>>(nameof(LoadByKeys), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
         }
 
 <#
@@ -229,11 +229,11 @@ if (!DALModel.IsAbstract)
         {
             q.<#= DALModel.Name #>Alias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.<#= DALModel.Name #>.Alias(out alias, "node"));
+            IMatchQuery matchQuery = Cypher.Match(q.Node.<#= DALModel.Name #>.Alias(out alias, "node"));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            RegisterQuery(name, compiled);
+            QueryExtensions.RegisterQuery(name, compiled);
         }
 
         public override string ToString()
@@ -595,7 +595,7 @@ if (!DALModel.IsAbstract)
 #>
         public <#= attr.OuterReturnType  #> <#= attr.Name #> { get { LazyGet(); return InnerData.<#= attr.Name #>; } set { if (LazySet(Members.<#= attr.Name #>, InnerData.<#= attr.Name #>, value)) InnerData.<#= attr.Name #> = value; } }
         protected override DateTime GetRowVersion() { return <#= attr.Name #>; }
-        public override void SetRowVersion(DateTime? value) { <#= attr.Name #> = value ?? DateTime.MinValue; }
+        protected override void SetRowVersion(DateTime? value) { <#= attr.Name #> = value ?? DateTime.MinValue; }
 <#
             }
             else if (attr.PropertyType == PropertyType.Collection || attr.IsNodeType)
@@ -750,7 +750,7 @@ if (!DALModel.IsAbstract)
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name.ToSingular() #>Relations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -771,7 +771,7 @@ if (!DALModel.IsAbstract)
         });
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -795,7 +795,7 @@ if (!DALModel.IsAbstract)
         }
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -891,7 +891,7 @@ if (!DALModel.IsAbstract)
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name.ToSingular() #>Relations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -912,7 +912,7 @@ if (!DALModel.IsAbstract)
         });
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -936,7 +936,7 @@ if (!DALModel.IsAbstract)
         }
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -1042,7 +1042,7 @@ if (!DALModel.IsAbstract)
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relation = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -1063,7 +1063,7 @@ if (!DALModel.IsAbstract)
         });
         public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -1087,7 +1087,7 @@ if (!DALModel.IsAbstract)
         }
         public <#= attr.Relationship.Name #> Get<#= attr.Name #>If(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -1183,7 +1183,7 @@ if (!DALModel.IsAbstract)
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relation = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -1209,7 +1209,7 @@ if (!DALModel.IsAbstract)
         }
         private readonly Lazy<ICompiled> _query<#= attr.Name #>Relations = new Lazy<ICompiled>(delegate()
         {
-            return Transaction.CompiledQuery
+            return Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -1233,7 +1233,7 @@ if (!DALModel.IsAbstract)
             if (moment is null)
                 moment = DateTime.UtcNow;
 
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -1261,7 +1261,7 @@ if (!DALModel.IsAbstract)
             if (moment is null)
                 moment = DateTime.UtcNow;
 
-            var query = Transaction.CompiledQuery
+            var query = Cypher
 <#
             if (!attr.Relationship.InEntity.IsVirtual)
             {
@@ -1316,7 +1316,7 @@ if (!DALModel.IsAbstract)
         }
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
@@ -1327,7 +1327,7 @@ if (!DALModel.IsAbstract)
         }
         public List<<#= attr.Relationship.Name #>> <#= attr.Name #>Where(Func<<#= attr.Relationship.Name #>.Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.<#= attr.Relationship.InEntity.Name #>.Alias(out var inAlias).In.<#= attr.Relationship.Name #>.Alias(out var relAlias).Out.<#= attr.Relationship.OutEntity.Name #>.Alias(out var outAlias))
                 .Where(<#= attr.Direction.ToString().ToLowerInvariant() #>Alias.<#= DALModel.Key.Name #> == <#= DALModel.Key.Name #>)
                 .And(expression.Invoke(new <#= attr.Relationship.Name #>.Alias(relAlias, inAlias, outAlias)))
@@ -1487,7 +1487,7 @@ if (!DALModel.IsAbstract)
 #>
         }
 
-        sealed public override Entity GetEntity()
+        sealed protected override Entity GetEntity()
         {
             if (entity is null)
             {

@@ -1353,8 +1353,7 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("Alias alias;\r\n\r\n            IMatchQuery matchQuery = Blueprint41.Transaction.Comp" +
-                    "iledQuery.Match(q.Node.");
+            this.Write("Alias alias;\r\n\r\n            IMatchQuery matchQuery = Cypher.Match(q.Node.");
             
             #line 327 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
@@ -1572,8 +1571,8 @@ if (DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write("\r\n        sealed public override Entity GetEntity()\r\n        {\r\n            if (e" +
-                    "ntity is null)\r\n            {\r\n                lock (typeof(");
+            this.Write("\r\n        sealed protected override Entity GetEntity()\r\n        {\r\n            if" +
+                    " (entity is null)\r\n            {\r\n                lock (typeof(");
             
             #line 418 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Abstract.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));

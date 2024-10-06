@@ -30,7 +30,7 @@ namespace Blueprint41
             return transaction;
         }
 
-        private Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        protected Transaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
         {
             Logger = logger;
             OptimizeFor = optimize;
@@ -720,26 +720,6 @@ After:
         internal RelationshipPersistenceProvider RelationshipPersistenceProvider => PersistenceProvider.RelationshipPersistenceProvider;
 
         #endregion
-
-        //#region Query
-
-        //public static Query.IBlankQuery CompiledQuery
-        //{
-        //    get
-        //    {
-        //        return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
-        //    }
-        //}
-
-        //public static Query.ICallSubquery CompiledSubQuery
-        //{
-        //    get
-        //    {
-        //        return new Query.Query(Current?.PersistenceProviderFactory ?? PersistenceProvider.CurrentPersistenceProvider);
-        //    }
-        //}
-
-        //#endregion
 
         #region Events
 

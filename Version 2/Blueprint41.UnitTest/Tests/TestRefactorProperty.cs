@@ -7,11 +7,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-using Blueprint41.Neo4j.Persistence;
-using Blueprint41.UnitTest.Helper;
-using Neo4j.Driver;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
+
+using driver = Neo4j.Driver;
+
+using Blueprint41.Refactoring;
+using Blueprint41.UnitTest.DataStore;
+using Blueprint41.UnitTest.Helper;
+
 
 namespace Blueprint41.UnitTest.Tests
 {
@@ -21,6 +25,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertyRename
         private class DataModelPropertyRename : DatastoreModel<DataModelPropertyRename>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -85,6 +95,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertyMove
         private class DataModelPropertyMove : DatastoreModel<DataModelPropertyMove>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -128,6 +144,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelPropertyMoveToBase : DatastoreModel<DataModelPropertyMove>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -173,6 +195,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelPropertyMoveFromBase : DatastoreModel<DataModelPropertyMove>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -249,6 +277,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertyMerge
         private class DataModelPropertyMerge : DatastoreModel<DataModelPropertyMerge>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -328,6 +362,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertyConvert
         private class DataModelPropertyConvert : DatastoreModel<DataModelPropertyConvert>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -412,6 +452,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorPropertySetIndexTypeAndDeprecate
         private class DataModelPropertySetIndexTypeAndDeprecate : DatastoreModel<DataModelPropertySetIndexTypeAndDeprecate>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -513,6 +559,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelPropertyReroute : DatastoreModel<DataModelPropertyReroute>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -586,6 +638,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorConvert, IRefactorMakeMandatory(), IRefactorMakeNullable
         private class DataModelPropertyConvertRel : DatastoreModel<DataModelPropertyConvertRel>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -659,6 +717,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorMakeMandatory with values
         private class DataModelPropertyMandatory : DatastoreModel<DataModelPropertyMandatory>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -774,27 +838,27 @@ namespace Blueprint41.UnitTest.Tests
 
         private IndexAssert() 
         {
-            using (Session.Begin())
+            using (MockModel.BeginSession())
             {   
-                var constraints = Session.Current.Run(SHOW_CONSTRAINTS);
+                var constraints = Session.Run(SHOW_CONSTRAINTS);
 
                 Constraints =
-                    constraints.Select(item => 
+                    constraints.ToList().Select(item => 
                         (
-                            GetSingleItem(item.Values[SHOW_CONSTRAINTS_LABEL]),
-                            GetSingleItem(item.Values[SHOW_CONSTRAINTS_PROPERTIES]),
-                            GetConstraintType(item.Values[SHOW_CONSTRAINTS_CONSTRAINT_TYPE].As<string>())
+                            GetSingleItem(item[SHOW_CONSTRAINTS_LABEL]),
+                            GetSingleItem(item[SHOW_CONSTRAINTS_PROPERTIES]),
+                            GetConstraintType(item[SHOW_CONSTRAINTS_CONSTRAINT_TYPE].As<string>())
                         )
                     ).ToList();
 
-                var indexes = Session.Current.Run(SHOW_INDEXES);
+                var indexes = Session.Run(SHOW_INDEXES);
 
                 Indexes =                   
-                    indexes.Where(item => item.Values[SHOW_INDEXES_LABELS] is not null)
+                    indexes.ToList().Where(item => item[SHOW_INDEXES_LABELS] is not null)
                            .Select(item =>
                         (
-                            GetSingleItem(item.Values[SHOW_INDEXES_LABELS]),
-                            GetSingleItem(item.Values[SHOW_INDEXES_PROPERTIES])
+                            GetSingleItem(item[SHOW_INDEXES_LABELS]),
+                            GetSingleItem(item[SHOW_INDEXES_PROPERTIES])
                         )
                     ).ToList();
             }
