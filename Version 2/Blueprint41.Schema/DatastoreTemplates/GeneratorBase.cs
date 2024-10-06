@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 using Blueprint41.Core;
@@ -12,8 +15,43 @@ namespace Blueprint41.DatastoreTemplates
     {
         public static GeneratorBase? Get(string templateName)
         {
-            throw new NotImplementedException();
+            if (templateCache.Count == 0)
+                InitTemplateCache();
+
+            if (templateCache.TryGetValue(templateName, out Type? generator))
+                return (GeneratorBase?)Activator.CreateInstance(generator);
+
+            return null;
         }
+        private static void InitTemplateCache()
+        {
+            lock (templateCache)
+            {
+                if (templateCache.Count == 0)
+                {
+                    string bp41Schema = Assembly.GetExecutingAssembly().Location;
+                    string folder = Path.GetDirectoryName(bp41Schema) ?? string.Empty;
+
+                    foreach (string filePath in Directory.EnumerateFiles(folder, "*.dll"))
+                    {
+                        string fileName = Path.GetFileName(filePath);
+                        if (filePath == bp41Schema || !fileName.StartsWith("Blueprint41."))
+                            continue;
+
+#pragma warning disable S3885 // "Assembly.Load" should be used
+                        Assembly assembly = Assembly.LoadFile(filePath);
+#pragma warning restore S3885 // "Assembly.Load" should be used
+
+                        foreach (Type type in assembly.GetTypes().Where(type => typeof(GeneratorBase).IsAssignableFrom(type)))
+                            templateCache.Add(type.Name, type);
+                    }
+                }
+
+                if (templateCache.Count == 0)
+                    throw new InvalidOperationException("Templates missing. You should add a reference to at least 'Blueprint41.OGM', 'Blueprint41.Query' or both.");
+            }
+        }
+        private static readonly Dictionary<string, Type> templateCache = new Dictionary<string, Type>();
 
         public abstract string TransformText();
         public Entity? DALModel { get; set; }

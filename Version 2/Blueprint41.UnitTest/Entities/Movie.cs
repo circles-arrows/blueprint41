@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 using Blueprint41;
 using Blueprint41.Core;
+using Blueprint41.Events;
 using Blueprint41.Query;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;

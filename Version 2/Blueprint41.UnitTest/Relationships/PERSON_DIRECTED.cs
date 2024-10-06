@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 using Blueprint41;
 using Blueprint41.Query;
+using Blueprint41.Events;
 
 namespace Datastore.Query
 {

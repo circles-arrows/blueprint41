@@ -1,4 +1,8 @@
-﻿using Blueprint41.DatastoreTemplates;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+
+using Blueprint41.DatastoreTemplates;
 using Blueprint41.UnitTest.DataStore;
 
 namespace UnitTest.Generation
