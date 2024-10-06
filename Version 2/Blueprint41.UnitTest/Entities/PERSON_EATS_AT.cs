@@ -9,6 +9,7 @@ using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Query;
+using Blueprint41.Persistence;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
 using node = Datastore.Query.Node;
@@ -27,9 +28,9 @@ namespace Datastore.Manipulation
             Person = @in;
             Restaurant = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            //CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            throw new NotImplementedException();
         }
-
         internal string _elementId { get; private set; }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace Datastore.Manipulation
 
         public void Assign()
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
                 .Where(inAlias.Uid == Person.Uid, outAlias.Uid == Restaurant.Uid, relAlias.ElementId == _elementId)
                 .Set(GetAssignments(relAlias))
@@ -64,7 +65,7 @@ namespace Datastore.Manipulation
         }
         public static List<PERSON_EATS_AT> Where(Func<Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -74,7 +75,7 @@ namespace Datastore.Manipulation
         }
         public static List<PERSON_EATS_AT> Where(Func<Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
 
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
@@ -215,7 +216,7 @@ namespace Datastore.Manipulation
     {
         public static void Assign(this IEnumerable<PERSON_EATS_AT> @this)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.PERSON_EATS_AT.Alias(out var relAlias).Out.Restaurant.Alias(out var outAlias))
                 .Where(relAlias.ElementId.In(@this.Select(item => item._elementId)))
                 .Set(GetAssignments(relAlias))

@@ -14,9 +14,9 @@ using ClientException = Neo4j.Driver.ClientException;
 using DatabaseException = Neo4j.Driver.DatabaseException;
 
 #if NEO4J
-using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
+//using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
 #elif MEMGRAPH
-using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
+//using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
 #endif
 
 namespace Blueprint41.UnitTest.Tests
@@ -28,7 +28,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
                 Assert.That(relations.Any(rel => rel.properties.ContainsKey(nameof(PERSON_LIVES_IN.AddressLine1))), "Unexpected test-data");
@@ -37,7 +37,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(RenameAddrLine1);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
                 Assert.That(relations.Any(rel => rel.properties.ContainsKey("NewName")), "There should have been 'NewName' properties.");
@@ -58,7 +58,7 @@ namespace Blueprint41.UnitTest.Tests
             */
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "Unexpected test-data");
@@ -69,7 +69,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(MergeAddrLine1And2IntoAddrLine1);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
 
@@ -93,7 +93,7 @@ namespace Blueprint41.UnitTest.Tests
             */
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "Unexpected test-data");
@@ -104,7 +104,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(MergeAddrLine1And2IntoAddrLine2);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
 
@@ -128,7 +128,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is string), "Unexpected test-data");
@@ -138,7 +138,7 @@ namespace Blueprint41.UnitTest.Tests
 #if NEO4J
             Execute(CompressAddrLine1);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not string), "Conversion failed");
@@ -155,7 +155,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(WATCHED_MOVIE.Relationship);
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is long), "Unexpected test-data");
@@ -164,7 +164,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(ConvertMinsWatchedToString);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(WATCHED_MOVIE.Relationship);
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is not long), "Conversion failed");
@@ -199,8 +199,8 @@ namespace Blueprint41.UnitTest.Tests
         public void SetIndexTypeToUnique()
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            var persistenceProvider = PersistenceProvider.CurrentPersistenceProvider as driver.Neo4jPersistenceProvider;
-            if (persistenceProvider is null || !persistenceProvider.VersionGreaterOrEqual(5, 7))
+            //var persistenceProvider = PersistenceProvider.CurrentPersistenceProvider as driver.Neo4jPersistenceProvider;
+            //if (persistenceProvider is null || !persistenceProvider.VersionGreaterOrEqual(5, 7))
                 throw new NotSupportedException("Run this test on Neo4j 5.7 or greater.");
 
             SetupTestDataSet();
@@ -231,7 +231,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
                 Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) != null), "Unexpected test-data");
@@ -240,7 +240,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(DeprecateAddrLine2And3);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
                 Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) != null), "There should not have been 'AddressLine3' properties.");
@@ -251,7 +251,7 @@ namespace Blueprint41.UnitTest.Tests
         [Test] // Asserts done
         public void MakeNullable()
         {
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var watched = SampleDataWatchedMovies().First();
                 watched.person.WatchedMovies.Add(watched.movie);
@@ -270,7 +270,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(MakeMinutesWatchedNullable);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var watched = SampleDataWatchedMovies().First();
                 watched.person.WatchedMovies.Add(watched.movie);
@@ -285,7 +285,7 @@ namespace Blueprint41.UnitTest.Tests
             SetupTestDataSet();
 
 #if NEO4J
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
 
@@ -307,7 +307,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
 
@@ -317,7 +317,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(MakeAddrLine2MandatoryWithDefault);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
 
@@ -341,7 +341,7 @@ namespace Blueprint41.UnitTest.Tests
         {
             SetupTestDataSet();
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
 
@@ -351,7 +351,7 @@ namespace Blueprint41.UnitTest.Tests
 
             Execute(SetAddrLine3FromNullToDEFAULT);
 
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
 

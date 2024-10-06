@@ -9,6 +9,7 @@ using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Query;
+using Blueprint41.Persistence;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
 using node = Datastore.Query.Node;
@@ -27,12 +28,12 @@ namespace Datastore.Manipulation
             Person = @in;
             StreamingService = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            MonthlyFee = (decimal)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(decimal), properties.GetValue("MonthlyFee"));
-            StartDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("StartDate"));
-            EndDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("EndDate"));
+            //CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            //MonthlyFee = (decimal)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(decimal), properties.GetValue("MonthlyFee"));
+            //StartDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("StartDate"));
+            //EndDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("EndDate"));
+            throw new NotImplementedException();
         }
-
         internal string _elementId { get; private set; }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace Datastore.Manipulation
 
         public void Assign(JsNotation<decimal> MonthlyFee = default)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
                 .Where(inAlias.Uid == Person.Uid, outAlias.Uid == StreamingService.Uid, relAlias.ElementId == _elementId)
                 .Set(GetAssignments(relAlias))
@@ -71,7 +72,7 @@ namespace Datastore.Manipulation
         }
         public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -81,7 +82,7 @@ namespace Datastore.Manipulation
         }
         public static List<SUBSCRIBED_TO_STREAMING_SERVICE> Where(Func<Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
 
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
@@ -262,7 +263,7 @@ namespace Datastore.Manipulation
     {
         public static void Assign(this IEnumerable<SUBSCRIBED_TO_STREAMING_SERVICE> @this, JsNotation<decimal> MonthlyFee = default)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Person.Alias(out var inAlias).In.SUBSCRIBED_TO_STREAMING_SERVICE.Alias(out var relAlias).Out.StreamingService.Alias(out var outAlias))
                 .Where(relAlias.ElementId.In(@this.Select(item => item._elementId)))
                 .Set(GetAssignments(relAlias))

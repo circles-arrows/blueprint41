@@ -324,7 +324,7 @@ if (DALModel.IsAbstract)
         {
             q.<#= DALModel.Name #>Alias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.<#= DALModel.Name #>.Alias(out alias));
+            IMatchQuery matchQuery = Cypher.Match(q.Node.<#= DALModel.Name #>.Alias(out alias));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
@@ -411,7 +411,7 @@ if (DALModel.IsAbstract)
     }
 #>
 
-        sealed public override Entity GetEntity()
+        sealed protected override Entity GetEntity()
         {
             if (entity is null)
             {

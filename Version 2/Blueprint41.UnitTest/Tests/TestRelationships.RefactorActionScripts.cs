@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Blueprint41.Refactoring;
 using Blueprint41.UnitTest.DataStore;
 
 namespace Blueprint41.UnitTest.Tests

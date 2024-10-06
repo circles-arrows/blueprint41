@@ -16,8 +16,9 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
-            PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+            //MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
+            //PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+            throw new NotImplementedException();
 
             TearDown();
 
@@ -28,25 +29,25 @@ namespace Blueprint41.UnitTest.Tests
         [TearDown]
         public void TearDown()
         {
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 string reset = "Match (n) detach delete n";
-                Transaction.RunningTransaction.Run(reset);
+                Transaction.Run(reset);
 
                 Transaction.Commit();
             }
 #if NEO4J
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
-                Transaction.RunningTransaction.Run(clearSchema);
+                Transaction.Run(clearSchema);
                 Transaction.Commit();
             }
 #elif MEMGRAPH
-            using (Session.Begin())
+            using (MockModel.BeginSession())
             {
                 string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
-                Session.RunningSession.Run(clearSchema);
+                Session.Run(clearSchema);
             }
 #endif
         }
@@ -60,7 +61,7 @@ namespace Blueprint41.UnitTest.Tests
                 string key = null;
 
                 string outputConsole;
-                using (Transaction.Begin(true))
+                using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     Person p1 = new Person
                     {
@@ -111,7 +112,7 @@ namespace Blueprint41.UnitTest.Tests
                     key = p2.Uid;
                 }
 
-                using (Transaction.Begin(OptimizeFor.RecursiveSubGraphAccess))
+                using (MockModel.BeginTransaction(OptimizeFor.RecursiveSubGraphAccess))
                 {
                     Person p = Person.Load(key);
                     Assert.Zero(p.DirectedMovies.Count);
@@ -126,7 +127,7 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.IsTrue(outputConsole.Contains(@"MATCH (node:Movie)<-[rel:ACTORS]-(out:Person) WHERE node.Uid in ($keys)  RETURN node as Parent, out as Item"));
                 }
 
-                using (Transaction.Begin(OptimizeFor.PartialSubGraphAccess))
+                using (MockModel.BeginTransaction(OptimizeFor.PartialSubGraphAccess))
                 {
                     Person p = Person.Load(key);
                     Assert.Zero(p.DirectedMovies.Count);

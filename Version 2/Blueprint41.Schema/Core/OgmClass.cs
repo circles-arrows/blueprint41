@@ -72,7 +72,7 @@ namespace Blueprint41.Core
         protected abstract DateTime GetRowVersion();
         protected abstract void SetChanged();
         protected abstract void SetData(IReadOnlyDictionary<string, object?> data);
-        protected internal abstract void SetKey(object key);
+        protected internal virtual void SetKey(object key) => throw new NotImplementedException();
         protected abstract void SetRowVersion(DateTime? value);
         protected abstract void ValidateDelete();
         protected abstract void ValidateSave();

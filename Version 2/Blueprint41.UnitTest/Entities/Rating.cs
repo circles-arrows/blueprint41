@@ -61,28 +61,28 @@ namespace Datastore.Manipulation
         }
         public static Rating LoadByCode(string code)
         {
-            return FromQuery(nameof(LoadByCode), new Parameter(Param0, code)).FirstOrDefault();
+            return QueryExtensions.FromQuery<Rating>(nameof(LoadByCode), new Parameter(Param0, code)).FirstOrDefault();
         }
         public static Rating LoadByName(string name)
         {
-            return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
+            return QueryExtensions.FromQuery<Rating>(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
         public static Dictionary<System.String, Rating> LoadByKeys(IEnumerable<System.String> uids)
         {
-            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return QueryExtensions.FromQuery<Rating>(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.RatingAlias, IWhereQuery> query)
         {
             q.RatingAlias alias;
 
-            IMatchQuery matchQuery = Blueprint41.Transaction.CompiledQuery.Match(q.Node.Rating.Alias(out alias, "node"));
+            IMatchQuery matchQuery = Cypher.Match(q.Node.Rating.Alias(out alias, "node"));
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            RegisterQuery(name, compiled);
+            QueryExtensions.RegisterQuery(name, compiled);
         }
 
         public override string ToString()
@@ -220,7 +220,7 @@ namespace Datastore.Manipulation
         public string Uid { get { return InnerData.Uid; } set { KeySet(() => InnerData.Uid = value); } }
         public System.DateTime LastModifiedOn { get { LazyGet(); return InnerData.LastModifiedOn; } set { if (LazySet(Members.LastModifiedOn, InnerData.LastModifiedOn, value)) InnerData.LastModifiedOn = value; } }
         protected override DateTime GetRowVersion() { return LastModifiedOn; }
-        public override void SetRowVersion(DateTime? value) { LastModifiedOn = value ?? DateTime.MinValue; }
+        protected override void SetRowVersion(DateTime? value) { LastModifiedOn = value ?? DateTime.MinValue; }
 
         #endregion
 
@@ -299,7 +299,7 @@ namespace Datastore.Manipulation
 
         }
 
-        sealed public override Entity GetEntity()
+        sealed protected override Entity GetEntity()
         {
             if (entity is null)
             {

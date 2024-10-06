@@ -9,6 +9,7 @@ using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Query;
+using Blueprint41.Persistence;
 using Blueprint41.DatastoreTemplates;
 using q = Datastore.Query;
 using node = Datastore.Query.Node;
@@ -27,14 +28,14 @@ namespace Datastore.Manipulation
             Movie = @in;
             Rating = @out;
             
-            CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
-            FrighteningIntense = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("FrighteningIntense"));
-            ViolenceGore = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("ViolenceGore"));
-            Profanity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Profanity"));
-            Substances = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Substances"));
-            SexAndNudity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("SexAndNudity"));
+            //CreationDate = (System.DateTime?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(System.DateTime?), properties.GetValue("CreationDate"));
+            //FrighteningIntense = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("FrighteningIntense"));
+            //ViolenceGore = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("ViolenceGore"));
+            //Profanity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Profanity"));
+            //Substances = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("Substances"));
+            //SexAndNudity = (Blueprint41.UnitTest.DataStore.RatingComponent?)PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(Blueprint41.UnitTest.DataStore.RatingComponent?), properties.GetValue("SexAndNudity"));
+            throw new NotImplementedException();
         }
-
         internal string _elementId { get; private set; }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace Datastore.Manipulation
 
         public void Assign(JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
                 .Where(inAlias.Uid == Movie.Uid, outAlias.Uid == Rating.Uid, relAlias.ElementId == _elementId)
                 .Set(GetAssignments(relAlias))
@@ -79,7 +80,7 @@ namespace Datastore.Manipulation
         }
         public static List<MOVIE_CERTIFICATION> Where(Func<Alias, QueryCondition> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
                 .Return(relAlias.ElementId.As("elementId"), relAlias.Properties("properties"), inAlias.As("in"), outAlias.As("out"))
@@ -89,7 +90,7 @@ namespace Datastore.Manipulation
         }
         public static List<MOVIE_CERTIFICATION> Where(Func<Alias, QueryCondition[]> expression)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
 
                 .Where(expression.Invoke(new Alias(relAlias, inAlias, outAlias)))
@@ -290,7 +291,7 @@ namespace Datastore.Manipulation
     {
         public static void Assign(this IEnumerable<MOVIE_CERTIFICATION> @this, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> FrighteningIntense = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Profanity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> SexAndNudity = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> Substances = default, JsNotation<Blueprint41.UnitTest.DataStore.RatingComponent?> ViolenceGore = default)
         {
-            var query = Transaction.CompiledQuery
+            var query = Cypher
                 .Match(node.Movie.Alias(out var inAlias).In.MOVIE_CERTIFICATION.Alias(out var relAlias).Out.Rating.Alias(out var outAlias))
                 .Where(relAlias.ElementId.In(@this.Select(item => item._elementId)))
                 .Set(GetAssignments(relAlias))

@@ -1,4 +1,6 @@
 ﻿using Blueprint41.Dynamic;
+using Blueprint41.Refactoring;
+using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Neo4j.Driver;
 using NUnit.Framework;
@@ -17,6 +19,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelWithRowVersion : DatastoreModel<DataModelWithRowVersion>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -60,6 +68,12 @@ namespace Blueprint41.UnitTest.Tests
         #region DataModelWithInvalidRowVersion
         private class DataModelWithInvalidRowVersion : DatastoreModel<DataModelWithInvalidRowVersion>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -105,6 +119,12 @@ namespace Blueprint41.UnitTest.Tests
         #region DataModelWithMultipleRowVersion
         private class DataModelWithMultipleRowVersion : DatastoreModel<DataModelWithMultipleRowVersion>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -147,6 +167,12 @@ namespace Blueprint41.UnitTest.Tests
         #region DataModelEntityKey
         private class DataModelKeyNotUnique : DatastoreModel<DataModelKeyNotUnique>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -169,6 +195,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelKeyIsUnique : DatastoreModel<DataModelKeyIsUnique>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -194,6 +226,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelMultipleKey : DatastoreModel<DataModelMultipleKey>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -246,6 +284,12 @@ namespace Blueprint41.UnitTest.Tests
         #region DataModelProperties
         private class DataModelEntityWithSameProperties : DatastoreModel<DataModelEntityWithSameProperties>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -262,6 +306,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelEntityWithSamePropertiesFromBase : DatastoreModel<DataModelEntityWithSamePropertiesFromBase>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -286,6 +336,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelEntityWithSamePropertiesFromChangedInheritance : DatastoreModel<DataModelEntityWithSamePropertiesFromChangedInheritance>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -354,6 +410,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelWithStaticData : DatastoreModel<DataModelWithStaticData>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -440,6 +502,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelWithStaticDataKeyDuplicate : DatastoreModel<DataModelWithStaticDataKeyDuplicate>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -476,6 +544,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelWithStaticDataWithoutKey : DatastoreModel<DataModelWithStaticDataWithoutKey>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -510,6 +584,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelWithStaticDataMissingProperty : DatastoreModel<DataModelWithStaticDataMissingProperty>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -549,6 +629,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DataModelStaticDataWithDeleteNode : DatastoreModel<DataModelStaticDataWithDeleteNode>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -596,6 +682,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorEntity Deprecate
         private class DataModelWithDeprecatedEntities : DatastoreModel<DataModelWithDeprecatedEntities>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -674,6 +766,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DatastoreEntityRefactor : DatastoreModel<DatastoreEntityRefactor>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -728,6 +826,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DatastoreEntityRefactorConstraints : DatastoreModel<DatastoreEntityRefactorConstraints>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -781,6 +885,12 @@ namespace Blueprint41.UnitTest.Tests
 #if !MEMGRAPH
         private class DatastoreEntityRefactorConstraintsHackedWithCompositeConstraint : DatastoreModel<DatastoreEntityRefactorConstraints>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -833,9 +943,9 @@ namespace Blueprint41.UnitTest.Tests
                 Assert.That(output.GetOutput(), Contains.Substring("CREATE INDEX AccountType_Indexed_RangeIndex FOR (node:AccountType) ON (node.Indexed)"));
                 Assert.That(output.GetOutput(), Contains.Substring("CREATE CONSTRAINT AccountType_Unique_UniqueConstraint FOR (node:AccountType) REQUIRE node.Unique IS UNIQUE"));
 
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
-                    Assert.That(Transaction.Current.Run("show constraints").Select(item => item.Values["name"]?.ToString()).Any(item => item == "AccountType_Uid_And_Name_UniqueConstraint"));
+                    Assert.That(Transaction.Run("show constraints").ToList().Select(item => item["name"]?.ToString()).Any(item => item == "AccountType_Uid_And_Name_UniqueConstraint"));
                 }
             }
         }
@@ -847,6 +957,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DatastoreEntityBaseWithoutParent : DatastoreModel<DatastoreEntityBaseWithoutParent>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -886,6 +1002,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DatastoreEntityBaseWithParent : DatastoreModel<DatastoreEntityBaseWithParent>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -941,6 +1063,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorEntity ResetFunctionalId
         private class DatastoreEntityResetFunctionalId : DatastoreModel<DatastoreEntityResetFunctionalId>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+            public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -988,6 +1116,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DatastoreEntityCopyValue : DatastoreModel<DatastoreEntityCopyValue>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -1047,6 +1181,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DatastoreEntitySetDefaultValue : DatastoreModel<DatastoreEntitySetDefaultValue>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -1096,6 +1236,12 @@ namespace Blueprint41.UnitTest.Tests
         #region IRefactorEntity SetFunctionalId
         private class DatastoreEntitySetFunctionalId : DatastoreModel<DatastoreEntitySetFunctionalId>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -1135,6 +1281,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class DatastoreEntityInheritedFunctionalId : DatastoreModel<DatastoreEntitySetFunctionalId>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 

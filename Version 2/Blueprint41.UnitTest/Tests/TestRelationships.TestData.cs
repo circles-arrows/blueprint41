@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Blueprint41.Core;
+using Blueprint41.Persistence;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
@@ -22,8 +23,9 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
-            PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+            //MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
+            //PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
+            throw new NotImplementedException();
 
             TearDown();
         }
@@ -44,25 +46,25 @@ namespace Blueprint41.UnitTest.Tests
         [TearDown]
         public void TearDown()
         {
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 string reset = "Match (n) detach delete n";
-                Transaction.RunningTransaction.Run(reset);
+                Transaction.Run(reset);
 
                 Transaction.Commit();
             }
 #if NEO4J
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 string clearSchema = "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *";
-                Transaction.RunningTransaction.Run(clearSchema);
+                Transaction.Run(clearSchema);
                 Transaction.Commit();
             }
 #elif MEMGRAPH
-            using (Session.Begin())
+            using (MockModel.BeginSession())
             {
                 string clearSchema = "CALL schema.assert({},{}, {}, true) YIELD label, key RETURN *";
-                Session.RunningSession.Run(clearSchema);
+                Session.Run(clearSchema);
             }
 #endif
         }
@@ -97,7 +99,7 @@ namespace Blueprint41.UnitTest.Tests
 
             public static Uids SetupDb()
             {
-                using (Transaction.Begin())
+                using (MockModel.BeginTransaction())
                 {
                     #region Movies
 
@@ -618,11 +620,11 @@ namespace Blueprint41.UnitTest.Tests
                 DELETE r
                 """;
 
-            Transaction.RunningTransaction.Run(cypher);
+            Transaction.Run(cypher);
         }
         private void SetupTestDataSet()
         {
-            using (Transaction.Begin())
+            using (MockModel.BeginTransaction())
             {
                 // Person lives in
                 foreach ((Person person, List<(DateTime from, DateTime till)> relations, City city, Dictionary<string, object> properties) data in SampleDataLivesIn())
@@ -674,9 +676,9 @@ namespace Blueprint41.UnitTest.Tests
         private void WriteRelation(OGM @in, Relationship relationship, OGM @out, DateTime? from, DateTime? till, Dictionary<string, object> properties)
         {
             Dictionary<string, object> map = new Dictionary<string, object>(properties);
-            map.AddOrSet(relationship.StartDate, PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(from));
-            map.AddOrSet(relationship.EndDate, PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(till));
-            map.AddOrSet(relationship.CreationDate, PersistenceProvider.CurrentPersistenceProvider.ConvertToStoredType(Transaction.RunningTransaction.TransactionDate));
+            map.AddOrSet(relationship.StartDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(from));
+            map.AddOrSet(relationship.EndDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(till));
+            map.AddOrSet(relationship.CreationDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(Transaction.RunningTransaction.TransactionDate));
 
             string cypher = $"""
                 MATCH (in:{relationship.InEntity.Label.Name}), (out:{relationship.OutEntity.Label.Name})
@@ -692,7 +694,7 @@ namespace Blueprint41.UnitTest.Tests
                 { "map", map },
             };
 
-            Transaction.RunningTransaction.Run(cypher, parameters);
+            Transaction.Run(cypher, parameters);
         }
 
         private List<(DateTime from, DateTime till)> ReadRelations(OGM @in, Relationship relationship, OGM @out)
@@ -709,12 +711,12 @@ namespace Blueprint41.UnitTest.Tests
                 { "out", @out.GetKey() },
             };
 
-            RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
+            ResultCursor result = Transaction.Run(cypher, parameters);
 
-            return result.Select(delegate (RawRecord record)
+            return result.ToList().Select(delegate (Record record)
             {
-                DateTime from = Conversion<long?, DateTime?>.Convert(record.Values["From"]?.As<long?>()) ?? Conversion.MinDateTime;
-                DateTime till = Conversion<long?, DateTime?>.Convert(record.Values["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
+                DateTime from = Conversion<long?, DateTime?>.Convert(record["From"]?.As<long?>()) ?? Conversion.MinDateTime;
+                DateTime till = Conversion<long?, DateTime?>.Convert(record["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
 
                 return (from, till);
             }).ToList();
@@ -733,14 +735,13 @@ namespace Blueprint41.UnitTest.Tests
                 { "out", @out.GetKey() },
             };
 
-            RawResult result = Transaction.RunningTransaction.Run(cypher, parameters);
+            ResultCursor result = Transaction.Run(cypher, parameters);
 
-            return result.Select(delegate (RawRecord record)
+            return result.ToList().Select(delegate (Record record)
             {
-                DateTime from = Conversion<long?, DateTime?>.Convert(record.Values["From"]?.As<long?>()) ?? Conversion.MinDateTime;
-                DateTime till = Conversion<long?, DateTime?>.Convert(record.Values["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
-                Dictionary<string, object> properties = record
-                    .Values["Properties"]
+                DateTime from = Conversion<long?, DateTime?>.Convert(record["From"]?.As<long?>()) ?? Conversion.MinDateTime;
+                DateTime till = Conversion<long?, DateTime?>.Convert(record["Till"]?.As<long?>()) ?? Conversion.MaxDateTime;
+                Dictionary<string, object> properties = record["Properties"]
                     .As<Dictionary<string, object>>()
                     .Where(item => item.Key != relationship.StartDate && item.Key != relationship.EndDate && item.Key != relationship.CreationDate)
                     .ToDictionary(item => item.Key, item => item.Value);
@@ -759,15 +760,15 @@ namespace Blueprint41.UnitTest.Tests
                         properties(r) AS Properties
                 """;
 
-            RawResult result = Transaction.RunningTransaction.Run(cypher);
+            ResultCursor result = Transaction.Run(cypher);
 
-            return result.Select(delegate (RawRecord record)
+            return result.ToList().Select(delegate (Record record)
             {
-                object inNodeKey = record.Values["InNodeKey"];
-                string[] inNodeLabels = record.Values["InNodeLabels"].As<List<string>>().ToArray();
-                object outNodeKey = record.Values["OutNodeKey"];
-                string[] outNodeLabels = record.Values["OutNodeLabels"].As<List<string>>().ToArray();
-                Dictionary<string, object> properties = record.Values["Properties"].As<Dictionary<string, object>>();
+                object inNodeKey = record["InNodeKey"];
+                string[] inNodeLabels = record["InNodeLabels"].As<List<string>>().ToArray();
+                object outNodeKey = record["OutNodeKey"];
+                string[] outNodeLabels = record["OutNodeLabels"].As<List<string>>().ToArray();
+                Dictionary<string, object> properties = record["Properties"].As<Dictionary<string, object>>();
 
                 return (inNodeKey, inNodeLabels, outNodeKey, outNodeLabels, properties);
             }).ToList();

@@ -8,6 +8,12 @@ namespace Blueprint41.UnitTest.Tests
     {
         private class MovieDataStoreModel_01 : DatastoreModel<MovieDataStoreModel_01>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers() { }
 
             [Version(0, 0, 0)]
@@ -42,6 +48,12 @@ namespace Blueprint41.UnitTest.Tests
 
         private class MovieDataStoreModel_02 : DatastoreModel<MovieDataStoreModel_02>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers() { }
 
             [Version(0, 0, 0)]

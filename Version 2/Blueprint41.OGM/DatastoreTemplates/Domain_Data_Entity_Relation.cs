@@ -41,73 +41,74 @@ using Blueprint41;
 using Blueprint41.Core;
 using Blueprint41.Events;
 using Blueprint41.Query;
+using Blueprint41.Persistence;
 using Blueprint41.DatastoreTemplates;
 using q = ");
-            
-            #line 21 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullQueryNamespace));
-            
-            #line default
-            #line hidden
-            this.Write(";\r\nusing node = ");
             
             #line 22 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullQueryNamespace));
             
             #line default
             #line hidden
+            this.Write(";\r\nusing node = ");
+            
+            #line 23 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullQueryNamespace));
+            
+            #line default
+            #line hidden
             this.Write(".Node;\r\n\r\nnamespace ");
             
-            #line 24 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 25 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullCRUDNamespace));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n    /// <summary>\r\n    /// Relationship: (");
             
-            #line 27 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 28 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(")-[");
             
-            #line 27 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 28 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("]->(");
             
-            #line 27 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 28 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(")\r\n    /// </summary>\r\n    public partial class ");
             
-            #line 29 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 30 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("\r\n    {\r\n        private ");
             
-            #line 31 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 32 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("(string elementId, ");
             
-            #line 31 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 32 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.ClassName));
             
             #line default
             #line hidden
             this.Write(" @in, ");
             
-            #line 31 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 32 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.ClassName));
             
             #line default
@@ -115,21 +116,21 @@ using q = ");
             this.Write(" @out, Dictionary<string, object> properties)\r\n        {\r\n            _elementId " +
                     "= elementId;\r\n            \r\n            ");
             
-            #line 35 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 36 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write(" = @in;\r\n            ");
             
-            #line 36 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 37 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
             this.Write(" = @out;\r\n            \r\n");
             
-            #line 38 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 39 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     foreach (var attr in DALRelation.Properties)
     {
@@ -137,89 +138,89 @@ using q = ");
             
             #line default
             #line hidden
-            this.Write("            ");
+            this.Write("            //");
             
-            #line 42 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 43 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" = (");
             
-            #line 42 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 43 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
             
             #line default
             #line hidden
             this.Write(")PersistenceProvider.CurrentPersistenceProvider.ConvertFromStoredType(typeof(");
             
-            #line 42 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 43 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
             
             #line default
             #line hidden
             this.Write("), properties.GetValue(\"");
             
-            #line 42 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 43 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("\"));\r\n");
             
-            #line 43 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 44 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     }
 
             
             #line default
             #line hidden
-            this.Write("        }\r\n\r\n        internal string _elementId { get; private set; }\r\n\r\n        " +
-                    "/// <summary>\r\n        /// ");
+            this.Write("            throw new NotImplementedException();\r\n        }\r\n        internal str" +
+                    "ing _elementId { get; private set; }\r\n\r\n        /// <summary>\r\n        /// ");
             
-            #line 50 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 52 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write(" (In Node)\r\n        /// </summary>\r\n        public ");
             
-            #line 52 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 54 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.ClassName));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 52 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 54 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write(" { get; private set; }\r\n\r\n        /// <summary>\r\n        /// ");
             
-            #line 55 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 57 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
             this.Write(" (Out Node)\r\n        /// </summary>\r\n        public ");
             
-            #line 57 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 59 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.ClassName));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 57 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 59 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
             this.Write(" { get; private set; }\r\n\r\n");
             
-            #line 59 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 61 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     foreach (var attr in DALRelation.Properties)
     {
@@ -229,21 +230,21 @@ using q = ");
             #line hidden
             this.Write("        public ");
             
-            #line 63 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 65 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.OuterReturnType));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 63 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 65 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" { get; private set; }\r\n");
             
-            #line 64 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 66 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     }
 
@@ -252,14 +253,14 @@ using q = ");
             #line hidden
             this.Write("\r\n        public void Assign(");
             
-            #line 68 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 70 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Properties.ToJsonNotation(DALRelation)));
             
             #line default
             #line hidden
-            this.Write(")\r\n        {\r\n            var query = Transaction.CompiledQuery\r\n");
+            this.Write(")\r\n        {\r\n            var query = Cypher\r\n");
             
-            #line 71 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 73 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             if (!DALRelation.InEntity.IsVirtual)
             {
@@ -269,28 +270,28 @@ using q = ");
             #line hidden
             this.Write("                .Match(node.");
             
-            #line 75 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 77 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var inAlias).In.");
             
-            #line 75 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 77 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var relAlias).Out.");
             
-            #line 75 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 77 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var outAlias))\r\n");
             
-            #line 76 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 78 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
             else if (!DALRelation.OutEntity.IsVirtual)
@@ -301,28 +302,28 @@ using q = ");
             #line hidden
             this.Write("                .Match(node.");
             
-            #line 81 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 83 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var outAlias).Out.");
             
-            #line 81 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 83 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var relAlias).In.");
             
-            #line 81 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 83 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var inAlias))\r\n");
             
-            #line 82 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 84 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
 
@@ -331,42 +332,42 @@ using q = ");
             #line hidden
             this.Write("                .Where(inAlias.");
             
-            #line 85 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 87 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(" == ");
             
-            #line 85 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 87 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 85 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 87 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(", outAlias.");
             
-            #line 85 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 87 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(" == ");
             
-            #line 85 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 87 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 85 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 87 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Key.Name));
             
             #line default
@@ -376,7 +377,7 @@ using q = ");
                     "ontext();\r\n            context.Execute();\r\n\r\n            Assignment[] GetAssignm" +
                     "ents(q.");
             
-            #line 92 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 94 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
@@ -384,7 +385,7 @@ using q = ");
             this.Write("_ALIAS alias)\r\n            {\r\n                List<Assignment> assignments = new " +
                     "List<Assignment>();\r\n");
             
-            #line 95 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 97 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     foreach (var attr in DALRelation.Properties)
     {
@@ -396,28 +397,28 @@ using q = ");
             #line hidden
             this.Write("                if (");
             
-            #line 101 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 103 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".HasValue) assignments.Add(new Assignment(alias.");
             
-            #line 101 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 103 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 101 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 103 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n");
             
-            #line 102 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 104 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     }
 
@@ -427,15 +428,15 @@ using q = ");
             this.Write("               \r\n                return assignments.ToArray();\r\n            }\r\n  " +
                     "      }\r\n        public static List<");
             
-            #line 109 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 111 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("> Where(Func<Alias, QueryCondition> expression)\r\n        {\r\n            var query" +
-                    " = Transaction.CompiledQuery\r\n");
+                    " = Cypher\r\n");
             
-            #line 112 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 114 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             if (!DALRelation.InEntity.IsVirtual)
             {
@@ -445,28 +446,28 @@ using q = ");
             #line hidden
             this.Write("                .Match(node.");
             
-            #line 116 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 118 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var inAlias).In.");
             
-            #line 116 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 118 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var relAlias).Out.");
             
-            #line 116 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 118 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var outAlias))\r\n");
             
-            #line 117 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 119 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
             else if (!DALRelation.OutEntity.IsVirtual)
@@ -477,28 +478,28 @@ using q = ");
             #line hidden
             this.Write("                .Match(node.");
             
-            #line 122 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 124 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var outAlias).Out.");
             
-            #line 122 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 124 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var relAlias).In.");
             
-            #line 122 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 124 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var inAlias))\r\n");
             
-            #line 123 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 125 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
 
@@ -513,15 +514,15 @@ using q = ");
         }
         public static List<");
             
-            #line 132 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 134 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("> Where(Func<Alias, QueryCondition[]> expression)\r\n        {\r\n            var que" +
-                    "ry = Transaction.CompiledQuery\r\n");
+                    "ry = Cypher\r\n");
             
-            #line 135 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 137 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             if (!DALRelation.InEntity.IsVirtual)
             {
@@ -531,28 +532,28 @@ using q = ");
             #line hidden
             this.Write("                .Match(node.");
             
-            #line 139 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 141 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var inAlias).In.");
             
-            #line 139 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 141 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var relAlias).Out.");
             
-            #line 139 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 141 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var outAlias))\r\n");
             
-            #line 140 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 142 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
             else if (!DALRelation.OutEntity.IsVirtual)
@@ -563,28 +564,28 @@ using q = ");
             #line hidden
             this.Write("                .Match(node.");
             
-            #line 145 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 147 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var outAlias).Out.");
             
-            #line 145 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 147 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var relAlias).In.");
             
-            #line 145 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 147 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var inAlias))\r\n");
             
-            #line 146 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 148 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
 
@@ -600,28 +601,28 @@ using q = ");
         }
         public static List<");
             
-            #line 156 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 158 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("> Where(");
             
-            #line 156 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 158 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Properties.ToJsonNotation()));
             
             #line default
             #line hidden
             this.Write(", JsNotation<");
             
-            #line 156 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 158 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.ClassName));
             
             #line default
             #line hidden
             this.Write("> InNode = default, JsNotation<");
             
-            #line 156 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 158 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.ClassName));
             
             #line default
@@ -630,7 +631,7 @@ using q = ");
                     "            {\r\n                List<QueryCondition> conditions = new List<QueryC" +
                     "ondition>();\r\n\r\n");
             
-            #line 162 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 164 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     foreach (var attr in DALRelation.Properties)
     {
@@ -642,28 +643,28 @@ using q = ");
             #line hidden
             this.Write("                if (");
             
-            #line 168 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 170 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".HasValue) conditions.Add(alias.");
             
-            #line 168 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 170 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" == ");
             
-            #line 168 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 170 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".Value?.ToString());\r\n");
             
-            #line 169 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 171 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
         }
         else
@@ -674,28 +675,28 @@ using q = ");
             #line hidden
             this.Write("                if (");
             
-            #line 174 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 176 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".HasValue) conditions.Add(alias.");
             
-            #line 174 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 176 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(" == ");
             
-            #line 174 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 176 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".Value);\r\n");
             
-            #line 175 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 177 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
         }
     }
@@ -705,14 +706,14 @@ using q = ");
             #line hidden
             this.Write("                if (InNode.HasValue) conditions.Add(alias.");
             
-            #line 179 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 181 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write("(InNode.Value));\r\n                if (OutNode.HasValue) conditions.Add(alias.");
             
-            #line 180 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 182 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
@@ -720,14 +721,14 @@ using q = ");
             this.Write("(OutNode.Value));\r\n\r\n                return conditions.ToArray();\r\n            })" +
                     ";\r\n        }\r\n        internal static List<");
             
-            #line 185 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 187 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("> Load(ICompiled query) => Load(query, null);\r\n        internal static List<");
             
-            #line 186 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 188 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
@@ -745,7 +746,7 @@ using q = ");
 
             return results.Select(result => new ");
             
-            #line 197 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 199 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
@@ -754,7 +755,7 @@ using q = ");
                     "  result.@out,\r\n                result.properties\r\n            )).ToList();\r\n   " +
                     "     }\r\n");
             
-            #line 204 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 206 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     var enumProperties = DALRelation.Properties.Where(item => item.EnumValues is not null).ToList();
 
@@ -766,7 +767,7 @@ using q = ");
             #line hidden
             this.Write("\r\n        #region Enumerations\r\n\r\n");
             
-            #line 213 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 215 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
         foreach (Property attr in enumProperties)
         {
@@ -778,14 +779,14 @@ using q = ");
             #line hidden
             this.Write("        public enum ");
             
-            #line 219 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 221 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("Enum\r\n        {\r\n");
             
-            #line 221 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 223 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             foreach (var value in attr.EnumValues)
             {
@@ -795,21 +796,21 @@ using q = ");
             #line hidden
             this.Write("            ");
             
-            #line 225 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 227 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(value.Name));
             
             #line default
             #line hidden
             this.Write(" = ");
             
-            #line 225 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 227 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(value.Value));
             
             #line default
             #line hidden
             this.Write(",\r\n");
             
-            #line 226 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 228 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
 
@@ -818,7 +819,7 @@ using q = ");
             #line hidden
             this.Write("        }\r\n\r\n");
             
-            #line 231 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 233 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
         }
 
@@ -827,7 +828,7 @@ using q = ");
             #line hidden
             this.Write("        #endregion\r\n");
             
-            #line 235 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 237 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     }
 
@@ -837,14 +838,14 @@ using q = ");
             this.Write("\r\n        public static Relationship Relationship => ThreadSafe.LazyInit(ref _rel" +
                     "ationship, () => ");
             
-            #line 239 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 241 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
             this.Write(".Model.Relations[\"");
             
-            #line 239 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 241 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
@@ -852,21 +853,21 @@ using q = ");
             this.Write("\"]);\r\n        private static Relationship _relationship = null;\r\n\r\n        /// <s" +
                     "ummary>\r\n        /// CRUD Specific alias for relationship: (");
             
-            #line 243 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 245 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(")-[");
             
-            #line 243 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 245 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("]->(");
             
-            #line 243 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 245 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -874,21 +875,21 @@ using q = ");
             this.Write(")\r\n        /// </summary>\r\n        public partial class Alias\r\n        {\r\n       " +
                     "     internal Alias(q.");
             
-            #line 247 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 249 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("_ALIAS relAlias, q.");
             
-            #line 247 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 249 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write("Alias inAlias, q.");
             
-            #line 247 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 249 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -897,7 +898,7 @@ using q = ");
                     "      _inAlias = inAlias;\r\n                _outAlias = outAlias;\r\n            }\r" +
                     "\n\r\n");
             
-            #line 254 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 256 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     foreach (var attr in DALRelation.Properties)
     {
@@ -907,14 +908,14 @@ using q = ");
             #line hidden
             this.Write("            public ");
             
-            #line 258 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 260 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetResultType(attr.SystemReturnType)));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 258 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 260 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
@@ -922,49 +923,49 @@ using q = ");
             this.Write("\r\n            {\r\n                get\r\n                {\r\n                    if (" +
                     "_");
             
-            #line 262 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 264 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" is null)\r\n                        _");
             
-            #line 263 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 265 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" = _relAlias.");
             
-            #line 263 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 265 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(";\r\n\r\n                    return _");
             
-            #line 265 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 267 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(";\r\n                }\r\n            }\r\n            private ");
             
-            #line 268 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 270 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetResultType(attr.SystemReturnType)));
             
             #line default
             #line hidden
             this.Write(" _");
             
-            #line 268 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 270 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(" = null;\r\n");
             
-            #line 269 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 271 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     }
 
@@ -973,28 +974,28 @@ using q = ");
             #line hidden
             this.Write("\r\n            /// <summary>\r\n            /// ");
             
-            #line 274 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 276 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write(" in-node: (");
             
-            #line 274 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 276 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(")-[");
             
-            #line 274 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 276 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("]->(");
             
-            #line 274 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 276 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -1002,77 +1003,77 @@ using q = ");
             this.Write(")\r\n            /// </summary>\r\n            /// <returns>\r\n            /// Conditi" +
                     "on where in-node is the given ");
             
-            #line 277 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 279 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToTitleCase().ToLowerCase()));
             
             #line default
             #line hidden
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
-            #line 279 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 281 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 279 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 281 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.ClassName));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 279 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 281 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n            {\r\n                return _inAlias.");
             
-            #line 281 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 283 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(" == ");
             
-            #line 281 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 283 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 281 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 283 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(";\r\n            }\r\n            /// <summary>\r\n            /// ");
             
-            #line 284 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 286 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write(" in-node: (");
             
-            #line 284 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 286 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(")-[");
             
-            #line 284 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 286 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("]->(");
             
-            #line 284 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 286 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -1080,77 +1081,77 @@ using q = ");
             this.Write(")\r\n            /// </summary>\r\n            /// <returns>\r\n            /// Conditi" +
                     "on where in-node is in the given set of ");
             
-            #line 287 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 289 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToPlural().ToTitleCase().ToLowerCase()));
             
             #line default
             #line hidden
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
-            #line 289 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 291 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName.ToPlural()));
             
             #line default
             #line hidden
             this.Write("(IEnumerable<");
             
-            #line 289 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 291 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.ClassName));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 289 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 291 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n            {\r\n                return _inAlias.");
             
-            #line 291 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 293 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(".In(");
             
-            #line 291 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 293 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(".Select(item => item.");
             
-            #line 291 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 293 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n            }\r\n            /// <summary>\r\n            /// ");
             
-            #line 294 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 296 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName));
             
             #line default
             #line hidden
             this.Write(" in-node: (");
             
-            #line 294 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 296 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(")-[");
             
-            #line 294 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 296 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("]->(");
             
-            #line 294 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 296 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -1158,77 +1159,77 @@ using q = ");
             this.Write(")\r\n            /// </summary>\r\n            /// <returns>\r\n            /// Conditi" +
                     "on where in-node is in the given set of ");
             
-            #line 297 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 299 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToPlural().ToTitleCase().ToLowerCase()));
             
             #line default
             #line hidden
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
-            #line 299 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 301 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntityName.ToPlural()));
             
             #line default
             #line hidden
             this.Write("(params ");
             
-            #line 299 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 301 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.ClassName));
             
             #line default
             #line hidden
             this.Write("[] ");
             
-            #line 299 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 301 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n            {\r\n                return _inAlias.");
             
-            #line 301 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 303 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(".In(");
             
-            #line 301 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 303 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(".Select(item => item.");
             
-            #line 301 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 303 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n            }\r\n\r\n            /// <summary>\r\n            /// ");
             
-            #line 305 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 307 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
             this.Write(" out-node: (");
             
-            #line 305 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 307 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(")-[");
             
-            #line 305 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 307 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("]->(");
             
-            #line 305 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 307 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -1236,77 +1237,77 @@ using q = ");
             this.Write(")\r\n            /// </summary>\r\n            /// <returns>\r\n            /// Conditi" +
                     "on where out-node is the given ");
             
-            #line 308 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 310 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToTitleCase().ToLowerCase()));
             
             #line default
             #line hidden
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
-            #line 310 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 312 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 310 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 312 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.ClassName));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 310 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 312 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n            {\r\n                return _outAlias.");
             
-            #line 312 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 314 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(" == ");
             
-            #line 312 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 314 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 312 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 314 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(";\r\n            }\r\n            /// <summary>\r\n            /// ");
             
-            #line 315 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 317 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
             this.Write(" out-node: (");
             
-            #line 315 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 317 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(")-[");
             
-            #line 315 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 317 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("]->(");
             
-            #line 315 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 317 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -1314,77 +1315,77 @@ using q = ");
             this.Write(")\r\n            /// </summary>\r\n            /// <returns>\r\n            /// Conditi" +
                     "on where out-node is in the given set of ");
             
-            #line 318 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 320 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToPlural().ToTitleCase().ToLowerCase()));
             
             #line default
             #line hidden
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
-            #line 320 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 322 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName.ToPlural()));
             
             #line default
             #line hidden
             this.Write("(IEnumerable<");
             
-            #line 320 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 322 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.ClassName));
             
             #line default
             #line hidden
             this.Write("> ");
             
-            #line 320 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 322 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n            {\r\n                return _outAlias.");
             
-            #line 322 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 324 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(".In(");
             
-            #line 322 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 324 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(".Select(item => item.");
             
-            #line 322 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 324 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n            }\r\n            /// <summary>\r\n            /// ");
             
-            #line 325 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 327 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName));
             
             #line default
             #line hidden
             this.Write(" out-node: (");
             
-            #line 325 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 327 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(")-[");
             
-            #line 325 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 327 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("]->(");
             
-            #line 325 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 327 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -1392,56 +1393,56 @@ using q = ");
             this.Write(")\r\n            /// </summary>\r\n            /// <returns>\r\n            /// Conditi" +
                     "on where out-node is in the given set of ");
             
-            #line 328 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 330 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToPlural().ToTitleCase().ToLowerCase()));
             
             #line default
             #line hidden
             this.Write("\r\n            /// </returns>\r\n            public QueryCondition ");
             
-            #line 330 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 332 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntityName.ToPlural()));
             
             #line default
             #line hidden
             this.Write("(params ");
             
-            #line 330 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 332 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.ClassName));
             
             #line default
             #line hidden
             this.Write("[] ");
             
-            #line 330 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 332 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(")\r\n            {\r\n                return _outAlias.");
             
-            #line 332 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 334 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write(".In(");
             
-            #line 332 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 334 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name.ToPlural().ToCamelCase()));
             
             #line default
             #line hidden
             this.Write(".Select(item => item.");
             
-            #line 332 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 334 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Key.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n            }\r\n\r\n");
             
-            #line 335 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 337 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     if (DALRelation.IsTimeDependent)
     {
@@ -1455,7 +1456,7 @@ using q = ");
 
 ");
             
-            #line 343 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 345 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     }
 
@@ -1464,21 +1465,21 @@ using q = ");
             #line hidden
             this.Write("            private readonly q.");
             
-            #line 346 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 348 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("_ALIAS _relAlias;\r\n            private readonly q.");
             
-            #line 347 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 349 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write("Alias _inAlias;\r\n            private readonly q.");
             
-            #line 348 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 350 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
@@ -1487,21 +1488,21 @@ using q = ");
                     "pAssignmentExtensions\r\n    {\r\n        public static void Assign(this IEnumerable" +
                     "<");
             
-            #line 354 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 356 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write("> @this");
             
-            #line 354 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 356 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Properties.ToJsonNotation(DALRelation, true)));
             
             #line default
             #line hidden
-            this.Write(")\r\n        {\r\n            var query = Transaction.CompiledQuery\r\n");
+            this.Write(")\r\n        {\r\n            var query = Cypher\r\n");
             
-            #line 357 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 359 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             if (!DALRelation.InEntity.IsVirtual)
             {
@@ -1511,28 +1512,28 @@ using q = ");
             #line hidden
             this.Write("                .Match(node.");
             
-            #line 361 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 363 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var inAlias).In.");
             
-            #line 361 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 363 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var relAlias).Out.");
             
-            #line 361 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 363 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var outAlias))\r\n");
             
-            #line 362 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 364 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
             else if (!DALRelation.OutEntity.IsVirtual)
@@ -1543,28 +1544,28 @@ using q = ");
             #line hidden
             this.Write("                .Match(node.");
             
-            #line 367 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 369 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.OutEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var outAlias).Out.");
             
-            #line 367 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 369 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var relAlias).In.");
             
-            #line 367 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 369 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.InEntity.Name));
             
             #line default
             #line hidden
             this.Write(".Alias(out var inAlias))\r\n");
             
-            #line 368 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 370 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
             }
 
@@ -1580,7 +1581,7 @@ using q = ");
 
             Assignment[] GetAssignments(q.");
             
-            #line 378 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 380 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALRelation.Name));
             
             #line default
@@ -1588,7 +1589,7 @@ using q = ");
             this.Write("_ALIAS alias)\r\n            {\r\n                List<Assignment> assignments = new " +
                     "List<Assignment>();\r\n");
             
-            #line 381 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 383 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     foreach (var attr in DALRelation.Properties)
     {
@@ -1600,28 +1601,28 @@ using q = ");
             #line hidden
             this.Write("                if (");
             
-            #line 387 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 389 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(".HasValue) assignments.Add(new Assignment(alias.");
             
-            #line 387 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 389 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 387 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 389 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n");
             
-            #line 388 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
+            #line 390 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity_Relation.tt"
 
     }
 

@@ -147,7 +147,7 @@ namespace Blueprint41.Core
         }
 
         internal static readonly TSelf Instance = (TSelf)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(TSelf));
-        public abstract Entity GetEntity();
+        protected internal abstract Entity GetEntity();
 
         #region Stored Queries
 

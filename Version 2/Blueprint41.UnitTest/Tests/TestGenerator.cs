@@ -1,6 +1,5 @@
 ﻿using Blueprint41.Core;
 using Blueprint41.DatastoreTemplates;
-using Blueprint41.Neo4j.Persistence;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.UnitTest.Mocks;
 using NUnit.Framework;
@@ -17,6 +16,12 @@ namespace Blueprint41.UnitTest.Tests
     {
         private class MockGeneratorModel : DatastoreModel<MockGeneratorModel>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers()
             {
 
@@ -41,6 +46,12 @@ namespace Blueprint41.UnitTest.Tests
         }
         private class MockModelWithDeprecate : DatastoreModel<MockModelWithDeprecate>
         {
+#if NEO4J
+            public override GDMS DatastoreTechnology => GDMS.Neo4j;
+#elif MEMGRAPH
+        public override GDMS DatastoreTechnology => GDMS.Memgraph;
+#endif
+
             protected override void SubscribeEventHandlers() { }
 
             [Version(0, 0, 0)]

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 using Neo4j.Driver;
+using driver = Neo4j.Driver;
 
 namespace Blueprint41.UnitTest.Mocks
 {
@@ -23,7 +24,7 @@ namespace Blueprint41.UnitTest.Mocks
         [Obsolete]
         public global::Neo4j.Driver.Bookmark LastBookmark => NeoSession.LastBookmark;
 
-        public Bookmarks LastBookmarks => NeoSession.LastBookmarks;
+        public driver.Bookmarks LastBookmarks => NeoSession.LastBookmarks;
 
         public SessionConfig SessionConfig => NeoSession.SessionConfig;
 
