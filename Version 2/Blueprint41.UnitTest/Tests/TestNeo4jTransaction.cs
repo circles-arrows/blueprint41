@@ -9,14 +9,6 @@ using Blueprint41.Core;
 using Blueprint41.UnitTest.DataStore;
 using Blueprint41.Persistence;
 
-
-
-#if NEO4J
-//using driver = Blueprint41.Neo4j.Persistence.Driver.v5;
-#elif MEMGRAPH
-//using driver = Blueprint41.Neo4j.Persistence.Driver.Memgraph;
-#endif
-
 namespace Blueprint41.UnitTest.Tests
 {
     /// <summary>

@@ -4,15 +4,11 @@ using System;
 
 namespace Blueprint41.UnitTest.Tests
 {
-    internal class TestConstraints : TestBase    
+    internal class TestConstraints : TestBase
     {
         private class MovieDataStoreModel_01 : DatastoreModel<MovieDataStoreModel_01>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers() { }
 
@@ -48,11 +44,7 @@ namespace Blueprint41.UnitTest.Tests
 
         private class MovieDataStoreModel_02 : DatastoreModel<MovieDataStoreModel_02>
         {
-#if NEO4J
-            public override GDMS DatastoreTechnology => GDMS.Neo4j;
-#elif MEMGRAPH
-        public override GDMS DatastoreTechnology => GDMS.Memgraph;
-#endif
+            public override GDMS DatastoreTechnology => DatabaseConnectionSettings.DatastoreTechnology;
 
             protected override void SubscribeEventHandlers() { }
 
