@@ -72,14 +72,6 @@ After:
 
 #pragma warning disable IDE0200
 
-/* Unmerged change from project 'Blueprint41.Schema (net6.0)'
-Before:
-        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
-        {
-After:
-        internal protected PersistenceProvider(DatastoreModel model, Uri? uri, Blueprint41.AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
-        {
-*/
         internal protected PersistenceProvider(DatastoreModel model, Uri? uri, AuthToken? authToken, string? database, AdvancedConfig? advancedConfig = null)
         {
             DatastoreModel = model;
@@ -474,7 +466,7 @@ After:
 
         #region Factory
 
-        internal DatastoreModel DatastoreModel { get; private set; }
+        public DatastoreModel DatastoreModel { get; private set; }
 
         internal virtual NodePersistenceProvider NodePersistenceProvider => GetOrInit(ref _nodePersistenceProvider, delegate ()
         {

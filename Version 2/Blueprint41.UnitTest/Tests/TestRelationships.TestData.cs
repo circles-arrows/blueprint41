@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
 using Blueprint41.Core;
 using Blueprint41.Persistence;
 using Blueprint41.UnitTest.DataStore;
@@ -9,8 +10,10 @@ using Blueprint41.UnitTest.Helper;
 using Blueprint41.UnitTest.Mocks;
 
 using Datastore.Manipulation;
+
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+
 using ClientException = Neo4j.Driver.ClientException;
 
 namespace Blueprint41.UnitTest.Tests
@@ -69,7 +72,9 @@ namespace Blueprint41.UnitTest.Tests
 #endif
         }
 
-        public Uids DatabaseUids;
+        public Uids DatabaseUids = null!;
+
+#nullable disable
 
         public record class Uids
         {
@@ -363,7 +368,7 @@ namespace Blueprint41.UnitTest.Tests
             public string TheFifthElement;
             public string TopGunMaverick;
 
-            public Ratings Ratings => ThreadSafe.LazyInit(ref _ratings, () => new Ratings(Parent));
+            public Ratings Ratings => ThreadSafe.LazyInit(ref _ratings, () => new Ratings(Parent))!;
             private Ratings _ratings = null;
 
             public (Movie movie, Rating rating, RatingComponent frighteningIntense, RatingComponent violenceGore, RatingComponent profanity, RatingComponent substances, RatingComponent sexAndNudity)[] Movies => new[]
@@ -375,7 +380,7 @@ namespace Blueprint41.UnitTest.Tests
                 (Movie.Load(Terminator2),     Rating.Load(Ratings.Terminator2.Rating)    , Ratings.Terminator2.FrighteningIntense,     Ratings.Terminator2.ViolenceGore,     Ratings.Terminator2.Profanity,    Ratings.Terminator2.Substances,     Ratings.Terminator2.SexAndNudity),
                 (Movie.Load(TheFifthElement), Rating.Load(Ratings.TheFifthElement.Rating), Ratings.TheFifthElement.FrighteningIntense, Ratings.TheFifthElement.ViolenceGore, Ratings.TheFifthElement.Profanity,Ratings.TheFifthElement.Substances, Ratings.TheFifthElement.SexAndNudity),
                 (Movie.Load(TopGunMaverick),  Rating.Load(Ratings.TopGunMaverick.Rating) , Ratings.TopGunMaverick.FrighteningIntense,  Ratings.TopGunMaverick.ViolenceGore,  Ratings.TopGunMaverick.Profanity, Ratings.TopGunMaverick.Substances,  Ratings.TopGunMaverick.SexAndNudity),
-            };
+            }!;
         }
         public record class RatingUids
         {
@@ -412,7 +417,7 @@ namespace Blueprint41.UnitTest.Tests
                 Person.Load(AlanKay),
                 Person.Load(SteveWozniak),
                 Person.Load(BillGates),
-            };
+            }!;
         }
         public record class CityUids
         {
@@ -486,7 +491,7 @@ namespace Blueprint41.UnitTest.Tests
                 (City.Load(Quahog),         AddressLines.Quahog.PeterGriffin,          null),
                 (City.Load(Muncie),         AddressLines.Muncie.Garfield,              null),
                 (City.Load(Metropolis),     AddressLines.Metropolis.ClarkKent_Earlier, AddressLines.Metropolis.ClarkKent_Later)
-            };
+            }!;
         }
         public record class StreamingServiceUids
         {
@@ -521,7 +526,7 @@ namespace Blueprint41.UnitTest.Tests
                 (StreamingService.Load(HboMax),           Rates.HboMax,           default(decimal?)),
                 (StreamingService.Load(DisneyPlus),       Rates.DisneyPlus,       default(decimal?)),
                 (StreamingService.Load(HistoryVault),     Rates.HistoryVault,     default(decimal?)),
-            };
+            }!;
         }
 
         public record class Ratings
@@ -609,6 +614,8 @@ namespace Blueprint41.UnitTest.Tests
             public RatingComponent SexAndNudity = RatingComponent.None;
         }
 
+#nullable enable
+
         #endregion
 
         #region Helper Methods
@@ -648,14 +655,18 @@ namespace Blueprint41.UnitTest.Tests
 
                 // Subscribed streaming service
                 var person = Person.Load(DatabaseUids.Persons.LinusTorvalds);
+                Assert.IsNotNull(person);
+
                 var netflix = StreamingService.Load(DatabaseUids.StreamingServices.Netflix);
+                Assert.IsNotNull(netflix);
+
                 var price = StreamingServiceUids.Rates.Netflix;
 
-                foreach (var state in GetSubscribedToState(TestScenario.RelationsFromMask(0b1111), netflix, price))
+                foreach (var state in GetSubscribedToState(TestScenario.RelationsFromMask(0b1111), netflix!, price))
                 {
                     foreach (var relation in state.relations)
                     {
-                        WriteRelation(person, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
+                        WriteRelation(person!, SUBSCRIBED_TO_STREAMING_SERVICE.Relationship, state.target, relation.from, relation.till, new Dictionary<string, object>()
                         {
                             { nameof(SUBSCRIBED_TO_STREAMING_SERVICE.MonthlyFee), state.price },
                         });
@@ -676,9 +687,9 @@ namespace Blueprint41.UnitTest.Tests
         private void WriteRelation(OGM @in, Relationship relationship, OGM @out, DateTime? from, DateTime? till, Dictionary<string, object> properties)
         {
             Dictionary<string, object> map = new Dictionary<string, object>(properties);
-            map.AddOrSet(relationship.StartDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(from));
-            map.AddOrSet(relationship.EndDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(till));
-            map.AddOrSet(relationship.CreationDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(Transaction.RunningTransaction.TransactionDate));
+            map!.AddOrSet(relationship.StartDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(from));
+            map!.AddOrSet(relationship.EndDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(till));
+            map!.AddOrSet(relationship.CreationDate, MockModel.Model.PersistenceProvider.ConvertToStoredType(Transaction.RunningTransaction.TransactionDate));
 
             string cypher = $"""
                 MATCH (in:{relationship.InEntity.Label.Name}), (out:{relationship.OutEntity.Label.Name})
@@ -687,14 +698,14 @@ namespace Blueprint41.UnitTest.Tests
                 SET r = $map
                 """;
 
-            var parameters = new Dictionary<string, object>()
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
             {
-                { "in", @in.GetKey() },
-                { "out", @out.GetKey() },
+                { "in", @in.GetKey()! },
+                { "out", @out.GetKey()! },
                 { "map", map },
             };
 
-            Transaction.Run(cypher, parameters);
+            Transaction.Run(cypher, parameters!);
         }
 
         private List<(DateTime from, DateTime till)> ReadRelations(OGM @in, Relationship relationship, OGM @out)
@@ -707,11 +718,11 @@ namespace Blueprint41.UnitTest.Tests
 
             var parameters = new Dictionary<string, object>()
             {
-                { "in", @in.GetKey() },
-                { "out", @out.GetKey() },
+                { "in", @in.GetKey()! },
+                { "out", @out.GetKey()! },
             };
 
-            ResultCursor result = Transaction.Run(cypher, parameters);
+            ResultCursor result = Transaction.Run(cypher, parameters!);
 
             return result.ToList().Select(delegate (Record record)
             {
@@ -731,11 +742,11 @@ namespace Blueprint41.UnitTest.Tests
 
             var parameters = new Dictionary<string, object>()
             {
-                { "in", @in.GetKey() },
-                { "out", @out.GetKey() },
+                { "in", @in.GetKey()! },
+                { "out", @out.GetKey()! },
             };
 
-            ResultCursor result = Transaction.Run(cypher, parameters);
+            ResultCursor result = Transaction.Run(cypher, parameters!);
 
             return result.ToList().Select(delegate (Record record)
             {
@@ -778,16 +789,16 @@ namespace Blueprint41.UnitTest.Tests
         {
             return new List<(Person, List<(DateTime, DateTime)>, City, Dictionary<string, object>)>()
             {
-                (Person.Load(DatabaseUids.Persons.AdaLovelace),   TestScenario.RelationsFromMask(0b1111), City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.HerculePoirot)),
-                (Person.Load(DatabaseUids.Persons.AlanKay),       TestScenario.RelationsFromMask(0b0111), City.Load(DatabaseUids.Cities.HillValley),     GetAddrLines(CityUids.AddressLines.HillValley.EmmettBrown)),
-                (Person.Load(DatabaseUids.Persons.AlanTuring),    TestScenario.RelationsFromMask(0b0011), City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.SherlockHolmes)),
-                (Person.Load(DatabaseUids.Persons.BillGates),     TestScenario.RelationsFromMask(0b0110), City.Load(DatabaseUids.Cities.LittleWhinging), GetAddrLines(CityUids.AddressLines.LittleWhinging.HarryPotter)),
-                (Person.Load(DatabaseUids.Persons.DennisRitchie), TestScenario.RelationsFromMask(0b1010), City.Load(DatabaseUids.Cities.Muncie),         GetAddrLines(CityUids.AddressLines.Muncie.Garfield)),
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b1100), City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Earlier)),
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b0011), City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Later)),
-                (Person.Load(DatabaseUids.Persons.MartinFowler),  TestScenario.RelationsFromMask(0b0101), City.Load(DatabaseUids.Cities.Quahog),         GetAddrLines(CityUids.AddressLines.Quahog.PeterGriffin)),
-                (Person.Load(DatabaseUids.Persons.SteveWozniak),  TestScenario.RelationsFromMask(0b0111), City.Load(DatabaseUids.Cities.Springfield),    GetAddrLines(CityUids.AddressLines.Springfield.TheSimpsons)),
-                (Person.Load(DatabaseUids.Persons.UncleBob),      TestScenario.RelationsFromMask(0b1111), City.Load(DatabaseUids.Cities.Sunnydale),      GetAddrLines(CityUids.AddressLines.Sunnydale.BuffySummers)),
+                (Person.Load(DatabaseUids.Persons.AdaLovelace),   TestScenario.RelationsFromMask(0b1111), City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.HerculePoirot))!,
+                (Person.Load(DatabaseUids.Persons.AlanKay),       TestScenario.RelationsFromMask(0b0111), City.Load(DatabaseUids.Cities.HillValley),     GetAddrLines(CityUids.AddressLines.HillValley.EmmettBrown))!,
+                (Person.Load(DatabaseUids.Persons.AlanTuring),    TestScenario.RelationsFromMask(0b0011), City.Load(DatabaseUids.Cities.London),         GetAddrLines(CityUids.AddressLines.London.SherlockHolmes))!,
+                (Person.Load(DatabaseUids.Persons.BillGates),     TestScenario.RelationsFromMask(0b0110), City.Load(DatabaseUids.Cities.LittleWhinging), GetAddrLines(CityUids.AddressLines.LittleWhinging.HarryPotter))!,
+                (Person.Load(DatabaseUids.Persons.DennisRitchie), TestScenario.RelationsFromMask(0b1010), City.Load(DatabaseUids.Cities.Muncie),         GetAddrLines(CityUids.AddressLines.Muncie.Garfield))!,
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b1100), City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Earlier))!,
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), TestScenario.RelationsFromMask(0b0011), City.Load(DatabaseUids.Cities.Metropolis),     GetAddrLines(CityUids.AddressLines.Metropolis.ClarkKent_Later))!,
+                (Person.Load(DatabaseUids.Persons.MartinFowler),  TestScenario.RelationsFromMask(0b0101), City.Load(DatabaseUids.Cities.Quahog),         GetAddrLines(CityUids.AddressLines.Quahog.PeterGriffin))!,
+                (Person.Load(DatabaseUids.Persons.SteveWozniak),  TestScenario.RelationsFromMask(0b0111), City.Load(DatabaseUids.Cities.Springfield),    GetAddrLines(CityUids.AddressLines.Springfield.TheSimpsons))!,
+                (Person.Load(DatabaseUids.Persons.UncleBob),      TestScenario.RelationsFromMask(0b1111), City.Load(DatabaseUids.Cities.Sunnydale),      GetAddrLines(CityUids.AddressLines.Sunnydale.BuffySummers))!,
             };
 
             Dictionary<string, object> GetAddrLines(string[] addressLines)
@@ -804,25 +815,25 @@ namespace Blueprint41.UnitTest.Tests
         {
             return new List<(Person person, Movie movie, int minutes, int total)>()
             {
-                (Person.Load(DatabaseUids.Persons.AlanKay),       Movie.Load(DatabaseUids.Movies.Aliens),          137, 137),
-                (Person.Load(DatabaseUids.Persons.DennisRitchie), Movie.Load(DatabaseUids.Movies.DieHard),         132, 132),
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Aliens),          137, 137),
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity),        34,  119),
-                (Person.Load(DatabaseUids.Persons.MartinFowler),  Movie.Load(DatabaseUids.Movies.Matrix),          136, 136),
-                (Person.Load(DatabaseUids.Persons.MartinFowler),  Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137),
-                (Person.Load(DatabaseUids.Persons.SteveWozniak),  Movie.Load(DatabaseUids.Movies.Matrix),          136, 136),
-                (Person.Load(DatabaseUids.Persons.SteveWozniak),  Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137),
-                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.TheFifthElement), 126, 126),
-                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.Serenity),        119, 119),
-                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.TopGunMaverick),  130, 130),
+                (Person.Load(DatabaseUids.Persons.AlanKay),       Movie.Load(DatabaseUids.Movies.Aliens),          137, 137)!,
+                (Person.Load(DatabaseUids.Persons.DennisRitchie), Movie.Load(DatabaseUids.Movies.DieHard),         132, 132)!,
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Aliens),          137, 137)!,
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity),        34,  119)!,
+                (Person.Load(DatabaseUids.Persons.MartinFowler),  Movie.Load(DatabaseUids.Movies.Matrix),          136, 136)!,
+                (Person.Load(DatabaseUids.Persons.MartinFowler),  Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137)!,
+                (Person.Load(DatabaseUids.Persons.SteveWozniak),  Movie.Load(DatabaseUids.Movies.Matrix),          136, 136)!,
+                (Person.Load(DatabaseUids.Persons.SteveWozniak),  Movie.Load(DatabaseUids.Movies.Terminator2),     137, 137)!,
+                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.TheFifthElement), 126, 126)!,
+                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.Serenity),        119, 119)!,
+                (Person.Load(DatabaseUids.Persons.UncleBob),      Movie.Load(DatabaseUids.Movies.TopGunMaverick),  130, 130)!,
             };
         }
         private List<(Person person, Movie movie, int minutes)> SampleDataWatchedMoviesMutations()
         {
             return new List<(Person person, Movie movie, int minutes)>()
             {
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity), 52),
-                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity), 33),
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity), 52)!,
+                (Person.Load(DatabaseUids.Persons.LinusTorvalds), Movie.Load(DatabaseUids.Movies.Serenity), 33)!,
             };
         }
 
@@ -837,11 +848,11 @@ namespace Blueprint41.UnitTest.Tests
             return new List<(List<(DateTime, DateTime)> initial, StreamingService, decimal)>()
                 {
                     (scenario, item, price),
-                    (TestScenario.RelationsFromMask(0b0010), amazon,  StreamingServiceUids.Rates.AmazonPrimeVideo),
-                    (TestScenario.RelationsFromMask(0b0101), hboMax,  StreamingServiceUids.Rates.HboMax),
-                    (TestScenario.RelationsFromMask(0b1010), peacock, StreamingServiceUids.Rates.Peacock),
-                    (TestScenario.RelationsFromMask(0b1001), hulu,    StreamingServiceUids.Rates.Hulu),
-                    (TestScenario.RelationsFromMask(0b1111), history, StreamingServiceUids.Rates.HistoryVault),
+                    (TestScenario.RelationsFromMask(0b0010), amazon,  StreamingServiceUids.Rates.AmazonPrimeVideo)!,
+                    (TestScenario.RelationsFromMask(0b0101), hboMax,  StreamingServiceUids.Rates.HboMax)!,
+                    (TestScenario.RelationsFromMask(0b1010), peacock, StreamingServiceUids.Rates.Peacock)!,
+                    (TestScenario.RelationsFromMask(0b1001), hulu,    StreamingServiceUids.Rates.Hulu)!,
+                    (TestScenario.RelationsFromMask(0b1111), history, StreamingServiceUids.Rates.HistoryVault)!,
                 };
         }
 

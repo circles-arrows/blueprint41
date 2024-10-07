@@ -18,13 +18,14 @@ namespace Blueprint41.UnitTest.Mocks
         {
         }
 
-        //#if NEO4J
-        //        public MockNeo4jPersistenceProvider(string uri, string username, string pass) : base(uri, username, pass, "unittest") { }
-        //#elif MEMGRAPH
-        //        public MockNeo4jPersistenceProvider(string uri, string username, string pass) : base(uri, username, pass) { }
-        //#endif
-
-        //public override Transaction NewTransaction(bool readWriteMode) => new MockNeo4jTransaction(this, readWriteMode, TransactionLogger);
+        public override Transaction NewTransaction(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
+        {
+            return MockNeo4jTransaction.Get(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
+        }
+        public override Task<Transaction> NewTransactionAsync(ReadWriteMode mode, OptimizeFor optimize = OptimizeFor.PartialSubGraphAccess)
+        {
+            return MockNeo4jTransaction.GetAsync(DatastoreModel.PersistenceProvider, mode, optimize, AdvancedConfig?.GetLogger());
+        }
     }
 
     public class MockNeo4jTransaction : Transaction
@@ -32,6 +33,19 @@ namespace Blueprint41.UnitTest.Mocks
         protected MockNeo4jTransaction(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
             : base(provider, readwrite, optimize, logger)
         {
+        }
+
+        static internal Transaction Get(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        {
+            MockNeo4jTransaction transaction = new MockNeo4jTransaction(provider, readwrite, optimize, logger);
+            transaction.InitializeDriver();
+            return transaction;
+        }
+        static internal async Task<Transaction> GetAsync(PersistenceProvider provider, ReadWriteMode readwrite, OptimizeFor optimize, TransactionLogger? logger)
+        {
+            MockNeo4jTransaction transaction = new MockNeo4jTransaction(provider, readwrite, optimize, logger);
+            await transaction.InitializeDriverAsync();
+            return transaction;
         }
 
         //protected override void Initialize()

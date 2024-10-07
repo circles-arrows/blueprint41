@@ -49,13 +49,13 @@ namespace Blueprint41
         private protected TransactionLogger? Logger { get; private set; }
         public static void Log(string message) => RunningTransaction.Logger?.Log(message);
 
-        private void InitializeDriver()
+        protected void InitializeDriver()
         {
             DriverSession = InitializeDriverSession();
             DriverTransaction = DriverSession.BeginTransaction();
         }
 
-        private async Task InitializeDriverAsync()
+        protected async Task InitializeDriverAsync()
         {
             DriverSession = InitializeDriverSession();
             DriverTransaction = await DriverSession.BeginTransactionAsync();

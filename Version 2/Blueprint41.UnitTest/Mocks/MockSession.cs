@@ -19,7 +19,7 @@ namespace Blueprint41.UnitTest.Mocks
             NeoSession = neoSession;
         }
         public IAsyncSession NeoSession { get; private set; }
-        public IAsyncTransaction MockTransaction { get; set; }
+        public IAsyncTransaction? MockTransaction { get; set; }
 
         [Obsolete]
         public global::Neo4j.Driver.Bookmark LastBookmark => NeoSession.LastBookmark;
@@ -62,45 +62,45 @@ namespace Blueprint41.UnitTest.Mocks
             return NeoSession.DisposeAsync();
         }
 
-        public Task<TResult> ExecuteReadAsync<TResult>(Func<IAsyncQueryRunner, Task<TResult>> work, Action<TransactionConfigBuilder> action = null)
+        public Task<TResult> ExecuteReadAsync<TResult>(Func<IAsyncQueryRunner, Task<TResult>> work, Action<TransactionConfigBuilder>? action = null)
         {
             return NeoSession.ExecuteReadAsync(work, action);
         }
 
-        public Task ExecuteReadAsync(Func<IAsyncQueryRunner, Task> work, Action<TransactionConfigBuilder> action = null)
+        public Task ExecuteReadAsync(Func<IAsyncQueryRunner, Task> work, Action<TransactionConfigBuilder>? action = null)
         {
             return NeoSession.ExecuteReadAsync(work, action);
         }
 
-        public Task<TResult> ExecuteWriteAsync<TResult>(Func<IAsyncQueryRunner, Task<TResult>> work, Action<TransactionConfigBuilder> action = null)
+        public Task<TResult> ExecuteWriteAsync<TResult>(Func<IAsyncQueryRunner, Task<TResult>> work, Action<TransactionConfigBuilder>? action = null)
         {
             return NeoSession.ExecuteWriteAsync(work, action);
         }
 
-        public Task ExecuteWriteAsync(Func<IAsyncQueryRunner, Task> work, Action<TransactionConfigBuilder> action = null)
+        public Task ExecuteWriteAsync(Func<IAsyncQueryRunner, Task> work, Action<TransactionConfigBuilder>? action = null)
         {
             return NeoSession.ExecuteWriteAsync(work, action);
         }
 
         [Obsolete]
-        public Task<T> ReadTransactionAsync<T>(Func<IAsyncTransaction, Task<T>> work, Action<TransactionConfigBuilder> action = null)
+        public Task<T> ReadTransactionAsync<T>(Func<IAsyncTransaction, Task<T>> work, Action<TransactionConfigBuilder>? action = null)
         {
             return NeoSession.ReadTransactionAsync(work, action);
         }
 
         [Obsolete]
-        public Task ReadTransactionAsync(Func<IAsyncTransaction, Task> work, Action<TransactionConfigBuilder> action = null)
+        public Task ReadTransactionAsync(Func<IAsyncTransaction, Task> work, Action<TransactionConfigBuilder>? action = null)
         {
             return NeoSession.ReadTransactionAsync(work, action);
         }
 
-        public Task<IResultCursor> RunAsync(string query, Action<TransactionConfigBuilder> action = null)
+        public Task<IResultCursor> RunAsync(string query, Action<TransactionConfigBuilder>? action = null)
         {
             Console.WriteLine(query);
             return NeoSession.RunAsync(query, action);
         }
 
-        public Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters, Action<TransactionConfigBuilder> action = null)
+        public Task<IResultCursor> RunAsync(string query, IDictionary<string, object?>? parameters, Action<TransactionConfigBuilder>? action = null)
         {
             string st = query;
 
@@ -109,12 +109,12 @@ namespace Blueprint41.UnitTest.Mocks
                     st = st.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
 
             Console.WriteLine(st);
-            Console.WriteLine("params: {0}:{1}", parameters.ToString());
+            Console.WriteLine("params: {0}:{1}", parameters?.ToString());
 
             return NeoSession.RunAsync(query, parameters, action);
         }
 
-        public Task<IResultCursor> RunAsync(global::Neo4j.Driver.Query query, Action<TransactionConfigBuilder> action = null)
+        public Task<IResultCursor> RunAsync(global::Neo4j.Driver.Query query, Action<TransactionConfigBuilder>? action = null)
         {
             Console.WriteLine(query);
             return NeoSession.RunAsync(query, action);
@@ -126,18 +126,18 @@ namespace Blueprint41.UnitTest.Mocks
             return ((IAsyncQueryRunner)NeoSession).RunAsync(query);
         }
 
-        public Task<IResultCursor> RunAsync(string query, object parameters)
+        public Task<IResultCursor> RunAsync(string query, object? parameters)
         {
-            if (parameters is IDictionary<string, object> par)
+            if (parameters is IDictionary<string, object?> par)
                 return RunAsync(query, par);
 
             Console.WriteLine(query);
-            Console.WriteLine("params: {0}:{1}", parameters.ToString());
+            Console.WriteLine("params: {0}:{1}", parameters?.ToString());
 
             return NeoSession.RunAsync(query, parameters);
         }
 
-        public Task<IResultCursor> RunAsync(string query, IDictionary<string, object> parameters)
+        public Task<IResultCursor> RunAsync(string query, IDictionary<string, object?>? parameters)
         {
             string st = query;
 
@@ -146,7 +146,7 @@ namespace Blueprint41.UnitTest.Mocks
                     st = st.Replace("{" + par.Key + "}", JsonConvert.SerializeObject(par.Value));
 
             Console.WriteLine(st);
-            Console.WriteLine("params: {0}:{1}", parameters.ToString());
+            Console.WriteLine("params: {0}:{1}", parameters?.ToString());
             return ((IAsyncQueryRunner)NeoSession).RunAsync(query, parameters);
         }
 
@@ -157,13 +157,13 @@ namespace Blueprint41.UnitTest.Mocks
         }
 
         [Obsolete]
-        public Task<T> WriteTransactionAsync<T>(Func<IAsyncTransaction, Task<T>> work, Action<TransactionConfigBuilder> action = null)
+        public Task<T> WriteTransactionAsync<T>(Func<IAsyncTransaction, Task<T>> work, Action<TransactionConfigBuilder>? action = null)
         {
             return NeoSession.WriteTransactionAsync(work, action);
         }
 
         [Obsolete]
-        public Task WriteTransactionAsync(Func<IAsyncTransaction, Task> work, Action<TransactionConfigBuilder> action = null)
+        public Task WriteTransactionAsync(Func<IAsyncTransaction, Task> work, Action<TransactionConfigBuilder>? action = null)
         {
             return NeoSession.WriteTransactionAsync(work, action);
         }

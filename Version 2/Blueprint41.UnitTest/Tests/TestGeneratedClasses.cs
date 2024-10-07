@@ -103,27 +103,29 @@ namespace Blueprint41.UnitTest.Tests
                 // Without transaction
                 Assert.Throws<InvalidOperationException>(() => Person.Load(key));
 
-                Person b;
+                Person? b;
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     // Load
                     b = Person.Load(key);
+                    Assert.IsNotNull(b);
                     Assert.AreEqual(a, b);
 
                     // Update
-                    b.Name = "Jaden Smith";
+                    b!.Name = "Jaden Smith";
                     Transaction.Commit();
                 }
 
                 Assert.AreEqual(b.Name, "Jaden Smith");
                 output.AssertNodeUpdated("Person");
 
-                Person c;
+                Person? c;
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     c = Person.Load(key);
+                    Assert.IsNotNull(c);
 
-                    c.Delete();
+                    c!.Delete();
                     Transaction.Commit();
                 }
 
@@ -131,7 +133,7 @@ namespace Blueprint41.UnitTest.Tests
                 output.AssertTimeDependentRelationshipDeleted("Person", "LIVES_IN", "City");
                 output.AssertRelationshipDeleted("Person", "EATS_AT", "Restaurant");
 
-                Person d;
+                Person? d;
                 using (MockModel.BeginTransaction())
                 {
                     // Load
@@ -237,13 +239,16 @@ namespace Blueprint41.UnitTest.Tests
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
 
-                    Person person = Person.Load(key5);
-                    person.Name = "Janice Smith";
+                    Person? person = Person.Load(key5);
+                    Assert.IsNotNull(person);
+                    person!.Name = "Janice Smith";
                     person.City.Name = "California";
-                    person.Restaurants[0].Name = "Shakeys Pizza";
+                    Assert.IsNotEmpty(person.Restaurants);
+                    person.Restaurants[0]!.Name = "Shakeys Pizza";
 
                     City city = person.City;
-                    Restaurant restaurant = person.Restaurants[0];
+                    Assert.IsNotEmpty(person.Restaurants);
+                    Restaurant restaurant = person.Restaurants[0]!;
 
                     Transaction.Commit();
                 }
@@ -258,20 +263,24 @@ namespace Blueprint41.UnitTest.Tests
                 // Check properties are updated after reloading
                 using (MockModel.BeginTransaction())
                 {
-                    Person p = Person.Load(key5);
-                    City c = City.Load(key6);
-                    Restaurant r = Restaurant.Load(key7);
+                    Person? p = Person.Load(key5);
+                    Assert.IsNotNull(p);
+                    City? c = City.Load(key6);
+                    Assert.IsNotNull(c);
+                    Restaurant? r = Restaurant.Load(key7);
+                    Assert.IsNotNull(r);
 
-                    Assert.AreEqual(p.Name, "Janice Smith");
-                    Assert.AreEqual(c.Name, "California");
-                    Assert.AreEqual(r.Name, "Shakeys Pizza");
+                    Assert.AreEqual(p!.Name, "Janice Smith");
+                    Assert.AreEqual(c!.Name, "California");
+                    Assert.AreEqual(r!.Name, "Shakeys Pizza");
                 }
 
                 // Removing relationships by setting
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
-                    Person p = Person.Load(key5);
-                    p.City = null;
+                    Person? p = Person.Load(key5);
+                    Assert.IsNotNull(p);
+                    p!.City = null;
                     p.Restaurants.Clear();
 
                     Transaction.Flush();
@@ -289,17 +298,20 @@ namespace Blueprint41.UnitTest.Tests
                 // Removing relationships via properties
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
-                    Person p = Person.Load(key5);
-                    City c = p.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
-                    Restaurant r = p.Restaurants[0];
+                    Person? p = Person.Load(key5);
+                    Assert.IsNotNull(p);
+                    City? c = p!.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
+                    Assert.IsNotNull(c);
+                    Restaurant? r = p.Restaurants[0];
+                    Assert.IsNotNull(r);
 
                     p.City = null;
-                    p.Restaurants.Remove(r);
+                    p.Restaurants.Remove(r!);
 
                     Transaction.Flush();
 
                     Assert.IsTrue(c.PersistenceState == PersistenceState.Loaded);
-                    Assert.IsTrue(r.PersistenceState == PersistenceState.Loaded);
+                    Assert.IsTrue(r!.PersistenceState == PersistenceState.Loaded);
  
                     Assert.IsNull(p.City);
                     Assert.True(p.Restaurants.Count == 0);
@@ -314,12 +326,15 @@ namespace Blueprint41.UnitTest.Tests
                 // Removing relationships and nodes via properties
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
-                    Person p = Person.Load(key5);
-                    City c = p.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
-                    Restaurant r = p.Restaurants[0];
+                    Person? p = Person.Load(key5);
+                    Assert.IsNotNull(p);
+                    City? c = p!.City; // Side-effect Person is lazy-loaded here, because one of it's properties is accessed.
+                    Assert.IsNotNull(c);
+                    Restaurant? r = p.Restaurants[0];
+                    Assert.IsNotNull(r);
 
                     p.City = null;
-                    p.Restaurants.Delete(r);
+                    p.Restaurants.Delete(r!);
 
                     c.Delete();
 
@@ -328,7 +343,7 @@ namespace Blueprint41.UnitTest.Tests
                     Assert.IsTrue(c.PersistenceState == PersistenceState.Deleted);
                     Assert.Throws<InvalidOperationException>(() => c.Name = "New Name", "The object has been deleted, you cannot make changes to it anymore.");
 
-                    Assert.IsTrue(r.PersistenceState == PersistenceState.Deleted);
+                    Assert.IsTrue(r!.PersistenceState == PersistenceState.Deleted);
                     Assert.Throws<InvalidOperationException>(() => r.Name = "New Name", "The object has been deleted, you cannot make changes to it anymore.");
 
                     Assert.IsNull(p.City);
@@ -349,16 +364,19 @@ namespace Blueprint41.UnitTest.Tests
                 using (MockModel.BeginTransaction(ReadWriteMode.ReadWrite))
                 {
                     //load before deleting
-                    Person p = Person.Load(key5);
+                    Person? p = Person.Load(key5);
 
-                    City.Load(key6).ForceDelete(); // Side-effect Person NOT lazy loaded here yet, because it's properties were never accessed.
+                    City.Load(key6)?.ForceDelete(); // Side-effect Person NOT lazy loaded here yet, because it's properties were never accessed.
                     Transaction.Flush(); // Persist in DB & change PersistenceState from Delete to Deleted
 
                     //load after deleting
-                    Restaurant r = Restaurant.Load(key7);
+                    Restaurant? r = Restaurant.Load(key7);
 
-                    Assert.IsNull(p.City);
-                    Assert.IsNull(r.City);
+                    Assert.IsNotNull(p);
+                    Assert.IsNotNull(r);
+
+                    Assert.IsNull(p?.City);
+                    Assert.IsNull(r?.City);
 
                     Transaction.Rollback();
                 }
@@ -449,7 +467,7 @@ namespace Blueprint41.UnitTest.Tests
                     WHERE (EXISTS{MATCH (n0)-[:EATS_AT]->(:Restaurant)} = $param1)
                     RETURN DISTINCT n0 AS Column1, restaurants AS Column2
                     """,
-                    compiled.CompiledQuery.QueryText);
+                    compiled.CompiledQuery!.QueryText);
 
                 compiled = Cypher
                     .Match(node.Person.Alias(out PersonAlias pWithLimit))
@@ -468,7 +486,7 @@ namespace Blueprint41.UnitTest.Tests
                     RETURN DISTINCT n0 AS Column1
                     LIMIT $param1
                     """,
-                    compiled.CompiledQuery.QueryText);
+                    compiled.CompiledQuery!.QueryText);
 
                 compiled = Cypher
                     .Match(node.Person.Alias(out var pR).In.PERSON_EATS_AT.Out.Restaurant.Alias(out var rP))
@@ -490,7 +508,7 @@ namespace Blueprint41.UnitTest.Tests
                     RETURN DISTINCT n0 AS Column1
                     ORDER BY n0.Name
                     """,
-                    compiled.CompiledQuery.QueryText);
+                    compiled.CompiledQuery!.QueryText);
 #elif MEMGRAPH
                 Exception ex = Assert.Throws<NotSupportedException>(() => query.Compile());
                 Assert.That(() => ex.Message.Contains("Memgraph does not support Collect subqueries"));
@@ -560,13 +578,16 @@ namespace Blueprint41.UnitTest.Tests
                                 .OrderBy(m.Title)
                                 .Compile();
 
-                    var result = compiled.GetExecutionContext().Execute();
+                    List<dynamic> result = compiled.GetExecutionContext().Execute();
 
-                    var a = result[0] as IDictionary<string, object>;
-                    var b = result[1] as IDictionary<string, object>;
+                    IDictionary<string, object>? a = result[0] as IDictionary<string, object>;
+                    IDictionary<string, object>? b = result[1] as IDictionary<string, object>;
 
-                    Assert.AreEqual(a["Column1"], "The American President");
-                    Assert.AreEqual(b["Column1"], "Wall Street");
+                    Assert.IsNotNull(a);
+                    Assert.IsNotNull(b);
+
+                    Assert.AreEqual(a!["Column1"], "The American President");
+                    Assert.AreEqual(b!["Column1"], "Wall Street");
 
                     output.AssertQuery(
                         """
@@ -588,7 +609,10 @@ namespace Blueprint41.UnitTest.Tests
                     result = compiled.GetExecutionContext().Execute();
 
                     a = result[0] as IDictionary<string, object>;
-                    Assert.AreEqual(a["Column1"], "Martin Sheen");
+                    
+                    Assert.IsNotNull(a);
+
+                    Assert.AreEqual(a!["Column1"], "Martin Sheen");
                     Assert.IsNull(a["Column2"]);
 
                     output.AssertQuery(
@@ -701,7 +725,10 @@ namespace Blueprint41.UnitTest.Tests
                     var result = compiled.GetExecutionContext().Execute();
 
                     var a = result[0] as IDictionary<string, object>;
-                    Assert.AreEqual(a["Column1"], "Wall Street");
+                    
+                    Assert.IsNotNull(a);
+                    
+                    Assert.AreEqual(a!["Column1"], "Wall Street");
 
 #if NEO4J
                     output.AssertQuery(
@@ -732,7 +759,10 @@ namespace Blueprint41.UnitTest.Tests
                     result = compiled.GetExecutionContext().Execute();
 
                     a = result[0] as IDictionary<string, object>;
-                    Assert.AreEqual(a["Column1"], "Wall Street");
+
+                    Assert.IsNotNull(a);
+
+                    Assert.AreEqual(a!["Column1"], "Wall Street");
                     Assert.AreEqual(a["Column2"], "Oliver Stone");
 
 #if NEO4J
@@ -773,7 +803,10 @@ namespace Blueprint41.UnitTest.Tests
                     result = compiled.GetExecutionContext().Execute();
 
                     a = result[0] as IDictionary<string, object>;
-                    Assert.AreEqual(a["Column1"], "Wall Street");
+
+                    Assert.IsNotNull(a);
+
+                    Assert.AreEqual(a!["Column1"], "Wall Street");
 
                     output.AssertQuery(
                         """
@@ -803,7 +836,10 @@ namespace Blueprint41.UnitTest.Tests
                     result = compiled.GetExecutionContext().Execute();
 
                     a = result[0] as IDictionary<string, object>;
-                    Assert.AreEqual(a["Column1"], "Wall Street");
+
+                    Assert.IsNotNull(a);
+
+                    Assert.AreEqual(a!["Column1"], "Wall Street");
                     Assert.AreEqual(a["Column2"], "Oliver Stone");
 
                     output.AssertQuery(
@@ -839,7 +875,10 @@ namespace Blueprint41.UnitTest.Tests
                     result = compiled.GetExecutionContext().Execute();
 
                     a = result[0] as IDictionary<string, object>;
-                    Assert.AreEqual(a["Column1"], "Wall Street");
+
+                    Assert.IsNotNull(a);
+
+                    Assert.AreEqual(a!["Column1"], "Wall Street");
                     Assert.AreEqual(a["Column2"], "Oliver Stone");
 
                     output.AssertQuery(
@@ -876,15 +915,15 @@ namespace Blueprint41.UnitTest.Tests
         private static string GetAndCheckKey<T>(T a)
             where T : OGM
         {
-            string key = a.GetKey()?.ToString();
+            string? key = a.GetKey()?.ToString();
             Assert.IsNotNull(key);
             Assert.IsNotEmpty(key);
 #if NEO4J
-            Assert.DoesNotThrow(() => int.Parse(key));
+            Assert.DoesNotThrow(() => int.Parse(key!));
 #elif MEMGRAPH
-            Assert.DoesNotThrow(() => Guid.Parse(key));
+            Assert.DoesNotThrow(() => Guid.Parse(key!));
 #endif
-            return key;
+            return key!;
         }
     }
 }

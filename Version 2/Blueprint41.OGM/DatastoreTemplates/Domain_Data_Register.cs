@@ -28,11 +28,11 @@ namespace Blueprint41.DatastoreTemplates
         /// </summary>
         public override string TransformText()
         {
-            this.Write("#pragma warning disable S101 // Types should be named in PascalCase\r\n#pragma warn" +
-                    "ing disable CS8981 // Names should not be lower type only\r\n\r\nusing System;\r\nusin" +
-                    "g Blueprint41.Core;\r\nusing Blueprint41.Events;\r\n\r\nnamespace ");
+            this.Write("#nullable disable\r\n#pragma warning disable S101 // Types should be named in Pasca" +
+                    "lCase\r\n#pragma warning disable CS8981 // Names should not be lower type only\r\n\r\n" +
+                    "using System;\r\nusing Blueprint41.Core;\r\nusing Blueprint41.Events;\r\n\r\nnamespace ");
             
-            #line 12 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 13 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Settings.FullCRUDNamespace));
             
             #line default
@@ -40,7 +40,7 @@ namespace Blueprint41.DatastoreTemplates
             this.Write("\r\n{\r\n    internal class Register\r\n    {\r\n        [Obsolete]\r\n        public stati" +
                     "c void Types()\r\n        {\r\n            if (");
             
-            #line 19 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 20 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
@@ -48,14 +48,14 @@ namespace Blueprint41.DatastoreTemplates
             this.Write(".Model.TypesRegistered)\r\n                return;\r\n\r\n            lock (typeof(Regi" +
                     "ster))\r\n            {\r\n                if (");
             
-            #line 24 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 25 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
             this.Write(".Model.TypesRegistered)\r\n                    return;\r\n\r\n");
             
-            #line 27 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 28 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
 
 foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
 {
@@ -65,35 +65,35 @@ foreach (var DALModel in Datastore.Entities.OrderBy(item => item.Name))
             #line hidden
             this.Write("                ((ISetRuntimeType)");
             
-            #line 31 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 32 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Datastore.GetType().FullName.Replace("+", ".")));
             
             #line default
             #line hidden
             this.Write(".Model.Entities[\"");
             
-            #line 31 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 32 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("\"]).SetRuntimeTypes(typeof(");
             
-            #line 31 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 32 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
             
             #line default
             #line hidden
             this.Write("), typeof(");
             
-            #line 31 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 32 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Name));
             
             #line default
             #line hidden
             this.Write("));\r\n");
             
-            #line 32 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
+            #line 33 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Register.tt"
 
 }
 

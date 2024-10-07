@@ -61,10 +61,12 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Apt. 56B Whitehaven Mansions"), "Unexpected test-data");
-                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
+                Assert.IsNotNull(relations);
+
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Apt. 56B Whitehaven Mansions"), "Unexpected test-data");
+                Assert.That(!relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
             }
 
             Execute(MergeAddrLine1And2IntoAddrLine1);
@@ -72,10 +74,11 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.IsNotNull(relations);
 
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "There should have been 'AddressLine1' properties with value '1640 Riverside Drive'.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine1' properties with value 'Sandhurst Square'.");
-                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Apt. 56B Whitehaven Mansions"), "There should not have been 'AddressLine1' properties with value 'Apt. 56B Whitehaven Mansions'.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "There should have been 'AddressLine1' properties with value '1640 Riverside Drive'.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine1' properties with value 'Sandhurst Square'.");
+                Assert.That(!relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Apt. 56B Whitehaven Mansions"), "There should not have been 'AddressLine1' properties with value 'Apt. 56B Whitehaven Mansions'.");
                 Assert.That(!relations.Exists(rel => rel.properties.ContainsKey(nameof(PERSON_LIVES_IN.AddressLine2))), "There should not have been 'AddressLine2' properties.");
             }
         }
@@ -96,10 +99,12 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Apt. 56B Whitehaven Mansions"), "Unexpected test-data");
-                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
+                Assert.IsNotNull(relations);
+
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Apt. 56B Whitehaven Mansions"), "Unexpected test-data");
+                Assert.That(!relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
             }
 
             Execute(MergeAddrLine1And2IntoAddrLine2);
@@ -107,11 +112,12 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.IsNotNull(relations);
 
                 Assert.That(!relations.Exists(rel => rel.properties.ContainsKey(nameof(PERSON_LIVES_IN.AddressLine1))), "There should not have been 'AddressLine1' properties.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "1640 Riverside Drive"), "There should have been 'AddressLine2' properties with value '1640 Riverside Drive'.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
-                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Apt. 56B Whitehaven Mansions"), "There should not have been 'AddressLine2' properties with value 'Apt. 56B Whitehaven Mansions'.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "1640 Riverside Drive"), "There should have been 'AddressLine2' properties with value '1640 Riverside Drive'.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
+                Assert.That(!relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Apt. 56B Whitehaven Mansions"), "There should not have been 'AddressLine2' properties with value 'Apt. 56B Whitehaven Mansions'.");
             }
         }
 
@@ -131,8 +137,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is string), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not byte[]), "Unexpected test-data");
+                Assert.IsNotNull(relations);
+
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is string), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not byte[]), "Unexpected test-data");
             }
 
 #if NEO4J
@@ -141,8 +149,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not string), "Conversion failed");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is byte[]), "Conversion failed");
+                Assert.IsNotNull(relations);
+
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is not string), "Conversion failed");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null) is byte[]), "Conversion failed");
             }
 #elif MEMGRAPH
             Exception ex = Assert.Throws<InvalidOperationException>(() => Execute(CompressAddrLine1));
@@ -158,8 +168,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(WATCHED_MOVIE.Relationship);
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is long), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is not string), "Unexpected test-data");
+                Assert.IsNotNull(relations);
+
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is long), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is not string), "Unexpected test-data");
             }
 
             Execute(ConvertMinsWatchedToString);
@@ -167,8 +179,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(WATCHED_MOVIE.Relationship);
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is not long), "Conversion failed");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is string), "Conversion failed");
+                Assert.IsNotNull(relations);
+
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is not long), "Conversion failed");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(WATCHED_MOVIE.MinutesWatched), null) is string), "Conversion failed");
             }
         }
 
@@ -234,8 +248,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) != null), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine3), null) != null), "Unexpected test-data");
+                Assert.IsNotNull(relations);
+
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) != null), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine3), null) != null), "Unexpected test-data");
             }
 
             Execute(DeprecateAddrLine2And3);
@@ -243,8 +259,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
-                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) != null), "There should not have been 'AddressLine3' properties.");
-                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine3), null) != null), "There should not have been 'AddressLine3' properties.");
+                Assert.IsNotNull(relations);
+
+                Assert.That(!relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) != null), "There should not have been 'AddressLine3' properties.");
+                Assert.That(!relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine3), null) != null), "There should not have been 'AddressLine3' properties.");
             }
         }
 
@@ -288,9 +306,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.IsNotNull(relations);
 
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "There should have been 'AddressLine1' properties with value '1640 Riverside Drive'.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine1), null)?.ToString() == "1640 Riverside Drive"), "There should have been 'AddressLine1' properties with value '1640 Riverside Drive'.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
             }
 
             Execute(MakeAddrLine1Mandatory);
@@ -310,9 +329,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.IsNotNull(relations);
 
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
             }
 
             Execute(MakeAddrLine2MandatoryWithDefault);
@@ -320,10 +340,11 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.IsNotNull(relations);
 
-                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "There should not have been 'AddressLine2' properties with value NULL.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "DEFAULT"), "There should have been 'AddressLine2' properties with value 'DEFAULT'.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
+                Assert.That(!relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "There should not have been 'AddressLine2' properties with value NULL.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "DEFAULT"), "There should have been 'AddressLine2' properties with value 'DEFAULT'.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
             }
         }
 
@@ -344,9 +365,10 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.IsNotNull(relations);
 
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "Unexpected test-data");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "Unexpected test-data");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "Unexpected test-data");
             }
 
             Execute(SetAddrLine3FromNullToDEFAULT);
@@ -354,10 +376,11 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 var relations = ReadAllRelations(PERSON_LIVES_IN.Relationship);
+                Assert.IsNotNull(relations);
 
-                Assert.That(!relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "There should not have been 'AddressLine2' properties with value NULL.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "DEFAULT"), "There should have been 'AddressLine2' properties with value 'DEFAULT'.");
-                Assert.That(relations.Exists(rel => rel.properties.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
+                Assert.That(!relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null) == null), "There should not have been 'AddressLine2' properties with value NULL.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "DEFAULT"), "There should have been 'AddressLine2' properties with value 'DEFAULT'.");
+                Assert.That(relations.Exists(rel => rel.properties!.GetValue(nameof(PERSON_LIVES_IN.AddressLine2), null)?.ToString() == "Sandhurst Square"), "There should have been 'AddressLine2' properties with value 'Sandhurst Square'.");
             }
         }
     }

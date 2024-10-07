@@ -57,7 +57,7 @@ namespace Blueprint41.UnitTest.Tests
 
                     // This statement should throw invalid operation exception
                     ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                    Record record = result.FirstOrDefault();
+                    Record record = result.First();
                     NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -77,7 +77,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
                 NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -96,7 +96,7 @@ namespace Blueprint41.UnitTest.Tests
                 Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
                 NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -108,7 +108,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
                 Assert.IsNull(record);
             }
         }
@@ -124,7 +124,7 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
                     ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                    Record record = result.FirstOrDefault();
+                    Record record = result.First();
                     NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -145,7 +145,7 @@ namespace Blueprint41.UnitTest.Tests
                     Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
 
                     ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                    Record record = result.FirstOrDefault();
+                    Record record = result.First();
                     NodeResult loaded = record["n"].As<NodeResult>();
 
                     Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -176,7 +176,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
                 NodeResult loaded = record["n"].As<NodeResult>();
 
                 Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -200,7 +200,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
                 Assert.IsNull(record);
             }
         }
@@ -212,7 +212,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
 
                 NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -224,7 +224,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
                 Assert.IsNull(record);
             }
         }
@@ -236,7 +236,7 @@ namespace Blueprint41.UnitTest.Tests
             {
                 Transaction.Run("CREATE (n:SampleEntity { name: 'Address', title: 'Developer' })");
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
 
                 NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
@@ -248,7 +248,7 @@ namespace Blueprint41.UnitTest.Tests
             using (MockModel.BeginTransaction())
             {
                 ResultCursor result = Transaction.Run("Match (n:SampleEntity) Return n");
-                Record record = result.FirstOrDefault();
+                Record record = result.First();
 
                 NodeResult loaded = record["n"].As<NodeResult>();
                 Assert.AreEqual(loaded.Properties["name"], "Address");
