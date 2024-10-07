@@ -26,16 +26,15 @@ namespace Blueprint41.UnitTest.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            //MockNeo4jPersistenceProvider persistenceProvider = new MockNeo4jPersistenceProvider(DatabaseConnectionSettings.URI, DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD);
-            //PersistenceProvider.CurrentPersistenceProvider = persistenceProvider;
-            throw new NotImplementedException();
-
-            TearDown();
+            MockModel model = MockModel.Connect(new Uri(DatabaseConnectionSettings.URI), AuthToken.Basic(DatabaseConnectionSettings.USER_NAME, DatabaseConnectionSettings.PASSWORD), DatabaseConnectionSettings.DATA_BASE);
+            model.Execute(true);
         }
 
         [SetUp]
         public void Setup()
         {
+            TearDown();
+
             // Run mock model every time because the FunctionalId is wiped out by cleanup and needs to be recreated!
             MockModel model = new MockModel()
             {

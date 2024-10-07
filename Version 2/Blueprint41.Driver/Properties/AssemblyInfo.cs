@@ -41,4 +41,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Blueprint41.OGM")]
 [assembly: InternalsVisibleTo("Blueprint41.Query")]
 
+[assembly: InternalsVisibleTo("Blueprint41.UnitTest.Memgraph")]
+[assembly: InternalsVisibleTo("Blueprint41.UnitTest.Neo4j")]
+
 [assembly: InternalsVisibleTo("Laboratory version 2")]

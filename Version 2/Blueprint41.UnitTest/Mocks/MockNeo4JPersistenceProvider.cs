@@ -2,12 +2,13 @@
 
 using System;
 using System.Linq;
-
-using neo4j = Neo4j.Driver;
+using System.Threading.Tasks;
 
 using Blueprint41.Core;
 using Blueprint41.Persistence;
-using System.Threading.Tasks;
+using Blueprint41.Config;
+
+using driver = Neo4j.Driver; 
 
 namespace Blueprint41.UnitTest.Mocks
 {
@@ -48,28 +49,29 @@ namespace Blueprint41.UnitTest.Mocks
             return transaction;
         }
 
-        //protected override void Initialize()
-        //{
-        //    neo4j.AccessMode accessMode = (ReadWriteMode) ? neo4j.AccessMode.Write : neo4j.AccessMode.Read;
+        protected override void InitializeDriver()
+        {
+            DriverSession = Swap(InitializeDriverSession());
+            DriverTransaction = Swap(DriverSession.BeginTransaction());
+        }
 
-        //    if ((Provider ?? PersistenceProvider.CurrentPersistenceProvider) is not MockNeo4jPersistenceProvider provider)
-        //        throw new InvalidOperationException("CurrentPersistenceProvider is null");
+        protected override async Task InitializeDriverAsync()
+        {
+            DriverSession = Swap(InitializeDriverSession());
+            DriverTransaction = Swap(await DriverSession.BeginTransactionAsync().ConfigureAwait(false));
+        }
 
-        //    Session = new MockSession(provider.Driver.AsyncSession(c =>
-        //    {
-        //        if (provider.Database is not null)
-        //            c.WithDatabase(provider.Database);
+        private DriverSession Swap(DriverSession session)
+        {
+            driver.IAsyncSession neo4jSession = (driver.IAsyncSession)session._instance;
 
-        //        c.WithFetchSize(neo4j.Config.Infinite);
-        //        c.WithDefaultAccessMode(accessMode);
+            return new DriverSession(new MockSession(neo4jSession));
+        }
+        private DriverTransaction Swap(DriverTransaction transaction)
+        {
+            driver.IAsyncTransaction neo4jTransaction = (driver.IAsyncTransaction)transaction._instance;
 
-        //        if (Consistency is not null)
-        //            c.WithBookmarks(Consistency.Select(item => item.ToBookmark()).ToArray());
-        //    }));
-
-        //    Transaction = provider.TaskScheduler.RunBlocking(() => Session.BeginTransactionAsync(), "Begin Transaction");
-
-        //    StatementRunner = Transaction;
-        //}
+            return new DriverTransaction(new MockTransaction(neo4jTransaction));
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace Blueprint41.UnitTest
 
         public const string USER_NAME = "neo4j";
         public const string PASSWORD = "neoneoneo";
+        public const string DATA_BASE = "unittest";
 
 #if NEO4J
         public const GDMS DatastoreTechnology = GDMS.Neo4j;
