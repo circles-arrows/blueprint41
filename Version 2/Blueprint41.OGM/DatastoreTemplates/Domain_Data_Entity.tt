@@ -183,7 +183,7 @@ if (!DALModel.IsAbstract)
 #>
         public static <#= DALModel.ClassName #> LoadBy<#= attr.Name #>(string <#= attr.Name.ToCamelCase() #>)
         {
-            return QueryExtensions.FromQuery<<#= DALModel.ClassName #>>(nameof(LoadBy<#= attr.Name #>), new Parameter(Param0, <#= attr.Name.ToCamelCase() #>)).FirstOrDefault();
+            return FromQuery(nameof(LoadBy<#= attr.Name #>), new Parameter(Param0, <#= attr.Name.ToCamelCase() #>)).FirstOrDefault();
         }
 <#
     }
@@ -192,7 +192,7 @@ if (!DALModel.IsAbstract)
 
         public static Dictionary<<#= DALModel.Key.SystemReturnType #>, <#= DALModel.ClassName #>> LoadByKeys(IEnumerable<<#= DALModel.Key.SystemReturnType #>> <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>)
         {
-            return QueryExtensions.FromQuery<<#= DALModel.ClassName #>>(nameof(LoadByKeys), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
+            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, <#= DALModel.Key.Name.ToPlural().ToCamelCase() #>.ToArray(), typeof(<#= DALModel.Key.SystemReturnType #>))).ToDictionary(item=> item.<#= DALModel.Key.Name #>, item => item);
         }
 
 <#
@@ -233,7 +233,7 @@ if (!DALModel.IsAbstract)
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            QueryExtensions.RegisterQuery(name, compiled);
+            RegisterQuery(name, compiled);
         }
 
         public override string ToString()

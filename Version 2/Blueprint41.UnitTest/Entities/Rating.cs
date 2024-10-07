@@ -61,17 +61,17 @@ namespace Datastore.Manipulation
         }
         public static Rating LoadByCode(string code)
         {
-            return QueryExtensions.FromQuery<Rating>(nameof(LoadByCode), new Parameter(Param0, code)).FirstOrDefault();
+            return FromQuery(nameof(LoadByCode), new Parameter(Param0, code)).FirstOrDefault();
         }
         public static Rating LoadByName(string name)
         {
-            return QueryExtensions.FromQuery<Rating>(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
+            return FromQuery(nameof(LoadByName), new Parameter(Param0, name)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
         public static Dictionary<System.String, Rating> LoadByKeys(IEnumerable<System.String> uids)
         {
-            return QueryExtensions.FromQuery<Rating>(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.RatingAlias, IWhereQuery> query)
@@ -82,7 +82,7 @@ namespace Datastore.Manipulation
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            QueryExtensions.RegisterQuery(name, compiled);
+            RegisterQuery(name, compiled);
         }
 
         public override string ToString()

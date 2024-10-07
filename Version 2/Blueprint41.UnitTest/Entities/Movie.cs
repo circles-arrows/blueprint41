@@ -55,13 +55,13 @@ namespace Datastore.Manipulation
         }
         public static Movie LoadByTitle(string title)
         {
-            return QueryExtensions.FromQuery<Movie>(nameof(LoadByTitle), new Parameter(Param0, title)).FirstOrDefault();
+            return FromQuery(nameof(LoadByTitle), new Parameter(Param0, title)).FirstOrDefault();
         }
         partial void AdditionalGeneratedStoredQueries();
 
         public static Dictionary<System.String, Movie> LoadByKeys(IEnumerable<System.String> uids)
         {
-            return QueryExtensions.FromQuery<Movie>(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
+            return FromQuery(nameof(LoadByKeys), new Parameter(Param0, uids.ToArray(), typeof(System.String))).ToDictionary(item=> item.Uid, item => item);
         }
 
         protected static void RegisterQuery(string name, Func<IMatchQuery, q.MovieAlias, IWhereQuery> query)
@@ -72,7 +72,7 @@ namespace Datastore.Manipulation
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            QueryExtensions.RegisterQuery(name, compiled);
+            RegisterQuery(name, compiled);
         }
 
         public override string ToString()

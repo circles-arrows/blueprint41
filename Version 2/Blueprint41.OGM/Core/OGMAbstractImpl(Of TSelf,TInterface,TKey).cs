@@ -105,14 +105,14 @@ namespace Blueprint41.Core
         {
             return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, conditions, parameters, page, pageSize, ascending, orderBy);
         }
-        //public static List<TInterface> LoadWhere(ICompiled query)
-        //{
-        //    return LoadWhere(query, new Parameter[0]);
-        //}
-        //public static List<TInterface> LoadWhere(ICompiled query, params Parameter[] parameters)
-        //{
-        //    return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, query, parameters);
-        //}
+        public static List<TInterface> LoadWhere(ICompiledQuery query)
+        {
+            return LoadWhere(query, new IParameter[0]);
+        }
+        public static List<TInterface> LoadWhere(ICompiledQuery query, params IParameter[] parameters)
+        {
+            return Transaction.RunningTransaction.NodePersistenceProvider.LoadWhere<TInterface>(Entity, query, parameters);
+        }
 
         public static List<TInterface> Search(string text, params Property[] properties)
         {
@@ -151,44 +151,41 @@ namespace Blueprint41.Core
 
         #region Stored Queries
 
-        //private static IDictionary<string, ICompiled>? StoredQueries = null;
+        private static IDictionary<string, ICompiledQuery>? StoredQueries = null;
         private static bool IsInitialized = false;
 
         protected virtual void RegisterStoredQueries() { }
         protected abstract void RegisterGeneratedStoredQueries();
 
-        //public static void RegisterQuery(string name, ICompiled query)
-        //{
-        //    InitializeStoredQueries();
+        public static void RegisterQuery(string name, ICompiledQuery query)
+        {
+            InitializeStoredQueries();
 
-        //    StoredQueries!.Add(name, query);
-        //}
+            StoredQueries!.Add(name, query);
+        }
         public static List<TInterface> FromQuery(string name, params IParameter[] parameters)
         {
-            throw new NotImplementedException();
-            //InitializeStoredQueries();
+            InitializeStoredQueries();
 
-            //ICompiled query = StoredQueries![name];
-            //return LoadWhere(query, parameters);
+            ICompiledQuery query = StoredQueries![name];
+            return LoadWhere(query, parameters);
         }
 
         private static void InitializeStoredQueries()
         {
-            throw new NotImplementedException();
+            if (StoredQueries is not null && IsInitialized)
+                return;
 
-            //if (StoredQueries is not null && IsInitialized)
-            //    return;
-
-            //lock (typeof(TInterface))
-            //{
-            //    if (StoredQueries is null)
-            //    {
-            //        StoredQueries = new AtomicDictionary<string, ICompiled>();
-            //        Instance.RegisterGeneratedStoredQueries();
-            //        Instance.RegisterStoredQueries(); 
-            //        IsInitialized = true;
-            //    }
-            //}
+            lock (typeof(TInterface))
+            {
+                if (StoredQueries is null)
+                {
+                    StoredQueries = new AtomicDictionary<string, ICompiledQuery>();
+                    Instance.RegisterGeneratedStoredQueries();
+                    Instance.RegisterStoredQueries();
+                    IsInitialized = true;
+                }
+            }
         }
 
         #endregion

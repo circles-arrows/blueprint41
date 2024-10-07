@@ -601,14 +601,7 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(")\r\n        {\r\n            return QueryExtensions.FromQuery<");
-            
-            #line 186 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
-            
-            #line default
-            #line hidden
-            this.Write(">(nameof(LoadBy");
+            this.Write(")\r\n        {\r\n            return FromQuery(nameof(LoadBy");
             
             #line 186 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(attr.Name));
@@ -660,14 +653,8 @@ if (!DALModel.IsAbstract)
             
             #line default
             #line hidden
-            this.Write(")\r\n        {\r\n            return QueryExtensions.FromQuery<");
-            
-            #line 195 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.ClassName));
-            
-            #line default
-            #line hidden
-            this.Write(">(nameof(LoadByKeys), new Parameter(Param0, ");
+            this.Write(")\r\n        {\r\n            return FromQuery(nameof(LoadByKeys), new Parameter(Para" +
+                    "m0, ");
             
             #line 195 "C:\_CirclesArrows\blueprint41\Version 2\Blueprint41.OGM\DatastoreTemplates\Domain_Data_Entity.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(DALModel.Key.Name.ToPlural().ToCamelCase()));
@@ -841,7 +828,7 @@ if (!DALModel.IsAbstract)
             IWhereQuery partial = query.Invoke(matchQuery, alias);
             ICompiled compiled = partial.Return(alias).Compile();
 
-            QueryExtensions.RegisterQuery(name, compiled);
+            RegisterQuery(name, compiled);
         }
 
         public override string ToString()

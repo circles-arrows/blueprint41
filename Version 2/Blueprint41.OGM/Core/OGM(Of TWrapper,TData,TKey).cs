@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -389,23 +390,6 @@ namespace Blueprint41.Core
         {
             OriginalData = InnerData;
         }
-        //internal TData GetData()
-        //{
-        //    return Current ?? Loaded;
-        //}
-        //sealed internal override Data NewData(object key = null)
-        //{
-        //    return NewData((TKey)key);
-        //}
-        //internal TData NewData(TKey key)
-        //{
-        //	  TData item = NewData();
-
-        //	  if (key is not null && !key.Equals(default(TKey)))
-        //		  item.SetKey(key);
-
-        //    return item;
-        //}
 
         protected void KeySet(Action set)
         {
@@ -423,50 +407,48 @@ namespace Blueprint41.Core
 
         #region Stored Queries
 
-        //private static IDictionary<string, ICompiled>? StoredQueries = null;
+        private static IDictionary<string, ICompiledQuery>? StoredQueries = null;
         private static bool IsInitialized = false;
 
         protected virtual void RegisterStoredQueries() { }
         protected abstract void RegisterGeneratedStoredQueries();
 
-        //public static void RegisterQuery(string name, ICompiled query)
-        //{
-        //    InitializeStoredQueries();
+        public static void RegisterQuery(string name, ICompiledQuery query)
+        {
+            InitializeStoredQueries();
 
-        //    StoredQueries!.Add(name, query);
-        //}
-        //public static List<TWrapper> FromQuery(string name, params Parameter[] parameters)
-        //{
-        //    InitializeStoredQueries();
+            StoredQueries!.Add(name, query);
+        }
+        public static List<TWrapper> FromQuery(string name, params IParameter[] parameters)
+        {
+            InitializeStoredQueries();
 
-        //    ICompiled query = StoredQueries![name];
-        //    return LoadWhere(query, parameters);
-        //}
-        //public static List<TWrapper> FromQuery(string name, Parameter[] parameters, int page, int size, bool ascending = true, params Property[] orderBy)
-        //{
-        //    InitializeStoredQueries();
+            ICompiledQuery query = StoredQueries![name];
+            return LoadWhere(query, parameters);
+        }
+        public static List<TWrapper> FromQuery(string name, IParameter[] parameters, int page, int size, bool ascending = true, params Property[] orderBy)
+        {
+            InitializeStoredQueries();
 
-        //    ICompiled query = StoredQueries![name];
-        //    return LoadWhere(query, parameters, page, size, ascending, orderBy);
-        //}
+            ICompiledQuery query = StoredQueries![name];
+            return LoadWhere(query, parameters, page, size, ascending, orderBy);
+        }
 
         private static void InitializeStoredQueries()
         {
-            throw new NotImplementedException();
+            if (StoredQueries is not null && IsInitialized)
+                return;
 
-            //if (StoredQueries is not null && IsInitialized)
-            //    return;
-
-            //lock (typeof(TWrapper))
-            //{
-            //    if (StoredQueries is null)
-            //    {
-            //        StoredQueries = new AtomicDictionary<string, ICompiled>();
-            //        Instance.RegisterGeneratedStoredQueries();
-            //        Instance.RegisterStoredQueries();
-            //        IsInitialized = true;
-            //    }
-            //}
+            lock (typeof(TWrapper))
+            {
+                if (StoredQueries is null)
+                {
+                    StoredQueries = new AtomicDictionary<string, ICompiledQuery>();
+                    Instance.RegisterGeneratedStoredQueries();
+                    Instance.RegisterStoredQueries();
+                    IsInitialized = true;
+                }
+            }
         }
 
         #endregion
